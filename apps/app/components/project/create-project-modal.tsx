@@ -41,7 +41,8 @@ const defaultValues: Partial<IProject> = {
   description: "",
   network: 2,
   icon: getRandomEmoji(),
-  cover_image: null,
+  cover_image:
+    "https://images.unsplash.com/photo-1575116464504-9e7652fddcb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODUyNTV8MHwxfHNlYXJjaHwxOHx8cGxhbmV8ZW58MHx8fHwxNjgxNDY4NTY5&ixlib=rb-4.0.3&q=80&w=1080",
 };
 
 const IsGuestCondition: React.FC<{
@@ -147,7 +148,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
       });
   };
 
-  // FIXME: remove this and authorize using getServerSideProps
   if (myWorkspaceMembership && isOpen) {
     if (myWorkspaceMembership.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
   }

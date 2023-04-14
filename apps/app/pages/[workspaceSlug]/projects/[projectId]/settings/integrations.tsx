@@ -1,31 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// lib
-import { requiredAdmin } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
-import workspaceService from "services/workspace.service";
+import IntegrationService from "services/integration";
 import projectService from "services/project.service";
+// components
+import { SingleIntegration } from "components/project";
 // ui
 import { EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
 // types
-import { IProject, UserAuth } from "types";
-import type { NextPageContext, NextPage } from "next";
+import { IProject } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
-import { SingleIntegration } from "components/project";
 
-const ProjectIntegrations: NextPage<UserAuth> = (props) => {
-  const { isMember, isOwner, isViewer, isGuest } = props;
-
+const ProjectIntegrations: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -39,12 +36,13 @@ const ProjectIntegrations: NextPage<UserAuth> = (props) => {
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
     () =>
-      workspaceSlug ? workspaceService.getWorkspaceIntegrations(workspaceSlug as string) : null
+      workspaceSlug
+        ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
+        : null
   );
 
   return (
-    <AppLayout
-      memberType={{ isMember, isOwner, isViewer, isGuest }}
+    <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -54,7 +52,6 @@ const ProjectIntegrations: NextPage<UserAuth> = (props) => {
           <BreadcrumbItem title="Integrations" />
         </Breadcrumbs>
       }
-      settingsLayout
     >
       {workspaceIntegrations ? (
         workspaceIntegrations.length > 0 ? (
@@ -94,24 +91,8 @@ const ProjectIntegrations: NextPage<UserAuth> = (props) => {
           <Loader.Item height="40px" />
         </Loader>
       )}
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: NextPageContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default ProjectIntegrations;

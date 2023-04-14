@@ -21,11 +21,12 @@ import useToast from "hooks/use-toast";
 import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
+  ViewEstimateSelect,
   ViewPrioritySelect,
   ViewStateSelect,
-} from "components/issues/view-select";
+} from "components/issues";
 // ui
-import { ContextMenu, CustomMenu } from "components/ui";
+import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
 // icons
 import {
   ClipboardDocumentCheckIcon,
@@ -34,7 +35,7 @@ import {
   TrashIcon,
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
-
+  PaperClipIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { handleIssuesMutation } from "constants/issue";
@@ -109,7 +110,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
         >(
           CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
           (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+            handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            ),
           false
         );
       else if (moduleId)
@@ -121,10 +129,17 @@ export const SingleBoardIssue: React.FC<Props> = ({
         >(
           MODULE_ISSUES_WITH_PARAMS(moduleId as string),
           (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+            handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            ),
           false
         );
-      else
+      else {
         mutate<
           | {
               [key: string]: IIssue[];
@@ -132,10 +147,21 @@ export const SingleBoardIssue: React.FC<Props> = ({
           | IIssue[]
         >(
           PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
-          (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            );
+          },
           false
         );
+      }
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
@@ -152,7 +178,18 @@ export const SingleBoardIssue: React.FC<Props> = ({
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      issue,
+      groupTitle,
+      index,
+      selectedGroup,
+      orderBy,
+      params,
+    ]
   );
 
   const getStyle = (
@@ -342,6 +379,34 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 tooltipPosition="left"
                 selfPositioned
               />
+            )}
+            {properties.estimate && (
+              <ViewEstimateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+                selfPositioned
+              />
+            )}
+            {properties.link && (
+              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+                <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
+                    {issue.link_count}
+                  </div>
+                </Tooltip>
+              </div>
+            )}
+            {properties.attachment_count && (
+              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+                <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                    {issue.attachment_count}
+                  </div>
+                </Tooltip>
+              </div>
             )}
           </div>
         </div>

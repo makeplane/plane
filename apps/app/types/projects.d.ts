@@ -18,6 +18,7 @@ export interface IProject {
   page_view: boolean;
   default_assignee: IUser | string | null;
   description: string;
+  estimate: string | null;
   icon: string;
   id: string;
   identifier: string;

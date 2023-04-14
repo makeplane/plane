@@ -7,29 +7,33 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-
-// icons
-import { LinkIcon } from "@heroicons/react/24/outline";
-// lib
-import { requiredWorkspaceAdmin } from "lib/auth";
 // services
 import workspaceService from "services/workspace.service";
 import fileService from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
 // ui
-import { Spinner, Input, CustomSelect, OutlineButton, SecondaryButton } from "components/ui";
+import {
+  Spinner,
+  Input,
+  CustomSelect,
+  OutlineButton,
+  SecondaryButton,
+  DangerButton,
+} from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
+import { LinkIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { IWorkspace, UserAuth } from "types";
-import type { GetServerSideProps, NextPage } from "next";
+import type { IWorkspace } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // constants
@@ -42,9 +46,10 @@ const defaultValues: Partial<IWorkspace> = {
   logo: null,
 };
 
-const WorkspaceSettings: NextPage<UserAuth> = (props) => {
+const WorkspaceSettings: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
   const router = useRouter();
@@ -88,6 +93,14 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
         mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
           prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
         );
+        mutate<IWorkspace>(WORKSPACE_DETAILS(workspaceSlug as string), (prevData) => {
+          if (!prevData) return prevData;
+
+          return {
+            ...prevData,
+            logo: formData.logo,
+          };
+        });
         setToastAlert({
           title: "Success",
           type: "success",
@@ -98,17 +111,47 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
   };
 
   const handleDelete = (url: string | null | undefined) => {
-    if (!url) return;
+    if (!activeWorkspace || !url) return;
+
+    setIsImageRemoving(true);
 
     const index = url.indexOf(".com");
     const asset = url.substring(index + 5);
 
-    fileService.deleteFile(asset);
+    fileService.deleteFile(asset).then(() => {
+      workspaceService
+        .updateWorkspace(activeWorkspace.slug, { logo: "" })
+        .then((res) => {
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Workspace picture removed successfully.",
+          });
+          mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
+            prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
+          );
+          mutate<IWorkspace>(WORKSPACE_DETAILS(workspaceSlug as string), (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              logo: "",
+            };
+          });
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "There was some error in deleting your profile picture. Please try again.",
+          });
+        })
+        .finally(() => setIsImageRemoving(false));
+    });
   };
 
   return (
-    <AppLayout
-      memberType={props}
+    <WorkspaceAuthorizationLayout
       meta={{
         title: "Plane - Workspace Settings",
       }}
@@ -117,7 +160,6 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
           <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
         </Breadcrumbs>
       }
-      settingsLayout
     >
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
@@ -166,7 +208,7 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                     </div>
                   )}
                 </button>
-                <div>
+                <div className="flex gap-4">
                   <SecondaryButton
                     onClick={() => {
                       setIsImageUploadModalOpen(true);
@@ -174,6 +216,11 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                   >
                     {isImageUploading ? "Uploading..." : "Upload"}
                   </SecondaryButton>
+                  {activeWorkspace.logo && activeWorkspace.logo !== "" && (
+                    <DangerButton onClick={() => handleDelete(activeWorkspace.logo)}>
+                      {isImageRemoving ? "Removing..." : "Remove"}
+                    </DangerButton>
+                  )}
                 </div>
               </div>
             </div>
@@ -191,13 +238,20 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                 register={register}
                 error={errors.name}
                 className="w-full"
-                value={`app.plane.so/${activeWorkspace.slug}`}
+                value={`${
+                  typeof window !== "undefined" &&
+                  window.location.origin.replace("http://", "").replace("https://", "")
+                }/${activeWorkspace.slug}`}
                 disabled
               />
               <SecondaryButton
                 className="h-min"
                 onClick={() =>
-                  copyTextToClipboard(`https://app.plane.so/${activeWorkspace.slug}`).then(() => {
+                  copyTextToClipboard(
+                    `${typeof window !== "undefined" && window.location.origin}/${
+                      activeWorkspace.slug
+                    }`
+                  ).then(() => {
                     setToastAlert({
                       type: "success",
                       title: "Link Copied!",
@@ -282,32 +336,8 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
           <Spinner />
         </div>
       )}
-    </AppLayout>
+    </WorkspaceAuthorizationLayout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const workspaceSlug = ctx.params?.workspaceSlug as string;
-
-  const memberDetail = await requiredWorkspaceAdmin(workspaceSlug, ctx.req.headers.cookie);
-
-  if (memberDetail === null) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default WorkspaceSettings;

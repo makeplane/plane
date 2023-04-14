@@ -4,8 +4,6 @@ import Image from "next/image";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// lib
-import { requiredAuth } from "lib/auth";
 // services
 import fileService from "services/file.service";
 import userService from "services/user.service";
@@ -13,7 +11,7 @@ import userService from "services/user.service";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ImageUploadModal } from "components/core";
 // ui
@@ -22,7 +20,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
 // types
-import type { NextPage, GetServerSidePropsContext } from "next";
+import type { NextPage } from "next";
 import type { IUser } from "types";
 // constants
 import { USER_ROLES } from "constants/workspace";
@@ -123,7 +121,7 @@ const Profile: NextPage = () => {
   };
 
   return (
-    <AppLayout
+    <WorkspaceAuthorizationLayout
       meta={{
         title: "Plane - My Profile",
       }}
@@ -132,7 +130,6 @@ const Profile: NextPage = () => {
           <BreadcrumbItem title="My Profile" />
         </Breadcrumbs>
       }
-      settingsLayout
       profilePage
     >
       <ImageUploadModal
@@ -282,29 +279,8 @@ const Profile: NextPage = () => {
           <Spinner />
         </div>
       )}
-    </AppLayout>
+    </WorkspaceAuthorizationLayout>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      user,
-    },
-  };
 };
 
 export default Profile;

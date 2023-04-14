@@ -26,7 +26,7 @@ def get_default_props():
         "collapsed": True,
         "issueView": "list",
         "filterIssue": None,
-        "groupByProperty": True,
+        "groupByProperty": None,
         "showEmptyGroups": True,
     }
 
@@ -69,6 +69,9 @@ class Project(BaseModel):
     issue_views_view = models.BooleanField(default=True)
     page_view = models.BooleanField(default=True)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
+    estimate = models.ForeignKey(
+        "db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True
+    )
 
     def __str__(self):
         """Return name of the project"""
@@ -130,7 +133,7 @@ class ProjectMember(ProjectBaseModel):
     )
     comment = models.TextField(blank=True, null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
-    view_props = models.JSONField(null=True)
+    view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
 
     class Meta:

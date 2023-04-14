@@ -1,30 +1,28 @@
 import { useRouter } from "next/router";
-import { GetServerSidePropsContext } from "next";
 
 import useSWR from "swr";
 
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 import viewsService from "services/views.service";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
+// components
+import { IssuesFilterView, IssuesView } from "components/core";
 // ui
 import { CustomMenu, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// types
-import { UserAuth } from "types";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { StackedLayersIcon } from "components/icons";
+// helpers
+import { truncateText } from "helpers/string.helper";
 // fetch-keys
 import { PROJECT_DETAILS, VIEWS_LIST, VIEW_DETAILS } from "constants/fetch-keys";
-import { IssuesFilterView, IssuesView } from "components/core";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { truncateText } from "helpers/string.helper";
-import { StackedLayersIcon } from "components/icons";
 
-const SingleView: React.FC<UserAuth> = (props) => {
+const SingleView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
 
@@ -56,8 +54,7 @@ const SingleView: React.FC<UserAuth> = (props) => {
 
   return (
     <IssueViewContextProvider>
-      <AppLayout
-        memberType={props}
+      <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -104,39 +101,10 @@ const SingleView: React.FC<UserAuth> = (props) => {
           </div>
         }
       >
-        <IssuesView userAuth={props} />
-      </AppLayout>
+        <IssuesView />
+      </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default SingleView;

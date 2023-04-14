@@ -12,6 +12,7 @@ from sentry_sdk import capture_exception
 # Module imports
 from .base import BaseAPIView
 from plane.db.models import Workspace, Project, Issue, Cycle, Module, Page, IssueView
+from plane.utils.issue_search import search_issues
 
 
 class GlobalSearchEndpoint(BaseAPIView):
@@ -24,20 +25,26 @@ class GlobalSearchEndpoint(BaseAPIView):
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return Workspace.objects.filter(
-            q, workspace_member__member=self.request.user
-        ).distinct().values("name", "id", "slug")
+        return (
+            Workspace.objects.filter(q, workspace_member__member=self.request.user)
+            .distinct()
+            .values("name", "id", "slug")
+        )
 
     def filter_projects(self, query, slug, project_id):
         fields = ["name"]
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return Project.objects.filter(
-            q,
-            Q(project_projectmember__member=self.request.user) | Q(network=2),
-            workspace__slug=slug,
-        ).distinct().values("name", "id", "identifier", "workspace__slug")
+        return (
+            Project.objects.filter(
+                q,
+                Q(project_projectmember__member=self.request.user) | Q(network=2),
+                workspace__slug=slug,
+            )
+            .distinct()
+            .values("name", "id", "identifier", "workspace__slug")
+        )
 
     def filter_issues(self, query, slug, project_id):
         fields = ["name", "sequence_id"]
@@ -49,18 +56,22 @@ class GlobalSearchEndpoint(BaseAPIView):
                     q |= Q(**{"sequence_id": sequence_id})
             else:
                 q |= Q(**{f"{field}__icontains": query})
-        return Issue.objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-        ).distinct().values(
-            "name",
-            "id",
-            "sequence_id",
-            "project__identifier",
-            "project_id",
-            "workspace__slug",
+        return (
+            Issue.objects.filter(
+                q,
+                project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .distinct()
+            .values(
+                "name",
+                "id",
+                "sequence_id",
+                "project__identifier",
+                "project_id",
+                "workspace__slug",
+            )
         )
 
     def filter_cycles(self, query, slug, project_id):
@@ -68,16 +79,20 @@ class GlobalSearchEndpoint(BaseAPIView):
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return Cycle.objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-        ).distinct().values(
-            "name",
-            "id",
-            "project_id",
-            "workspace__slug",
+        return (
+            Cycle.objects.filter(
+                q,
+                project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .distinct()
+            .values(
+                "name",
+                "id",
+                "project_id",
+                "workspace__slug",
+            )
         )
 
     def filter_modules(self, query, slug, project_id):
@@ -85,16 +100,20 @@ class GlobalSearchEndpoint(BaseAPIView):
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return Module.objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-        ).distinct().values(
-            "name",
-            "id",
-            "project_id",
-            "workspace__slug",
+        return (
+            Module.objects.filter(
+                q,
+                project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .distinct()
+            .values(
+                "name",
+                "id",
+                "project_id",
+                "workspace__slug",
+            )
         )
 
     def filter_pages(self, query, slug, project_id):
@@ -102,16 +121,20 @@ class GlobalSearchEndpoint(BaseAPIView):
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return Page.objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-        ).distinct().values(
-            "name",
-            "id",
-            "project_id",
-            "workspace__slug",
+        return (
+            Page.objects.filter(
+                q,
+                project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .distinct()
+            .values(
+                "name",
+                "id",
+                "project_id",
+                "workspace__slug",
+            )
         )
 
     def filter_views(self, query, slug, project_id):
@@ -119,16 +142,20 @@ class GlobalSearchEndpoint(BaseAPIView):
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return IssueView.objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-        ).distinct().values(
-            "name",
-            "id",
-            "project_id",
-            "workspace__slug",
+        return (
+            IssueView.objects.filter(
+                q,
+                project__project_projectmember__member=self.request.user,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .distinct()
+            .values(
+                "name",
+                "id",
+                "project_id",
+                "workspace__slug",
+            )
         )
 
     def get(self, request, slug, project_id):
@@ -169,6 +196,56 @@ class GlobalSearchEndpoint(BaseAPIView):
 
         except Exception as e:
             print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class IssueSearchEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+            query = request.query_params.get("search", False)
+            parent = request.query_params.get("parent", False)
+            blocker_blocked_by = request.query_params.get("blocker_blocked_by", False)
+            issue_id = request.query_params.get("issue_id", False)
+
+            issues = search_issues(query)
+            issues = issues.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                project__project_projectmember__member=self.request.user,
+            )
+
+            if parent == "true" and issue_id:
+                issue = Issue.objects.get(pk=issue_id)
+                issues = issues.filter(
+                    ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
+                ).exclude(
+                    pk__in=Issue.objects.filter(parent__isnull=False).values_list(
+                        "parent_id", flat=True
+                    )
+                )
+            if blocker_blocked_by == "true" and issue_id:
+                issues = issues.filter(blocker_issues=issue_id, blocked_issues=issue_id)
+
+            return Response(
+                issues.values(
+                    "name",
+                    "id",
+                    "sequence_id",
+                    "project__identifier",
+                    "project_id",
+                    "workspace__slug",
+                ),
+                status=status.HTTP_200_OK,
+            )
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

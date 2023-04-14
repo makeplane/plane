@@ -9,6 +9,7 @@ import type {
   ICycle,
   IGptResponse,
   IIssue,
+  IIssueComment,
   IModule,
   IPage,
   IPageBlock,
@@ -26,7 +27,11 @@ type WorkspaceEventType =
   | "WORKSPACE_USER_INVITE_ACCEPT"
   | "WORKSPACE_USER_BULK_INVITE_ACCEPT";
 
-type ProjectEventType = "CREATE_PROJECT" | "UPDATE_PROJECT" | "DELETE_PROJECT";
+type ProjectEventType =
+  | "CREATE_PROJECT"
+  | "UPDATE_PROJECT"
+  | "DELETE_PROJECT"
+  | "PROJECT_MEMBER_INVITE";
 
 type IssueEventType = "ISSUE_CREATE" | "ISSUE_UPDATE" | "ISSUE_DELETE";
 
@@ -40,11 +45,31 @@ type PagesEventType = "PAGE_CREATE" | "PAGE_UPDATE" | "PAGE_DELETE";
 
 type ViewEventType = "VIEW_CREATE" | "VIEW_UPDATE" | "VIEW_DELETE";
 
+type IssueCommentType = "ISSUE_COMMENT_CREATE" | "ISSUE_COMMENT_UPDATE" | "ISSUE_COMMENT_DELETE";
+
+type MiscellaneousEventType =
+  | "TOGGLE_CYCLE_ON"
+  | "TOGGLE_CYCLE_OFF"
+  | "TOGGLE_MODULE_ON"
+  | "TOGGLE_MODULE_OFF"
+  | "TOGGLE_VIEW_ON"
+  | "TOGGLE_VIEW_OFF"
+  | "TOGGLE_PAGES_ON"
+  | "TOGGLE_PAGES_OFF"
+  | "TOGGLE_STATE_ON"
+  | "TOGGLE_STATE_OFF";
+
+type IntegrationEventType = "ADD_WORKSPACE_INTEGRATION" | "REMOVE_WORKSPACE_INTEGRATION";
+
+type GitHubSyncEventType = "GITHUB_REPO_SYNC";
+
 type PageBlocksEventType =
   | "PAGE_BLOCK_CREATE"
   | "PAGE_BLOCK_UPDATE"
   | "PAGE_BLOCK_DELETE"
   | "PAGE_BLOCK_CONVERTED_TO_ISSUE";
+
+type IssueLabelEventType = "ISSUE_LABEL_CREATE" | "ISSUE_LABEL_UPDATE" | "ISSUE_LABEL_DELETE";
 
 type GptEventType = "ASK_GPT" | "USE_GPT_RESPONSE_IN_ISSUE" | "USE_GPT_RESPONSE_IN_PAGE_BLOCK";
 
@@ -85,7 +110,7 @@ class TrackEventServices extends APIService {
     eventName: ProjectEventType
   ): Promise<any> {
     let payload: any;
-    if (eventName !== "DELETE_PROJECT")
+    if (eventName !== "DELETE_PROJECT" && eventName !== "PROJECT_MEMBER_INVITE")
       payload = {
         workspaceId: data?.workspace_detail?.id,
         workspaceName: data?.workspace_detail?.name,
@@ -131,7 +156,6 @@ class TrackEventServices extends APIService {
         projectName: data?.project_detail?.name,
         projectIdentifier: data?.project_detail?.identifier,
         issueId: data?.id,
-        issueTitle: data?.name,
       };
     else payload = data;
 
@@ -142,6 +166,90 @@ class TrackEventServices extends APIService {
         eventName,
         extra: {
           ...payload,
+        },
+      },
+    });
+  }
+
+  async trackIssueMarkedAsDoneEvent(data: any): Promise<any> {
+    if (!trackEvent) return;
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "ISSUES_MARKED_AS_DONE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssuePartialPropertyUpdateEvent(
+    data: any,
+    propertyName:
+      | "ISSUE_PROPERTY_UPDATE_PRIORITY"
+      | "ISSUE_PROPERTY_UPDATE_STATE"
+      | "ISSUE_PROPERTY_UPDATE_ASSIGNEE"
+      | "ISSUE_PROPERTY_UPDATE_DUE_DATE"
+      | "ISSUE_PROPERTY_UPDATE_ESTIMATE"
+  ): Promise<any> {
+    if (!trackEvent) return;
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: propertyName,
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssueCommentEvent(
+    data: Partial<IIssueComment> | any,
+    eventName: IssueCommentType
+  ): Promise<any> {
+    let payload: any;
+    if (eventName !== "ISSUE_COMMENT_DELETE")
+      payload = {
+        workspaceId: data?.workspace_detail?.id,
+        workspaceName: data?.workspace_detail?.name,
+        workspaceSlug: data?.workspace_detail?.slug,
+        projectId: data?.project_detail?.id,
+        projectName: data?.project_detail?.name,
+        projectIdentifier: data?.project_detail?.identifier,
+        issueId: data?.issue,
+      };
+    else payload = data;
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...payload,
+        },
+      },
+    });
+  }
+
+  async trackIssueMovedToCycleOrModuleEvent(
+    data: any,
+    eventName:
+      | "ISSUE_MOVED_TO_CYCLE"
+      | "ISSUE_MOVED_TO_MODULE"
+      | "ISSUE_MOVED_TO_CYCLE_IN_BULK"
+      | "ISSUE_MOVED_TO_MODULE_IN_BULK"
+  ): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
         },
       },
     });
@@ -160,6 +268,19 @@ class TrackEventServices extends APIService {
     });
   }
 
+  async trackIssueLabelEvent(data: any, eventName: IssueLabelEventType): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
   async trackStateEvent(data: IState | any, eventName: StateEventType): Promise<any> {
     let payload: any;
     if (eventName !== "STATE_DELETE")
@@ -171,7 +292,6 @@ class TrackEventServices extends APIService {
         projectName: data?.project_detail?.name,
         projectIdentifier: data?.project_detail?.identifier,
         stateId: data.id,
-        stateName: data.name,
       };
     else payload = data;
 
@@ -198,7 +318,6 @@ class TrackEventServices extends APIService {
         projectName: data?.project_detail?.name,
         projectIdentifier: data?.project_detail?.identifier,
         cycleId: data.id,
-        cycleName: data.name,
       };
     else payload = data;
 
@@ -225,7 +344,6 @@ class TrackEventServices extends APIService {
         projectName: data.project_detail?.name,
         projectIdentifier: data?.project_detail?.identifier,
         moduleId: data.id,
-        moduleName: data.name,
       };
     else payload = data;
 
@@ -388,6 +506,45 @@ class TrackEventServices extends APIService {
         eventName,
         extra: {
           ...payload,
+        },
+      },
+    });
+  }
+
+  async trackMiscellaneousEvent(data: any, eventName: MiscellaneousEventType): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackAppIntegrationEvent(data: any, eventName: IntegrationEventType): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackGitHubSyncEvent(data: any, eventName: GitHubSyncEventType): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
         },
       },
     });

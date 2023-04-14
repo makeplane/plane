@@ -28,6 +28,8 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     CycleFavorite,
+    IssueLink,
+    IssueAttachment,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -226,6 +228,20 @@ class CycleIssueViewSet(BaseViewSet):
                 .prefetch_related("labels")
                 .order_by(order_by)
                 .filter(**filters)
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
 
             issues_data = IssueStateSerializer(issues, many=True).data
@@ -317,21 +333,19 @@ class CycleIssueViewSet(BaseViewSet):
 
             # Capture Issue Activity
             issue_activity.delay(
-                {
-                    "type": "issue.activity",
-                    "requested_data": json.dumps({"cycles_list": issues}),
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("pk", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        {
-                            "updated_cycle_issues": update_cycle_issue_activity,
-                            "created_cycle_issues": serializers.serialize(
-                                "json", record_to_create
-                            ),
-                        }
-                    ),
-                },
+                type="issue.activity.updated",
+                requested_data=json.dumps({"cycles_list": issues}),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "updated_cycle_issues": update_cycle_issue_activity,
+                        "created_cycle_issues": serializers.serialize(
+                            "json", record_to_create
+                        ),
+                    }
+                ),
             )
 
             # Return all Cycle Issues
@@ -370,7 +384,8 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
             cycles = Cycle.objects.filter(
                 Q(start_date__lte=start_date, end_date__gte=start_date)
-                | Q(start_date__gte=end_date, end_date__lte=end_date),
+                | Q(start_date__lte=end_date, end_date__gte=end_date)
+                | Q(start_date__gte=start_date, end_date__lte=end_date),
                 workspace__slug=slug,
                 project_id=project_id,
             )

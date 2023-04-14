@@ -21,6 +21,8 @@ import { Disclosure, Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // services
 import modulesService from "services/modules.service";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -30,17 +32,16 @@ import ProgressChart from "components/core/sidebar/progress-chart";
 import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
 // icon
 import { ExclamationIcon } from "components/icons";
+import { LinkIcon } from "@heroicons/react/20/solid";
 // helpers
-import { isDateRangeValid, renderDateFormat, renderShortDate } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
-import { groupBy } from "helpers/array.helper";
 // types
-import { IIssue, IModule, ModuleLink, UserAuth } from "types";
+import { IIssue, IModule, ModuleLink } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
 import { MODULE_STATUS } from "constants/module";
-import { LinkIcon } from "@heroicons/react/20/solid";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -55,21 +56,16 @@ type Props = {
   module?: IModule;
   isOpen: boolean;
   moduleIssues?: IIssue[];
-  userAuth: UserAuth;
 };
 
-export const ModuleDetailsSidebar: React.FC<Props> = ({
-  issues,
-  module,
-  isOpen,
-  moduleIssues,
-  userAuth,
-}) => {
+export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, moduleIssues }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
+
+  const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
 
@@ -397,7 +393,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
             </div>
 
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
-              <Disclosure>
+              <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
                     className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
@@ -476,7 +472,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
             </div>
 
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
-              <Disclosure>
+              <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
                     className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
@@ -516,7 +512,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                                   completed: module.completed_issues,
                                   cancelled: module.cancelled_issues,
                                 }}
-                                userAuth={userAuth}
+                                userAuth={memberRole}
                                 module={module}
                               />
                             </div>
@@ -542,11 +538,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 </button>
               </div>
               <div className="mt-2 space-y-2 hover:bg-gray-100">
-                {userAuth && module.link_module && module.link_module.length > 0 ? (
+                {memberRole && module.link_module && module.link_module.length > 0 ? (
                   <LinksList
                     links={module.link_module}
                     handleDeleteLink={handleDeleteLink}
-                    userAuth={userAuth}
+                    userAuth={memberRole}
                   />
                 ) : null}
               </div>

@@ -2,10 +2,11 @@ import React from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 
+// hooks
+import useUser from "hooks/use-user";
 // ui
-import { CustomMenu, Loader, Tooltip } from "components/ui";
+import { CustomMenu, Tooltip } from "components/ui";
 // icons
 import {
   LockClosedIcon,
@@ -14,14 +15,16 @@ import {
   StarIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { ExclamationIcon } from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
-import { renderShortTime } from "helpers/date-time.helper";
+import { renderShortTime, renderShortDate, renderLongDateFormat } from "helpers/date-time.helper";
 // types
-import { IPage } from "types";
+import { IPage, IProjectMember } from "types";
 
 type TSingleStatProps = {
   page: IPage;
+  people: IProjectMember[] | undefined;
   handleEditPage: () => void;
   handleDeletePage: () => void;
   handleAddToFavorites: () => void;
@@ -29,17 +32,9 @@ type TSingleStatProps = {
   partialUpdatePage: (page: IPage, formData: Partial<IPage>) => void;
 };
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="p-4">
-      <Loader.Item height="100px" width="100%" />
-    </Loader>
-  ),
-});
-
 export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
   page,
+  people,
   handleEditPage,
   handleDeletePage,
   handleAddToFavorites,
@@ -49,13 +44,15 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUser();
+
   return (
-    <div className="relative first:rounded-t last:rounded-b border">
+    <div className="relative">
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
-        <a className="block p-4">
+        <a className="block py-4 px-6">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
+              <p className="mr-2 truncate text-xl font-semibold">{truncateText(page.name, 75)}</p>
               {page.label_details.length > 0 &&
                 page.label_details.map((label) => (
                   <div
@@ -80,7 +77,14 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
+              <Tooltip
+                tooltipContent={`Last updated at ${
+                  renderShortTime(page.updated_at) +
+                  ` ${new Date(page.updated_at).getHours() < 12 ? "am" : "pm"}`
+                } on ${renderShortDate(page.updated_at)}`}
+              >
+                <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
+              </Tooltip>
               {page.is_favorite ? (
                 <button
                   type="button"
@@ -106,28 +110,42 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   <StarIcon className="h-4 w-4 " color="#858E96" />
                 </button>
               )}
-              <Tooltip
-                tooltipContent={`${
-                  page.access
-                    ? "This page is only visible to you."
-                    : "This page can be viewed by anyone in the project."
-                }`}
-                theme="dark"
-              >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    partialUpdatePage(page, { access: page.access ? 0 : 1 });
-                  }}
+              {page.created_by === user?.id && (
+                <Tooltip
+                  tooltipContent={`${
+                    page.access
+                      ? "This page is only visible to you."
+                      : "This page can be viewed by anyone in the project."
+                  }`}
+                  theme="dark"
                 >
-                  {page.access ? (
-                    <LockClosedIcon className="h-4 w-4" color="#858e96" />
-                  ) : (
-                    <LockOpenIcon className="h-4 w-4" color="#858e96" />
-                  )}
-                </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      partialUpdatePage(page, { access: page.access ? 0 : 1 });
+                    }}
+                  >
+                    {page.access ? (
+                      <LockClosedIcon className="h-4 w-4" color="#858e96" />
+                    ) : (
+                      <LockOpenIcon className="h-4 w-4" color="#858e96" />
+                    )}
+                  </button>
+                </Tooltip>
+              )}
+              <Tooltip
+                theme="dark"
+                position="top-right"
+                tooltipContent={`Created by ${
+                  people?.find((person) => person.member.id === page.created_by)?.member
+                    .first_name ?? ""
+                } on ${renderLongDateFormat(`${page.created_at}`)}`}
+              >
+                <span>
+                  <ExclamationIcon className="h-4 w-4 text-gray-400" />
+                </span>
               </Tooltip>
               <CustomMenu verticalEllipsis>
                 <CustomMenu.MenuItem
@@ -157,7 +175,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
               </CustomMenu>
             </div>
           </div>
-          <div className="relative mt-2 space-y-2 text-sm text-gray-600">
+          <div className="relative mt-2 space-y-2 text-base font-normal text-gray-600">
             {page.blocks.length > 0
               ? page.blocks.slice(0, 3).map((block) => <h4>{block.name}</h4>)
               : null}

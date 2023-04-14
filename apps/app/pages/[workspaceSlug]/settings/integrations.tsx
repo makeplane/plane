@@ -6,22 +6,20 @@ import useSWR from "swr";
 
 // services
 import workspaceService from "services/workspace.service";
-// lib
-import { requiredWorkspaceAdmin } from "lib/auth";
+import IntegrationService from "services/integration";
 // layouts
-import AppLayout from "layouts/app-layout";
-// componentss
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+// components
 import OAuthPopUp from "components/popup";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import type { NextPage, GetServerSideProps } from "next";
-import { UserAuth } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, APP_INTEGRATIONS } from "constants/fetch-keys";
 
-const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
+const WorkspaceIntegrations: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -30,71 +28,43 @@ const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
 
-  const { data: integrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug ? workspaceService.getIntegrations() : null
+  const { data: appIntegrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
+    workspaceSlug ? IntegrationService.getAppIntegrationsList() : null
   );
 
   return (
-    <>
-      <AppLayout
-        memberType={props}
-        breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${activeWorkspace?.name ?? "Workspace"}`}
-              link={`/${workspaceSlug}`}
-            />
-            <BreadcrumbItem title="Integrations" />
-          </Breadcrumbs>
-        }
-        settingsLayout
-      >
-        <section className="space-y-8">
-          <h3 className="text-2xl font-semibold">Integrations</h3>
-          <div className="space-y-5">
-            {integrations ? (
-              integrations.map((integration) => (
-                <OAuthPopUp
-                  key={integration.id}
-                  workspaceSlug={workspaceSlug}
-                  integration={integration}
-                />
-              ))
-            ) : (
-              <Loader className="space-y-5">
-                <Loader.Item height="60px" />
-                <Loader.Item height="60px" />
-              </Loader>
-            )}
-          </div>
-        </section>
-      </AppLayout>
-    </>
+    <WorkspaceAuthorizationLayout
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem
+            title={`${activeWorkspace?.name ?? "Workspace"}`}
+            link={`/${workspaceSlug}`}
+          />
+          <BreadcrumbItem title="Integrations" />
+        </Breadcrumbs>
+      }
+    >
+      <section className="space-y-8">
+        <h3 className="text-2xl font-semibold">Integrations</h3>
+        <div className="space-y-5">
+          {appIntegrations ? (
+            appIntegrations.map((integration) => (
+              <OAuthPopUp
+                key={integration.id}
+                workspaceSlug={workspaceSlug}
+                integration={integration}
+              />
+            ))
+          ) : (
+            <Loader className="space-y-5">
+              <Loader.Item height="60px" />
+              <Loader.Item height="60px" />
+            </Loader>
+          )}
+        </div>
+      </section>
+    </WorkspaceAuthorizationLayout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const workspaceSlug = ctx.params?.workspaceSlug as string;
-
-  const memberDetail = await requiredWorkspaceAdmin(workspaceSlug, ctx.req.headers.cookie);
-
-  if (memberDetail === null) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default WorkspaceIntegrations;

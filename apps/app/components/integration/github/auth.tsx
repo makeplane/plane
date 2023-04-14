@@ -1,5 +1,8 @@
 import { FC, useRef, useState } from "react";
 
+// ui
+import { PrimaryButton } from "components/ui";
+
 type Props = {
   workspaceSlug: string | undefined;
   workspaceIntegration: any;
@@ -39,21 +42,11 @@ export const GithubAuth: FC<Props> = ({ workspaceSlug, workspaceIntegration }) =
   return (
     <div>
       {workspaceIntegration && workspaceIntegration?.id ? (
-        <button
-          type="button"
-          className={`cursor-not-allowed rounded-sm bg-theme bg-opacity-80 px-3 py-1.5 text-sm text-white transition-colors`}
-        >
-          Successfully Connected
-        </button>
+        <PrimaryButton disabled>Successfully Connected</PrimaryButton>
       ) : (
-        <button
-          onClick={startAuth}
-          type="button"
-          className={`rounded-sm bg-theme px-3 py-1.5 text-sm text-white transition-colors hover:bg-opacity-80`}
-          disabled={authLoader}
-        >
+        <PrimaryButton onClick={startAuth} loading={authLoader}>
           {authLoader ? "Connecting..." : "Connect"}
-        </button>
+        </PrimaryButton>
       )}
     </div>
   );

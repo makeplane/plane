@@ -12,6 +12,7 @@ interface IGithuPostInstallationProps {
   provider: string;
 }
 
+// TODO:Change getServerSideProps to router.query
 const AppPostInstallation = ({
   installation_id,
   setup_action,
@@ -42,7 +43,6 @@ const AppPostInstallation = ({
 };
 
 export async function getServerSideProps(context: any) {
-  console.log(context.query);
   return {
     props: context.query,
   };

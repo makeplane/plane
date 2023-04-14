@@ -10,6 +10,9 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import modulesService from "services/modules.service";
+import trackEventServices from "services/track-event.service";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -20,7 +23,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
-import { EmptySpace, EmptySpaceItem, PrimaryButton, Spinner } from "components/ui";
+import { EmptySpace, EmptySpaceItem, EmptyState, PrimaryButton, Spinner } from "components/ui";
 import { CalendarView } from "./calendar-view";
 // icons
 import {
@@ -29,11 +32,13 @@ import {
   RectangleStackIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { ExclamationIcon, TransferIcon } from "components/icons";
+// images
+import emptyIssue from "public/empty-state/empty-issue.svg";
 // helpers
 import { getStatesList } from "helpers/state.helper";
+import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, IIssueFilterOptions, UserAuth } from "types";
+import { IIssue, IIssueFilterOptions } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -43,19 +48,18 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATE_LIST,
 } from "constants/fetch-keys";
+// image
 
 type Props = {
   type?: "issue" | "cycle" | "module";
   openIssuesListModal?: () => void;
   isCompleted?: boolean;
-  userAuth: UserAuth;
 };
 
 export const IssuesView: React.FC<Props> = ({
   type = "issue",
   openIssuesListModal,
   isCompleted = false,
-  userAuth,
 }) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
@@ -82,6 +86,8 @@ export const IssuesView: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+
+  const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
 
@@ -186,71 +192,31 @@ export const IssuesView: React.FC<Props> = ({
 
         const sourceGroup = source.droppableId; // source group id
 
-        // TODO: move this mutation logic to a separate function
-        if (cycleId)
-          mutate<{
-            [key: string]: IIssue[];
-          }>(
-            CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
-            (prevData) => {
-              if (!prevData) return prevData;
+        mutate<{
+          [key: string]: IIssue[];
+        }>(
+          cycleId
+            ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params)
+            : moduleId
+            ? MODULE_ISSUES_WITH_PARAMS(moduleId as string, params)
+            : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
+          (prevData) => {
+            if (!prevData) return prevData;
 
-              const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = groupedByIssues[destinationGroup];
+            const sourceGroupArray = prevData[sourceGroup];
+            const destinationGroupArray = groupedByIssues[destinationGroup];
 
-              sourceGroupArray.splice(source.index, 1);
-              destinationGroupArray.splice(destination.index, 0, draggedItem);
+            sourceGroupArray.splice(source.index, 1);
+            destinationGroupArray.splice(destination.index, 0, draggedItem);
 
-              return {
-                ...prevData,
-                [sourceGroup]: sourceGroupArray,
-                [destinationGroup]: destinationGroupArray,
-              };
-            },
-            false
-          );
-        else if (moduleId)
-          mutate<{
-            [key: string]: IIssue[];
-          }>(
-            MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
-            (prevData) => {
-              if (!prevData) return prevData;
-
-              const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = groupedByIssues[destinationGroup];
-
-              sourceGroupArray.splice(source.index, 1);
-              destinationGroupArray.splice(destination.index, 0, draggedItem);
-
-              return {
-                ...prevData,
-                [sourceGroup]: sourceGroupArray,
-                [destinationGroup]: destinationGroupArray,
-              };
-            },
-            false
-          );
-        else
-          mutate<{ [key: string]: IIssue[] }>(
-            PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
-            (prevData) => {
-              if (!prevData) return prevData;
-
-              const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = groupedByIssues[destinationGroup];
-
-              sourceGroupArray.splice(source.index, 1);
-              destinationGroupArray.splice(destination.index, 0, draggedItem);
-
-              return {
-                ...prevData,
-                [sourceGroup]: sourceGroupArray,
-                [destinationGroup]: destinationGroupArray,
-              };
-            },
-            false
-          );
+            return {
+              ...prevData,
+              [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
+              [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
+            };
+          },
+          false
+        );
 
         // patch request
         issuesService
@@ -259,7 +225,22 @@ export const IssuesView: React.FC<Props> = ({
             state: draggedItem.state,
             sort_order: draggedItem.sort_order,
           })
-          .then(() => {
+          .then((response) => {
+            const sourceStateBeforeDrag = states.find((state) => state.name === source.droppableId);
+
+            if (
+              sourceStateBeforeDrag?.group !== "completed" &&
+              response?.state_detail?.group === "completed"
+            )
+              trackEventServices.trackIssueMarkedAsDoneEvent({
+                workspaceSlug,
+                workspaceId: draggedItem.workspace_detail.id,
+                projectName: draggedItem.project_detail.name,
+                projectIdentifier: draggedItem.project_detail.identifier,
+                projectId,
+                issueId: draggedItem.id,
+              });
+
             if (cycleId) {
               mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
               mutate(CYCLE_DETAILS(cycleId as string));
@@ -282,6 +263,7 @@ export const IssuesView: React.FC<Props> = ({
       orderBy,
       handleDeleteIssue,
       params,
+      states,
     ]
   );
 
@@ -382,7 +364,7 @@ export const IssuesView: React.FC<Props> = ({
       <CreateUpdateViewModal
         isOpen={createViewModal !== null}
         handleClose={() => setCreateViewModal(null)}
-        preLoadedData={createViewModal}
+        data={createViewModal}
       />
       <CreateUpdateIssueModal
         isOpen={createIssueModal && preloadedData?.actionType === "createIssue"}
@@ -406,7 +388,7 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setTransferIssuesModal(false)}
         isOpen={transferIssuesModal}
       />
-      <div className="mb-5 -mt-4">
+      <div>
         <div className="flex items-center justify-between gap-2">
           <FilterList filters={filters} setFilters={setFilters} />
           {Object.keys(filters).length > 0 &&
@@ -477,7 +459,7 @@ export const IssuesView: React.FC<Props> = ({
                       : null
                   }
                   isCompleted={isCompleted}
-                  userAuth={userAuth}
+                  userAuth={memberRole}
                 />
               ) : issueView === "kanban" ? (
                 <AllBoards
@@ -497,12 +479,19 @@ export const IssuesView: React.FC<Props> = ({
                       : null
                   }
                   isCompleted={isCompleted}
-                  userAuth={userAuth}
+                  userAuth={memberRole}
                 />
               ) : (
                 <CalendarView />
               )}
             </>
+          ) : type === "issue" ? (
+            <EmptyState
+              type="issue"
+              title="Create New Issue"
+              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+              imgURL={emptyIssue}
+            />
           ) : (
             <div className="grid h-full w-full place-items-center px-4 sm:px-0">
               <EmptySpace

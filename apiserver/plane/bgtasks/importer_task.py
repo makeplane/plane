@@ -11,7 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.hashers import make_password
 
 # Third Party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -29,7 +29,7 @@ from plane.db.models import (
 from .workspace_invitation_task import workspace_invitation
 
 
-@job("default")
+@shared_task
 def service_importer(service, importer_id):
     try:
         importer = Importer.objects.get(pk=importer_id)
@@ -38,54 +38,55 @@ def service_importer(service, importer_id):
 
         users = importer.data.get("users", [])
 
-        # For all invited users create the uers
-        new_users = User.objects.bulk_create(
-            [
-                User(
-                    email=user.get("email").strip().lower(),
-                    username=uuid.uuid4().hex,
-                    password=make_password(uuid.uuid4().hex),
-                    is_password_autoset=True,
-                )
-                for user in users
-                if user.get("import", False) == "invite"
-            ],
-            batch_size=10,
-            ignore_conflicts=True,
-        )
+        # Check if we need to import users as well
+        if len(users):
+            # For all invited users create the uers
+            new_users = User.objects.bulk_create(
+                [
+                    User(
+                        email=user.get("email").strip().lower(),
+                        username=uuid.uuid4().hex,
+                        password=make_password(uuid.uuid4().hex),
+                        is_password_autoset=True,
+                    )
+                    for user in users
+                    if user.get("import", False) == "invite"
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
 
-        workspace_users = User.objects.filter(
-            email__in=[
-                user.get("email").strip().lower()
-                for user in users
-                if user.get("import", False) == "invite"
-                or user.get("import", False) == "map"
-            ]
-        )
+            workspace_users = User.objects.filter(
+                email__in=[
+                    user.get("email").strip().lower()
+                    for user in users
+                    if user.get("import", False) == "invite"
+                    or user.get("import", False) == "map"
+                ]
+            )
 
+            # Add new users to Workspace and project automatically
+            WorkspaceMember.objects.bulk_create(
+                [
+                    WorkspaceMember(member=user, workspace_id=importer.workspace_id)
+                    for user in workspace_users
+                ],
+                batch_size=100,
+                ignore_conflicts=True,
+            )
 
-        # Add new users to Workspace and project automatically
-        WorkspaceMember.objects.bulk_create(
-            [
-                WorkspaceMember(member=user, workspace_id=importer.workspace_id)
-                for user in workspace_users
-            ],
-            batch_size=100,
-            ignore_conflicts=True,
-        )
-
-        ProjectMember.objects.bulk_create(
-            [
-                ProjectMember(
-                    project_id=importer.project_id,
-                    workspace_id=importer.workspace_id,
-                    member=user,
-                )
-                for user in workspace_users
-            ],
-            batch_size=100,
-            ignore_conflicts=True,
-        )
+            ProjectMember.objects.bulk_create(
+                [
+                    ProjectMember(
+                        project_id=importer.project_id,
+                        workspace_id=importer.workspace_id,
+                        member=user,
+                    )
+                    for user in workspace_users
+                ],
+                batch_size=100,
+                ignore_conflicts=True,
+            )
 
         # Check if sync config is on for github importers
         if service == "github" and importer.config.get("sync", False):

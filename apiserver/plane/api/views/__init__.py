@@ -40,6 +40,7 @@ from .workspace import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
+    WorkspaceThemeViewSet,
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
@@ -69,6 +70,7 @@ from .issue import (
     SubIssuesEndpoint,
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
+    IssueAttachmentEndpoint,
 )
 
 from .auth_extended import (
@@ -125,7 +127,14 @@ from .page import (
     CreatedbyOtherPagesEndpoint,
 )
 
-from .search import GlobalSearchEndpoint
+from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
 from .gpt import GPTIntegrationEndpoint
+
+from .estimate import (
+    EstimateViewSet,
+    EstimatePointViewSet,
+    ProjectEstimatePointEndpoint,
+    BulkEstimatePointEndpoint,
+)

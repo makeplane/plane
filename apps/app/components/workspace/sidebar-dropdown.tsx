@@ -67,19 +67,17 @@ export const WorkspaceSidebarDropdown = () => {
   };
 
   const handleSignOut = async () => {
-    await authenticationService
-      .signOut()
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
-        })
-      )
-      .finally(() => {
-        mutateUser();
-        router.push("/signin");
-      });
+    router.push("/signin").then(() => {
+      mutateUser();
+    });
+
+    await authenticationService.signOut().catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
+      })
+    );
   };
 
   return (

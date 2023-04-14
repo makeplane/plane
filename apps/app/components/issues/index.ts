@@ -1,5 +1,6 @@
 export * from "./comment";
 export * from "./sidebar-select";
+export * from "./view-select";
 export * from "./activity";
 export * from "./delete-issue-modal";
 export * from "./description-form";
@@ -9,3 +10,6 @@ export * from "./my-issues-list-item";
 export * from "./parent-issues-list-modal";
 export * from "./sidebar";
 export * from "./sub-issues-list";
+export * from "./attachment-upload";
+export * from "./attachments";
+export * from "./delete-attachment-modal";
