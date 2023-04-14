@@ -239,91 +239,114 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   return (
     <div>
       <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
-        <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
-          <div className="flex items-start justify-between gap-1">
-            <Tooltip tooltipContent={cycle.name} position="top-left">
-              <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-                <a className="w-full">
+        <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
+          <a className="w-full">
+            <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
+              <div className="flex items-start justify-between gap-1">
+                <Tooltip tooltipContent={cycle.name} position="top-left">
                   <h3 className="break-all text-lg font-semibold">
                     {truncateText(cycle.name, 75)}
                   </h3>
-                </a>
-              </Link>
-            </Tooltip>
-            {cycle.is_favorite ? (
-              <button onClick={handleRemoveFromFavorites}>
-                <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-              </button>
-            ) : (
-              <button onClick={handleAddToFavorites}>
-                <StarIcon className="h-4 w-4 " color="#858E96" />
-              </button>
-            )}
-          </div>
+                </Tooltip>
+                {cycle.is_favorite ? (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleRemoveFromFavorites();
+                    }}
+                  >
+                    <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleAddToFavorites();
+                    }}
+                  >
+                    <StarIcon className="h-4 w-4 " color="#858E96" />
+                  </button>
+                )}
+              </div>
 
-          <div className="flex items-center justify-start gap-5">
-            <div className="flex items-start gap-1 ">
-              <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
-              <span className="text-gray-400">Start :</span>
-              <span>{renderShortDateWithYearFormat(startDate)}</span>
+              <div className="flex items-center justify-start gap-5">
+                <div className="flex items-start gap-1 ">
+                  <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
+                  <span className="text-gray-400">Start :</span>
+                  <span>{renderShortDateWithYearFormat(startDate)}</span>
+                </div>
+                <div className="flex items-start gap-1 ">
+                  <TargetIcon className="h-4 w-4 text-gray-900" />
+                  <span className="text-gray-400">End :</span>
+                  <span>{renderShortDateWithYearFormat(endDate)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center gap-2.5">
+                  {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
+                    <Image
+                      src={cycle.owned_by.avatar}
+                      height={16}
+                      width={16}
+                      className="rounded-full"
+                      alt={cycle.owned_by.first_name}
+                    />
+                  ) : (
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
+                      {cycle.owned_by.first_name.charAt(0)}
+                    </span>
+                  )}
+                  <span className="text-gray-900">{cycle.owned_by.first_name}</span>
+                </div>
+                <div className="flex items-center">
+                  {!isCompleted && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleEditCycle();
+                      }}
+                      className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-gray-100"
+                    >
+                      <span>
+                        <PencilIcon className="h-4 w-4" />
+                      </span>
+                    </button>
+                  )}
+
+                  <CustomMenu width="auto" verticalEllipsis>
+                    {!isCompleted && (
+                      <CustomMenu.MenuItem
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDeleteCycle();
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-2">
+                          <TrashIcon className="h-4 w-4" />
+                          <span>Delete cycle</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    )}
+                    <CustomMenu.MenuItem
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleCopyText();
+                      }}
+                    >
+                      <span className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-4 w-4" />
+                        <span>Copy cycle link</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                </div>
+              </div>
             </div>
-            <div className="flex items-start gap-1 ">
-              <TargetIcon className="h-4 w-4 text-gray-900" />
-              <span className="text-gray-400">End :</span>
-              <span>{renderShortDateWithYearFormat(endDate)}</span>
-            </div>
-          </div>
-        </div>
+          </a>
+        </Link>
 
         <div className="flex h-full flex-col rounded-b-[10px]">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-2.5">
-              {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                <Image
-                  src={cycle.owned_by.avatar}
-                  height={16}
-                  width={16}
-                  className="rounded-full"
-                  alt={cycle.owned_by.first_name}
-                />
-              ) : (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
-                  {cycle.owned_by.first_name.charAt(0)}
-                </span>
-              )}
-              <span className="text-gray-900">{cycle.owned_by.first_name}</span>
-            </div>
-            <div className="flex items-center">
-              {!isCompleted && (
-                <button
-                  onClick={handleEditCycle}
-                  className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-gray-100"
-                >
-                  <span>
-                    <PencilIcon className="h-4 w-4" />
-                  </span>
-                </button>
-              )}
-
-              <CustomMenu width="auto" verticalEllipsis>
-                {!isCompleted && (
-                  <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                    <span className="flex items-center justify-start gap-2">
-                      <TrashIcon className="h-4 w-4" />
-                      <span>Delete cycle</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                )}
-                <CustomMenu.MenuItem onClick={handleCopyText}>
-                  <span className="flex items-center justify-start gap-2">
-                    <LinkIcon className="h-4 w-4" />
-                    <span>Copy cycle link</span>
-                  </span>
-                </CustomMenu.MenuItem>
-              </CustomMenu>
-            </div>
-          </div>
-
           <Disclosure>
             {({ open }) => (
               <div
