@@ -21,8 +21,6 @@ const unsplashEnabled =
   process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "true" ||
   process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "1";
 
-const showPopover = unsplashEnabled;
-
 const tabOptions = [
   {
     key: "unsplash",
@@ -62,7 +60,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
     onChange(images[0].urls.regular);
   }, [value, onChange, images]);
 
-  if (!showPopover) return null;
+  if (!unsplashEnabled) return null;
 
   return (
     <Popover className="relative z-[2]" ref={ref}>
