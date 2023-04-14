@@ -32,11 +32,10 @@ import {
   RectangleStackIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { ExclamationIcon, TransferIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssue, IIssueFilterOptions, UserAuth } from "types";
+import { IIssue, IIssueFilterOptions } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -47,7 +46,7 @@ import {
   STATE_LIST,
 } from "constants/fetch-keys";
 // image
-import emptyCycle from "public/empty-state/empty-cycle.svg";
+import emptyIssue from "public/empty-state/empty-issue.svg";
 import { orderArrayBy } from "helpers/array.helper";
 
 type Props = {
@@ -525,13 +524,46 @@ export const IssuesView: React.FC<Props> = ({
                 <CalendarView />
               )}
             </>
-          ) : (
+          ) : type === "issue" ? (
             <EmptyState
               type="issue"
               title="Create New Issue"
               description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-              imgURL={emptyCycle}
+              imgURL={emptyIssue}
             />
+          ) : (
+            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+              <EmptySpace
+                title="You don't have any issue yet."
+                description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+                Icon={RectangleStackIcon}
+              >
+                <EmptySpaceItem
+                  title="Create a new issue"
+                  description={
+                    <span>
+                      Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut to
+                      create a new issue
+                    </span>
+                  }
+                  Icon={PlusIcon}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      key: "c",
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+                {openIssuesListModal && (
+                  <EmptySpaceItem
+                    title="Add an existing issue"
+                    description="Open list"
+                    Icon={ListBulletIcon}
+                    action={openIssuesListModal}
+                  />
+                )}
+              </EmptySpace>
+            </div>
           )
         ) : (
           <div className="flex h-full w-full items-center justify-center">
