@@ -234,7 +234,7 @@ export const IssuesView: React.FC<Props> = ({
             )
               trackEventServices.trackIssueMarkedAsDoneEvent({
                 workspaceSlug,
-                workspaceId: draggedItem.workspace_detail.id,
+                workspaceId: draggedItem.workspace,
                 projectName: draggedItem.project_detail.name,
                 projectIdentifier: draggedItem.project_detail.identifier,
                 projectId,

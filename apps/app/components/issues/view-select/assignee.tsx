@@ -75,8 +75,8 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
 
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
-            workspaceSlug: issue.workspace_detail.slug,
-            workspaceId: issue.workspace_detail.id,
+            workspaceSlug,
+            workspaceId: issue.workspace,
             projectId: issue.project_detail.id,
             projectIdentifier: issue.project_detail.identifier,
             projectName: issue.project_detail.name,
