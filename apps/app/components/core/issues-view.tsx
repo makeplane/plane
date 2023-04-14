@@ -32,8 +32,11 @@ import {
   RectangleStackIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+// images
+import emptyIssue from "public/empty-state/empty-issue.svg";
 // helpers
 import { getStatesList } from "helpers/state.helper";
+import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue, IIssueFilterOptions } from "types";
 // fetch-keys
@@ -46,8 +49,6 @@ import {
   STATE_LIST,
 } from "constants/fetch-keys";
 // image
-import emptyIssue from "public/empty-state/empty-issue.svg";
-import { orderArrayBy } from "helpers/array.helper";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -191,71 +192,31 @@ export const IssuesView: React.FC<Props> = ({
 
         const sourceGroup = source.droppableId; // source group id
 
-        // TODO: move this mutation logic to a separate function
-        if (cycleId)
-          mutate<{
-            [key: string]: IIssue[];
-          }>(
-            CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
-            (prevData) => {
-              if (!prevData) return prevData;
+        mutate<{
+          [key: string]: IIssue[];
+        }>(
+          cycleId
+            ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params)
+            : moduleId
+            ? MODULE_ISSUES_WITH_PARAMS(moduleId as string, params)
+            : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
+          (prevData) => {
+            if (!prevData) return prevData;
 
-              const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = groupedByIssues[destinationGroup];
+            const sourceGroupArray = prevData[sourceGroup];
+            const destinationGroupArray = groupedByIssues[destinationGroup];
 
-              sourceGroupArray.splice(source.index, 1);
-              destinationGroupArray.splice(destination.index, 0, draggedItem);
+            sourceGroupArray.splice(source.index, 1);
+            destinationGroupArray.splice(destination.index, 0, draggedItem);
 
-              return {
-                ...prevData,
-                [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
-                [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
-              };
-            },
-            false
-          );
-        else if (moduleId)
-          mutate<{
-            [key: string]: IIssue[];
-          }>(
-            MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
-            (prevData) => {
-              if (!prevData) return prevData;
-
-              const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = groupedByIssues[destinationGroup];
-
-              sourceGroupArray.splice(source.index, 1);
-              destinationGroupArray.splice(destination.index, 0, draggedItem);
-
-              return {
-                ...prevData,
-                [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
-                [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
-              };
-            },
-            false
-          );
-        else
-          mutate<{ [key: string]: IIssue[] }>(
-            PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
-            (prevData) => {
-              if (!prevData) return prevData;
-
-              const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = groupedByIssues[destinationGroup];
-
-              sourceGroupArray.splice(source.index, 1);
-              destinationGroupArray.splice(destination.index, 0, draggedItem);
-
-              return {
-                ...prevData,
-                [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
-                [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
-              };
-            },
-            false
-          );
+            return {
+              ...prevData,
+              [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
+              [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
+            };
+          },
+          false
+        );
 
         // patch request
         issuesService
