@@ -1,17 +1,17 @@
 import React from "react";
 
+import { useRouter } from "next/router";
+
+// services
+import trackEventServices from "services/track-event.service";
+// hooks
+import useEstimateOption from "hooks/use-estimate-option";
 // ui
 import { CustomSelect, Tooltip } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons/priority-icon";
+import { PlayIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
-// constants
-import { PRIORITIES } from "constants/project";
-// services
-import trackEventServices from "services/track-event.service";
-import useEstimateOption from "hooks/use-estimate-option";
-import { PlayIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   issue: IIssue;
@@ -28,6 +28,9 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   selfPositioned = false,
   isNotAllowed,
 }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { isEstimateActive, estimatePoints } = useEstimateOption(issue.estimate_point);
 
   const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
@@ -41,8 +44,8 @@ export const ViewEstimateSelect: React.FC<Props> = ({
         partialUpdateIssue({ estimate_point: val });
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
-            workspaceSlug: issue.workspace_detail.slug,
-            workspaceId: issue.workspace_detail.id,
+            workspaceSlug,
+            workspaceId: issue.workspace,
             projectId: issue.project_detail.id,
             projectIdentifier: issue.project_detail.identifier,
             projectName: issue.project_detail.name,
