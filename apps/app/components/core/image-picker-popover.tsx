@@ -17,6 +17,13 @@ import { Input, Spinner, PrimaryButton } from "components/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
+const unsplashKey = process.env.NEXT_PUBLIC_UNSPLASH_ENABLED;
+const unsplashEnabled =
+  process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "true" ||
+  process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "1";
+
+const showPopover = unsplashEnabled && unsplashKey;
+
 const tabOptions = [
   {
     key: "unsplash",
@@ -56,6 +63,8 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
     onChange(images[0].urls.regular);
   }, [value, onChange, images]);
 
+  if (!showPopover) return null;
+
   return (
     <Popover className="relative z-[2]" ref={ref}>
       <Popover.Button
@@ -92,9 +101,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
               </Tab.List>
               <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
                 <Tab.Panel className="h-full w-full space-y-4">
-                  <div
-                    className="flex gap-x-2 pt-7"
-                  >
+                  <div className="flex gap-x-2 pt-7">
                     <Input
                       name="search"
                       className="text-sm"
@@ -103,7 +110,12 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                       onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                       placeholder="Search for images"
                     />
-                    <PrimaryButton type="button" onClick={()=>setSearchParams(formData.search)} className="bg-indigo-600" size="sm">
+                    <PrimaryButton
+                      type="button"
+                      onClick={() => setSearchParams(formData.search)}
+                      className="bg-indigo-600"
+                      size="sm"
+                    >
                       Search
                     </PrimaryButton>
                   </div>
