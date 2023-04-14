@@ -32,11 +32,10 @@ import {
   RectangleStackIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { ExclamationIcon, TransferIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssue, IIssueFilterOptions, UserAuth } from "types";
+import { IIssue, IIssueFilterOptions } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -47,7 +46,6 @@ import {
   STATE_LIST,
 } from "constants/fetch-keys";
 // image
-import emptyCycle from "public/empty-state/empty-cycle.svg";
 import emptyIssue from "public/empty-state/empty-issue.svg";
 import { orderArrayBy } from "helpers/array.helper";
 
