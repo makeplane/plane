@@ -17,12 +17,11 @@ import { Input, Spinner, PrimaryButton } from "components/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
-const unsplashKey = process.env.NEXT_PUBLIC_UNSPLASH_ENABLED;
 const unsplashEnabled =
   process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "true" ||
   process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "1";
 
-const showPopover = unsplashEnabled && unsplashKey;
+const showPopover = unsplashEnabled;
 
 const tabOptions = [
   {
