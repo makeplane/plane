@@ -67,17 +67,18 @@ export const WorkspaceSidebarDropdown = () => {
   };
 
   const handleSignOut = async () => {
-    router.push("/signin").then(() => {
-      mutateUser();
-    });
-
-    await authenticationService.signOut().catch(() =>
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Failed to sign out. Please try again.",
+    await authenticationService
+      .signOut()
+      .then(() => {
+        router.push("/signin");
       })
-    );
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        })
+      );
   };
 
   return (
@@ -137,7 +138,7 @@ export const WorkspaceSidebarDropdown = () => {
           bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
-              <div className="text-sm text-gray-500">{user?.email}</div>
+              <div className="text-sm text-gray-500">{user?.user?.email}</div>
               <span className="text-sm font-semibold text-gray-500">Workspace</span>
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-3.5">

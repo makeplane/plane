@@ -82,6 +82,7 @@ const OnBoard: NextPage = () => {
     <UserAuthorizationLayout>
       <DefaultLayout
         meta={{
+          // TODO: move this meta data to constants
           title: "Plane - Welcome to Plane",
           description:
             "Please fasten your seatbelts because we are about to take your productivity to the next level.",
