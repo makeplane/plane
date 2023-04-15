@@ -239,8 +239,12 @@ SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
+broker_ssl = os.environ.get("REDIS_BROKER_SSL", "1") == "1"
 redis_url = os.environ.get("REDIS_URL")
-broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+if broker_ssl:
+    broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+else:
+    broker_url = redis_url
 
 CELERY_RESULT_BACKEND = broker_url
 CELERY_BROKER_URL = broker_url
