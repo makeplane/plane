@@ -180,7 +180,6 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
             </PrimaryButton>
           ) : (
             <PrimaryButton
-              type="submit"
               className="w-full text-center"
               size="md"
               onClick={() => {

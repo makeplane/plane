@@ -12,7 +12,13 @@ export const orderArrayBy = (
   key: string,
   ordering: "ascending" | "descending" = "ascending"
 ) => {
+  if (key[0] === "-") {
+    ordering = "descending";
+    key = key.slice(1);
+  }
+
   const innerKey = key.split("."); // split the key by dot
+
   return array.sort((a, b) => {
     const keyA = innerKey.reduce((obj, i) => obj[i], a); // get the value of the inner key
     const keyB = innerKey.reduce((obj, i) => obj[i], b); // get the value of the inner key

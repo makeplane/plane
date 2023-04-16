@@ -22,6 +22,7 @@ import { ONBOARDING_CARDS } from "constants/workspace";
 import Logo from "public/onboarding/logo.svg";
 // types
 import type { NextPage } from "next";
+import { ICurrentUserResponse } from "types";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
 
@@ -54,15 +55,15 @@ const Onboarding: NextPage = () => {
             </div>
           ) : (
             <div className="flex w-full max-w-2xl flex-col gap-12">
-              <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-white px-14 py-10 text-center shadow-md">
+              <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-white pb-10 text-center shadow-md">
                 {step === 4 ? (
                   <OnboardingCard data={ONBOARDING_CARDS.welcome} />
                 ) : step === 5 ? (
-                  <OnboardingCard data={ONBOARDING_CARDS.issue} />
+                  <OnboardingCard data={ONBOARDING_CARDS.issue} gradient />
                 ) : step === 6 ? (
-                  <OnboardingCard data={ONBOARDING_CARDS.cycle} />
+                  <OnboardingCard data={ONBOARDING_CARDS.cycle} gradient/>
                 ) : step === 7 ? (
-                  <OnboardingCard data={ONBOARDING_CARDS.module} />
+                  <OnboardingCard data={ONBOARDING_CARDS.module} gradient/>
                 ) : (
                   <OnboardingCard data={ONBOARDING_CARDS.commandMenu} />
                 )}
@@ -76,7 +77,21 @@ const Onboarding: NextPage = () => {
                         userService
                           .updateUserOnBoard({ userRole })
                           .then(() => {
-                            mutate(CURRENT_USER);
+                            mutate<ICurrentUserResponse>(
+                              CURRENT_USER,
+                              (prevData) => {
+                                if (!prevData) return prevData;
+
+                                return {
+                                  ...prevData,
+                                  user: {
+                                    ...prevData.user,
+                                    is_onboarded: true,
+                                  },
+                                };
+                              },
+                              false
+                            );
                             router.push("/");
                           })
                           .catch((err) => {

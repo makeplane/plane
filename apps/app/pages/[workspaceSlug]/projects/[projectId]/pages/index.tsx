@@ -177,14 +177,14 @@ const ProjectPages: NextPage = () => {
         <div className="space-y-4">
           <form
             onSubmit={handleSubmit(createPage)}
-            className="flex items-center justify-between gap-2 rounded-[10px] border border-gray-200 bg-white p-2 shadow-sm"
+            className="flex items-center relative justify-between gap-2 mb-12 rounded-[6px] border border-gray-200 bg-white p-2 shadow"
           >
             <Input
               type="text"
               name="name"
               register={register}
-              className="border-none outline-none focus:ring-0"
-              placeholder="Type to create a new page..."
+              className="border-none font-medium flex break-all text-xl outline-none focus:ring-0"
+              placeholder="Title"
             />
             {watch("name") !== "" && (
               <PrimaryButton type="submit" loading={isSubmitting}>
@@ -194,7 +194,7 @@ const ProjectPages: NextPage = () => {
           </form>
           <div>
             <Tab.Group>
-              <Tab.List as="div" className="flex items-center justify-between">
+              <Tab.List as="div" className="flex items-center justify-between mb-6">
                 <div className="flex gap-4">
                   {["Recent", "All", "Favorites", "Created by me", "Created by others"].map(
                     (tab, index) => (
@@ -213,7 +213,7 @@ const ProjectPages: NextPage = () => {
                     )
                   )}
                 </div>
-                <div className="flex items-center gap-x-1">
+                <div className="flex gap-x-1">
                   <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${

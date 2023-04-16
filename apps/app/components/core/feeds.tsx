@@ -8,6 +8,9 @@ import {
   ChartBarIcon,
   ChatBubbleBottomCenterTextIcon,
   ChatBubbleLeftEllipsisIcon,
+  LinkIcon,
+  PaperClipIcon,
+  PlayIcon,
   RectangleGroupIcon,
   Squares2X2Icon,
   TrashIcon,
@@ -82,6 +85,18 @@ const activityDetails: {
     message: "deleted the issue.",
     icon: <TrashIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
+  estimate: {
+    message: "updated the estimate",
+    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+  },
+  link: {
+    message: "updated the link",
+    icon: <LinkIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+  },
+  attachment: {
+    message: "updated the attachment",
+    icon: <PaperClipIcon className="h-3 w-3 text-gray-500 " aria-hidden="true" />,
+  },
 };
 
 export const Feeds: React.FC<any> = ({ activities }) => (
@@ -117,13 +132,22 @@ export const Feeds: React.FC<any> = ({ activities }) => (
               : "removed the priority";
         } else if (activity.field === "description") {
           action = "updated the";
+        } else if (activity.field === "attachment") {
+          action = `${activity.verb} the`;
+        } else if (activity.field === "link") {
+          action = `${activity.verb} the`;
+        } else if (activity.field === "estimate") {
+          action = "updated the";
         }
         // for values that are after the action clause
         let value: any = activity.new_value ? activity.new_value : activity.old_value;
         if (
           activity.verb === "created" &&
           activity.field !== "cycles" &&
-          activity.field !== "modules"
+          activity.field !== "modules" &&
+          activity.field !== "attachment" &&
+          activity.field !== "link" &&
+          activity.field !== "estimate"
         ) {
           const { workspace_detail, project, issue } = activity;
           value = (
@@ -160,6 +184,12 @@ export const Feeds: React.FC<any> = ({ activities }) => (
           value = renderShortNumericDateFormat(date as string);
         } else if (activity.field === "description") {
           value = "description";
+        } else if (activity.field === "attachment") {
+          value = "attachment";
+        } else if (activity.field === "link") {
+          value = "link";
+        } else if (activity.field === "estimate") {
+          value = "estimate";
         }
 
         if (activity.field === "comment") {

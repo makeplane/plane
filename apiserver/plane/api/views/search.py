@@ -221,6 +221,10 @@ class IssueSearchEndpoint(BaseAPIView):
                 issue = Issue.objects.get(pk=issue_id)
                 issues = issues.filter(
                     ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
+                ).exclude(
+                    pk__in=Issue.objects.filter(parent__isnull=False).values_list(
+                        "parent_id", flat=True
+                    )
                 )
             if blocker_blocked_by == "true" and issue_id:
                 issues = issues.filter(blocker_issues=issue_id, blocked_issues=issue_id)
