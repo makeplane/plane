@@ -125,6 +125,14 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 metadata = get_github_metadata(installation_id)
                 config = {"installation_id": installation_id}
 
+            if provider == "slack":
+                metadata = request.data.get("metadata", False)
+                if not metadata:
+                    return Response(
+                        {"error": "Metadata is required"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
             # Create a bot user
             bot_user = User.objects.create(
                 email=f"{uuid.uuid4().hex}@plane.so",

@@ -17,12 +17,16 @@ class SlackProjectSync(ProjectBaseModel):
     data = models.JSONField(default=dict)
     team_id = models.CharField(max_length=30)
     team_name = models.CharField(max_length=300)
+    workspace_integration = models.ForeignKey(
+        "db.WorkspaceIntegration", related_name="slack_syncs", on_delete=models.CASCADE
+    )
 
     def __str__(self):
         """Return the repo name"""
         return f"{self.project.name}"
 
     class Meta:
+        unique_together = ["team_id", "project"]
         verbose_name = "Slack Project Sync"
         verbose_name_plural = "Slack Project Syncs"
         db_table = "slack_project_syncs"
