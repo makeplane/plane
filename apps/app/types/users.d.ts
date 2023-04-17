@@ -15,6 +15,7 @@ export interface IUser {
   last_location: readonly string;
   created_location: readonly string;
   is_email_verified: boolean;
+  is_onboarded: boolean;
   token: string;
   role: string;
 
@@ -24,6 +25,12 @@ export interface IUser {
   };
 
   [...rest: string]: any;
+}
+
+export interface ICurrentUserResponse {
+  assigned_issues: number;
+  user: IUser;
+  workspace_invites: number;
 }
 
 export interface IUserLite {

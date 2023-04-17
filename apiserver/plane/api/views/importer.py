@@ -65,29 +65,35 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 )
 
             if service == "jira":
-                project_key = request.data.get("project_key", "")
-                api_token = request.data.get("api_token", "")
-                email = request.data.get("email", "")
-                cloud_hostname = request.data.get("cloud_hostname", "")
-                if (
-                    not bool(project_key)
-                    or not bool(api_token)
-                    or not bool(email)
-                    or not bool(cloud_hostname)
-                ):
-                    return Response(
-                        {
-                            "error": "Project name, Project key, API token, Cloud hostname and email are requied"
-                        },
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+                # Check for all the keys
+                params = {
+                    "project_key": "Project key is required",
+                    "api_token": "API token is required",
+                    "email": "Email is required",
+                    "cloud_hostname": "Cloud hostname is required",
+                }
 
-                return Response(
-                    jira_project_issue_summary(
-                        email, api_token, project_key, cloud_hostname
-                    ),
-                    status=status.HTTP_200_OK,
+                for key, error_message in params.items():
+                    if not request.GET.get(key, False):
+                        return Response(
+                            {"error": error_message}, status=status.HTTP_400_BAD_REQUEST
+                        )
+
+                project_key = request.GET.get("project_key", "")
+                api_token = request.GET.get("api_token", "")
+                email = request.GET.get("email", "")
+                cloud_hostname = request.GET.get("cloud_hostname", "")
+
+                response = jira_project_issue_summary(
+                    email, api_token, project_key, cloud_hostname
                 )
+                if "error" in response:
+                    return Response(response, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(
+                        response,
+                        status=status.HTTP_200_OK,
+                    )
             return Response(
                 {"error": "Service not supported yet"},
                 status=status.HTTP_400_BAD_REQUEST,

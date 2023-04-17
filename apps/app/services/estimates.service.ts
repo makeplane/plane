@@ -1,6 +1,6 @@
 // services
 import APIService from "services/api.service";
-
+// types
 import type { IEstimate, IEstimatePoint } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
@@ -78,7 +78,7 @@ class ProjectEstimateServices extends APIService {
     }
   ): Promise<any> {
     return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/bulk-create-estimate-points/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/bulk-estimate-points/`,
       data
     )
       .then((response) => response?.data)
@@ -87,7 +87,7 @@ class ProjectEstimateServices extends APIService {
       });
   }
 
-  async getEstimatesPoints(
+  async getEstimatesPointDetails(
     workspaceSlug: string,
     projectId: string,
     estimateId: string,
@@ -116,31 +116,15 @@ class ProjectEstimateServices extends APIService {
       });
   }
 
-  async updateEstimatesPoints(
+  async patchEstimatePoints(
     workspaceSlug: string,
     projectId: string,
     estimateId: string,
-    estimatePointId: string,
     data: any
   ): Promise<any> {
     return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimate/${estimateId}/estimate-points/${estimatePointId}`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/bulk-estimate-points/`,
       data
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteEstimatesPoints(
-    workspaceSlug: string,
-    projectId: string,
-    estimateId: string,
-    estimatePointId: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimate/${estimateId}/estimate-points/${estimatePointId}`
     )
       .then((response) => response?.data)
       .catch((error) => {

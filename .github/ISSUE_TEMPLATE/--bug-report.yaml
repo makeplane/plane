@@ -44,6 +44,15 @@ body:
       - Deploy preview
   validations:
     required: true
+  type: dropdown
+  id: browser
+  attributes:
+    label: Browser
+    options:
+      - Google Chrome
+      - Mozilla Firefox
+      - Safari
+      - Other
 - type: dropdown
   id: version
   attributes:

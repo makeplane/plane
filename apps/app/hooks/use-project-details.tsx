@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -23,14 +21,6 @@ const useProjectDetails = () => {
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
-
-  useEffect(() => {
-    if (projectDetailsError?.status === 404) {
-      router.push("/404");
-    } else if (projectDetailsError) {
-      router.push("/error");
-    }
-  }, [projectDetailsError, router]);
 
   return {
     projectDetails,

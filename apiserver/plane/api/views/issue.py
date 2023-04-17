@@ -148,6 +148,20 @@ class IssueViewSet(BaseViewSet):
                 .filter(**filters)
                 .annotate(cycle_id=F("issue_cycle__id"))
                 .annotate(module_id=F("issue_module__id"))
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
 
             issue_queryset = (
@@ -232,6 +246,20 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
                 .order_by("-created_at")
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
             serializer = IssueLiteSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -621,6 +649,54 @@ class IssueLinkViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             issue_id=self.kwargs.get("issue_id"),
         )
+        issue_activity.delay(
+            type="link.activity.created",
+            requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id")),
+            project_id=str(self.kwargs.get("project_id")),
+            current_instance=None,
+        )
+
+    def perform_update(self, serializer):
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                type="link.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueLinkSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
+            )
+
+        return super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                type="link.activity.deleted",
+                requested_data=json.dumps(
+                    {"link_id": str(self.kwargs.get("pk", None))}
+                ),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueLinkSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
+            )
+        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return (
@@ -687,6 +763,17 @@ class IssueAttachmentEndpoint(BaseAPIView):
             serializer = IssueAttachmentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(project_id=project_id, issue_id=issue_id)
+                issue_activity.delay(
+                    type="attachment.activity.created",
+                    requested_data=None,
+                    actor_id=str(self.request.user.id),
+                    issue_id=str(self.kwargs.get("issue_id", None)),
+                    project_id=str(self.kwargs.get("project_id", None)),
+                    current_instance=json.dumps(
+                        serializer.data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -699,7 +786,17 @@ class IssueAttachmentEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, issue_id, pk):
         try:
             issue_attachment = IssueAttachment.objects.get(pk=pk)
+            issue_attachment.asset.delete(save=False)
             issue_attachment.delete()
+            issue_activity.delay(
+                type="attachment.activity.deleted",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=None,
+            )
+
             return Response(status=status.HTTP_204_NO_CONTENT)
         except IssueAttachment.DoesNotExist:
             return Response(

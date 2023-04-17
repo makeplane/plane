@@ -20,16 +20,11 @@ import { VIEWS_LIST } from "constants/fetch-keys";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: IView;
-  preLoadedData?: Partial<IView> | null;
+  data?: IView | null;
+  preLoadedData?: Partial<IView> | null ;
 };
 
-export const CreateUpdateViewModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  data,
-  preLoadedData,
-}) => {
+export const CreateUpdateViewModal: React.FC<Props> = ({ isOpen, handleClose, data, preLoadedData }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -66,14 +61,18 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
   };
 
   const updateView = async (payload: IView) => {
+    const payloadData = {
+      ...payload,
+      query_data: payload.query,
+    };
     await viewsService
-      .updateView(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
+      .updateView(workspaceSlug as string, projectId as string, data?.id ?? "", payloadData)
       .then((res) => {
         mutate<IView[]>(
           VIEWS_LIST(projectId as string),
           (prevData) =>
             prevData?.map((p) => {
-              if (p.id === res.id) return { ...p, ...payload };
+              if (p.id === res.id) return { ...p, ...payloadData };
 
               return p;
             }),

@@ -13,6 +13,7 @@ import useToast from "hooks/use-toast";
 import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
+  ViewEstimateSelect,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
@@ -28,6 +29,7 @@ import {
   TrashIcon,
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
+  PaperClipIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -80,7 +82,7 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const { groupByProperty: selectedGroup, params } = useIssueView();
+  const { groupByProperty: selectedGroup, orderBy, params } = useIssueView();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -95,7 +97,14 @@ export const SingleListIssue: React.FC<Props> = ({
         >(
           CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
           (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+            handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            ),
           false
         );
 
@@ -108,7 +117,14 @@ export const SingleListIssue: React.FC<Props> = ({
         >(
           MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
           (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+            handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            ),
           false
         );
 
@@ -120,7 +136,7 @@ export const SingleListIssue: React.FC<Props> = ({
       >(
         PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
         (prevData) =>
-          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, orderBy, prevData),
         false
       );
 
@@ -136,7 +152,18 @@ export const SingleListIssue: React.FC<Props> = ({
           } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      issue,
+      groupTitle,
+      index,
+      selectedGroup,
+      orderBy,
+      params,
+    ]
   );
 
   const handleCopyText = () => {
@@ -189,9 +216,9 @@ export const SingleListIssue: React.FC<Props> = ({
           </ContextMenu.Item>
         </a>
       </ContextMenu>
-      <div className="border-b border-gray-300 last:border-b-0">
+      <div className="border-b mx-6 border-gray-300 last:border-b-0">
         <div
-          className="flex items-center justify-between gap-2 px-4 py-3"
+          className="flex items-center justify-between gap-2  py-3"
           onContextMenu={(e) => {
             e.preventDefault();
             setContextMenu(true);
@@ -272,6 +299,34 @@ export const SingleListIssue: React.FC<Props> = ({
                 position="right"
                 isNotAllowed={isNotAllowed}
               />
+            )}
+            {properties.estimate && (
+              <ViewEstimateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="right"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.link && (
+              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+                <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
+                    {issue.link_count}
+                  </div>
+                </Tooltip>
+              </div>
+            )}
+            {properties.attachment_count && (
+              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+                <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                    {issue.attachment_count}
+                  </div>
+                </Tooltip>
+              </div>
             )}
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>

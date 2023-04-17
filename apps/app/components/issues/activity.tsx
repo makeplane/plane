@@ -8,6 +8,9 @@ import {
   CalendarDaysIcon,
   ChartBarIcon,
   ChatBubbleBottomCenterTextIcon,
+  LinkIcon,
+  PaperClipIcon,
+  PlayIcon,
   RectangleGroupIcon,
   Squares2X2Icon,
   UserIcon,
@@ -26,6 +29,7 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssueComment, IIssueLabels } from "types";
 import { PROJECT_ISSUES_ACTIVITY, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import useEstimateOption from "hooks/use-estimate-option";
 
 const activityDetails: {
   [key: string]: {
@@ -52,6 +56,10 @@ const activityDetails: {
   cycles: {
     message: "set the cycle to",
     icon: <CyclesIcon height="12" width="12" color="#6b7280" />,
+  },
+  estimate_point: {
+    message: "set the estimate point to",
+    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
   },
   labels: {
     icon: <TagIcon height="12" width="12" color="#6b7280" />,
@@ -84,6 +92,18 @@ const activityDetails: {
     message: "set the parent to",
     icon: <UserIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
+  estimate: {
+    message: "updated the estimate",
+    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+  },
+  link: {
+    message: "updated the link",
+    icon: <LinkIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+  },
+  attachment: {
+    message: "updated the attachment",
+    icon: <PaperClipIcon className="h-3 w-3 text-gray-500 " aria-hidden="true" />,
+  },
 };
 
 type Props = {};
@@ -91,6 +111,8 @@ type Props = {};
 export const IssueActivitySection: React.FC<Props> = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { isEstimateActive, estimatePoints } = useEstimateOption();
 
   const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId as string) : null,
@@ -204,13 +226,22 @@ export const IssueActivitySection: React.FC<Props> = () => {
                 : "removed the priority";
           } else if (activityItem.field === "description") {
             action = "updated the";
+          } else if (activityItem.field === "attachment") {
+            action = `${activityItem.verb} the`;
+          } else if (activityItem.field === "link") {
+            action = `${activityItem.verb} the`;
+          } else if (activityItem.field === "estimate") {
+            action = "updated the";
           }
           // for values that are after the action clause
           let value: any = activityItem.new_value ? activityItem.new_value : activityItem.old_value;
           if (
             activityItem.verb === "created" &&
             activityItem.field !== "cycles" &&
-            activityItem.field !== "modules"
+            activityItem.field !== "modules" &&
+            activityItem.field !== "attachment" &&
+            activityItem.field !== "link" &&
+            activityItem.field !== "estimate"
           ) {
             value = <span className="text-gray-600">created this issue.</span>;
           } else if (activityItem.field === "state") {
@@ -250,6 +281,18 @@ export const IssueActivitySection: React.FC<Props> = () => {
             value = renderShortNumericDateFormat(date as string);
           } else if (activityItem.field === "description") {
             value = "description";
+          } else if (activityItem.field === "attachment") {
+            value = "attachment";
+          } else if (activityItem.field === "link") {
+            value = "link";
+          } else if (activityItem.field === "estimate_point") {
+            value = activityItem.new_value
+              ? isEstimateActive
+                ? estimatePoints.find((e) => e.key === parseInt(activityItem.new_value ?? "", 10))
+                    ?.value
+                : activityItem.new_value +
+                  ` Point${parseInt(activityItem.new_value ?? "", 10) > 1 ? "s" : ""}`
+              : "None";
           }
 
           if ("field" in activityItem && activityItem.field !== "updated_by") {

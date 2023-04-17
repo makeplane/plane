@@ -179,6 +179,7 @@ export const CommandPalette: React.FC = () => {
     (e: KeyboardEvent) => {
       const singleShortcutKeys = ["p", "v", "d", "h", "q", "m"];
       const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
+      if (!key) return;
       const keyPressed = key.toLowerCase();
       if (
         !(e.target instanceof HTMLTextAreaElement) &&
@@ -297,6 +298,11 @@ export const CommandPalette: React.FC = () => {
   const createNewView = () => {
     setIsPaletteOpen(false);
     setIsCreateViewModalOpen(true);
+  };
+
+  const createNewPage = () => {
+    setIsPaletteOpen(false);
+    setIsCreateUpdatePageModalOpen(true);
   };
 
   const createNewModule = () => {
@@ -654,7 +660,17 @@ export const CommandPalette: React.FC = () => {
                                   <ViewListIcon className="h-4 w-4" color="#6b7280" />
                                   Create new view
                                 </div>
-                                <kbd>Q</kbd>
+                                <kbd>V</kbd>
+                              </Command.Item>
+                            </Command.Group>
+
+                            <Command.Group heading="Page">
+                              <Command.Item onSelect={createNewPage} className="focus:outline-none">
+                                <div className="flex items-center gap-2 text-gray-700">
+                                  <DocumentTextIcon className="h-4 w-4" color="#6b7280" />
+                                  Create new page
+                                </div>
+                                <kbd>D</kbd>
                               </Command.Item>
                             </Command.Group>
                           </>

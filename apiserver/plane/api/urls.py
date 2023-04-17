@@ -42,6 +42,7 @@ from plane.api.views import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
+    WorkspaceThemeViewSet,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -83,7 +84,7 @@ from plane.api.views import (
     EstimateViewSet,
     EstimatePointViewSet,
     ProjectEstimatePointEndpoint,
-    BulkCreateEstimatePointEndpoint,
+    BulkEstimatePointEndpoint,
     ## End Estimates
     # Shortcuts
     ShortCutViewSet,
@@ -350,6 +351,27 @@ urlpatterns = [
         WorkspaceMemberUserViewsEndpoint.as_view(),
         name="workspace-member-details",
     ),
+    path(
+        "workspaces/<str:slug>/workspace-themes/",
+        WorkspaceThemeViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="workspace-themes",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-themes/<uuid:pk>/",
+        WorkspaceThemeViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-themes",
+    ),
     ## End Workspaces ##
     # Projects
     path(
@@ -536,8 +558,8 @@ urlpatterns = [
         name="project-estimate-points",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/bulk-create-estimate-points/",
-        BulkCreateEstimatePointEndpoint.as_view(),
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/bulk-estimate-points/",
+        BulkEstimatePointEndpoint.as_view(),
         name="bulk-create-estimate-points",
     ),
     # End States ##
@@ -759,7 +781,7 @@ urlpatterns = [
         name="project-issue-labels",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/lk-create-labels/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",
         BulkCreateIssueLabelsEndpoint.as_view(),
         name="project-bulk-labels",
     ),

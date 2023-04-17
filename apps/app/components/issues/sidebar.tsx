@@ -294,7 +294,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               render={({ field: { value } }) => (
                 <SidebarEstimateSelect
                   value={value}
-                  onChange={(val: number) => submitChanges({ estimate_point: val })}
+                  onChange={(val: number | null) => submitChanges({ estimate_point: val })}
                   userAuth={memberRole}
                 />
               )}

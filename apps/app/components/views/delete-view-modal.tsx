@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -21,12 +21,11 @@ import { VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data: IView | null;
-  onClose: () => void;
-  onSuccess?: () => void;
 };
 
-export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, onClose, onSuccess }) => {
+export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -35,22 +34,20 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, onClose, onSucc
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
+    setIsOpen(false);
     setIsDeleteLoading(false);
-    onClose();
   };
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-
     if (!workspaceSlug || !data || !projectId) return;
+
     await viewsService
       .deleteView(workspaceSlug as string, projectId as string, data.id)
       .then(() => {
         mutate<IView[]>(VIEWS_LIST(projectId as string), (views) =>
           views?.filter((view) => view.id !== data.id)
         );
-
-        if (onSuccess) onSuccess();
 
         handleClose();
 
@@ -66,6 +63,8 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, onClose, onSucc
           title: "Error!",
           message: "View could not be deleted. Please try again.",
         });
+      })
+      .finally(() => {
         setIsDeleteLoading(false);
       });
   };
@@ -111,10 +110,9 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, onClose, onSucc
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete view- {" "}
-                          <span className="font-bold">{data?.name}</span>
-                          ? All of the data related to the view will be permanently removed.
-                          This action cannot be undone.
+                          Are you sure you want to delete view-{" "}
+                          <span className="font-bold">{data?.name}</span>? All of the data related
+                          to the view will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
                     </div>

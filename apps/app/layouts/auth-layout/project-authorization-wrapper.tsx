@@ -5,11 +5,14 @@ import { useRouter } from "next/router";
 
 // contexts
 import { useProjectMyMembership, ProjectMemberProvider } from "contexts/project-member.context";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // layouts
 import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import SettingsNavbar from "layouts/settings-navbar";
+import { WorkspaceAuthorizationLayout } from "./workspace-authorization-wrapper";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
@@ -56,6 +59,8 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { issueView } = useIssuesView();
 
   const { loading, error, memberRole: memberType } = useProjectMyMembership();
 
@@ -114,7 +119,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             )}
             <div
               className={`flex w-full flex-grow flex-col ${
-                noPadding ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
+                noPadding || issueView === "list" ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
               } ${
                 bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
               }`}
