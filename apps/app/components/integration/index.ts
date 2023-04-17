@@ -1,14 +1,10 @@
 // layout
+export * from "./delete-import-modal";
 export * from "./guide";
+export * from "./single-import";
 
-// github integration
-// authenticate
-export * from "./github/auth";
-// layout
-export * from "./github/root";
-// components
-export * from "./github/configure";
-export * from "./github/import-data";
-export * from "./github/issues-select";
-export * from "./github/users-select";
-export * from "./github/confirm";
+// github
+export * from "./github";
+
+// jira
+export * from "./jira";

@@ -23,12 +23,9 @@ const paramsToKey = (params: any) => {
 export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
 export const USER_WORKSPACES = "USER_WORKSPACES";
-export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
 
 export const WORKSPACE_DETAILS = (workspaceSlug: string) =>
   `WORKSPACE_DETAILS_${workspaceSlug.toUpperCase()}`;
-export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
-  `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}`;
 
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) =>
   `WORKSPACE_MEMBERS_${workspaceSlug.toUpperCase()}`;
@@ -118,8 +115,20 @@ export const VIEW_DETAILS = (viewId: string) => `VIEW_DETAILS_${viewId.toUpperCa
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase()}`;
+export const ISSUE_ATTACHMENTS = (issueId: string) => `ISSUE_ATTACHMENTS_${issueId.toUpperCase()}`;
 
 // integrations
+export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
+export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
+  `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}`;
+
+//import-export
+export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
+  `IMPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}`;
+
+// github-importer
+export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) =>
+  `GITHUB_REPO_INFO_${workspaceSlug.toString().toUpperCase()}_${repoName.toUpperCase()}`;
 
 // Calendar
 export const PROJECT_CALENDAR_ISSUES = (projectId: string) =>
@@ -141,3 +150,9 @@ export const OTHER_PAGES_LIST = (projectId: string) =>
 export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId.toUpperCase()}`;
 export const PAGE_BLOCKS_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId.toUpperCase()}`;
 export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${pageId.toUpperCase()}`;
+
+// estimates
+export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
+export const ESTIMATE_DETAILS = (estimateId: string) => `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
+export const ESTIMATE_POINTS_LIST = (estimateId: string) =>
+  `ESTIMATES_POINTS_LIST_${estimateId.toUpperCase()}`;

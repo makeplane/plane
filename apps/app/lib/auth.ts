@@ -109,9 +109,6 @@ export const homePageRedirect = async (cookie?: string) => {
       },
     };
 
-  // FIXME: backend is returning object of user and workspace.
-  // Get KT if it's required to send user and workspace and if
-  // yes change below accordingly
   if (!user.is_onboarded)
     return {
       redirect: {

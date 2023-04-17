@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -13,16 +13,15 @@ import { TwitterPicker } from "react-color";
 // react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 import pagesService from "services/pages.service";
 import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 // ui
@@ -34,17 +33,18 @@ import {
   LockClosedIcon,
   LockOpenIcon,
   PlusIcon,
-  ShareIcon,
   StarIcon,
+  LinkIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { ColorPalletteIcon } from "components/icons";
+import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
-import { renderShortTime } from "helpers/date-time.helper";
+import { renderShortTime, renderShortDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import type { NextPage, GetServerSidePropsContext } from "next";
-import { IIssueLabels, IPage, IPageBlock, UserAuth } from "types";
+import type { NextPage } from "next";
+import { IIssueLabels, IPage, IPageBlock } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
@@ -53,7 +53,7 @@ import {
   PROJECT_ISSUE_LABELS,
 } from "constants/fetch-keys";
 
-const SinglePage: NextPage<UserAuth> = (props) => {
+const SinglePage: NextPage = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
 
   const scrollToRef = useRef<HTMLDivElement>(null);
@@ -62,6 +62,8 @@ const SinglePage: NextPage<UserAuth> = (props) => {
   const { workspaceSlug, projectId, pageId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { user } = useUser();
 
   const { handleSubmit, reset, watch, setValue } = useForm<IPage>({
     defaultValues: { name: "" },
@@ -154,7 +156,13 @@ const SinglePage: NextPage<UserAuth> = (props) => {
         is_favorite: true,
       }),
       false
-    );
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Success",
+        message: "Added to favorites",
+      });
+    });
 
     pagesService.addPageToFavorites(workspaceSlug as string, projectId as string, {
       page: pageId as string,
@@ -171,7 +179,13 @@ const SinglePage: NextPage<UserAuth> = (props) => {
         is_favorite: false,
       }),
       false
-    );
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Success",
+        message: "Removed from favorites",
+      });
+    });
 
     pagesService.removePageFromFavorites(
       workspaceSlug as string,
@@ -239,12 +253,12 @@ const SinglePage: NextPage<UserAuth> = (props) => {
     );
   };
 
-  const handleNewBlock = () => {
+  const handleNewBlock = useCallback(() => {
     setCreateBlockForm(true);
     scrollToRef.current?.scrollIntoView({
       behavior: "smooth",
     });
-  };
+  }, [setCreateBlockForm, scrollToRef]);
 
   const options =
     labels?.map((label) => ({
@@ -271,12 +285,23 @@ const SinglePage: NextPage<UserAuth> = (props) => {
     });
   }, [reset, pageDetails]);
 
+  useEffect(() => {
+    const openCreateBlockForm = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.key === "Enter") handleNewBlock();
+    };
+
+    window.addEventListener("keydown", openCreateBlockForm);
+
+    return () => {
+      window.removeEventListener("keydown", openCreateBlockForm);
+    };
+  }, [handleNewBlock, createBlockForm]);
+
   return (
-    <AppLayout
+    <ProjectAuthorizationWrapper
       meta={{
         title: "Plane - Pages",
       }}
-      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -306,7 +331,11 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     return (
                       <div
                         key={label.id}
-                        className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                        className="group flex items-center gap-1 cursor-pointer rounded-2xl border px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                        onClick={() => {
+                          const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
+                          partialUpdatePage({ labels_list: updatedLabels });
+                        }}
                         style={{
                           backgroundColor: `${
                             label?.color && label.color !== "" ? label.color : "#000000"
@@ -321,6 +350,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                           }}
                         />
                         {label.name}
+                        <XMarkIcon className="h-2.5 w-2.5 group-hover:text-red-500" />
                       </div>
                     );
                   })}
@@ -345,10 +375,10 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded-md bg-gray-100 px-3 py-1.5 text-xs hover:bg-gray-200"
+                      className="flex items-center gap-1 rounded-full bg-gray-100 px-2  pr-2.5 py-1 text-xs hover:bg-gray-200"
                     >
                       <PlusIcon className="h-3 w-3" />
-                      Add new label
+                      Add label
                     </button>
                   }
                   value={pageDetails.labels}
@@ -359,19 +389,17 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 />
               )}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <Tooltip
-                tooltipContent={`Page last updated at ${renderShortTime(pageDetails.updated_at)}`}
-                theme="dark"
+                tooltipContent={`Last updated at ${renderShortTime(
+                  pageDetails.updated_at
+                )} on ${renderShortDate(pageDetails.updated_at)}`}
               >
-                <span className="cursor-default text-sm text-gray-500">
-                  {renderShortTime(pageDetails.updated_at)}
-                </span>
+                <p className="text-sm text-gray-500">{renderShortTime(pageDetails.updated_at)}</p>
               </Tooltip>
-              <PrimaryButton className="flex items-center gap-2" onClick={handleCopyText}>
-                <ShareIcon className="h-4 w-4" />
-                Share
-              </PrimaryButton>
+              <button className="flex items-center gap-2" onClick={handleCopyText}>
+                <LinkIcon className="h-4 w-4" />
+              </button>
               <div className="flex-shrink-0">
                 <Popover className="relative grid place-items-center">
                   {({ open }) => (
@@ -414,18 +442,29 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   )}
                 </Popover>
               </div>
-              {pageDetails.access ? (
-                <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
-                  <LockClosedIcon className="h-4 w-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => partialUpdatePage({ access: 1 })}
-                  type="button"
-                  className="z-10"
+              {pageDetails.created_by === user?.id && (
+                <Tooltip
+                  tooltipContent={`${
+                    pageDetails.access
+                      ? "This page is only visible to you."
+                      : "This page can be viewed by anyone in the project."
+                  }`}
+                  theme="dark"
                 >
-                  <LockOpenIcon className="h-4 w-4" />
-                </button>
+                  {pageDetails.access ? (
+                    <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
+                      <LockClosedIcon className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => partialUpdatePage({ access: 1 })}
+                      type="button"
+                      className="z-10"
+                    >
+                      <LockOpenIcon className="h-4 w-4" />
+                    </button>
+                  )}
+                </Tooltip>
               )}
               {pageDetails.is_favorite ? (
                 <button onClick={handleRemoveFromFavorites} className="z-10">
@@ -438,20 +477,20 @@ const SinglePage: NextPage<UserAuth> = (props) => {
               )}
             </div>
           </div>
-          <div>
+          <div className="px-4 pt-6">
             <TextArea
               id="name"
               name="name"
-              placeholder="Enter issue name"
+              placeholder="Page Title"
               value={watch("name")}
               onBlur={handleSubmit(updatePage)}
               onChange={(e) => setValue("name", e.target.value)}
               required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-gray-200"
+              className="min-h-10 block w-full resize-none overflow-hidden placeholder:text-[#858E96] rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 "
               role="textbox"
             />
           </div>
-          <div className="px-3">
+          <div className="px-7">
             {pageBlocks ? (
               <>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -465,7 +504,6 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                               block={block}
                               projectDetails={projectDetails}
                               index={index}
-                              handleNewBlock={handleNewBlock}
                             />
                           ))}
                           {provided.placeholder}
@@ -477,7 +515,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 {!createBlockForm && (
                   <button
                     type="button"
-                    className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 ml-6 text-xs hover:bg-gray-200 mt-4"
+                    className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 pr-2.5 text-xs hover:bg-gray-200 mt-4"
                     onClick={handleNewBlock}
                   >
                     <PlusIcon className="h-3 w-3" />
@@ -489,6 +527,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     <CreateUpdateBlockInline
                       handleClose={() => setCreateBlockForm(false)}
                       focus="name"
+                      setGptAssistantModal={() => {}}
                     />
                   </div>
                 )}
@@ -506,37 +545,8 @@ const SinglePage: NextPage<UserAuth> = (props) => {
           <Loader.Item height="200px" />
         </Loader>
       )}
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default SinglePage;

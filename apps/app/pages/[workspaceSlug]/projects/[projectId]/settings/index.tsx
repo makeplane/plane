@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
 
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-import { IProject, IWorkspace, UserAuth } from "types";
-// lib
-import { requiredAdmin } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
 import projectService from "services/project.service";
 // components
 import { DeleteProjectModal } from "components/project";
+import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
@@ -29,7 +28,8 @@ import {
 } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import type { NextPage, GetServerSidePropsContext } from "next";
+import { IProject, IWorkspace } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // constants
@@ -42,7 +42,7 @@ const defaultValues: Partial<IProject> = {
   network: 0,
 };
 
-const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGuest }) => {
+const GeneralSettings: NextPage = () => {
   const [selectProject, setSelectedProject] = useState<string | null>(null);
 
   const { setToastAlert } = useToast();
@@ -61,7 +61,9 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
     register,
     handleSubmit,
     reset,
+    watch,
     control,
+    setValue,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<IProject>({
@@ -116,6 +118,7 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
       default_assignee: formData.default_assignee,
       project_lead: formData.project_lead,
       icon: formData.icon,
+      cover_image: formData.cover_image,
     };
 
     if (projectDetails.identifier !== formData.identifier)
@@ -129,8 +132,7 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
   };
 
   return (
-    <AppLayout
-      memberType={{ isMember, isOwner, isViewer, isGuest }}
+    <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -140,7 +142,6 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
           <BreadcrumbItem title="General Settings" />
         </Breadcrumbs>
       }
-      settingsLayout
     >
       <DeleteProjectModal
         data={projectDetails ?? null}
@@ -218,9 +219,43 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-xl font-semibold">Cover Photo</h4>
+              <p className="text-gray-500">Select your cover photo from the given library.</p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              {watch("cover_image") ? (
+                <div className="w-full h-32 rounded border p-1">
+                  <div className="w-full h-full relative rounded">
+                    <Image
+                      src={watch("cover_image")!}
+                      alt={projectDetails?.name ?? "Cover image"}
+                      objectFit="cover"
+                      layout="fill"
+                      className="rounded"
+                    />
+                    <div className="absolute bottom-0 w-full flex justify-end">
+                      <ImagePickerPopover
+                        label={"Change cover"}
+                        onChange={(imageUrl) => {
+                          setValue("cover_image", imageUrl);
+                        }}
+                        value={watch("cover_image")}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Loader className="w-full">
+                  <Loader.Item height="46px" width="full" light />
+                </Loader>
+              )}
+            </div>
+          </div>
+          <div className="grid grid-cols-12 gap-4 sm:gap-16">
+            <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Identifier</h4>
               <p className="text-gray-500">
-                Create a 1-6 characters{"'"} identifier for the project.
+                Create a 1-5 characters{"'"} identifier for the project.
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
@@ -233,13 +268,15 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
                   placeholder="Enter identifier"
                   validations={{
                     required: "Identifier is required",
+                    validate: (value) =>
+                      /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
                     minLength: {
                       value: 1,
                       message: "Identifier must at least be of 1 character",
                     },
                     maxLength: {
-                      value: 9,
-                      message: "Identifier must at most be of 9 characters",
+                      value: 5,
+                      message: "Identifier must at most be of 5 characters",
                     },
                   }}
                 />
@@ -325,24 +362,8 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
           </div>
         </div>
       </form>
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default GeneralSettings;

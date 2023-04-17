@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// hooks
+import useToast from "hooks/use-toast";
 // services
 import issuesService from "services/issues.service";
 // components
@@ -13,16 +15,17 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
+// icon
+import { LinkIcon, PaperClipIcon } from "@heroicons/react/24/outline";
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { CustomMenu, Tooltip } from "components/ui";
 // types
 import { IIssue, Properties } from "types";
+// helper
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // fetch-keys
 import { USER_ISSUE } from "constants/fetch-keys";
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
-import useToast from "hooks/use-toast";
-import { LinkIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   issue: IIssue;
@@ -79,8 +82,8 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="border-b border-gray-300 last:border-b-0">
-      <div key={issue.id} className="flex items-center justify-between gap-2 px-4 py-3">
+    <div className="border-b border-gray-300 last:border-b-0 mx-6">
+      <div key={issue.id} className="flex items-center justify-between gap-2 py-3">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties?.key && (
@@ -166,6 +169,26 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
                 <AssigneesList userIds={issue.assignees ?? []} />
               </div>
             </Tooltip>
+          )}
+          {properties.link && (
+            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+              <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
+                  {issue.link_count}
+                </div>
+              </Tooltip>
+            </div>
+          )}
+          {properties.attachment_count && (
+            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+              <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                  {issue.attachment_count}
+                </div>
+              </Tooltip>
+            </div>
           )}
           <CustomMenu width="auto" ellipsis>
             <CustomMenu.MenuItem onClick={handleCopyText}>

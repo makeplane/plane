@@ -4,6 +4,7 @@ import useSWR from "swr";
 
 // services
 import stateService from "services/state.service";
+import trackEventServices from "services/track-event.service";
 // ui
 import { CustomSearchSelect, Tooltip } from "components/ui";
 // icons
@@ -58,13 +59,38 @@ export const ViewStateSelect: React.FC<Props> = ({
   return (
     <CustomSearchSelect
       value={issue.state}
-      onChange={(data: string) =>
+      onChange={(data: string) => {
         partialUpdateIssue({
           state: data,
           priority: issue.priority,
           target_date: issue.target_date,
-        })
-      }
+        });
+        trackEventServices.trackIssuePartialPropertyUpdateEvent(
+          {
+            workspaceSlug,
+            workspaceId: issue.workspace,
+            projectId: issue.project_detail.id,
+            projectIdentifier: issue.project_detail.identifier,
+            projectName: issue.project_detail.name,
+            issueId: issue.id,
+          },
+          "ISSUE_PROPERTY_UPDATE_STATE"
+        );
+
+        const oldState = states.find((s) => s.id === issue.state);
+        const newState = states.find((s) => s.id === data);
+
+        if (oldState?.group !== "completed" && newState?.group !== "completed") {
+          trackEventServices.trackIssueMarkedAsDoneEvent({
+            workspaceSlug: issue.workspace_detail.slug,
+            workspaceId: issue.workspace_detail.id,
+            projectId: issue.project_detail.id,
+            projectIdentifier: issue.project_detail.identifier,
+            projectName: issue.project_detail.name,
+            issueId: issue.id,
+          });
+        }
+      }}
       options={options}
       label={
         <Tooltip

@@ -65,29 +65,35 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 )
 
             if service == "jira":
-                project_name = request.data.get("project_name", "")
-                api_token = request.data.get("api_token", "")
-                email = request.data.get("email", "")
-                cloud_hostname = request.data.get("cloud_hostname", "")
-                if (
-                    not bool(project_name)
-                    or not bool(api_token)
-                    or not bool(email)
-                    or not bool(cloud_hostname)
-                ):
-                    return Response(
-                        {
-                            "error": "Project name, Project key, API token, Cloud hostname and email are requied"
-                        },
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+                # Check for all the keys
+                params = {
+                    "project_key": "Project key is required",
+                    "api_token": "API token is required",
+                    "email": "Email is required",
+                    "cloud_hostname": "Cloud hostname is required",
+                }
 
-                return Response(
-                    jira_project_issue_summary(
-                        email, api_token, project_name, cloud_hostname
-                    ),
-                    status=status.HTTP_200_OK,
+                for key, error_message in params.items():
+                    if not request.GET.get(key, False):
+                        return Response(
+                            {"error": error_message}, status=status.HTTP_400_BAD_REQUEST
+                        )
+
+                project_key = request.GET.get("project_key", "")
+                api_token = request.GET.get("api_token", "")
+                email = request.GET.get("email", "")
+                cloud_hostname = request.GET.get("cloud_hostname", "")
+
+                response = jira_project_issue_summary(
+                    email, api_token, project_key, cloud_hostname
                 )
+                if "error" in response:
+                    return Response(response, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(
+                        response,
+                        status=status.HTTP_200_OK,
+                    )
             return Response(
                 {"error": "Service not supported yet"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -213,11 +219,27 @@ class ImportServiceEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
-            imports = Importer.objects.filter(workspace__slug=slug).order_by(
-                "-created_at"
+            imports = (
+                Importer.objects.filter(workspace__slug=slug)
+                .order_by("-created_at")
+                .select_related("initiated_by", "project", "workspace")
             )
             serializer = ImporterSerializer(imports, many=True)
             return Response(serializer.data)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def delete(self, request, slug, service, pk):
+        try:
+            importer = Importer.objects.filter(
+                pk=pk, service=service, workspace__slug=slug
+            )
+            importer.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             capture_exception(e)
             return Response(

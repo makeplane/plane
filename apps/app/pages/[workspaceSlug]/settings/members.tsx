@@ -5,14 +5,12 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// lib
-import { requiredWorkspaceAdmin } from "lib/auth";
 // hooks
 import useToast from "hooks/use-toast";
 // services
 import workspaceService from "services/workspace.service";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
@@ -22,14 +20,13 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import type { GetServerSideProps, NextPage } from "next";
-import { UserAuth } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
-const MembersSettings: NextPage<UserAuth> = (props) => {
+const MembersSettings: NextPage = () => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
   const [inviteModal, setInviteModal] = useState(false);
@@ -129,8 +126,7 @@ const MembersSettings: NextPage<UserAuth> = (props) => {
         workspace_slug={workspaceSlug as string}
         members={members}
       />
-      <AppLayout
-        memberType={props}
+      <WorkspaceAuthorizationLayout
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -140,7 +136,6 @@ const MembersSettings: NextPage<UserAuth> = (props) => {
             <BreadcrumbItem title="Members Settings" />
           </Breadcrumbs>
         }
-        settingsLayout
       >
         <section className="space-y-8">
           <div className="flex items-end justify-between gap-4">
@@ -254,33 +249,9 @@ const MembersSettings: NextPage<UserAuth> = (props) => {
             </div>
           )}
         </section>
-      </AppLayout>
+      </WorkspaceAuthorizationLayout>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const workspaceSlug = ctx.params?.workspaceSlug as string;
-
-  const memberDetail = await requiredWorkspaceAdmin(workspaceSlug, ctx.req.headers.cookie);
-
-  if (memberDetail === null) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default MembersSettings;

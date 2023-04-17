@@ -31,6 +31,8 @@ from plane.db.models import (
     Issue,
     ModuleLink,
     ModuleFavorite,
+    IssueLink,
+    IssueAttachment,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -204,6 +206,20 @@ class ModuleIssueViewSet(BaseViewSet):
                 .prefetch_related("labels")
                 .order_by(order_by)
                 .filter(**filters)
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
 
             issues_data = IssueStateSerializer(issues, many=True).data
@@ -286,21 +302,19 @@ class ModuleIssueViewSet(BaseViewSet):
 
             # Capture Issue Activity
             issue_activity.delay(
-                {
-                    "type": "issue.activity",
-                    "requested_data": json.dumps({"modules_list": issues}),
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("pk", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        {
-                            "updated_module_issues": update_module_issue_activity,
-                            "created_module_issues": serializers.serialize(
-                                "json", record_to_create
-                            ),
-                        }
-                    ),
-                },
+                type="issue.activity.updated",
+                requested_data=json.dumps({"modules_list": issues}),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "updated_module_issues": update_module_issue_activity,
+                        "created_module_issues": serializers.serialize(
+                            "json", record_to_create
+                        ),
+                    }
+                ),
             )
 
             return Response(

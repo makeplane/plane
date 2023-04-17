@@ -1,5 +1,7 @@
 """Production settings and globals."""
 from urllib.parse import urlparse
+import ssl
+import certifi
 
 import dj_database_url
 from urllib.parse import urlparse
@@ -9,7 +11,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 from .common import *  # noqa
-
 # Database
 DEBUG = True
 DATABASES = {
@@ -197,3 +198,9 @@ GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
+
+redis_url = os.environ.get("REDIS_URL")
+broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+
+CELERY_RESULT_BACKEND = broker_url
+CELERY_BROKER_URL = broker_url

@@ -25,6 +25,7 @@ from plane.db.models import (
     Module,
     ModuleIssue,
     IssueLink,
+    IssueAttachment,
 )
 
 
@@ -99,7 +100,7 @@ class IssueCreateSerializer(BaseSerializer):
         project = self.context["project"]
         issue = Issue.objects.create(**validated_data, project=project)
 
-        if blockers is not None:
+        if blockers is not None and len(blockers):
             IssueBlocker.objects.bulk_create(
                 [
                     IssueBlocker(
@@ -115,7 +116,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if assignees is not None:
+        if assignees is not None and len(assignees):
             IssueAssignee.objects.bulk_create(
                 [
                     IssueAssignee(
@@ -130,8 +131,19 @@ class IssueCreateSerializer(BaseSerializer):
                 ],
                 batch_size=10,
             )
+        else:
+            # Then assign it to default assignee
+            if project.default_assignee is not None:
+                IssueAssignee.objects.create(
+                    assignee=project.default_assignee,
+                    issue=issue,
+                    project=project,
+                    workspace=project.workspace,
+                    created_by=issue.created_by,
+                    updated_by=issue.updated_by,
+                )
 
-        if labels is not None:
+        if labels is not None and len(labels):
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
@@ -147,7 +159,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if blocks is not None:
+        if blocks is not None and len(blocks):
             IssueBlocker.objects.bulk_create(
                 [
                     IssueBlocker(
@@ -254,7 +266,8 @@ class IssueActivitySerializer(BaseSerializer):
 class IssueCommentSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
-    project_detail = ProjectSerializer(read_only=True, source="project")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
 
     class Meta:
         model = IssueComment
@@ -297,6 +310,9 @@ class IssuePropertySerializer(BaseSerializer):
 
 
 class LabelSerializer(BaseSerializer):
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+
     class Meta:
         model = Label
         fields = "__all__"
@@ -439,6 +455,21 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
 
+class IssueAttachmentSerializer(BaseSerializer):
+    class Meta:
+        model = IssueAttachment
+        fields = "__all__"
+        read_only_fields = [
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "workspace",
+            "project",
+            "issue",
+        ]
+
+
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
     state_detail = StateSerializer(read_only=True, source="state")
@@ -466,6 +497,7 @@ class IssueSerializer(BaseSerializer):
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
     issue_module = IssueModuleDetailSerializer(read_only=True)
     issue_link = IssueLinkSerializer(read_only=True, many=True)
+    issue_attachment = IssueAttachmentSerializer(read_only=True, many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -490,6 +522,8 @@ class IssueLiteSerializer(BaseSerializer):
     sub_issues_count = serializers.IntegerField(read_only=True)
     cycle_id = serializers.UUIDField(read_only=True)
     module_id = serializers.UUIDField(read_only=True)
+    attachment_count = serializers.IntegerField(read_only=True)
+    link_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue

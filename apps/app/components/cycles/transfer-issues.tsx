@@ -46,7 +46,7 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
       {transferableIssuesCount > 0 && (
         <div>
           <PrimaryButton onClick={handleClick} className="flex items-center gap-3 rounded-lg">
-            <TransferIcon className="h-4 w-4" />
+            <TransferIcon className="h-4 w-4" color="white"/>
             <span className="text-white">Transfer Issues</span>
           </PrimaryButton>
         </div>

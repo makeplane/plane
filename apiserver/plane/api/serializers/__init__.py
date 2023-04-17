@@ -11,6 +11,7 @@ from .workspace import (
     TeamSerializer,
     WorkSpaceMemberInviteSerializer,
     WorkspaceLiteSerializer,
+    WorkspaceThemeSerializer,
 )
 from .project import (
     ProjectSerializer,
@@ -41,6 +42,7 @@ from .issue import (
     IssueStateSerializer,
     IssueLinkSerializer,
     IssueLiteSerializer,
+    IssueAttachmentSerializer,
 )
 
 from .module import (
@@ -65,3 +67,5 @@ from .integration import (
 from .importer import ImporterSerializer
 
 from .page import PageSerializer, PageBlockSerializer, PageFavoriteSerializer
+
+from .estimate import EstimateSerializer, EstimatePointSerializer

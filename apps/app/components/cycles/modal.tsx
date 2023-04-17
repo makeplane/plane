@@ -21,6 +21,7 @@ import {
   CYCLE_COMPLETE_LIST,
   CYCLE_CURRENT_AND_UPCOMING_LIST,
   CYCLE_DRAFT_LIST,
+  CYCLE_INCOMPLETE_LIST,
 } from "constants/fetch-keys";
 
 type CycleModalProps = {
@@ -56,6 +57,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           default:
             mutate(CYCLE_DRAFT_LIST(projectId as string));
         }
+        mutate(CYCLE_INCOMPLETE_LIST(projectId as string));
         handleClose();
 
         setToastAlert({

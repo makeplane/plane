@@ -1,15 +1,12 @@
 import { useState } from "react";
 
 import { useRouter } from "next/router";
-import type { GetServerSidePropsContext, NextPage } from "next";
 import dynamic from "next/dynamic";
 
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
@@ -17,19 +14,21 @@ import projectService from "services/project.service";
 import pagesService from "services/pages.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useLocalStorage from "hooks/use-local-storage";
 // icons
 import { PlusIcon } from "components/icons";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
 import { Input, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ListBulletIcon, RectangleGroupIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
+import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import { IPage, TPageViewProps, UserAuth } from "types";
+import { IPage, TPageViewProps } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import {
   ALL_PAGES_LIST,
@@ -66,7 +65,7 @@ const OtherPagesList = dynamic<TPagesListProps>(
   }
 );
 
-const ProjectPages: NextPage<UserAuth> = (props) => {
+const ProjectPages: NextPage = () => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
 
   const [viewType, setViewType] = useState<TPageViewProps>("list");
@@ -75,6 +74,8 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
 
   const {
     handleSubmit,
@@ -147,17 +148,35 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
       });
   };
 
+
+  const currentTabValue = (tab: string | null) => {
+    switch (tab) {
+      case "Recent":
+        return 0;
+      case "All":
+        return 1;
+      case "Favorites":
+        return 2;
+      case "Created by me":
+        return 3;
+      case "Created by others":
+        return 4;
+
+      default:
+        return 0;
+    }
+  };
+
   return (
     <>
       <CreateUpdatePageModal
         isOpen={createUpdatePageModal}
         handleClose={() => setCreateUpdatePageModal(false)}
       />
-      <AppLayout
+      <ProjectAuthorizationWrapper
         meta={{
           title: "Plane - Pages",
         }}
-        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -180,14 +199,14 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
         <div className="space-y-4">
           <form
             onSubmit={handleSubmit(createPage)}
-            className="flex items-center justify-between gap-2 rounded-[10px] border border-gray-200 bg-white p-2 shadow-sm"
+            className="flex items-center relative justify-between gap-2 mb-12 rounded-[6px] border border-gray-200 bg-white p-2 shadow"
           >
             <Input
               type="text"
               name="name"
               register={register}
-              className="border-none outline-none focus:ring-0"
-              placeholder="Type to create a new page..."
+              className="border-none font-medium flex break-all text-xl outline-none focus:ring-0"
+              placeholder="Title"
             />
             {watch("name") !== "" && (
               <PrimaryButton type="submit" loading={isSubmitting}>
@@ -196,8 +215,27 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
             )}
           </form>
           <div>
-            <Tab.Group>
-              <Tab.List as="div" className="flex items-center justify-between">
+            <Tab.Group
+              defaultIndex={currentTabValue(pageTab)}
+              onChange={(i) => {
+                switch (i) {
+                  case 0:
+                    return setPageTab("Recent");
+                  case 1:
+                    return setPageTab("All");
+                  case 2:
+                    return setPageTab("Favorites");
+                  case 3:
+                    return setPageTab("Created by me");
+                  case 4:
+                    return setPageTab("Created by others");
+
+                  default:
+                    return setPageTab("Recent");
+                }
+              }}
+            >
+              <Tab.List as="div" className="flex items-center justify-between mb-6">
                 <div className="flex gap-4">
                   {["Recent", "All", "Favorites", "Created by me", "Created by others"].map(
                     (tab, index) => (
@@ -216,7 +254,7 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
                     )
                   )}
                 </div>
-                <div className="flex items-center gap-x-1">
+                <div className="flex gap-x-1">
                   <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
@@ -266,38 +304,9 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
             </Tab.Group>
           </div>
         </div>
-      </AppLayout>
+      </ProjectAuthorizationWrapper>
     </>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default ProjectPages;

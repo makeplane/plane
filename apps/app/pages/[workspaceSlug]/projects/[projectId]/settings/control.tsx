@@ -6,10 +6,8 @@ import Image from "next/image";
 import useSWR, { mutate } from "swr";
 
 import { Controller, useForm } from "react-hook-form";
-// lib
-import { requiredAdmin } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
 import projectService from "services/project.service";
 // hooks
@@ -19,30 +17,20 @@ import { CustomSelect, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IProject, IWorkspace } from "types";
-import type { NextPage, GetServerSidePropsContext } from "next";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, PROJECT_MEMBERS } from "constants/fetch-keys";
-
-type TControlSettingsProps = {
-  isMember: boolean;
-  isOwner: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
   default_assignee: null,
 };
 
-const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
-  const { isMember, isOwner, isViewer, isGuest } = props;
-
+const ControlSettings: NextPage = () => {
   const { setToastAlert } = useToast();
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -102,9 +90,9 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
         console.log(err);
       });
   };
+
   return (
-    <AppLayout
-      memberType={{ isMember, isOwner, isViewer, isGuest }}
+    <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -114,7 +102,6 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
           <BreadcrumbItem title="Control Settings" />
         </Breadcrumbs>
       }
-      settingsLayout
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-8 sm:space-y-12">
@@ -245,24 +232,8 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
           </div>
         </div>
       </form>
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default ControlSettings;

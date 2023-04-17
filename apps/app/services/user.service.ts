@@ -2,7 +2,12 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
-import type { IUser, IUserActivityResponse, IUserWorkspaceDashboard } from "types";
+import type {
+  ICurrentUserResponse,
+  IUser,
+  IUserActivityResponse,
+  IUserWorkspaceDashboard,
+} from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -29,13 +34,11 @@ class UserService extends APIService {
       });
   }
 
-  async currentUser(): Promise<any> {
-    if (!this.getAccessToken()) return null;
+  async currentUser(): Promise<ICurrentUserResponse> {
     return this.get("/api/users/me/")
       .then((response) => response?.data)
       .catch((error) => {
-        this.purgeAccessToken();
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 

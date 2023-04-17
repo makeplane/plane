@@ -42,6 +42,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   setDefaultValues,
 }) => {
   const [slugError, setSlugError] = useState(false);
+  const [invalidSlug, setInvalidSlug] = useState(false);
 
   const { setToastAlert } = useToast();
 
@@ -112,6 +113,9 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                 }
                 validations={{
                   required: "Workspace name is required",
+                  validate: (value) =>
+                    /^[\w\s-]*$/.test(value) ||
+                    `Name can only contain (" "), ( - ), ( _ ) & Alphanumeric characters.`,
                 }}
                 placeholder="e.g. My Workspace"
                 error={errors.name}
@@ -120,17 +124,30 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>Workspace URL</span>
               <div className="flex w-full items-center rounded-md border border-gray-300 px-3">
-                <span className="text-sm text-slate-600">https://app.plane.so/</span>
+                <span className="text-sm whitespace-nowrap text-slate-600">
+                  {typeof window !== "undefined" && window.location.origin}/
+                </span>
                 <Input
                   mode="trueTransparent"
                   autoComplete="off"
                   name="slug"
                   register={register}
                   className="block w-full rounded-md bg-transparent py-2 px-0 text-sm"
+                  validations={{
+                    required: "Workspace URL is required",
+                  }}
+                  onChange={(e) =>
+                    /^[a-zA-Z0-9_-]+$/.test(e.target.value)
+                      ? setInvalidSlug(false)
+                      : setInvalidSlug(true)
+                  }
                 />
               </div>
               {slugError && (
                 <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>
+              )}
+              {invalidSlug && (
+                <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & Alphanumeric characters.`}</span>
               )}
             </div>
           </div>

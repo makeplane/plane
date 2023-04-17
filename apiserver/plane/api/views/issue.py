@@ -12,6 +12,7 @@ from django.views.decorators.gzip import gzip_page
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -28,6 +29,7 @@ from plane.api.serializers import (
     IssueFlatSerializer,
     IssueLinkSerializer,
     IssueLiteSerializer,
+    IssueAttachmentSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -43,6 +45,7 @@ from plane.db.models import (
     IssueProperty,
     Label,
     IssueLink,
+    IssueAttachment,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -82,16 +85,14 @@ class IssueViewSet(BaseViewSet):
         )
         if current_instance is not None:
             issue_activity.delay(
-                {
-                    "type": "issue.activity.updated",
-                    "requested_data": requested_data,
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("pk", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
-                    ),
-                },
+                type="issue.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                ),
             )
 
         return super().perform_update(serializer)
@@ -102,18 +103,16 @@ class IssueViewSet(BaseViewSet):
         )
         if current_instance is not None:
             issue_activity.delay(
-                {
-                    "type": "issue.activity.deleted",
-                    "requested_data": json.dumps(
-                        {"issue_id": str(self.kwargs.get("pk", None))}
-                    ),
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("pk", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
-                    ),
-                },
+                type="issue.activity.deleted",
+                requested_data=json.dumps(
+                    {"issue_id": str(self.kwargs.get("pk", None))}
+                ),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                ),
             )
         return super().perform_destroy(instance)
 
@@ -149,6 +148,20 @@ class IssueViewSet(BaseViewSet):
                 .filter(**filters)
                 .annotate(cycle_id=F("issue_cycle__id"))
                 .annotate(module_id=F("issue_module__id"))
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
 
             issue_queryset = (
@@ -187,16 +200,12 @@ class IssueViewSet(BaseViewSet):
 
                 # Track the issue
                 issue_activity.delay(
-                    {
-                        "type": "issue.activity.created",
-                        "requested_data": json.dumps(
-                            self.request.data, cls=DjangoJSONEncoder
-                        ),
-                        "actor_id": str(request.user.id),
-                        "issue_id": str(serializer.data.get("id", None)),
-                        "project_id": str(project_id),
-                        "current_instance": None,
-                    },
+                    type="issue.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    issue_id=str(serializer.data.get("id", None)),
+                    project_id=str(project_id),
+                    current_instance=None,
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -237,6 +246,20 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
                 .order_by("-created_at")
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
             serializer = IssueLiteSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -328,14 +351,12 @@ class IssueCommentViewSet(BaseViewSet):
             actor=self.request.user if self.request.user is not None else None,
         )
         issue_activity.delay(
-            {
-                "type": "comment.activity.created",
-                "requested_data": json.dumps(serializer.data, cls=DjangoJSONEncoder),
-                "actor_id": str(self.request.user.id),
-                "issue_id": str(self.kwargs.get("issue_id")),
-                "project_id": str(self.kwargs.get("project_id")),
-                "current_instance": None,
-            },
+            type="comment.activity.created",
+            requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id")),
+            project_id=str(self.kwargs.get("project_id")),
+            current_instance=None,
         )
 
     def perform_update(self, serializer):
@@ -345,17 +366,15 @@ class IssueCommentViewSet(BaseViewSet):
         )
         if current_instance is not None:
             issue_activity.delay(
-                {
-                    "type": "comment.activity.updated",
-                    "requested_data": requested_data,
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("issue_id", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        IssueCommentSerializer(current_instance).data,
-                        cls=DjangoJSONEncoder,
-                    ),
-                },
+                type="comment.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueCommentSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
             )
 
         return super().perform_update(serializer)
@@ -366,19 +385,17 @@ class IssueCommentViewSet(BaseViewSet):
         )
         if current_instance is not None:
             issue_activity.delay(
-                {
-                    "type": "comment.activity.deleted",
-                    "requested_data": json.dumps(
-                        {"comment_id": str(self.kwargs.get("pk", None))}
-                    ),
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("issue_id", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        IssueCommentSerializer(current_instance).data,
-                        cls=DjangoJSONEncoder,
-                    ),
-                },
+                type="comment.activity.deleted",
+                requested_data=json.dumps(
+                    {"comment_id": str(self.kwargs.get("pk", None))}
+                ),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueCommentSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
             )
         return super().perform_destroy(instance)
 
@@ -632,6 +649,54 @@ class IssueLinkViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             issue_id=self.kwargs.get("issue_id"),
         )
+        issue_activity.delay(
+            type="link.activity.created",
+            requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id")),
+            project_id=str(self.kwargs.get("project_id")),
+            current_instance=None,
+        )
+
+    def perform_update(self, serializer):
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                type="link.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueLinkSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
+            )
+
+        return super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                type="link.activity.deleted",
+                requested_data=json.dumps(
+                    {"link_id": str(self.kwargs.get("pk", None))}
+                ),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueLinkSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
+            )
+        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return (
@@ -677,6 +742,75 @@ class BulkCreateIssueLabelsEndpoint(BaseAPIView):
             return Response(
                 {"error": "Project Does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class IssueAttachmentEndpoint(BaseAPIView):
+    serializer_class = IssueAttachmentSerializer
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    model = IssueAttachment
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, slug, project_id, issue_id):
+        try:
+            serializer = IssueAttachmentSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id, issue_id=issue_id)
+                issue_activity.delay(
+                    type="attachment.activity.created",
+                    requested_data=None,
+                    actor_id=str(self.request.user.id),
+                    issue_id=str(self.kwargs.get("issue_id", None)),
+                    project_id=str(self.kwargs.get("project_id", None)),
+                    current_instance=json.dumps(
+                        serializer.data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def delete(self, request, slug, project_id, issue_id, pk):
+        try:
+            issue_attachment = IssueAttachment.objects.get(pk=pk)
+            issue_attachment.asset.delete(save=False)
+            issue_attachment.delete()
+            issue_activity.delay(
+                type="attachment.activity.deleted",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=None,
+            )
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except IssueAttachment.DoesNotExist:
+            return Response(
+                {"error": "Issue Attachment does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def get(self, request, slug, project_id, issue_id):
+        try:
+            issue_attachments = IssueAttachment.objects.filter(
+                issue_id=issue_id, workspace__slug=slug, project_id=project_id
+            )
+            serilaizer = IssueAttachmentSerializer(issue_attachments, many=True)
+            return Response(serilaizer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
