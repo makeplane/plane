@@ -13,7 +13,7 @@ import { AssignmentClipboardIcon } from "components/icons";
 import JoinProjectImg from "public/auth/project-not-authorized.svg";
 import projectService from "services/project.service";
 // fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import { PROJECT_MEMBERS, USER_PROJECT_VIEW } from "constants/fetch-keys";
 
 export const JoinProject: React.FC = () => {
   const [isJoiningProject, setIsJoiningProject] = useState(false);
@@ -22,13 +22,16 @@ export const JoinProject: React.FC = () => {
   const { workspaceSlug, projectId } = router.query;
 
   const handleJoin = () => {
+    if (!workspaceSlug || !projectId) return;
+
     setIsJoiningProject(true);
     projectService
       .joinProject(workspaceSlug as string, {
         project_ids: [projectId as string],
       })
-      .then(() => {
-        mutate(PROJECT_MEMBERS(projectId as string));
+      .then(async () => {
+        await mutate(USER_PROJECT_VIEW(workspaceSlug.toString()));
+        setIsJoiningProject(false);
       })
       .catch((err) => {
         console.error(err);
