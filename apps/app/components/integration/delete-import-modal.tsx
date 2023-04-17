@@ -45,7 +45,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
       false
     );
 
-    IntegrationService.deleteImporterService(workspaceSlug as string, data.id)
+    IntegrationService.deleteImporterService(workspaceSlug as string, data.service, data.id)
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -53,7 +53,10 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
           message: "Something went wrong. Please try again.",
         })
       )
-      .finally(() => setDeleteLoading(false));
+      .finally(() => {
+        setDeleteLoading(false);
+        handleClose();
+      });
   };
 
   if (!data) return <></>;
