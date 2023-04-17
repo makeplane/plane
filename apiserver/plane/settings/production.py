@@ -241,10 +241,11 @@ LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
 broker_ssl = os.environ.get("REDIS_BROKER_SSL", "1") == "1"
 redis_url = os.environ.get("REDIS_URL")
-if broker_ssl:
-    broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
-else:
-    broker_url = redis_url
+broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
 
-CELERY_RESULT_BACKEND = broker_url
-CELERY_BROKER_URL = broker_url
+if DOCKERIZED:
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
+else:
+    CELERY_RESULT_BACKEND = broker_url
+    CELERY_BROKER_URL = broker_url

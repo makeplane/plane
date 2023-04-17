@@ -46,7 +46,7 @@ const WorkspacePage: NextPage = () => {
             // style={{ background: "linear-gradient(90deg, #8e2de2 0%, #4a00e0 100%)" }}
           >
             <p className="font-semibold">
-              Plane is a open source application, to support us you can star us on GitHub!
+              Plane is open source, support us by staring us on GitHub.
             </p>
             <div className="flex items-center gap-2">
               {/* <a href="#" target="_blank" rel="noopener noreferrer">

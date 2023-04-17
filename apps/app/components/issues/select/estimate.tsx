@@ -8,8 +8,8 @@ import { PlayIcon } from "@heroicons/react/24/outline";
 import useEstimateOption from "hooks/use-estimate-option";
 
 type Props = {
-  value: number;
-  onChange: (value: number) => void;
+  value: number | null;
+  onChange: (value: number | null) => void;
 };
 
 export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
@@ -24,18 +24,26 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
         <div className="flex items-center gap-2 text-xs">
           <PlayIcon className="h-4 w-4 text-gray-500 -rotate-90" />
           <span className={`${value ? "text-gray-600" : "text-gray-500"}`}>
-            {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate points"}
+            {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate"}
           </span>
         </div>
       }
       onChange={onChange}
       position="right"
-      width="w-full min-w-[6rem]"
+      width="w-full min-w-[8rem]"
       noChevron
     >
+      <CustomSelect.Option value={null}>
+        <>
+          <span>
+            <PlayIcon className="h-4 w-4 -rotate-90" />
+          </span>
+          None
+        </>
+      </CustomSelect.Option>
       {estimatePoints &&
         estimatePoints.map((point) => (
-          <CustomSelect.Option className="w-full " key={point.key} value={point.key}>
+          <CustomSelect.Option key={point.key} value={point.key}>
             <>
               <span>
                 <PlayIcon className="h-4 w-4 -rotate-90" />

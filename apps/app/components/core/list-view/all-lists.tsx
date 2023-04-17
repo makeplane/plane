@@ -36,7 +36,7 @@ export const AllLists: React.FC<Props> = ({
   return (
     <>
       {groupedByIssues && (
-        <div className="flex flex-col space-y-5 gap-4 bg-white">
+        <div className="flex flex-col space-y-5 bg-white">
           {Object.keys(groupedByIssues).map((singleGroup) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;

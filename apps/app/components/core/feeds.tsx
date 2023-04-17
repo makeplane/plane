@@ -73,6 +73,10 @@ const activityDetails: {
     message: "updated the description.",
     icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
+  estimate_point: {
+    message: "set the estimate point to",
+    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+  },
   target_date: {
     message: "set the due date to",
     icon: <CalendarDaysIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
@@ -136,8 +140,6 @@ export const Feeds: React.FC<any> = ({ activities }) => (
           action = `${activity.verb} the`;
         } else if (activity.field === "link") {
           action = `${activity.verb} the`;
-        } else if (activity.field === "estimate") {
-          action = "updated the";
         }
         // for values that are after the action clause
         let value: any = activity.new_value ? activity.new_value : activity.old_value;
@@ -188,8 +190,10 @@ export const Feeds: React.FC<any> = ({ activities }) => (
           value = "attachment";
         } else if (activity.field === "link") {
           value = "link";
-        } else if (activity.field === "estimate") {
-          value = "estimate";
+        } else if (activity.field === "estimate_point") {
+          value = activity.new_value
+            ? activity.new_value + ` Point${parseInt(activity.new_value ?? "", 10) > 1 ? "s" : ""}`
+            : "None";
         }
 
         if (activity.field === "comment") {

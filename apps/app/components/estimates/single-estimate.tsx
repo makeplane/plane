@@ -152,14 +152,16 @@ export const SingleEstimate: React.FC<Props> = ({
           </CustomMenu>
         </div>
         {estimatePoints && estimatePoints.length > 0 ? (
-          <div className="flex gap-2 text-sm text-gray-400">
-            Estimate points(
-            {estimatePoints.map((point, index) => (
-              <h6 key={point.id}>
-                {point.value}
-                {index !== estimatePoints.length - 1 && ","}{" "}
-              </h6>
-            ))}
+          <div className="flex text-sm text-gray-400">
+            Estimate points (
+            <span className="flex gap-1">
+              {estimatePoints.map((point, index) => (
+                <h6 key={point.id}>
+                  {point.value}
+                  {index !== estimatePoints.length - 1 && ","}{" "}
+                </h6>
+              ))}
+            </span>
             )
           </div>
         ) : (

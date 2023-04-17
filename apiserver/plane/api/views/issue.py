@@ -246,6 +246,20 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
                 .order_by("-created_at")
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
             serializer = IssueLiteSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

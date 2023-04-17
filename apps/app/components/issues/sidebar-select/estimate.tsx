@@ -1,17 +1,17 @@
 import React from "react";
 
+// hooks
+import useEstimateOption from "hooks/use-estimate-option";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { BanknotesIcon, PlayIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/outline";
 // types
 import { UserAuth } from "types";
-import useEstimateOption from "hooks/use-estimate-option";
-// constants
 
 type Props = {
-  value: number;
-  onChange: (val: number) => void;
+  value: number | null;
+  onChange: (val: number | null) => void;
   userAuth: UserAuth;
 };
 
@@ -35,7 +35,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, userAu
             <div className="flex items-center gap-2 text-xs">
               <PlayIcon className="h-4 w-4 text-gray-700 -rotate-90" />
               <span className={`${value ? "text-gray-600" : "text-gray-500"}`}>
-                {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate points"}
+                {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate"}
               </span>
             </div>
           }
@@ -44,9 +44,17 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, userAu
           width="w-full"
           disabled={isNotAllowed}
         >
+          <CustomSelect.Option value={null}>
+            <>
+              <span>
+                <PlayIcon className="h-4 w-4 -rotate-90" />
+              </span>
+              None
+            </>
+          </CustomSelect.Option>
           {estimatePoints &&
             estimatePoints.map((point) => (
-              <CustomSelect.Option className="w-full " key={point.key} value={point.key}>
+              <CustomSelect.Option key={point.key} value={point.key}>
                 <>
                   <span>
                     <PlayIcon className="h-4 w-4 -rotate-90" />

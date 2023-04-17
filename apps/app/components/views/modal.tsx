@@ -21,9 +21,10 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IView | null;
+  preLoadedData?: Partial<IView> | null ;
 };
 
-export const CreateUpdateViewModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export const CreateUpdateViewModal: React.FC<Props> = ({ isOpen, handleClose, data, preLoadedData }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -133,6 +134,7 @@ export const CreateUpdateViewModal: React.FC<Props> = ({ isOpen, handleClose, da
                   handleClose={handleClose}
                   status={data ? true : false}
                   data={data}
+                  preLoadedData={preLoadedData}
                 />
               </Dialog.Panel>
             </Transition.Child>
