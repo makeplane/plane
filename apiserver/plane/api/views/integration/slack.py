@@ -21,6 +21,10 @@ class SlackProjectSyncViewSet(BaseViewSet):
         try:
             serializer = SlackProjectSyncSerializer(data=request.data)
 
+            workspace_integration = WorkspaceIntegration.objects.get(
+                workspace__slug=slug, pk=workspace_integration_id
+            )
+
             if serializer.is_valid():
                 serializer.save(
                     project_id=project_id,
@@ -43,7 +47,7 @@ class SlackProjectSyncViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
