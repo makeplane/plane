@@ -34,7 +34,7 @@ export const ProjectMemberProvider: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId } = router.query;
 
   const { data: memberDetails, error } = useSWR(
-    workspaceSlug && projectId ? USER_PROJECT_VIEW(workspaceSlug.toString()) : null,
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null,
