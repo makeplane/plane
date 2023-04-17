@@ -72,20 +72,24 @@ const MyIssuesPage: NextPage = () => {
                         <div className="relative flex flex-col gap-1">
                           <h4 className="text-base text-gray-600">Properties</h4>
                           <div className="flex flex-wrap items-center gap-2">
-                            {Object.keys(properties).map((key) => (
-                              <button
-                                key={key}
-                                type="button"
-                                className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
-                                  properties[key as keyof Properties]
-                                    ? "border-theme bg-theme text-white"
-                                    : ""
-                                }`}
-                                onClick={() => setProperties(key as keyof Properties)}
-                              >
-                                {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                              </button>
-                            ))}
+                            {Object.keys(properties).map((key) => {
+                              if (key === "estimate") return null;
+
+                              return (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
+                                    properties[key as keyof Properties]
+                                      ? "border-theme bg-theme text-white"
+                                      : ""
+                                  }`}
+                                  onClick={() => setProperties(key as keyof Properties)}
+                                >
+                                  {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
