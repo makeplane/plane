@@ -119,10 +119,9 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete state- {" "}
-                          <span className="italic">{data?.name}</span>
-                          ? All of the data related to the state will be permanently removed.
-                          This action cannot be undone.
+                          Are you sure you want to delete state-{" "}
+                          <span className="italic">{data?.name}</span>? All of the data related to
+                          the state will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
                       <div className="mt-2">
@@ -140,7 +139,8 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
                   <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                   <DangerButton
                     onClick={handleDeletion}
-                    loading={isDeleteLoading || issuesWithThisStateExist}
+                    disabled={issuesWithThisStateExist}
+                    loading={isDeleteLoading}
                   >
                     {isDeleteLoading ? "Deleting..." : "Delete"}
                   </DangerButton>
