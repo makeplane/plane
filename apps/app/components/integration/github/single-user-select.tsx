@@ -4,21 +4,20 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // ui
 import { Avatar, CustomSearchSelect, CustomSelect, Input } from "components/ui";
 // types
 import { IGithubRepoCollaborator } from "types";
 import { IUserDetails } from "./root";
 // fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   collaborator: IGithubRepoCollaborator;
   index: number;
   users: IUserDetails[];
   setUsers: React.Dispatch<React.SetStateAction<IUserDetails[]>>;
-  project: string | null;
 };
 
 const importOptions = [
@@ -36,21 +35,13 @@ const importOptions = [
   },
 ];
 
-export const SingleUserSelect: React.FC<Props> = ({
-  collaborator,
-  index,
-  users,
-  setUsers,
-  project,
-}) => {
+export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, setUsers }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { data: members } = useSWR(
-    workspaceSlug && project ? PROJECT_MEMBERS(project) : null,
-    workspaceSlug && project
-      ? () => projectService.projectMembers(workspaceSlug as string, project)
-      : null
+    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug.toString()) : null
   );
 
   const options =
