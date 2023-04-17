@@ -82,8 +82,8 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="border-b border-gray-300 last:border-b-0">
-      <div key={issue.id} className="flex items-center justify-between gap-2 px-4 py-3">
+    <div className="border-b border-gray-300 last:border-b-0 mx-6">
+      <div key={issue.id} className="flex items-center justify-between gap-2 py-3">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties?.key && (

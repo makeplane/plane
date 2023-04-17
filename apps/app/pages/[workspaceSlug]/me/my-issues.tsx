@@ -43,6 +43,7 @@ const MyIssuesPage: NextPage = () => {
           <BreadcrumbItem title="My Issues" />
         </Breadcrumbs>
       }
+      noPadding
       right={
         <div className="flex items-center gap-2">
           {myIssues && myIssues.length > 0 && (
@@ -119,10 +120,10 @@ const MyIssuesPage: NextPage = () => {
               <div className="flex flex-col space-y-5">
                 <Disclosure as="div" defaultOpen>
                   {({ open }) => (
-                    <div className="rounded-[10px] border border-gray-300 bg-white">
+                    <div className="bg-white">
                       <div
                         className={`flex items-center justify-start bg-gray-100 px-5 py-3 ${
-                          open ? "rounded-t-[10px]" : "rounded-[10px]"
+                          open ? "" : "rounded-[10px]"
                         }`}
                       >
                         <Disclosure.Button>
