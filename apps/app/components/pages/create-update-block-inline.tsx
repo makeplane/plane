@@ -168,7 +168,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           });
         else {
           setValue("description", {});
-          setValue("description_html", `${watch("description_html")}<p>${res.response}</p>`);
+          setValue("description_html", `${watch("description_html") ?? ""}<p>${res.response}</p>`);
         }
       })
       .catch((err) => {
