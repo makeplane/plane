@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-
 import { useForm } from "react-hook-form";
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
@@ -16,6 +15,7 @@ type Props = {
   handleClose: () => void;
   status: boolean;
   data?: IView | null;
+  preLoadedData?: Partial<IView> | null;
 };
 
 const defaultValues: Partial<IView> = {
@@ -23,7 +23,13 @@ const defaultValues: Partial<IView> = {
   description: "",
 };
 
-export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+export const ViewForm: React.FC<Props> = ({
+  handleFormSubmit,
+  handleClose,
+  status,
+  data,
+  preLoadedData,
+}) => {
   const {
     register,
     formState: { errors, isSubmitting },
@@ -47,9 +53,10 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
   useEffect(() => {
     reset({
       ...defaultValues,
+      ...preLoadedData,
       ...data,
     });
-  }, [data, reset]);
+  }, [data, preLoadedData, reset]);
 
   useEffect(() => {
     if (status && data) {

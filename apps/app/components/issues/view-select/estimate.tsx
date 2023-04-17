@@ -1,17 +1,17 @@
 import React from "react";
 
+import { useRouter } from "next/router";
+
+// services
+import trackEventServices from "services/track-event.service";
+// hooks
+import useEstimateOption from "hooks/use-estimate-option";
 // ui
 import { CustomSelect, Tooltip } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons/priority-icon";
+import { PlayIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
-// constants
-import { PRIORITIES } from "constants/project";
-// services
-import trackEventServices from "services/track-event.service";
-import useEstimateOption from "hooks/use-estimate-option";
-import { PlayIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   issue: IIssue;
@@ -28,6 +28,9 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   selfPositioned = false,
   isNotAllowed,
 }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { isEstimateActive, estimatePoints } = useEstimateOption(issue.estimate_point);
 
   const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
@@ -41,8 +44,8 @@ export const ViewEstimateSelect: React.FC<Props> = ({
         partialUpdateIssue({ estimate_point: val });
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
-            workspaceSlug: issue.workspace_detail.slug,
-            workspaceId: issue.workspace_detail.id,
+            workspaceSlug,
+            workspaceId: issue.workspace,
             projectId: issue.project_detail.id,
             projectIdentifier: issue.project_detail.identifier,
             projectName: issue.project_detail.name,
@@ -55,7 +58,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
         <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue}>
           <div className="flex items-center gap-1 text-gray-500">
             <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
-            {estimateValue}
+            {estimateValue ?? "Estimate"}
           </div>
         </Tooltip>
       }
@@ -64,11 +67,24 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       disabled={isNotAllowed}
       position={position}
       selfPositioned={selfPositioned}
-      width="w-full min-w-[6rem]"
+      width="w-full min-w-[8rem]"
     >
+      <CustomSelect.Option value={null}>
+        <>
+          <span>
+            <PlayIcon className="h-4 w-4 -rotate-90" />
+          </span>
+          None
+        </>
+      </CustomSelect.Option>
       {estimatePoints?.map((estimate) => (
-        <CustomSelect.Option key={estimate.id} value={estimate.key} className="capitalize">
-          <>{estimate.value}</>
+        <CustomSelect.Option key={estimate.id} value={estimate.key}>
+          <>
+            <span>
+              <PlayIcon className="h-4 w-4 -rotate-90" />
+            </span>
+            {estimate.value}
+          </>
         </CustomSelect.Option>
       ))}
     </CustomSelect>

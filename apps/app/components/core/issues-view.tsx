@@ -234,7 +234,7 @@ export const IssuesView: React.FC<Props> = ({
             )
               trackEventServices.trackIssueMarkedAsDoneEvent({
                 workspaceSlug,
-                workspaceId: draggedItem.workspace_detail.id,
+                workspaceId: draggedItem.workspace,
                 projectName: draggedItem.project_detail.name,
                 projectIdentifier: draggedItem.project_detail.identifier,
                 projectId,
@@ -359,12 +359,15 @@ export const IssuesView: React.FC<Props> = ({
     (key) => filters[key as keyof IIssueFilterOptions] === null
   );
 
+  const areFiltersApplied =
+    Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length;
+
   return (
     <>
       <CreateUpdateViewModal
         isOpen={createViewModal !== null}
         handleClose={() => setCreateViewModal(null)}
-        data={createViewModal}
+        preLoadedData={createViewModal}
       />
       <CreateUpdateIssueModal
         isOpen={createIssueModal && preloadedData?.actionType === "createIssue"}
@@ -388,11 +391,15 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setTransferIssuesModal(false)}
         isOpen={transferIssuesModal}
       />
-      <div>
-        <div className="flex items-center justify-between gap-2">
-          <FilterList filters={filters} setFilters={setFilters} />
-          {Object.keys(filters).length > 0 &&
-            nullFilters.length !== Object.keys(filters).length && (
+      {issueView !== "calendar" && (
+        <>
+          <div
+            className={`flex items-center justify-between gap-2 ${
+              issueView === "list" && areFiltersApplied ? "px-8 mt-6" : "-mt-2"
+            }`}
+          >
+            <FilterList filters={filters} setFilters={setFilters} />
+            {areFiltersApplied && (
               <PrimaryButton
                 onClick={() => {
                   if (viewId) {
@@ -413,20 +420,19 @@ export const IssuesView: React.FC<Props> = ({
                 {viewId ? "Update" : "Save"} view
               </PrimaryButton>
             )}
-        </div>
-      </div>
-
-      {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
-        <div className="mb-5 border-t" />
+          </div>
+          {areFiltersApplied && (
+            <div className={` ${issueView === "list" ? "mt-4" : "my-4"} border-t`} />
+          )}
+        </>
       )}
-
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">
           {(provided, snapshot) => (
             <div
               className={`${
                 trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-              } fixed top-9 right-9 z-20 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
+              } fixed top-9 right-9 z-30 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
                 snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
               } duration-200`}
               ref={provided.innerRef}
@@ -434,7 +440,6 @@ export const IssuesView: React.FC<Props> = ({
             >
               <TrashIcon className="h-4 w-4" />
               Drop issue here to delete
-              {provided.placeholder}
             </div>
           )}
         </StrictModeDroppable>

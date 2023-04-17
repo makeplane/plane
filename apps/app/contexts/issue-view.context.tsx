@@ -439,12 +439,11 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       payload: {
         ...myViewProps?.view_props,
         filters: {
-          ...myViewProps?.view_props?.filters,
-          ...viewDetails?.query_data,
+          ...(viewId ? viewDetails?.query_data : myViewProps?.view_props?.filters),
         } as any,
       },
     });
-  }, [myViewProps, viewDetails]);
+  }, [myViewProps, viewDetails, viewId]);
 
   return (
     <issueViewContext.Provider
