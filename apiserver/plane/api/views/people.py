@@ -47,7 +47,7 @@ class UserEndpoint(BaseViewSet):
                 "fallback_workspace_slug": workspace.slug,
                 "invites": workspace_invites,
             }
-            serialized_data["issues"]["assigned_issues"] = assigned_issues
+            serialized_data.setdefault("issues", {})["assigned_issues"] = assigned_issues
 
             return Response(
                 serialized_data,
@@ -63,7 +63,7 @@ class UserEndpoint(BaseViewSet):
 
             fallback_workspace = Workspace.objects.filter(
                 workspace_member__member=request.user
-            ).first()
+            ).order_by("created_at").first()
 
             serialized_data = UserSerializer(request.user).data
 
@@ -73,18 +73,19 @@ class UserEndpoint(BaseViewSet):
                 "fallback_workspace_id": fallback_workspace.id
                 if fallback_workspace is not None
                 else None,
-                "fallback_workspace_slug": fallback_workspace.id
+                "fallback_workspace_slug": fallback_workspace.slug
                 if fallback_workspace is not None
                 else None,
                 "invites": workspace_invites,
             }
-            serialized_data["issues"]["assigned_issues"] = assigned_issues
+            serialized_data.setdefault("issues", {})["assigned_issues"] = assigned_issues
 
             return Response(
                 serialized_data,
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
