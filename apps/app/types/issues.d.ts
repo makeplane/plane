@@ -87,7 +87,7 @@ export interface IIssue {
   description: any;
   description_html: any;
   description_stripped: any;
-  estimate_point: number;
+  estimate_point: number | null;
   id: string;
   issue_cycle: IIssueCycle | null;
   issue_link: {

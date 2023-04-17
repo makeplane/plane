@@ -34,6 +34,7 @@ const defaultValues = {
   name: "",
   description: "",
   description_html: "",
+  estimate_point: null,
   state: "",
   assignees_list: [],
   priority: "low",
