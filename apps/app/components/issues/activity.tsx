@@ -157,10 +157,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
         issueId as string,
         commentId
       )
-      .then((response) => {
-        mutateIssueActivities();
-        console.log(response);
-      });
+      .then(() => mutateIssueActivities());
   };
 
   const getLabelColor = (labelId: string) => {

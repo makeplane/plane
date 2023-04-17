@@ -94,11 +94,8 @@ const SingleModule: React.FC = () => {
 
     await modulesService
       .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-      .then((res) => {
-        console.log(res);
-        mutate(MODULE_ISSUES(moduleId as string));
-      })
-      .catch((e) =>
+      .then(() => mutate(MODULE_ISSUES(moduleId as string)))
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",

@@ -315,9 +315,6 @@ export const IssuesView: React.FC<Props> = ({
           cycleId as string,
           bridgeId
         )
-        .then((res) => {
-          console.log(res);
-        })
         .catch((e) => {
           console.log(e);
         });
@@ -338,9 +335,6 @@ export const IssuesView: React.FC<Props> = ({
           moduleId as string,
           bridgeId
         )
-        .then((res) => {
-          console.log(res);
-        })
         .catch((e) => {
           console.log(e);
         });

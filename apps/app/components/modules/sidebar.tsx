@@ -87,13 +87,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
 
     modulesService
       .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-      .then((res) => {
-        console.log(res);
-        mutate(MODULE_DETAILS(moduleId as string));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      .then(() => mutate(MODULE_DETAILS(moduleId as string)))
+      .catch((e) => console.log(e));
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
