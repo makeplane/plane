@@ -32,7 +32,8 @@ type Props = {
 
 const defaultValues = {
   name: "",
-  description: "<p></p>",
+  description: { type: "doc", content: [] },
+  description_html: "<p></p>",
 };
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
