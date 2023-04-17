@@ -1,5 +1,5 @@
 // All the app integrations that are available
-export interface IAppIntegrations {
+export interface IAppIntegration {
   author: string;
   author: "";
   avatar_url: string | null;
@@ -19,7 +19,7 @@ export interface IAppIntegrations {
   webhook_url: string;
 }
 
-export interface IWorkspaceIntegrations {
+export interface IWorkspaceIntegration {
   actor: string;
   api_token: string;
   config: any;

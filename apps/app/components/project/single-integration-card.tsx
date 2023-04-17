@@ -14,12 +14,12 @@ import { SelectRepository } from "components/integration";
 // icons
 import GithubLogo from "public/logos/github-square.png";
 // types
-import { IWorkspaceIntegrations } from "types";
+import { IWorkspaceIntegration } from "types";
 // fetch-keys
 import { PROJECT_GITHUB_REPOSITORY } from "constants/fetch-keys";
 
 type Props = {
-  integration: IWorkspaceIntegrations;
+  integration: IWorkspaceIntegration;
 };
 
 export const SingleIntegration: React.FC<Props> = ({ integration }) => {

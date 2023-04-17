@@ -10,7 +10,7 @@ import IntegrationService from "services/integration";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
-import OAuthPopUp from "components/popup";
+import { SingleIntegrationCard } from "components/integration";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -49,11 +49,7 @@ const WorkspaceIntegrations: NextPage = () => {
         <div className="space-y-5">
           {appIntegrations ? (
             appIntegrations.map((integration) => (
-              <OAuthPopUp
-                key={integration.id}
-                workspaceSlug={workspaceSlug}
-                integration={integration}
-              />
+              <SingleIntegrationCard key={integration.id} integration={integration} />
             ))
           ) : (
             <Loader className="space-y-5">
