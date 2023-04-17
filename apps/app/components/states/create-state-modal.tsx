@@ -12,6 +12,8 @@ import { TwitterPicker } from "react-color";
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
 import stateService from "services/state.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // icons
@@ -41,6 +43,8 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { setToastAlert } = useToast();
+
   const {
     register,
     formState: { errors, isSubmitting },
@@ -48,7 +52,6 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
     watch,
     control,
     reset,
-    setError,
   } = useForm<IState>({
     defaultValues,
   });
@@ -67,16 +70,23 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
 
     await stateService
       .createState(workspaceSlug as string, projectId, payload)
-      .then((res) => {
+      .then(() => {
         mutate(STATE_LIST(projectId));
         onClose();
       })
       .catch((err) => {
-        Object.keys(err).map((key) => {
-          setError(key as keyof IState, {
-            message: err[key].join(", "),
+        if (err.status === 400)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Another state exists with the same name. Please try again with another name.",
           });
-        });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "State could not be created. Please try again.",
+          });
       });
   };
 
