@@ -388,36 +388,33 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setTransferIssuesModal(false)}
         isOpen={transferIssuesModal}
       />
-      <div>
-        <div className="flex items-center justify-between gap-2">
-          <FilterList filters={filters} setFilters={setFilters} />
-          {Object.keys(filters).length > 0 &&
-            nullFilters.length !== Object.keys(filters).length && (
-              <PrimaryButton
-                onClick={() => {
-                  if (viewId) {
-                    setFilters({}, true);
-                    setToastAlert({
-                      title: "View updated",
-                      message: "Your view has been updated",
-                      type: "success",
-                    });
-                  } else
-                    setCreateViewModal({
-                      query: filters,
-                    });
-                }}
-                className="flex items-center gap-2 text-sm"
-              >
-                {!viewId && <PlusIcon className="h-4 w-4" />}
-                {viewId ? "Update" : "Save"} view
-              </PrimaryButton>
-            )}
-        </div>
+      <div className="flex items-center justify-between gap-2 -mt-2">
+        <FilterList filters={filters} setFilters={setFilters} />
+        {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
+          <PrimaryButton
+            onClick={() => {
+              if (viewId) {
+                setFilters({}, true);
+                setToastAlert({
+                  title: "View updated",
+                  message: "Your view has been updated",
+                  type: "success",
+                });
+              } else
+                setCreateViewModal({
+                  query: filters,
+                });
+            }}
+            className="flex items-center gap-2 text-sm"
+          >
+            {!viewId && <PlusIcon className="h-4 w-4" />}
+            {viewId ? "Update" : "Save"} view
+          </PrimaryButton>
+        )}
       </div>
 
       {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
-        <div className="mb-5 border-t" />
+        <div className="my-4 border-t" />
       )}
 
       <DragDropContext onDragEnd={handleOnDragEnd}>

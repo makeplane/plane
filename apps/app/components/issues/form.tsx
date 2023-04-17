@@ -48,7 +48,7 @@ const defaultValues: Partial<IIssue> = {
   name: "",
   description: "",
   description_html: "<p></p>",
-  estimate_point: 0,
+  estimate_point: null,
   state: "",
   cycle: null,
   priority: null,

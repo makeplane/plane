@@ -13,7 +13,7 @@ import { orderArrayBy } from "helpers/array.helper";
 // fetch-keys
 import { ESTIMATE_POINTS_LIST } from "constants/fetch-keys";
 
-const useEstimateOption = (estimateKey?: number) => {
+const useEstimateOption = (estimateKey?: number | null) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
