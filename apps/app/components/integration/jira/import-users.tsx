@@ -3,17 +3,11 @@ import { FC } from "react";
 // next
 import { useRouter } from "next/router";
 
-// swr
-import useSWR from "swr";
-
 // react-hook-form
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 
-// services
-import projectService from "services/project.service";
-
-// fetch keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// hooks
+import useWorkspaceMembers from "hooks/use-workspace-members";
 
 // components
 import { ToggleSwitch, Input, CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
@@ -36,14 +30,7 @@ export const JiraImportUsers: FC = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const project = watch("project_id");
-
-  const { data: members } = useSWR(
-    workspaceSlug && project ? PROJECT_MEMBERS(project) : null,
-    workspaceSlug && project
-      ? () => projectService.projectMembers(workspaceSlug.toString(), project)
-      : null
-  );
+  const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString());
 
   const options =
     members?.map((member) => ({
@@ -58,7 +45,7 @@ export const JiraImportUsers: FC = () => {
         <div className="flex items-center gap-2">
           <Avatar user={member.member} />
           {member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name + "(" + member.member.email + ")"
+            ? member.member.first_name + " (" + member.member.email + ")"
             : member.member.email}
         </div>
       ),
