@@ -423,7 +423,7 @@ export const IssuesView: React.FC<Props> = ({
             <div
               className={`${
                 trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-              } fixed top-9 right-9 z-20 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
+              } fixed top-9 right-9 z-30 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
                 snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
               } duration-200`}
               ref={provided.innerRef}
@@ -431,7 +431,6 @@ export const IssuesView: React.FC<Props> = ({
             >
               <TrashIcon className="h-4 w-4" />
               Drop issue here to delete
-              {provided.placeholder}
             </div>
           )}
         </StrictModeDroppable>
