@@ -61,10 +61,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
       .patchIssueLabel(workspaceSlug as string, projectId as string, label.id, {
         parent: parent?.id ?? "",
       })
-      .then((res) => {
-        console.log(res);
-        mutate();
-      });
+      .then(() => mutate());
   };
 
   return (

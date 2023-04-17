@@ -92,13 +92,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
     cyclesService
       .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
-      .then((res) => {
-        console.log(res);
-        mutate(CYCLE_DETAILS(cycleId as string));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
+      .catch((e) => console.log(e));
   };
 
   const handleCopyText = () => {

@@ -58,7 +58,6 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
         url: html_url,
       })
       .then((res) => {
-        console.log(res);
         mutate(PROJECT_GITHUB_REPOSITORY(projectId as string));
 
         setToastAlert({

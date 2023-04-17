@@ -51,11 +51,7 @@ export const CustomFloatingToolbar: React.FC<Props> = ({ gptOption, editorState 
       </div>
       {gptOption && (
         <div className="flex items-center gap-x-1 px-2">
-          <button
-            type="button"
-            className="rounded py-1 px-1.5 text-xs hover:bg-gray-100"
-            onClick={() => console.log(editorState.selection.$anchor.nodeBefore)}
-          >
+          <button type="button" className="rounded py-1 px-1.5 text-xs hover:bg-gray-100">
             AI
           </button>
         </div>

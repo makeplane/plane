@@ -78,8 +78,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
         labelToUpdate?.id ?? "",
         formData
       )
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         reset(defaultValues);
         mutate<IIssueLabels[]>(
           PROJECT_ISSUE_LABELS(projectId as string),
