@@ -106,7 +106,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
             } items-center gap-2 text-gray-500`}
           >
             {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 -my-0.5">
                 <AssigneesList userIds={issue.assignees} length={3} showLength={false} />
                 <span className="text-gray-500">{issue.assignees.length} Assignees</span>
               </div>

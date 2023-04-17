@@ -34,7 +34,7 @@ export const CustomDatePicker: React.FC<Props> = ({
       if (!val) onChange(null);
       else onChange(renderDateFormat(val));
     }}
-    className={`${className} ${
+    className={`${
       renderAs === "input"
         ? "block border-gray-300 bg-transparent px-3 py-2 text-sm focus:outline-none"
         : renderAs === "button"
@@ -44,7 +44,7 @@ export const CustomDatePicker: React.FC<Props> = ({
         : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${
       disabled ? "cursor-not-allowed" : "cursor-pointer"
-    } w-full rounded-md border bg-transparent caret-transparent`}
+    } w-full rounded-md border bg-transparent caret-transparent ${className}`}
     dateFormat="dd-MM-yyyy"
     isClearable={isClearable}
     disabled={disabled}

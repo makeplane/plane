@@ -216,149 +216,147 @@ export const SingleListIssue: React.FC<Props> = ({
           </ContextMenu.Item>
         </a>
       </ContextMenu>
-      <div className="border-b mx-6 border-gray-300 last:border-b-0">
-        <div
-          className="flex items-center justify-between gap-2  py-3"
-          onContextMenu={(e) => {
-            e.preventDefault();
-            setContextMenu(true);
-            setContextMenuPosition({ x: e.pageX, y: e.pageY });
-          }}
-        >
-          <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
-            <a className="group relative flex items-center gap-2">
-              {properties.key && (
-                <Tooltip
-                  tooltipHeading="Issue ID"
-                  tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
-                >
-                  <span className="flex-shrink-0 text-xs text-gray-400">
-                    {issue.project_detail?.identifier}-{issue.sequence_id}
-                  </span>
-                </Tooltip>
-              )}
-              <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                <span className="text-sm text-gray-800">{truncateText(issue.name, 50)}</span>
+      <div
+        className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-gray-300 last:border-b-0"
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setContextMenu(true);
+          setContextMenuPosition({ x: e.pageX, y: e.pageY });
+        }}
+      >
+        <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
+          <a className="group relative flex items-center gap-2">
+            {properties.key && (
+              <Tooltip
+                tooltipHeading="Issue ID"
+                tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+              >
+                <span className="flex-shrink-0 text-xs text-gray-400">
+                  {issue.project_detail?.identifier}-{issue.sequence_id}
+                </span>
               </Tooltip>
-            </a>
-          </Link>
+            )}
+            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+              <span className="text-[0.825rem] text-gray-800">{truncateText(issue.name, 50)}</span>
+            </Tooltip>
+          </a>
+        </Link>
 
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            {properties.priority && (
-              <ViewPrioritySelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="right"
-                isNotAllowed={isNotAllowed}
-              />
-            )}
-            {properties.state && (
-              <ViewStateSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="right"
-                isNotAllowed={isNotAllowed}
-              />
-            )}
-            {properties.due_date && (
-              <ViewDueDateSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                isNotAllowed={isNotAllowed}
-              />
-            )}
-            {properties.sub_issue_count && (
-              <div className="flex  items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
-                {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-              </div>
-            )}
-            {properties.labels && issue.label_details.length > 0 ? (
-              <div className="flex flex-wrap gap-1">
-                {issue.label_details.map((label) => (
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {properties.priority && (
+            <ViewPrioritySelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              position="right"
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.state && (
+            <ViewStateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              position="right"
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.due_date && (
+            <ViewDueDateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.sub_issue_count && (
+            <div className="flex  items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
+              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
+            </div>
+          )}
+          {properties.labels && issue.label_details.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {issue.label_details.map((label) => (
+                <span
+                  key={label.id}
+                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                >
                   <span
-                    key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
-                  >
-                    <span
-                      className="h-1.5 w-1.5  rounded-full"
-                      style={{
-                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                      }}
-                    />
-                    {label.name}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              ""
-            )}
-            {properties.assignee && (
-              <ViewAssigneeSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="right"
-                isNotAllowed={isNotAllowed}
-              />
-            )}
-            {properties.estimate && (
-              <ViewEstimateSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="right"
-                isNotAllowed={isNotAllowed}
-              />
-            )}
-            {properties.link && (
-              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
-                <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
-                  <div className="flex items-center gap-1 text-gray-500">
-                    <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
-                    {issue.link_count}
-                  </div>
-                </Tooltip>
-              </div>
-            )}
-            {properties.attachment_count && (
-              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
-                <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
-                  <div className="flex items-center gap-1 text-gray-500">
-                    <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
-                    {issue.attachment_count}
-                  </div>
-                </Tooltip>
-              </div>
-            )}
-            {type && !isNotAllowed && (
-              <CustomMenu width="auto" ellipsis>
-                <CustomMenu.MenuItem onClick={editIssue}>
+                    className="h-1.5 w-1.5  rounded-full"
+                    style={{
+                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                    }}
+                  />
+                  {label.name}
+                </span>
+              ))}
+            </div>
+          ) : (
+            ""
+          )}
+          {properties.assignee && (
+            <ViewAssigneeSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              position="right"
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.estimate && (
+            <ViewEstimateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              position="right"
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.link && (
+            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+              <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
+                  {issue.link_count}
+                </div>
+              </Tooltip>
+            </div>
+          )}
+          {properties.attachment_count && (
+            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+              <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                  {issue.attachment_count}
+                </div>
+              </Tooltip>
+            </div>
+          )}
+          {type && !isNotAllowed && (
+            <CustomMenu width="auto" ellipsis>
+              <CustomMenu.MenuItem onClick={editIssue}>
+                <div className="flex items-center justify-start gap-2">
+                  <PencilIcon className="h-4 w-4" />
+                  <span>Edit issue</span>
+                </div>
+              </CustomMenu.MenuItem>
+              {type !== "issue" && removeIssue && (
+                <CustomMenu.MenuItem onClick={removeIssue}>
                   <div className="flex items-center justify-start gap-2">
-                    <PencilIcon className="h-4 w-4" />
-                    <span>Edit issue</span>
+                    <XMarkIcon className="h-4 w-4" />
+                    <span>Remove from {type}</span>
                   </div>
                 </CustomMenu.MenuItem>
-                {type !== "issue" && removeIssue && (
-                  <CustomMenu.MenuItem onClick={removeIssue}>
-                    <div className="flex items-center justify-start gap-2">
-                      <XMarkIcon className="h-4 w-4" />
-                      <span>Remove from {type}</span>
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-                <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                  <div className="flex items-center justify-start gap-2">
-                    <TrashIcon className="h-4 w-4" />
-                    <span>Delete issue</span>
-                  </div>
-                </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleCopyText}>
-                  <div className="flex items-center justify-start gap-2">
-                    <LinkIcon className="h-4 w-4" />
-                    <span>Copy issue link</span>
-                  </div>
-                </CustomMenu.MenuItem>
-              </CustomMenu>
-            )}
-          </div>
+              )}
+              <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                <div className="flex items-center justify-start gap-2">
+                  <TrashIcon className="h-4 w-4" />
+                  <span>Delete issue</span>
+                </div>
+              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={handleCopyText}>
+                <div className="flex items-center justify-start gap-2">
+                  <LinkIcon className="h-4 w-4" />
+                  <span>Copy issue link</span>
+                </div>
+              </CustomMenu.MenuItem>
+            </CustomMenu>
+          )}
         </div>
       </div>
     </>
