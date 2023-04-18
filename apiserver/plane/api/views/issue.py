@@ -599,6 +599,13 @@ class SubIssuesEndpoint(BaseAPIView):
                 .annotate(state_count=Count("state_group"))
                 .order_by("state_group")
             )
+            
+            result = {}
+            for item in state_distribution:
+                state_group = item['state_group']
+                count = item['state_count']
+                result.setdefault(state_group, count)
+
 
             serializer = IssueLiteSerializer(
                 sub_issues,
@@ -607,7 +614,7 @@ class SubIssuesEndpoint(BaseAPIView):
             return Response(
                 {
                     "sub_issues": serializer.data,
-                    "state_distribution": state_distribution,
+                    "state_distribution": result,
                 },
                 status=status.HTTP_200_OK,
             )
