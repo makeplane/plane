@@ -31,7 +31,7 @@ export const JoinProject: React.FC = () => {
         project_ids: [projectId as string],
       })
       .then(async () => {
-        await mutate(USER_PROJECT_VIEW(workspaceSlug.toString()));
+        await mutate(USER_PROJECT_VIEW(projectId.toString()));
         setIsJoiningProject(false);
       })
       .catch((err) => {
