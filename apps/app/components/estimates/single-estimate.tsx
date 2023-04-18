@@ -21,11 +21,12 @@ import {
   SquaresPlusIcon,
   ListBulletIcon,
 } from "@heroicons/react/24/outline";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IEstimate, IProject } from "types";
+import { IEstimate } from "types";
 // fetch-keys
 import { ESTIMATE_POINTS_LIST } from "constants/fetch-keys";
-import { orderArrayBy } from "helpers/array.helper";
 
 type Props = {
   estimate: IEstimate;
@@ -40,7 +41,6 @@ export const SingleEstimate: React.FC<Props> = ({
 }) => {
   const [isEstimatePointsModalOpen, setIsEstimatePointsModalOpen] = useState(false);
   const [isDeleteEstimateModalOpen, setIsDeleteEstimateModalOpen] = useState(false);
-
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
