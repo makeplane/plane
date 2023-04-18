@@ -16,6 +16,7 @@ class Cycle(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="owned_by_cycle",
     )
+    view_props = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Cycle"
