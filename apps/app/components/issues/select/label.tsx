@@ -72,10 +72,10 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
               <span className="flex items-center justify-center gap-2 px-3 py-1 text-xs">
                 <IssueLabelsList
                   labels={value.map((v) => issueLabels?.find((l) => l.id === v)?.color) ?? []}
-                  length={3}
-                  showLength
+                  length={value.length}
+                  showLength={false}
                 />
-                <span className=" text-gray-600">{value.length} Labels</span>
+                <span className=" text-gray-600">Labels</span>
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2 px-3  py-1.5 text-xs">
