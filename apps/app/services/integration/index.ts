@@ -1,6 +1,6 @@
 import APIService from "services/api.service";
 // types
-import { IAppIntegrations, IImporterService, IWorkspaceIntegrations } from "types";
+import { IAppIntegration, IImporterService, IWorkspaceIntegration } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -9,7 +9,7 @@ class IntegrationService extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async getAppIntegrationsList(): Promise<IAppIntegrations[]> {
+  async getAppIntegrationsList(): Promise<IAppIntegration[]> {
     return this.get(`/api/integrations/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -17,7 +17,7 @@ class IntegrationService extends APIService {
       });
   }
 
-  async getWorkspaceIntegrationsList(workspaceSlug: string): Promise<IWorkspaceIntegrations[]> {
+  async getWorkspaceIntegrationsList(workspaceSlug: string): Promise<IWorkspaceIntegration[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/workspace-integrations/`)
       .then((response) => response?.data)
       .catch((error) => {
