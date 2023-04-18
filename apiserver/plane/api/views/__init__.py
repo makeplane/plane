@@ -138,3 +138,6 @@ from .estimate import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
 )
+
+
+from .release import ReleaseNotesEndpoint

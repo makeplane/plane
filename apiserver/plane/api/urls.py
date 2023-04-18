@@ -146,6 +146,9 @@ from plane.api.views import (
     # Gpt
     GPTIntegrationEndpoint,
     ## End Gpt
+    # Release Notes
+    ReleaseNotesEndpoint,
+    ## End Release Notes
 )
 
 
@@ -1284,4 +1287,11 @@ urlpatterns = [
         name="importer",
     ),
     ## End Gpt
+    # Release Notes
+    path(
+        "release-notes/",
+        ReleaseNotesEndpoint.as_view(),
+        name="release-notes",
+    ),
+    ## End Release Notes
 ]
