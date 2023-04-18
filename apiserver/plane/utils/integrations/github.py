@@ -128,3 +128,8 @@ def get_github_repo_details(access_tokens_url, owner, repo):
     ).json()
 
     return open_issues, total_labels, collaborators
+
+
+def get_release_notes():
+    url = "https://api.github.com/repos/makeplane/plane/releases"
+    
