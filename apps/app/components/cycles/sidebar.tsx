@@ -60,6 +60,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
+  const [isDateValid, setIsDateValid] = useState(false);
+
   const defaultValues: Partial<ICycle> = {
     start_date: new Date().toString(),
     end_date: new Date().toString(),
@@ -112,6 +114,27 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
           type: "error",
           title: "Some error occurred",
         });
+      });
+  };
+
+  const dateChecker = async (payload: any) => {
+    await cyclesService
+      .cycleDateCheck(workspaceSlug as string, projectId as string, payload)
+      .then((res) => {
+        if (res.status) {
+          setIsDateValid(true);
+        } else {
+          setIsDateValid(false);
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -179,13 +202,19 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                   : new Date()
                               }
                               onChange={(date) => {
-                                if (date && watch("end_date")) {
+                                if (watch("end_date")) {
                                   if (
                                     isDateRangeValid(renderDateFormat(date), `${watch("end_date")}`)
                                   ) {
-                                    submitChanges({
-                                      start_date: renderDateFormat(date),
-                                    });
+                                    cycleStatus != "current" &&
+                                      dateChecker({
+                                        start_date: renderDateFormat(date),
+                                        end_date: watch("end_date"),
+                                      });
+                                    isDateValid &&
+                                      submitChanges({
+                                        start_date: renderDateFormat(date),
+                                      });
                                   } else {
                                     setToastAlert({
                                       type: "error",
@@ -194,6 +223,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                         "The date you have entered is invalid. Please check and enter a valid date.",
                                     });
                                   }
+                                } else {
+                                  submitChanges({
+                                    start_date: renderDateFormat(date),
+                                  });
                                 }
                               }}
                               selectsStart
@@ -240,16 +273,22 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 watch("end_date") ? new Date(`${watch("end_date")}`) : new Date()
                               }
                               onChange={(date) => {
-                                if (watch("start_date") && date) {
+                                if (watch("start_date")) {
                                   if (
                                     isDateRangeValid(
                                       `${watch("start_date")}`,
                                       renderDateFormat(date)
                                     )
                                   ) {
-                                    submitChanges({
-                                      end_date: renderDateFormat(date),
-                                    });
+                                    cycleStatus != "current" &&
+                                      dateChecker({
+                                        start_date: watch("start_date"),
+                                        end_date: renderDateFormat(date),
+                                      });
+                                    isDateValid &&
+                                      submitChanges({
+                                        end_date: renderDateFormat(date),
+                                      });
                                   } else {
                                     setToastAlert({
                                       type: "error",
@@ -258,6 +297,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                         "The date you have entered is invalid. Please check and enter a valid date.",
                                     });
                                   }
+                                } else {
+                                  submitChanges({
+                                    end_date: renderDateFormat(date),
+                                  });
                                 }
                               }}
                               selectsEnd
