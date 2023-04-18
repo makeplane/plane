@@ -1,10 +1,10 @@
 # Python imports
 import json
 import random
-from itertools import groupby, chain
+from itertools import chain
 
 # Django imports
-from django.db.models import Prefetch, OuterRef, Func, F, Q
+from django.db.models import Prefetch, OuterRef, Func, F, Q, Count
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -590,10 +590,29 @@ class SubIssuesEndpoint(BaseAPIView):
                 .prefetch_related("labels")
             )
 
-            serializer = IssueLiteSerializer(sub_issues, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            state_distribution = (
+                Issue.objects.filter(
+                    workspace__slug=slug, project_id=project_id, parent_id=issue_id
+                )
+                .annotate(state_group=F("state__group"))
+                .values("state_group")
+                .annotate(state_count=Count("state_group"))
+                .order_by("state_group")
+            )
+
+            serializer = IssueLiteSerializer(
+                sub_issues,
+                many=True,
+            )
+            return Response(
+                {
+                    "sub_issues": serializer.data,
+                    "state_distribution": state_distribution,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
