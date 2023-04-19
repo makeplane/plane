@@ -127,11 +127,14 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
 
             if provider == "slack":
                 metadata = request.data.get("metadata", False)
-                if not metadata:
+                access_token = metadata.get("access_token", False)
+                team_id = metadata.get("team_id", False)
+                if not metadata or not access_token or not team_id:
                     return Response(
-                        {"error": "Metadata is required"},
+                        {"error": "Access token and team id is required"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
+                config = {"team_id": team_id, "access_token": access_token}
 
             # Create a bot user
             bot_user = User.objects.create(
