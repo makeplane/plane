@@ -18,6 +18,11 @@ const nextConfig = {
     // this includes files from the monorepo base two directories up
     outputFileTracingRoot: path.join(__dirname, "../../"),
   },
+  publicRuntimeConfig: {
+    processEnv: Object.fromEntries(
+      Object.entries(process.env).filter(([key]) => key.includes("NEXT_PUBLIC_"))
+    ),
+  },
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {

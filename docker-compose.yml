@@ -38,16 +38,24 @@ services:
     build:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost123
+        NEXT_PUBLIC_GOOGLE_CLIENTID: 0
+        NEXT_PUBLIC_GITHUB_APP_NAME: 0
+        NEXT_PUBLIC_GITHUB_ID: 0
+        NEXT_PUBLIC_SENTRY_DSN: 0
+        NEXT_PUBLIC_ENABLE_OAUTH: 0
+        NEXT_PUBLIC_ENABLE_SENTRY: 0
     restart: always
     command: node apps/app/server.js
     environment:
-      NEXT_PUBLIC_API_BASE_URL : http://localhost123
-      NEXT_PUBLIC_GOOGLE_CLIENTID : 
-      NEXT_PUBLIC_GITHUB_APP_NAME : 
-      NEXT_PUBLIC_GITHUB_ID :
-      NEXT_PUBLIC_SENTRY_DSN : 
-      NEXT_PUBLIC_ENABLE_OAUTH : 0
-      NEXT_PUBLIC_ENABLE_SENTRY : 0
+      NEXT_PUBLIC_API_BASE_URL: http://localhost123
+      NEXT_PUBLIC_GOOGLE_CLIENTID: 0
+      NEXT_PUBLIC_GITHUB_APP_NAME: 0
+      NEXT_PUBLIC_GITHUB_ID: 0
+      NEXT_PUBLIC_SENTRY_DSN: 0
+      NEXT_PUBLIC_ENABLE_OAUTH: 0
+      NEXT_PUBLIC_ENABLE_SENTRY: 0
     ports:
       - 3000:3000
   plane-api:
@@ -59,23 +67,23 @@ services:
     ports:
       - 8000:8000
     environment:
-      DJANGO_SETTINGS_MODULE : plane.settings.production
-      DATABASE_URL : postgres://plane:xyzzyspoon@db:5432/plane
-      REDIS_URL : redis://redis:6379/
-      EMAIL_HOST :  
-      EMAIL_HOST_USER : 
-      EMAIL_HOST_PASSWORD : 
-      AWS_REGION :
-      AWS_ACCESS_KEY_ID :
-      AWS_SECRET_ACCESS_KEY : 
-      AWS_S3_BUCKET_NAME :
-      WEB_URL : localhost/
-      GITHUB_CLIENT_SECRET :
-      DISABLE_COLLECTSTATIC : 1
-      DOCKERIZED : 1
-      OPENAI_API_KEY : 0
-      GPT_ENGINE : 0
-      SECRET_KEY : asdasdasdsd
+      DJANGO_SETTINGS_MODULE: plane.settings.production
+      DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
+      REDIS_URL: redis://redis:6379/
+      EMAIL_HOST:
+      EMAIL_HOST_USER:
+      EMAIL_HOST_PASSWORD:
+      AWS_REGION:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_S3_BUCKET_NAME:
+      WEB_URL: localhost/
+      GITHUB_CLIENT_SECRET:
+      DISABLE_COLLECTSTATIC: 1
+      DOCKERIZED: 1
+      OPENAI_API_KEY: 0
+      GPT_ENGINE: 0
+      SECRET_KEY: asdasdasdsd
     depends_on:
       - db
       - redis
@@ -97,23 +105,23 @@ services:
       - redis:redis
       - db:db
     environment:
-      DJANGO_SETTINGS_MODULE : plane.settings.production
-      DATABASE_URL : postgres://plane:xyzzyspoon@db:5432/plane
-      REDIS_URL : redis://redis:6379/
-      EMAIL_HOST :  
-      EMAIL_HOST_USER : 
-      EMAIL_HOST_PASSWORD : 
-      AWS_REGION :
-      AWS_ACCESS_KEY_ID :
-      AWS_SECRET_ACCESS_KEY : 
-      AWS_S3_BUCKET_NAME :
-      WEB_URL : localhost/
-      GITHUB_CLIENT_SECRET :
-      DISABLE_COLLECTSTATIC : 1
-      DOCKERIZED : 1
-      OPENAI_API_KEY : 0
-      GPT_ENGINE : 0
-      SECRET_KEY : asdasdasdsd
+      DJANGO_SETTINGS_MODULE: plane.settings.production
+      DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
+      REDIS_URL: redis://redis:6379/
+      EMAIL_HOST:
+      EMAIL_HOST_USER:
+      EMAIL_HOST_PASSWORD:
+      AWS_REGION:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_S3_BUCKET_NAME:
+      WEB_URL: localhost/
+      GITHUB_CLIENT_SECRET:
+      DISABLE_COLLECTSTATIC: 1
+      DOCKERIZED: 1
+      OPENAI_API_KEY: 0
+      GPT_ENGINE: 0
+      SECRET_KEY: asdasdasdsd
 volumes:
   pgdata:
   redisdata:
