@@ -57,8 +57,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
         <div className="flex items-center gap-2 text-gray-500">
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="flex items-center justify-center gap-2">
-              <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className="text-gray-500">{value.length} Assignees</span>
+              <AssigneesList userIds={value} length={3} showLength={true} />
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
