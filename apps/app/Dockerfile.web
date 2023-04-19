@@ -43,8 +43,8 @@ COPY --from=installer /app/apps/app/package.json .
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone ./
-# COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone/node_modules ./apps/app/node_modules
-COPY --from=installer --chown=captain:plane /app/apps/app/.next/static ./apps/app/.next/static
+
+COPY --from=installer --chown=captain:plane /app/apps/app/.next ./apps/app/.next
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
