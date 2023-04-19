@@ -11,6 +11,7 @@ from .workspace import (
     TeamSerializer,
     WorkSpaceMemberInviteSerializer,
     WorkspaceLiteSerializer,
+    WorkspaceThemeSerializer,
 )
 from .project import (
     ProjectSerializer,

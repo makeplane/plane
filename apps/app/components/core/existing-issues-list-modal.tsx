@@ -19,7 +19,12 @@ import { LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue } from "types";
 // fetch-keys
-import { CYCLE_ISSUES_WITH_PARAMS, MODULE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
+import {
+  CYCLE_DETAILS,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
+  MODULE_ISSUES_WITH_PARAMS,
+} from "constants/fetch-keys";
 
 type FormInput = {
   issues: string[];
@@ -76,8 +81,14 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
     }
 
     await handleOnSubmit(data);
-    if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-    if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+    if (cycleId) {
+      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+      mutate(CYCLE_DETAILS(cycleId as string));
+    }
+    if (moduleId) {
+      mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+      mutate(MODULE_DETAILS(moduleId as string));
+    }
 
     handleClose();
 

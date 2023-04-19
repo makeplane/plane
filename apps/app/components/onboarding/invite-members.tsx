@@ -24,17 +24,14 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
   const onSubmit = async (formData: IUser) => {
     await workspaceService
       .inviteWorkspace(workspace.slug, formData)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Invitations sent!",
         });
         setStep(4);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => console.log(err));
   };
 
   return (

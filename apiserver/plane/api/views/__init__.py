@@ -40,6 +40,7 @@ from .workspace import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
+    WorkspaceThemeViewSet,
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
@@ -135,5 +136,5 @@ from .estimate import (
     EstimateViewSet,
     EstimatePointViewSet,
     ProjectEstimatePointEndpoint,
-    BulkCreateEstimatePointEndpoint,
+    BulkEstimatePointEndpoint,
 )

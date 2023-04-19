@@ -21,10 +21,9 @@ import { IEstimate } from "types";
 import { ESTIMATES_LIST } from "constants/fetch-keys";
 
 type Props = {
+  isOpen: boolean;
   handleClose: () => void;
   data?: IEstimate;
-  isOpen: boolean;
-  isCreate: boolean;
 };
 
 const defaultValues: Partial<IEstimate> = {
@@ -32,7 +31,7 @@ const defaultValues: Partial<IEstimate> = {
   description: "",
 };
 
-export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, isCreate }) => {
+export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen }) => {
   const {
     register,
     formState: { errors, isSubmitting },
@@ -95,9 +94,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
 
     await estimatesService
       .patchEstimate(workspaceSlug as string, projectId as string, data?.id as string, payload)
-      .then(() => {
-        handleClose();
-      })
+      .then(() => handleClose())
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -109,12 +106,11 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
   };
 
   useEffect(() => {
-    if (!data && isCreate) return;
     reset({
       ...defaultValues,
       ...data,
     });
-  }, [data, reset, isCreate]);
+  }, [data, reset]);
 
   return (
     <>
@@ -148,7 +144,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                     onSubmit={data ? handleSubmit(updateEstimate) : handleSubmit(createEstimate)}
                   >
                     <div className="space-y-3">
-                      <div className="text-2xl font-medium">Create Estimate</div>
+                      <div className="text-lg font-medium leading-6">
+                        {data ? "Update" : "Create"} Estimate
+                      </div>
                       <div>
                         <Input
                           id="name"

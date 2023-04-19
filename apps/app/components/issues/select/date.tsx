@@ -36,7 +36,7 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
               </>
             ) : (
               <>
-                <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 " />
+                <CalendarDaysIcon className="h-4 w-4 text-gray-500 flex-shrink-0 " />
                 <span className="text-gray-500">Due Date</span>
               </>
             )}

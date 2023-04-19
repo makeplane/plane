@@ -14,6 +14,7 @@ import projectService from "services/project.service";
 import pagesService from "services/pages.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useLocalStorage from "hooks/use-local-storage";
 // icons
 import { PlusIcon } from "components/icons";
 // layouts
@@ -73,6 +74,8 @@ const ProjectPages: NextPage = () => {
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
 
   const {
     handleSubmit,
@@ -145,6 +148,25 @@ const ProjectPages: NextPage = () => {
       });
   };
 
+
+  const currentTabValue = (tab: string | null) => {
+    switch (tab) {
+      case "Recent":
+        return 0;
+      case "All":
+        return 1;
+      case "Favorites":
+        return 2;
+      case "Created by me":
+        return 3;
+      case "Created by others":
+        return 4;
+
+      default:
+        return 0;
+    }
+  };
+
   return (
     <>
       <CreateUpdatePageModal
@@ -177,14 +199,14 @@ const ProjectPages: NextPage = () => {
         <div className="space-y-4">
           <form
             onSubmit={handleSubmit(createPage)}
-            className="flex items-center justify-between gap-2 rounded-[10px] border border-gray-200 bg-white p-2 shadow-sm"
+            className="flex items-center relative justify-between gap-2 mb-12 rounded-[6px] border border-gray-200 bg-white p-2 shadow"
           >
             <Input
               type="text"
               name="name"
               register={register}
-              className="border-none outline-none focus:ring-0"
-              placeholder="Type to create a new page..."
+              className="border-none font-medium flex break-all text-xl outline-none focus:ring-0"
+              placeholder="Title"
             />
             {watch("name") !== "" && (
               <PrimaryButton type="submit" loading={isSubmitting}>
@@ -193,8 +215,27 @@ const ProjectPages: NextPage = () => {
             )}
           </form>
           <div>
-            <Tab.Group>
-              <Tab.List as="div" className="flex items-center justify-between">
+            <Tab.Group
+              defaultIndex={currentTabValue(pageTab)}
+              onChange={(i) => {
+                switch (i) {
+                  case 0:
+                    return setPageTab("Recent");
+                  case 1:
+                    return setPageTab("All");
+                  case 2:
+                    return setPageTab("Favorites");
+                  case 3:
+                    return setPageTab("Created by me");
+                  case 4:
+                    return setPageTab("Created by others");
+
+                  default:
+                    return setPageTab("Recent");
+                }
+              }}
+            >
+              <Tab.List as="div" className="flex items-center justify-between mb-6">
                 <div className="flex gap-4">
                   {["Recent", "All", "Favorites", "Created by me", "Created by others"].map(
                     (tab, index) => (
@@ -213,7 +254,7 @@ const ProjectPages: NextPage = () => {
                     )
                   )}
                 </div>
-                <div className="flex items-center gap-x-1">
+                <div className="flex gap-x-1">
                   <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${

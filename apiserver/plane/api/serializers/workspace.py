@@ -5,8 +5,15 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .user import UserLiteSerializer
 
-from plane.db.models import User, Workspace, WorkspaceMember, Team, TeamMember
-from plane.db.models import Workspace, WorkspaceMember, Team, WorkspaceMemberInvite
+from plane.db.models import (
+    User,
+    Workspace,
+    WorkspaceMember,
+    Team,
+    TeamMember,
+    WorkspaceMemberInvite,
+    WorkspaceTheme,
+)
 
 
 class WorkSpaceSerializer(BaseSerializer):
@@ -100,3 +107,13 @@ class WorkspaceLiteSerializer(BaseSerializer):
             "id",
         ]
         read_only_fields = fields
+
+
+class WorkspaceThemeSerializer(BaseSerializer):
+    class Meta:
+        model = WorkspaceTheme
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "actor",
+        ]

@@ -47,7 +47,6 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setError,
     watch,
     reset,
     control,
@@ -89,39 +88,55 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
           handleClose();
 
           setToastAlert({
-            title: "Success",
             type: "success",
-            message: "State created successfully",
+            title: "Success!",
+            message: "State created successfully.",
           });
         })
         .catch((err) => {
-          Object.keys(err).map((key) => {
-            setError(key as keyof IState, {
-              message: err[key].join(", "),
+          if (err.status === 400)
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message:
+                "Another state exists with the same name. Please try again with another name.",
             });
-          });
+          else
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "State could not be created. Please try again.",
+            });
         });
     } else {
       await stateService
         .updateState(workspaceSlug as string, projectId as string, data.id, {
           ...payload,
         })
-        .then((res) => {
+        .then(() => {
           mutate(STATE_LIST(projectId as string));
           handleClose();
 
           setToastAlert({
-            title: "Success",
             type: "success",
-            message: "State updated successfully",
+            title: "Success!",
+            message: "State updated successfully.",
           });
         })
         .catch((err) => {
-          Object.keys(err).map((key) => {
-            setError(key as keyof IState, {
-              message: err[key].join(", "),
+          if (err.status === 400)
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message:
+                "Another state exists with the same name. Please try again with another name.",
             });
-          });
+          else
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "State could not be updated. Please try again.",
+            });
         });
     }
   };
@@ -131,18 +146,18 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
       onSubmit={handleSubmit(onSubmit)}
       className="flex items-center gap-x-2 rounded-[10px] bg-white p-5"
     >
-      <div className="h-8 w-8 flex-shrink-0">
-        <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
+      <div className="flex-shrink-0">
+        <Popover className="relative flex h-full w-full items-center justify-center">
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
                   open ? "text-gray-900" : "text-gray-500"
                 }`}
               >
                 {watch("color") && watch("color") !== "" && (
                   <span
-                    className="h-4 w-4 rounded"
+                    className="h-5 w-5 rounded"
                     style={{
                       backgroundColor: watch("color") ?? "black",
                     }}

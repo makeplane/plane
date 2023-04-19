@@ -11,11 +11,11 @@ import { CustomSearchSelect, PrimaryButton, SecondaryButton } from "components/u
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegrations } from "types";
+import { IWorkspaceIntegration } from "types";
 
 type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;
-  integration: IWorkspaceIntegrations | false | undefined;
+  integration: IWorkspaceIntegration | false | undefined;
   control: Control<TFormValues, any>;
   watch: UseFormWatch<TFormValues>;
 };

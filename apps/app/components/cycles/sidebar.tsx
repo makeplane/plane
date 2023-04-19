@@ -92,13 +92,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
     cyclesService
       .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
-      .then((res) => {
-        console.log(res);
-        mutate(CYCLE_DETAILS(cycleId as string));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
+      .catch((e) => console.log(e));
   };
 
   const handleCopyText = () => {
@@ -350,7 +345,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
             </div>
 
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
-              <Disclosure>
+              <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
                     className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
@@ -430,7 +425,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
             </div>
 
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
-              <Disclosure>
+              <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
                     className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}

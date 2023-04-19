@@ -43,6 +43,7 @@ const MyIssuesPage: NextPage = () => {
           <BreadcrumbItem title="My Issues" />
         </Breadcrumbs>
       }
+      noPadding
       right={
         <div className="flex items-center gap-2">
           {myIssues && myIssues.length > 0 && (
@@ -72,20 +73,24 @@ const MyIssuesPage: NextPage = () => {
                         <div className="relative flex flex-col gap-1">
                           <h4 className="text-base text-gray-600">Properties</h4>
                           <div className="flex flex-wrap items-center gap-2">
-                            {Object.keys(properties).map((key) => (
-                              <button
-                                key={key}
-                                type="button"
-                                className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
-                                  properties[key as keyof Properties]
-                                    ? "border-theme bg-theme text-white"
-                                    : ""
-                                }`}
-                                onClick={() => setProperties(key as keyof Properties)}
-                              >
-                                {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                              </button>
-                            ))}
+                            {Object.keys(properties).map((key) => {
+                              if (key === "estimate") return null;
+
+                              return (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
+                                    properties[key as keyof Properties]
+                                      ? "border-theme bg-theme text-white"
+                                      : ""
+                                  }`}
+                                  onClick={() => setProperties(key as keyof Properties)}
+                                >
+                                  {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
@@ -115,10 +120,10 @@ const MyIssuesPage: NextPage = () => {
               <div className="flex flex-col space-y-5">
                 <Disclosure as="div" defaultOpen>
                   {({ open }) => (
-                    <div className="rounded-[10px] border border-gray-300 bg-white">
+                    <div className="bg-white">
                       <div
                         className={`flex items-center justify-start bg-gray-100 px-5 py-3 ${
-                          open ? "rounded-t-[10px]" : "rounded-[10px]"
+                          open ? "" : "rounded-[10px]"
                         }`}
                       >
                         <Disclosure.Button>

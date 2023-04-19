@@ -1,9 +1,5 @@
 import { useEffect } from "react";
 
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
 import { useForm } from "react-hook-form";
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
@@ -11,11 +7,6 @@ import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 import { FilterList } from "components/core";
 // types
 import { IView } from "types";
-// constant
-import { STATE_LIST } from "constants/fetch-keys";
-
-// services
-import stateService from "services/state.service";
 // components
 import { SelectFilters } from "components/views";
 
@@ -23,7 +14,7 @@ type Props = {
   handleFormSubmit: (values: IView) => Promise<void>;
   handleClose: () => void;
   status: boolean;
-  data?: IView;
+  data?: IView | null;
   preLoadedData?: Partial<IView> | null;
 };
 
@@ -49,6 +40,7 @@ export const ViewForm: React.FC<Props> = ({
   } = useForm<IView>({
     defaultValues,
   });
+  const filters = watch("query");
 
   const handleCreateUpdateView = async (formData: IView) => {
     await handleFormSubmit(formData);
@@ -61,18 +53,16 @@ export const ViewForm: React.FC<Props> = ({
   useEffect(() => {
     reset({
       ...defaultValues,
+      ...preLoadedData,
       ...data,
     });
-  }, [data, reset]);
+  }, [data, preLoadedData, reset]);
 
   useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...preLoadedData,
-    });
-  }, [preLoadedData, reset]);
-
-  const filters = watch("query");
+    if (status && data) {
+      setValue("query", data.query_data);
+    }
+  }, [data, status, setValue]);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
@@ -84,18 +74,19 @@ export const ViewForm: React.FC<Props> = ({
           <div>
             <Input
               id="name"
-              label="Name"
               name="name"
               type="name"
-              placeholder="Enter name"
+              placeholder="Title"
               autoComplete="off"
+              mode="transparent"
+              className="resize-none text-xl"
               error={errors.name}
               register={register}
               validations={{
-                required: "Name is required",
+                required: "Title is required",
                 maxLength: {
                   value: 255,
-                  message: "Name should be less than 255 characters",
+                  message: "Title should be less than 255 characters",
                 },
               }}
             />
@@ -104,8 +95,9 @@ export const ViewForm: React.FC<Props> = ({
             <TextArea
               id="description"
               name="description"
-              label="Description"
-              placeholder="Enter description"
+              placeholder="Description"
+              className="h-32 resize-none text-sm"
+              mode="transparent"
               error={errors.description}
               register={register}
             />
