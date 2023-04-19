@@ -1,3 +1,5 @@
+import { IJiraMetadata } from "types";
+
 const paramsToKey = (params: any) => {
   const { state, priority, assignees, created_by, labels } = params;
 
@@ -122,6 +124,12 @@ export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
 export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
   `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}`;
 
+export const JIRA_IMPORTER_DETAIL = (workspaceSlug: string, params: IJiraMetadata) => {
+  const { api_token, cloud_hostname, email, project_key } = params;
+
+  return `JIRA_IMPORTER_DETAIL_${workspaceSlug.toUpperCase()}_${api_token}_${cloud_hostname}_${email}_${project_key}`;
+};
+
 //import-export
 export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
   `IMPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}`;
@@ -153,6 +161,7 @@ export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${page
 
 // estimates
 export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
-export const ESTIMATE_DETAILS = (estimateId: string) => `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
+export const ESTIMATE_DETAILS = (estimateId: string) =>
+  `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
 export const ESTIMATE_POINTS_LIST = (estimateId: string) =>
   `ESTIMATES_POINTS_LIST_${estimateId.toUpperCase()}`;

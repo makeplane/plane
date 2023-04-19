@@ -56,6 +56,8 @@
     "eslint-config-custom": "*",
     "eslint-config-next": "12.2.2",
     "postcss": "^8.4.14",
+    "prettier": "^2.8.7",
+    "prettier-plugin-tailwindcss": "^0.2.7",
     "tailwindcss": "^3.1.6",
     "tsconfig": "*",
     "typescript": "4.7.4"
