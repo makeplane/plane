@@ -51,7 +51,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
             <div className="w-full">
               <MultiInput
                 name="emails"
-                placeholder="Enter co-workers email id"
+                placeholder="Enter co-workers Email IDs"
                 watch={watch}
                 setValue={setValue}
                 className="w-full"

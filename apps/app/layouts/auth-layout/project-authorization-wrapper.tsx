@@ -74,7 +74,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
         {loading ? (
           <div className="h-full w-full grid place-items-center p-4">
             <div className="flex flex-col items-center gap-3 text-center">
-              <h3 className="text-xl">Setting up your project...</h3>
+              <h3 className="text-xl">Loading your project...</h3>
               <Spinner />
             </div>
           </div>
