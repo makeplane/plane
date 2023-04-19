@@ -100,7 +100,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       onSubmit={handleSubmit(handleCreateWorkspace)}
     >
       <div className="flex w-full max-w-xl flex-col">
-        <div className="flex flex-col rounded-[10px] bg-white shadow-md">
+        <div className="flex flex-col rounded-[10px] bg-white">
           <div className="flex flex-col justify-between gap-3 px-4 py-7">
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>Workspace name</span>

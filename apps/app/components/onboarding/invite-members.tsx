@@ -34,6 +34,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
       .catch((err) => console.log(err));
   };
 
+  const checkEmail = watch("emails") && watch("emails").length > 0 ;
   return (
     <form
       className="flex w-full items-center justify-center"
@@ -63,7 +64,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
           <PrimaryButton
             type="submit"
             className="flex w-1/2 items-center justify-center text-center"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !checkEmail}
             size="md"
           >
             {isSubmitting ? "Inviting..." : "Continue"}
