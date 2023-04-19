@@ -1,4 +1,12 @@
-import type { IUser, IIssue, IProject, IProjectLite, IWorkspace, IWorkspaceLite } from "types";
+import type {
+  IUser,
+  IIssue,
+  IProject,
+  IProjectLite,
+  IWorkspace,
+  IWorkspaceLite,
+  IIssueFilterOptions,
+} from "types";
 
 export interface ICycle {
   backlog_issues: number;
@@ -21,6 +29,9 @@ export interface ICycle {
   unstarted_issues: number;
   updated_at: Date;
   updated_by: string;
+  view_props: {
+    filters: IIssueFilterOptions;
+  };
   workspace: string;
   workspace_detail: IWorkspaceLite;
 }
