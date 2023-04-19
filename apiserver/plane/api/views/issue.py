@@ -8,6 +8,7 @@ from django.db.models import Prefetch, OuterRef, Func, F, Q, Count
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from django.db.models.functions import Coalesce
 
 # Third Party imports
 from rest_framework.response import Response
@@ -46,6 +47,7 @@ from plane.db.models import (
     Label,
     IssueLink,
     IssueAttachment,
+    State,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -591,21 +593,18 @@ class SubIssuesEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                Issue.objects.filter(
-                    workspace__slug=slug, project_id=project_id, parent_id=issue_id
+                State.objects.filter(workspace__slug=slug, project_id=project_id)
+                .annotate(
+                    state_count=Count(
+                        "state_issue",
+                        filter=Q(state_issue__parent_id=issue_id),
+                    )
                 )
-                .annotate(state_group=F("state__group"))
-                .values("state_group")
-                .annotate(state_count=Count("state_group"))
-                .order_by("state_group")
+                .order_by("group")
+                .values("group", "state_count")
             )
-            
-            result = {}
-            for item in state_distribution:
-                state_group = item['state_group']
-                count = item['state_count']
-                result.setdefault(state_group, count)
 
+            result = {item["group"]: item["state_count"] for item in state_distribution}
 
             serializer = IssueLiteSerializer(
                 sub_issues,
