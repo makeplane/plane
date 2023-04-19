@@ -39,7 +39,7 @@ services:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
       args:
-        NEXT_PUBLIC_API_BASE_URL: http://localhost123
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
         NEXT_PUBLIC_GOOGLE_CLIENTID: 0
         NEXT_PUBLIC_GITHUB_APP_NAME: 0
         NEXT_PUBLIC_GITHUB_ID: 0
@@ -48,14 +48,6 @@ services:
         NEXT_PUBLIC_ENABLE_SENTRY: 0
     restart: always
     command: node apps/app/server.js
-    environment:
-      NEXT_PUBLIC_API_BASE_URL: http://localhost123
-      NEXT_PUBLIC_GOOGLE_CLIENTID: 0
-      NEXT_PUBLIC_GITHUB_APP_NAME: 0
-      NEXT_PUBLIC_GITHUB_ID: 0
-      NEXT_PUBLIC_SENTRY_DSN: 0
-      NEXT_PUBLIC_ENABLE_OAUTH: 0
-      NEXT_PUBLIC_ENABLE_SENTRY: 0
     ports:
       - 3000:3000
   plane-api:
