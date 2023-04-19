@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -16,6 +16,7 @@ import issuesService from "services/issues.service";
 import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
@@ -60,6 +61,9 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
 
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
+
+  const [isMenuActive, setIsMenuActive] = useState(false);
+  const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -274,6 +278,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
     reset({ ...block });
   }, [reset, block]);
 
+  useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   return (
     <Draggable draggableId={block.id} index={index} isDragDisabled={createBlockForm}>
       {(provided, snapshot) => (
@@ -308,7 +313,12 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 <EllipsisVerticalIcon className="h-[18px]" />
                 <EllipsisVerticalIcon className="h-[18px] -ml-3" />
               </button>
-              <div className="absolute top-4 right-0 items-center gap-2 hidden group-hover:!flex bg-white pl-4">
+              <div
+                ref={actionSectionRef}
+                className={`absolute top-4 right-0 items-center gap-2 hidden group-hover:!flex  bg-white pl-4 ${
+                  isMenuActive ? "!flex" : ""
+                }`}
+              >
                 {block.issue && block.sync && (
                   <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
                     {isSyncing ? (
@@ -350,7 +360,16 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 >
                   <PencilIcon className="h-3.5 w-3.5" />
                 </button>
-                <CustomMenu label={<BoltIcon className="h-4.5 w-3.5" />} noBorder noChevron>
+                <CustomMenu
+                  customButton={
+                    <button
+                      className="flex cursor-pointer items-center justify-between gap-1 px-2.5 py-1 text-xs duration-300 hover:bg-gray-100 text-left rounded w-full"
+                      onClick={() => setIsMenuActive(!isMenuActive)}
+                    >
+                      <BoltIcon className="h-4.5 w-3.5" />
+                    </button>
+                  }
+                >
                   {block.issue ? (
                     <>
                       <CustomMenu.MenuItem onClick={handleBlockSync}>

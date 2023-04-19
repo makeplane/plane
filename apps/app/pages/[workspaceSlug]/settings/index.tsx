@@ -238,13 +238,20 @@ const WorkspaceSettings: NextPage = () => {
                 register={register}
                 error={errors.name}
                 className="w-full"
-                value={`app.plane.so/${activeWorkspace.slug}`}
+                value={`${
+                  typeof window !== "undefined" &&
+                  window.location.origin.replace("http://", "").replace("https://", "")
+                }/${activeWorkspace.slug}`}
                 disabled
               />
               <SecondaryButton
                 className="h-min"
                 onClick={() =>
-                  copyTextToClipboard(`https://app.plane.so/${activeWorkspace.slug}`).then(() => {
+                  copyTextToClipboard(
+                    `${typeof window !== "undefined" && window.location.origin}/${
+                      activeWorkspace.slug
+                    }`
+                  ).then(() => {
                     setToastAlert({
                       type: "success",
                       title: "Link Copied!",

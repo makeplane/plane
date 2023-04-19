@@ -183,7 +183,7 @@ class IssueCreateSerializer(BaseSerializer):
         labels = validated_data.pop("labels_list", None)
         blocks = validated_data.pop("blocks_list", None)
 
-        if blockers is not None and len(blockers):
+        if blockers is not None:
             IssueBlocker.objects.filter(block=instance).delete()
             IssueBlocker.objects.bulk_create(
                 [
@@ -200,7 +200,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if assignees is not None and len(assignees):
+        if assignees is not None:
             IssueAssignee.objects.filter(issue=instance).delete()
             IssueAssignee.objects.bulk_create(
                 [
@@ -217,7 +217,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if labels is not None and len(labels):
+        if labels is not None:
             IssueLabel.objects.filter(issue=instance).delete()
             IssueLabel.objects.bulk_create(
                 [
@@ -234,7 +234,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if blocks is not None and len(blocks):
+        if blocks is not None:
             IssueBlocker.objects.filter(blocked_by=instance).delete()
             IssueBlocker.objects.bulk_create(
                 [

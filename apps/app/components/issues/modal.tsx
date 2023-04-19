@@ -29,6 +29,8 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
+  CYCLE_DETAILS,
+  MODULE_DETAILS,
 } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
@@ -101,7 +103,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         issues: [issueId],
       })
       .then(() => {
-        mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
+        if (cycleId) {
+          mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
+          mutate(CYCLE_DETAILS(cycleId as string));
+        }
       });
   };
 
@@ -113,7 +118,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         issues: [issueId],
       })
       .then(() => {
-        mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+        if (moduleId) {
+          mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+          mutate(MODULE_DETAILS(moduleId as string));
+        }
       });
   };
 

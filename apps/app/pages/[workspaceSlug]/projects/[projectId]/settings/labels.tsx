@@ -81,12 +81,7 @@ const LabelsSettings: NextPage = () => {
       mutate((prevData) => prevData?.filter((p) => p.id !== labelId), false);
       issuesService
         .deleteIssueLabel(workspaceSlug as string, projectDetails.id, labelId)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+        .catch((e) => console.log(e));
     }
   };
 

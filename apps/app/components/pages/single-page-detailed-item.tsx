@@ -15,14 +15,16 @@ import {
   StarIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { ExclamationIcon } from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
-import { renderShortTime, renderShortDate } from "helpers/date-time.helper";
+import { renderShortTime, renderShortDate, renderLongDateFormat } from "helpers/date-time.helper";
 // types
-import { IPage } from "types";
+import { IPage, IProjectMember } from "types";
 
 type TSingleStatProps = {
   page: IPage;
+  people: IProjectMember[] | undefined;
   handleEditPage: () => void;
   handleDeletePage: () => void;
   handleAddToFavorites: () => void;
@@ -32,6 +34,7 @@ type TSingleStatProps = {
 
 export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
   page,
+  people,
   handleEditPage,
   handleDeletePage,
   handleAddToFavorites,
@@ -132,6 +135,18 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   </button>
                 </Tooltip>
               )}
+              <Tooltip
+                theme="dark"
+                position="top-right"
+                tooltipContent={`Created by ${
+                  people?.find((person) => person.member.id === page.created_by)?.member
+                    .first_name ?? ""
+                } on ${renderLongDateFormat(`${page.created_at}`)}`}
+              >
+                <span>
+                  <ExclamationIcon className="h-4 w-4 text-gray-400" />
+                </span>
+              </Tooltip>
               <CustomMenu verticalEllipsis>
                 <CustomMenu.MenuItem
                   onClick={(e: any) => {

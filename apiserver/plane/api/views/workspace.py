@@ -36,6 +36,7 @@ from plane.api.serializers import (
     WorkSpaceMemberInviteSerializer,
     UserLiteSerializer,
     ProjectMemberSerializer,
+    WorkspaceThemeSerializer,
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -48,6 +49,7 @@ from plane.db.models import (
     ProjectMember,
     IssueActivity,
     Issue,
+    WorkspaceTheme,
 )
 from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
@@ -752,3 +754,35 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class WorkspaceThemeViewSet(BaseViewSet):
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
+    model = WorkspaceTheme
+    serializer_class = WorkspaceThemeSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().filter(workspace__slug=self.kwargs.get("slug"))
+
+    def create(self, request, slug):
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+            serializer = WorkspaceThemeSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(workspace=workspace, actor=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Workspace.DoesNotExist:
+            return Response(
+                {"error": "Workspace does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+

@@ -56,7 +56,6 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
     await workspaceService
       .inviteWorkspace(workspace_slug, { emails: [formData] })
       .then((res) => {
-        console.log(res);
         setIsOpen(false);
         handleClose();
         mutate(WORKSPACE_INVITATIONS, (prevData: any) => [
@@ -64,9 +63,9 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
           ...(prevData ?? []),
         ]);
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Member invited successfully",
+          title: "Success!",
+          message: "Member invited successfully.",
         });
       })
       .catch((err) => console.log(err));

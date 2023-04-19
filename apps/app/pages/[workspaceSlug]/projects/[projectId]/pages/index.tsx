@@ -14,6 +14,7 @@ import projectService from "services/project.service";
 import pagesService from "services/pages.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useLocalStorage from "hooks/use-local-storage";
 // icons
 import { PlusIcon } from "components/icons";
 // layouts
@@ -73,6 +74,8 @@ const ProjectPages: NextPage = () => {
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
 
   const {
     handleSubmit,
@@ -145,6 +148,25 @@ const ProjectPages: NextPage = () => {
       });
   };
 
+
+  const currentTabValue = (tab: string | null) => {
+    switch (tab) {
+      case "Recent":
+        return 0;
+      case "All":
+        return 1;
+      case "Favorites":
+        return 2;
+      case "Created by me":
+        return 3;
+      case "Created by others":
+        return 4;
+
+      default:
+        return 0;
+    }
+  };
+
   return (
     <>
       <CreateUpdatePageModal
@@ -193,7 +215,26 @@ const ProjectPages: NextPage = () => {
             )}
           </form>
           <div>
-            <Tab.Group>
+            <Tab.Group
+              defaultIndex={currentTabValue(pageTab)}
+              onChange={(i) => {
+                switch (i) {
+                  case 0:
+                    return setPageTab("Recent");
+                  case 1:
+                    return setPageTab("All");
+                  case 2:
+                    return setPageTab("Favorites");
+                  case 3:
+                    return setPageTab("Created by me");
+                  case 4:
+                    return setPageTab("Created by others");
+
+                  default:
+                    return setPageTab("Recent");
+                }
+              }}
+            >
               <Tab.List as="div" className="flex items-center justify-between mb-6">
                 <div className="flex gap-4">
                   {["Recent", "All", "Favorites", "Created by me", "Created by others"].map(

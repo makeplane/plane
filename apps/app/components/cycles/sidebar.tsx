@@ -92,13 +92,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
     cyclesService
       .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
-      .then((res) => {
-        console.log(res);
-        mutate(CYCLE_DETAILS(cycleId as string));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
+      .catch((e) => console.log(e));
   };
 
   const handleCopyText = () => {
@@ -349,7 +344,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
               </div>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base px-6 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure>
                 {({ open }) => (
                   <div
@@ -429,7 +424,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base px-6 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure>
                 {({ open }) => (
                   <div

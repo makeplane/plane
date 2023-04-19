@@ -34,6 +34,7 @@ const defaultValues = {
   name: "",
   description: "",
   description_html: "",
+  estimate_point: null,
   state: "",
   assignees_list: [],
   priority: "low",
@@ -121,7 +122,7 @@ const IssueDetailsPage: NextPage = () => {
 
   return (
     <ProjectAuthorizationWrapper
-      noPadding={true}
+      noPadding
       bg="secondary"
       breadcrumbs={
         <Breadcrumbs>

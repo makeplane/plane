@@ -22,7 +22,7 @@ class ProjectStateServices extends APIService {
         return response?.data;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 
@@ -66,7 +66,7 @@ class ProjectStateServices extends APIService {
         return response?.data;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 

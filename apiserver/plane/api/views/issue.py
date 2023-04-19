@@ -246,6 +246,20 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
                 .order_by("-created_at")
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
             serializer = IssueLiteSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -751,7 +765,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 serializer.save(project_id=project_id, issue_id=issue_id)
                 issue_activity.delay(
                     type="attachment.activity.created",
-                    requested_data=request.data,
+                    requested_data=None,
                     actor_id=str(self.request.user.id),
                     issue_id=str(self.kwargs.get("issue_id", None)),
                     project_id=str(self.kwargs.get("project_id", None)),
@@ -772,10 +786,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, issue_id, pk):
         try:
             issue_attachment = IssueAttachment.objects.get(pk=pk)
+            issue_attachment.asset.delete(save=False)
             issue_attachment.delete()
             issue_activity.delay(
                 type="attachment.activity.deleted",
-                requested_data=request.data,
+                requested_data=None,
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),

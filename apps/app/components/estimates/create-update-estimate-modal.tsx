@@ -94,9 +94,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
 
     await estimatesService
       .patchEstimate(workspaceSlug as string, projectId as string, data?.id as string, payload)
-      .then(() => {
-        handleClose();
-      })
+      .then(() => handleClose())
       .catch(() => {
         setToastAlert({
           type: "error",

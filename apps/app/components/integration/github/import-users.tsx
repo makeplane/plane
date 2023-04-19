@@ -1,7 +1,5 @@
 import { FC } from "react";
 
-import { useRouter } from "next/router";
-
 // react-hook-form
 import { UseFormWatch } from "react-hook-form";
 // ui
@@ -22,8 +20,6 @@ type Props = {
 };
 
 export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers, watch }) => {
-  const router = useRouter();
-
   const isInvalid = users.filter((u) => u.import !== false && u.email === "").length > 0;
 
   return (
@@ -44,7 +40,6 @@ export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers
               index={index}
               users={users}
               setUsers={setUsers}
-              project={watch("project")}
             />
           ))}
         </div>

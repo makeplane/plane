@@ -104,17 +104,17 @@ export const SingleList: React.FC<Props> = ({
 
     switch (selectedGroup) {
       case "state":
-        icon = currentState && getStateGroupIcon(currentState.group, "18", "18", bgColor);
+        icon = currentState && getStateGroupIcon(currentState.group, "16", "16", bgColor);
         break;
       case "priority":
-        icon = getPriorityIcon(groupTitle, "h-[18px] w-[18px] flex items-center");
+        icon = getPriorityIcon(groupTitle, "text-lg");
         break;
       case "labels":
         const labelColor =
           issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
         icon = (
           <span
-            className="h-[18px] w-[18px] flex-shrink-0 rounded-full"
+            className="h-3 w-3 flex-shrink-0 rounded-full"
             style={{ backgroundColor: labelColor }}
           />
         );
@@ -134,23 +134,23 @@ export const SingleList: React.FC<Props> = ({
       {({ open }) => (
         <div className="rounded-[10px] border border-brand-base bg-brand-surface-2">
           <div
-            className={`flex items-center justify-between bg-brand-surface-1 px-5 py-3 ${
+            className={`flex items-center justify-between bg-brand-surface-1 px-4 py-2.5 ${
               open ? "rounded-t-[10px]" : "rounded-[10px]"
             }`}
           >
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
                 {selectedGroup !== null && (
-                  <span className="flex items-center">{getGroupIcon()}</span>
+                  <div className="flex items-center">{getGroupIcon()}</div>
                 )}
                 {selectedGroup !== null ? (
-                  <h2 className="text-base font-semibold capitalize leading-6 text-brand-base">
+                  <h2 className="text-sm font-semibold capitalize leading-6 text-brand-base">
                     {getGroupTitle()}
                   </h2>
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
-                <span className="rounded-full bg-brand-surface-2 py-0.5 px-3 text-sm text-brand-2">
+                <span className="rounded-full bg-brand-surface-2 py-1 min-w-[2.5rem] text-center text-xs text-brand-2">
                   {groupedByIssues[groupTitle as keyof IIssue].length}
                 </span>
               </div>

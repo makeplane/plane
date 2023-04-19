@@ -36,11 +36,7 @@ const fallbackCopyTextToClipboard = (text: string) => {
     // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
     var successful = document.execCommand("copy");
-    var msg = successful ? "successful" : "unsuccessful";
-    console.log("Fallback: Copying text command was " + msg);
-  } catch (err) {
-    console.error("Fallback: Oops, unable to copy", err);
-  }
+  } catch (err) {}
 
   document.body.removeChild(textArea);
 };

@@ -37,6 +37,7 @@ export const FILTER_ISSUE_OPTIONS: Array<{
   },
 ];
 
+import { orderArrayBy } from "helpers/array.helper";
 import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
 
 type THandleIssuesMutation = (
@@ -44,6 +45,7 @@ type THandleIssuesMutation = (
   oldGroupTitle: string,
   selectedGroupBy: TIssueGroupByOptions,
   issueIndex: number,
+  orderBy: TIssueOrderByOptions,
   prevData?:
     | {
         [key: string]: IIssue[];
@@ -61,6 +63,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
   oldGroupTitle,
   selectedGroupBy,
   issueIndex,
+  orderBy,
   prevData
 ) => {
   if (!prevData) return prevData;
@@ -89,15 +92,24 @@ export const handleIssuesMutation: THandleIssuesMutation = (
       assignees: formData?.assignees_list ?? oldGroup[issueIndex]?.assignees_list,
     };
 
-    oldGroup.splice(issueIndex, 1);
-    newGroup.push(updatedIssue);
+    if (selectedGroupBy !== Object.keys(formData)[0])
+      return {
+        ...prevData,
+        [oldGroupTitle ?? ""]: orderArrayBy(
+          oldGroup.map((i) => (i.id === updatedIssue.id ? updatedIssue : i)),
+          orderBy
+        ),
+      };
 
     const groupThatIsUpdated = selectedGroupBy === "priority" ? formData.priority : formData.state;
 
     return {
       ...prevData,
-      [oldGroupTitle ?? ""]: oldGroup,
-      [groupThatIsUpdated ?? ""]: newGroup,
+      [oldGroupTitle ?? ""]: orderArrayBy(
+        oldGroup.filter((i) => i.id !== updatedIssue.id),
+        orderBy
+      ),
+      [groupThatIsUpdated ?? ""]: orderArrayBy([...newGroup, updatedIssue], orderBy),
     };
   }
 };

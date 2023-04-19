@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 const getValueFromLocalStorage = (key: string, defaultValue: any) => {
+  if (typeof window === undefined || typeof window === "undefined") return defaultValue;
   try {
     const item = window.localStorage.getItem(key);
     return item ? JSON.parse(item) : defaultValue;

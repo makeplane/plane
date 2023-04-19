@@ -29,6 +29,7 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssueComment, IIssueLabels } from "types";
 import { PROJECT_ISSUES_ACTIVITY, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import useEstimateOption from "hooks/use-estimate-option";
 
 const activityDetails: {
   [key: string]: {
@@ -55,6 +56,10 @@ const activityDetails: {
   cycles: {
     message: "set the cycle to",
     icon: <CyclesIcon height="12" width="12" color="#6b7280" />,
+  },
+  estimate_point: {
+    message: "set the estimate point to",
+    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
   },
   labels: {
     icon: <TagIcon height="12" width="12" color="#6b7280" />,
@@ -107,6 +112,8 @@ export const IssueActivitySection: React.FC<Props> = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  const { isEstimateActive, estimatePoints } = useEstimateOption();
+
   const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId as string) : null,
     workspaceSlug && projectId && issueId
@@ -150,10 +157,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
         issueId as string,
         commentId
       )
-      .then((response) => {
-        mutateIssueActivities();
-        console.log(response);
-      });
+      .then(() => mutateIssueActivities());
   };
 
   const getLabelColor = (labelId: string) => {
@@ -278,8 +282,14 @@ export const IssueActivitySection: React.FC<Props> = () => {
             value = "attachment";
           } else if (activityItem.field === "link") {
             value = "link";
-          } else if (activityItem.field === "estimate") {
-            value = "estimate";
+          } else if (activityItem.field === "estimate_point") {
+            value = activityItem.new_value
+              ? isEstimateActive
+                ? estimatePoints.find((e) => e.key === parseInt(activityItem.new_value ?? "", 10))
+                    ?.value
+                : activityItem.new_value +
+                  ` Point${parseInt(activityItem.new_value ?? "", 10) > 1 ? "s" : ""}`
+              : "None";
           }
 
           if ("field" in activityItem && activityItem.field !== "updated_by") {

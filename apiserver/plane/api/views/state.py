@@ -1,6 +1,9 @@
 # Python imports
 from itertools import groupby
 
+# Django imports
+from django.db import IntegrityError
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -35,6 +38,22 @@ class StateViewSet(BaseViewSet):
             .select_related("workspace")
             .distinct()
         )
+
+    def create(self, request, slug, project_id):
+        try:
+            serializer = StateSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            return Response(
+                {"error": "State with the name already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, slug, project_id):
         try:

@@ -101,12 +101,12 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
             style={{ gridTemplateRows: "repeat(7, minmax(0, 1fr))" }}
             ref={ref}
           >
-            {recentDates.map((date) => {
+            {recentDates.map((date, index) => {
               const isActive = activities?.find((a) => a.created_date === date);
 
               return (
                 <Tooltip
-                  key={date}
+                  key={`${date}-${index}`}
                   tooltipContent={`${
                     isActive ? isActive.activity_count : 0
                   } activities on ${renderShortNumericDateFormat(date)}`}

@@ -87,13 +87,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
 
     modulesService
       .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-      .then((res) => {
-        console.log(res);
-        mutate(MODULE_DETAILS(moduleId as string));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      .then(() => mutate(MODULE_DETAILS(moduleId as string)))
+      .catch((e) => console.log(e));
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -392,7 +387,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
               </div>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base px-6 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure>
                 {({ open }) => (
                   <div
@@ -471,7 +466,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base px-6 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure>
                 {({ open }) => (
                   <div

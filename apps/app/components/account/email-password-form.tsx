@@ -50,7 +50,7 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
         if (!error?.response?.data) return;
         Object.keys(error.response.data).forEach((key) => {
           const err = error.response.data[key];
-          console.log("err", err);
+          console.log(err);
           setError(key as keyof EmailPasswordFormValues, {
             type: "manual",
             message: Array.isArray(err) ? err.join(", ") : err,

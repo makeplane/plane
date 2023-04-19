@@ -48,6 +48,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
   }));
 
   const selectedOption = states?.find((s) => s.id === value);
+  const currentDefaultState = states.find((s) => s.default);
 
   return (
     <CustomSearchSelect
@@ -58,11 +59,12 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
         <div className="flex items-center gap-2 text-brand-secondary">
           {selectedOption ? (
             getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)
+          ) : currentDefaultState ? (
+            getStateGroupIcon(currentDefaultState.group, "16", "16", currentDefaultState.color)
           ) : (
             <Squares2X2Icon className="h-4 w-4" />
           )}
-
-          {selectedOption?.name ?? "State"}
+          {selectedOption?.name ? selectedOption.name : currentDefaultState?.name ?? "State"}
         </div>
       }
       footerOption={

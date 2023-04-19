@@ -309,7 +309,19 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                   )}
                 </div>
               ) : (
-                <span className="capitalize">{filters[key as keyof typeof filters]}</span>
+                <div className="flex items-center gap-x-1 capitalize">
+                  {filters[key as keyof typeof filters]}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFilters({
+                        [key]: null,
+                      })
+                    }
+                  >
+                    <XMarkIcon className="h-3 w-3" />
+                  </button>
+                </div>
               )}
             </div>
           );
@@ -319,6 +331,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
           type="button"
           onClick={() =>
             setFilters({
+              type: null,
               state: null,
               priority: null,
               assignees: null,

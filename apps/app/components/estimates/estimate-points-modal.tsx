@@ -1,23 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
 
 import { useForm } from "react-hook-form";
 
 import { mutate } from "swr";
+
+// services
+import estimatesService from "services/estimates.service";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
-
-// icons
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { IEstimate, IEstimatePoint } from "types";
-
-import estimatesService from "services/estimates.service";
+// fetch-keys
 import { ESTIMATE_POINTS_LIST } from "constants/fetch-keys";
 
 type Props = {
@@ -144,6 +143,21 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
   };
 
   const onSubmit = async (formData: FormValues) => {
+    let c = 0;
+
+    Object.keys(formData).map((key) => {
+      if (formData[key as keyof FormValues] === "") c++;
+    });
+
+    if (c !== 0) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Please fill all the fields.",
+      });
+      return;
+    }
+
     if (data && data.length !== 0) await updateEstimatePoints(formData);
     else await createEstimatePoints(formData);
 
@@ -195,7 +209,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                   <div className="space-y-3">
                     <div className="flex flex-col gap-3">
                       <h4 className="text-lg font-medium leading-6">
-                        {data ? "Update" : "Create"} Estimate Points
+                        {data && data.length > 0 ? "Update" : "Create"} Estimate Points
                       </h4>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="flex items-center">
@@ -206,16 +220,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                                 id="name"
                                 name="value1"
                                 type="name"
-                                placeholder="Value"
+                                placeholder="Point 1"
                                 autoComplete="off"
                                 register={register}
-                                validations={{
-                                  required: "value is required",
-                                  maxLength: {
-                                    value: 10,
-                                    message: "Name should be less than 10 characters",
-                                  },
-                                }}
                               />
                             </span>
                           </span>
@@ -228,16 +235,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                                 id="name"
                                 name="value2"
                                 type="name"
-                                placeholder="Value"
+                                placeholder="Point 2"
                                 autoComplete="off"
                                 register={register}
-                                validations={{
-                                  required: "value is required",
-                                  maxLength: {
-                                    value: 10,
-                                    message: "Name should be less than 10 characters",
-                                  },
-                                }}
                               />
                             </span>
                           </span>
@@ -250,16 +250,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                                 id="name"
                                 name="value3"
                                 type="name"
-                                placeholder="Value"
+                                placeholder="Point 3"
                                 autoComplete="off"
                                 register={register}
-                                validations={{
-                                  required: "value is required",
-                                  maxLength: {
-                                    value: 10,
-                                    message: "Name should be less than 10 characters",
-                                  },
-                                }}
                               />
                             </span>
                           </span>
@@ -272,16 +265,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                                 id="name"
                                 name="value4"
                                 type="name"
-                                placeholder="Value"
+                                placeholder="Point 4"
                                 autoComplete="off"
                                 register={register}
-                                validations={{
-                                  required: "value is required",
-                                  maxLength: {
-                                    value: 10,
-                                    message: "Name should be less than 10 characters",
-                                  },
-                                }}
                               />
                             </span>
                           </span>
@@ -294,16 +280,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                                 id="name"
                                 name="value5"
                                 type="name"
-                                placeholder="Value"
+                                placeholder="Point 5"
                                 autoComplete="off"
                                 register={register}
-                                validations={{
-                                  required: "value is required",
-                                  maxLength: {
-                                    value: 10,
-                                    message: "Name should be less than 10 characters",
-                                  },
-                                }}
                               />
                             </span>
                           </span>
@@ -316,16 +295,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                                 id="name"
                                 name="value6"
                                 type="name"
-                                placeholder="Value"
+                                placeholder="Point 6"
                                 autoComplete="off"
                                 register={register}
-                                validations={{
-                                  required: "value is required",
-                                  maxLength: {
-                                    value: 10,
-                                    message: "Name should be less than 10 characters",
-                                  },
-                                }}
                               />
                             </span>
                           </span>
