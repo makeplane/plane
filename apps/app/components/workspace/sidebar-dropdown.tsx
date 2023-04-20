@@ -84,13 +84,13 @@ export const WorkspaceSidebarDropdown = () => {
     <div className="relative">
       <Menu as="div" className="col-span-4 inline-block w-full p-3 text-left">
         <div className="flex items-center justify-between gap-2.5">
-          <Menu.Button className="flex w-full items-center rounded-md py-2 text-sm font-semibold text-brand-muted-1 focus:outline-none">
+          <Menu.Button className="text-brand-muted-1 flex w-full items-center rounded-md py-2 text-sm font-semibold focus:outline-none">
             <div
               className={`flex w-full items-center gap-x-2 rounded-md bg-brand-base px-2 py-1.5 ${
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
-              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 dark:bg-brand-surface-2 uppercase text-white dark:text-gray-800">
+              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white dark:bg-brand-surface-2 dark:text-gray-800">
                 {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                   <Image
                     src={activeWorkspace.logo}
@@ -134,7 +134,7 @@ export const WorkspaceSidebarDropdown = () => {
         >
           <Menu.Items
             className="fixed left-2 z-20 mt-1  flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
-          bg-brand-surface-2 shadow-lg border border-brand-base focus:outline-none"
+          border border-brand-base bg-brand-surface-2 shadow-lg focus:outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
               <div className="text-sm text-brand-secondary">{user?.email}</div>
@@ -161,7 +161,7 @@ export const WorkspaceSidebarDropdown = () => {
                                     className="rounded"
                                   />
                                 ) : (
-                                  activeWorkspace?.name?.charAt(0) ?? "N"
+                                  workspace?.name?.charAt(0) ?? "..."
                                 )}
                               </span>
 
