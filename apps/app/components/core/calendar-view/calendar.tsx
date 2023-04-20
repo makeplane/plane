@@ -33,6 +33,7 @@ import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
@@ -49,12 +50,16 @@ import { IIssue } from "types";
 import { monthOptions, yearOptions } from "constants/calendar";
 import modulesService from "services/modules.service";
 
+type Props = {
+  addIssueToDate: (date: string) => void;
+};
+
 interface ICalendarRange {
   startDate: Date;
   endDate: Date;
 }
 
-export const CalendarView = () => {
+export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
   const [showWeekEnds, setShowWeekEnds] = useState<boolean>(false);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [isMonthlyView, setIsMonthlyView] = useState<boolean>(true);
@@ -231,7 +236,7 @@ export const CalendarView = () => {
                               isSameYear(year.value, currentDate)
                                 ? "text-sm font-medium text-gray-800"
                                 : "text-xs text-gray-400 "
-                            } hover:text-sm hover:text-gray-800 hover:font-medium `}
+                            } hover:text-sm hover:text-gray-800 hover:font-medium`}
                           >
                             {year.label}
                           </button>
@@ -424,7 +429,7 @@ export const CalendarView = () => {
                   key={index}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className={`flex flex-col gap-1.5 border-t border-brand-base p-2.5 text-left text-sm font-medium hover:bg-brand-surface-1 ${
+                  className={`group flex flex-col gap-1.5 border-t border-brand-base p-2.5 text-left text-sm font-medium hover:bg-brand-surface-1 ${
                     showWeekEnds
                       ? (index + 1) % 7 === 0
                         ? ""
@@ -458,6 +463,15 @@ export const CalendarView = () => {
                         )}
                       </Draggable>
                     ))}
+                  <div className="flex items-center justify-center p-1.5 text-sm text-gray-600 opacity-0 group-hover:opacity-100">
+                    <button
+                      className="flex items-center justify-center gap-2 text-center"
+                      onClick={() => addIssueToDate(date.date)}
+                    >
+                      <PlusIcon className="h-4 w-4 text-gray-600" />
+                      Add new issue
+                    </button>
+                  </div>
                   {provided.placeholder}
                 </div>
               )}
