@@ -302,7 +302,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                 <div className="relative pb-1">
                   {issueActivities.length > 1 && activityItemIdx !== issueActivities.length - 1 ? (
                     <span
-                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-base"
+                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-surface-2"
                       aria-hidden="true"
                     />
                   ) : null}
@@ -311,7 +311,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                       <div>
                         <div className="relative px-1.5">
                           <div className="mt-1.5">
-                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-base ring-white">
+                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-surface-2 ring-white">
                               {activityItem.field ? (
                                 activityDetails[activityItem.field as keyof typeof activityDetails]
                                   ?.icon

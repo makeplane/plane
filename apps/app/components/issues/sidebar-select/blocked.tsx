@@ -288,7 +288,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
         <button
           type="button"
           className={`flex w-full text-brand-secondary ${
-            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-1"
+            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
           } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
           onClick={() => setIsBlockedModalOpen(true)}
           disabled={isNotAllowed}

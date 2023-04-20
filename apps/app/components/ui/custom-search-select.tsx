@@ -69,7 +69,7 @@ export const CustomSearchSelect = ({
           ) : (
             <Combobox.Button
               className={`flex w-full border border-brand-base ${
-                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-base"
+                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
               } ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
               } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-brand-base ${
@@ -97,9 +97,9 @@ export const CustomSearchSelect = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Combobox.Options
-              className={`${optionsClassName} absolute min-w-[10rem] p-2 ${
+              className={`${optionsClassName} absolute min-w-[10rem] border border-brand-base p-2 ${
                 position === "right" ? "right-0" : "left-0"
-              } z-10 mt-1 origin-top-right rounded-md bg-brand-surface-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
+              } z-10 mt-1 origin-top-right rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none`}
             >
               <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-brand-base bg-brand-surface-1 px-2">
                 <MagnifyingGlassIcon className="text-brand-muted-1 h-3 w-3" />
@@ -130,7 +130,7 @@ export const CustomSearchSelect = ({
                         key={option.value}
                         value={option.value}
                         className={({ active, selected }) =>
-                          `${active || selected ? "bg-brand-surface-1" : ""} ${
+                          `${active || selected ? "bg-brand-surface-2" : ""} ${
                             selected ? "font-medium" : ""
                           } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-brand-secondary`
                         }

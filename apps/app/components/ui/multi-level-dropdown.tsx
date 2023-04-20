@@ -60,7 +60,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
           >
             <Menu.Items
               static
-              className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-brand-surface-2 text-xs shadow-lg focus:outline-none"
+              className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none"
             >
               {options.map((option) => (
                 <div className="relative p-1" key={option.id}>
@@ -83,7 +83,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                       <>
                         <div
                           className={`${
-                            active || option.selected ? "bg-brand-surface-1" : ""
+                            active || option.selected ? "bg-brand-surface-2" : ""
                           } flex items-center gap-1 rounded px-1 py-1.5 text-brand-secondary ${
                             direction === "right" ? "justify-between" : ""
                           }`}
@@ -101,7 +101,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                   </Menu.Item>
                   {option.children && option.id === openChildFor && (
                     <div
-                      className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-brand-surface-2 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+                      className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-brand-surface-1 shadow-lg focus:outline-none ${
                         direction === "left"
                           ? "right-full -translate-x-1"
                           : "left-full translate-x-1"
@@ -126,8 +126,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                               onSelect(child.value);
                             }}
                             className={`${
-                              child.selected ? "bg-brand-surface-1" : ""
-                            } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-1`}
+                              child.selected ? "bg-brand-surface-2" : ""
+                            } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-2`}
                           >
                             {child.label}
                           </button>

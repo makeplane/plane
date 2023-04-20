@@ -358,7 +358,7 @@ const SinglePage: NextPage = () => {
                     customButton={
                       <button
                         type="button"
-                        className="flex items-center gap-1 rounded-md bg-brand-surface-1 p-1.5 text-xs hover:bg-brand-surface-2"
+                        className="flex items-center gap-1 rounded-md bg-brand-surface-2 p-1.5 text-xs"
                       >
                         <PlusIcon className="h-3.5 w-3.5" />
                       </button>
@@ -375,7 +375,7 @@ const SinglePage: NextPage = () => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded-md bg-brand-surface-1 px-3 py-1.5 text-xs hover:bg-brand-surface-2"
+                      className="flex items-center gap-1 rounded-md bg-brand-surface-2 px-3 py-1.5 text-xs"
                     >
                       <PlusIcon className="h-3 w-3" />
                       Add label
@@ -515,7 +515,7 @@ const SinglePage: NextPage = () => {
                 {!createBlockForm && (
                   <button
                     type="button"
-                    className="mt-4 flex items-center gap-1 rounded-full bg-brand-base px-2 py-1 pr-2.5 text-xs hover:bg-brand-surface-1"
+                    className="mt-4 flex items-center gap-1 rounded-full bg-brand-base px-2 py-1 pr-2.5 text-xs hover:bg-brand-surface-2"
                     onClick={handleNewBlock}
                   >
                     <PlusIcon className="h-3 w-3" />

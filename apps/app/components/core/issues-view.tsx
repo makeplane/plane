@@ -399,7 +399,7 @@ export const IssuesView: React.FC<Props> = ({
       <>
         <div
           className={`flex items-center justify-between gap-2 ${
-            issueView === "list" && areFiltersApplied ? "mt-6 px-8" : "-mt-2"
+            issueView === "list" ? (areFiltersApplied ? "mt-6 px-8" : "") : "-mt-2"
           }`}
         >
           <FilterList filters={filters} setFilters={setFilters} />

@@ -57,8 +57,8 @@ export const IssuesFilterView: React.FC = () => {
       <div className="flex items-center gap-x-1">
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
-            issueView === "list" ? "bg-brand-base" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+            issueView === "list" ? "bg-brand-surface-2" : ""
           }`}
           onClick={() => setIssueView("list")}
         >
@@ -66,8 +66,8 @@ export const IssuesFilterView: React.FC = () => {
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-base ${
-            issueView === "kanban" ? "bg-brand-base" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+            issueView === "kanban" ? "bg-brand-surface-2" : ""
           }`}
           onClick={() => setIssueView("kanban")}
         >
@@ -75,8 +75,8 @@ export const IssuesFilterView: React.FC = () => {
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-base ${
-            issueView === "calendar" ? "bg-brand-base" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+            issueView === "calendar" ? "bg-brand-surface-2" : ""
           }`}
           onClick={() => setIssueView("calendar")}
         >
@@ -134,7 +134,7 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-brand-surface-2 p-3 shadow-lg">
+              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg border border-brand-base bg-brand-surface-1 p-3 shadow-lg">
                 <div className="relative divide-y-2 divide-brand-base">
                   <div className="space-y-4 pb-3 text-xs">
                     {issueView !== "calendar" && (
@@ -259,8 +259,8 @@ export const IssuesFilterView: React.FC = () => {
                               type="button"
                               className={`rounded border px-2 py-1 text-xs capitalize ${
                                 properties[key as keyof Properties]
-                                  ? "border-theme bg-theme text-white"
-                                  : "border-gray-300"
+                                  ? "border-brand-accent bg-brand-accent text-brand-base"
+                                  : "border-brand-base"
                               }`}
                               onClick={() => setProperties(key as keyof Properties)}
                             >
