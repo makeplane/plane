@@ -128,7 +128,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             if provider == "slack":
                 metadata = request.data.get("metadata", False)
                 access_token = metadata.get("access_token", False)
-                team_id = metadata.get("team", {}).get("team_id", False)
+                team_id = metadata.get("team", {}).get("id", False)
                 if not metadata or not access_token or not team_id:
                     return Response(
                         {"error": "Access token and team id is required"},
