@@ -388,7 +388,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
             </div>
 
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
-              <Disclosure>
+              <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
                     className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
@@ -467,7 +467,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
             </div>
 
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
-              <Disclosure>
+              <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
                     className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
