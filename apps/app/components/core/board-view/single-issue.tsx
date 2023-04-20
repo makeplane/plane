@@ -358,7 +358,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 {issue.label_details.map((label) => (
                   <div
                     key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
                   >
                     <span
                       className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -389,7 +389,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               />
             )}
             {properties.link && (
-              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
                   <div className="flex items-center gap-1 text-gray-500">
                     <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
@@ -399,10 +399,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
               </div>
             )}
             {properties.attachment_count && (
-              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
                   <div className="flex items-center gap-1 text-gray-500">
-                    <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                    <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-gray-500" />
                     {issue.attachment_count}
                   </div>
                 </Tooltip>

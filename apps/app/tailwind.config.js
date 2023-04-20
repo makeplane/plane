@@ -1,8 +1,7 @@
 function withOpacity(variableName) {
   return ({ opacityValue }) => {
-    if (opacityValue !== undefined) {
-      return `rgba(var(${variableName}), ${opacityValue})`;
-    }
+    if (opacityValue !== undefined) return `rgba(var(${variableName}), ${opacityValue})`;
+
     return `rgb(var(${variableName}))`;
   };
 }
@@ -19,11 +18,14 @@ module.exports = {
         secondary: "white",
         brand: {
           accent: withOpacity("--color-accent"),
+          base: withOpacity("--color-border"),
         },
       },
       borderColor: {
         brand: {
           base: withOpacity("--color-border"),
+          "surface-1": withOpacity("--color-bg-surface-1"),
+          "surface-2": withOpacity("--color-bg-surface-2"),
         },
       },
       backgroundColor: {

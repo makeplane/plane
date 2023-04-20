@@ -12,7 +12,12 @@ import { SelectFilters } from "components/views";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon, ListBulletIcon, Squares2X2Icon, CalendarDaysIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  ListBulletIcon,
+  Squares2X2Icon,
+  CalendarDaysIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -113,7 +118,7 @@ export const IssuesFilterView: React.FC = () => {
           <>
             <Popover.Button
               className={`group flex items-center gap-2 rounded-md border border-brand-base bg-transparent px-3 py-1.5 text-xs hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none ${
-                open ? "bg-brand-surface-1 text-brand-base" : "text-brand-muted-1"
+                open ? "bg-brand-surface-1 text-brand-base" : "text-brand-secondary"
               }`}
             >
               View

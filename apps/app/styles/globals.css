@@ -113,12 +113,11 @@
 
 .horizontal-scroll-enable::-webkit-scrollbar-track {
   height: 7px;
-  background-color: #f5f5f5;
 }
 
 .horizontal-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: #9ca3af;
+  background-color: rgba(var(--color-bg-surface-1));
 }
 
 .vertical-scroll-enable::-webkit-scrollbar {
@@ -128,12 +127,11 @@
 
 .vertical-scroll-enable::-webkit-scrollbar-track {
   width: 5px;
-  background-color: #f5f5f5;
 }
 
 .vertical-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: #9ca3af;
+  background-color: rgba(var(--color-bg-surface-1));
 }
 /* end scrollbar style */
 

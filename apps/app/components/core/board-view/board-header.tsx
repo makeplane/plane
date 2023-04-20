@@ -123,8 +123,8 @@ export const BoardHeader: React.FC<Props> = ({
 
   return (
     <div
-      className={`flex justify-between items-center px-1 ${
-        !isCollapsed ? "flex-col rounded-md border bg-brand-surface-2 border-brand-base" : ""
+      className={`flex items-center justify-between px-1 ${
+        !isCollapsed ? "flex-col rounded-md bg-brand-surface-1" : ""
       }`}
     >
       <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
@@ -145,7 +145,7 @@ export const BoardHeader: React.FC<Props> = ({
           <span
             className={`${
               isCollapsed ? "ml-0.5" : ""
-            } rounded-full bg-brand-surface-2 py-1 min-w-[2.5rem] text-xs text-center`}
+            } min-w-[2.5rem] rounded-full bg-brand-surface-2 py-1 text-center text-xs`}
           >
             {groupedByIssues?.[groupTitle].length ?? 0}
           </span>

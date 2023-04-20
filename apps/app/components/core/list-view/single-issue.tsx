@@ -217,7 +217,7 @@ export const SingleListIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-brand-base last:border-b-0"
+        className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-brand-base bg-brand-surface-1 last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
@@ -231,13 +231,15 @@ export const SingleListIssue: React.FC<Props> = ({
                 tooltipHeading="Issue ID"
                 tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
               >
-                <span className="flex-shrink-0 text-xs text-gray-400">
+                <span className="flex-shrink-0 text-xs text-brand-secondary">
                   {issue.project_detail?.identifier}-{issue.sequence_id}
                 </span>
               </Tooltip>
             )}
             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="text-[0.825rem] text-gray-800">{truncateText(issue.name, 50)}</span>
+              <span className="text-[0.825rem] text-brand-base">
+                {truncateText(issue.name, 50)}
+              </span>
             </Tooltip>
           </a>
         </Link>
@@ -267,7 +269,7 @@ export const SingleListIssue: React.FC<Props> = ({
             />
           )}
           {properties.sub_issue_count && (
-            <div className="flex  items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
+            <div className="flex items-center gap-1 rounded-md border border-brand-base text-brand-secondary px-3 py-1 text-xs shadow-sm">
               {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}
@@ -276,7 +278,7 @@ export const SingleListIssue: React.FC<Props> = ({
               {issue.label_details.map((label) => (
                 <span
                   key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                  className="group flex items-center gap-1 rounded-2xl border border-brand-base text-brand-secondary px-2 py-0.5 text-xs"
                 >
                   <span
                     className="h-1.5 w-1.5  rounded-full"
@@ -308,8 +310,8 @@ export const SingleListIssue: React.FC<Props> = ({
             />
           )}
           {properties.link && (
-            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
-              <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
+            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-brand-base">
+              <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-gray-500">
                   <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
                   {issue.link_count}
@@ -318,8 +320,8 @@ export const SingleListIssue: React.FC<Props> = ({
             </div>
           )}
           {properties.attachment_count && (
-            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
-              <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
+            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-brand-base">
+              <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-gray-500">
                   <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
                   {issue.attachment_count}
