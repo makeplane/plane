@@ -42,7 +42,7 @@ from .workspace import (
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
 )
-from .state import StateViewSet
+from .state import StateViewSet, StateDeleteIssueCheckEndpoint
 from .shortcut import ShortCutViewSet
 from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
 from .cycle import (
