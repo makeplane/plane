@@ -68,11 +68,11 @@ export const CustomSearchSelect = ({
             <Combobox.Button as="div">{customButton}</Combobox.Button>
           ) : (
             <Combobox.Button
-              className={`flex w-full ${
-                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
+              className={`flex w-full border border-brand-base ${
+                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-base"
               } ${
-                input ? "border-brand-base px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
-              } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent ${
+                input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+              } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-brand-base ${
                 textAlignment === "right"
                   ? "text-right"
                   : textAlignment === "center"
@@ -132,7 +132,7 @@ export const CustomSearchSelect = ({
                         className={({ active, selected }) =>
                           `${active || selected ? "bg-brand-surface-1" : ""} ${
                             selected ? "font-medium" : ""
-                          } text-brand-muted-1 flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5`
+                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-brand-secondary`
                         }
                       >
                         {({ active, selected }) => (

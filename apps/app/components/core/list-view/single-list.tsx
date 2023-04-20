@@ -130,14 +130,10 @@ export const SingleList: React.FC<Props> = ({
   };
 
   return (
-    <Disclosure key={groupTitle} as="div" defaultOpen>
+    <Disclosure as="div" defaultOpen>
       {({ open }) => (
-        <div className="rounded-[10px] border border-brand-base bg-brand-surface-2">
-          <div
-            className={`flex items-center justify-between bg-brand-surface-1 px-4 py-2.5 ${
-              open ? "rounded-t-[10px]" : "rounded-[10px]"
-            }`}
-          >
+        <div>
+          <div className="flex items-center justify-between bg-brand-base px-4 py-2.5">
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
                 {selectedGroup !== null && (
@@ -150,7 +146,7 @@ export const SingleList: React.FC<Props> = ({
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
-                <span className="rounded-full bg-brand-surface-2 py-1 min-w-[2.5rem] text-center text-xs text-brand-2">
+                <span className="text-brand-2 min-w-[2.5rem] rounded-full bg-brand-surface-2 py-1 text-center text-xs">
                   {groupedByIssues[groupTitle as keyof IIssue].length}
                 </span>
               </div>
@@ -168,7 +164,7 @@ export const SingleList: React.FC<Props> = ({
             ) : (
               <CustomMenu
                 customButton={
-                  <div className="flex items-center cursor-pointer">
+                  <div className="flex cursor-pointer items-center">
                     <PlusIcon className="h-4 w-4" />
                   </div>
                 }
@@ -215,7 +211,9 @@ export const SingleList: React.FC<Props> = ({
                     />
                   ))
                 ) : (
-                  <p className="px-4 py-3 text-sm text-brand-secondary">No issues.</p>
+                  <p className="bg-brand-surface-1 px-4 py-2.5 text-sm text-brand-secondary">
+                    No issues.
+                  </p>
                 )
               ) : (
                 <div className="flex h-full w-full items-center justify-center">Loading...</div>

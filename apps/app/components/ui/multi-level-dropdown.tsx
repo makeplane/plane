@@ -41,7 +41,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
           <div>
             <Menu.Button
               onClick={() => setOpenChildFor(null)}
-              className={`group flex items-center justify-between gap-2 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+              className={`group flex items-center justify-between gap-2 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm duration-300 focus:outline-none ${
                 open ? "bg-brand-surface-1 text-brand-base" : "text-brand-secondary"
               }`}
             >
@@ -83,8 +83,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                       <>
                         <div
                           className={`${
-                            active || option.selected ? "bg-brand-surface-1" : "text-brand-base"
-                          } flex items-center gap-1 rounded px-1 py-1.5 ${
+                            active || option.selected ? "bg-brand-surface-1" : ""
+                          } flex items-center gap-1 rounded px-1 py-1.5 text-brand-secondary ${
                             direction === "right" ? "justify-between" : ""
                           }`}
                         >
@@ -126,8 +126,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                               onSelect(child.value);
                             }}
                             className={`${
-                              child.selected ? "bg-brand-surface-1" : "text-brand-base"
-                            } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize hover:bg-brand-surface-1`}
+                              child.selected ? "bg-brand-surface-1" : ""
+                            } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-1`}
                           >
                             {child.label}
                           </button>
