@@ -41,6 +41,11 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     defaultValues,
   });
 
+  const onClose = () => {
+    handleClose();
+    reset();
+  };
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -62,7 +67,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
           (prevData) => [res, ...(prevData ?? [])],
           false
         );
-        handleClose();
       })
       .catch(() => {
         setToastAlert({
@@ -71,6 +75,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
           message: "Error: Estimate could not be created",
         });
       });
+
+    onClose();
   };
 
   const updateEstimate = async (formData: IEstimate) => {
@@ -102,7 +108,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
           message: "Error: Estimate could not be updated",
         });
       });
-    handleClose();
+
+    onClose();
   };
 
   useEffect(() => {
