@@ -44,7 +44,6 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
-import { DIVIDER } from "@blueprintjs/core/lib/esm/common/classes";
 
 type Props = {
   type?: string;
@@ -217,7 +216,7 @@ export const SingleListIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-brand-base bg-brand-surface-1 last:border-b-0"
+        className="flex items-center justify-between gap-2 border-b border-brand-base px-4 py-2.5 last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
@@ -269,7 +268,7 @@ export const SingleListIssue: React.FC<Props> = ({
             />
           )}
           {properties.sub_issue_count && (
-            <div className="flex items-center gap-1 rounded-md border border-brand-base text-brand-secondary px-3 py-1 text-xs shadow-sm">
+            <div className="flex items-center gap-1 rounded-md border border-brand-base px-3 py-1 text-xs text-brand-secondary shadow-sm">
               {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}
@@ -278,7 +277,7 @@ export const SingleListIssue: React.FC<Props> = ({
               {issue.label_details.map((label) => (
                 <span
                   key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-brand-base text-brand-secondary px-2 py-0.5 text-xs"
+                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
                 >
                   <span
                     className="h-1.5 w-1.5  rounded-full"
@@ -310,7 +309,7 @@ export const SingleListIssue: React.FC<Props> = ({
             />
           )}
           {properties.link && (
-            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-brand-base">
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-gray-500">
                   <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
@@ -320,10 +319,10 @@ export const SingleListIssue: React.FC<Props> = ({
             </div>
           )}
           {properties.attachment_count && (
-            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-brand-base">
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-gray-500">
-                  <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-gray-500" />
                   {issue.attachment_count}
                 </div>
               </Tooltip>

@@ -211,9 +211,7 @@ export const SingleList: React.FC<Props> = ({
                     />
                   ))
                 ) : (
-                  <p className="bg-brand-surface-1 px-4 py-2.5 text-sm text-brand-secondary">
-                    No issues.
-                  </p>
+                  <p className="px-4 py-2.5 text-sm text-brand-secondary">No issues.</p>
                 )
               ) : (
                 <div className="flex h-full w-full items-center justify-center">Loading...</div>

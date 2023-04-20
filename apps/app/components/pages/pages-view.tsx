@@ -47,9 +47,9 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const { setToastAlert } = useToast();
 
   const { data: people } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectService.projectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -67,7 +67,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
     if (!workspaceSlug || !projectId) return;
 
     mutate<IPage[]>(
-      ALL_PAGES_LIST(projectId as string),
+      ALL_PAGES_LIST(projectId.toString()),
       (prevData) =>
         (prevData ?? []).map((p) => {
           if (p.id === page.id) p.is_favorite = true;
@@ -77,7 +77,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
     mutate<IPage[]>(
-      MY_PAGES_LIST(projectId as string),
+      MY_PAGES_LIST(projectId.toString()),
       (prevData) =>
         (prevData ?? []).map((p) => {
           if (p.id === page.id) p.is_favorite = true;
@@ -87,17 +87,17 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
     mutate<IPage[]>(
-      FAVORITE_PAGES_LIST(projectId as string),
-      (prevData) => [page, ...(prevData as IPage[])],
+      FAVORITE_PAGES_LIST(projectId.toString()),
+      (prevData) => [page, ...(prevData ?? [])],
       false
     );
 
     pagesService
-      .addPageToFavorites(workspaceSlug as string, projectId as string, {
+      .addPageToFavorites(workspaceSlug.toString(), projectId.toString(), {
         page: page.id,
       })
       .then(() => {
-        mutate(RECENT_PAGES_LIST(projectId as string));
+        mutate(RECENT_PAGES_LIST(projectId.toString()));
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -117,7 +117,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
     if (!workspaceSlug || !projectId) return;
 
     mutate<IPage[]>(
-      ALL_PAGES_LIST(projectId as string),
+      ALL_PAGES_LIST(projectId.toString()),
       (prevData) =>
         (prevData ?? []).map((p) => {
           if (p.id === page.id) p.is_favorite = false;
@@ -127,7 +127,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
     mutate<IPage[]>(
-      MY_PAGES_LIST(projectId as string),
+      MY_PAGES_LIST(projectId.toString()),
       (prevData) =>
         (prevData ?? []).map((p) => {
           if (p.id === page.id) p.is_favorite = false;
@@ -137,15 +137,15 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
     mutate<IPage[]>(
-      FAVORITE_PAGES_LIST(projectId as string),
+      FAVORITE_PAGES_LIST(projectId.toString()),
       (prevData) => (prevData ?? []).filter((p) => p.id !== page.id),
       false
     );
 
     pagesService
-      .removePageFromFavorites(workspaceSlug as string, projectId as string, page.id)
+      .removePageFromFavorites(workspaceSlug.toString(), projectId.toString(), page.id)
       .then(() => {
-        mutate(RECENT_PAGES_LIST(projectId as string));
+        mutate(RECENT_PAGES_LIST(projectId.toString()));
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -165,25 +165,25 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
     if (!workspaceSlug || !projectId) return;
 
     mutate<IPage[]>(
-      ALL_PAGES_LIST(projectId as string),
+      ALL_PAGES_LIST(projectId.toString()),
       (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
       false
     );
     mutate<IPage[]>(
-      MY_PAGES_LIST(projectId as string),
+      MY_PAGES_LIST(projectId.toString()),
       (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
       false
     );
     mutate<IPage[]>(
-      FAVORITE_PAGES_LIST(projectId as string),
+      FAVORITE_PAGES_LIST(projectId.toString()),
       (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
       false
     );
 
     pagesService
-      .patchPage(workspaceSlug as string, projectId as string, page.id, formData)
+      .patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData)
       .then(() => {
-        mutate(RECENT_PAGES_LIST(projectId as string));
+        mutate(RECENT_PAGES_LIST(projectId.toString()));
       });
   };
 
@@ -202,7 +202,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       {pages ? (
         pages.length > 0 ? (
           viewType === "list" ? (
-            <ul role="list" className="divide-y">
+            <ul role="list" className="divide-y divide-brand-base">
               {pages.map((page) => (
                 <SinglePageListItem
                   key={page.id}
@@ -217,7 +217,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               ))}
             </ul>
           ) : viewType === "detailed" ? (
-            <div className="divide-y rounded-[10px] border border-brand-base bg-brand-surface-2">
+            <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base">
               {pages.map((page) => (
                 <SinglePageDetailedItem
                   key={page.id}
@@ -232,7 +232,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               ))}
             </div>
           ) : (
-            <div className="rounded-[10px] border border-brand-base bg-brand-surface-2">
+            <div className="rounded-[10px] border border-brand-base">
               {pages.map((page) => (
                 <SinglePageDetailedItem
                   key={page.id}
@@ -260,6 +260,11 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
+        </Loader>
+      ) : viewType === "detailed" ? (
+        <Loader className="space-y-4">
+          <Loader.Item height="150px" />
+          <Loader.Item height="150px" />
         </Loader>
       ) : (
         <Loader className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
