@@ -52,7 +52,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <UserIcon className="h-4 w-4 flex-shrink-0" />
         <p>Parent</p>
       </div>
@@ -79,7 +79,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
           type="button"
           className={`flex w-full ${
             isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-1"
-          } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent`}
+          } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
           onClick={() => setIsParentModalOpen(true)}
           disabled={isNotAllowed}
         >

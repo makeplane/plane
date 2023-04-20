@@ -59,21 +59,27 @@ export const SidebarModuleSelect: React.FC<Props> = ({
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <RectangleGroupIcon className="h-4 w-4 flex-shrink-0" />
         <p>Module</p>
       </div>
       <div className="space-y-1 sm:basis-1/2">
         <CustomSelect
           label={
-            <Tooltip position="left" tooltipContent={`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}`}>
-            <span
-              className={`w-full max-w-[125px] truncate text-left sm:block ${
-                issueModule ? "" : "text-brand-base"
+            <Tooltip
+              position="left"
+              tooltipContent={`${
+                modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"
               }`}
             >
-              {truncateText(`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}`, 15)}
-            </span>
+              <span className="w-full max-w-[125px] truncate text-left sm:block">
+                <span className={`${issueModule ? "text-brand-base" : "text-brand-secondary"}`}>
+                  {truncateText(
+                    `${modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}`,
+                    15
+                  )}
+                </span>
+              </span>
             </Tooltip>
           }
           value={issueModule?.module_detail?.id}
@@ -93,7 +99,9 @@ export const SidebarModuleSelect: React.FC<Props> = ({
                 {modules.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     <Tooltip position="left-bottom" tooltipContent={option.name}>
-                      <span className="w-full max-w-[125px] truncate">{truncateText(option.name, 15)}</span>
+                      <span className="w-full max-w-[125px] truncate">
+                        {truncateText(option.name, 15)}
+                      </span>
                     </Tooltip>
                   </CustomSelect.Option>
                 ))}

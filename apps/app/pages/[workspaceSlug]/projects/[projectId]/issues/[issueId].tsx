@@ -123,7 +123,6 @@ const IssueDetailsPage: NextPage = () => {
   return (
     <ProjectAuthorizationWrapper
       noPadding
-      bg="secondary"
       breadcrumbs={
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
@@ -149,18 +148,18 @@ const IssueDetailsPage: NextPage = () => {
                       issueDetails.parent
                     }`}
                   >
-                    <a className="flex items-center gap-2">
+                    <a className="flex items-center gap-2 text-brand-secondary">
                       <span
                         className="block h-1.5 w-1.5 rounded-full"
                         style={{
                           backgroundColor: issueDetails?.state_detail?.color,
                         }}
                       />
-                      <span className="flex-shrink-0 text-gray-600">
+                      <span className="flex-shrink-0">
                         {issueDetails.project_detail.identifier}-
                         {issueDetails.parent_detail?.sequence_id}
                       </span>
-                      <span className="truncate font-medium">
+                      <span className="truncate">
                         {issueDetails.parent_detail?.name.substring(0, 50)}
                       </span>
                     </a>
@@ -182,7 +181,7 @@ const IssueDetailsPage: NextPage = () => {
                         </CustomMenu.MenuItem>
                       ))
                     ) : (
-                      <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-brand-base">
+                      <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-brand-secondary">
                         No other sibling issues
                       </CustomMenu.MenuItem>
                     )}
@@ -196,12 +195,12 @@ const IssueDetailsPage: NextPage = () => {
             </div>
             <div className="flex flex-col gap-3 py-3">
               <h3 className="text-lg">Attachments</h3>
-              <div className="grid  gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 <IssueAttachmentUpload />
                 <IssueAttachments />
               </div>
             </div>
-            <div className="space-y-5 bg-brand-base pt-3">
+            <div className="space-y-5 pt-3">
               <h3 className="text-lg text-brand-base">Comments/Activity</h3>
               <IssueActivitySection />
               <AddComment />
