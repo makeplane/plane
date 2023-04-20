@@ -49,10 +49,10 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
   return (
     <div className="relative">
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
-        <a className="block py-4 px-6">
+        <a className="block p-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <p className="mr-2 truncate text-xl font-semibold">{truncateText(page.name, 75)}</p>
+              <p className="mr-2 truncate font-medium">{truncateText(page.name, 75)}</p>
               {page.label_details.length > 0 &&
                 page.label_details.map((label) => (
                   <div
