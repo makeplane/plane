@@ -295,27 +295,28 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 handleClose={() => setCreateBlockForm(false)}
                 data={block}
                 setIsSyncing={setIsSyncing}
+                focus="name"
               />
             </div>
           ) : (
             <div
               className={`group relative ${
-                snapshot.isDragging ? "border-2 bg-white border-theme shadow-lg rounded-md p-6" : ""
+                snapshot.isDragging ? "rounded-md border-2 border-theme bg-white p-6 shadow-lg" : ""
               }`}
               ref={provided.innerRef}
               {...provided.draggableProps}
             >
               <button
                 type="button"
-                className="absolute top-4 -left-4 p-0.5 hover:bg-gray-100 rounded hidden group-hover:!flex"
+                className="absolute top-4 -left-4 hidden rounded p-0.5 hover:bg-gray-100 group-hover:!flex"
                 {...provided.dragHandleProps}
               >
                 <EllipsisVerticalIcon className="h-[18px]" />
-                <EllipsisVerticalIcon className="h-[18px] -ml-3" />
+                <EllipsisVerticalIcon className="-ml-3 h-[18px]" />
               </button>
               <div
                 ref={actionSectionRef}
-                className={`absolute top-4 right-0 items-center gap-2 hidden group-hover:!flex  bg-white pl-4 ${
+                className={`absolute top-4 right-0 hidden items-center gap-2 bg-white  pl-4 group-hover:!flex ${
                   isMenuActive ? "!flex" : ""
                 }`}
               >
@@ -363,7 +364,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 <CustomMenu
                   customButton={
                     <button
-                      className="flex cursor-pointer items-center justify-between gap-1 px-2.5 py-1 text-xs duration-300 hover:bg-gray-100 text-left rounded w-full"
+                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2.5 py-1 text-left text-xs duration-300 hover:bg-gray-100"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <BoltIcon className="h-4.5 w-3.5" />
@@ -407,28 +408,28 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 }`}
               >
                 <div
-                  className="px-4 w-full overflow-hidden break-all cursor-pointer"
+                  className="w-full cursor-pointer overflow-hidden break-all px-4"
                   onClick={() => setCreateBlockForm(true)}
                 >
                   <div className="flex">
                     {block.issue && (
-                      <div className="flex mr-1.5">
+                      <div className="mr-1.5 flex">
                         <Link
                           href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}
                         >
-                          <a className="flex flex-shrink-0 items-center gap-1 rounded h-6 bg-gray-100 px-1.5 py-1 text-xs">
+                          <a className="flex h-6 flex-shrink-0 items-center gap-1 rounded bg-gray-100 px-1.5 py-1 text-xs">
                             <LayerDiagonalIcon height="16" width="16" color="black" />
                             {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
                           </a>
                         </Link>
                       </div>
                     )}
-                    <h3 className="font-medium text-base overflow-hidden max-w-[1000px]">
+                    <h3 className="max-w-[1000px] overflow-hidden text-base font-medium">
                       {block.name}
                     </h3>
                   </div>
                   {block?.description_stripped.length > 0 && (
-                    <p className="mt-3 text-sm text-gray-500 font-normal h-5 truncate">
+                    <p className="mt-3 h-5 truncate text-sm font-normal text-gray-500">
                       {block.description_stripped}
                     </p>
                   )}

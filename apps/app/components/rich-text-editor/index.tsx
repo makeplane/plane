@@ -209,9 +209,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         {(!value || value === "" || value?.content?.[0]?.content === undefined) &&
           !(typeof value === "string" && value.includes("<")) &&
           placeholder && (
-            <p className="absolute pointer-events-none top-4 left-4 text-brand-secondary">
-              {placeholder}
-            </p>
+            <p className="pointer-events-none absolute top-4 left-4 text-sm">{placeholder}</p>
           )}
         <EditorComponent />
 
