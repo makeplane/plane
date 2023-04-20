@@ -98,7 +98,7 @@ export const IssueAttachmentUpload = () => {
         ) : isLoading ? (
           <p className="text-center">Uploading...</p>
         ) : (
-          <p className="text-center">Drag and drop/ Click to add</p>
+          <p className="text-center">Drag and drop here</p>
         )}
       </span>
     </div>
