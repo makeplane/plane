@@ -146,11 +146,13 @@ class BulkEstimatePointEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
-    def post(self, request, slug, project_id, estimate_id):
+    def post(self, request, slug, project_id):
         try:
-            estimate = Estimate.objects.get(
-                pk=estimate_id, workspace__slug=slug, project=project_id
-            )
+            if not request.data.get("estimate", False):
+                return Response(
+                    {"error": "Estimate is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             estimate_points = request.data.get("estimate_points", [])
 
@@ -160,6 +162,18 @@ class BulkEstimatePointEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            estimate_serializer = EstimateSerializer(data=request.data.get("estimate"))
+            if not estimate_serializer.is_valid():
+                return Response(
+                    estimate_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                )
+            try:
+                estimate = estimate_serializer.save(project_id=project_id)
+            except IntegrityError:
+                return Response(
+                    {"errror": "Estimate with the name already exists"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             estimate_points = EstimatePoint.objects.bulk_create(
                 [
                     EstimatePoint(
@@ -178,9 +192,17 @@ class BulkEstimatePointEndpoint(BaseAPIView):
                 ignore_conflicts=True,
             )
 
-            serializer = EstimatePointSerializer(estimate_points, many=True)
+            estimate_point_serializer = EstimatePointSerializer(
+                estimate_points, many=True
+            )
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "estimate": estimate_serializer.data,
+                    "estimate_points": estimate_point_serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Estimate.DoesNotExist:
             return Response(
                 {"error": "Estimate does not exist"},
@@ -212,7 +234,6 @@ class BulkEstimatePointEndpoint(BaseAPIView):
                 estimate_id=estimate_id,
             )
 
-            print(estimate_points)
             updated_estimate_points = []
             for estimate_point in estimate_points:
                 # Find the data for that estimate point
@@ -238,7 +259,7 @@ class BulkEstimatePointEndpoint(BaseAPIView):
                 {"error": "Estimate does not exist"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

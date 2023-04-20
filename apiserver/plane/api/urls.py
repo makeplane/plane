@@ -567,6 +567,11 @@ urlpatterns = [
         name="project-estimate-points",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/bulk-estimate-points/",
+        BulkEstimatePointEndpoint.as_view(),
+        name="bulk-create-estimate-points",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/bulk-estimate-points/",
         BulkEstimatePointEndpoint.as_view(),
         name="bulk-create-estimate-points",
