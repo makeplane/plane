@@ -59,7 +59,7 @@ const activityDetails: {
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
   },
   labels: {
     icon: <TagIcon height="12" width="12" color="#6b7280" />,
@@ -78,11 +78,15 @@ const activityDetails: {
   },
   name: {
     message: "set the name to",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: (
+      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />
+    ),
   },
   description: {
     message: "updated the description.",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: (
+      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />
+    ),
   },
   target_date: {
     message: "set the due date to",
@@ -94,7 +98,7 @@ const activityDetails: {
   },
   estimate: {
     message: "updated the estimate",
-    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
   },
   link: {
     message: "updated the link",
@@ -255,7 +259,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
             }
 
             value = (
-              <span className="relative inline-flex items-center rounded-full px-2 py-0.5 text-xs border border-brand-base">
+              <span className="relative inline-flex items-center rounded-full border border-brand-base px-2 py-0.5 text-xs">
                 <span className="absolute flex flex-shrink-0 items-center justify-center">
                   <span
                     className="h-1.5 w-1.5 rounded-full"
@@ -298,7 +302,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                 <div className="relative pb-1">
                   {issueActivities.length > 1 && activityItemIdx !== issueActivities.length - 1 ? (
                     <span
-                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-surface-2"
+                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-surface-1"
                       aria-hidden="true"
                     />
                   ) : null}
@@ -353,12 +357,13 @@ export const IssueActivitySection: React.FC<Props> = () => {
             );
           } else if ("comment_json" in activityItem)
             return (
-              <CommentCard
-                key={activityItem.id}
-                comment={activityItem as any}
-                onSubmit={handleCommentUpdate}
-                handleCommentDeletion={handleCommentDelete}
-              />
+              <div key={activityItem.id} className="mt-4">
+                <CommentCard
+                  comment={activityItem as any}
+                  onSubmit={handleCommentUpdate}
+                  handleCommentDeletion={handleCommentDelete}
+                />
+              </div>
             );
         })}
       </ul>

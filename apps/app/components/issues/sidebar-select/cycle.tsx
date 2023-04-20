@@ -12,7 +12,7 @@ import { Spinner, CustomSelect, Tooltip } from "components/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 // icons
-import { CyclesIcon } from "components/icons";
+import { ContrastIcon } from "components/icons";
 // types
 import { ICycle, IIssue, UserAuth } from "types";
 // fetch-keys
@@ -60,20 +60,21 @@ export const SidebarCycleSelect: React.FC<Props> = ({
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <CyclesIcon className="h-4 w-4 flex-shrink-0" />
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+        <ContrastIcon className="h-4 w-4 flex-shrink-0" />
         <p>Cycle</p>
       </div>
       <div className="space-y-1 sm:basis-1/2">
         <CustomSelect
           label={
-            <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : ""}`}>
-              <span
-                className={`w-full max-w-[125px] truncate text-left sm:block ${
-                  issueCycle ? "" : "text-brand-base"
-                }`}
-              >
-                {issueCycle ? truncateText(issueCycle.cycle_detail.name, 15) : "None"}
+            <Tooltip
+              position="left"
+              tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}
+            >
+              <span className="w-full max-w-[125px] truncate text-left sm:block">
+                <span className={`${issueCycle ? "text-brand-base" : "text-brand-secondary"}`}>
+                  {issueCycle ? truncateText(issueCycle.cycle_detail.name, 15) : "No cycle"}
+                </span>
               </span>
             </Tooltip>
           }

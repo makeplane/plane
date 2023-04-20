@@ -21,21 +21,21 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, userAu
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
         <p>Priority</p>
       </div>
       <div className="sm:basis-1/2">
         <CustomSelect
           label={
-            <span
-              className={`flex items-center gap-2 text-left capitalize ${
-                value ? "" : "text-brand-base"
-              }`}
-            >
-              {getPriorityIcon(value && value !== "" ? value ?? "" : "None", "text-sm")}
-              {value && value !== "" ? value : "None"}
-            </span>
+            <div className="flex items-center gap-2 text-left capitalize">
+              <span className={`${value ? "text-brand-base" : "text-brand-secondary"}`}>
+                {getPriorityIcon(value ?? "None", "text-sm")}
+              </span>
+              <span className={`${value ? "text-brand-base" : "text-brand-secondary"}`}>
+                {value ?? "None"}
+              </span>
+            </div>
           }
           value={value}
           onChange={onChange}

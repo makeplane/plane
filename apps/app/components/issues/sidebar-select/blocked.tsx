@@ -105,7 +105,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
 
   return (
     <div className="flex flex-wrap items-start py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <BlockedIcon height={16} width={16} />
         <p>Blocked by</p>
       </div>
@@ -115,7 +115,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
             ? watch("blocked_list").map((issue) => (
                 <div
                   key={issue}
-                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500 hover:bg-red-500/30"
+                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                 >
                   <Link
                     href={`/${workspaceSlug}/projects/${projectId}/issues/${
@@ -287,9 +287,9 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
         </Transition.Root>
         <button
           type="button"
-          className={`flex w-full ${
+          className={`flex w-full text-brand-secondary ${
             isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-1"
-          } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent`}
+          } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
           onClick={() => setIsBlockedModalOpen(true)}
           disabled={isNotAllowed}
         >

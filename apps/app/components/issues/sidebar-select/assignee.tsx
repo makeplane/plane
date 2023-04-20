@@ -56,7 +56,7 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
         <p>Assignees</p>
       </div>
@@ -66,9 +66,9 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
           label={
             <div className="flex items-center gap-2 text-brand-secondary">
               {value && value.length > 0 && Array.isArray(value) ? (
-                <div className="flex items-center justify-center gap-2 -my-0.5">
+                <div className="-my-0.5 flex items-center justify-center gap-2">
                   <AssigneesList userIds={value} length={3} showLength={false} />
-                  <span className="text-brand-secondary">{value.length} Assignees</span>
+                  <span className="text-brand-base">{value.length} Assignees</span>
                 </div>
               ) : (
                 "No assignees"

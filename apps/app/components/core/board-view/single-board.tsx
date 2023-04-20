@@ -66,7 +66,7 @@ export const SingleBoard: React.FC<Props> = ({
   }, [currentState]);
 
   return (
-    <div className={`h-full flex-shrink-0 ${!isCollapsed ? "" : "w-96 bg-brand-base"}`}>
+    <div className={`h-full flex-shrink-0 ${!isCollapsed ? "" : "w-96"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}

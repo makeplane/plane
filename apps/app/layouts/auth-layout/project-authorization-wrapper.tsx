@@ -121,7 +121,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                 noPadding || issueView === "list" ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
               } ${
                 bg === "primary"
-                  ? "bg-brand-base"
+                  ? "bg-brand-sidebar"
                   : bg === "secondary"
                   ? "bg-brand-surface-1"
                   : "bg-brand-base"
