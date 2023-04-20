@@ -60,7 +60,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
           >
             <Menu.Items
               static
-              className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-brand-surface-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-brand-surface-2 text-xs shadow-lg focus:outline-none"
             >
               {options.map((option) => (
                 <div className="relative p-1" key={option.id}>

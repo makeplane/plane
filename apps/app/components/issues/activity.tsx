@@ -244,7 +244,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
             activityItem.field !== "link" &&
             activityItem.field !== "estimate"
           ) {
-            value = <span className="text-gray-600">created this issue.</span>;
+            value = <span className="text-brand-secondary">created this issue.</span>;
           } else if (activityItem.field === "state") {
             value = activityItem.new_value ? addSpaceIfCamelCase(activityItem.new_value) : "None";
           } else if (activityItem.field === "labels") {
@@ -302,7 +302,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                 <div className="relative pb-1">
                   {issueActivities.length > 1 && activityItemIdx !== issueActivities.length - 1 ? (
                     <span
-                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-surface-1"
+                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-base"
                       aria-hidden="true"
                     />
                   ) : null}
@@ -311,7 +311,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                       <div>
                         <div className="relative px-1.5">
                           <div className="mt-1.5">
-                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-surface-1 ring-white">
+                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-base ring-white">
                               {activityItem.field ? (
                                 activityDetails[activityItem.field as keyof typeof activityDetails]
                                   ?.icon

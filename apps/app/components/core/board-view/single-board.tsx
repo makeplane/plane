@@ -81,7 +81,7 @@ export const SingleBoard: React.FC<Props> = ({
             {(provided, snapshot) => (
               <div
                 className={`relative h-full overflow-y-auto p-1  ${
-                  snapshot.isDraggingOver ? "bg-brand-accent bg-opacity-50" : ""
+                  snapshot.isDraggingOver ? "bg-brand-base/20" : ""
                 } ${!isCollapsed ? "hidden" : "block"}`}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
@@ -96,10 +96,12 @@ export const SingleBoard: React.FC<Props> = ({
                     <div
                       className={`absolute ${
                         snapshot.isDraggingOver ? "block" : "hidden"
-                      } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs`}
+                      } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-brand-base p-2 text-xs`}
                     >
                       This board is ordered by{" "}
-                      {replaceUnderscoreIfSnakeCase(orderBy ?? "created_at")}
+                      {replaceUnderscoreIfSnakeCase(
+                        orderBy ? (orderBy[0] === "-" ? orderBy.slice(1) : orderBy) : "created_at"
+                      )}
                     </div>
                   </>
                 )}

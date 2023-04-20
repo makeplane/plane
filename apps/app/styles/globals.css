@@ -176,17 +176,17 @@
 
 /* react datepicker styling */
 .react-datepicker-wrapper input::placeholder {
-  color: #000;
+  color: rgba(var(--color-text-secondary));
   opacity: 1;
 }
 
 .react-datepicker-wrapper input:-ms-input-placeholder {
-  color: #000;
+  color: rgba(var(--color-text-secondary));
 }
 
 .react-datepicker-wrapper .react-datepicker__close-icon::after {
   background: transparent;
-  color: #000;
+  color: rgba(var(--color-text-secondary));
 }
 
 .react-datepicker-popper {

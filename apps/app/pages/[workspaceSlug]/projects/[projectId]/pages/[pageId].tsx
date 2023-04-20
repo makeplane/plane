@@ -310,7 +310,7 @@ const SinglePage: NextPage = () => {
       }
     >
       {pageDetails ? (
-        <div className="h-full w-full space-y-4 rounded-md border border-brand-base bg-brand-surface-1 p-4">
+        <div className="h-full w-full space-y-4 rounded-md border border-brand-base bg-brand-base p-4">
           <div className="flex items-center justify-between gap-2 px-3">
             <button
               type="button"
@@ -331,7 +331,7 @@ const SinglePage: NextPage = () => {
                     return (
                       <div
                         key={label.id}
-                        className="group flex items-center gap-1 cursor-pointer rounded-2xl border border-brand-base px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                        className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                         onClick={() => {
                           const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
                           partialUpdatePage({ labels_list: updatedLabels });
@@ -389,13 +389,13 @@ const SinglePage: NextPage = () => {
                 />
               )}
             </div>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 text-brand-secondary">
               <Tooltip
                 tooltipContent={`Last updated at ${renderShortTime(
                   pageDetails.updated_at
                 )} on ${renderShortDate(pageDetails.updated_at)}`}
               >
-                <p className="text-sm text-gray-500">{renderShortTime(pageDetails.updated_at)}</p>
+                <p className="text-sm">{renderShortTime(pageDetails.updated_at)}</p>
               </Tooltip>
               <button className="flex items-center gap-2" onClick={handleCopyText}>
                 <LinkIcon className="h-4 w-4" />
@@ -418,7 +418,7 @@ const SinglePage: NextPage = () => {
                             }}
                           />
                         ) : (
-                          <ColorPalletteIcon height={16} width={16} color="#000000" />
+                          <ColorPalletteIcon height={16} width={16} />
                         )}
                       </Popover.Button>
 
@@ -486,7 +486,7 @@ const SinglePage: NextPage = () => {
               onBlur={handleSubmit(updatePage)}
               onChange={(e) => setValue("name", e.target.value)}
               required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden placeholder:text-[#858E96] rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 "
+              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
               role="textbox"
             />
           </div>
@@ -515,7 +515,7 @@ const SinglePage: NextPage = () => {
                 {!createBlockForm && (
                   <button
                     type="button"
-                    className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 pr-2.5 text-xs hover:bg-gray-200 mt-4"
+                    className="mt-4 flex items-center gap-1 rounded-full bg-brand-base px-2 py-1 pr-2.5 text-xs hover:bg-brand-surface-1"
                     onClick={handleNewBlock}
                   >
                     <PlusIcon className="h-3 w-3" />

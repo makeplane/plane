@@ -51,11 +51,11 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
     <li>
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a>
-          <div className="relative rounded p-4 hover:bg-brand-surface-1">
+          <div className="relative rounded p-4 text-brand-secondary hover:bg-brand-base">
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap items-center gap-2">
                 <DocumentTextIcon className="h-4 w-4" />
-                <p className="mr-2 truncate text-base font-medium text-gray-800">
+                <p className="mr-2 truncate text-sm text-brand-base">
                   {truncateText(page.name, 75)}
                 </p>
                 {page.label_details.length > 0 &&
@@ -64,16 +64,13 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       key={label.id}
                       className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
                       style={{
-                        backgroundColor: `${
-                          label?.color && label.color !== "" ? label.color : "#000000"
-                        }20`,
+                        backgroundColor: `${label?.color}20`,
                       }}
                     >
                       <span
                         className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                         style={{
-                          backgroundColor:
-                            label?.color && label.color !== "" ? label.color : "#000000",
+                          backgroundColor: label?.color,
                         }}
                       />
                       {label.name}

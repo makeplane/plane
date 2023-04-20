@@ -142,7 +142,7 @@ const IssueDetailsPage: NextPage = () => {
           <div className="basis-2/3 space-y-5 divide-y-2 divide-brand-base p-5">
             <div className="rounded-lg">
               {issueDetails?.parent && issueDetails.parent !== "" ? (
-                <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-1 p-2 text-xs">
+                <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-base p-2 text-xs">
                   <Link
                     href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
                       issueDetails.parent
