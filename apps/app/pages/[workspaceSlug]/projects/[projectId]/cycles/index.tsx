@@ -7,6 +7,8 @@ import useSWR from "swr";
 
 // headless ui
 import { Tab } from "@headlessui/react";
+// hooks
+import useLocalStorage from "hooks/use-local-storage";
 // services
 import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
@@ -45,6 +47,8 @@ const ProjectCycles: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
 
+  const { storedValue: cycleTab, setValue: setCycleTab } = useLocalStorage("cycleTab", "Upcoming");
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -77,6 +81,20 @@ const ProjectCycles: NextPage = () => {
     }, 500);
   }, [createUpdateCycleModal]);
 
+  const currentTabValue = (tab: string | null) => {
+    switch (tab) {
+      case "Upcoming":
+        return 0;
+      case "Completed":
+        return 1;
+      case "Drafts":
+        return 2;
+
+      default:
+        return 0;
+    }
+  };
+
   return (
     <ProjectAuthorizationWrapper
       meta={{
@@ -96,7 +114,7 @@ const ProjectCycles: NextPage = () => {
             document.dispatchEvent(e);
           }}
         >
-          <PlusIcon className="w-4 h-4" />
+          <PlusIcon className="h-4 w-4" />
           Add Cycle
         </PrimaryButton>
       }
@@ -123,7 +141,22 @@ const ProjectCycles: NextPage = () => {
         <div className="flex flex-col gap-5">
           <h3 className="text-3xl font-semibold text-black">Other Cycles</h3>
           <div>
-            <Tab.Group>
+            <Tab.Group
+              defaultIndex={currentTabValue(cycleTab)}
+              onChange={(i) => {
+                switch (i) {
+                  case 0:
+                    return setCycleTab("Upcoming");
+                  case 1:
+                    return setCycleTab("Completed");
+                  case 2:
+                    return setCycleTab("Drafts");
+
+                  default:
+                    return setCycleTab("Upcoming");
+                }
+              }}
+            >
               <Tab.List
                 as="div"
                 className="flex items-center justify-start gap-4 text-base font-medium"
