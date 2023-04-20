@@ -106,7 +106,13 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             workspaceSlug as string,
             projectId as string,
             cycleId as string,
-            targetDateFilter
+            {
+              ...params,
+              target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
+                calendarDateRange.endDate
+              )};before`,
+              group_by: null,
+            }
           )
       : null
   );
@@ -121,7 +127,13 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             workspaceSlug as string,
             projectId as string,
             moduleId as string,
-            targetDateFilter
+            {
+              ...params,
+              target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
+                calendarDateRange.endDate
+              )};before`,
+              group_by: null,
+            }
           )
       : null
   );
