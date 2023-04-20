@@ -160,7 +160,7 @@ export const SelectFilters: React.FC<Props> = ({
               label: (
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-2 h-2 rounded-full"
+                    className="h-2 w-2 rounded-full"
                     style={{
                       backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
                     }}
