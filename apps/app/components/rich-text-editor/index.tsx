@@ -29,6 +29,8 @@ import {
   OnChangeHTML,
 } from "@remirror/react";
 import { TableExtension } from "@remirror/extension-react-tables";
+// tlds
+import tlds from "tlds";
 // services
 import fileService from "services/file.service";
 // ui
@@ -136,7 +138,10 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       new CodeExtension(),
       new PlaceholderExtension({ placeholder: placeholder || "Enter text..." }),
       new HistoryExtension(),
-      new LinkExtension({ autoLink: true }),
+      new LinkExtension({
+        autoLink: true,
+        autoLinkAllowedTLDs: tlds,
+      }),
       new ImageExtension({
         enableResizing: true,
         uploadHandler: uploadImageHandler,

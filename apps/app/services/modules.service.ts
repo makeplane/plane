@@ -53,7 +53,11 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getModuleDetails(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
+  async getModuleDetails(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string
+  ): Promise<IModule> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`)
       .then((response) => response?.data)
       .catch((error) => {

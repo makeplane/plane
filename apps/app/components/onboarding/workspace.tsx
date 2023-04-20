@@ -65,10 +65,10 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   };
 
   return (
-    <div className="grid w-full place-items-center">
+    <div className="grid min-h-[490px] w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex w-full max-w-xl flex-col rounded-[10px] bg-brand-surface-2 shadow-md"
+        className="flex h-full w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-surface-2 shadow-md"
       >
         <Tab.List
           as="div"
@@ -97,7 +97,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             Invited Workspace
           </Tab>
         </Tab.List>
-        <Tab.Panels>
+        <Tab.Panels as="div" className="h-full">
           <Tab.Panel>
             <CreateWorkspaceForm
               onSubmit={(res) => {
@@ -108,9 +108,9 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
               setDefaultValues={setDefaultValues}
             />
           </Tab.Panel>
-          <Tab.Panel>
-            <div className="mt-6">
-              <div className="divide-y px-4 pb-8">
+          <Tab.Panel className="h-full">
+            <div className="flex h-full w-full flex-col justify-between">
+              <div className="divide-y px-4 py-7">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
                     <div key={invitation.id}>

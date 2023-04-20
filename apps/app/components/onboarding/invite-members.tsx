@@ -34,6 +34,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
       .catch((err) => console.log(err));
   };
 
+  const checkEmail = watch("emails") && watch("emails").length > 0 ;
   return (
     <form
       className="flex w-full items-center justify-center"
@@ -50,7 +51,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
             <div className="w-full">
               <MultiInput
                 name="emails"
-                placeholder="Enter co-workers email id"
+                placeholder="Enter co-workers Email IDs"
                 watch={watch}
                 setValue={setValue}
                 className="w-full"
@@ -63,7 +64,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
           <PrimaryButton
             type="submit"
             className="flex w-1/2 items-center justify-center text-center"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !checkEmail}
             size="md"
           >
             {isSubmitting ? "Inviting..." : "Continue"}

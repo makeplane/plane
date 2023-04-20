@@ -18,6 +18,7 @@ type CustomSearchSelectProps = {
   noChevron?: boolean;
   customButton?: JSX.Element;
   optionsClassName?: string;
+  input?: boolean;
   disabled?: boolean;
   selfPositioned?: boolean;
   multiple?: boolean;
@@ -34,6 +35,7 @@ export const CustomSearchSelect = ({
   noChevron = false,
   customButton,
   optionsClassName = "",
+  input = false,
   disabled = false,
   selfPositioned = false,
   multiple = false,
@@ -68,7 +70,9 @@ export const CustomSearchSelect = ({
             <Combobox.Button
               className={`flex w-full ${
                 disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
-              } items-center justify-between gap-1 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent ${
+              } ${
+                input ? "border-brand-base px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+              } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent ${
                 textAlignment === "right"
                   ? "text-right"
                   : textAlignment === "center"
@@ -98,9 +102,9 @@ export const CustomSearchSelect = ({
               } z-10 mt-1 origin-top-right rounded-md bg-brand-surface-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
             >
               <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-brand-base bg-brand-surface-1 px-2">
-                <MagnifyingGlassIcon className="h-3 w-3 text-brand-muted-1" />
+                <MagnifyingGlassIcon className="text-brand-muted-1 h-3 w-3" />
                 <Combobox.Input
-                  className="w-full  bg-transparent py-1 px-2  text-xs text-brand-muted-1 focus:outline-none"
+                  className="text-brand-muted-1  w-full bg-transparent py-1  px-2 text-xs focus:outline-none"
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Type to search..."
                   displayValue={(assigned: any) => assigned?.name}
@@ -128,7 +132,7 @@ export const CustomSearchSelect = ({
                         className={({ active, selected }) =>
                           `${active || selected ? "bg-brand-surface-1" : ""} ${
                             selected ? "font-medium" : ""
-                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-brand-muted-1`
+                          } text-brand-muted-1 flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5`
                         }
                       >
                         {({ active, selected }) => (
