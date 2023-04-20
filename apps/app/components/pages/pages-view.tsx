@@ -166,17 +166,17 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
 
     mutate<IPage[]>(
       ALL_PAGES_LIST(projectId as string),
-      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...formData })),
+      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
       false
     );
     mutate<IPage[]>(
       MY_PAGES_LIST(projectId as string),
-      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...formData })),
+      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
       false
     );
     mutate<IPage[]>(
       FAVORITE_PAGES_LIST(projectId as string),
-      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...formData })),
+      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
       false
     );
 
@@ -217,7 +217,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               ))}
             </ul>
           ) : viewType === "detailed" ? (
-            <div className="rounded-[10px] border divide-y  border-gray-200 bg-white">
+            <div className="divide-y rounded-[10px] border  border-gray-200 bg-white">
               {pages.map((page) => (
                 <SinglePageDetailedItem
                   key={page.id}
