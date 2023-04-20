@@ -126,7 +126,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 config = {"installation_id": installation_id}
 
             if provider == "slack":
-                metadata = request.data.get("metadata", False)
+                metadata = request.data.get("metadata", {})
                 access_token = metadata.get("access_token", False)
                 team_id = metadata.get("team", {}).get("id", False)
                 if not metadata or not access_token or not team_id:
