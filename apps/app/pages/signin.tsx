@@ -108,17 +108,17 @@ const SignInPage: NextPage = () => {
           <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="flex flex-col items-center justify-center gap-10">
               <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
-              <h2 className="text-center text-xl font-medium text-black">
+              <h2 className="text-center text-xl font-medium text-brand-base">
                 Sign In to your Plane Account
               </h2>
             </div>
 
-            <div className="flex flex-col rounded-[10px] bg-white  shadow-md">
+            <div className="flex flex-col rounded-[10px] bg-brand-surface-2  shadow-md">
               {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <>
                   <EmailSignInForm handleSuccess={onSignInSuccess} />
 
-                  <div className="flex flex-col gap-3 py-5 px-5 border-t items-center justify-center border-gray-300 ">
+                  <div className="flex flex-col gap-3 py-5 px-5 border-t items-center justify-center border-brand-base ">
                     <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
 
                     <GithubLoginButton handleSignIn={handleGithubSignIn} />

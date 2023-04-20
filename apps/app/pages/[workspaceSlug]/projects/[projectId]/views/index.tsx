@@ -79,7 +79,7 @@ const ProjectViews: NextPage = () => {
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="w-4 h-4" />
+            <PlusIcon className="h-4 w-4" />
             Create View
           </PrimaryButton>
         </div>
@@ -98,8 +98,8 @@ const ProjectViews: NextPage = () => {
       {views ? (
         views.length > 0 ? (
           <div className="space-y-5">
-            <h3 className="text-3xl font-semibold text-black">Views</h3>
-            <ul role="list" className="divide-y">
+            <h3 className="text-3xl font-semibold text-brand-base">Views</h3>
+            <div className="rounded-[10px] border border-brand-base">
               {views.map((view) => (
                 <SingleViewItem
                   key={view.id}
@@ -108,7 +108,7 @@ const ProjectViews: NextPage = () => {
                   handleDeleteView={() => handleDeleteView(view)}
                 />
               ))}
-            </ul>
+            </div>
           </div>
         ) : (
           <EmptyState

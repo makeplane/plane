@@ -127,7 +127,7 @@ const ProjectCycles: NextPage = () => {
       <div className="space-y-8">
         <div className="flex flex-col gap-5">
           {currentAndUpcomingCycles && currentAndUpcomingCycles.current_cycle.length > 0 && (
-            <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
+            <h3 className="text-3xl font-semibold text-brand-base">Current Cycle</h3>
           )}
           <div className="space-y-5">
             <CyclesList
@@ -139,7 +139,7 @@ const ProjectCycles: NextPage = () => {
           </div>
         </div>
         <div className="flex flex-col gap-5">
-          <h3 className="text-3xl font-semibold text-black">Other Cycles</h3>
+          <h3 className="text-3xl font-semibold text-brand-base">Other Cycles</h3>
           <div>
             <Tab.Group
               defaultIndex={currentTabValue(cycleTab)}
@@ -165,8 +165,8 @@ const ProjectCycles: NextPage = () => {
                   className={({ selected }) =>
                     `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "border-theme bg-theme text-white"
-                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                        ? "border-brand-accent bg-brand-accent text-white"
+                        : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
                     }`
                   }
                 >
@@ -176,8 +176,8 @@ const ProjectCycles: NextPage = () => {
                   className={({ selected }) =>
                     `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "border-theme bg-theme text-white"
-                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                        ? "border-brand-accent bg-brand-accent text-white"
+                        : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
                     }`
                   }
                 >
@@ -187,8 +187,8 @@ const ProjectCycles: NextPage = () => {
                   className={({ selected }) =>
                     `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "border-theme bg-theme text-white"
-                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                        ? "border-brand-accent bg-brand-accent text-white"
+                        : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
                     }`
                   }
                 >

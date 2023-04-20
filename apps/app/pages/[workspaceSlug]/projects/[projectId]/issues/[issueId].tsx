@@ -140,10 +140,10 @@ const IssueDetailsPage: NextPage = () => {
     >
       {issueDetails && projectId ? (
         <div className="flex h-full">
-          <div className="basis-2/3 space-y-5 divide-y-2 p-5">
+          <div className="basis-2/3 space-y-5 divide-y-2 divide-brand-base p-5">
             <div className="rounded-lg">
               {issueDetails?.parent && issueDetails.parent !== "" ? (
-                <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
+                <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-1 p-2 text-xs">
                   <Link
                     href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
                       issueDetails.parent
@@ -182,7 +182,7 @@ const IssueDetailsPage: NextPage = () => {
                         </CustomMenu.MenuItem>
                       ))
                     ) : (
-                      <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-gray-900">
+                      <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-brand-base">
                         No other sibling issues
                       </CustomMenu.MenuItem>
                     )}
@@ -201,13 +201,13 @@ const IssueDetailsPage: NextPage = () => {
                 <IssueAttachments />
               </div>
             </div>
-            <div className="space-y-5 bg-secondary pt-3">
-              <h3 className="text-lg">Comments/Activity</h3>
+            <div className="space-y-5 bg-brand-base pt-3">
+              <h3 className="text-lg text-brand-base">Comments/Activity</h3>
               <IssueActivitySection />
               <AddComment />
             </div>
           </div>
-          <div className="basis-1/3 space-y-5 border-l p-5">
+          <div className="basis-1/3 space-y-5 border-l border-brand-base p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

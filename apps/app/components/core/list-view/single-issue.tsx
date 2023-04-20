@@ -217,7 +217,7 @@ export const SingleListIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-gray-300 last:border-b-0"
+        className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-brand-base last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);

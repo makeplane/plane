@@ -22,9 +22,9 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
       <div
         className={`${sidebarCollapse ? "" : "w-auto md:w-[17rem]"} fixed inset-y-0 top-0 ${
           toggleSidebar ? "left-0" : "-left-full md:left-0"
-        } flex h-full flex-col bg-white duration-300 md:relative`}
+        } flex h-full flex-col bg-brand-sidebar duration-300 md:relative`}
       >
-        <div className="flex h-full flex-1 flex-col border-r">
+        <div className="flex h-full flex-1 flex-col border-r border-brand-base">
           <div className="flex h-full flex-1 flex-col">
             <WorkspaceSidebarDropdown />
             <WorkspaceSidebarMenu />

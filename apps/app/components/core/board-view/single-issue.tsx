@@ -261,8 +261,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className={`mb-3 rounded bg-white shadow ${
-          snapshot.isDragging ? "border-2 border-theme shadow-lg" : ""
+        className={`mb-3 rounded bg-brand-surface-1 shadow ${
+          snapshot.isDragging ? "border-2 border-brand-accent shadow-lg" : ""
         }`}
         ref={provided.innerRef}
         {...provided.draggableProps}
@@ -312,12 +312,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
           <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
             <a>
               {properties.key && (
-                <div className="mb-2.5 text-xs font-medium text-gray-700">
+                <div className="mb-2.5 text-xs font-medium text-brand-secondary">
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
               <h5
-                className="break-all text-sm group-hover:text-theme"
+                className="break-all text-sm group-hover:text-brand-accent"
                 style={{ lineClamp: 3, WebkitLineClamp: 3 }}
               >
                 {truncateText(issue.name, 100)}
@@ -349,7 +349,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               />
             )}
             {properties.sub_issue_count && (
-              <div className="flex flex-shrink-0 items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
+              <div className="flex flex-shrink-0 items-center gap-1 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm">
                 {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
               </div>
             )}

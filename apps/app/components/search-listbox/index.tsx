@@ -87,14 +87,14 @@ const SearchListbox: React.FC<Props> = ({
         <>
           <Combobox.Label className="sr-only">{title}</Combobox.Label>
           <Combobox.Button
-            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+            className={`flex cursor-pointer items-center gap-1 rounded-md border  border-brand-base px-2 py-1 text-xs shadow-sm duration-300 hover:bg-brand-surface-1 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent ${
               buttonClassName || ""
             }`}
           >
             {icon ?? null}
             <span
               className={`hidden truncate sm:block ${
-                value === null || value === undefined ? "" : "text-gray-900"
+                value === null || value === undefined ? "" : "text-brand-base"
               }`}
             >
               {Array.isArray(value)
@@ -113,7 +113,7 @@ const SearchListbox: React.FC<Props> = ({
             leaveTo="opacity-0"
           >
             <Combobox.Options
-              className={`absolute z-10 mt-1 max-h-32 min-w-[8rem] overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none  ${
+              className={`absolute z-10 mt-1 max-h-32 min-w-[8rem] overflow-auto rounded-md bg-brand-surface-2 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none  ${
                 optionsFontsize === "sm"
                   ? "text-xs"
                   : optionsFontsize === "md"
@@ -142,7 +142,7 @@ const SearchListbox: React.FC<Props> = ({
                         className={({ active }) =>
                           `${
                             active ? "bg-indigo-50" : ""
-                          } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                          } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-brand-base`
                         }
                         value={option.value}
                       >
@@ -151,10 +151,10 @@ const SearchListbox: React.FC<Props> = ({
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-xs text-gray-500 px-2">No {title.toLowerCase()} found</p>
+                    <p className="text-xs text-brand-secondary px-2">No {title.toLowerCase()} found</p>
                   )
                 ) : (
-                  <p className="text-xs text-gray-500 px-2">Loading...</p>
+                  <p className="text-xs text-brand-secondary px-2">Loading...</p>
                 )}
               </div>
             </Combobox.Options>

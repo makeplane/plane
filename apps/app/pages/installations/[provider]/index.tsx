@@ -35,8 +35,8 @@ const AppPostInstallation = ({
   }, [state, installation_id, provider]);
 
   return (
-    <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-white">
-      <h2 className="text-2xl text-gray-900">Installing. Please wait...</h2>
+    <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-brand-surface-2">
+      <h2 className="text-2xl text-brand-base">Installing. Please wait...</h2>
       <Spinner />
     </div>
   );

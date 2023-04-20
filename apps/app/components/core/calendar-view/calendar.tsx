@@ -208,7 +208,7 @@ export const CalendarView = () => {
                 <>
                   <Popover.Button className={`group flex h-full items-start gap-1 text-gray-800`}>
                     <div className="flex  items-center   justify-center gap-2 text-2xl font-semibold">
-                      <span className="text-black">{formatDate(currentDate, "Month")}</span>{" "}
+                      <span className="text-brand-base">{formatDate(currentDate, "Month")}</span>{" "}
                       <span>{formatDate(currentDate, "yyyy")}</span>
                     </div>
                   </Popover.Button>
@@ -222,7 +222,7 @@ export const CalendarView = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute top-10 left-0 z-20 w-full max-w-xs flex flex-col transform overflow-hidden bg-white shadow-lg rounded-[10px]">
+                    <Popover.Panel className="absolute top-10 left-0 z-20 w-full max-w-xs flex flex-col transform overflow-hidden bg-brand-surface-2 shadow-lg rounded-[10px]">
                       <div className="flex justify-center items-center text-sm gap-5 px-2 py-2">
                         {yearOptions.map((year) => (
                           <button
@@ -237,7 +237,7 @@ export const CalendarView = () => {
                           </button>
                         ))}
                       </div>
-                      <div className="grid grid-cols-4  px-2 border-t border-gray-200">
+                      <div className="grid grid-cols-4  px-2 border-t border-brand-base">
                         {monthOptions.map((month) => (
                           <button
                             onClick={() =>
@@ -297,7 +297,7 @@ export const CalendarView = () => {
 
           <div className="flex w-full gap-2 items-center justify-end">
             <button
-              className="group flex cursor-pointer items-center gap-2 rounded-md border bg-white px-4 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
+              className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base bg-brand-surface-2 px-4 py-1.5 text-sm  hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none"
               onClick={() => {
                 if (isMonthlyView) {
                   updateDate(new Date());
@@ -315,7 +315,7 @@ export const CalendarView = () => {
             <CustomMenu
               customButton={
                 <div
-                  className={`group flex cursor-pointer items-center gap-2 rounded-md border bg-white px-3 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none `}
+                  className={`group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-sm  hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none `}
                 >
                   {isMonthlyView ? "Monthly" : "Weekly"}
                   <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
@@ -360,12 +360,12 @@ export const CalendarView = () => {
                   />
                 </div>
               </CustomMenu.MenuItem>
-              <div className="mt-1 flex w-52 items-center justify-between border-t border-gray-200 py-2 px-1  text-sm text-gray-600">
+              <div className="mt-1 flex w-52 items-center justify-between border-t border-brand-base py-2 px-1  text-sm text-gray-600">
                 <h4>Show weekends</h4>
                 <button
                   type="button"
                   className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    showWeekEnds ? "bg-green-500" : "bg-gray-200"
+                    showWeekEnds ? "bg-green-500" : "bg-brand-surface-2"
                   }`}
                   role="switch"
                   aria-checked={showWeekEnds}
@@ -374,7 +374,7 @@ export const CalendarView = () => {
                   <span className="sr-only">Show weekends</span>
                   <span
                     aria-hidden="true"
-                    className={`inline-block h-2.5 w-2.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    className={`inline-block h-2.5 w-2.5 transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
                       showWeekEnds ? "translate-x-2.5" : "translate-x-0"
                     }`}
                   />
@@ -392,7 +392,7 @@ export const CalendarView = () => {
           {weeks.map((date, index) => (
             <div
               key={index}
-              className={`flex  items-center justify-start p-1.5 gap-2 border-gray-300 bg-gray-100 text-base font-medium text-gray-600 ${
+              className={`flex  items-center justify-start p-1.5 gap-2 border-brand-base bg-brand-surface-1 text-base font-medium text-gray-600 ${
                 !isMonthlyView
                   ? showWeekEnds
                     ? (index + 1) % 7 === 0
@@ -424,7 +424,7 @@ export const CalendarView = () => {
                   key={index}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className={`flex flex-col gap-1.5 border-t border-gray-300 p-2.5 text-left text-sm font-medium hover:bg-gray-100 ${
+                  className={`flex flex-col gap-1.5 border-t border-brand-base p-2.5 text-left text-sm font-medium hover:bg-brand-surface-1 ${
                     showWeekEnds
                       ? (index + 1) % 7 === 0
                         ? ""
@@ -444,7 +444,7 @@ export const CalendarView = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`w-full cursor-pointer truncate rounded bg-white p-1.5 hover:scale-105 ${
+                            className={`w-full cursor-pointer truncate rounded bg-brand-surface-2 p-1.5 hover:scale-105 ${
                               snapshot.isDragging ? "shadow-lg" : ""
                             }`}
                           >

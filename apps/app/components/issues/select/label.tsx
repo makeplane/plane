@@ -60,11 +60,11 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
         <>
           <Combobox.Button
             className={({ open }) =>
-              `flex cursor-pointer items-center rounded-md border text-xs shadow-sm duration-200 
+              `flex cursor-pointer items-center rounded-md border border-brand-base text-xs shadow-sm duration-200 
               ${
                 open
-                  ? "border-theme bg-theme/5 outline-none ring-1 ring-theme "
-                  : "hover:bg-theme/5 "
+                  ? "border-brand-accent bg-brand-accent/5 outline-none ring-1 ring-brand-accent "
+                  : "hover:bg-brand-accent/5 "
               }`
             }
           >
@@ -78,8 +78,8 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2 px-3  py-1.5 text-xs">
-                <TagIcon className="h-3 w-3 text-gray-500" />
-                <span className=" text-gray-500">Label</span>
+                <TagIcon className="h-3 w-3 text-brand-secondary" />
+                <span className=" text-brand-secondary">Label</span>
               </span>
             )}
           </Combobox.Button>
@@ -96,12 +96,12 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           >
             <Combobox.Options
               className={`absolute z-10 mt-1 max-h-52 min-w-[8rem] overflow-auto rounded-md border-none
-                bg-white px-2 py-2 text-xs shadow-md focus:outline-none`}
+                bg-brand-surface-2 px-2 py-2 text-xs shadow-md focus:outline-none`}
             >
-              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-gray-100 px-2">
-                <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
+              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-brand-surface-1 px-2">
+                <MagnifyingGlassIcon className="h-3 w-3 text-brand-secondary" />
                 <Combobox.Input
-                  className="w-full  bg-transparent py-1 px-2 text-xs text-gray-500 focus:outline-none"
+                  className="w-full  bg-transparent py-1 px-2 text-xs text-brand-secondary focus:outline-none"
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search for label..."
                   displayValue={(assigned: any) => assigned?.name}
@@ -120,7 +120,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                               key={label.id}
                               className={({ active }) =>
                                 `${
-                                  active ? "bg-gray-200" : ""
+                                  active ? "bg-brand-surface-2" : ""
                                 } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-600`
                               }
                               value={label.id}
@@ -150,8 +150,8 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                           );
                       } else
                         return (
-                          <div className="border-y border-gray-400 bg-gray-50">
-                            <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-gray-900">
+                          <div className="border-y border-brand-base bg-brand-surface-2">
+                            <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-brand-base">
                               <RectangleGroupIcon className="h-3 w-3" /> {label.name}
                             </div>
                             <div>
@@ -160,7 +160,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                   key={child.id}
                                   className={({ active }) =>
                                     `${
-                                      active ? "bg-gray-200" : ""
+                                      active ? "bg-brand-surface-2" : ""
                                     } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-600`
                                   }
                                   value={child.id}
@@ -192,14 +192,14 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                         );
                     })
                   ) : (
-                    <p className="px-2 text-xs text-gray-500">No labels found</p>
+                    <p className="px-2 text-xs text-brand-secondary">No labels found</p>
                   )
                 ) : (
-                  <p className="px-2 text-xs text-gray-500">Loading...</p>
+                  <p className="px-2 text-xs text-brand-secondary">Loading...</p>
                 )}
                 <button
                   type="button"
-                  className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-gray-200"
+                  className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
                   onClick={() => setIsOpen(true)}
                 >
                   <span className="flex items-center justify-start gap-1">

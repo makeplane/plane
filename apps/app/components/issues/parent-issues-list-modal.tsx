@@ -71,17 +71,17 @@ export const ParentIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-brand-surface-2 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                 {multiple ? (
                   <>
                     <Combobox value={value} onChange={() => ({})} multiple>
                       <div className="relative m-1">
                         <MagnifyingGlassIcon
-                          className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
+                          className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
                           aria-hidden="true"
                         />
                         <Combobox.Input
-                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                           placeholder="Search..."
                           onChange={(e) => setQuery(e.target.value)}
                           displayValue={() => ""}
@@ -95,7 +95,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                         {filteredIssues.length > 0 && (
                           <li className="p-2">
                             {query === "" && (
-                              <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                              <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-brand-base">
                                 {title}
                               </h2>
                             )}
@@ -106,7 +106,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                   value={issue.id}
                                   className={({ active }) =>
                                     `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
-                                      active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                      active ? "bg-gray-900 bg-opacity-5 text-brand-base" : ""
                                     }`
                                   }
                                 >
@@ -119,7 +119,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                           backgroundColor: issue.state_detail.color,
                                         }}
                                       />
-                                      <span className="flex-shrink-0 text-xs text-gray-500">
+                                      <span className="flex-shrink-0 text-xs text-brand-secondary">
                                         {issue.project_detail?.identifier}-{issue.sequence_id}
                                       </span>{" "}
                                       {issue.id}
@@ -135,10 +135,10 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       {query !== "" && filteredIssues.length === 0 && (
                         <div className="py-14 px-6 text-center sm:px-14">
                           <RectangleStackIcon
-                            className="mx-auto h-6 w-6 text-gray-900 text-opacity-40"
+                            className="mx-auto h-6 w-6 text-brand-base text-opacity-40"
                             aria-hidden="true"
                           />
-                          <p className="mt-4 text-sm text-gray-900">
+                          <p className="mt-4 text-sm text-brand-base">
                             We couldn{"'"}t find any issue with that term. Please try again.
                           </p>
                         </div>
@@ -153,11 +153,11 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                   <Combobox value={value} onChange={onChange}>
                     <div className="relative m-1">
                       <MagnifyingGlassIcon
-                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
+                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
                         aria-hidden="true"
                       />
                       <Combobox.Input
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                         placeholder="Search..."
                         onChange={(e) => setQuery(e.target.value)}
                         displayValue={() => ""}
@@ -171,7 +171,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-brand-base">
                               {title}
                             </h2>
                           )}
@@ -182,7 +182,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                 value={issue.id}
                                 className={({ active }) =>
                                   `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
-                                    active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                    active ? "bg-gray-900 bg-opacity-5 text-brand-base" : ""
                                   }`
                                 }
                                 onClick={() => handleClose()}
@@ -194,7 +194,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                       backgroundColor: issue.state_detail.color,
                                     }}
                                   />
-                                  <span className="flex-shrink-0 text-xs text-gray-500">
+                                  <span className="flex-shrink-0 text-xs text-brand-secondary">
                                     {issue.project_detail?.identifier}-{issue.sequence_id}
                                   </span>{" "}
                                   {issue.name}
@@ -206,9 +206,9 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       ) : (
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                           <LayerDiagonalIcon height="56" width="56" />
-                          <h3 className="text-gray-500">
+                          <h3 className="text-brand-secondary">
                             No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre>.
+                            <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre>.
                           </h3>
                         </div>
                       )}

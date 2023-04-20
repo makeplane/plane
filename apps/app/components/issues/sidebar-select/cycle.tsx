@@ -70,7 +70,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
             <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : ""}`}>
               <span
                 className={`w-full max-w-[125px] truncate text-left sm:block ${
-                  issueCycle ? "" : "text-gray-900"
+                  issueCycle ? "" : "text-brand-base"
                 }`}
               >
                 {issueCycle ? truncateText(issueCycle.cycle_detail.name, 15) : "None"}

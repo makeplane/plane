@@ -121,7 +121,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               className={`flex w-full flex-grow flex-col ${
                 noPadding || issueView === "list" ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
               } ${
-                bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
+                bg === "primary" ? "bg-brand-base" : bg === "secondary" ? "bg-brand-surface-1" : "bg-brand-base"
               }`}
             >
               {settingsLayout && (

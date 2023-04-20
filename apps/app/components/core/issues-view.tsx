@@ -502,8 +502,8 @@ export const IssuesView: React.FC<Props> = ({
                   title="Create a new issue"
                   description={
                     <span>
-                      Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut to
-                      create a new issue
+                      Use <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre>{" "}
+                      shortcut to create a new issue
                     </span>
                   }
                   Icon={PlusIcon}

@@ -12,8 +12,7 @@ import { SelectFilters } from "components/views";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon, ListBulletIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
-import { Squares2X2Icon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, ListBulletIcon, Squares2X2Icon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -53,30 +52,30 @@ export const IssuesFilterView: React.FC = () => {
       <div className="flex items-center gap-x-1">
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-            issueView === "list" ? "bg-gray-200" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
+            issueView === "list" ? "bg-brand-base" : ""
           }`}
           onClick={() => setIssueView("list")}
         >
-          <ListBulletIcon className="h-4 w-4" />
+          <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-            issueView === "kanban" ? "bg-gray-200" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-base ${
+            issueView === "kanban" ? "bg-brand-base" : ""
           }`}
           onClick={() => setIssueView("kanban")}
         >
-          <Squares2X2Icon className="h-4 w-4" />
+          <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-            issueView === "calendar" ? "bg-gray-200" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-base ${
+            issueView === "calendar" ? "bg-brand-base" : ""
           }`}
           onClick={() => setIssueView("calendar")}
         >
-          <CalendarDaysIcon className="h-4 w-4" />
+          <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
         </button>
       </div>
       <SelectFilters
@@ -113,8 +112,8 @@ export const IssuesFilterView: React.FC = () => {
         {({ open }) => (
           <>
             <Popover.Button
-              className={`group flex items-center gap-2 rounded-md border bg-transparent px-3 py-1.5 text-xs hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
-                open ? "bg-gray-100 text-gray-900" : "text-gray-500"
+              className={`group flex items-center gap-2 rounded-md border border-brand-base bg-transparent px-3 py-1.5 text-xs hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none ${
+                open ? "bg-brand-surface-1 text-brand-base" : "text-brand-muted-1"
               }`}
             >
               View
@@ -130,11 +129,11 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
-                <div className="relative divide-y-2">
+              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-brand-surface-2 p-3 shadow-lg">
+                <div className="relative divide-y-2 divide-brand-base">
                   <div className="space-y-4 pb-3 text-xs">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-gray-600">Group by</h4>
+                      <h4 className="text-brand-secondary">Group by</h4>
                       <CustomMenu
                         label={
                           GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)?.name ??
@@ -155,7 +154,7 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
                     <div className="flex items-center justify-between">
-                      <h4 className="text-gray-600">Order by</h4>
+                      <h4 className="text-brand-secondary">Order by</h4>
                       <CustomMenu
                         label={
                           ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
@@ -178,7 +177,7 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
                     <div className="flex items-center justify-between">
-                      <h4 className="text-gray-600">Issue type</h4>
+                      <h4 className="text-brand-secondary">Issue type</h4>
                       <CustomMenu
                         label={
                           FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
@@ -201,11 +200,11 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
                     <div className="flex items-center justify-between">
-                      <h4 className="text-gray-600">Show empty states</h4>
+                      <h4 className="text-brand-secondary">Show empty states</h4>
                       <button
                         type="button"
                         className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          showEmptyGroups ? "bg-green-500" : "bg-gray-200"
+                          showEmptyGroups ? "bg-green-500" : "bg-brand-surface-2"
                         }`}
                         role="switch"
                         aria-checked={showEmptyGroups}
@@ -214,7 +213,7 @@ export const IssuesFilterView: React.FC = () => {
                         <span className="sr-only">Show empty groups</span>
                         <span
                           aria-hidden="true"
-                          className={`inline-block h-2.5 w-2.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          className={`inline-block h-2.5 w-2.5 transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
                             showEmptyGroups ? "translate-x-2.5" : "translate-x-0"
                           }`}
                         />
@@ -226,7 +225,7 @@ export const IssuesFilterView: React.FC = () => {
                       </button>
                       <button
                         type="button"
-                        className="font-medium text-theme"
+                        className="font-medium text-brand-accent"
                         onClick={() => setNewFilterDefaultView()}
                       >
                         Set as default
@@ -234,7 +233,7 @@ export const IssuesFilterView: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-2 py-3">
-                    <h4 className="text-sm text-gray-600">Display Properties</h4>
+                    <h4 className="text-sm text-brand-secondary">Display Properties</h4>
                     <div className="flex flex-wrap items-center gap-2">
                       {Object.keys(properties).map((key) => {
                         if (key === "estimate" && !isEstimateActive) return null;

@@ -33,7 +33,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
             <div className="absolute top-1.5 right-1.5 z-[1] flex items-center gap-1">
               <Link href={link.url}>
                 <a
-                  className="grid h-7 w-7 place-items-center rounded bg-gray-100 p-1 outline-none"
+                  className="grid h-7 w-7 place-items-center rounded bg-brand-surface-1 p-1 outline-none"
                   target="_blank"
                 >
                   <ExternalLinkIcon width="14" height="14" />
@@ -41,7 +41,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
               </Link>
               <button
                 type="button"
-                className="grid h-7 w-7 place-items-center rounded bg-gray-100 p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
+                className="grid h-7 w-7 place-items-center rounded bg-brand-surface-1 p-1 text-red-500 outline-none duration-300 hover:bg-red-500/30"
                 onClick={() => handleDeleteLink(link.id)}
               >
                 <TrashIcon className="h-4 w-4" />
@@ -49,13 +49,13 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
             </div>
           )}
           <Link href={link.url}>
-            <a className="relative flex gap-2 rounded-md border bg-gray-50 p-2" target="_blank">
+            <a className="relative flex gap-2 rounded-md border border-brand-base bg-brand-surface-2 p-2" target="_blank">
               <div className="mt-0.5">
                 <LinkIcon className="h-3.5 w-3.5" />
               </div>
               <div>
                 <h5 className="w-4/5 break-all">{link.title}</h5>
-                <p className="mt-0.5 text-gray-500">
+                <p className="mt-0.5 text-brand-secondary">
                   Added {timeAgo(link.created_at)}
                   <br />
                   by{" "}

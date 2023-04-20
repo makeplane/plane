@@ -58,18 +58,18 @@ const CustomErrorComponent = () => {
         <div className="space-y-8 text-center">
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">Exception Detected!</h3>
-            <p className="text-sm text-gray-500 w-1/2 mx-auto">
+            <p className="text-sm text-brand-secondary w-1/2 mx-auto">
               We{"'"}re Sorry! An exception has been detected, and our engineering team has been
               notified. We apologize for any inconvenience this may have caused. Please reach out to
               our engineering team at{" "}
-              <a href="mailto:support@plane.so" className="text-theme">
+              <a href="mailto:support@plane.so" className="text-brand-accent">
                 support@plane.so
               </a>{" "}
               or on our{" "}
               <a
                 href="https://discord.com/invite/A92xrEGCge"
                 target="_blank"
-                className="text-theme"
+                className="text-brand-accent"
                 rel="noopener noreferrer"
               >
                 Discord

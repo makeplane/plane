@@ -69,7 +69,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
             <Tooltip position="left" tooltipContent={`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}`}>
             <span
               className={`w-full max-w-[125px] truncate text-left sm:block ${
-                issueModule ? "" : "text-gray-900"
+                issueModule ? "" : "text-brand-base"
               }`}
             >
               {truncateText(`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}`, 15)}

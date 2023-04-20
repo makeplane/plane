@@ -66,7 +66,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-gray-900">
+        <h3 className="text-lg font-medium leading-6 text-brand-base">
           {status ? "Update" : "Create"} Module
         </h3>
         <div className="space-y-3">
@@ -170,7 +170,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
           </div>
         </div>
       </div>
-      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t px-5 pt-5">
+      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-brand-base px-5 pt-5">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting || isDateValid ? false : true}>
           {status

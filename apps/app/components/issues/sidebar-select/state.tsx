@@ -50,7 +50,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
       <div className="sm:basis-1/2">
         <CustomSelect
           label={
-            <div className={`flex items-center gap-2 text-left ${value ? "" : "text-gray-900"}`}>
+            <div className={`flex items-center gap-2 text-left ${value ? "" : "text-brand-base"}`}>
               {getStateGroupIcon(
                 selectedState?.group ?? "backlog",
                 "16",
