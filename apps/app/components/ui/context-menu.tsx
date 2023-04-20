@@ -37,7 +37,7 @@ const ContextMenu = ({ position, children, title, isOpen, setIsOpen }: Props) =>
       }`}
     >
       <div
-        className={`fixed z-20 flex min-w-[8rem] flex-col items-stretch gap-1 rounded-md border bg-white p-2 text-xs shadow-lg`}
+        className={`fixed z-20 flex min-w-[8rem] flex-col items-stretch gap-1 rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs shadow-lg`}
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
@@ -71,7 +71,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
     {renderAs === "a" ? (
       <Link href={href}>
         <a
-          className={`${className} flex w-full items-center gap-2 rounded px-1 py-1.5 text-left text-gray-500 hover:bg-gray-100 hover:text-gray-900`}
+          className={`${className} flex w-full items-center gap-2 rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-base`}
         >
           <>
             {Icon && <Icon />}
@@ -82,7 +82,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
     ) : (
       <button
         type="button"
-        className={`${className} flex w-full items-center gap-2 rounded px-1 py-1.5 text-left text-gray-500 hover:bg-gray-100 hover:text-gray-900`}
+        className={`${className} flex w-full items-center gap-2 rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-base`}
         onClick={onClick}
       >
         <>

@@ -9,12 +9,12 @@ type Props = {
 };
 
 const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar }) => (
-  <div className="flex w-full flex-row items-center justify-between gap-y-4 border-b bg-white px-5 py-4 ">
+  <div className="flex w-full flex-row items-center justify-between gap-y-4 border-b border-brand-base bg-brand-sidebar px-5 py-4 ">
     <div className="flex items-center gap-2">
       <div className="block md:hidden">
         <button
           type="button"
-          className="grid h-8 w-8 place-items-center rounded border border-gray-300"
+          className="grid h-8 w-8 place-items-center rounded border border-brand-base"
           onClick={() => setToggleSidebar((prevData) => !prevData)}
         >
           <Bars3Icon className="h-5 w-5" />

@@ -142,7 +142,7 @@ export const ProjectSidebarList: FC = () => {
         onClose={() => setDeleteProjectModal(false)}
         data={projectToDelete}
       />
-      <div className="mt-2.5 h-full overflow-y-auto border-t bg-white pt-2.5">
+      <div className="mt-2.5 h-full overflow-y-auto border-t border-brand-base bg-brand-sidebar pt-2.5">
         {favoriteProjects && favoriteProjects.length > 0 && (
           <div className="mt-3 flex flex-col space-y-2 px-3">
             {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Favorites</h5>}
@@ -184,7 +184,7 @@ export const ProjectSidebarList: FC = () => {
                   )}
                   <button
                     type="button"
-                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-gray-200 p-2 text-xs text-gray-900"
+                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-brand-surface-2 p-2 text-xs text-brand-base"
                     onClick={() => setCreateProjectModal(true)}
                   >
                     <PlusIcon className="h-4 w-4" />

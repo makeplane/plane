@@ -100,13 +100,13 @@ export const SidebarProgressStats: React.FC<Props> = ({
     >
       <Tab.List
         as="div"
-        className={`flex w-full items-center justify-between rounded-md bg-gray-100 px-1 py-1.5 
+        className={`flex w-full items-center justify-between rounded-md bg-brand-surface-1 px-1 py-1.5 
         ${module ? "text-xs" : "text-sm"} `}
       >
         <Tab
           className={({ selected }) =>
-            `w-full rounded px-3 py-1 text-gray-900  ${
-              selected ? " bg-theme text-white" : "  hover:bg-hover-gray"
+            `w-full rounded px-3 py-1 text-brand-base  ${
+              selected ? " bg-brand-accent text-white" : "  hover:bg-brand-surface-2"
             }`
           }
         >
@@ -114,8 +114,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-full rounded px-3 py-1 text-gray-900 ${
-              selected ? " bg-theme text-white" : " hover:bg-hover-gray"
+            `w-full rounded px-3 py-1 text-brand-base ${
+              selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
             }`
           }
         >
@@ -123,8 +123,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-full rounded px-3 py-1  text-gray-900 ${
-              selected ? " bg-theme text-white" : " hover:bg-hover-gray"
+            `w-full rounded px-3 py-1  text-brand-base ${
+              selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
             }`
           }
         >
@@ -166,7 +166,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             <SingleProgressStats
               title={
                 <>
-                  <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
+                  <div className="h-5 w-5 rounded-full border-2 border-white bg-brand-surface-2">
                     <Image
                       src={User}
                       height="100%"

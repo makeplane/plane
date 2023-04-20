@@ -244,8 +244,8 @@ const ProjectPages: NextPage = () => {
                         className={({ selected }) =>
                           `rounded-full border px-5 py-1.5 text-sm outline-none ${
                             selected
-                              ? "border-theme bg-theme text-white"
-                              : "border-gray-300 bg-white hover:bg-hover-gray"
+                              ? "border-brand-accent bg-brand-accent text-white"
+                              : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
                           }`
                         }
                       >
@@ -257,8 +257,8 @@ const ProjectPages: NextPage = () => {
                 <div className="flex gap-x-1">
                   <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                      viewType === "list" ? "bg-gray-200" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "list" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("list")}
                   >
@@ -266,8 +266,8 @@ const ProjectPages: NextPage = () => {
                   </button>
                   <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                      viewType === "detailed" ? "bg-gray-200" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "detailed" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("detailed")}
                   >
@@ -275,8 +275,8 @@ const ProjectPages: NextPage = () => {
                   </button>
                   {/* <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                      viewType === "masonry" ? "bg-gray-200" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "masonry" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("masonry")}
                   >

@@ -52,19 +52,19 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       customButton={
         <button
           type="button"
-          className={`grid h-6 w-6 place-items-center rounded ${
+          className={`grid h-6 w-6 place-items-center rounded border border-brand-base ${
             isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-          } items-center shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+          } items-center shadow-sm ${
             issue.priority === "urgent"
-              ? "bg-red-100 text-red-600 hover:bg-red-100"
+              ? "text-red-600"
               : issue.priority === "high"
-              ? "bg-orange-100 text-orange-500 hover:bg-orange-100"
+              ? "text-orange-500"
               : issue.priority === "medium"
-              ? "bg-yellow-100 text-yellow-500 hover:bg-yellow-100"
+              ? "text-yellow-500"
               : issue.priority === "low"
-              ? "bg-green-100 text-green-500 hover:bg-green-100"
-              : "bg-gray-100"
-          } border-none`}
+              ? "bg-green-100 text-green-500"
+              : ""
+          }`}
         >
           <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"}>
             <span>

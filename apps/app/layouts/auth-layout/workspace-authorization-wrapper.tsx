@@ -72,7 +72,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
     return (
       <div className="h-screen grid place-items-center p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h3 className="text-xl">Setting up your workspace...</h3>
+          <h3 className="text-xl">Loading your workspace...</h3>
           <Spinner />
         </div>
       </div>
@@ -131,10 +131,10 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   noPadding ? "" : settingsLayout || profilePage ? "p-8 lg:px-28" : "p-8"
                 } ${
                   bg === "primary"
-                    ? "bg-primary"
+                    ? "bg-brand-base"
                     : bg === "secondary"
-                    ? "bg-secondary"
-                    : "bg-primary"
+                    ? "bg-brand-surface-1"
+                    : "bg-brand-base"
                 }`}
               >
                 {(settingsLayout || profilePage) && (

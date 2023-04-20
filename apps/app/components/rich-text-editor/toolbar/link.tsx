@@ -173,12 +173,12 @@ export const FloatingLinkToolbar = () => {
   return (
     <>
       {!isEditing && (
-        <FloatingToolbar className="rounded bg-white p-1 shadow-lg">
+        <FloatingToolbar className="rounded bg-brand-surface-2 p-1 shadow-lg">
           {linkEditButtons}
         </FloatingToolbar>
       )}
       {!isEditing && empty && (
-        <FloatingToolbar positioner={linkPositioner} className="rounded bg-white p-1 shadow-lg">
+        <FloatingToolbar positioner={linkPositioner} className="rounded bg-brand-surface-2 p-1 shadow-lg">
           {linkEditButtons}
         </FloatingToolbar>
       )}

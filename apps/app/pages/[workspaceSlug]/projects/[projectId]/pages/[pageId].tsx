@@ -310,11 +310,11 @@ const SinglePage: NextPage = () => {
       }
     >
       {pageDetails ? (
-        <div className="h-full w-full space-y-4 rounded-md border bg-white p-4">
+        <div className="h-full w-full space-y-4 rounded-md border border-brand-base bg-brand-surface-1 p-4">
           <div className="flex items-center justify-between gap-2 px-3">
             <button
               type="button"
-              className="flex items-center gap-2 text-sm text-gray-500"
+              className="flex items-center gap-2 text-sm text-brand-secondary"
               onClick={() => router.back()}
             >
               <ArrowLeftIcon className="h-4 w-4" />
@@ -331,7 +331,7 @@ const SinglePage: NextPage = () => {
                     return (
                       <div
                         key={label.id}
-                        className="group flex items-center gap-1 cursor-pointer rounded-2xl border px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                        className="group flex items-center gap-1 cursor-pointer rounded-2xl border border-brand-base px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                         onClick={() => {
                           const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
                           partialUpdatePage({ labels_list: updatedLabels });
@@ -358,7 +358,7 @@ const SinglePage: NextPage = () => {
                     customButton={
                       <button
                         type="button"
-                        className="flex items-center gap-1 rounded-md bg-gray-100 p-1.5 text-xs hover:bg-gray-200"
+                        className="flex items-center gap-1 rounded-md bg-brand-surface-1 p-1.5 text-xs hover:bg-brand-surface-2"
                       >
                         <PlusIcon className="h-3.5 w-3.5" />
                       </button>
@@ -375,7 +375,7 @@ const SinglePage: NextPage = () => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded-full bg-gray-100 px-2  pr-2.5 py-1 text-xs hover:bg-gray-200"
+                      className="flex items-center gap-1 rounded-md bg-brand-surface-1 px-3 py-1.5 text-xs hover:bg-brand-surface-2"
                     >
                       <PlusIcon className="h-3 w-3" />
                       Add label
@@ -407,7 +407,7 @@ const SinglePage: NextPage = () => {
                       <Popover.Button
                         type="button"
                         className={`group inline-flex items-center outline-none ${
-                          open ? "text-gray-900" : "text-gray-500"
+                          open ? "text-brand-base" : "text-brand-secondary"
                         }`}
                       >
                         {watch("color") && watch("color") !== "" ? (

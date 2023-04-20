@@ -238,7 +238,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
 
   return (
     <div>
-      <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
+      <div className="flex flex-col rounded-[10px] bg-brand-surface-2 text-xs shadow">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
@@ -350,7 +350,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
           <Disclosure>
             {({ open }) => (
               <div
-                className={`flex h-full w-full flex-col border-t border-gray-200 bg-gray-100 ${
+                className={`flex h-full w-full flex-col border-t border-brand-base bg-brand-surface-1 ${
                   open ? "" : "flex-row"
                 }`}
               >
@@ -368,7 +368,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                 </div>
                 <Transition show={open}>
                   <Disclosure.Panel>
-                    <div className="overflow-hidden rounded-b-md bg-white py-3 shadow">
+                    <div className="overflow-hidden rounded-b-md bg-brand-surface-2 py-3 shadow">
                       <div className="col-span-2 space-y-3 px-4">
                         <div className="space-y-3 text-xs">
                           {stateGroups.map((group) => (
@@ -388,7 +388,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                               <div>
                                 <span>
                                   {cycle[group.key as keyof ICycle] as number}{" "}
-                                  <span className="text-gray-500">
+                                  <span className="text-brand-secondary">
                                     -{" "}
                                     {cycle.total_issues > 0
                                       ? `${Math.round(

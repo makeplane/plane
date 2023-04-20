@@ -240,7 +240,9 @@ SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
 redis_url = os.environ.get("REDIS_URL")
-broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+broker_url = (
+    f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+)
 
 if DOCKERIZED:
     CELERY_BROKER_URL = REDIS_URL
@@ -248,3 +250,5 @@ if DOCKERIZED:
 else:
     CELERY_RESULT_BACKEND = broker_url
     CELERY_BROKER_URL = broker_url
+
+GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)

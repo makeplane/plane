@@ -10,7 +10,7 @@ import { useForm, Controller } from "react-hook-form";
 // services
 import issuesServices from "services/issues.service";
 // ui
-import { Loader } from "components/ui";
+import { Loader, SecondaryButton } from "components/ui";
 // helpers
 import { debounce } from "helpers/common.helper";
 // types
@@ -83,9 +83,9 @@ export const AddComment: React.FC = () => {
   );
 
   return (
-    <div className="space-y-5">
+    <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="issue-comments-section">
+        <div className="issue-comments-section" >
           <Controller
             name="comment_html"
             control={control}
@@ -101,13 +101,9 @@ export const AddComment: React.FC = () => {
             )}
           />
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="rounded-md bg-gray-300 p-2 px-4 text-sm text-black hover:bg-gray-300 mt-4"
-          >
+          <SecondaryButton type="submit" disabled={isSubmitting} className="mt-2">
             {isSubmitting ? "Adding..." : "Comment"}
-          </button>
+          </SecondaryButton>
         </div>
       </form>
     </div>

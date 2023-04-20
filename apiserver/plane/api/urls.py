@@ -79,6 +79,7 @@ from plane.api.views import (
     ## End Issues
     # States
     StateViewSet,
+    StateDeleteIssueCheckEndpoint,
     ## End States
     # Estimates
     EstimateViewSet,
@@ -146,6 +147,9 @@ from plane.api.views import (
     # Gpt
     GPTIntegrationEndpoint,
     ## End Gpt
+    # Release Notes
+    ReleaseNotesEndpoint,
+    ## End Release Notes
 )
 
 
@@ -506,6 +510,11 @@ urlpatterns = [
         ),
         name="project-state",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/states/<uuid:pk>/",
+        StateDeleteIssueCheckEndpoint.as_view(),
+        name="state-delete-check",
+    ),
     # End States ##
     #  States
     path(
@@ -556,6 +565,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-estimates/",
         ProjectEstimatePointEndpoint.as_view(),
         name="project-estimate-points",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/bulk-estimate-points/",
+        BulkEstimatePointEndpoint.as_view(),
+        name="bulk-create-estimate-points",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/bulk-estimate-points/",
@@ -1284,4 +1298,11 @@ urlpatterns = [
         name="importer",
     ),
     ## End Gpt
+    # Release Notes
+    path(
+        "release-notes/",
+        ReleaseNotesEndpoint.as_view(),
+        name="release-notes",
+    ),
+    ## End Release Notes
 ]

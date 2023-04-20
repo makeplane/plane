@@ -96,7 +96,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -110,7 +110,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-100 p-4">
@@ -124,7 +124,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm leading-7 text-gray-500">
+                    <p className="text-sm leading-7 text-brand-secondary">
                       Are you sure you want to delete project{" "}
                       <span className="break-all font-semibold">{selectedProject?.name}</span>? All
                       of the data related to the project will be permanently removed. This action

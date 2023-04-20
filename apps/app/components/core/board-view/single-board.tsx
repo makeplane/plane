@@ -66,7 +66,7 @@ export const SingleBoard: React.FC<Props> = ({
   }, [currentState]);
 
   return (
-    <div className={`h-full flex-shrink-0 ${!isCollapsed ? "" : "w-96 bg-gray-50"}`}>
+    <div className={`h-full flex-shrink-0 ${!isCollapsed ? "" : "w-96 bg-brand-base"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
@@ -81,7 +81,7 @@ export const SingleBoard: React.FC<Props> = ({
             {(provided, snapshot) => (
               <div
                 className={`relative h-full overflow-y-auto p-1  ${
-                  snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
+                  snapshot.isDraggingOver ? "bg-brand-accent bg-opacity-50" : ""
                 } ${!isCollapsed ? "hidden" : "block"}`}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
@@ -91,12 +91,12 @@ export const SingleBoard: React.FC<Props> = ({
                     <div
                       className={`absolute ${
                         snapshot.isDraggingOver ? "block" : "hidden"
-                      } pointer-events-none top-0 left-0 z-[99] h-full w-full bg-gray-100 opacity-50`}
+                      } pointer-events-none top-0 left-0 z-[99] h-full w-full bg-brand-surface-1 opacity-50`}
                     />
                     <div
                       className={`absolute ${
                         snapshot.isDraggingOver ? "block" : "hidden"
-                      } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white p-2 text-xs`}
+                      } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs`}
                     >
                       This board is ordered by{" "}
                       {replaceUnderscoreIfSnakeCase(orderBy ?? "created_at")}
@@ -146,7 +146,7 @@ export const SingleBoard: React.FC<Props> = ({
                 {type === "issue" ? (
                   <button
                     type="button"
-                    className="flex items-center gap-2 font-medium text-theme outline-none"
+                    className="flex items-center gap-2 font-medium text-brand-accent outline-none"
                     onClick={addIssueToState}
                   >
                     <PlusIcon className="h-4 w-4" />
@@ -158,7 +158,7 @@ export const SingleBoard: React.FC<Props> = ({
                       customButton={
                         <button
                           type="button"
-                          className="flex items-center gap-2 font-medium text-theme outline-none"
+                          className="flex items-center gap-2 font-medium text-brand-accent outline-none"
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add Issue

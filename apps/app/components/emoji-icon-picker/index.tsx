@@ -55,7 +55,7 @@ const EmojiIconPicker: React.FC<Props> = ({
   return (
     <Popover className="relative z-[1]" ref={ref}>
       <Popover.Button
-        className="rounded-full bg-gray-100 p-2 outline-none sm:text-sm"
+        className="rounded-full bg-brand-surface-1 p-2 outline-none sm:text-sm"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {label}
@@ -69,8 +69,8 @@ const EmojiIconPicker: React.FC<Props> = ({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] bg-white shadow-lg">
-          <div className="h-[230px] w-[250px] overflow-auto border rounded-[4px] bg-white p-2 shadow-xl">
+        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] bg-brand-surface-2 shadow-lg">
+          <div className="h-[230px] w-[250px] overflow-auto border border-brand-base rounded-[4px] bg-brand-surface-2 p-2 shadow-xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 p-1">
                 {tabOptions.map((tab) => (
@@ -100,7 +100,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                         {recentEmojis.map((emoji) => (
                           <button
                             type="button"
-                            className="h-4 w-4 select-none text-base hover:bg-hover-gray flex items-center justify-between"
+                            className="h-4 w-4 select-none text-sm hover:bg-brand-surface-2 flex items-center justify-between"
                             key={emoji}
                             onClick={() => {
                               onChange(emoji);
@@ -119,7 +119,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                       {emojis.map((emoji) => (
                         <button
                           type="button"
-                          className="h-4 w-4 ml-1 select-none text-base hover:bg-hover-gray flex justify-center items-center"
+                          className="h-4 w-4 mb-1 select-none text-sm hover:bg-brand-surface-2 flex items-center"
                           key={emoji}
                           onClick={() => {
                             onChange(emoji);
@@ -184,7 +184,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                       {icons.material_rounded.map((icon) => (
                         <button
                           type="button"
-                          className="h-4 w-4 mb-1 select-none text-lg hover:bg-hover-gray flex items-center"
+                          className="h-4 w-4 mb-1 select-none text-lg hover:bg-brand-surface-2 flex items-center"
                           key={icon.name}
                           onClick={() => {
                             if (onIconsClick) onIconsClick(icon.name);

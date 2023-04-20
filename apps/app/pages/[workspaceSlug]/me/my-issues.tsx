@@ -51,8 +51,8 @@ const MyIssuesPage: NextPage = () => {
               {({ open }) => (
                 <>
                   <Popover.Button
-                    className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
-                      open ? "bg-gray-100 text-gray-900" : "text-gray-500"
+                    className={`group flex items-center gap-2 rounded-md border border-brand-base bg-transparent px-3 py-1.5 text-xs hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none ${
+                      open ? "bg-brand-surface-1 text-brand-base" : "text-brand-muted-1"
                     }`}
                   >
                     <span>View</span>
@@ -68,7 +68,7 @@ const MyIssuesPage: NextPage = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
+                    <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-brand-base p-3 shadow-lg">
                       <div className="relative flex flex-col gap-1 gap-y-4">
                         <div className="relative flex flex-col gap-1">
                           <h4 className="text-base text-gray-600">Properties</h4>
@@ -120,10 +120,10 @@ const MyIssuesPage: NextPage = () => {
               <div className="flex flex-col space-y-5">
                 <Disclosure as="div" defaultOpen>
                   {({ open }) => (
-                    <div className="bg-white">
+                    <div className="rounded-[10px] border border-brand-base bg-brand-base">
                       <div
-                        className={`flex items-center justify-start bg-gray-100 px-5 py-3 ${
-                          open ? "" : "rounded-[10px]"
+                        className={`flex items-center justify-start bg-brand-surface-1 px-4 py-2.5 ${
+                          open ? "rounded-t-[10px]" : "rounded-[10px]"
                         }`}
                       >
                         <Disclosure.Button>
@@ -136,7 +136,7 @@ const MyIssuesPage: NextPage = () => {
                               />
                             </span>
                             <h2 className="font-medium leading-5">My Issues</h2>
-                            <span className="rounded-full bg-gray-200 py-0.5 px-3 text-sm text-black">
+                            <span className="rounded-full bg-brand-surface-2 py-0.5 px-3 text-sm text-brand-secondary">
                               {myIssues.length}
                             </span>
                           </div>

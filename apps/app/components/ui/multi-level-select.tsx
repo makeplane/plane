@@ -48,7 +48,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
           <div className="relative mt-1">
             <Listbox.Button
               onClick={() => setOpenChildFor(null)}
-              className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md sm:text-sm"
+              className="relative w-full cursor-default rounded-lg bg-brand-surface-2 py-2 pl-3 pr-10 text-left shadow-md sm:text-sm"
             >
               <span className="block truncate">{selected?.label ?? label}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -64,13 +64,13 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
             >
               <Listbox.Options
                 static
-                className="absolute mt-1 max-h-60 w-full rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                className="absolute mt-1 max-h-60 w-full rounded-md bg-brand-surface-2 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
               >
                 {options.map((option) => (
                   <Listbox.Option
                     key={option.id}
                     className={
-                      "relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-gray-100 hover:text-gray-900"
+                      "relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-brand-surface-1 hover:text-brand-base"
                     }
                     onClick={(e: any) => {
                       if (option.children !== null) {
@@ -88,7 +88,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                       <>
                         {openChildFor?.id === option.id && (
                           <div
-                            className={`absolute h-auto max-h-72 w-72 rounded-lg border bg-white ${
+                            className={`absolute h-auto max-h-72 w-72 rounded-lg border border-brand-base bg-brand-surface-2 ${
                               direction === "right"
                                 ? "left-full translate-x-2 rounded-tl-none shadow-md"
                                 : "right-full -translate-x-2 rounded-tr-none shadow-md"
@@ -98,7 +98,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                               <Listbox.Option
                                 key={child.id}
                                 className={
-                                  "relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-gray-100 hover:text-gray-900"
+                                  "relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-brand-surface-1 hover:text-brand-base"
                                 }
                                 as="div"
                                 value={child}
@@ -123,7 +123,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                             ))}
 
                             <div
-                              className={`absolute h-0 w-0 border-t-8 border-gray-300 ${
+                              className={`absolute h-0 w-0 border-t-8 border-brand-base ${
                                 direction === "right"
                                   ? "top-0 left-0 -translate-x-2 border-r-8 border-b-8 border-b-transparent border-t-transparent border-l-transparent"
                                   : "top-0 right-0 translate-x-2 border-l-8 border-b-8 border-b-transparent border-t-transparent border-r-transparent"

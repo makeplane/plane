@@ -41,7 +41,7 @@ export const Tooltip: React.FC<Props> = ({
     content={
       <div
         className={`${className} flex max-w-[600px] flex-col items-start justify-center gap-1 rounded-md p-2 text-left text-xs shadow-md ${
-          theme === "light" ? "bg-white text-gray-700" : "bg-black text-white"
+          theme === "light" ? "bg-brand-surface-2 text-brand-muted-1" : "bg-black text-white"
         }`}
       >
         {tooltipHeading && <h5 className="font-medium">{tooltipHeading}</h5>}

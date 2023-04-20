@@ -5,6 +5,7 @@ from urllib.parse import urlparse, parse_qs
 from datetime import datetime, timedelta
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.hazmat.backends import default_backend
+from django.conf import settings
 
 
 def get_jwt_token():
@@ -128,3 +129,24 @@ def get_github_repo_details(access_tokens_url, owner, repo):
     ).json()
 
     return open_issues, total_labels, collaborators
+
+
+def get_release_notes():
+    token = settings.GITHUB_ACCESS_TOKEN
+
+    if token:
+        headers = {
+            "Authorization": "Bearer " + str(token),
+            "Accept": "application/vnd.github.v3+json",
+        }
+    else:
+        headers = {
+            "Accept": "application/vnd.github.v3+json",
+        }
+    url = "https://api.github.com/repos/makeplane/plane/releases?per_page=5&page=1"
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        return {"error": "Unable to render information from Github Repository"}
+
+    return response.json()

@@ -122,14 +122,14 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
         setIsOpen={setModuleDeleteModal}
         data={module}
       />
-      <div className="flex flex-col divide-y overflow-hidden rounded-[10px] border bg-white text-xs">
+      <div className="flex flex-col divide-y divide-brand-base overflow-hidden rounded-[10px] border border-brand-base bg-brand-surface-2 text-xs">
         <div className="p-4">
           <div className="flex w-full flex-col gap-5">
             <div className="flex items-start justify-between gap-2">
               <Tooltip tooltipContent={module.name} position="top-left">
                 <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
                   <a className="w-auto max-w-[calc(100%-9rem)]">
-                    <h3 className="truncate break-all text-lg font-semibold text-black">
+                    <h3 className="truncate break-all text-lg font-semibold text-brand-base">
                       {truncateText(module.name, 75)}
                     </h3>
                   </a>
@@ -137,7 +137,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
               </Tooltip>
 
               <div className="flex items-center gap-1">
-                <div className="mr-2 flex whitespace-nowrap rounded bg-gray-100 px-2.5 py-2">
+                <div className="mr-2 flex whitespace-nowrap rounded bg-brand-surface-1 px-2.5 py-2">
                   <span className="capitalize">{module?.status?.replace("-", " ")}</span>
                 </div>
                 {module.is_favorite ? (
@@ -174,12 +174,12 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-start gap-1">
-                <CalendarMonthIcon className="h-4 w-4 text-gray-900" />
+                <CalendarMonthIcon className="h-4 w-4 text-brand-base" />
                 <span className="text-gray-400">Start:</span>
                 <span>{renderShortDateWithYearFormat(startDate)}</span>
               </div>
               <div className="flex items-start gap-1">
-                <TargetIcon className="h-4 w-4 text-gray-900" />
+                <TargetIcon className="h-4 w-4 text-brand-base" />
                 <span className="text-gray-400">End:</span>
                 <span>{renderShortDateWithYearFormat(endDate)}</span>
               </div>
@@ -187,7 +187,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
           </div>
         </div>
         <div className="flex h-20 flex-col items-end">
-          <div className="flex w-full items-center justify-between gap-2 justify-self-end bg-gray-100 p-4">
+          <div className="flex w-full items-center justify-between gap-2 justify-self-end bg-brand-surface-1 p-4">
             <span>Progress</span>
             <div className="bar relative h-1 w-full rounded bg-gray-300">
               <div
@@ -199,10 +199,10 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             </div>
             <span>{isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%</span>
           </div>
-          <div className="item-center flex h-full w-full justify-between bg-gray-100 px-4 pb-4">
+          <div className="item-center flex h-full w-full justify-between bg-brand-surface-1 px-4 pb-4">
             <p className="text-[#858E96]">
               Last updated:
-              <span className="font-medium text-black">
+              <span className="font-medium text-brand-base">
                 {renderShortDateWithYearFormat(lastUpdated)}
               </span>
             </p>

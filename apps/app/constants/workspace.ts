@@ -75,11 +75,11 @@ export const IMPORTERS_EXPORTERS_LIST = [
     description: "Import issues from GitHub repositories and sync them.",
     logo: GithubLogo,
   },
-  // {
-  //   provider: "jira",
-  //   type: "import",
-  //   title: "Jira",
-  //   description: "Import issues and epics from Jira projects and epics.",
-  //   logo: JiraLogo,
-  // },
+  {
+    provider: "jira",
+    type: "import",
+    title: "Jira",
+    description: "Import issues and epics from Jira projects and epics.",
+    logo: JiraLogo,
+  },
 ];

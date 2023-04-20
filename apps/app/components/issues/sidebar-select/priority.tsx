@@ -30,7 +30,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, userAu
           label={
             <span
               className={`flex items-center gap-2 text-left capitalize ${
-                value ? "" : "text-gray-900"
+                value ? "" : "text-brand-base"
               }`}
             >
               {getPriorityIcon(value && value !== "" ? value ?? "" : "None", "text-sm")}
