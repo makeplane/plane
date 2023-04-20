@@ -280,6 +280,17 @@ export const IssuesView: React.FC<Props> = ({
     [setCreateIssueModal, setPreloadedData, selectedGroup]
   );
 
+  const addIssueToDate = useCallback(
+    (date: string) => {
+      setCreateIssueModal(true);
+      setPreloadedData({
+        target_date: date,
+        actionType: "createIssue",
+      });
+    },
+    [setCreateIssueModal, setPreloadedData]
+  );
+
   const makeIssueCopy = useCallback(
     (issue: IIssue) => {
       setCreateIssueModal(true);
@@ -389,7 +400,7 @@ export const IssuesView: React.FC<Props> = ({
         <>
           <div
             className={`flex items-center justify-between gap-2 ${
-              issueView === "list" && areFiltersApplied ? "px-8 mt-6" : "-mt-2"
+              issueView === "list" && areFiltersApplied ? "mt-6 px-8" : "-mt-2"
             }`}
           >
             <FilterList filters={filters} setFilters={setFilters} />
@@ -481,7 +492,7 @@ export const IssuesView: React.FC<Props> = ({
                   userAuth={memberRole}
                 />
               ) : (
-                <CalendarView />
+                <CalendarView addIssueToDate={addIssueToDate} />
               )}
             </>
           ) : type === "issue" ? (
