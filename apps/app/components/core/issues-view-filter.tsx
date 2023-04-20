@@ -137,50 +137,54 @@ export const IssuesFilterView: React.FC = () => {
               <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-brand-surface-2 p-3 shadow-lg">
                 <div className="relative divide-y-2 divide-brand-base">
                   <div className="space-y-4 pb-3 text-xs">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-brand-secondary">Group by</h4>
-                      <CustomMenu
-                        label={
-                          GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)?.name ??
-                          "Select"
-                        }
-                        width="lg"
-                      >
-                        {GROUP_BY_OPTIONS.map((option) =>
-                          issueView === "kanban" && option.key === null ? null : (
-                            <CustomMenu.MenuItem
-                              key={option.key}
-                              onClick={() => setGroupByProperty(option.key)}
-                            >
-                              {option.name}
-                            </CustomMenu.MenuItem>
-                          )
-                        )}
-                      </CustomMenu>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-brand-secondary">Order by</h4>
-                      <CustomMenu
-                        label={
-                          ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
-                          "Select"
-                        }
-                        width="lg"
-                      >
-                        {ORDER_BY_OPTIONS.map((option) =>
-                          groupByProperty === "priority" && option.key === "priority" ? null : (
-                            <CustomMenu.MenuItem
-                              key={option.key}
-                              onClick={() => {
-                                setOrderBy(option.key);
-                              }}
-                            >
-                              {option.name}
-                            </CustomMenu.MenuItem>
-                          )
-                        )}
-                      </CustomMenu>
-                    </div>
+                    {issueView !== "calendar" && (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-brand-secondary">Group by</h4>
+                          <CustomMenu
+                            label={
+                              GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
+                                ?.name ?? "Select"
+                            }
+                            width="lg"
+                          >
+                            {GROUP_BY_OPTIONS.map((option) =>
+                              issueView === "kanban" && option.key === null ? null : (
+                                <CustomMenu.MenuItem
+                                  key={option.key}
+                                  onClick={() => setGroupByProperty(option.key)}
+                                >
+                                  {option.name}
+                                </CustomMenu.MenuItem>
+                              )
+                            )}
+                          </CustomMenu>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-brand-secondary">Order by</h4>
+                          <CustomMenu
+                            label={
+                              ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
+                              "Select"
+                            }
+                            width="lg"
+                          >
+                            {ORDER_BY_OPTIONS.map((option) =>
+                              groupByProperty === "priority" && option.key === "priority" ? null : (
+                                <CustomMenu.MenuItem
+                                  key={option.key}
+                                  onClick={() => {
+                                    setOrderBy(option.key);
+                                  }}
+                                >
+                                  {option.name}
+                                </CustomMenu.MenuItem>
+                              )
+                            )}
+                          </CustomMenu>
+                        </div>
+                      </>
+                    )}
                     <div className="flex items-center justify-between">
                       <h4 className="text-brand-secondary">Issue type</h4>
                       <CustomMenu
@@ -204,62 +208,69 @@ export const IssuesFilterView: React.FC = () => {
                         ))}
                       </CustomMenu>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-brand-secondary">Show empty states</h4>
-                      <button
-                        type="button"
-                        className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          showEmptyGroups ? "bg-green-500" : "bg-brand-surface-2"
-                        }`}
-                        role="switch"
-                        aria-checked={showEmptyGroups}
-                        onClick={() => setShowEmptyGroups(!showEmptyGroups)}
-                      >
-                        <span className="sr-only">Show empty groups</span>
-                        <span
-                          aria-hidden="true"
-                          className={`inline-block h-2.5 w-2.5 transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
-                            showEmptyGroups ? "translate-x-2.5" : "translate-x-0"
-                          }`}
-                        />
-                      </button>
-                    </div>
-                    <div className="relative flex justify-end gap-x-3">
-                      <button type="button" onClick={() => resetFilterToDefault()}>
-                        Reset to default
-                      </button>
-                      <button
-                        type="button"
-                        className="font-medium text-brand-accent"
-                        onClick={() => setNewFilterDefaultView()}
-                      >
-                        Set as default
-                      </button>
-                    </div>
-                  </div>
-                  <div className="space-y-2 py-3">
-                    <h4 className="text-sm text-brand-secondary">Display Properties</h4>
-                    <div className="flex flex-wrap items-center gap-2">
-                      {Object.keys(properties).map((key) => {
-                        if (key === "estimate" && !isEstimateActive) return null;
 
-                        return (
+                    {issueView !== "calendar" && (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-brand-secondary">Show empty states</h4>
                           <button
-                            key={key}
                             type="button"
-                            className={`rounded border px-2 py-1 text-xs capitalize ${
-                              properties[key as keyof Properties]
-                                ? "border-theme bg-theme text-white"
-                                : "border-gray-300"
+                            className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                              showEmptyGroups ? "bg-green-500" : "bg-brand-surface-2"
                             }`}
-                            onClick={() => setProperties(key as keyof Properties)}
+                            role="switch"
+                            aria-checked={showEmptyGroups}
+                            onClick={() => setShowEmptyGroups(!showEmptyGroups)}
                           >
-                            {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                            <span className="sr-only">Show empty groups</span>
+                            <span
+                              aria-hidden="true"
+                              className={`inline-block h-2.5 w-2.5 transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
+                                showEmptyGroups ? "translate-x-2.5" : "translate-x-0"
+                              }`}
+                            />
                           </button>
-                        );
-                      })}
-                    </div>
+                        </div>
+                        <div className="relative flex justify-end gap-x-3">
+                          <button type="button" onClick={() => resetFilterToDefault()}>
+                            Reset to default
+                          </button>
+                          <button
+                            type="button"
+                            className="font-medium text-brand-accent"
+                            onClick={() => setNewFilterDefaultView()}
+                          >
+                            Set as default
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
+                  {issueView !== "calendar" && (
+                    <div className="space-y-2 py-3">
+                      <h4 className="text-sm text-brand-secondary">Display Properties</h4>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {Object.keys(properties).map((key) => {
+                          if (key === "estimate" && !isEstimateActive) return null;
+
+                          return (
+                            <button
+                              key={key}
+                              type="button"
+                              className={`rounded border px-2 py-1 text-xs capitalize ${
+                                properties[key as keyof Properties]
+                                  ? "border-theme bg-theme text-white"
+                                  : "border-gray-300"
+                              }`}
+                              onClick={() => setProperties(key as keyof Properties)}
+                            >
+                              {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </Popover.Panel>
             </Transition>

@@ -396,41 +396,40 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setTransferIssuesModal(false)}
         isOpen={transferIssuesModal}
       />
-      {issueView !== "calendar" && (
-        <>
-          <div
-            className={`flex items-center justify-between gap-2 ${
-              issueView === "list" && areFiltersApplied ? "mt-6 px-8" : "-mt-2"
-            }`}
-          >
-            <FilterList filters={filters} setFilters={setFilters} />
-            {areFiltersApplied && (
-              <PrimaryButton
-                onClick={() => {
-                  if (viewId) {
-                    setFilters({}, true);
-                    setToastAlert({
-                      title: "View updated",
-                      message: "Your view has been updated",
-                      type: "success",
-                    });
-                  } else
-                    setCreateViewModal({
-                      query: filters,
-                    });
-                }}
-                className="flex items-center gap-2 text-sm"
-              >
-                {!viewId && <PlusIcon className="h-4 w-4" />}
-                {viewId ? "Update" : "Save"} view
-              </PrimaryButton>
-            )}
-          </div>
+      <>
+        <div
+          className={`flex items-center justify-between gap-2 ${
+            issueView === "list" && areFiltersApplied ? "mt-6 px-8" : "-mt-2"
+          }`}
+        >
+          <FilterList filters={filters} setFilters={setFilters} />
           {areFiltersApplied && (
-            <div className={` ${issueView === "list" ? "mt-4" : "my-4"} border-t`} />
+            <PrimaryButton
+              onClick={() => {
+                if (viewId) {
+                  setFilters({}, true);
+                  setToastAlert({
+                    title: "View updated",
+                    message: "Your view has been updated",
+                    type: "success",
+                  });
+                } else
+                  setCreateViewModal({
+                    query: filters,
+                  });
+              }}
+              className="flex items-center gap-2 text-sm"
+            >
+              {!viewId && <PlusIcon className="h-4 w-4" />}
+              {viewId ? "Update" : "Save"} view
+            </PrimaryButton>
           )}
-        </>
-      )}
+        </div>
+        {areFiltersApplied && (
+          <div className={` ${issueView === "list" ? "mt-4" : "my-4"} border-t`} />
+        )}
+      </>
+
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">
           {(provided, snapshot) => (
