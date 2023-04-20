@@ -22,12 +22,10 @@ export const ThemeSwitch = () => {
     <>
       <CustomSelect
         value={theme}
-        label={theme ? theme : "Select your theme"}
+        label={theme ? THEMES_OBJ.find((t) => t.value === theme)?.label : "Select your theme"}
         onChange={({ value, type }: { value: string; type: string }) => {
           if (value === "custom") {
-            if (!customThemeModal) {
-              setCustomThemeModal(true);
-            }
+            if (!customThemeModal) setCustomThemeModal(true);
           } else {
             const cssVars = [
               "--color-bg-base",
@@ -56,7 +54,7 @@ export const ThemeSwitch = () => {
           </CustomSelect.Option>
         ))}
       </CustomSelect>
-      <CustomThemeModal isOpen={customThemeModal} handleClose={() => setCustomThemeModal(false)} />
+      {/* <CustomThemeModal isOpen={customThemeModal} handleClose={() => setCustomThemeModal(false)} /> */}
     </>
   );
 };

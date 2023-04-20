@@ -1,4 +1,10 @@
-export const THEMES = ["light", "dark", "light-contrast", "dark-contrast", "custom"];
+export const THEMES = [
+  "light",
+  "dark",
+  "light-contrast",
+  "dark-contrast",
+  // "custom"
+];
 
 export const THEMES_OBJ = [
   {
@@ -21,9 +27,9 @@ export const THEMES_OBJ = [
     label: "Dark High Contrast",
     type: "dark",
   },
-  {
-    value: "custom",
-    label: "Custom",
-    type: "light",
-  },
+  // {
+  //   value: "custom",
+  //   label: "Custom",
+  //   type: "light",
+  // },
 ];
