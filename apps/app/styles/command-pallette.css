@@ -3,7 +3,7 @@
 }
 
 [cmdk-group-heading] {
-  color: rgb(107 114 128);
+  color: rgb(var(--color-text-secondary));
   font-size: 0.75rem;
   margin: 0 0 0.25rem 0.25rem;
 }
@@ -27,13 +27,13 @@
   font-size: 0.75rem;
   line-height: 1rem;
   border-radius: 0.25rem;
-  background-color: rgb(229 231 235);
+  background-color: rgba(var(--color-bg-base));
 }
 
 [cmdk-item]:hover {
-  background-color: rgb(229 231 235);
+  background-color: rgba(var(--color-bg-base));
 }
 
 [cmdk-item][aria-selected="true"] {
-  background-color: rgb(229 231 235);
+  background-color: rgba(var(--color-bg-base));
 }

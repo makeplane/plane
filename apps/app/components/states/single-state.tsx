@@ -135,12 +135,12 @@ export const SingleState: React.FC<Props> = ({
 
   return (
     <div
-      className={`group flex items-center justify-between gap-2 bg-white p-5 first:rounded-t-[10px] last:rounded-b-[10px]`}
+      className={`group flex items-center justify-between gap-2 border-brand-base bg-brand-surface-1 p-5 first:rounded-t-[10px] last:rounded-b-[10px]`}
     >
       <div className="flex items-center gap-3">
         {getStateGroupIcon(state.group, "20", "20", state.color)}
         <div>
-          <h6 className="font-medium text-gray-600">{addSpaceIfCamelCase(state.name)}</h6>
+          <h6 className="font-medium text-brand-muted-1">{addSpaceIfCamelCase(state.name)}</h6>
           <p className="text-xs text-gray-400">{state.description}</p>
         </div>
       </div>
@@ -148,7 +148,7 @@ export const SingleState: React.FC<Props> = ({
         {index !== 0 && (
           <button
             type="button"
-            className="hidden text-gray-400 hover:text-gray-900 group-hover:inline-block"
+            className="hidden text-gray-400 hover:text-brand-base group-hover:inline-block"
             onClick={() => handleMove(state, "up")}
           >
             <ArrowUpIcon className="h-4 w-4" />
@@ -157,7 +157,7 @@ export const SingleState: React.FC<Props> = ({
         {!(index === groupLength - 1) && (
           <button
             type="button"
-            className="hidden text-gray-400 hover:text-gray-900 group-hover:inline-block"
+            className="hidden text-gray-400 hover:text-brand-base group-hover:inline-block"
             onClick={() => handleMove(state, "down")}
           >
             <ArrowDownIcon className="h-4 w-4" />
@@ -168,7 +168,7 @@ export const SingleState: React.FC<Props> = ({
         ) : (
           <button
             type="button"
-            className="hidden text-xs text-gray-400 hover:text-gray-900 group-hover:inline-block"
+            className="hidden text-xs text-gray-400 hover:text-brand-base group-hover:inline-block"
             onClick={handleMakeDefault}
             disabled={isSubmitting}
           >

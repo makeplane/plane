@@ -15,6 +15,72 @@
   html {
     font-family: "Inter", sans-serif;
   }
+
+  :root {
+    --color-bg-base: 243, 244, 246;
+    --color-bg-surface-1: 249, 250, 251;
+    --color-bg-surface-2: 255, 255, 255;
+
+    --color-border: 229, 231, 235;
+    --color-bg-sidebar: 255, 255, 255;
+    --color-accent: 63, 118, 255;
+
+    --color-text-base: 3, 7, 18;
+    --color-text-secondary: 55, 65, 81;
+  }
+
+  [data-theme="light"] {
+    --color-bg-base: 243, 244, 246;
+    --color-bg-surface-1: 249, 250, 251;
+    --color-bg-surface-2: 255, 255, 255;
+
+    --color-border: 229, 231, 235;
+    --color-bg-sidebar: 255, 255, 255;
+    --color-accent: 63, 118, 255;
+
+    --color-text-base: 3, 7, 18;
+    --color-text-secondary: 55, 65, 81;
+  }
+
+  [data-theme="dark"] {
+    --color-bg-base: 25, 27, 27;
+    --color-bg-surface-1: 31, 32, 35;
+    --color-bg-surface-2: 39, 42, 45;
+
+    --color-border: 46, 50, 52;
+    --color-bg-sidebar: 19, 20, 22;
+    --color-accent: 60, 133, 217;
+
+    --color-text-base: 255, 255, 255;
+    --color-text-secondary: 142, 148, 146;
+  }
+
+  [data-theme="light-contrast"] {
+    --color-bg-base: 250, 250, 250;
+    --color-bg-surface-1: 250, 250, 250;
+    --color-bg-surface-2: 206, 212, 218;
+
+    --color-border: 0, 0, 0;
+    --color-bg-sidebar: 255, 255, 255;
+    --color-accent: 63, 118, 255;
+
+    --color-text-base: 0, 0, 0;
+    --color-text-secondary: 0, 0, 0;
+  }
+
+  [data-theme="dark-contrast"] {
+    --color-bg-base: 25, 27, 27;
+    --color-bg-surface-1: 31, 32, 35;
+    --color-bg-surface-2: 39, 42, 45;
+
+    --color-border: 255, 255, 255;
+    --color-bg-sidebar: 19, 20, 22;
+    --color-accent: 60, 133, 217;
+
+    --color-text-base: 255, 255, 255;
+    --color-text-secondary: 142, 148, 146;
+    color-scheme: dark !important;
+  }
 }
 
 * {
@@ -129,8 +195,17 @@
   z-index: 30 !important;
 }
 
-.conical-gradient{
-  background: conic-gradient(from 180deg at 50% 50%, #FF6B00 0deg, #F7AE59 70.5deg, #3F76FF 151.12deg, #05C3FF 213deg, #18914F 289.87deg, #F6F172 329.25deg, #FF6B00 360deg);
+.conical-gradient {
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff6b00 0deg,
+    #f7ae59 70.5deg,
+    #3f76ff 151.12deg,
+    #05c3ff 213deg,
+    #18914f 289.87deg,
+    #f6f172 329.25deg,
+    #ff6b00 360deg
+  );
 }
 
 /* end react datepicker styling */

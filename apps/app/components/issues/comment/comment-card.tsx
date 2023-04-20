@@ -67,7 +67,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           </div>
         )}
 
-        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-white px-0.5 py-px">
+        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-brand-surface-2 px-0.5 py-px">
           <ChatBubbleLeftEllipsisIcon className="h-3.5 w-3.5 text-gray-400" aria-hidden="true" />
         </span>
       </div>
@@ -77,7 +77,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             {comment.actor_detail.first_name}
             {comment.actor_detail.is_bot ? "Bot" : " " + comment.actor_detail.last_name}
           </div>
-          <p className="mt-0.5 text-xs text-gray-500">Commented {timeAgo(comment.created_at)}</p>
+          <p className="mt-0.5 text-xs text-brand-secondary">Commented {timeAgo(comment.created_at)}</p>
         </div>
         <div className="issue-comments-section p-0">
           {isEditing ? (
@@ -117,7 +117,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               editable={false}
               onBlur={() => ({})}
               noBorder
-              customClassName="text-xs bg-gray-100"
+              customClassName="text-xs bg-brand-surface-1"
             />
           )}
         </div>

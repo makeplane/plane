@@ -141,7 +141,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
             <button
               type="button"
               className={`mt-5 flex w-full justify-end text-xs outline-none ${
-                isResendDisabled ? "cursor-default text-gray-400" : "cursor-pointer text-theme"
+                isResendDisabled ? "cursor-default text-gray-400" : "cursor-pointer text-brand-accent"
               } `}
               onClick={() => {
                 setIsCodeResending(true);

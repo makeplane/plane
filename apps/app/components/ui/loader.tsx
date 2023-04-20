@@ -19,7 +19,7 @@ type ItemProps = {
 
 const Item: React.FC<ItemProps> = ({ height = "auto", width = "auto", light }) => (
   <div
-    className={`rounded-md ${light ? "bg-gray-200" : "bg-gray-300"}`}
+    className={`rounded-md ${light ? "bg-brand-surface-2" : "bg-gray-300"}`}
     style={{ height: height, width: width }}
   />
 );

@@ -51,14 +51,14 @@ const CustomMenu = ({
         {ellipsis || verticalEllipsis ? (
           <Menu.Button
             type="button"
-            className="relative grid place-items-center rounded p-1 hover:bg-gray-100 focus:outline-none"
+            className="relative grid place-items-center rounded p-1 hover:bg-brand-surface-1 focus:outline-none"
           >
             <EllipsisHorizontalIcon className={`h-4 w-4 ${verticalEllipsis ? "rotate-90" : ""}`} />
           </Menu.Button>
         ) : (
           <Menu.Button
             type="button"
-            className={`flex cursor-pointer items-center justify-between gap-1 px-2.5 py-1 text-xs duration-300 hover:bg-gray-100 ${
+            className={`flex cursor-pointer items-center justify-between gap-1 px-2.5 py-1 text-xs duration-300 hover:bg-brand-surface-1 ${
               textAlignment === "right"
                 ? "text-right"
                 : textAlignment === "center"
@@ -67,7 +67,7 @@ const CustomMenu = ({
             } ${
               noBorder
                 ? "rounded"
-                : "rounded-md border shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                : "rounded-md border border-brand-base shadow-sm focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-skinborder-brand-accent"
             } ${
               width === "sm"
                 ? "w-10"
@@ -97,7 +97,7 @@ const CustomMenu = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Menu.Items
-        className={`absolute z-20 mt-1 overflow-y-scroll whitespace-nowrap rounded-md bg-white p-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+        className={`absolute z-20 mt-1 overflow-y-scroll whitespace-nowrap rounded-md bg-brand-surface-2 p-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
           optionsPosition === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
         } ${
           height === "sm"
@@ -140,8 +140,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
         <Link href={href ?? ""}>
           <a
             className={`${className} ${
-              active ? "bg-hover-gray" : ""
-            } inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500 hover:bg-gray-100 hover:text-gray-900`}
+              active ? "bg-brand-surface-1" : ""
+            } inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-muted-1`}
             onClick={close}
           >
             {children}
@@ -151,8 +151,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
         <button
           type="button"
           className={`${className} ${
-            active ? "bg-hover-gray" : ""
-          } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500 hover:bg-gray-100 hover:text-gray-900`}
+            active ? "bg-brand-surface-1" : ""
+          } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-muted-1`}
           onClick={onClick}
         >
           {children}

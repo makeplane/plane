@@ -20,7 +20,7 @@ export const SingleLabel: React.FC<Props> = ({
   editLabel,
   handleLabelDelete,
 }) => (
-  <div className="gap-2 space-y-3 divide-y rounded-[10px] border bg-white p-5">
+  <div className="gap-2 space-y-3 divide-y divide-brand-base rounded-[10px]  border border-brand-base bg-brand-surface-1 p-5">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
         <span
@@ -29,7 +29,7 @@ export const SingleLabel: React.FC<Props> = ({
             backgroundColor: label.color && label.color !== "" ? label.color : "#000",
           }}
         />
-        <h6 className="font-medium text-gray-600">{label.name}</h6>
+        <h6 className="font-medium text-brand-base">{label.name}</h6>
       </div>
       <CustomMenu ellipsis>
         <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>

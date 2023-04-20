@@ -36,11 +36,11 @@ export const CustomDatePicker: React.FC<Props> = ({
     }}
     className={`${
       renderAs === "input"
-        ? "block border-gray-300 bg-transparent px-3 py-2 text-sm focus:outline-none"
+        ? "block border-brand-base bg-transparent px-3 py-2 text-sm focus:outline-none"
         : renderAs === "button"
         ? `px-3 py-1 text-xs shadow-sm ${
-            disabled ? "" : "hover:bg-gray-100"
-          } duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`
+            disabled ? "" : "hover:bg-brand-surface-1"
+          } duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent`
         : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${
       disabled ? "cursor-not-allowed" : "cursor-pointer"

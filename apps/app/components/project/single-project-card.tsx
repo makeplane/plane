@@ -138,7 +138,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <>
       {members ? (
-        <div className="flex flex-col rounded-[10px] shadow">
+        <div className="flex flex-col rounded-[10px] shadow bg-brand-surface-2">
           <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
             <a>
               <div className="relative h-32 w-full rounded-t-[10px]">
@@ -211,7 +211,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                 <div className="flex items-center">
                   {(isOwner || isMember) && (
                     <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
-                      <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-gray-100">
+                      <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-brand-surface-1">
                         <PencilIcon className="h-4 w-4" />
                       </a>
                     </Link>

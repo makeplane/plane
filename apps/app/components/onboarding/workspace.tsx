@@ -65,10 +65,10 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   };
 
   return (
-    <div className="grid w-full place-items-center min-h-[490px]">
+    <div className="grid min-h-[490px] w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex h-full w-full max-w-xl flex-col justify-between rounded-[10px] bg-white shadow-md"
+        className="flex h-full w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-surface-2 shadow-md"
       >
         <Tab.List
           as="div"
@@ -78,8 +78,8 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             className={({ selected }) =>
               `rounded-3xl border px-4 py-2 outline-none ${
                 selected
-                  ? "border-theme bg-theme text-white"
-                  : "border-gray-300 bg-white hover:bg-hover-gray"
+                  ? "border-brand-accent bg-brand-accent text-white"
+                  : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
               }`
             }
           >
@@ -89,8 +89,8 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             className={({ selected }) =>
               `rounded-3xl border px-5 py-2 outline-none ${
                 selected
-                  ? "border-theme bg-theme text-white"
-                  : "border-gray-300 bg-white hover:bg-hover-gray"
+                  ? "border-brand-accent bg-brand-accent text-white"
+                  : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
               }`
             }
           >
@@ -109,7 +109,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             />
           </Tab.Panel>
           <Tab.Panel className="h-full">
-            <div className="flex flex-col justify-between h-full w-full">
+            <div className="flex h-full w-full flex-col justify-between">
               <div className="divide-y px-4 py-7">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
@@ -136,10 +136,10 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                           </span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-brand-base">
                             {invitation.workspace.name}
                           </div>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-brand-secondary">
                             Invited by {invitation.workspace.owner.first_name}
                           </p>
                         </div>
@@ -157,7 +157,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                               );
                             }}
                             type="checkbox"
-                            className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
+                            className="h-4 w-4 rounded border-brand-base text-brand-accent focus:ring-brand-accent"
                           />
                         </div>
                       </label>

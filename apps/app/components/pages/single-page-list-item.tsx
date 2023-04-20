@@ -51,7 +51,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
     <li>
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a>
-          <div className="relative rounded p-4 hover:bg-gray-200">
+          <div className="relative rounded p-4 hover:bg-brand-surface-1">
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap items-center gap-2">
                 <DocumentTextIcon className="h-4 w-4" />
@@ -62,7 +62,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                   page.label_details.map((label) => (
                     <div
                       key={label.id}
-                      className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                      className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
                       style={{
                         backgroundColor: `${
                           label?.color && label.color !== "" ? label.color : "#000000"

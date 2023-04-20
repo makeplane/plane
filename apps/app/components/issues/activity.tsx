@@ -66,31 +66,31 @@ const activityDetails: {
   },
   modules: {
     message: "set the module to",
-    icon: <RectangleGroupIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <RectangleGroupIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   state: {
     message: "set the state to",
-    icon: <Squares2X2Icon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <Squares2X2Icon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   priority: {
     message: "set the priority to",
-    icon: <ChartBarIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <ChartBarIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   name: {
     message: "set the name to",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   description: {
     message: "updated the description.",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   target_date: {
     message: "set the due date to",
-    icon: <CalendarDaysIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <CalendarDaysIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   parent: {
     message: "set the parent to",
-    icon: <UserIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <UserIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   estimate: {
     message: "updated the estimate",
@@ -255,7 +255,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
             }
 
             value = (
-              <span className="relative inline-flex items-center rounded-full px-2 py-0.5 text-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+              <span className="relative inline-flex items-center rounded-full px-2 py-0.5 text-xs border border-brand-base">
                 <span className="absolute flex flex-shrink-0 items-center justify-center">
                   <span
                     className="h-1.5 w-1.5 rounded-full"
@@ -265,7 +265,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                     aria-hidden="true"
                   />
                 </span>
-                <span className="ml-3 font-medium text-gray-900">{name}</span>
+                <span className="ml-3 font-medium text-brand-base">{name}</span>
               </span>
             );
           } else if (activityItem.field === "assignees") {
@@ -298,7 +298,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                 <div className="relative pb-1">
                   {issueActivities.length > 1 && activityItemIdx !== issueActivities.length - 1 ? (
                     <span
-                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
+                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-surface-2"
                       aria-hidden="true"
                     />
                   ) : null}
@@ -307,7 +307,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                       <div>
                         <div className="relative px-1.5">
                           <div className="mt-1.5">
-                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 ring-white">
+                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-surface-1 ring-white">
                               {activityItem.field ? (
                                 activityDetails[activityItem.field as keyof typeof activityDetails]
                                   ?.icon
@@ -332,7 +332,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                         </div>
                       </div>
                       <div className="min-w-0 flex-1 py-3">
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-brand-secondary">
                           <span className="text-gray font-medium">
                             {activityItem.actor_detail.first_name}
                             {activityItem.actor_detail.is_bot
@@ -340,7 +340,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                               : " " + activityItem.actor_detail.last_name}
                           </span>
                           <span> {action} </span>
-                          <span className="text-xs font-medium text-gray-900"> {value} </span>
+                          <span className="text-xs font-medium text-brand-base"> {value} </span>
                           <span className="whitespace-nowrap">
                             {timeAgo(activityItem.created_at)}
                           </span>

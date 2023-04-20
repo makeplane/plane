@@ -41,17 +41,17 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, 
         <Image src={imgURL} height="128" width="288" alt={type} />
       </div>
 
-      <h3 className="text-xl font-semibold">{title}</h3>
+      <h3 className="text-xl font-semibold text-brand-secondary">{title}</h3>
       {shortcutKey(type) && (
         <span>
           Use shortcut{" "}
-          <span className="mx-1 rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
+          <span className="mx-1 rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-brand-muted-1">
             {shortcutKey(type)}
           </span>{" "}
           to create {type} from anywhere.
         </span>
       )}
-      <p className="max-w-md text-sm text-gray-500">{description}</p>
+      <p className="max-w-md text-sm text-brand-secondary">{description}</p>
 
       <PrimaryButton
         className="flex items-center gap-1"

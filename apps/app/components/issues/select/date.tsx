@@ -18,11 +18,11 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
       <>
         <Popover.Button
           className={({ open }) =>
-            `flex cursor-pointer items-center rounded-md border text-xs shadow-sm duration-200 
+            `flex cursor-pointer items-center rounded-md border border-brand-base text-xs shadow-sm duration-200 
               ${
                 open
-                  ? "border-theme bg-theme/5 outline-none ring-1 ring-theme "
-                  : "hover:bg-theme/5 "
+                  ? "border-brand-accent bg-brand-accent/5 outline-none ring-1 ring-brand-accent "
+                  : "hover:bg-brand-accent/5 "
               }`
           }
         >
