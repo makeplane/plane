@@ -28,12 +28,15 @@ type Props = {
 };
 
 const restrictedUrls = [
+  "api",
   "create-workspace",
   "error",
+  "installations",
   "invitations",
   "magic-sign-in",
   "onboarding",
   "signin",
+  "workspace-member-invitation",
 ];
 
 export const CreateWorkspaceForm: React.FC<Props> = ({
