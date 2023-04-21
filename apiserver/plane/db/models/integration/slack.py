@@ -12,7 +12,6 @@ class SlackProjectSync(ProjectBaseModel):
     access_token = models.CharField(max_length=300)
     scopes = models.TextField()
     bot_user_id = models.CharField(max_length=50)
-    bot_access_token = models.CharField(max_length=300)
     webhook_url = models.URLField(max_length=1000)
     data = models.JSONField(default=dict)
     team_id = models.CharField(max_length=30)
