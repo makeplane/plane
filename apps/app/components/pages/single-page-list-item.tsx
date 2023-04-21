@@ -69,7 +69,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
     <li>
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a>
-          <div className="relative rounded p-4 text-brand-secondary hover:bg-brand-base">
+          <div className="relative rounded p-4 text-brand-secondary hover:bg-brand-surface-2">
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap items-center gap-2">
                 <DocumentTextIcon className="h-4 w-4" />
