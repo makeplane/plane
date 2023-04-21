@@ -203,18 +203,30 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                     for point in estimate_points_data
                     if point.get("id") == str(estimate_point.id)
                 ]
-                print(estimate_point_data)
                 if len(estimate_point_data):
                     estimate_point.value = estimate_point_data[0].get(
                         "value", estimate_point.value
                     )
                     updated_estimate_points.append(estimate_point)
 
-            EstimatePoint.objects.bulk_update(
-                updated_estimate_points, ["value"], batch_size=10
+            try:
+                EstimatePoint.objects.bulk_update(
+                    updated_estimate_points, ["value"], batch_size=10
+                )
+            except IntegrityError as e:
+                return Response(
+                    {"error": "Values need to be unique for each key"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            estimate_point_serializer = EstimatePointSerializer(estimate_points, many=True)
+            return Response(
+                {
+                    "estimate": estimate_serializer.data,
+                    "estimate_points": estimate_point_serializer.data,
+                },
+                status=status.HTTP_200_OK,
             )
-            serializer = EstimatePointSerializer(estimate_points, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         except Estimate.DoesNotExist:
             return Response(
                 {"error": "Estimate does not exist"}, status=status.HTTP_400_BAD_REQUEST
