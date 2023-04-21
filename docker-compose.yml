@@ -2,18 +2,18 @@ version: "3.8"
 
 services:
   nginx:
-    container_name: nginx
+    container_name: plane_nginx
     build:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
       - 80:80
     depends_on:
-      - plane-web
-      - plane-api
+      - app
+      - api
   db:
     image: postgres:15.2-alpine
-    container_name: db
+    container_name: plane_db
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -27,25 +27,26 @@ services:
       - 5432:5432
   redis:
     image: redis:6.2.7-alpine
-    container_name: redis
+    container_name: plane_redis
     restart: always
     ports:
       - 6379:6379
     volumes:
       - redisdata:/data
-  plane-web:
-    container_name: planefrontend
+  app:
+    container_name: plane_app
     build:
-      context: .
-      dockerfile: ./apps/app/Dockerfile.web
+      context: ./app
+      dockerfile: Dockerfile.web
     restart: always
-    command: node apps/app/server.js
-    env_file:
-      - ./apps/app/.env
+    command: npm run start
+    environment:
+      NEXT_PUBLIC_ENABLE_OAUTH: 0
+      NEXT_PUBLIC_ENABLE_SENTRY: 0
     ports:
       - 3000:3000
-  plane-api:
-    container_name: planebackend
+  api:
+    container_name: plane_api
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
@@ -61,15 +62,15 @@ services:
     links:
       - db:db
       - redis:redis
-  plane-worker:
-    container_name: planebgworker
+  worker:
+    container_name: plane_worker
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
     depends_on:
       - redis
       - db
-      - plane-api
+      - api
     command: ./bin/worker
     links:
       - redis:redis
