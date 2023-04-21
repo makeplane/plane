@@ -8,3 +8,5 @@ export * from "./single-integration-card";
 export * from "./github";
 // jira
 export * from "./jira";
+// slack
+export * from "./slack";

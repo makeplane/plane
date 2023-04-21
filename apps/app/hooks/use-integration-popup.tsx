@@ -6,14 +6,22 @@ const useIntegrationPopup = (provider: string | undefined) => {
   const [authLoader, setAuthLoader] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const providerUrls: { [key: string]: string } = {
     github: `https://github.com/apps/${
       process.env.NEXT_PUBLIC_GITHUB_APP_NAME
-    }/installations/new?state=${workspaceSlug as string}`,
-    slack: "",
+    }/installations/new?state=${workspaceSlug?.toString()}`,
+    slack: `https://slack.com/oauth/v2/authorize?scope=chat%3Awrite%2Cim%3Ahistory%2Cim%3Awrite%2Clinks%3Aread%2Clinks%3Awrite%2Cusers%3Aread%2Cusers%3Aread.email&amp;user_scope=&amp;&client_id=${
+      process.env.NEXT_PUBLIC_SLACK_CLIENT_ID
+    }&state=${workspaceSlug?.toString()}&redirect_uri=https://53ff-2405-201-3005-e03e-bc47-b3f9-495d-414d.ngrok-free.app/installations/slack`,
+    slackChannel: `https://slack.com/oauth/v2/authorize?scope=incoming-webhook&client_id=${
+      process.env.NEXT_PUBLIC_SLACK_CLIENT_ID
+    }&state=${workspaceSlug?.toString()}_${projectId?.toString()}&redirect_uri=https://53ff-2405-201-3005-e03e-bc47-b3f9-495d-414d.ngrok-free.app/installations/slack/connect-project`,
   };
+
+  //&project=${projectId?.toString()}
+
   const popup = useRef<any>();
 
   const checkPopup = () => {

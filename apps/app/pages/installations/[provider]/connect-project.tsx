@@ -1,10 +1,16 @@
 import React, { useEffect } from "react";
+
+import useSWR from "swr";
+
 // services
 import appinstallationsService from "services/app-installations.service";
+import IntegrationService from "services/integration";
 // components
 import { Spinner } from "components/ui";
 
 import { useRouter } from "next/router";
+
+import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 interface IGithuPostInstallationProps {
   installation_id: string;
@@ -12,6 +18,7 @@ interface IGithuPostInstallationProps {
   state: string;
   provider: string;
   code: string;
+  projectId: string;
 }
 
 // TODO:Change getServerSideProps to router.query
@@ -21,20 +28,24 @@ const AppPostInstallation = ({
   state,
   provider,
   code,
+  projectId,
 }: IGithuPostInstallationProps) => {
+
+  console.log(state, provider, code)
+  const { data: workspaceIntegrations } = useSWR(
+    state ? WORKSPACE_INTEGRATIONS(state as string) : null,
+    () => (state ? IntegrationService.getWorkspaceIntegrationsList(state as string) : null)
+  );
+  console.log(workspaceIntegrations)
+
+  const workspaceIntegrationId = workspaceIntegrations?.find(
+    (integration) => integration.integration_detail.provider === provider
+  );
+
+  console.log(workspaceIntegrationId);
+
   useEffect(() => {
-    if (provider === "github" && state && installation_id) {
-      appinstallationsService
-        .addInstallationApp(state, provider, { installation_id })
-        .then(() => {
-          window.opener = null;
-          window.open("", "_self");
-          window.close();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else if (provider === "slack" && state && code) {
+    if (provider && state && code) {
       appinstallationsService
         .getSlackAuthDetails(code)
         .then((res) => {
@@ -43,9 +54,8 @@ const AppPostInstallation = ({
               ...res,
             },
           };
-
-          appinstallationsService
-            .addInstallationApp(state, provider, payload)
+          workspaceIntegrationId && appinstallationsService
+            .addSlackChannel(state, projectId, workspaceIntegrationId?.integration?.toString(), payload)
             .then((r) => {
               window.opener = null;
               window.open("", "_self");
@@ -59,7 +69,7 @@ const AppPostInstallation = ({
           console.log(err);
         });
     }
-  }, [state, installation_id, provider, code]);
+  }, [state, installation_id, provider, code, projectId, workspaceIntegrationId]);
 
   return (
     <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-white">
