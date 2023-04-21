@@ -138,7 +138,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <>
       {members ? (
-        <div className="flex flex-col rounded-[10px] shadow bg-brand-surface-2">
+        <div className="flex flex-col rounded-[10px] bg-brand-base shadow">
           <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
             <a>
               <div className="relative h-32 w-full rounded-t-[10px]">
@@ -180,11 +180,11 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               </div>
             </a>
           </Link>
-          <div className="flex h-full flex-col rounded-b-[10px] px-7 py-4">
+          <div className="flex h-full flex-col rounded-b-[10px] p-4 text-brand-secondary">
             <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
               <a>
                 <div className="flex items-center gap-1">
-                  <h3 className="text-1.5xl font-semibold">{project.name}</h3>
+                  <h3 className="text-1.5xl font-medium text-brand-base">{project.name}</h3>
                   {project.icon && (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
                       {String.fromCodePoint(parseInt(project.icon))}
