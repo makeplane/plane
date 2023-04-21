@@ -213,9 +213,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                       </h4>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="flex items-center">
-                          <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="px-2 rounded-lg text-sm  text-gray-600">1</span>
-                            <span className="bg-white rounded-lg">
+                          <span className="flex h-full items-center rounded-lg bg-gray-100">
+                            <span className="rounded-lg px-2 text-sm  text-gray-600">1</span>
+                            <span className="rounded-lg bg-white">
                               <Input
                                 id="name"
                                 name="value1"
@@ -228,9 +228,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="px-2 rounded-lg text-sm  text-gray-600">2</span>
-                            <span className="bg-white rounded-lg">
+                          <span className="flex h-full items-center rounded-lg bg-gray-100">
+                            <span className="rounded-lg px-2 text-sm  text-gray-600">2</span>
+                            <span className="rounded-lg bg-white">
                               <Input
                                 id="name"
                                 name="value2"
@@ -243,9 +243,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="px-2 rounded-lg text-sm text-gray-600">3</span>
-                            <span className="bg-white rounded-lg">
+                          <span className="flex h-full items-center rounded-lg bg-gray-100">
+                            <span className="rounded-lg px-2 text-sm text-gray-600">3</span>
+                            <span className="rounded-lg bg-white">
                               <Input
                                 id="name"
                                 name="value3"
@@ -258,9 +258,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="px-2 rounded-lg text-sm  text-gray-600">4</span>
-                            <span className="bg-white rounded-lg">
+                          <span className="flex h-full items-center rounded-lg bg-gray-100">
+                            <span className="rounded-lg px-2 text-sm  text-gray-600">4</span>
+                            <span className="rounded-lg bg-white">
                               <Input
                                 id="name"
                                 name="value4"
@@ -273,9 +273,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="px-2 rounded-lg text-sm  text-gray-600">5</span>
-                            <span className="bg-white rounded-lg">
+                          <span className="flex h-full items-center rounded-lg bg-gray-100">
+                            <span className="rounded-lg px-2 text-sm  text-gray-600">5</span>
+                            <span className="rounded-lg bg-white">
                               <Input
                                 id="name"
                                 name="value5"
@@ -288,9 +288,9 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="px-2 rounded-lg text-sm  text-gray-600">6</span>
-                            <span className="bg-white rounded-lg">
+                          <span className="flex h-full items-center rounded-lg bg-gray-100">
+                            <span className="rounded-lg px-2 text-sm  text-gray-600">6</span>
+                            <span className="rounded-lg bg-white">
                               <Input
                                 id="name"
                                 name="value6"

@@ -23,3 +23,14 @@ export interface IEstimatePoint {
   value: string;
   workspace: string;
 }
+
+export interface IEstimateFormData {
+  estimate: {
+    name: string;
+    description: string;
+  };
+  estimate_points: {
+    key: number;
+    value: string;
+  }[];
+}

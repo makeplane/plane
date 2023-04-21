@@ -127,7 +127,7 @@ const EstimatesSettings: NextPage = () => {
           <div className="col-span-12 space-y-5 sm:col-span-7">
             <div className="flex items-center gap-2">
               <span
-                className="flex items-center cursor-pointer gap-2 text-theme"
+                className="flex cursor-pointer items-center gap-2 text-theme"
                 onClick={() => {
                   setEstimateToUpdate(undefined);
                   setEstimateFormOpen(true);
@@ -143,7 +143,7 @@ const EstimatesSettings: NextPage = () => {
           </div>
         </section>
         {estimatesList && estimatesList.length > 0 && (
-          <section className="mt-4 divide-y px-6 mb-8 rounded-xl border bg-white">
+          <section className="mt-4 mb-8 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
             <>
               {estimatesList ? (
                 estimatesList.map((estimate) => (

@@ -94,17 +94,17 @@ export const SingleEstimate: React.FC<Props> = ({
         data={estimatePoints ? orderArrayBy(estimatePoints, "key") : undefined}
       />
       <div className="gap-2 py-3">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div>
-            <h6 className="flex items-center gap-2 font-medium text-base w-[40vw] truncate">
+            <h6 className="flex w-[40vw] items-center gap-2 truncate text-sm font-medium">
               {estimate.name}
               {projectDetails?.estimate && projectDetails?.estimate === estimate.id && (
-                <span className="capitalize px-2 py-0.5 text-xs rounded bg-green-100 text-green-500">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs capitalize text-green-500">
                   In use
                 </span>
               )}
             </h6>
-            <p className="font-sm text-gray-400 font-normal text-[14px] w-[40vw] truncate">
+            <p className="font-sm w-[40vw] truncate text-[14px] font-normal text-brand-secondary">
               {estimate.description}
             </p>
           </div>
@@ -152,11 +152,11 @@ export const SingleEstimate: React.FC<Props> = ({
           </CustomMenu>
         </div>
         {estimatePoints && estimatePoints.length > 0 ? (
-          <div className="flex text-sm text-gray-400">
+          <div className="flex text-xs text-brand-secondary">
             Estimate points (
             <span className="flex gap-1">
               {estimatePoints.map((point, index) => (
-                <h6 key={point.id}>
+                <h6 key={point.id} className="text-brand-secondary">
                   {point.value}
                   {index !== estimatePoints.length - 1 && ","}{" "}
                 </h6>
@@ -166,7 +166,7 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
         ) : (
           <div>
-            <p className="text-sm text-gray-400">No estimate points</p>
+            <p className="text-xs text-brand-secondary">No estimate points</p>
           </div>
         )}
       </div>

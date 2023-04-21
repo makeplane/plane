@@ -16,7 +16,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import useToast from "hooks/use-toast";
 
 // types
-import { IEstimate } from "types";
+import { IEstimate, IEstimateFormData } from "types";
 // fetch-keys
 import { ESTIMATES_LIST } from "constants/fetch-keys";
 
@@ -26,9 +26,26 @@ type Props = {
   data?: IEstimate;
 };
 
-const defaultValues: Partial<IEstimate> = {
+type FormValues = {
+  name: string;
+  description: string;
+  value1: string;
+  value2: string;
+  value3: string;
+  value4: string;
+  value5: string;
+  value6: string;
+};
+
+const defaultValues: Partial<FormValues> = {
   name: "",
   description: "",
+  value1: "",
+  value2: "",
+  value3: "",
+  value4: "",
+  value5: "",
+  value6: "",
 };
 
 export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen }) => {
@@ -37,7 +54,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
-  } = useForm<IEstimate>({
+  } = useForm<FormValues>({
     defaultValues,
   });
 
@@ -51,16 +68,11 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
 
   const { setToastAlert } = useToast();
 
-  const createEstimate = async (formData: IEstimate) => {
+  const createEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId) return;
 
-    const payload = {
-      name: formData.name,
-      description: formData.description,
-    };
-
     await estimatesService
-      .createEstimate(workspaceSlug as string, projectId as string, payload)
+      .createEstimateAndPoints(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
         mutate<IEstimate[]>(
           ESTIMATES_LIST(projectId as string),
@@ -79,13 +91,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     onClose();
   };
 
-  const updateEstimate = async (formData: IEstimate) => {
+  const updateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId || !data) return;
-
-    const payload = {
-      name: formData.name,
-      description: formData.description,
-    };
 
     mutate<IEstimate[]>(
       ESTIMATES_LIST(projectId as string),
@@ -110,6 +117,44 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
       });
 
     onClose();
+  };
+
+  const onSubmit = async (formData: FormValues) => {
+    const payload: IEstimateFormData = {
+      estimate: {
+        name: formData.name,
+        description: formData.description,
+      },
+      estimate_points: [
+        {
+          key: 0,
+          value: formData.value1,
+        },
+        {
+          key: 1,
+          value: formData.value2,
+        },
+        {
+          key: 2,
+          value: formData.value3,
+        },
+        {
+          key: 3,
+          value: formData.value4,
+        },
+        {
+          key: 4,
+          value: formData.value5,
+        },
+        {
+          key: 5,
+          value: formData.value6,
+        },
+      ],
+    };
+
+    if (data) await updateEstimate(payload);
+    else await createEstimate(payload);
   };
 
   useEffect(() => {
@@ -146,10 +191,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                  <form
-                    onSubmit={data ? handleSubmit(updateEstimate) : handleSubmit(createEstimate)}
-                  >
+                <Dialog.Panel className="relative transform rounded-lg bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+                  <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
                       <div className="text-lg font-medium leading-6">
                         {data ? "Update" : "Create"} Estimate
@@ -184,6 +227,98 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           error={errors.description}
                           register={register}
                         />
+                      </div>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="flex items-center">
+                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
+                            <span className="rounded-lg px-2 text-sm text-brand-secondary">1</span>
+                            <span className="rounded-lg bg-brand-base">
+                              <Input
+                                id="name"
+                                name="value1"
+                                type="name"
+                                placeholder="Point 1"
+                                autoComplete="off"
+                                register={register}
+                              />
+                            </span>
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
+                            <span className="rounded-lg px-2 text-sm text-brand-secondary">2</span>
+                            <span className="rounded-lg bg-brand-base">
+                              <Input
+                                id="name"
+                                name="value2"
+                                type="name"
+                                placeholder="Point 2"
+                                autoComplete="off"
+                                register={register}
+                              />
+                            </span>
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
+                            <span className="rounded-lg px-2 text-sm text-brand-secondary">3</span>
+                            <span className="rounded-lg bg-brand-base">
+                              <Input
+                                id="name"
+                                name="value3"
+                                type="name"
+                                placeholder="Point 3"
+                                autoComplete="off"
+                                register={register}
+                              />
+                            </span>
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
+                            <span className="rounded-lg px-2 text-sm text-brand-secondary">4</span>
+                            <span className="rounded-lg bg-brand-base">
+                              <Input
+                                id="name"
+                                name="value4"
+                                type="name"
+                                placeholder="Point 4"
+                                autoComplete="off"
+                                register={register}
+                              />
+                            </span>
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
+                            <span className="rounded-lg px-2 text-sm text-brand-secondary">5</span>
+                            <span className="rounded-lg bg-brand-base">
+                              <Input
+                                id="name"
+                                name="value5"
+                                type="name"
+                                placeholder="Point 5"
+                                autoComplete="off"
+                                register={register}
+                              />
+                            </span>
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
+                            <span className="rounded-lg px-2 text-sm text-brand-secondary">6</span>
+                            <span className="rounded-lg bg-brand-base">
+                              <Input
+                                id="name"
+                                name="value6"
+                                type="name"
+                                placeholder="Point 6"
+                                autoComplete="off"
+                                register={register}
+                              />
+                            </span>
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="mt-5 flex justify-end gap-2">
