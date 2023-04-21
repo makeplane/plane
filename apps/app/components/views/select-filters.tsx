@@ -15,7 +15,7 @@ import { getStatesList } from "helpers/state.helper";
 // types
 import { IIssueFilterOptions, IQuery } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 // constants
 import { PRIORITIES } from "constants/project";
 
@@ -36,7 +36,7 @@ export const SelectFilters: React.FC<Props> = ({
   const { workspaceSlug, projectId } = router.query;
 
   const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null

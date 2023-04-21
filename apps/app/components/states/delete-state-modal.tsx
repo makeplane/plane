@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -10,17 +10,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // services
 import stateServices from "services/state.service";
-import issuesServices from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { DangerButton, SecondaryButton } from "components/ui";
-// helpers
-import { groupBy } from "helpers/array.helper";
 // types
-import type { IState } from "types";
+import type { IState, IStateResponse } from "types";
 // fetch-keys
-import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -30,21 +27,11 @@ type Props = {
 
 export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-  const [issuesWithThisStateExist, setIssuesWithThisStateExist] = useState(true);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
-
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const handleClose = () => {
     onClose();
@@ -52,31 +39,47 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
   };
 
   const handleDeletion = async () => {
+    if (!workspaceSlug || !data) return;
+
     setIsDeleteLoading(true);
-    if (!data || !workspaceSlug || issuesWithThisStateExist) return;
+
     await stateServices
       .deleteState(workspaceSlug as string, data.project, data.id)
       .then(() => {
-        mutate(STATE_LIST(data.project));
-        handleClose();
+        mutate<IStateResponse>(
+          STATES_LIST(data.project),
+          (prevData) => {
+            if (!prevData) return prevData;
 
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "State deleted successfully",
-        });
+            const stateGroup = [...prevData[data.group]].filter((s) => s.id !== data.id);
+
+            return {
+              ...prevData,
+              [data.group]: stateGroup,
+            };
+          },
+          false
+        );
+        handleClose();
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
         setIsDeleteLoading(false);
+
+        if (err.status === 400)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              "This state contains some issues within it, please move them to some other state to delete this state.",
+          });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "State could not be deleted. Please try again.",
+          });
       });
   };
-
-  const groupedIssues = groupBy(issues ?? [], "state");
-
-  useEffect(() => {
-    if (data) setIssuesWithThisStateExist(!!groupedIssues[data.id]);
-  }, [groupedIssues, data]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -127,24 +130,12 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
                           the state will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
-                      <div className="mt-2">
-                        {issuesWithThisStateExist && (
-                          <p className="text-sm text-red-500">
-                            There are issues with this state. Please move them to another state
-                            before deleting this state.
-                          </p>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end gap-2 bg-gray-50 p-4 sm:px-6">
+                <div className="flex justify-end gap-2 p-4 sm:px-6">
                   <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton
-                    onClick={handleDeletion}
-                    disabled={issuesWithThisStateExist}
-                    loading={isDeleteLoading}
-                  >
+                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
                   </DangerButton>
                 </div>

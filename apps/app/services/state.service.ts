@@ -8,7 +8,7 @@ const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 // types
-import type { IState, StateResponse } from "types";
+import type { IState, IStateResponse } from "types";
 
 class ProjectStateServices extends APIService {
   constructor() {
@@ -26,7 +26,7 @@ class ProjectStateServices extends APIService {
       });
   }
 
-  async getStates(workspaceSlug: string, projectId: string): Promise<StateResponse> {
+  async getStates(workspaceSlug: string, projectId: string): Promise<IStateResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -96,7 +96,7 @@ class ProjectStateServices extends APIService {
         return response?.data;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 }

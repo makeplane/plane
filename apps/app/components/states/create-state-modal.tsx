@@ -19,9 +19,9 @@ import { CustomSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "c
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import type { IState } from "types";
+import type { IState, IStateResponse } from "types";
 // fetch keys
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
 
@@ -35,7 +35,7 @@ type Props = {
 const defaultValues: Partial<IState> = {
   name: "",
   description: "",
-  color: "#000000",
+  color: "#858e96",
   group: "backlog",
 };
 
@@ -70,8 +70,19 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
 
     await stateService
       .createState(workspaceSlug as string, projectId, payload)
-      .then(() => {
-        mutate(STATE_LIST(projectId));
+      .then((res) => {
+        mutate<IStateResponse>(
+          STATES_LIST(projectId.toString()),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              [res.group]: [...prevData[res.group], res],
+            };
+          },
+          false
+        );
         onClose();
       })
       .catch((err) => {

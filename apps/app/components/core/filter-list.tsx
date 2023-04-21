@@ -15,7 +15,7 @@ import issuesService from "services/issues.service";
 import projectService from "services/project.service";
 import stateService from "services/state.service";
 // types
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 import { IIssueFilterOptions } from "types";
 
 export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
@@ -37,7 +37,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
   );
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null

@@ -14,7 +14,7 @@ import { getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // fetch keys
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,7 +29,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
   const { workspaceSlug } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId)
       : null
