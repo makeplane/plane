@@ -70,7 +70,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 
   if (!workspaceMemberMe && !error)
     return (
-      <div className="h-screen grid place-items-center p-4">
+      <div className="grid h-screen place-items-center p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <h3 className="text-xl">Loading your workspace...</h3>
           <Spinner />
@@ -83,7 +83,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   // FIXME: show 404 for workspace not workspace member
   if (error?.status === 404) {
     return (
-      <div className="container h-screen flex justify-center items-center">
+      <div className="container flex h-screen items-center justify-center">
         <p className="text-2xl font-semibold">No such workspace exist. Create one?</p>
       </div>
     );
@@ -131,7 +131,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   noPadding ? "" : settingsLayout || profilePage ? "p-8 lg:px-28" : "p-8"
                 } ${
                   bg === "primary"
-                    ? "bg-brand-base"
+                    ? "bg-brand-surface-1"
                     : bg === "secondary"
                     ? "bg-brand-surface-1"
                     : "bg-brand-base"

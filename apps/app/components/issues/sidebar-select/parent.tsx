@@ -78,7 +78,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
         <button
           type="button"
           className={`flex w-full ${
-            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-1"
+            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
           } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
           onClick={() => setIsParentModalOpen(true)}
           disabled={isNotAllowed}

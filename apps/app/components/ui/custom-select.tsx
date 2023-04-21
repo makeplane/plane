@@ -51,7 +51,7 @@ const CustomSelect = ({
       ) : (
         <Listbox.Button
           className={`flex w-full ${
-            disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-1"
+            disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
           } items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 focus:outline-none ${
             input ? "border-brand-base px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
           } ${
@@ -78,9 +78,9 @@ const CustomSelect = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Listbox.Options
-        className={`${optionsClassName} absolute ${
+        className={`${optionsClassName} absolute border border-brand-base ${
           position === "right" ? "right-0" : "left-0"
-        } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-brand-surface-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+        } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none ${
           width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
         } ${input ? "max-h-48" : ""} ${
           maxHeight === "lg"
@@ -110,7 +110,7 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
   <Listbox.Option
     value={value}
     className={({ active, selected }) =>
-      `${className} ${active || selected ? "bg-brand-surface-1" : ""} ${
+      `${className} ${active || selected ? "bg-brand-surface-2" : ""} ${
         selected ? "font-medium" : ""
       } cursor-pointer select-none truncate rounded px-1 py-1.5 text-brand-secondary`
     }
