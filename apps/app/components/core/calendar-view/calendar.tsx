@@ -108,9 +108,9 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             cycleId as string,
             {
               ...params,
-              target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
-                calendarDateRange.endDate
-              )};before`,
+              target_date: `${renderDateFormat(
+                calendarDateRange.startDate
+              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
               group_by: null,
             }
           )
@@ -129,9 +129,9 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             moduleId as string,
             {
               ...params,
-              target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
-                calendarDateRange.endDate
-              )};before`,
+              target_date: `${renderDateFormat(
+                calendarDateRange.startDate
+              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
               group_by: null,
             }
           )
@@ -227,15 +227,15 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
 
   return calendarIssues ? (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="-m-2 h-full overflow-y-auto rounded-lg text-gray-600">
+      <div className="-m-2 h-full overflow-y-auto rounded-lg text-brand-secondary">
         <div className="mb-4 flex items-center justify-between">
           <div className="relative flex h-full w-full items-center justify-start gap-2 text-sm ">
             <Popover className="flex h-full items-center justify-start rounded-lg">
               {({ open }) => (
                 <>
-                  <Popover.Button className={`group flex h-full items-start gap-1 text-gray-800`}>
+                  <Popover.Button className={`group flex h-full items-start gap-1 text-brand-base`}>
                     <div className="flex  items-center   justify-center gap-2 text-2xl font-semibold">
-                      <span className="text-brand-base">{formatDate(currentDate, "Month")}</span>{" "}
+                      <span>{formatDate(currentDate, "Month")}</span>{" "}
                       <span>{formatDate(currentDate, "yyyy")}</span>
                     </div>
                   </Popover.Button>
@@ -256,9 +256,9 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                             onClick={() => updateDate(updateDateWithYear(year.label, currentDate))}
                             className={` ${
                               isSameYear(year.value, currentDate)
-                                ? "text-sm font-medium text-gray-800"
-                                : "text-xs text-gray-400 "
-                            } hover:text-sm hover:font-medium hover:text-gray-800`}
+                                ? "text-sm font-medium text-brand-base"
+                                : "text-xs text-brand-secondary "
+                            } hover:text-sm hover:font-medium hover:text-brand-base`}
                           >
                             {year.label}
                           </button>
@@ -270,9 +270,9 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                             onClick={() =>
                               updateDate(updateDateWithMonth(month.value, currentDate))
                             }
-                            className={`px-2 py-2 text-xs text-gray-400 hover:font-medium hover:text-gray-800 ${
+                            className={`px-2 py-2 text-xs text-brand-secondary hover:font-medium hover:text-brand-base ${
                               isSameMonth(month.value, currentDate)
-                                ? "font-medium text-gray-800"
+                                ? "font-medium text-brand-base"
                                 : ""
                             }`}
                           >
@@ -358,7 +358,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                     endDate: lastDayOfWeek(currentDate),
                   });
                 }}
-                className="w-52 text-sm text-gray-600"
+                className="w-52 text-sm text-brand-secondary"
               >
                 <div className="flex w-full max-w-[260px] items-center justify-between gap-2">
                   <span className="flex items-center gap-2">Monthly View</span>
@@ -377,7 +377,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                     endDate: getCurrentWeekEndDate(currentDate),
                   });
                 }}
-                className="w-52 text-sm text-gray-600"
+                className="w-52 text-sm text-brand-secondary"
               >
                 <div className="flex w-full items-center justify-between gap-2">
                   <span className="flex items-center gap-2">Weekly View</span>
@@ -388,7 +388,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                   />
                 </div>
               </CustomMenu.MenuItem>
-              <div className="mt-1 flex w-52 items-center justify-between border-t border-brand-base py-2 px-1  text-sm text-gray-600">
+              <div className="mt-1 flex w-52 items-center justify-between border-t border-brand-base py-2 px-1  text-sm text-brand-secondary">
                 <h4>Show weekends</h4>
                 <button
                   type="button"
@@ -420,7 +420,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
           {weeks.map((date, index) => (
             <div
               key={index}
-              className={`flex  items-center justify-start gap-2 border-brand-base bg-brand-surface-1 p-1.5 text-base font-medium text-gray-600 ${
+              className={`flex  items-center justify-start gap-2 border-brand-base bg-brand-surface-1 p-1.5 text-base font-medium text-brand-secondary ${
                 !isMonthlyView
                   ? showWeekEnds
                     ? (index + 1) % 7 === 0
@@ -486,12 +486,12 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                         )}
                       </Draggable>
                     ))}
-                  <div className="flex items-center justify-center p-1.5 text-sm text-gray-600 opacity-0 group-hover:opacity-100">
+                  <div className="flex items-center justify-center p-1.5 text-sm text-brand-secondary opacity-0 group-hover:opacity-100">
                     <button
                       className="flex items-center justify-center gap-2 text-center"
                       onClick={() => addIssueToDate(date.date)}
                     >
-                      <PlusIcon className="h-4 w-4 text-gray-600" />
+                      <PlusIcon className="h-4 w-4 text-brand-secondary" />
                       Add new issue
                     </button>
                   </div>
