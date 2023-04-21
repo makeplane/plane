@@ -44,7 +44,7 @@ export const TextArea: React.FC<Props> = ({
   return (
     <>
       {label && (
-        <label htmlFor={id} className="mb-2 text-gray-500">
+        <label htmlFor={id} className="mb-2 text-brand-secondary">
           {label}
         </label>
       )}
@@ -67,7 +67,7 @@ export const TextArea: React.FC<Props> = ({
         }}
         className={`no-scrollbar w-full bg-transparent px-3 py-2 outline-none ${
           mode === "primary"
-            ? "rounded-md border border-gray-300"
+            ? "rounded-md border border-brand-base"
             : mode === "transparent"
             ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
             : ""

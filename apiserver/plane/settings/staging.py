@@ -204,3 +204,5 @@ broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={cert
 
 CELERY_RESULT_BACKEND = broker_url
 CELERY_BROKER_URL = broker_url
+
+GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)

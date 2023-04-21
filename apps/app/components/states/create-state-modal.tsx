@@ -102,7 +102,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -116,10 +116,10 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
                       Create State
                     </Dialog.Title>
                     <div className="mt-2 space-y-3">
@@ -165,8 +165,8 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                           {({ open }) => (
                             <>
                               <Popover.Button
-                                className={`group inline-flex items-center rounded-md bg-white text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                                  open ? "text-gray-900" : "text-gray-500"
+                                className={`group inline-flex items-center rounded-md bg-brand-surface-2 text-base font-medium hover:text-brand-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                                  open ? "text-brand-base" : "text-brand-secondary"
                                 }`}
                               >
                                 <span>Color</span>
@@ -179,7 +179,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                   />
                                 )}
                                 <ChevronDownIcon
-                                  className={`ml-2 h-5 w-5 group-hover:text-gray-500 ${
+                                  className={`ml-2 h-5 w-5 group-hover:text-brand-secondary ${
                                     open ? "text-gray-600" : "text-gray-400"
                                   }`}
                                   aria-hidden="true"

@@ -17,18 +17,27 @@ type AvatarProps = {
   index?: number;
   height?: string;
   width?: string;
-  fontSize?: string
+  fontSize?: string;
 };
 
-export const Avatar: React.FC<AvatarProps> = ({ user, index, height="20px", width="20px", fontSize="12px" }) => (
-  <div className={`relative rounded-full ${index && index !== 0 ? "-ml-3.5" : ""}`} style={{
-    height: height,
-    width: width,
-  }}>
+export const Avatar: React.FC<AvatarProps> = ({
+  user,
+  index,
+  height = "20px",
+  width = "20px",
+  fontSize = "12px",
+}) => (
+  <div
+    className={`relative rounded-full ${index && index !== 0 ? "-ml-3.5" : ""}`}
+    style={{
+      height: height,
+      width: width,
+    }}
+  >
     {user && user.avatar && user.avatar !== "" ? (
       <div
         className={`rounded-full border-2 ${
-          index ? "border-white bg-white" : "border-transparent"
+          index ? "border-brand-surface-1 bg-brand-surface-2" : "border-transparent"
         }`}
         style={{
           height: height,
@@ -44,11 +53,14 @@ export const Avatar: React.FC<AvatarProps> = ({ user, index, height="20px", widt
         />
       </div>
     ) : (
-      <div className="grid place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white" style={{
-        height: height,
-        width: width,
-        fontSize: fontSize,
-      }}>
+      <div
+        className="grid place-items-center rounded-full border-2 border-brand-surface-1 bg-gray-700 text-xs capitalize text-white"
+        style={{
+          height: height,
+          width: width,
+          fontSize: fontSize,
+        }}
+      >
         {user?.first_name && user.first_name !== ""
           ? user.first_name.charAt(0)
           : user?.email?.charAt(0)}
@@ -80,7 +92,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
 
   if ((users && users.length === 0) || (userIds && userIds.length === 0))
     return (
-      <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
+      <div className="h-5 w-5 rounded-full border-2 border-white bg-brand-surface-2">
         <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
       </div>
     );

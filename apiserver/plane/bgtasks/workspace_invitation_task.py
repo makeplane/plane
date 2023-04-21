@@ -27,7 +27,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         )
         abs_url = "http://" + current_site + realtivelink
 
-        from_email_string = f"Team Plane <team@mailer.plane.so>"
+        from_email_string = settings.EMAIL_FROM
 
         subject = f"{invitor or email} invited you to join {workspace.name} on Plane"
 

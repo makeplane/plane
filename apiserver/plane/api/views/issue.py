@@ -1,13 +1,14 @@
 # Python imports
 import json
 import random
-from itertools import groupby, chain
+from itertools import chain
 
 # Django imports
-from django.db.models import Prefetch, OuterRef, Func, F, Q
+from django.db.models import Prefetch, OuterRef, Func, F, Q, Count
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from django.db.models.functions import Coalesce
 
 # Third Party imports
 from rest_framework.response import Response
@@ -46,6 +47,7 @@ from plane.db.models import (
     Label,
     IssueLink,
     IssueAttachment,
+    State,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -590,10 +592,33 @@ class SubIssuesEndpoint(BaseAPIView):
                 .prefetch_related("labels")
             )
 
-            serializer = IssueLiteSerializer(sub_issues, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            state_distribution = (
+                State.objects.filter(workspace__slug=slug, project_id=project_id)
+                .annotate(
+                    state_count=Count(
+                        "state_issue",
+                        filter=Q(state_issue__parent_id=issue_id),
+                    )
+                )
+                .order_by("group")
+                .values("group", "state_count")
+            )
+
+            result = {item["group"]: item["state_count"] for item in state_distribution}
+
+            serializer = IssueLiteSerializer(
+                sub_issues,
+                many=True,
+            )
+            return Response(
+                {
+                    "sub_issues": serializer.data,
+                    "state_distribution": result,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

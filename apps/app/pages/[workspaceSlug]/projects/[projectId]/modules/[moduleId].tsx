@@ -154,7 +154,7 @@ const SingleModule: React.FC = () => {
             <IssuesFilterView />
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
                 moduleSidebar ? "rotate-180" : ""
               }`}
               onClick={() => setModuleSidebar((prevData) => !prevData)}

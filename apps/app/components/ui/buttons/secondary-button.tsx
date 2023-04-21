@@ -13,7 +13,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({
 }) => (
   <button
     type={type}
-    className={`${className} border font-medium duration-300 ${
+    className={`${className} border border-brand-base font-medium duration-300 ${
       size === "sm"
         ? "rounded px-3 py-2 text-xs"
         : size === "md"
@@ -21,12 +21,12 @@ export const SecondaryButton: React.FC<ButtonProps> = ({
         : "rounded-lg px-4 py-2 text-base"
     } ${
       disabled
-        ? "cursor-not-allowed border-gray-300 bg-gray-300 hover:border-gray-300 hover:border-opacity-100 hover:bg-gray-300 hover:bg-opacity-100"
+        ? "cursor-not-allowed border-brand-base bg-brand-surface-1 hover:border-brand-base hover:border-opacity-100 hover:bg-brand-surface-1 hover:bg-opacity-100"
         : ""
     } ${
       outline
-        ? "bg-transparent hover:bg-gray-300"
-        : "bg-gray-300 hover:border-opacity-90 hover:bg-opacity-90"
+        ? "bg-transparent hover:bg-brand-surface-2"
+        : "bg-brand-surface-2 hover:border-opacity-70 hover:bg-opacity-70"
     } ${loading ? "cursor-wait" : ""}`}
     onClick={onClick}
     disabled={disabled || loading}

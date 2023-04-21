@@ -56,11 +56,11 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
       options={options}
       value={value}
       label={
-        <div className="flex items-center gap-2 text-gray-500">
+        <div className="flex items-center gap-2 text-brand-secondary">
           {selectedOption ? (
             <Avatar user={selectedOption} />
           ) : (
-            <div className="h-4 w-4 rounded-full bg-white">
+            <div className="h-4 w-4 rounded-full bg-brand-surface-2">
               <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
             </div>
           )}

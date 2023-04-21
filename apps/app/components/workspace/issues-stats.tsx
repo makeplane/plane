@@ -11,8 +11,8 @@ type Props = {
 };
 
 export const IssuesStats: React.FC<Props> = ({ data }) => (
-  <div className="grid grid-cols-1 rounded-[10px] border bg-white lg:grid-cols-3">
-    <div className="grid grid-cols-1 divide-y border-b lg:border-r lg:border-b-0">
+  <div className="grid grid-cols-1 rounded-[10px] border border-brand-base bg-brand-sidebar lg:grid-cols-3">
+    <div className="grid grid-cols-1 divide-y divide-brand-base border-b border-brand-base lg:border-r lg:border-b-0">
       <div className="flex">
         <div className="basis-1/2 p-4">
           <h4 className="text-sm">Issues assigned to you</h4>
@@ -26,7 +26,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => (
             )}
           </h5>
         </div>
-        <div className="basis-1/2 border-l p-4">
+        <div className="basis-1/2 border-l border-brand-base p-4">
           <h4 className="text-sm">Pending issues</h4>
           <h5 className="mt-2 text-2xl font-semibold">
             {data ? (
@@ -52,7 +52,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => (
             )}
           </h5>
         </div>
-        <div className="basis-1/2 border-l p-4">
+        <div className="basis-1/2 border-l border-brand-base p-4">
           <h4 className="text-sm">Issues due by this week</h4>
           <h5 className="mt-2 text-2xl font-semibold">
             {data ? (

@@ -72,8 +72,8 @@ const StatesSettings: NextPage = () => {
       >
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 sm:col-span-5">
-            <h3 className="text-2xl font-semibold">States</h3>
-            <p className="text-gray-500">Manage the states of this project.</p>
+            <h3 className="text-2xl font-semibold text-brand-base">States</h3>
+            <p className="text-brand-secondary">Manage the states of this project.</p>
           </div>
           <div className="col-span-12 space-y-8 sm:col-span-7">
             {states && projectDetails ? (
@@ -85,14 +85,14 @@ const StatesSettings: NextPage = () => {
                         <h4 className="font-medium capitalize">{key}</h4>
                         <button
                           type="button"
-                          className="flex items-center gap-2 text-theme outline-none"
+                          className="flex items-center gap-2 text-brand-accent outline-none"
                           onClick={() => setActiveGroup(key as keyof StateGroup)}
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add
                         </button>
                       </div>
-                      <div className="divide-y rounded-[10px] border">
+                      <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
                         {key === activeGroup && (
                           <CreateUpdateStateInline
                             onClose={() => {

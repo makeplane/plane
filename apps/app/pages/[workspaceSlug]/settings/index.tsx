@@ -184,7 +184,7 @@ const WorkspaceSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Logo</h4>
-              <p className="text-gray-500">
+              <p className="text-brand-secondary">
                 Max file size is 5MB. Supported file types are .jpg and .png.
               </p>
             </div>
@@ -228,7 +228,7 @@ const WorkspaceSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">URL</h4>
-              <p className="text-gray-500">Your workspace URL.</p>
+              <p className="text-brand-secondary">Your workspace URL.</p>
             </div>
             <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
               <Input
@@ -268,7 +268,7 @@ const WorkspaceSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Name</h4>
-              <p className="text-gray-500">Give a name to your workspace.</p>
+              <p className="text-brand-secondary">Give a name to your workspace.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               <Input
@@ -287,7 +287,7 @@ const WorkspaceSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Company Size</h4>
-              <p className="text-gray-500">How big is your company?</p>
+              <p className="text-brand-secondary">How big is your company?</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               <Controller
@@ -318,7 +318,7 @@ const WorkspaceSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Danger Zone</h4>
-              <p className="text-gray-500">
+              <p className="text-brand-secondary">
                 The danger zone of the workspace delete page is a critical area that requires
                 careful consideration and attention. When deleting a workspace, all of the data and
                 resources within that workspace will be permanently removed and cannot be recovered.
