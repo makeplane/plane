@@ -947,6 +947,5 @@ def issue_activity(
                     )
         return
     except Exception as e:
-        print(e)
         capture_exception(e)
         return

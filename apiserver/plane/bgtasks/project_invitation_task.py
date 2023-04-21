@@ -50,6 +50,5 @@ def project_invitation(email, project_id, token, current_site):
     except (Project.DoesNotExist, ProjectMemberInvite.DoesNotExist) as e:
         return
     except Exception as e:
-        print(e)
         capture_exception(e)
         return
