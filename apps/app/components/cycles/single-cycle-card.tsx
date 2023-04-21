@@ -271,13 +271,13 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
 
               <div className="flex items-center justify-start gap-5">
                 <div className="flex items-start gap-1 ">
-                  <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
-                  <span className="text-gray-400">Start :</span>
+                  <CalendarDaysIcon className="h-4 w-4 text-brand-base" />
+                  <span className="text-brand-secondary">Start :</span>
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
                 <div className="flex items-start gap-1 ">
-                  <TargetIcon className="h-4 w-4 text-gray-900" />
-                  <span className="text-gray-400">End :</span>
+                  <TargetIcon className="h-4 w-4 text-brand-base" />
+                  <span className="text-brand-secondary">End :</span>
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
@@ -293,11 +293,11 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       alt={cycle.owned_by.first_name}
                     />
                   ) : (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-base capitalize  bg-brand-secondary">
                       {cycle.owned_by.first_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-gray-900">{cycle.owned_by.first_name}</span>
+                  <span className="text-brand-base">{cycle.owned_by.first_name}</span>
                 </div>
                 <div className="flex items-center">
                   {!isCompleted && (
@@ -306,7 +306,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                         e.preventDefault();
                         handleEditCycle();
                       }}
-                      className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-gray-100"
+                      className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-brand-surface-1"
                     >
                       <span>
                         <PencilIcon className="h-4 w-4" />
