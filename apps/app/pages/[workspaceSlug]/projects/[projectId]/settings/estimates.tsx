@@ -6,6 +6,7 @@ import useSWR, { mutate } from "swr";
 
 // services
 import estimatesService from "services/estimates.service";
+import projectService from "services/project.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
@@ -24,7 +25,6 @@ import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-import projectService from "services/project.service";
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -61,13 +61,6 @@ const EstimatesSettings: NextPage = () => {
 
     estimatesService
       .deleteEstimate(workspaceSlug as string, projectId as string, estimateId)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Estimate Deleted successfully.",
-        });
-      })
       .catch(() => {
         setToastAlert({
           type: "error",

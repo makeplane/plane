@@ -56,7 +56,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       }}
       label={
         <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue}>
-          <div className="flex items-center gap-1 text-gray-500">
+          <div className="flex items-center gap-1 text-brand-secondary">
             <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
             {estimateValue ?? "Estimate"}
           </div>

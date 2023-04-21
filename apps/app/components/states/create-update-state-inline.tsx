@@ -98,8 +98,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
             setToastAlert({
               type: "error",
               title: "Error!",
-              message:
-                "Another state exists with the same name. Please try again with another name.",
+              message: "State with that name already exists. Please try again with another name.",
             });
           else
             setToastAlert({

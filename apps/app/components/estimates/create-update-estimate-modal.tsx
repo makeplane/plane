@@ -6,19 +6,20 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
+// headless ui
+import { Dialog, Transition } from "@headlessui/react";
 // services
 import estimatesService from "services/estimates.service";
-// ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-import { Dialog, Transition } from "@headlessui/react";
-
 // hooks
 import useToast from "hooks/use-toast";
-
+// ui
+import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+// helpers
+import { checkDuplicates } from "helpers/array.helper";
 // types
 import { IEstimate, IEstimateFormData } from "types";
 // fetch-keys
-import { ESTIMATES_LIST } from "constants/fetch-keys";
+import { ESTIMATES_LIST, ESTIMATE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -51,7 +52,7 @@ const defaultValues: Partial<FormValues> = {
 export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen }) => {
   const {
     register,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     handleSubmit,
     reset,
   } = useForm<FormValues>({
@@ -72,33 +73,44 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     if (!workspaceSlug || !projectId) return;
 
     await estimatesService
-      .createEstimateAndPoints(workspaceSlug as string, projectId as string, payload)
-      .then((res) => {
-        mutate<IEstimate[]>(
-          ESTIMATES_LIST(projectId as string),
-          (prevData) => [res, ...(prevData ?? [])],
-          false
-        );
+      .createEstimate(workspaceSlug as string, projectId as string, payload)
+      .then(() => {
+        mutate(ESTIMATES_LIST(projectId as string));
+        onClose();
       })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Error: Estimate could not be created",
-        });
+      .catch((err) => {
+        if (err.status === 400)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Estimate with that name already exists. Please try again with another name.",
+          });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Estimate could not be created. Please try again.",
+          });
       });
-
-    onClose();
   };
 
   const updateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId || !data) return;
 
     mutate<IEstimate[]>(
-      ESTIMATES_LIST(projectId as string),
+      ESTIMATES_LIST(projectId.toString()),
       (prevData) =>
         prevData?.map((p) => {
-          if (p.id === data.id) return { ...p, ...payload };
+          if (p.id === data.id)
+            return {
+              ...p,
+              name: payload.estimate.name,
+              description: payload.estimate.description,
+              points: p.points.map((point, index) => ({
+                ...point,
+                value: payload.estimate_points[index].value,
+              })),
+            };
 
           return p;
         }),
@@ -107,12 +119,16 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
 
     await estimatesService
       .patchEstimate(workspaceSlug as string, projectId as string, data?.id as string, payload)
-      .then(() => handleClose())
+      .then(() => {
+        mutate(ESTIMATES_LIST(projectId.toString()));
+        mutate(ESTIMATE_DETAILS(data.id));
+        handleClose();
+      })
       .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error: Estimate could not be updated",
+          message: "Estimate could not be updated. Please try again.",
         });
       });
 
@@ -120,6 +136,49 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
   };
 
   const onSubmit = async (formData: FormValues) => {
+    if (!formData.name || formData.name === "") {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Estimate title cannot be empty.",
+      });
+      return;
+    }
+
+    if (
+      formData.value1 === "" ||
+      formData.value2 === "" ||
+      formData.value3 === "" ||
+      formData.value4 === "" ||
+      formData.value5 === "" ||
+      formData.value6 === ""
+    ) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Estimate point cannot be empty.",
+      });
+      return;
+    }
+
+    if (
+      checkDuplicates([
+        formData.value1,
+        formData.value2,
+        formData.value3,
+        formData.value4,
+        formData.value5,
+        formData.value6,
+      ])
+    ) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Estimate points cannot have duplicate values.",
+      });
+      return;
+    }
+
     const payload: IEstimateFormData = {
       estimate: {
         name: formData.name,
@@ -158,10 +217,18 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
   };
 
   useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...data,
-    });
+    if (data)
+      reset({
+        ...defaultValues,
+        ...data,
+        value1: data.points[0]?.value,
+        value2: data.points[1]?.value,
+        value3: data.points[2]?.value,
+        value4: data.points[3]?.value,
+        value5: data.points[4]?.value,
+        value6: data.points[5]?.value,
+      });
+    else reset({ ...defaultValues });
   }, [data, reset]);
 
   return (
@@ -204,17 +271,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           type="name"
                           placeholder="Title"
                           autoComplete="off"
-                          mode="transparent"
                           className="resize-none text-xl"
-                          error={errors.name}
                           register={register}
-                          validations={{
-                            required: "Title is required",
-                            maxLength: {
-                              value: 255,
-                              message: "Title should be less than 255 characters",
-                            },
-                          }}
                         />
                       </div>
                       <div>
@@ -223,8 +281,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           name="description"
                           placeholder="Description"
                           className="h-32 resize-none text-sm"
-                          mode="transparent"
-                          error={errors.description}
                           register={register}
                         />
                       </div>
@@ -232,11 +288,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                         <div className="flex items-center">
                           <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
                             <span className="rounded-lg px-2 text-sm text-brand-secondary">1</span>
-                            <span className="rounded-lg bg-brand-base">
+                            <span className="rounded-r-lg bg-brand-base">
                               <Input
                                 id="name"
                                 name="value1"
                                 type="name"
+                                className="rounded-l-none"
                                 placeholder="Point 1"
                                 autoComplete="off"
                                 register={register}
@@ -247,11 +304,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                         <div className="flex items-center">
                           <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
                             <span className="rounded-lg px-2 text-sm text-brand-secondary">2</span>
-                            <span className="rounded-lg bg-brand-base">
+                            <span className="rounded-r-lg bg-brand-base">
                               <Input
                                 id="name"
                                 name="value2"
                                 type="name"
+                                className="rounded-l-none"
                                 placeholder="Point 2"
                                 autoComplete="off"
                                 register={register}
@@ -262,11 +320,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                         <div className="flex items-center">
                           <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
                             <span className="rounded-lg px-2 text-sm text-brand-secondary">3</span>
-                            <span className="rounded-lg bg-brand-base">
+                            <span className="rounded-r-lg bg-brand-base">
                               <Input
                                 id="name"
                                 name="value3"
                                 type="name"
+                                className="rounded-l-none"
                                 placeholder="Point 3"
                                 autoComplete="off"
                                 register={register}
@@ -277,11 +336,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                         <div className="flex items-center">
                           <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
                             <span className="rounded-lg px-2 text-sm text-brand-secondary">4</span>
-                            <span className="rounded-lg bg-brand-base">
+                            <span className="rounded-r-lg bg-brand-base">
                               <Input
                                 id="name"
                                 name="value4"
                                 type="name"
+                                className="rounded-l-none"
                                 placeholder="Point 4"
                                 autoComplete="off"
                                 register={register}
@@ -292,11 +352,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                         <div className="flex items-center">
                           <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
                             <span className="rounded-lg px-2 text-sm text-brand-secondary">5</span>
-                            <span className="rounded-lg bg-brand-base">
+                            <span className="rounded-r-lg bg-brand-base">
                               <Input
                                 id="name"
                                 name="value5"
                                 type="name"
+                                className="rounded-l-none"
                                 placeholder="Point 5"
                                 autoComplete="off"
                                 register={register}
@@ -307,11 +368,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                         <div className="flex items-center">
                           <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
                             <span className="rounded-lg px-2 text-sm text-brand-secondary">6</span>
-                            <span className="rounded-lg bg-brand-base">
+                            <span className="rounded-r-lg bg-brand-base">
                               <Input
                                 id="name"
                                 name="value6"
                                 type="name"
+                                className="rounded-l-none"
                                 placeholder="Point 6"
                                 autoComplete="off"
                                 register={register}

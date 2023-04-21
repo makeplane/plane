@@ -6,6 +6,7 @@ export interface IEstimate {
   description: string;
   created_by: string;
   updated_by: string;
+  points: IEstimatePoint[];
   project: string;
   workspace: string;
 }
