@@ -54,8 +54,8 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2">
-        <UserCircleIcon className="h-5 w-5 text-gray-400" />
+      <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+        <UserCircleIcon className="h-5 w-5" />
         <span>Lead</span>
       </div>
       <div className="sm:basis-1/2">
