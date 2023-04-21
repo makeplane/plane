@@ -1,11 +1,6 @@
 // services
 import axios from "axios";
 import APIService from "services/api.service";
-import IntegrationService from "services/integration";
-
-import {
-  WORKSPACE_INTEGRATIONS,
-} from "constants/fetch-keys";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -26,6 +21,26 @@ class AppInstallationsService extends APIService {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/project-slack-sync/`,
       data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async getSlackChannelDetail(workspaceSlug: string, projectId: string, integrationId: string | null | undefined): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/project-slack-sync/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async removeSlackChannel(workspaceSlug: string, projectId: string, integrationId: string | null | undefined, slackSyncId: string | undefined): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/project-slack-sync/${slackSyncId}`
     )
       .then((response) => response?.data)
       .catch((error) => {

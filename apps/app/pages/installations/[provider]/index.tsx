@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
+
 // services
 import appinstallationsService from "services/app-installations.service";
+
+import useToast from "hooks/use-toast";
+
 // components
 import { Spinner } from "components/ui";
 
@@ -22,6 +26,9 @@ const AppPostInstallation = ({
   provider,
   code,
 }: IGithuPostInstallationProps) => {
+
+  const { setToastAlert } = useToast();
+
   useEffect(() => {
     if (provider === "github" && state && installation_id) {
       appinstallationsService
@@ -35,29 +42,53 @@ const AppPostInstallation = ({
           console.log(err);
         });
     } else if (provider === "slack" && state && code) {
-      appinstallationsService
-        .getSlackAuthDetails(code)
-        .then((res) => {
-          const payload = {
-            metadata: {
-              ...res,
-            },
-          };
+        appinstallationsService
+          .getSlackAuthDetails(code)
+          .then((res) => {
+            const [workspaceSlug, projectId, integrationId] = state.split(",");
 
-          appinstallationsService
-            .addInstallationApp(state, provider, payload)
-            .then((r) => {
-              window.opener = null;
-              window.open("", "_self");
-              window.close();
-            })
-            .catch((err) => {
-              throw err?.response;
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+            if(!projectId) {
+              const payload = {
+                metadata: {
+                  ...res,
+                },
+              };
+
+              appinstallationsService
+                .addInstallationApp(state, provider, payload)
+                .then((r) => {
+                  window.opener = null;
+                  window.open("", "_self");
+                  window.close();
+                })
+                .catch((err) => {
+                  throw err?.response;
+                });
+            } else {
+              const payload = {
+                access_token: res.access_token,
+                bot_user_id: res.bot_user_id,
+                webhook_url: res.incoming_webhook.url,
+                data: res,
+                team_id: res.team.id,
+                team_name: res.team.name,
+                scopes: res.scope,
+              };
+              appinstallationsService
+                .addSlackChannel(workspaceSlug, projectId, integrationId, payload)
+                .then((r) => {
+                  window.opener = null;
+                  window.open("", "_self");
+                  window.close();
+                })
+                .catch((err) => {
+                  throw err.response
+                })
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     }
   }, [state, installation_id, provider, code]);
 

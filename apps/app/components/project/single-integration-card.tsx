@@ -112,7 +112,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
                 {integration.integration_detail.provider === "github"
                   ? "Select GitHub repository to enable sync."
                   : integration.integration_detail.provider === "slack"
-                  ? "Select Slack channel to enable sync."
+                  ? "Connect your slack channel to this project to get regular updates. Control which notification you want to receive"
                   : null}
               </p>
             </div>
