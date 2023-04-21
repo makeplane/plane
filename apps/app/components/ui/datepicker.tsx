@@ -39,7 +39,7 @@ export const CustomDatePicker: React.FC<Props> = ({
         ? "block px-3 py-2 text-sm focus:outline-none"
         : renderAs === "button"
         ? `px-3 py-1 text-xs shadow-sm ${
-            disabled ? "" : "hover:bg-brand-surface-1"
+            disabled ? "" : "hover:bg-brand-surface-2"
           } duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent`
         : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${

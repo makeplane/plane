@@ -44,14 +44,14 @@
 
   [data-theme="dark"] {
     --color-bg-base: 25, 27, 27;
-    --color-bg-surface-1: 31, 32, 35;
+    --color-bg-surface-1: 29, 30, 32;
     --color-bg-surface-2: 39, 42, 45;
 
     --color-border: 46, 50, 52;
     --color-bg-sidebar: 19, 20, 22;
     --color-accent: 60, 133, 217;
 
-    --color-text-base: 255, 255, 255;
+    --color-text-base: 233, 244, 252;
     --color-text-secondary: 142, 148, 146;
   }
 
