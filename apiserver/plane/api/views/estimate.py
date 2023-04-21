@@ -135,7 +135,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
     def retrieve(self, request, slug, project_id, estimate_id):
         try:
             estimate = Estimate.objects.get(
-                pk=estimate_id, workspace_slug=slug, project_id=project_id
+                pk=estimate_id, workspace__slug=slug, project_id=project_id
             )
             serializer = EstimateReadSerializer(estimate)
             return Response(
