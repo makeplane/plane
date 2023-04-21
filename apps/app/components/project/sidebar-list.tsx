@@ -198,15 +198,15 @@ export const ProjectSidebarList: FC = () => {
               <Loader className="space-y-5">
                 <div className="space-y-2">
                   <Loader.Item height="30px" />
-                  <Loader.Item height="15px" width="80%" light />
-                  <Loader.Item height="15px" width="80%" light />
-                  <Loader.Item height="15px" width="80%" light />
+                  <Loader.Item height="15px" width="80%" />
+                  <Loader.Item height="15px" width="80%" />
+                  <Loader.Item height="15px" width="80%" />
                 </div>
                 <div className="space-y-2">
                   <Loader.Item height="30px" />
-                  <Loader.Item height="15px" width="80%" light />
-                  <Loader.Item height="15px" width="80%" light />
-                  <Loader.Item height="15px" width="80%" light />
+                  <Loader.Item height="15px" width="80%" />
+                  <Loader.Item height="15px" width="80%" />
+                  <Loader.Item height="15px" width="80%" />
                 </div>
               </Loader>
             </div>

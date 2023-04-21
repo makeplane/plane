@@ -135,7 +135,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-surface-2 py-5 duration-300`}
+        } z-20 h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar py-5 duration-300`}
       >
         {cycle ? (
           <>
@@ -297,15 +297,15 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     </CustomMenu>
                   </div>
 
-                  <span className="whitespace-normal text-sm leading-5 text-brand-base">
+                  <span className="whitespace-normal text-sm leading-5 text-brand-secondary">
                     {cycle.description}
                   </span>
                 </div>
 
                 <div className="flex flex-col  gap-4  text-sm">
                   <div className="flex items-center justify-start gap-1">
-                    <div className="flex w-40 items-center justify-start gap-2">
-                      <UserCircleIcon className="h-5 w-5 text-gray-400" />
+                    <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+                      <UserCircleIcon className="h-5 w-5" />
                       <span>Lead</span>
                     </div>
 
@@ -323,17 +323,17 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           {cycle.owned_by.first_name.charAt(0)}
                         </span>
                       )}
-                      <span className="text-brand-base">{cycle.owned_by.first_name}</span>
+                      <span className="text-brand-secondary">{cycle.owned_by.first_name}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-start gap-1">
-                    <div className="flex w-40 items-center justify-start gap-2">
-                      <ChartPieIcon className="h-5 w-5 text-gray-400" />
+                    <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+                      <ChartPieIcon className="h-5 w-5" />
                       <span>Progress</span>
                     </div>
 
-                    <div className="flex items-center gap-2.5 text-brand-muted-1">
+                    <div className="flex items-center gap-2.5 text-brand-secondary">
                       <span className="h-4 w-4">
                         <ProgressBar value={cycle.completed_issues} maxValue={cycle.total_issues} />
                       </span>

@@ -175,12 +175,12 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-start gap-1">
                 <CalendarMonthIcon className="h-4 w-4 text-brand-base" />
-                <span className="text-gray-400">Start:</span>
+                <span className="text-brand-secondary">Start:</span>
                 <span>{renderShortDateWithYearFormat(startDate)}</span>
               </div>
               <div className="flex items-start gap-1">
                 <TargetIcon className="h-4 w-4 text-brand-base" />
-                <span className="text-gray-400">End:</span>
+                <span className="text-brand-secondary">End:</span>
                 <span>{renderShortDateWithYearFormat(endDate)}</span>
               </div>
             </div>
@@ -189,7 +189,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
         <div className="flex h-20 flex-col items-end">
           <div className="flex w-full items-center justify-between gap-2 justify-self-end bg-brand-surface-1 p-4">
             <span>Progress</span>
-            <div className="bar relative h-1 w-full rounded bg-gray-300">
+            <div className="bar relative h-1 w-full rounded bg-brand-surface-2">
               <div
                 className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
                 style={{

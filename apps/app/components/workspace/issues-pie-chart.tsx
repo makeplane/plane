@@ -69,7 +69,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
         />
         <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
         <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-        <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">
+        <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#858e96">
           {value} issues
         </text>
       </g>
@@ -79,7 +79,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
   return (
     <div>
       <h3 className="mb-2 font-semibold">Issues by States</h3>
-      <div className="rounded-[10px] border border-brand-base bg-brand-sidebar p-4">
+      <div className="rounded-[10px] border border-brand-base bg-brand-base p-4">
         <ResponsiveContainer width="100%" height={320}>
           <PieChart>
             <Pie

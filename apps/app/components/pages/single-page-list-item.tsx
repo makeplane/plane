@@ -5,11 +5,13 @@ import { useRouter } from "next/router";
 
 // hooks
 import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
 import {
   DocumentTextIcon,
+  LinkIcon,
   LockClosedIcon,
   LockOpenIcon,
   PencilIcon,
@@ -18,7 +20,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ExclamationIcon } from "components/icons";
 // helpers
-import { truncateText } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderLongDateFormat, renderShortDate, renderShortTime } from "helpers/date-time.helper";
 // types
 import { IPage, IProjectMember } from "types";
@@ -47,15 +49,31 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
 
   const { user } = useUser();
 
+  const { setToastAlert } = useToast();
+
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/pages/${page.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Page link copied to clipboard.",
+      });
+    });
+  };
+
   return (
     <li>
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a>
-          <div className="relative rounded p-4 hover:bg-brand-surface-1">
+          <div className="relative rounded p-4 text-brand-secondary hover:bg-brand-surface-2">
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap items-center gap-2">
                 <DocumentTextIcon className="h-4 w-4" />
-                <p className="mr-2 truncate text-base font-medium text-gray-800">
+                <p className="mr-2 truncate text-sm text-brand-base">
                   {truncateText(page.name, 75)}
                 </p>
                 {page.label_details.length > 0 &&
@@ -64,16 +82,13 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       key={label.id}
                       className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
                       style={{
-                        backgroundColor: `${
-                          label?.color && label.color !== "" ? label.color : "#000000"
-                        }20`,
+                        backgroundColor: `${label?.color}20`,
                       }}
                     >
                       <span
                         className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                         style={{
-                          backgroundColor:
-                            label?.color && label.color !== "" ? label.color : "#000000",
+                          backgroundColor: label?.color,
                         }}
                       />
                       {label.name}
@@ -174,6 +189,18 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         <TrashIcon className="h-3.5 w-3.5" />
                         <span>Delete Page</span>
                       </span>
+                    </CustomMenu.MenuItem>
+                    <CustomMenu.MenuItem
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleCopyText();
+                      }}
+                    >
+                      <div className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-4 w-4" />
+                        <span>Copy Page link</span>
+                      </div>
                     </CustomMenu.MenuItem>
                   </CustomMenu>
                 </div>

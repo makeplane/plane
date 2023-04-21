@@ -1,7 +1,7 @@
 import * as React from "react";
-// common
-import { Props } from "./types";
+
 // types
+import { Props } from "./types";
 
 export const Input: React.FC<Props> = ({
   label,
@@ -21,7 +21,7 @@ export const Input: React.FC<Props> = ({
 }) => (
   <>
     {label && (
-      <label htmlFor={id} className="mb-2 text-brand-muted-1">
+      <label htmlFor={id} className="text-brand-muted-1 mb-2">
         {label}
       </label>
     )}
@@ -42,7 +42,7 @@ export const Input: React.FC<Props> = ({
           : mode === "trueTransparent"
           ? "rounded border-none bg-transparent ring-0"
           : ""
-      } ${error ? "border-red-500" : ""} ${error && mode === "primary" ? "bg-red-100" : ""} ${
+      } ${error ? "border-red-500/20" : ""} ${error && mode === "primary" ? "bg-red-500/20" : ""} ${
         fullWidth ? "w-full" : ""
       } ${size === "rg" ? "px-3 py-2" : size === "lg" ? "p-3" : ""} ${className}`}
       {...rest}

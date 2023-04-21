@@ -30,9 +30,9 @@
   }
 
   [data-theme="light"] {
-    --color-bg-base: 243, 244, 246;
+    --color-bg-base: 255, 255, 255;
     --color-bg-surface-1: 249, 250, 251;
-    --color-bg-surface-2: 255, 255, 255;
+    --color-bg-surface-2: 243, 244, 246;
 
     --color-border: 229, 231, 235;
     --color-bg-sidebar: 255, 255, 255;
@@ -44,14 +44,14 @@
 
   [data-theme="dark"] {
     --color-bg-base: 25, 27, 27;
-    --color-bg-surface-1: 31, 32, 35;
+    --color-bg-surface-1: 29, 30, 32;
     --color-bg-surface-2: 39, 42, 45;
 
     --color-border: 46, 50, 52;
     --color-bg-sidebar: 19, 20, 22;
     --color-accent: 60, 133, 217;
 
-    --color-text-base: 255, 255, 255;
+    --color-text-base: 233, 244, 252;
     --color-text-secondary: 142, 148, 146;
   }
 
@@ -176,17 +176,17 @@
 
 /* react datepicker styling */
 .react-datepicker-wrapper input::placeholder {
-  color: #000;
+  color: rgba(var(--color-text-secondary));
   opacity: 1;
 }
 
 .react-datepicker-wrapper input:-ms-input-placeholder {
-  color: #000;
+  color: rgba(var(--color-text-secondary));
 }
 
 .react-datepicker-wrapper .react-datepicker__close-icon::after {
   background: transparent;
-  color: #000;
+  color: rgba(var(--color-text-secondary));
 }
 
 .react-datepicker-popper {
@@ -204,6 +204,11 @@
     #f6f172 329.25deg,
     #ff6b00 360deg
   );
+}
+
+.progress-bar{
+  fill: currentColor;
+  color: rgba(var(--color-bg-sidebar));
 }
 
 /* end react datepicker styling */

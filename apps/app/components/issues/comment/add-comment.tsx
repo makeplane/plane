@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -9,10 +9,10 @@ import { mutate } from "swr";
 import { useForm, Controller } from "react-hook-form";
 // services
 import issuesServices from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Loader, SecondaryButton } from "components/ui";
-// helpers
-import { debounce } from "helpers/common.helper";
 // types
 import type { IIssueComment } from "types";
 // fetch-keys
@@ -28,8 +28,8 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
 });
 
 const defaultValues: Partial<IIssueComment> = {
-  comment_html: "",
   comment_json: "",
+  comment_html: "",
 };
 
 export const AddComment: React.FC = () => {
@@ -42,8 +42,9 @@ export const AddComment: React.FC = () => {
   } = useForm<IIssueComment>({ defaultValues });
 
   const router = useRouter();
-
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const onSubmit = async (formData: IIssueComment) => {
     if (
@@ -61,41 +62,27 @@ export const AddComment: React.FC = () => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         reset(defaultValues);
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Comment could not be posted. Please try again.",
+        })
+      );
   };
-
-  const updateDescription = useMemo(
-    () =>
-      debounce((key: any, val: any) => {
-        setValue(key, val);
-      }, 1000),
-    [setValue]
-  );
-
-  const updateDescriptionHTML = useMemo(
-    () =>
-      debounce((key: any, val: any) => {
-        setValue(key, val);
-      }, 1000),
-    [setValue]
-  );
 
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="issue-comments-section" >
+        <div className="issue-comments-section">
           <Controller
-            name="comment_html"
+            name="comment_json"
             control={control}
             render={({ field: { value } }) => (
               <RemirrorRichTextEditor
                 value={value}
-                onBlur={(jsonValue, htmlValue) => {
-                  setValue("comment_json", jsonValue);
-                  setValue("comment_html", htmlValue);
-                }}
+                onJSONChange={(jsonValue) => setValue("comment_json", jsonValue)}
+                onHTMLChange={(htmlValue) => setValue("comment_html", htmlValue)}
                 placeholder="Enter your comment..."
               />
             )}

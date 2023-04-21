@@ -173,7 +173,7 @@ const GeneralSettings: NextPage = () => {
                 />
               ) : (
                 <Loader>
-                  <Loader.Item height="46px" width="46px" light />
+                  <Loader.Item height="46px" width="46px" />
                 </Loader>
               )}
               {projectDetails ? (
@@ -189,7 +189,7 @@ const GeneralSettings: NextPage = () => {
                 />
               ) : (
                 <Loader>
-                  <Loader.Item height="46px" width="225px" light />
+                  <Loader.Item height="46px" width="225px" />
                 </Loader>
               )}
             </div>
@@ -212,7 +212,7 @@ const GeneralSettings: NextPage = () => {
                 />
               ) : (
                 <Loader className="w-full">
-                  <Loader.Item height="46px" width="full" light />
+                  <Loader.Item height="46px" width="full" />
                 </Loader>
               )}
             </div>
@@ -224,8 +224,8 @@ const GeneralSettings: NextPage = () => {
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="w-full h-32 rounded border p-1">
-                  <div className="w-full h-full relative rounded">
+                <div className="h-32 w-full rounded border p-1">
+                  <div className="relative h-full w-full rounded">
                     <Image
                       src={watch("cover_image")!}
                       alt={projectDetails?.name ?? "Cover image"}
@@ -233,7 +233,7 @@ const GeneralSettings: NextPage = () => {
                       layout="fill"
                       className="rounded"
                     />
-                    <div className="absolute bottom-0 w-full flex justify-end">
+                    <div className="absolute bottom-0 flex w-full justify-end">
                       <ImagePickerPopover
                         label={"Change cover"}
                         onChange={(imageUrl) => {
@@ -246,7 +246,7 @@ const GeneralSettings: NextPage = () => {
                 </div>
               ) : (
                 <Loader className="w-full">
-                  <Loader.Item height="46px" width="full" light />
+                  <Loader.Item height="46px" width="full" />
                 </Loader>
               )}
             </div>
@@ -282,7 +282,7 @@ const GeneralSettings: NextPage = () => {
                 />
               ) : (
                 <Loader>
-                  <Loader.Item height="46px" width="160px" light />
+                  <Loader.Item height="46px" width="160px" />
                 </Loader>
               )}
             </div>
@@ -318,7 +318,7 @@ const GeneralSettings: NextPage = () => {
                 />
               ) : (
                 <Loader className="w-full">
-                  <Loader.Item height="46px" width="160px" light />
+                  <Loader.Item height="46px" width="160px" />
                 </Loader>
               )}
             </div>
@@ -330,7 +330,7 @@ const GeneralSettings: NextPage = () => {
               </SecondaryButton>
             ) : (
               <Loader className="mt-2 w-full">
-                <Loader.Item height="34px" width="100px" light />
+                <Loader.Item height="34px" width="100px" />
               </Loader>
             )}
           </div>
@@ -355,7 +355,7 @@ const GeneralSettings: NextPage = () => {
                 </div>
               ) : (
                 <Loader className="mt-2 w-full">
-                  <Loader.Item height="46px" width="100px" light />
+                  <Loader.Item height="46px" width="100px" />
                 </Loader>
               )}
             </div>

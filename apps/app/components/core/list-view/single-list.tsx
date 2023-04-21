@@ -133,7 +133,7 @@ export const SingleList: React.FC<Props> = ({
     <Disclosure as="div" defaultOpen>
       {({ open }) => (
         <div>
-          <div className="flex items-center justify-between bg-brand-base px-4 py-2.5">
+          <div className="flex items-center justify-between px-4 py-2.5">
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
                 {selectedGroup !== null && (
@@ -211,7 +211,7 @@ export const SingleList: React.FC<Props> = ({
                     />
                   ))
                 ) : (
-                  <p className="bg-brand-surface-1 px-4 py-2.5 text-sm text-brand-secondary">
+                  <p className="bg-brand-base px-4 py-2.5 text-sm text-brand-secondary">
                     No issues.
                   </p>
                 )

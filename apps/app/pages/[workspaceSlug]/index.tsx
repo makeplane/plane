@@ -21,7 +21,7 @@ import type { NextPage } from "next";
 import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 
 const WorkspacePage: NextPage = () => {
-   const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -42,7 +42,7 @@ const WorkspacePage: NextPage = () => {
       <div className="h-full w-full">
         <div className="flex flex-col gap-8">
           <div
-            className="flex flex-col bg-brand-sidebar justify-between gap-x-2 gap-y-6 rounded-lg px-8 py-6 text-brand-muted-1 md:flex-row md:items-center md:py-3"
+            className="text-brand-muted-1 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg bg-brand-base px-8 py-6 md:flex-row md:items-center md:py-3"
             // style={{ background: "linear-gradient(90deg, #8e2de2 0%, #4a00e0 100%)" }}
           >
             <p className="font-semibold">
@@ -55,7 +55,7 @@ const WorkspacePage: NextPage = () => {
               <a
                 href="https://github.com/makeplane/plane"
                 target="_blank"
-                className="rounded-md border-2 border-brand-base font-medium px-3 py-1.5 text-sm duration-300"
+                className="rounded-md border-2 border-brand-base px-3 py-1.5 text-sm font-medium duration-300"
                 rel="noopener noreferrer"
               >
                 Star us on GitHub

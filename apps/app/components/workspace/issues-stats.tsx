@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const IssuesStats: React.FC<Props> = ({ data }) => (
-  <div className="grid grid-cols-1 rounded-[10px] border border-brand-base bg-brand-sidebar lg:grid-cols-3">
+  <div className="grid grid-cols-1 rounded-[10px] border border-brand-base bg-brand-base lg:grid-cols-3">
     <div className="grid grid-cols-1 divide-y divide-brand-base border-b border-brand-base lg:border-r lg:border-b-0">
       <div className="flex">
         <div className="basis-1/2 p-4">

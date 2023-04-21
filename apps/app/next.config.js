@@ -1,5 +1,8 @@
 const { withSentryConfig } = require("@sentry/nextjs");
 const path = require("path");
+const extraImageDomains = (process.env.NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS ?? "")
+  .split(",")
+  .filter((domain) => domain.length > 0);
 
 async function getDockerEnv() {
   const env = await DockerCompose.config({
@@ -21,6 +24,7 @@ const nextConfig = {
       "planefs.s3.amazonaws.com",
       "images.unsplash.com",
       "avatars.githubusercontent.com",
+      ...extraImageDomains,
     ],
   },
   output: "standalone",

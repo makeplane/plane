@@ -105,7 +105,7 @@ if (
     AWS_S3_ADDRESSING_STYLE = "auto"
 
     # The full URL to the S3 endpoint. Leave blank to use the default region URL.
-    AWS_S3_ENDPOINT_URL = ""
+    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "")
 
     # A prefix to be applied to every stored file. This will be joined to every filename using the "/" separator.
     AWS_S3_KEY_PREFIX = ""

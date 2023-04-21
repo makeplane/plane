@@ -396,49 +396,48 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setTransferIssuesModal(false)}
         isOpen={transferIssuesModal}
       />
-      {issueView !== "calendar" && (
-        <>
-          <div
-            className={`flex items-center justify-between gap-2 ${
-              issueView === "list" && areFiltersApplied ? "mt-6 px-8" : "-mt-2"
-            }`}
-          >
-            <FilterList filters={filters} setFilters={setFilters} />
-            {areFiltersApplied && (
-              <PrimaryButton
-                onClick={() => {
-                  if (viewId) {
-                    setFilters({}, true);
-                    setToastAlert({
-                      title: "View updated",
-                      message: "Your view has been updated",
-                      type: "success",
-                    });
-                  } else
-                    setCreateViewModal({
-                      query: filters,
-                    });
-                }}
-                className="flex items-center gap-2 text-sm"
-              >
-                {!viewId && <PlusIcon className="h-4 w-4" />}
-                {viewId ? "Update" : "Save"} view
-              </PrimaryButton>
-            )}
-          </div>
+      <>
+        <div
+          className={`flex items-center justify-between gap-2 ${
+            issueView === "list" ? (areFiltersApplied ? "mt-6 px-8" : "") : "-mt-2"
+          }`}
+        >
+          <FilterList filters={filters} setFilters={setFilters} />
           {areFiltersApplied && (
-            <div className={` ${issueView === "list" ? "mt-4" : "my-4"} border-t`} />
+            <PrimaryButton
+              onClick={() => {
+                if (viewId) {
+                  setFilters({}, true);
+                  setToastAlert({
+                    title: "View updated",
+                    message: "Your view has been updated",
+                    type: "success",
+                  });
+                } else
+                  setCreateViewModal({
+                    query: filters,
+                  });
+              }}
+              className="flex items-center gap-2 text-sm"
+            >
+              {!viewId && <PlusIcon className="h-4 w-4" />}
+              {viewId ? "Update" : "Save"} view
+            </PrimaryButton>
           )}
-        </>
-      )}
+        </div>
+        {areFiltersApplied && (
+          <div className={` ${issueView === "list" ? "mt-4" : "my-4"} border-t`} />
+        )}
+      </>
+
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">
           {(provided, snapshot) => (
             <div
               className={`${
                 trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-              } fixed top-9 right-9 z-30 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
-                snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
+              } fixed top-9 right-9 z-30 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-red-500/20 p-3 text-xs font-medium italic text-red-500 ${
+                snapshot.isDraggingOver ? "bg-red-500/100 text-white" : ""
               } duration-200`}
               ref={provided.innerRef}
               {...provided.droppableProps}

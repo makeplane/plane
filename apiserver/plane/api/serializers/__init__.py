@@ -68,4 +68,4 @@ from .importer import ImporterSerializer
 
 from .page import PageSerializer, PageBlockSerializer, PageFavoriteSerializer
 
-from .estimate import EstimateSerializer, EstimatePointSerializer
+from .estimate import EstimateSerializer, EstimatePointSerializer, EstimateReadSerializer

@@ -245,7 +245,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {!isNotAllowed && (
               <button
                 type="button"
-                className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/30 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
                 onClick={() => setDeleteIssueModal(true)}
               >
                 <TrashIcon className="h-3.5 w-3.5" />
@@ -344,7 +344,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               userAuth={memberRole}
             />
             <div className="flex flex-wrap items-center py-2">
-              <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+              <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
                 <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
                 <p>Due date</p>
               </div>
@@ -382,7 +382,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         </div>
         <div className="space-y-3 py-3">
           <div className="flex items-start justify-between">
-            <div className="flex basis-1/2 items-center gap-x-2 text-sm">
+            <div className="flex basis-1/2 items-center gap-x-2 text-sm text-brand-secondary">
               <TagIcon className="h-4 w-4" />
               <p>Label</p>
             </div>
@@ -395,7 +395,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     return (
                       <span
                         key={label.id}
-                        className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-1 py-0.5 text-xs hover:border-red-500 hover:bg-red-500/30"
+                        className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
                         onClick={() => {
                           const updatedLabels = watchIssue("labels_list")?.filter(
                             (l) => l !== labelId
@@ -436,7 +436,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                               isNotAllowed
                                 ? "cursor-not-allowed"
                                 : "cursor-pointer hover:bg-brand-surface-1"
-                            } items-center gap-2 rounded-2xl border border-brand-base px-2 py-0.5 text-xs`}
+                            } items-center gap-2 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary`}
                           >
                             Select Label
                           </Listbox.Button>
@@ -463,7 +463,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                             <Listbox.Option
                                               key={label.id}
                                               className={({ active, selected }) =>
-                                                `${active || selected ? "bg-brand-surface-1" : ""} ${
+                                                `${
+                                                  active || selected ? "bg-brand-surface-1" : ""
+                                                } ${
                                                   selected ? "font-medium" : ""
                                                 } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-brand-base`
                                               }
@@ -530,8 +532,10 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <button
                     type="button"
                     className={`flex ${
-                      isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-1"
-                    } items-center gap-1 rounded-2xl border border-brand-base  px-2 py-0.5 text-xs`}
+                      isNotAllowed
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer hover:bg-brand-surface-1"
+                    } items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary`}
                     onClick={() => setCreateLabelForm((prevData) => !prevData)}
                   >
                     {createLabelForm ? (
