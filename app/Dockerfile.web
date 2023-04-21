@@ -1,0 +1,30 @@
+FROM node:18-alpine AS builder
+RUN apk add --no-cache libc6-compat
+RUN apk update
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+RUN yarn install --frozen-lockfile
+COPY . .
+
+# build
+RUN yarn build
+
+FROM node:18-alpine AS runner
+WORKDIR /app
+
+# Don't run production as root
+RUN addgroup --system --gid 1001 plane
+RUN adduser --system --uid 1001 captain
+USER captain
+
+COPY --from=builder /app/next.config.js .
+COPY --from=builder /app/package.json .
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+ENV NEXT_TELEMETRY_DISABLED 1
+
+EXPOSE 3000
