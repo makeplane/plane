@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
-
+from sentry_sdk import capture_exception
 from django_filters.rest_framework import DjangoFilterBackend
 
 # Module imports
@@ -39,7 +39,7 @@ class BaseViewSet(ModelViewSet, BasePaginator):
         try:
             return self.model.objects.all()
         except Exception as e:
-            print(e)
+            capture_exception(e)
             raise APIException("Please check the view", status.HTTP_400_BAD_REQUEST)
 
     def dispatch(self, request, *args, **kwargs):
