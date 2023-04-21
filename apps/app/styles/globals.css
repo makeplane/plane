@@ -206,4 +206,9 @@
   );
 }
 
+.progress-bar{
+  fill: currentColor;
+  color: rgba(var(--color-bg-sidebar));
+}
+
 /* end react datepicker styling */

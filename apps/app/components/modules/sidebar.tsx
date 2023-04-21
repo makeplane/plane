@@ -185,7 +185,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-surface-2 py-5 duration-300`}
+        } z-20 h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar py-5 duration-300`}
       >
         {module ? (
           <>
@@ -336,7 +336,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     </CustomMenu>
                   </div>
 
-                  <span className="whitespace-normal text-sm leading-5 text-brand-base">
+                  <span className="whitespace-normal text-sm leading-5 text-brand-secondary">
                     {module.description}
                   </span>
                 </div>
@@ -368,12 +368,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   />
 
                   <div className="flex items-center justify-start gap-1">
-                    <div className="flex w-40 items-center justify-start gap-2">
-                      <ChartPieIcon className="h-5 w-5 text-gray-400" />
+                    <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+                      <ChartPieIcon className="h-5 w-5" />
                       <span>Progress</span>
                     </div>
 
-                    <div className="flex items-center gap-2.5 text-brand-muted-1">
+                    <div className="flex items-center gap-2.5 text-brand-secondary">
                       <span className="h-4 w-4">
                         <ProgressBar
                           value={module.completed_issues}
@@ -532,7 +532,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   <PlusIcon className="h-4 w-4" />
                 </button>
               </div>
-              <div className="mt-2 space-y-2 hover:bg-gray-100">
+              <div className="mt-2 space-y-2 hover:bg-brand-surface-2">
                 {memberRole && module.link_module && module.link_module.length > 0 ? (
                   <LinksList
                     links={module.link_module}
