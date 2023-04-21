@@ -86,7 +86,7 @@ export const WorkspaceSidebarDropdown = () => {
         <div className="flex items-center justify-between gap-2.5">
           <Menu.Button className="text-brand-muted-1 flex w-full items-center rounded-md py-2 text-sm font-semibold focus:outline-none">
             <div
-              className={`flex w-full items-center gap-x-2 rounded-md bg-brand-base px-2 py-1.5 ${
+              className={`flex w-full items-center gap-x-2 rounded-md bg-brand-surface-2 px-2 py-1.5 ${
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
@@ -189,9 +189,9 @@ export const WorkspaceSidebarDropdown = () => {
                     onClick={() => {
                       router.push("/create-workspace");
                     }}
-                    className="flex w-full items-center gap-1 text-sm text-gray-600"
+                    className="flex w-full items-center gap-1 text-sm text-brand-secondary"
                   >
-                    <PlusIcon className="h-3 w-3 text-gray-600" />
+                    <PlusIcon className="h-3 w-3" />
                     Create Workspace
                   </Menu.Item>
                 </div>
@@ -209,7 +209,7 @@ export const WorkspaceSidebarDropdown = () => {
                 <Menu.Item
                   key={index}
                   as="div"
-                  className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-gray-600 hover:bg-brand-surface-1"
+                  className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-brand-secondary hover:bg-brand-surface-1"
                 >
                   <Link href={link.href}>
                     <a className="w-full">{link.name}</a>
