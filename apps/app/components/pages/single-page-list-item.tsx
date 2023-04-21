@@ -5,11 +5,13 @@ import { useRouter } from "next/router";
 
 // hooks
 import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
 import {
   DocumentTextIcon,
+  LinkIcon,
   LockClosedIcon,
   LockOpenIcon,
   PencilIcon,
@@ -18,7 +20,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ExclamationIcon } from "components/icons";
 // helpers
-import { truncateText } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderLongDateFormat, renderShortDate, renderShortTime } from "helpers/date-time.helper";
 // types
 import { IPage, IProjectMember } from "types";
@@ -46,6 +48,22 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   const { workspaceSlug, projectId } = router.query;
 
   const { user } = useUser();
+
+  const { setToastAlert } = useToast();
+
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/pages/${page.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Page link copied to clipboard.",
+      });
+    });
+  };
 
   return (
     <li>
@@ -171,6 +189,18 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         <TrashIcon className="h-3.5 w-3.5" />
                         <span>Delete Page</span>
                       </span>
+                    </CustomMenu.MenuItem>
+                    <CustomMenu.MenuItem
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleCopyText();
+                      }}
+                    >
+                      <div className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-4 w-4" />
+                        <span>Copy Page link</span>
+                      </div>
                     </CustomMenu.MenuItem>
                   </CustomMenu>
                 </div>
