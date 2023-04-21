@@ -26,7 +26,7 @@ import {
 import { Popover, Transition } from "@headlessui/react";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Spinner } from "components/ui";
 // icon
 import {
   CheckIcon,
@@ -35,6 +35,8 @@ import {
   ChevronRightIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // services
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
@@ -67,6 +69,8 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
+  const { params } = useIssuesView();
+
   const [calendarDateRange, setCalendarDateRange] = useState<ICalendarRange>({
     startDate: startOfWeek(currentDate),
     endDate: lastDayOfWeek(currentDate),
@@ -82,11 +86,13 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
     workspaceSlug && projectId ? PROJECT_CALENDAR_ISSUES(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          issuesService.getIssuesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            targetDateFilter
-          )
+          issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, {
+            ...params,
+            target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
+              calendarDateRange.endDate
+            )};before`,
+            group_by: null,
+          })
       : null
   );
 
@@ -100,7 +106,13 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             workspaceSlug as string,
             projectId as string,
             cycleId as string,
-            targetDateFilter
+            {
+              ...params,
+              target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
+                calendarDateRange.endDate
+              )};before`,
+              group_by: null,
+            }
           )
       : null
   );
@@ -115,7 +127,13 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             workspaceSlug as string,
             projectId as string,
             moduleId as string,
-            targetDateFilter
+            {
+              ...params,
+              target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
+                calendarDateRange.endDate
+              )};before`,
+              group_by: null,
+            }
           )
       : null
   );
@@ -132,7 +150,11 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
 
   const currentViewDays = showWeekEnds ? totalDate : onlyWeekDays;
 
-  const calendarIssues = cycleCalendarIssues ?? moduleCalendarIssues ?? projectCalendarIssues;
+  const calendarIssues = cycleId
+    ? cycleCalendarIssues
+    : moduleId
+    ? moduleCalendarIssues
+    : projectCalendarIssues;
 
   const currentViewDaysData = currentViewDays.map((date: Date) => {
     const filterIssue =
@@ -203,11 +225,11 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
     });
   };
 
-  return (
+  return calendarIssues ? (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="h-full overflow-y-auto rounded-lg text-gray-600 -m-2">
+      <div className="-m-2 h-full overflow-y-auto rounded-lg text-gray-600">
         <div className="mb-4 flex items-center justify-between">
-          <div className="relative flex h-full w-full gap-2 items-center justify-start text-sm ">
+          <div className="relative flex h-full w-full items-center justify-start gap-2 text-sm ">
             <Popover className="flex h-full items-center justify-start rounded-lg">
               {({ open }) => (
                 <>
@@ -227,8 +249,8 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute top-10 left-0 z-20 w-full max-w-xs flex flex-col transform overflow-hidden bg-brand-surface-2 shadow-lg rounded-[10px]">
-                      <div className="flex justify-center items-center text-sm gap-5 px-2 py-2">
+                    <Popover.Panel className="absolute top-10 left-0 z-20 flex w-full max-w-xs transform flex-col overflow-hidden rounded-[10px] bg-brand-surface-2 shadow-lg">
+                      <div className="flex items-center justify-center gap-5 px-2 py-2 text-sm">
                         {yearOptions.map((year) => (
                           <button
                             onClick={() => updateDate(updateDateWithYear(year.label, currentDate))}
@@ -236,19 +258,19 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                               isSameYear(year.value, currentDate)
                                 ? "text-sm font-medium text-gray-800"
                                 : "text-xs text-gray-400 "
-                            } hover:text-sm hover:text-gray-800 hover:font-medium`}
+                            } hover:text-sm hover:font-medium hover:text-gray-800`}
                           >
                             {year.label}
                           </button>
                         ))}
                       </div>
-                      <div className="grid grid-cols-4  px-2 border-t border-brand-base">
+                      <div className="grid grid-cols-4  border-t border-brand-base px-2">
                         {monthOptions.map((month) => (
                           <button
                             onClick={() =>
                               updateDate(updateDateWithMonth(month.value, currentDate))
                             }
-                            className={`text-gray-400 text-xs px-2 py-2 hover:font-medium hover:text-gray-800 ${
+                            className={`px-2 py-2 text-xs text-gray-400 hover:font-medium hover:text-gray-800 ${
                               isSameMonth(month.value, currentDate)
                                 ? "font-medium text-gray-800"
                                 : ""
@@ -300,7 +322,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             </div>
           </div>
 
-          <div className="flex w-full gap-2 items-center justify-end">
+          <div className="flex w-full items-center justify-end gap-2">
             <button
               className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base bg-brand-surface-2 px-4 py-1.5 text-sm  hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none"
               onClick={() => {
@@ -317,6 +339,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             >
               Today{" "}
             </button>
+
             <CustomMenu
               customButton={
                 <div
@@ -397,7 +420,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
           {weeks.map((date, index) => (
             <div
               key={index}
-              className={`flex  items-center justify-start p-1.5 gap-2 border-brand-base bg-brand-surface-1 text-base font-medium text-gray-600 ${
+              className={`flex  items-center justify-start gap-2 border-brand-base bg-brand-surface-1 p-1.5 text-base font-medium text-gray-600 ${
                 !isMonthlyView
                   ? showWeekEnds
                     ? (index + 1) % 7 === 0
@@ -480,5 +503,9 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
         </div>
       </div>
     </DragDropContext>
+  ) : (
+    <div className="flex h-full w-full items-center justify-center">
+      <Spinner />
+    </div>
   );
 };

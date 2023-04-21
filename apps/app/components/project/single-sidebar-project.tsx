@@ -16,7 +16,6 @@ import {
 import {
   ContrastIcon,
   LayerDiagonalIcon,
-  PencilScribbleIcon,
   PeopleGroupIcon,
   SettingIcon,
   ViewListIcon,

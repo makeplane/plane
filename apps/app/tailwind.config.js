@@ -18,7 +18,7 @@ module.exports = {
         secondary: "white",
         brand: {
           accent: withOpacity("--color-accent"),
-          base: withOpacity("--color-border"),
+          base: withOpacity("--color-bg-base"),
         },
       },
       borderColor: {

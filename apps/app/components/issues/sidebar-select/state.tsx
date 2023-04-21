@@ -43,14 +43,14 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
         <p>State</p>
       </div>
       <div className="sm:basis-1/2">
         <CustomSelect
           label={
-            <div className={`flex items-center gap-2 text-left ${value ? "" : "text-brand-base"}`}>
+            <div className="flex items-center gap-2 text-left text-brand-base">
               {getStateGroupIcon(
                 selectedState?.group ?? "backlog",
                 "16",

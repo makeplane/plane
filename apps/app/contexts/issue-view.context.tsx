@@ -297,6 +297,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           },
         });
       }
+      if (property === "calendar") {
+        dispatch({
+          type: "SET_GROUP_BY_PROPERTY",
+          payload: {
+            groupByProperty: null,
+          },
+        });
+      }
 
       if (!workspaceSlug || !projectId) return;
 

@@ -52,7 +52,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
         <a className="block p-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <p className="mr-2 truncate font-medium">{truncateText(page.name, 75)}</p>
+              <p className="mr-2 truncate text-sm">{truncateText(page.name, 75)}</p>
               {page.label_details.length > 0 &&
                 page.label_details.map((label) => (
                   <div
@@ -175,7 +175,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
               </CustomMenu>
             </div>
           </div>
-          <div className="relative mt-2 space-y-2 text-base font-normal text-gray-600">
+          <div className="relative mt-2 space-y-2 text-sm text-brand-secondary">
             {page.blocks.length > 0
               ? page.blocks.slice(0, 3).map((block) => <h4>{block.name}</h4>)
               : null}

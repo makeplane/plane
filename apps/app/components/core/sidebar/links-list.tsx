@@ -1,8 +1,7 @@
 import Link from "next/link";
 
 // icons
-import { LinkIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { ExternalLinkIcon } from "components/icons";
+import { ArrowTopRightOnSquareIcon, LinkIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
@@ -33,15 +32,15 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
             <div className="absolute top-1.5 right-1.5 z-[1] flex items-center gap-1">
               <Link href={link.url}>
                 <a
-                  className="grid h-7 w-7 place-items-center rounded bg-brand-surface-1 p-1 outline-none"
+                  className="grid h-7 w-7 place-items-center rounded bg-brand-surface-1 p-1 outline-none hover:bg-brand-surface-2"
                   target="_blank"
                 >
-                  <ExternalLinkIcon width="14" height="14" />
+                  <ArrowTopRightOnSquareIcon className="h-4 w-4 text-brand-secondary" />
                 </a>
               </Link>
               <button
                 type="button"
-                className="grid h-7 w-7 place-items-center rounded bg-brand-surface-1 p-1 text-red-500 outline-none duration-300 hover:bg-red-500/30"
+                className="grid h-7 w-7 place-items-center rounded bg-brand-surface-1 p-1 text-red-500 outline-none duration-300 hover:bg-red-500/20"
                 onClick={() => handleDeleteLink(link.id)}
               >
                 <TrashIcon className="h-4 w-4" />
@@ -49,7 +48,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
             </div>
           )}
           <Link href={link.url}>
-            <a className="relative flex gap-2 rounded-md border border-brand-base bg-brand-surface-2 p-2" target="_blank">
+            <a className="relative flex gap-2 rounded-md bg-brand-base p-2" target="_blank">
               <div className="mt-0.5">
                 <LinkIcon className="h-3.5 w-3.5" />
               </div>
