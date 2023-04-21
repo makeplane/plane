@@ -31,3 +31,5 @@ export const orderArrayBy = (
     return 0;
   });
 };
+
+export const checkDuplicates = (array: any[]) => new Set(array).size !== array.length;

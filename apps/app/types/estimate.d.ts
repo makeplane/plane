@@ -6,6 +6,7 @@ export interface IEstimate {
   description: string;
   created_by: string;
   updated_by: string;
+  points: IEstimatePoint[];
   project: string;
   workspace: string;
 }
@@ -22,4 +23,15 @@ export interface IEstimatePoint {
   updated_by: string;
   value: string;
   workspace: string;
+}
+
+export interface IEstimateFormData {
+  estimate: {
+    name: string;
+    description: string;
+  };
+  estimate_points: {
+    key: number;
+    value: string;
+  }[];
 }

@@ -163,5 +163,3 @@ export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${page
 export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
 export const ESTIMATE_DETAILS = (estimateId: string) =>
   `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
-export const ESTIMATE_POINTS_LIST = (estimateId: string) =>
-  `ESTIMATES_POINTS_LIST_${estimateId.toUpperCase()}`;
