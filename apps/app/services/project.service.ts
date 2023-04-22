@@ -244,7 +244,7 @@ class ProjectServices extends APIService {
       });
   }
 
-  async syncGiuthubRepository(
+  async syncGithubRepository(
     workspaceSlug: string,
     projectId: string,
     workspaceIntegrationId: string,
