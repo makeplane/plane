@@ -108,28 +108,26 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
 
   return (
     <div
-      className={`flex items-center gap-2 scroll-m-8 rounded-[10px] border border-brand-base bg-brand-surface-2 p-5 ${
+      className={`flex scroll-m-8 items-center gap-2 rounded-[10px] border border-brand-base bg-brand-base p-5 ${
         labelForm ? "" : "hidden"
       }`}
       ref={ref}
     >
       <div className="h-8 w-8 flex-shrink-0">
-        <Popover className="relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-brand-surface-2">
+        <Popover className="relative z-10 flex h-full w-full items-center justify-center">
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 ${
+                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
                   open ? "text-brand-base" : "text-brand-secondary"
                 }`}
               >
-                {watch("color") && watch("color") !== "" && (
-                  <span
-                    className="h-4 w-4 rounded"
-                    style={{
-                      backgroundColor: watch("color") ?? "#000",
-                    }}
-                  />
-                )}
+                <span
+                  className="h-5 w-5 rounded"
+                  style={{
+                    backgroundColor: watch("color"),
+                  }}
+                />
               </Popover.Button>
 
               <Transition

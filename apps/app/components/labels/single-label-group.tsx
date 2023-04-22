@@ -66,7 +66,11 @@ export const SingleLabelGroup: React.FC<Props> = ({
   };
 
   return (
-    <Disclosure as="div" className="rounded-[10px] border border-brand-base bg-brand-surface-1 p-5 text-brand-base" defaultOpen>
+    <Disclosure
+      as="div"
+      className="rounded-[10px] border border-brand-base bg-brand-base p-5 text-brand-base"
+      defaultOpen
+    >
       {({ open }) => (
         <>
           <div className="flex cursor-pointer items-center justify-between gap-2">
@@ -74,7 +78,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
               <span>
                 <RectangleGroupIcon className="h-4 w-4" />
               </span>
-              <h6 className="font-medium text-brand-base">{label.name}</h6>
+              <h6>{label.name}</h6>
             </div>
             <div className="flex items-center gap-2">
               <CustomMenu ellipsis>
@@ -122,7 +126,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                     key={child.id}
                     className="group flex items-center justify-between rounded-md border border-brand-base p-2 text-sm"
                   >
-                    <h5 className="flex items-center gap-3 text-brand-base">
+                    <h5 className="flex items-center gap-3">
                       <span
                         className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                         style={{

@@ -163,7 +163,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
             <>
               <Popover.Button
                 className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-gray-900" : "text-gray-500"
+                  open ? "text-brand-base" : "text-brand-secondary"
                 }`}
               >
                 {watch("color") && watch("color") !== "" && (
