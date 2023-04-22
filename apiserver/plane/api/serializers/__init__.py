@@ -62,6 +62,7 @@ from .integration import (
     GithubRepositorySerializer,
     GithubRepositorySyncSerializer,
     GithubCommentSyncSerializer,
+    SlackProjectSyncSerializer,
 )
 
 from .importer import ImporterSerializer

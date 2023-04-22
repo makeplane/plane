@@ -132,6 +132,7 @@ from plane.api.views import (
     GithubIssueSyncViewSet,
     GithubCommentSyncViewSet,
     BulkCreateGithubIssueSyncEndpoint,
+    SlackProjectSyncViewSet,
     ## End Integrations
     # Importer
     ServiceIssueImportSummaryEndpoint,
@@ -1216,6 +1217,26 @@ urlpatterns = [
         ),
     ),
     ## End Github Integrations
+    # Slack Integration
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/project-slack-sync/",
+        SlackProjectSyncViewSet.as_view(
+            {
+                "post": "create",
+                "get": "list",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/project-slack-sync/<uuid:pk>/",
+        SlackProjectSyncViewSet.as_view(
+            {
+                "delete": "destroy",
+                "get": "retrieve",
+            }
+        ),
+    ),
+    ## End Slack Integration
     ## End Integrations
     # Importer
     path(

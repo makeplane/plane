@@ -106,6 +106,7 @@ from .integration import (
     GithubCommentSyncViewSet,
     GithubRepositoriesEndpoint,
     BulkCreateGithubIssueSyncEndpoint,
+    SlackProjectSyncViewSet,
 )
 
 from .importer import (
