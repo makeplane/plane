@@ -34,6 +34,7 @@ module.exports = {
           "surface-1": withOpacity("--color-bg-surface-1"),
           "surface-2": withOpacity("--color-bg-surface-2"),
           sidebar: withOpacity("--color-bg-sidebar"),
+          backdrop: "#131313",
         },
       },
       textColor: {

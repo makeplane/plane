@@ -77,7 +77,9 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             {comment.actor_detail.first_name}
             {comment.actor_detail.is_bot ? "Bot" : " " + comment.actor_detail.last_name}
           </div>
-          <p className="mt-0.5 text-xs text-brand-secondary">Commented {timeAgo(comment.created_at)}</p>
+          <p className="mt-0.5 text-xs text-brand-secondary">
+            Commented {timeAgo(comment.created_at)}
+          </p>
         </div>
         <div className="issue-comments-section p-0">
           {isEditing ? (
@@ -94,13 +96,13 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="group rounded border border-green-500 bg-green-100 p-2 shadow-md duration-300 hover:bg-green-500"
+                  className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
                 >
                   <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
                 </button>
                 <button
                   type="button"
-                  className="group rounded border border-red-500 bg-red-100 p-2 shadow-md duration-300 hover:bg-red-500"
+                  className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                   onClick={() => setIsEditing(false)}
                 >
                   <XMarkIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
@@ -115,9 +117,8 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             <RemirrorRichTextEditor
               value={comment.comment_html}
               editable={false}
-              onBlur={() => ({})}
               noBorder
-              customClassName="text-xs bg-brand-surface-1"
+              customClassName="text-xs border border-brand-base bg-brand-base"
             />
           )}
         </div>
