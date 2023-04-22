@@ -96,8 +96,11 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* scrollbar style */
+body {
+  color: rgba(var(--color-text-base));
+}
 
+/* scrollbar style */
 ::-webkit-scrollbar {
   display: none;
 }
@@ -206,7 +209,7 @@
   );
 }
 
-.progress-bar{
+.progress-bar {
   fill: currentColor;
   color: rgba(var(--color-bg-sidebar));
 }

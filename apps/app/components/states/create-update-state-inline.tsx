@@ -155,7 +155,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-brand-surface-1 p-5"
+      className="flex items-center gap-x-2 rounded-[10px] bg-brand-base p-5"
     >
       <div className="flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center">
@@ -163,7 +163,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
             <>
               <Popover.Button
                 className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-gray-900" : "text-gray-500"
+                  open ? "text-brand-base" : "text-brand-secondary"
                 }`}
               >
                 {watch("color") && watch("color") !== "" && (

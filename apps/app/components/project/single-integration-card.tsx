@@ -18,7 +18,6 @@ import SlackLogo from "public/services/slack.png";
 import { IWorkspaceIntegration } from "types";
 // fetch-keys
 import { PROJECT_GITHUB_REPOSITORY } from "constants/fetch-keys";
-import { comboMatches } from "@blueprintjs/core";
 
 type Props = {
   integration: IWorkspaceIntegration;
@@ -27,14 +26,12 @@ type Props = {
 const integrationDetails: { [key: string]: any } = {
   github: {
     logo: GithubLogo,
-    installed:
-      "Activate GitHub integrations on individual projects to sync with specific repositories.",
-    notInstalled: "Connect with GitHub with your Plane workspace to sync project issues.",
+    description: "Select GitHub repository to enable sync.",
   },
   slack: {
     logo: SlackLogo,
-    installed: "Activate Slack integrations on individual projects to sync with specific cahnnels.",
-    notInstalled: "Connect with Slack with your Plane workspace to sync project issues.",
+    description:
+      "Connect your slack channel to this project to get regular updates. Control which notification you want to receive.",
   },
 };
 
@@ -67,19 +64,19 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
     } = repo;
 
     projectService
-      .syncGiuthubRepository(workspaceSlug as string, projectId as string, integration.id, {
+      .syncGithubRepository(workspaceSlug as string, projectId as string, integration.id, {
         name,
         owner: login,
         repository_id: id,
         url: html_url,
       })
-      .then((res) => {
+      .then(() => {
         mutate(PROJECT_GITHUB_REPOSITORY(projectId as string));
 
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: `${login}/${name} respository synced with the project successfully.`,
+          message: `${login}/${name} repository synced with the project successfully.`,
         });
       })
       .catch((err) => {
@@ -88,7 +85,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Respository could not be synced with the project. Please try again.",
+          message: "Repository could not be synced with the project. Please try again.",
         });
       });
   };
@@ -96,24 +93,20 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 rounded-[10px] border border-brand-base bg-brand-surface-1 p-5">
+        <div className="flex items-center justify-between gap-2 rounded-[10px] border border-brand-base bg-brand-base p-5">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 flex-shrink-0">
               <Image
                 src={integrationDetails[integration.integration_detail.provider].logo}
-                alt="GithubLogo"
+                alt={`${integration.integration_detail.title} Logo`}
               />
             </div>
             <div>
               <h3 className="flex items-center gap-4 text-xl font-semibold">
                 {integration.integration_detail.title}
               </h3>
-              <p className="text-sm text-gray-400">
-                {integration.integration_detail.provider === "github"
-                  ? "Select GitHub repository to enable sync."
-                  : integration.integration_detail.provider === "slack"
-                  ? "Connect your slack channel to this project to get regular updates. Control which notification you want to receive"
-                  : null}
+              <p className="text-sm text-brand-secondary">
+                {integrationDetails[integration.integration_detail.provider].description}
               </p>
             </div>
           </div>

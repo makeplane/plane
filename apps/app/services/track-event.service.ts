@@ -47,7 +47,7 @@ type ViewEventType = "VIEW_CREATE" | "VIEW_UPDATE" | "VIEW_DELETE";
 
 type IssueCommentType = "ISSUE_COMMENT_CREATE" | "ISSUE_COMMENT_UPDATE" | "ISSUE_COMMENT_DELETE";
 
-type MiscellaneousEventType =
+export type MiscellaneousEventType =
   | "TOGGLE_CYCLE_ON"
   | "TOGGLE_CYCLE_OFF"
   | "TOGGLE_MODULE_ON"
