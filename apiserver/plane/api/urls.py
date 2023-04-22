@@ -79,7 +79,6 @@ from plane.api.views import (
     ## End Issues
     # States
     StateViewSet,
-    StateDeleteIssueCheckEndpoint,
     ## End States
     # Estimates
     ProjectEstimatePointEndpoint,
@@ -508,11 +507,6 @@ urlpatterns = [
             }
         ),
         name="project-state",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/states/<uuid:pk>/",
-        StateDeleteIssueCheckEndpoint.as_view(),
-        name="state-delete-check",
     ),
     # End States ##
     #  Estimates
