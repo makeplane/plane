@@ -11,7 +11,11 @@ import useToast from "hooks/use-toast";
 // ui
 import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // helpers
-import { getDateRangeStatus, isDateRangeValid } from "helpers/date-time.helper";
+import {
+  getDateRangeStatus,
+  isDateGreaterThanToday,
+  isDateRangeValid,
+} from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
 
@@ -60,24 +64,33 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
     data?.start_date && data?.end_date ? getDateRangeStatus(data?.start_date, data?.end_date) : "";
 
   const dateChecker = async (payload: any) => {
-    await cyclesService
-      .cycleDateCheck(workspaceSlug as string, projectId as string, payload)
-      .then((res) => {
-        if (res.status) {
-          setIsDateValid(true);
-        } else {
-          setIsDateValid(false);
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message:
-              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+    if (isDateGreaterThanToday(payload.end_date)) {
+      await cyclesService
+        .cycleDateCheck(workspaceSlug as string, projectId as string, payload)
+        .then((res) => {
+          if (res.status) {
+            setIsDateValid(true);
+          } else {
+            setIsDateValid(false);
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message:
+                "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      setIsDateValid(false);
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Unable to create cycle in past date. Please enter a valid date.",
       });
+    }
   };
 
   const checkEmptyDate =
