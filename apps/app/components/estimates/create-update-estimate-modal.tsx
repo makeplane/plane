@@ -184,32 +184,65 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
         name: formData.name,
         description: formData.description,
       },
-      estimate_points: [
-        {
-          key: 0,
-          value: formData.value1,
-        },
-        {
-          key: 1,
-          value: formData.value2,
-        },
-        {
-          key: 2,
-          value: formData.value3,
-        },
-        {
-          key: 3,
-          value: formData.value4,
-        },
-        {
-          key: 4,
-          value: formData.value5,
-        },
-        {
-          key: 5,
-          value: formData.value6,
-        },
-      ],
+      estimate_points: data
+        ? [
+            {
+              id: data.points[0].id,
+              key: 0,
+              value: formData.value1,
+            },
+            {
+              id: data.points[1].id,
+              key: 1,
+              value: formData.value2,
+            },
+            {
+              id: data.points[2].id,
+              key: 2,
+              value: formData.value3,
+            },
+            {
+              id: data.points[3].id,
+              key: 3,
+              value: formData.value4,
+            },
+            {
+              id: data.points[4].id,
+              key: 4,
+              value: formData.value5,
+            },
+            {
+              id: data.points[5].id,
+              key: 5,
+              value: formData.value6,
+            },
+          ]
+        : [
+            {
+              key: 0,
+              value: formData.value1,
+            },
+            {
+              key: 1,
+              value: formData.value2,
+            },
+            {
+              key: 2,
+              value: formData.value3,
+            },
+            {
+              key: 3,
+              value: formData.value4,
+            },
+            {
+              key: 4,
+              value: formData.value5,
+            },
+            {
+              key: 5,
+              value: formData.value6,
+            },
+          ],
     };
 
     if (data) await updateEstimate(payload);
