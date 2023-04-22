@@ -48,13 +48,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
 
   const { data: people } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null,
-    {
-      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
-        if (err?.status === 403 || err?.status === 401) return;
-        setTimeout(() => revalidate(revalidateOpts), 5000);
-      },
-    }
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
   const {

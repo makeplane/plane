@@ -221,7 +221,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             </h3>
           </div>
           {watch("parent") && watch("parent") !== "" ? (
-            <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-1 p-2 text-xs">
+            <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs">
               <div className="flex items-center gap-2">
                 <span
                   className="block h-1.5 w-1.5 rounded-full"
@@ -230,7 +230,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                       .color,
                   }}
                 />
-                <span className="flex-shrink-0 text-gray-600">
+                <span className="flex-shrink-0 text-brand-secondary">
                   {/* {projects?.find((p) => p.id === projectId)?.identifier}- */}
                   {issues.find((i) => i.id === watch("parent"))?.sequence_id}
                 </span>
@@ -253,7 +253,6 @@ export const IssueForm: FC<IssueFormProps> = ({
                   onChange={handleTitleChange}
                   className="resize-none text-xl"
                   placeholder="Title"
-                  mode="transparent"
                   autoComplete="off"
                   error={errors.name}
                   register={register}
@@ -294,7 +293,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 )}
               </div>
               <div className="relative">
-                <div className="flex justify-end -mb-2">
+                <div className="-mb-2 flex justify-end">
                   {issueName && issueName !== "" && (
                     <button
                       type="button"
