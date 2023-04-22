@@ -98,12 +98,12 @@ const SignInPage: NextPage = () => {
       }}
     >
       {isLoading && (
-        <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-white">
+        <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3">
           <h2 className="text-xl text-gray-900">Signing in. Please wait...</h2>
           <Spinner />
         </div>
       )}
-      <div className="flex h-screen w-full items-center justify-center overflow-auto bg-gray-50">
+      <div className="flex h-screen w-full items-center justify-center overflow-auto">
         <div className="flex min-h-full w-full flex-col justify-center py-12 px-6 lg:px-8">
           <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="flex flex-col items-center justify-center gap-10">
@@ -113,12 +113,12 @@ const SignInPage: NextPage = () => {
               </h2>
             </div>
 
-            <div className="flex flex-col rounded-[10px] bg-brand-surface-2  shadow-md">
+            <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
               {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <>
                   <EmailSignInForm handleSuccess={onSignInSuccess} />
 
-                  <div className="flex flex-col gap-3 py-5 px-5 border-t items-center justify-center border-brand-base ">
+                  <div className="flex flex-col items-center justify-center gap-3 border-t border-brand-base py-5 px-5 ">
                     <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
 
                     <GithubLoginButton handleSignIn={handleGithubSignIn} />

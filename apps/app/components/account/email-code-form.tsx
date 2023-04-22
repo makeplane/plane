@@ -92,13 +92,13 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
     <>
       <form className="space-y-5 py-5 px-5">
         {(codeSent || codeResent) && (
-          <div className="rounded-md bg-green-50 p-4">
+          <div className="rounded-md bg-green-500/20 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
-                <CheckCircleIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
+                <CheckCircleIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-green-800">
+                <p className="text-sm font-medium text-green-500">
                   {codeResent
                     ? "Please check your mail for new code."
                     : "Please check your mail for code."}
@@ -141,7 +141,9 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
             <button
               type="button"
               className={`mt-5 flex w-full justify-end text-xs outline-none ${
-                isResendDisabled ? "cursor-default text-gray-400" : "cursor-pointer text-brand-accent"
+                isResendDisabled
+                  ? "cursor-default text-brand-secondary"
+                  : "cursor-pointer text-brand-accent"
               } `}
               onClick={() => {
                 setIsCodeResending(true);
@@ -174,7 +176,8 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               className="w-full text-center"
               size="md"
               onClick={handleSubmit(handleSignin)}
-              loading={isSubmitting || (!isValid && isDirty)}
+              disabled={!isValid && isDirty}
+              loading={isSubmitting}
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
             </PrimaryButton>
