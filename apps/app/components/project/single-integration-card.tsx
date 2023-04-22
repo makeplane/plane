@@ -10,16 +10,32 @@ import projectService from "services/project.service";
 import { useRouter } from "next/router";
 import useToast from "hooks/use-toast";
 // components
-import { SelectRepository } from "components/integration";
+import { SelectRepository, SelectChannel } from "components/integration";
 // icons
 import GithubLogo from "public/logos/github-square.png";
+import SlackLogo from "public/services/slack.png";
 // types
 import { IWorkspaceIntegration } from "types";
 // fetch-keys
 import { PROJECT_GITHUB_REPOSITORY } from "constants/fetch-keys";
+import { comboMatches } from "@blueprintjs/core";
 
 type Props = {
   integration: IWorkspaceIntegration;
+};
+
+const integrationDetails: { [key: string]: any } = {
+  github: {
+    logo: GithubLogo,
+    installed:
+      "Activate GitHub integrations on individual projects to sync with specific repositories.",
+    notInstalled: "Connect with GitHub with your Plane workspace to sync project issues.",
+  },
+  slack: {
+    logo: SlackLogo,
+    installed: "Activate Slack integrations on individual projects to sync with specific cahnnels.",
+    notInstalled: "Connect with Slack with your Plane workspace to sync project issues.",
+  },
 };
 
 export const SingleIntegration: React.FC<Props> = ({ integration }) => {
@@ -83,29 +99,43 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
         <div className="flex items-center justify-between gap-2 rounded-[10px] border border-brand-base bg-brand-surface-1 p-5">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 flex-shrink-0">
-              <Image src={GithubLogo} alt="GithubLogo" />
+              <Image
+                src={integrationDetails[integration.integration_detail.provider].logo}
+                alt="GithubLogo"
+              />
             </div>
             <div>
               <h3 className="flex items-center gap-4 text-xl font-semibold">
                 {integration.integration_detail.title}
               </h3>
-              <p className="text-sm text-gray-400">Select GitHub repository to enable sync.</p>
+              <p className="text-sm text-gray-400">
+                {integration.integration_detail.provider === "github"
+                  ? "Select GitHub repository to enable sync."
+                  : integration.integration_detail.provider === "slack"
+                  ? "Connect your slack channel to this project to get regular updates. Control which notification you want to receive"
+                  : null}
+              </p>
             </div>
           </div>
-          <SelectRepository
-            integration={integration}
-            value={
-              syncedGithubRepository && syncedGithubRepository.length > 0
-                ? `${syncedGithubRepository[0].repo_detail.owner}/${syncedGithubRepository[0].repo_detail.name}`
-                : null
-            }
-            label={
-              syncedGithubRepository && syncedGithubRepository.length > 0
-                ? `${syncedGithubRepository[0].repo_detail.owner}/${syncedGithubRepository[0].repo_detail.name}`
-                : "Select Repository"
-            }
-            onChange={handleChange}
-          />
+          {integration.integration_detail.provider === "github" && (
+            <SelectRepository
+              integration={integration}
+              value={
+                syncedGithubRepository && syncedGithubRepository.length > 0
+                  ? `${syncedGithubRepository[0].repo_detail.owner}/${syncedGithubRepository[0].repo_detail.name}`
+                  : null
+              }
+              label={
+                syncedGithubRepository && syncedGithubRepository.length > 0
+                  ? `${syncedGithubRepository[0].repo_detail.owner}/${syncedGithubRepository[0].repo_detail.name}`
+                  : "Select Repository"
+              }
+              onChange={handleChange}
+            />
+          )}
+          {integration.integration_detail.provider === "slack" && (
+            <SelectChannel integration={integration} />
+          )}
         </div>
       )}
     </>

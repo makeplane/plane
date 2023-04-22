@@ -138,6 +138,10 @@ export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
 export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) =>
   `GITHUB_REPO_INFO_${workspaceSlug.toString().toUpperCase()}_${repoName.toUpperCase()}`;
 
+// slack-project-integration
+export const SLACK_CHANNEL_INFO = (workspaceSlug: string, projectId: string) =>
+  `SLACK_CHANNEL_INFO_${workspaceSlug.toString().toUpperCase()}_${projectId.toUpperCase()}`;
+
 // Calendar
 export const PROJECT_CALENDAR_ISSUES = (projectId: string) =>
   `CALENDAR_ISSUES_${projectId.toUpperCase()}`;

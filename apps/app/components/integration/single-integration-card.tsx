@@ -11,7 +11,7 @@ import IntegrationService from "services/integration";
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { DangerButton, Loader, SecondaryButton } from "components/ui";
+import { DangerButton, Loader, PrimaryButton } from "components/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
@@ -33,7 +33,7 @@ const integrationDetails: { [key: string]: any } = {
   },
   slack: {
     logo: SlackLogo,
-    installed: "Activate Slack integrations on individual projects to sync with specific cahnnels.",
+    installed: "Activate Slack integrations on individual projects to sync with specific channels.",
     notInstalled: "Connect with Slack with your Plane workspace to sync project issues.",
   },
 };
@@ -139,9 +139,9 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
             {deletingIntegration ? "Removing..." : "Remove installation"}
           </DangerButton>
         ) : (
-          <SecondaryButton onClick={startAuth} loading={isInstalling}>
+          <PrimaryButton onClick={startAuth} loading={isInstalling}>
             {isInstalling ? "Installing..." : "Add installation"}
-          </SecondaryButton>
+          </PrimaryButton>
         )
       ) : (
         <Loader>
