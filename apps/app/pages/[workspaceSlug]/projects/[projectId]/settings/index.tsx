@@ -23,8 +23,8 @@ import {
   TextArea,
   Loader,
   CustomSelect,
-  OutlineButton,
   SecondaryButton,
+  DangerButton,
 } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
@@ -346,12 +346,12 @@ const GeneralSettings: NextPage = () => {
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
                 <div>
-                  <OutlineButton
-                    theme="danger"
+                  <DangerButton
                     onClick={() => setSelectedProject(projectDetails.id ?? null)}
+                    outline
                   >
                     Delete Project
-                  </OutlineButton>
+                  </DangerButton>
                 </div>
               ) : (
                 <Loader className="mt-2 w-full">

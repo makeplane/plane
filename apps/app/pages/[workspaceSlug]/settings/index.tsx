@@ -18,14 +18,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
 // ui
-import {
-  Spinner,
-  Input,
-  CustomSelect,
-  OutlineButton,
-  SecondaryButton,
-  DangerButton,
-} from "components/ui";
+import { Spinner, Input, CustomSelect, SecondaryButton, DangerButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
@@ -325,9 +318,9 @@ const WorkspaceSettings: NextPage = () => {
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
-              <OutlineButton theme="danger" onClick={() => setIsOpen(true)}>
+              <DangerButton onClick={() => setIsOpen(true)} outline>
                 Delete the workspace
-              </OutlineButton>
+              </DangerButton>
             </div>
           </div>
         </div>
