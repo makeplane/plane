@@ -110,7 +110,10 @@ const StatesSettings: NextPage = () => {
                               handleDeleteState={() => setSelectDeleteState(state.id)}
                             />
                           ) : (
-                            <div className="border-b last:border-b-0" key={state.id}>
+                            <div
+                              className="border-b border-brand-base last:border-b-0"
+                              key={state.id}
+                            >
                               <CreateUpdateStateInline
                                 onClose={() => {
                                   setActiveGroup(null);
