@@ -17,9 +17,9 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
-import type { IState } from "types";
+import type { IState, IStateResponse } from "types";
 // fetch-keys
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
 
@@ -33,7 +33,7 @@ export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "ca
 
 const defaultValues: Partial<IState> = {
   name: "",
-  color: "#000000",
+  color: "#858e96",
   group: "backlog",
 };
 
@@ -80,11 +80,23 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
     const payload: IState = {
       ...formData,
     };
+
     if (!data) {
       await stateService
-        .createState(workspaceSlug as string, projectId as string, { ...payload })
+        .createState(workspaceSlug.toString(), projectId.toString(), { ...payload })
         .then((res) => {
-          mutate(STATE_LIST(projectId as string));
+          mutate<IStateResponse>(
+            STATES_LIST(projectId.toString()),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              return {
+                ...prevData,
+                [res.group]: [...prevData[res.group], res],
+              };
+            },
+            false
+          );
           handleClose();
 
           setToastAlert({
@@ -109,11 +121,11 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
         });
     } else {
       await stateService
-        .updateState(workspaceSlug as string, projectId as string, data.id, {
+        .updateState(workspaceSlug.toString(), projectId.toString(), data.id, {
           ...payload,
         })
         .then(() => {
-          mutate(STATE_LIST(projectId as string));
+          mutate(STATES_LIST(projectId.toString()));
           handleClose();
 
           setToastAlert({

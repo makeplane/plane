@@ -1,7 +1,7 @@
 // types
-import { IState, StateResponse } from "types";
+import { IState, IStateResponse } from "types";
 
-export const orderStateGroups = (unorderedStateGroups: StateResponse) =>
+export const orderStateGroups = (unorderedStateGroups: IStateResponse) =>
   Object.assign(
     { backlog: [], unstarted: [], started: [], completed: [], cancelled: [] },
     unorderedStateGroups

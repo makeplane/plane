@@ -15,6 +15,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy, orderArrayBy } from "helpers/array.helper";
@@ -22,8 +23,7 @@ import { orderStateGroups } from "helpers/state.helper";
 // types
 import { IState } from "types";
 // fetch-keys
-import { STATE_LIST } from "constants/fetch-keys";
-import { getStateGroupIcon } from "components/icons";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   index: number;
@@ -60,7 +60,7 @@ export const SingleState: React.FC<Props> = ({
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
     mutate(
-      STATE_LIST(projectId as string),
+      STATES_LIST(projectId as string),
       orderStateGroups(groupBy(newStatesList, "group")),
       false
     );
@@ -76,7 +76,7 @@ export const SingleState: React.FC<Props> = ({
               default: true,
             })
             .then(() => {
-              mutate(STATE_LIST(projectId as string));
+              mutate(STATES_LIST(projectId as string));
               setIsSubmitting(false);
             })
             .catch(() => {
@@ -89,7 +89,7 @@ export const SingleState: React.FC<Props> = ({
           default: true,
         })
         .then(() => {
-          mutate(STATE_LIST(projectId as string));
+          mutate(STATES_LIST(projectId as string));
           setIsSubmitting(false);
         })
         .catch(() => {
@@ -115,7 +115,7 @@ export const SingleState: React.FC<Props> = ({
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
     mutate(
-      STATE_LIST(projectId as string),
+      STATES_LIST(projectId as string),
       orderStateGroups(groupBy(newStatesList, "group")),
       false
     );
@@ -126,7 +126,7 @@ export const SingleState: React.FC<Props> = ({
       })
       .then((res) => {
         console.log(res);
-        mutate(STATE_LIST(projectId as string));
+        mutate(STATES_LIST(projectId as string));
       })
       .catch((err) => {
         console.error(err);
@@ -140,7 +140,7 @@ export const SingleState: React.FC<Props> = ({
       <div className="flex items-center gap-3">
         {getStateGroupIcon(state.group, "20", "20", state.color)}
         <div>
-          <h6 className="font-medium text-brand-muted-1">{addSpaceIfCamelCase(state.name)}</h6>
+          <h6 className="text-brand-muted-1 font-medium">{addSpaceIfCamelCase(state.name)}</h6>
           <p className="text-xs text-gray-400">{state.description}</p>
         </div>
       </div>

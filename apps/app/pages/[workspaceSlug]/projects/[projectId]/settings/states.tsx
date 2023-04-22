@@ -6,7 +6,8 @@ import useSWR from "swr";
 
 // services
 import stateService from "services/state.service";
-import projectService from "services/project.service";
+// hooks
+import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -26,7 +27,7 @@ import { getStatesList, orderStateGroups } from "helpers/state.helper";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 const StatesSettings: NextPage = () => {
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
@@ -36,15 +37,10 @@ const StatesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { projectDetails } = useProjectDetails();
 
   const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
