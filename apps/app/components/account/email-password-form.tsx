@@ -94,7 +94,7 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
         <div className="mt-2 flex items-center justify-between">
           <div className="ml-auto text-sm">
             <Link href={"/forgot-password"}>
-              <a className="font-medium text-theme hover:text-indigo-500">Forgot your password?</a>
+              <a className="font-medium text-brand-accent hover:text-indigo-500">Forgot your password?</a>
             </Link>
           </div>
         </div>

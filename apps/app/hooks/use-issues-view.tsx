@@ -20,7 +20,7 @@ import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
-  STATE_LIST,
+  STATES_LIST,
 } from "constants/fetch-keys";
 
 const useIssuesView = () => {
@@ -100,7 +100,7 @@ const useIssuesView = () => {
   );
 
   const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null

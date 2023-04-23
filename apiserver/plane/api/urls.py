@@ -81,8 +81,6 @@ from plane.api.views import (
     StateViewSet,
     ## End States
     # Estimates
-    EstimateViewSet,
-    EstimatePointViewSet,
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
     ## End Estimates
@@ -133,6 +131,7 @@ from plane.api.views import (
     GithubIssueSyncViewSet,
     GithubCommentSyncViewSet,
     BulkCreateGithubIssueSyncEndpoint,
+    SlackProjectSyncViewSet,
     ## End Integrations
     # Importer
     ServiceIssueImportSummaryEndpoint,
@@ -146,6 +145,9 @@ from plane.api.views import (
     # Gpt
     GPTIntegrationEndpoint,
     ## End Gpt
+    # Release Notes
+    ReleaseNotesEndpoint,
+    ## End Release Notes
 )
 
 
@@ -507,62 +509,34 @@ urlpatterns = [
         name="project-state",
     ),
     # End States ##
-    #  States
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/",
-        EstimateViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-estimates",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:pk>/",
-        EstimateViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-estimates",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-points/",
-        EstimatePointViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-estimate-points",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-points/<uuid:pk>/",
-        EstimatePointViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-estimates",
-    ),
+    #  Estimates
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-estimates/",
         ProjectEstimatePointEndpoint.as_view(),
         name="project-estimate-points",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/bulk-estimate-points/",
-        BulkEstimatePointEndpoint.as_view(),
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/",
+        BulkEstimatePointEndpoint.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
         name="bulk-create-estimate-points",
     ),
-    # End States ##
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/",
+        BulkEstimatePointEndpoint.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="bulk-create-estimate-points",
+    ),
+    # End Estimates ##
     # Shortcuts
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/shortcuts/",
@@ -1237,6 +1211,26 @@ urlpatterns = [
         ),
     ),
     ## End Github Integrations
+    # Slack Integration
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/project-slack-sync/",
+        SlackProjectSyncViewSet.as_view(
+            {
+                "post": "create",
+                "get": "list",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/project-slack-sync/<uuid:pk>/",
+        SlackProjectSyncViewSet.as_view(
+            {
+                "delete": "destroy",
+                "get": "retrieve",
+            }
+        ),
+    ),
+    ## End Slack Integration
     ## End Integrations
     # Importer
     path(
@@ -1284,4 +1278,11 @@ urlpatterns = [
         name="importer",
     ),
     ## End Gpt
+    # Release Notes
+    path(
+        "release-notes/",
+        ReleaseNotesEndpoint.as_view(),
+        name="release-notes",
+    ),
+    ## End Release Notes
 ]

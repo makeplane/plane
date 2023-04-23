@@ -3,7 +3,15 @@ import uuid
 import random
 from django.contrib.auth.hashers import make_password
 from plane.db.models import ProjectIdentifier
-from plane.db.models import Issue, IssueComment, User, Project, ProjectMember, Label
+from plane.db.models import (
+    Issue,
+    IssueComment,
+    User,
+    Project,
+    ProjectMember,
+    Label,
+    Integration,
+)
 
 
 # Update description and description html values for old descriptions
@@ -171,6 +179,32 @@ def update_label_color():
 
         Label.objects.bulk_update(updated_labels, ["color"], batch_size=100)
         print("Success")
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+
+def create_slack_integration():
+    try:
+        _ = Integration.objects.create(provider="slack", network=2, title="Slack")
+        print("Success")
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+
+def update_integration_verified():
+    try:
+        integrations = Integration.objects.all()
+        updated_integrations = []
+        for integration in integrations:
+            integration.verified = True
+            updated_integrations.append(integration)
+
+        Integration.objects.bulk_update(
+            updated_integrations, ["verified"], batch_size=10
+        )
+        print("Sucess")
     except Exception as e:
         print(e)
         print("Failed")

@@ -110,7 +110,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto">
@@ -124,9 +124,9 @@ export const ImageUploadModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
                     Upload Image
                   </Dialog.Title>
                   <div className="space-y-3">
@@ -135,7 +135,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                         {...getRootProps()}
                         className={`relative block h-80 w-full rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-gray-300 hover:border-gray-400"
+                            ? "border-2 border-dashed border-brand-base hover:border-gray-400"
                             : ""
                         }`}
                       >
@@ -143,7 +143,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                           <>
                             <button
                               type="button"
-                              className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600"
+                              className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-brand-surface-1 px-2 py-0.5 text-xs font-medium text-gray-600"
                             >
                               Edit
                             </button>
@@ -157,7 +157,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                         ) : (
                           <>
                             <UserCircleIcon className="mx-auto h-16 w-16 text-gray-400" />
-                            <span className="mt-2 block text-sm font-medium text-gray-900">
+                            <span className="mt-2 block text-sm font-medium text-brand-base">
                               {isDragActive
                                 ? "Drop image here to upload"
                                 : "Drag & drop image here"}

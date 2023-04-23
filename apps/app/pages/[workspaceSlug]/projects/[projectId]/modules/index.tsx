@@ -91,7 +91,7 @@ const ProjectModules: NextPage = () => {
         modules.length > 0 ? (
           <div className="space-y-5">
             <div className="flex flex-col gap-5">
-              <h3 className="text-3xl font-semibold text-black">Modules</h3>
+              <h3 className="text-3xl font-semibold text-brand-base">Modules</h3>
 
               <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
                 {modules.map((module) => (

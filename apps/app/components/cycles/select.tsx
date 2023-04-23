@@ -59,9 +59,9 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
         {({ open }) => (
           <>
             <Listbox.Button
-              className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
+              className={`flex cursor-pointer items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 hover:bg-brand-surface-1 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
             >
-              <CyclesIcon className="h-3 w-3 text-gray-500" />
+              <CyclesIcon className="h-3 w-3 text-brand-secondary" />
               <div className="flex items-center gap-2 truncate">
                 {cycles?.find((c) => c.id === value)?.name ?? "Cycles"}
               </div>
@@ -75,7 +75,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
               leaveTo="opacity-0"
             >
               <Listbox.Options
-                className={`absolute mt-1 max-h-32 min-w-[8rem] overflow-y-auto whitespace-nowrap bg-white shadow-lg text-xs z-10 rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none`}
+                className={`absolute mt-1 max-h-32 min-w-[8rem] overflow-y-auto whitespace-nowrap bg-brand-surface-2 shadow-lg text-xs z-10 rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none`}
               >
                 <div className="py-1">
                   {options ? (
@@ -93,7 +93,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
                                 : ""
                             } ${
                               active ? "bg-indigo-50" : ""
-                            } relative cursor-pointer select-none p-2 text-gray-900`
+                            } relative cursor-pointer select-none p-2 text-brand-base`
                           }
                           value={option.value}
                         >
@@ -103,14 +103,14 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
                         </Listbox.Option>
                       ))
                     ) : (
-                      <p className="text-center text-sm text-gray-500">No options</p>
+                      <p className="text-center text-sm text-brand-secondary">No options</p>
                     )
                   ) : (
-                    <p className="text-center text-sm text-gray-500">Loading...</p>
+                    <p className="text-center text-sm text-brand-secondary">Loading...</p>
                   )}
                   <button
                     type="button"
-                    className="relative w-full flex select-none items-center gap-x-2 p-2 text-gray-400 hover:bg-indigo-50 hover:text-gray-900"
+                    className="relative w-full flex select-none items-center gap-x-2 p-2 text-gray-400 hover:bg-indigo-50 hover:text-brand-base"
                     onClick={openCycleModal}
                   >
                     <PlusIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />

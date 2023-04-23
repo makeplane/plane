@@ -1,5 +1,8 @@
 import dynamic from "next/dynamic";
 
+// themes
+import { ThemeProvider } from "next-themes";
+
 // styles
 import "styles/globals.css";
 import "styles/editor.css";
@@ -18,6 +21,8 @@ import { ToastContextProvider } from "contexts/toast.context";
 import { ThemeContextProvider } from "contexts/theme.context";
 // types
 import type { AppProps } from "next/app";
+// constants
+import { THEMES } from "constants/themes";
 
 const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
 
@@ -29,14 +34,16 @@ Router.events.on("routeChangeComplete", NProgress.done);
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <UserProvider>
-      <ToastContextProvider>
-        <ThemeContextProvider>
-          <CrispWithNoSSR />
-          <Component {...pageProps} />
-        </ThemeContextProvider>
-      </ToastContextProvider>
-    </UserProvider>
+    <ThemeProvider themes={THEMES} defaultTheme="light">
+      <UserProvider>
+        <ToastContextProvider>
+          <ThemeContextProvider>
+            <CrispWithNoSSR />
+            <Component {...pageProps} />
+          </ThemeContextProvider>
+        </ToastContextProvider>
+      </UserProvider>
+    </ThemeProvider>
   );
 }
 

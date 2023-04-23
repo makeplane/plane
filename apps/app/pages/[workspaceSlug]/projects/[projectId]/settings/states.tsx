@@ -6,7 +6,8 @@ import useSWR from "swr";
 
 // services
 import stateService from "services/state.service";
-import projectService from "services/project.service";
+// hooks
+import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -26,7 +27,7 @@ import { getStatesList, orderStateGroups } from "helpers/state.helper";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 const StatesSettings: NextPage = () => {
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
@@ -36,15 +37,10 @@ const StatesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { projectDetails } = useProjectDetails();
 
   const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
@@ -72,8 +68,8 @@ const StatesSettings: NextPage = () => {
       >
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 sm:col-span-5">
-            <h3 className="text-2xl font-semibold">States</h3>
-            <p className="text-gray-500">Manage the states of this project.</p>
+            <h3 className="text-2xl font-semibold text-brand-base">States</h3>
+            <p className="text-brand-secondary">Manage the states of this project.</p>
           </div>
           <div className="col-span-12 space-y-8 sm:col-span-7">
             {states && projectDetails ? (
@@ -85,14 +81,14 @@ const StatesSettings: NextPage = () => {
                         <h4 className="font-medium capitalize">{key}</h4>
                         <button
                           type="button"
-                          className="flex items-center gap-2 text-theme outline-none"
+                          className="flex items-center gap-2 text-brand-accent outline-none"
                           onClick={() => setActiveGroup(key as keyof StateGroup)}
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add
                         </button>
                       </div>
-                      <div className="divide-y rounded-[10px] border">
+                      <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
                         {key === activeGroup && (
                           <CreateUpdateStateInline
                             onClose={() => {
@@ -114,7 +110,10 @@ const StatesSettings: NextPage = () => {
                               handleDeleteState={() => setSelectDeleteState(state.id)}
                             />
                           ) : (
-                            <div className="border-b last:border-b-0" key={state.id}>
+                            <div
+                              className="border-b border-brand-base last:border-b-0"
+                              key={state.id}
+                            >
                               <CreateUpdateStateInline
                                 onClose={() => {
                                   setActiveGroup(null);

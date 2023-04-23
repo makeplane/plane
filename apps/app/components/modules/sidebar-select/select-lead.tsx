@@ -54,19 +54,19 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2">
-        <UserCircleIcon className="h-5 w-5 text-gray-400" />
+      <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+        <UserCircleIcon className="h-5 w-5" />
         <span>Lead</span>
       </div>
       <div className="sm:basis-1/2">
         <CustomSearchSelect
           value={value}
           label={
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-brand-secondary">
               {selectedOption ? (
                 <Avatar user={selectedOption} />
               ) : (
-                <div className="h-5 w-5 rounded-full border-2 border-transparent bg-white">
+                <div className="h-5 w-5 rounded-full border-2 border-transparent bg-brand-surface-2">
                   <Image
                     src={User}
                     height="100%"

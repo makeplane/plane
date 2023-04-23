@@ -1,4 +1,5 @@
 export * from "./github-importer";
+export * from "./jira-importer";
 
 import { IProjectLite } from "types/projects";
 // types

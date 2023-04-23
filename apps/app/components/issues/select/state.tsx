@@ -14,7 +14,7 @@ import { getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // fetch keys
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,7 +29,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
   const { workspaceSlug } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId)
       : null
@@ -56,7 +56,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       onChange={onChange}
       options={options}
       label={
-        <div className="flex items-center gap-2 text-gray-500">
+        <div className="flex items-center gap-2 text-brand-secondary">
           {selectedOption ? (
             getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)
           ) : currentDefaultState ? (
@@ -70,7 +70,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       footerOption={
         <button
           type="button"
-          className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-gray-500 hover:bg-hover-gray"
+          className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-brand-secondary hover:bg-brand-surface-2"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-4 w-4" aria-hidden="true" />

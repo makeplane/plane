@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
-import { ImageUploadModal } from "components/core";
+import { ImageUploadModal, ThemeSwitch } from "components/core";
 // ui
 import { CustomSelect, DangerButton, Input, SecondaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -147,8 +147,8 @@ const Profile: NextPage = () => {
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Profile Picture</h4>
-              <p className="text-gray-500">
+              <h4 className="text-xl font-semibold text-brand-base">Profile Picture</h4>
+              <p className="text-brand-secondary">
                 Max file size is 5MB. Supported file types are .jpg and .png.
               </p>
             </div>
@@ -156,8 +156,8 @@ const Profile: NextPage = () => {
               <div className="flex items-center gap-4">
                 <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                   {!watch("avatar") || watch("avatar") === "" ? (
-                    <div className="bg-gray-100 h-12 w-12 p-2 rounded-md">
-                      <UserIcon className="h-full w-full text-gray-300" />
+                    <div className="bg-brand-surface-2 h-12 w-12 p-2 rounded-md">
+                      <UserIcon className="h-full w-full text-brand-secondary" />
                     </div>
                   ) : (
                     <div className="relative h-12 w-12 overflow-hidden">
@@ -195,8 +195,8 @@ const Profile: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Full Name</h4>
-              <p className="text-gray-500">
+              <h4 className="text-xl font-semibold text-brand-base">Full Name</h4>
+              <p className="text-brand-secondary">
                 This name will be reflected on all the projects you are working on.
               </p>
             </div>
@@ -224,8 +224,8 @@ const Profile: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Email</h4>
-              <p className="text-gray-500">The email address that you are using.</p>
+              <h4 className="text-xl font-semibold text-brand-base">Email</h4>
+              <p className="text-brand-secondary">The email address that you are using.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               <Input
@@ -241,8 +241,8 @@ const Profile: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Role</h4>
-              <p className="text-gray-500">Add your role.</p>
+              <h4 className="text-xl font-semibold text-brand-base">Role</h4>
+              <p className="text-brand-secondary">Add your role.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               <Controller
@@ -266,6 +266,15 @@ const Profile: NextPage = () => {
                   </CustomSelect>
                 )}
               />
+            </div>
+          </div>
+          <div className="grid grid-cols-12 gap-4 sm:gap-16">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-xl font-semibold text-brand-base">Theme</h4>
+              <p className="text-brand-secondary">Select or customize your interface color scheme.</p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <ThemeSwitch />
             </div>
           </div>
           <div className="sm:text-right">

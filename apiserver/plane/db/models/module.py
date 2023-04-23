@@ -39,6 +39,7 @@ class Module(ProjectBaseModel):
         through="ModuleMember",
         through_fields=("module", "member"),
     )
+    view_props = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["name", "project"]

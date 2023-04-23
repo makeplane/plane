@@ -50,19 +50,19 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2">
-        <UserGroupIcon className="h-5 w-5 text-gray-400" />
+      <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+        <UserGroupIcon className="h-5 w-5" />
         <span>Members</span>
       </div>
       <div className="sm:basis-1/2">
         <CustomSearchSelect
           value={value}
           label={
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-brand-secondary">
               {value && value.length > 0 && Array.isArray(value) ? (
                 <div className="flex items-center justify-center gap-2">
                   <AssigneesList userIds={value} length={3} showLength={false} />
-                  <span className="text-gray-500">{value.length} Assignees</span>
+                  <span className="text-brand-secondary">{value.length} Assignees</span>
                 </div>
               ) : (
                 "No members"

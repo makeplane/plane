@@ -52,7 +52,7 @@ const IntegrationGuide = () => {
         handleClose={() => setDeleteImportModal(false)}
         data={importToDelete}
       />
-      <div className="space-y-2">
+      <div className="space-y-2 h-full">
         {!provider && (
           <>
             <div className="flex items-center gap-2 mb-5">

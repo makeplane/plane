@@ -2,6 +2,7 @@
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
 
 # Third party imports
 from celery import shared_task
@@ -14,7 +15,7 @@ def magic_link(email, key, token, current_site):
         realtivelink = f"/magic-sign-in/?password={token}&key={key}"
         abs_url = "http://" + current_site + realtivelink
 
-        from_email_string = f"Team Plane <team@mailer.plane.so>"
+        from_email_string = settings.EMAIL_FROM
 
         subject = f"Login for Plane"
 
@@ -29,6 +30,5 @@ def magic_link(email, key, token, current_site):
         msg.send()
         return
     except Exception as e:
-        print(e)
         capture_exception(e)
         return

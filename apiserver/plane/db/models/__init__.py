@@ -59,6 +59,7 @@ from .integration import (
     GithubRepositorySync,
     GithubIssueSync,
     GithubCommentSync,
+    SlackProjectSync,
 )
 
 from .importer import Importer

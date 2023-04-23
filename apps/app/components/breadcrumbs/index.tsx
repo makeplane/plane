@@ -16,7 +16,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
       <div className="flex items-center">
         <button
           type="button"
-          className="grid h-8 w-8 flex-shrink-0 cursor-pointer place-items-center rounded border border-gray-300 text-center text-sm hover:bg-gray-100"
+          className="grid h-8 w-8 flex-shrink-0 cursor-pointer place-items-center rounded border border-brand-base text-center text-sm hover:bg-brand-surface-1"
           onClick={() => router.back()}
         >
           <ArrowLeftIcon className="h-3 w-3" />
@@ -37,7 +37,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({ title, link, icon }) =>
   <>
     {link ? (
       <Link href={link}>
-        <a className="border-r-2 border-gray-300 px-3 text-sm">
+        <a className="border-r-2 border-brand-base px-3 text-sm">
           <p className={`${icon ? "flex items-center gap-2" : ""}`}>
             {icon ?? null}
             {title}

@@ -177,6 +177,12 @@ export const renderShortTime = (date: string | Date) => {
 export const isDateRangeValid = (startDate: string, endDate: string) =>
   new Date(startDate) < new Date(endDate);
 
+export const isDateGreaterThanToday = (dateStr: string) =>{
+  const date = new Date(dateStr);
+  const today = new Date();
+  return date > today;
+}
+
 export const renderLongDateFormat = (dateString: string) => {
   const date = new Date(dateString);
   const day = date.getDate();

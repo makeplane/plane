@@ -106,7 +106,7 @@ const LabelsSettings: NextPage = () => {
         <section className="grid grid-cols-12 gap-10">
           <div className="col-span-12 sm:col-span-5">
             <h3 className="text-2xl font-semibold">Labels</h3>
-            <p className="text-gray-500">Manage the labels of this project.</p>
+            <p className="text-brand-secondary">Manage the labels of this project.</p>
             <PrimaryButton onClick={newLabel} size="sm" className="mt-4">
               <span className="flex items-center gap-2">
                 <PlusIcon className="h-4 w-4" />

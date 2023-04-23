@@ -80,7 +80,7 @@ AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
 AWS_S3_ADDRESSING_STYLE = "auto"
 
 # The full URL to the S3 endpoint. Leave blank to use the default region URL.
-AWS_S3_ENDPOINT_URL = ""
+AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "")
 
 # A prefix to be applied to every stored file. This will be joined to every filename using the "/" separator.
 AWS_S3_KEY_PREFIX = ""
@@ -204,3 +204,5 @@ broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={cert
 
 CELERY_RESULT_BACKEND = broker_url
 CELERY_BROKER_URL = broker_url
+
+GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
