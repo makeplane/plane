@@ -20,12 +20,12 @@ export const NotAWorkspaceMember = () => {
         <div className="space-y-8 text-center">
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">Not Authorized!</h3>
-            <p className="text-sm text-gray-500 w-1/2 mx-auto">
+            <p className="mx-auto w-1/2 text-sm text-brand-secondary">
               You{"'"}re not a member of this workspace. Please contact the workspace admin to get
               an invitation or check your pending invitations.
             </p>
           </div>
-          <div className="flex items-center gap-2 justify-center">
+          <div className="flex items-center justify-center gap-2">
             <Link href="/invitations">
               <a>
                 <SecondaryButton>Check pending invites</SecondaryButton>
