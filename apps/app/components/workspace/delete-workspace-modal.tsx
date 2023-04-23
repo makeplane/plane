@@ -88,7 +88,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -102,10 +102,10 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
-                    <span className="place-items-center rounded-full bg-red-100 p-4">
+                    <span className="place-items-center rounded-full bg-red-500/20 p-4">
                       <ExclamationTriangleIcon
                         className="h-6 w-6 text-red-600"
                         aria-hidden="true"
@@ -125,10 +125,11 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
                     </p>
                   </span>
 
-                  <div className="text-gray-600">
+                  <div className="text-brand-secondary">
                     <p className="break-all text-sm ">
                       Enter the workspace name{" "}
-                      <span className="font-medium">{selectedWorkspace?.name}</span> to continue:
+                      <span className="font-medium text-brand-base">{selectedWorkspace?.name}</span>{" "}
+                      to continue:
                     </p>
                     <Input
                       type="text"
@@ -142,9 +143,10 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
                     />
                   </div>
 
-                  <div className="text-gray-600">
+                  <div className="text-brand-secondary">
                     <p className="text-sm">
-                      To confirm, type <span className="font-medium">delete my workspace</span>{" "}
+                      To confirm, type{" "}
+                      <span className="font-medium text-brand-base">delete my workspace</span>{" "}
                       below:
                     </p>
                     <Input
