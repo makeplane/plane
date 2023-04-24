@@ -78,7 +78,6 @@ export const ViewForm: React.FC<Props> = ({
               type="name"
               placeholder="Title"
               autoComplete="off"
-              mode="transparent"
               className="resize-none text-xl"
               error={errors.name}
               register={register}
@@ -97,7 +96,6 @@ export const ViewForm: React.FC<Props> = ({
               name="description"
               placeholder="Description"
               className="h-32 resize-none text-sm"
-              mode="transparent"
               error={errors.description}
               register={register}
             />

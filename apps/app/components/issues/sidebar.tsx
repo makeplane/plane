@@ -316,7 +316,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 issueDetail?.parent_detail ? (
                   <button
                     type="button"
-                    className="flex items-center gap-2 rounded bg-brand-surface-1 px-3 py-2 text-xs"
+                    className="flex items-center gap-2 rounded bg-brand-surface-2 px-3 py-2 text-xs"
                     onClick={() => submitChanges({ parent: null })}
                   >
                     {issueDetail.parent_detail?.name}

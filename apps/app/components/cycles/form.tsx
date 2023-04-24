@@ -113,7 +113,6 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
         <div className="space-y-3">
           <div>
             <Input
-              mode="transparent"
               autoComplete="off"
               id="name"
               name="name"
@@ -137,7 +136,6 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
               name="description"
               placeholder="Description"
               className="h-32 resize-none text-sm"
-              mode="transparent"
               error={errors.description}
               register={register}
             />
@@ -166,7 +164,8 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                           setToastAlert({
                             type: "error",
                             title: "Error!",
-                            message: "The date you have entered is invalid. Please check and enter a valid date.",
+                            message:
+                              "The date you have entered is invalid. Please check and enter a valid date.",
                           });
                         }
                       }
@@ -197,7 +196,8 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                           setToastAlert({
                             type: "error",
                             title: "Error!",
-                            message: "The date you have entered is invalid. Please check and enter a valid date.",
+                            message:
+                              "The date you have entered is invalid. Please check and enter a valid date.",
                           });
                         }
                       }
@@ -220,7 +220,8 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
               ? "cursor-pointer"
               : "cursor-not-allowed"
           }
-          loading={isSubmitting || checkEmptyDate ? false : isDateValid ? false : true}
+          disabled={checkEmptyDate ? false : isDateValid ? false : true}
+          loading={isSubmitting}
         >
           {status
             ? isSubmitting

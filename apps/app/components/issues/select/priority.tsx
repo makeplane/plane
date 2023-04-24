@@ -20,7 +20,7 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
         <span className="flex items-center">
           {getPriorityIcon(value, `text-xs ${value ? "" : "text-brand-secondary"}`)}
         </span>
-        <span className={`${value ? "text-gray-600" : "text-brand-secondary"} capitalize`}>
+        <span className={`${value ? "" : "text-brand-secondary"} capitalize`}>
           {value ?? "Priority"}
         </span>
       </div>

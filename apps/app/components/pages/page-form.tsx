@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 
 // react-hook-form
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 // ui
 import { Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 // types
@@ -37,8 +37,6 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
-    control,
-    setValue,
   } = useForm<IPage>({
     defaultValues,
   });
@@ -68,36 +66,22 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
           <div>
             <Input
               id="name"
-              label="Name"
               name="name"
               type="name"
-              placeholder="Enter name"
+              placeholder="Title"
+              className="resize-none text-xl"
               autoComplete="off"
               error={errors.name}
               register={register}
               validations={{
-                required: "Name is required",
+                required: "Title is required",
                 maxLength: {
                   value: 255,
-                  message: "Name should be less than 255 characters",
+                  message: "Title should be less than 255 characters",
                 },
               }}
             />
           </div>
-          {/* <div>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field: { value } }) => (
-                <RemirrorRichTextEditor
-                  value={value}
-                  onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                  onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                  placeholder="Description"
-                />
-              )}
-            />
-          </div> */}
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">

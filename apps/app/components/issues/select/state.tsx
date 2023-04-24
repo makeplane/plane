@@ -56,15 +56,17 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       onChange={onChange}
       options={options}
       label={
-        <div className="flex items-center gap-2 text-brand-secondary">
+        <div className="flex items-center gap-2">
           {selectedOption ? (
             getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)
           ) : currentDefaultState ? (
             getStateGroupIcon(currentDefaultState.group, "16", "16", currentDefaultState.color)
           ) : (
-            <Squares2X2Icon className="h-4 w-4" />
+            <Squares2X2Icon className="h-3.5 w-3.5 text-brand-secondary" />
           )}
-          {selectedOption?.name ? selectedOption.name : currentDefaultState?.name ?? "State"}
+          {selectedOption?.name
+            ? selectedOption.name
+            : currentDefaultState?.name ?? <span className="text-brand-secondary">State</span>}
         </div>
       }
       footerOption={

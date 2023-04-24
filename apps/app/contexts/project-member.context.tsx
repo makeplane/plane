@@ -37,13 +37,7 @@ export const ProjectMemberProvider: React.FC<Props> = (props) => {
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
-      : null,
-    {
-      onErrorRetry(err, _, __, ___, revalidateOpts) {
-        if (err.status === 401 || err.status === 403) return;
-        revalidateOpts.retryCount = 5;
-      },
-    }
+      : null
   );
 
   const loading = !memberDetails && !error;

@@ -7,13 +7,7 @@ import useToast from "hooks/use-toast";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
 // ui
-import {
-  DateSelect,
-  Input,
-  PrimaryButton,
-  SecondaryButton,
-  TextArea,
-} from "components/ui";
+import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // helper
 import { isDateRangeValid } from "helpers/date-time.helper";
 // types
@@ -77,7 +71,6 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
               type="name"
               placeholder="Title"
               autoComplete="off"
-              mode="transparent"
               className="resize-none text-xl"
               error={errors.name}
               register={register}
@@ -96,7 +89,6 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
               name="description"
               placeholder="Description"
               className="h-32 resize-none text-sm"
-              mode="transparent"
               error={errors.description}
               register={register}
             />
@@ -119,7 +111,8 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                         setToastAlert({
                           type: "error",
                           title: "Error!",
-                          message: "The date you have entered is invalid. Please check and enter a valid date.",
+                          message:
+                            "The date you have entered is invalid. Please check and enter a valid date.",
                         });
                       }
                     }
@@ -144,7 +137,8 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                         setToastAlert({
                           type: "error",
                           title: "Error!",
-                          message: "The date you have entered is invalid. Please check and enter a valid date.",
+                          message:
+                            "The date you have entered is invalid. Please check and enter a valid date.",
                         });
                       }
                     }
