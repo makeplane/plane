@@ -385,8 +385,21 @@ const SinglePage: NextPage = () => {
                   }
                   value={pageDetails.labels}
                   onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
-                    options={options}
-                    setIsOpen={()=>setLabelModal((prev)=>!prev)}
+                  footerOption={
+                    <button
+                      type="button"
+                      className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
+                      onClick={() => {
+                        setLabelModal(true);
+                      }}
+                    >
+                      <span className="flex items-center justify-start gap-1 text-brand-secondary">
+                        <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                        <span>Create New Label</span>
+                      </span>
+                    </button>
+                  }
+                  options={options}
                   multiple
                   noChevron
                 />
@@ -534,7 +547,7 @@ const SinglePage: NextPage = () => {
                     />
                   </div>
                 )}
-                { labelModal && typeof projectId === 'string' && (
+                {labelModal && typeof projectId === "string" && (
                   <CreateLabelModal
                     isOpen={labelModal}
                     handleClose={() => setLabelModal(false)}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // icons
-import { CheckIcon, ChevronDownIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 type CustomSearchSelectProps = {
   value: any;
   onChange: any;
@@ -23,7 +23,6 @@ type CustomSearchSelectProps = {
   selfPositioned?: boolean;
   multiple?: boolean;
   footerOption?: JSX.Element;
-  setIsOpen?: ()=>void;
 };
 export const CustomSearchSelect = ({
   label,
@@ -41,7 +40,6 @@ export const CustomSearchSelect = ({
   selfPositioned = false,
   multiple = false,
   footerOption,
-  setIsOpen,
 }: CustomSearchSelectProps) => {
   const [query, setQuery] = useState("");
 
@@ -165,18 +163,6 @@ export const CustomSearchSelect = ({
                 ) : (
                   <p className="text-center text-brand-secondary">Loading...</p>
                 )}
-                <button
-                  type="button"
-                  className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
-                  onClick={() => {
-                    setIsOpen && setIsOpen();
-                  }}
-                >
-                  <span className="flex items-center justify-start gap-1 text-brand-secondary">
-                    <PlusIcon className="h-4 w-4" aria-hidden="true" />
-                    <span>Create New Label</span>
-                  </span>
-                </button>
               </div>
               {footerOption}
             </Combobox.Options>
