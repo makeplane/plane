@@ -24,6 +24,7 @@ import useUser from "hooks/use-user";
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
+import { CreateLabelModal } from "components/labels";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { CustomSearchSelect, Loader, PrimaryButton, TextArea, Tooltip } from "components/ui";
@@ -55,6 +56,7 @@ import {
 
 const SinglePage: NextPage = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
+  const [labelModal, setLabelModal] = useState(false);
 
   const scrollToRef = useRef<HTMLDivElement>(null);
 
@@ -383,7 +385,8 @@ const SinglePage: NextPage = () => {
                   }
                   value={pageDetails.labels}
                   onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
-                  options={options}
+                    options={options}
+                    setIsOpen={()=>setLabelModal((prev)=>!prev)}
                   multiple
                   noChevron
                 />
@@ -530,6 +533,13 @@ const SinglePage: NextPage = () => {
                       setGptAssistantModal={() => {}}
                     />
                   </div>
+                )}
+                { labelModal && typeof projectId === 'string' && (
+                  <CreateLabelModal
+                    isOpen={labelModal}
+                    handleClose={() => setLabelModal(false)}
+                    projectId={projectId}
+                  />
                 )}
               </>
             ) : (
