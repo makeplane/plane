@@ -507,7 +507,11 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                         {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
                       </button>
                     )}
-                    <div className="absolute right-2 bottom-2 flex items-center justify-center rounded-md bg-brand-surface-2 p-1 text-xs text-brand-secondary opacity-0 group-hover:opacity-100">
+                    <div
+                      className={`absolute ${
+                        isMonthlyView ? "bottom-2" : "top-2"
+                      } right-2 flex items-center justify-center rounded-md bg-brand-surface-2 p-1 text-xs text-brand-secondary opacity-0 group-hover:opacity-100`}
+                    >
                       <button
                         className="flex items-center justify-center gap-1 text-center"
                         onClick={() => addIssueToDate(date.date)}
