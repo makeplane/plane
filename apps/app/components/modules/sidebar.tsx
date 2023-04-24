@@ -198,9 +198,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     render={({ field: { value } }) => (
                       <CustomSelect
                         customButton={
-                          <span
-                            className={`flex cursor-pointer items-center rounded border-[0.5px] border-brand-base bg-brand-surface-1 px-2.5 py-1.5 text-center text-sm capitalize text-brand-muted-1 `}
-                          >
+                          <span className="flex cursor-pointer items-center rounded border-[0.5px] border-brand-base bg-brand-surface-1 px-2 py-1 text-center text-xs capitalize">
                             {capitalizeFirstLetter(`${watch("status")}`)}
                           </span>
                         }
@@ -218,17 +216,19 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     )}
                   />
                 </div>
-                <div className="relative flex h-full w-52 items-center justify-center gap-2 text-sm text-brand-muted-1">
-                  <Popover className="flex h-full items-center  justify-center rounded-lg">
+                <div className="relative flex h-full w-52 items-center gap-2 text-sm">
+                  <Popover className="flex h-full items-center justify-center rounded-lg">
                     {({ open }) => (
                       <>
                         <Popover.Button
-                          className={`group flex h-full items-center gap-1 rounded border-[0.5px]  border-brand-base bg-brand-surface-1 px-2.5 py-1.5 text-brand-muted-1   ${
-                            open ? "bg-brand-surface-1" : ""
+                          className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-brand-base bg-brand-surface-1 px-2 py-1 text-xs ${
+                            module.start_date ? "" : "text-brand-secondary"
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
-                          <span>{renderShortDate(new Date(`${module.start_date}`))}</span>
+                          <span>
+                            {renderShortDate(new Date(`${module.start_date}`), "Start date")}
+                          </span>
                         </Popover.Button>
 
                         <Transition
@@ -265,19 +265,21 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     )}
                   </Popover>
                   <span>
-                    <ArrowLongRightIcon className="h-3 w-3" />
+                    <ArrowLongRightIcon className="h-3 w-3 text-brand-secondary" />
                   </span>
-                  <Popover className="flex h-full items-center  justify-center rounded-lg">
+                  <Popover className="flex h-full items-center justify-center rounded-lg">
                     {({ open }) => (
                       <>
                         <Popover.Button
-                          className={`group flex items-center gap-1 rounded border-[0.5px] border-brand-base bg-brand-surface-1 px-2.5 py-1.5 text-brand-muted-1  ${
-                            open ? "bg-brand-surface-1" : ""
+                          className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-brand-base bg-brand-surface-1 px-2 py-1 text-xs ${
+                            module.target_date ? "" : "text-brand-secondary"
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3 " />
 
-                          <span>{renderShortDate(new Date(`${module?.target_date}`))}</span>
+                          <span>
+                            {renderShortDate(new Date(`${module?.target_date}`), "End date")}
+                          </span>
                         </Popover.Button>
 
                         <Transition
@@ -316,9 +318,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6 px-6 py-6 w-full">
-                <div className="flex flex-col items-start justify-start gap-2 w-full">
-                  <div className="flex items-start justify-between gap-2 w-full  ">
+              <div className="flex w-full flex-col gap-6 px-6 py-6">
+                <div className="flex w-full flex-col items-start justify-start gap-2">
+                  <div className="flex w-full items-start justify-between gap-2  ">
                     <h4 className="text-xl font-semibold text-brand-base">{module.name}</h4>
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
@@ -522,9 +524,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col text-xs border-t border-brand-base px-6 py-6">
-              <div className="flex justify-between items-center w-full">
-                <h4 className="font-medium text-sm text-brand-secondary">Links</h4>
+            <div className="flex w-full flex-col border-t border-brand-base px-6 py-6 text-xs">
+              <div className="flex w-full items-center justify-between">
+                <h4 className="text-sm font-medium text-brand-secondary">Links</h4>
                 <button
                   className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1"
                   onClick={() => setModuleLinkModal(true)}

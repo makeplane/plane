@@ -354,6 +354,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   name="target_date"
                   render={({ field: { value } }) => (
                     <CustomDatePicker
+                      placeholder="Due date"
                       value={value}
                       onChange={(val) =>
                         submitChanges({

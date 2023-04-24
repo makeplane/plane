@@ -116,11 +116,12 @@ body {
 
 .horizontal-scroll-enable::-webkit-scrollbar-track {
   height: 7px;
+  background-color: rgba(var(--color-bg-base));
 }
 
 .horizontal-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: rgba(var(--color-bg-surface-1));
+  background-color: rgba(var(--color-bg-surface-2));
 }
 
 .vertical-scroll-enable::-webkit-scrollbar {

@@ -83,11 +83,13 @@ export const SidebarParentSelect: React.FC<Props> = ({
           onClick={() => setIsParentModalOpen(true)}
           disabled={isNotAllowed}
         >
-          {watch("parent") && watch("parent") !== ""
-            ? `${issues?.find((i) => i.id === watch("parent"))?.project_detail?.identifier}-${
-                issues?.find((i) => i.id === watch("parent"))?.sequence_id
-              }`
-            : "Select issue"}
+          {watch("parent") && watch("parent") !== "" ? (
+            `${issues?.find((i) => i.id === watch("parent"))?.project_detail?.identifier}-${
+              issues?.find((i) => i.id === watch("parent"))?.sequence_id
+            }`
+          ) : (
+            <span className="text-brand-secondary">Select issue</span>
+          )}
         </button>
       </div>
     </div>
