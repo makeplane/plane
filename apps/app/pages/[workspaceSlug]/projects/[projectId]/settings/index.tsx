@@ -155,8 +155,10 @@ const GeneralSettings: NextPage = () => {
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Icon & Name</h4>
-              <p className="text-brand-secondary">Select an icon and a name for your project.</p>
+              <h4 className="text-lg font-semibold">Icon & Name</h4>
+              <p className="text-sm text-brand-secondary">
+                Select an icon and a name for your project.
+              </p>
             </div>
             <div className="col-span-12 flex gap-2 sm:col-span-6">
               {projectDetails ? (
@@ -196,8 +198,8 @@ const GeneralSettings: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Description</h4>
-              <p className="text-brand-secondary">Give a description to your project.</p>
+              <h4 className="text-lg font-semibold">Description</h4>
+              <p className="text-sm text-brand-secondary">Give a description to your project.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -208,7 +210,7 @@ const GeneralSettings: NextPage = () => {
                   register={register}
                   placeholder="Enter project description"
                   validations={{}}
-                  className="min-h-[46px]"
+                  className="min-h-[46px] text-sm"
                 />
               ) : (
                 <Loader className="w-full">
@@ -219,8 +221,10 @@ const GeneralSettings: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Cover Photo</h4>
-              <p className="text-gray-500">Select your cover photo from the given library.</p>
+              <h4 className="text-lg font-semibold">Cover Photo</h4>
+              <p className="text-sm text-gray-500">
+                Select your cover photo from the given library.
+              </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
@@ -253,8 +257,8 @@ const GeneralSettings: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Identifier</h4>
-              <p className="text-brand-secondary">
+              <h4 className="text-lg font-semibold">Identifier</h4>
+              <p className="text-sm text-brand-secondary">
                 Create a 1-6 characters{"'"} identifier for the project.
               </p>
             </div>
@@ -289,8 +293,8 @@ const GeneralSettings: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Network</h4>
-              <p className="text-brand-secondary">Select privacy type for the project.</p>
+              <h4 className="text-lg font-semibold">Network</h4>
+              <p className="text-sm text-brand-secondary">Select privacy type for the project.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -336,8 +340,8 @@ const GeneralSettings: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Danger Zone</h4>
-              <p className="text-brand-secondary">
+              <h4 className="text-lg font-semibold">Danger Zone</h4>
+              <p className="text-sm text-brand-secondary">
                 The danger zone of the project delete page is a critical area that requires careful
                 consideration and attention. When deleting a project, all of the data and resources
                 within that project will be permanently removed and cannot be recovered.

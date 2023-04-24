@@ -143,7 +143,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                       <h3 className="text-3xl font-semibold">
                         {profilePage ? "Profile" : "Workspace"} Settings
                       </h3>
-                      <p className="mt-1 text-gray-600">
+                      <p className="mt-1 text-brand-secondary">
                         {profilePage
                           ? "This information will be visible to only you."
                           : "This information will be displayed to every member of the workspace."}
