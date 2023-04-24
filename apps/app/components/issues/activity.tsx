@@ -110,9 +110,7 @@ const activityDetails: {
   },
 };
 
-type Props = {};
-
-export const IssueActivitySection: React.FC<Props> = () => {
+export const IssueActivitySection: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
