@@ -82,7 +82,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
         ) : error?.status === 404 ? (
           <div className="container grid h-screen place-items-center">
             <div className="space-y-4 text-center">
-              <p className="text-2xl font-semibold">No such project exist. Create one?</p>
+              <p className="text-2xl font-semibold">No such project exists. Create one?</p>
               <PrimaryButton
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", { key: "p" });
@@ -131,7 +131,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                 <div className="mb-12 space-y-6">
                   <div>
                     <h3 className="text-3xl font-semibold">Project Settings</h3>
-                    <p className="mt-1 text-gray-600">
+                    <p className="mt-1 text-brand-secondary">
                       This information will be displayed to every member of the project.
                     </p>
                   </div>
