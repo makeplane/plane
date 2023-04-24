@@ -21,7 +21,7 @@ type Props = {
 
 const DefaultLayout: React.FC<Props> = ({ meta, children }) => (
   <Container meta={meta}>
-    <div className="w-full h-screen overflow-auto bg-brand-base">
+    <div className="h-screen w-full overflow-auto bg-brand-surface-1">
       <>{children}</>
     </div>
   </Container>
