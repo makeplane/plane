@@ -68,7 +68,10 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
         )}
 
         <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-brand-surface-2 px-0.5 py-px">
-          <ChatBubbleLeftEllipsisIcon className="h-3.5 w-3.5 text-gray-400" aria-hidden="true" />
+          <ChatBubbleLeftEllipsisIcon
+            className="h-3.5 w-3.5 text-brand-secondary"
+            aria-hidden="true"
+          />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -110,10 +113,6 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               </div>
             </form>
           ) : (
-            // <div
-            //   className="mt-2 mb-6 text-sm text-gray-700"
-            //   dangerouslySetInnerHTML={{ __html: comment.comment_html }}
-            // />
             <RemirrorRichTextEditor
               value={comment.comment_html}
               editable={false}
