@@ -12,7 +12,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { SecondaryButton } from "components/ui";
+import { SecondaryButton, ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
@@ -149,16 +149,9 @@ const FeaturesSettings: NextPage = () => {
                   <p className="text-sm text-brand-secondary">{feature.description}</p>
                 </div>
               </div>
-              <button
-                type="button"
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  projectDetails?.[feature.property as keyof IProject]
-                    ? "bg-green-500"
-                    : "bg-brand-surface-2"
-                }`}
-                role="switch"
-                aria-checked={projectDetails?.[feature.property as keyof IProject]}
-                onClick={() => {
+              <ToggleSwitch
+                value={projectDetails?.[feature.property as keyof IProject]}
+                onChange={() => {
                   trackEventServices.trackMiscellaneousEvent(
                     {
                       workspaceId: (projectDetails?.workspace as any)?.id,
@@ -175,17 +168,8 @@ const FeaturesSettings: NextPage = () => {
                     [feature.property]: !projectDetails?.[feature.property as keyof IProject],
                   });
                 }}
-              >
-                <span className="sr-only">Use {feature.title}</span>
-                <span
-                  aria-hidden="true"
-                  className={`inline-block h-5 w-5 transform rounded-full bg-brand-surface-1 shadow ring-0 transition duration-200 ease-in-out ${
-                    projectDetails?.[feature.property as keyof IProject]
-                      ? "translate-x-5"
-                      : "translate-x-0"
-                  }`}
-                />
-              </button>
+                size="lg"
+              />
             </div>
           ))}
         </div>

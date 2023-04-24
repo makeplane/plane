@@ -26,7 +26,7 @@ import {
 import { Popover, Transition } from "@headlessui/react";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { CustomMenu, Spinner } from "components/ui";
+import { CustomMenu, Spinner, ToggleSwitch } from "components/ui";
 // icon
 import {
   CheckIcon,
@@ -390,23 +390,10 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
               </CustomMenu.MenuItem>
               <div className="mt-1 flex w-52 items-center justify-between border-t border-brand-base py-2 px-1  text-sm text-brand-secondary">
                 <h4>Show weekends</h4>
-                <button
-                  type="button"
-                  className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    showWeekEnds ? "bg-green-500" : "bg-brand-surface-2"
-                  }`}
-                  role="switch"
-                  aria-checked={showWeekEnds}
-                  onClick={() => setShowWeekEnds(!showWeekEnds)}
-                >
-                  <span className="sr-only">Show weekends</span>
-                  <span
-                    aria-hidden="true"
-                    className={`inline-block h-2.5 w-2.5 transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
-                      showWeekEnds ? "translate-x-2.5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
+                <ToggleSwitch
+                  value={showWeekEnds}
+                  onChange={() => setShowWeekEnds(!showWeekEnds)}
+                />
               </div>
             </CustomMenu>
           </div>
