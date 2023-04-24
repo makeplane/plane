@@ -426,7 +426,7 @@ export const IssuesView: React.FC<Props> = ({
           )}
         </div>
         {areFiltersApplied && (
-          <div className={` ${issueView === "list" ? "mt-4" : "my-4"} border-t`} />
+          <div className={`${issueView === "list" ? "mt-4" : "my-4"} border-t border-brand-base`} />
         )}
       </>
 
