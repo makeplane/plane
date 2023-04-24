@@ -4,16 +4,6 @@ const extraImageDomains = (process.env.NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS ?? "")
   .split(",")
   .filter((domain) => domain.length > 0);
 
-async function getDockerEnv() {
-  const env = await DockerCompose.config({
-    cwd: process.cwd(),
-    envFile: ".env",
-    files: ["../../docker-compose.yml"],
-  });
-
-  return env;
-}
-
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
@@ -31,16 +21,6 @@ const nextConfig = {
   experimental: {
     // this includes files from the monorepo base two directories up
     outputFileTracingRoot: path.join(__dirname, "../../"),
-  },
-  serverRuntimeConfig: {
-    processEnv: Object.fromEntries(
-      Object.entries(process.env).filter(([key]) => key.includes("NEXT_PUBLIC_"))
-    ),
-  },
-  publicRuntimeConfig: {
-    processEnv: Object.fromEntries(
-      Object.entries(process.env).filter(([key]) => key.includes("NEXT_PUBLIC_"))
-    ),
   },
 };
 

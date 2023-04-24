@@ -23,18 +23,8 @@ import { Spinner } from "components/ui";
 import Logo from "public/logo.png";
 // types
 import type { NextPage } from "next";
-// next config TODO: Remove this once the proper implementation is done.
-import getConfig from "next/config";
 
 const SignInPage: NextPage = () => {
-  // TODO: Remove this once the proper implementation is done.
-  const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
-  console.log("---");
-  console.log("publicRuntimeConfig", publicRuntimeConfig);
-  console.log("serverRuntimeConfig", serverRuntimeConfig);
-  console.log("process.env", process.env);
-  console.log("---");
-
   // router
   const router = useRouter();
   // user hook
@@ -147,11 +137,4 @@ const SignInPage: NextPage = () => {
   );
 };
 
-// TODO: Remove this once the proper implementation is done.
-export async function getServerSideProps() {
-  console.log("process.env-> Server side", process.env);
-  return {
-    props: {}, // will be passed to the page component as props
-  };
-}
 export default SignInPage;
