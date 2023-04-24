@@ -64,20 +64,20 @@ export const GithubRepoDetails: FC<Props> = ({
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="font-medium">Repository Details</div>
-              <div className="text-sm text-gray-600">Import completed. We have found:</div>
+              <div className="text-sm text-brand-secondary">Import completed. We have found:</div>
             </div>
-            <div className="flex gap-16 mt-4">
-              <div className="text-center flex-shrink-0">
+            <div className="mt-4 flex gap-16">
+              <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.issue_count}</p>
-                <h6 className="text-sm text-gray-500">Issues</h6>
+                <h6 className="text-sm text-brand-secondary">Issues</h6>
               </div>
-              <div className="text-center flex-shrink-0">
+              <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.labels}</p>
-                <h6 className="text-sm text-gray-500">Labels</h6>
+                <h6 className="text-sm text-brand-secondary">Labels</h6>
               </div>
-              <div className="text-center flex-shrink-0">
+              <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.collaborators.length}</p>
-                <h6 className="text-sm text-gray-500">Users</h6>
+                <h6 className="text-sm text-brand-secondary">Users</h6>
               </div>
             </div>
           </div>

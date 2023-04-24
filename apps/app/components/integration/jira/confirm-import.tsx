@@ -17,30 +17,30 @@ export const JiraConfirmImport: React.FC = () => {
         </div>
 
         <div className="col-span-1">
-          <p className="text-sm text-gray-500">Migrating</p>
+          <p className="text-sm text-brand-secondary">Migrating</p>
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{watch("data.total_issues")}</h4>
-            <p className="text-sm text-gray-500">Issues</p>
+            <h4 className="mb-2 text-lg font-semibold">{watch("data.total_issues")}</h4>
+            <p className="text-sm text-brand-secondary">Issues</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{watch("data.total_states")}</h4>
-            <p className="text-sm text-gray-500">States</p>
+            <h4 className="mb-2 text-lg font-semibold">{watch("data.total_states")}</h4>
+            <p className="text-sm text-brand-secondary">States</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{watch("data.total_modules")}</h4>
-            <p className="text-sm text-gray-500">Modules</p>
+            <h4 className="mb-2 text-lg font-semibold">{watch("data.total_modules")}</h4>
+            <p className="text-sm text-brand-secondary">Modules</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{watch("data.total_labels")}</h4>
-            <p className="text-sm text-gray-500">Labels</p>
+            <h4 className="mb-2 text-lg font-semibold">{watch("data.total_labels")}</h4>
+            <p className="text-sm text-brand-secondary">Labels</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">
+            <h4 className="mb-2 text-lg font-semibold">
               {watch("data.users").filter((user) => user.import).length}
             </h4>
-            <p className="text-sm text-gray-500">User</p>
+            <p className="text-sm text-brand-secondary">User</p>
           </div>
         </div>
       </div>

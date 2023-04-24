@@ -106,7 +106,7 @@ export const JiraImporterRoot = () => {
   return (
     <div className="flex h-full flex-col space-y-2">
       <Link href={`/${workspaceSlug}/settings/import-export`}>
-        <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900">
+        <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-brand-secondary hover:text-brand-base">
           <div>
             <ArrowLeftIcon className="h-3 w-3" />
           </div>
@@ -114,7 +114,7 @@ export const JiraImporterRoot = () => {
         </div>
       </Link>
 
-      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-gray-200 bg-white p-4">
+      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-brand-base bg-brand-base p-4">
         <div className="flex items-center gap-2">
           <div className="h-10 w-10 flex-shrink-0">
             <Image src={JiraLogo} alt="jira logo" />
@@ -131,14 +131,14 @@ export const JiraImporterRoot = () => {
                     index > activeIntegrationState() + 1 ||
                     Boolean(index === activeIntegrationState() + 1 && disableTopBarAfter)
                   }
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
+                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-brand-base ${
                     index <= activeIntegrationState()
-                      ? `border-[#3F76FF] bg-[#3F76FF] text-white ${
+                      ? `border-brand-accent bg-brand-accent ${
                           index === activeIntegrationState()
                             ? "border-opacity-100 bg-opacity-100"
                             : "border-opacity-80 bg-opacity-80"
                         }`
-                      : "border-gray-300"
+                      : "border-brand-base"
                   }`}
                 >
                   <integration.icon
@@ -151,7 +151,9 @@ export const JiraImporterRoot = () => {
                   <div
                     key={index}
                     className={`border-b px-7 ${
-                      index <= activeIntegrationState() - 1 ? `border-[#3F76FF]` : `border-gray-300`
+                      index <= activeIntegrationState() - 1
+                        ? `border-brand-accent`
+                        : `border-brand-base`
                     }`}
                   >
                     {" "}
@@ -177,7 +179,7 @@ export const JiraImporterRoot = () => {
                 {currentStep?.state === "import-confirmation" && <JiraConfirmImport />}
               </div>
 
-              <div className="-mx-4 mt-4 flex justify-end gap-4 border-t p-4 pb-0">
+              <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-brand-base p-4 pb-0">
                 {currentStep?.state !== "import-configure" && (
                   <SecondaryButton
                     onClick={() => {

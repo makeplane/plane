@@ -26,7 +26,7 @@ import {
 import { Popover, Transition } from "@headlessui/react";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { CustomMenu, Spinner } from "components/ui";
+import { CustomMenu, Spinner, ToggleSwitch } from "components/ui";
 // icon
 import {
   CheckIcon,
@@ -51,6 +51,7 @@ import { IIssue } from "types";
 // constant
 import { monthOptions, yearOptions } from "constants/calendar";
 import modulesService from "services/modules.service";
+import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   addIssueToDate: (date: string) => void;
@@ -62,9 +63,10 @@ interface ICalendarRange {
 }
 
 export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
-  const [showWeekEnds, setShowWeekEnds] = useState<boolean>(false);
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [isMonthlyView, setIsMonthlyView] = useState<boolean>(true);
+  const [showWeekEnds, setShowWeekEnds] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [isMonthlyView, setIsMonthlyView] = useState(true);
+  const [showAllIssues, setShowAllIssues] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -151,15 +153,15 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
   const currentViewDays = showWeekEnds ? totalDate : onlyWeekDays;
 
   const calendarIssues = cycleId
-    ? cycleCalendarIssues
+    ? (cycleCalendarIssues as IIssue[])
     : moduleId
-    ? moduleCalendarIssues
-    : projectCalendarIssues;
+    ? (moduleCalendarIssues as IIssue[])
+    : (projectCalendarIssues as IIssue[]);
 
   const currentViewDaysData = currentViewDays.map((date: Date) => {
     const filterIssue =
       calendarIssues && calendarIssues.length > 0
-        ? (calendarIssues as IIssue[]).filter(
+        ? calendarIssues.filter(
             (issue) =>
               issue.target_date && renderDateFormat(issue.target_date) === renderDateFormat(date)
           )
@@ -324,7 +326,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
 
           <div className="flex w-full items-center justify-end gap-2">
             <button
-              className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base bg-brand-surface-2 px-4 py-1.5 text-sm  hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none"
+              className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base px-3 py-1 text-sm hover:bg-brand-surface-2 hover:text-brand-base focus:outline-none"
               onClick={() => {
                 if (isMonthlyView) {
                   updateDate(new Date());
@@ -337,14 +339,12 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                 }
               }}
             >
-              Today{" "}
+              Today
             </button>
 
             <CustomMenu
               customButton={
-                <div
-                  className={`group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-sm  hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none `}
-                >
+                <div className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base px-3 py-1 text-sm hover:bg-brand-surface-2 hover:text-brand-base focus:outline-none ">
                   {isMonthlyView ? "Monthly" : "Weekly"}
                   <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                 </div>
@@ -390,23 +390,10 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
               </CustomMenu.MenuItem>
               <div className="mt-1 flex w-52 items-center justify-between border-t border-brand-base py-2 px-1  text-sm text-brand-secondary">
                 <h4>Show weekends</h4>
-                <button
-                  type="button"
-                  className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    showWeekEnds ? "bg-green-500" : "bg-brand-surface-2"
-                  }`}
-                  role="switch"
-                  aria-checked={showWeekEnds}
-                  onClick={() => setShowWeekEnds(!showWeekEnds)}
-                >
-                  <span className="sr-only">Show weekends</span>
-                  <span
-                    aria-hidden="true"
-                    className={`inline-block h-2.5 w-2.5 transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
-                      showWeekEnds ? "translate-x-2.5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
+                <ToggleSwitch
+                  value={showWeekEnds}
+                  onChange={() => setShowWeekEnds(!showWeekEnds)}
+                />
               </div>
             </CustomMenu>
           </div>
@@ -445,61 +432,87 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
             showWeekEnds ? "grid-cols-7" : "grid-cols-5"
           } `}
         >
-          {currentViewDaysData.map((date, index) => (
-            <StrictModeDroppable droppableId={date.date}>
-              {(provided, snapshot) => (
-                <div
-                  key={index}
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={`group flex flex-col gap-1.5 border-t border-brand-base p-2.5 text-left text-sm font-medium hover:bg-brand-surface-1 ${
-                    showWeekEnds
-                      ? (index + 1) % 7 === 0
+          {currentViewDaysData.map((date, index) => {
+            const totalIssues = date.issues.length;
+
+            return (
+              <StrictModeDroppable droppableId={date.date}>
+                {(provided) => (
+                  <div
+                    key={index}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={`group relative flex flex-col gap-1.5 border-t border-brand-base p-2.5 text-left text-sm font-medium hover:bg-brand-surface-1 ${
+                      showWeekEnds
+                        ? (index + 1) % 7 === 0
+                          ? ""
+                          : "border-r"
+                        : (index + 1) % 5 === 0
                         ? ""
                         : "border-r"
-                      : (index + 1) % 5 === 0
-                      ? ""
-                      : "border-r"
-                  }`}
-                >
-                  {isMonthlyView && <span>{formatDate(new Date(date.date), "d")}</span>}
-                  {date.issues.length > 0 &&
-                    date.issues.map((issue: IIssue, index) => (
-                      <Draggable draggableId={issue.id} index={index}>
-                        {(provided, snapshot) => (
-                          <div
-                            key={index}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`w-full cursor-pointer truncate rounded bg-brand-surface-2 p-1.5 hover:scale-105 ${
-                              snapshot.isDragging ? "shadow-lg" : ""
-                            }`}
-                          >
-                            <Link
-                              href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}
-                              className="w-full"
-                            >
-                              {issue.name}
-                            </Link>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                  <div className="flex items-center justify-center p-1.5 text-sm text-brand-secondary opacity-0 group-hover:opacity-100">
-                    <button
-                      className="flex items-center justify-center gap-2 text-center"
-                      onClick={() => addIssueToDate(date.date)}
+                    }`}
+                  >
+                    {isMonthlyView && <span>{formatDate(new Date(date.date), "d")}</span>}
+                    {totalIssues > 0 &&
+                      date.issues
+                        .slice(0, showAllIssues ? totalIssues : 4)
+                        .map((issue: IIssue, index) => (
+                          <Draggable draggableId={issue.id} index={index}>
+                            {(provided, snapshot) => (
+                              <div
+                                key={index}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`w-full cursor-pointer truncate rounded border border-brand-base px-1.5 py-1 text-xs duration-300 hover:cursor-move hover:bg-brand-surface-2 ${
+                                  snapshot.isDragging ? "bg-brand-surface-2 shadow-lg" : ""
+                                }`}
+                              >
+                                <Link
+                                  href={`/${workspaceSlug}/projects/${issue?.project_detail.id}/issues/${issue.id}`}
+                                >
+                                  <a className="flex w-full items-center gap-2">
+                                    {getStateGroupIcon(
+                                      issue.state_detail.group,
+                                      "12",
+                                      "12",
+                                      issue.state_detail.color
+                                    )}
+                                    {issue.name}
+                                  </a>
+                                </Link>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                    {totalIssues > 4 && (
+                      <button
+                        type="button"
+                        className="w-min whitespace-nowrap rounded-md border border-brand-base bg-brand-surface-2 px-1.5 py-1 text-xs"
+                        onClick={() => setShowAllIssues((prevData) => !prevData)}
+                      >
+                        {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
+                      </button>
+                    )}
+                    <div
+                      className={`absolute ${
+                        isMonthlyView ? "bottom-2" : "top-2"
+                      } right-2 flex items-center justify-center rounded-md bg-brand-surface-2 p-1 text-xs text-brand-secondary opacity-0 group-hover:opacity-100`}
                     >
-                      <PlusIcon className="h-4 w-4 text-brand-secondary" />
-                      Add new issue
-                    </button>
+                      <button
+                        className="flex items-center justify-center gap-1 text-center"
+                        onClick={() => addIssueToDate(date.date)}
+                      >
+                        <PlusIcon className="h-3 w-3 text-brand-secondary" />
+                        Add issue
+                      </button>
+                    </div>
+                    {provided.placeholder}
                   </div>
-                  {provided.placeholder}
-                </div>
-              )}
-            </StrictModeDroppable>
-          ))}
+                )}
+              </StrictModeDroppable>
+            );
+          })}
         </div>
       </div>
     </DragDropContext>

@@ -175,15 +175,13 @@ export const GithubImporterRoot = () => {
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="space-y-2">
         <Link href={`/${workspaceSlug}/settings/import-export`}>
-          <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900">
-            <div>
-              <ArrowLeftIcon className="h-3 w-3" />
-            </div>
+          <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-brand-secondary hover:text-brand-base">
+            <ArrowLeftIcon className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </div>
         </Link>
 
-        <div className="space-y-4 rounded-[10px] border border-gray-200 bg-white p-4">
+        <div className="space-y-4 rounded-[10px] border border-brand-base bg-brand-base p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
               <Image src={GithubLogo} alt="GithubLogo" />
@@ -194,12 +192,12 @@ export const GithubImporterRoot = () => {
                   <div
                     className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
                       index <= activeIntegrationState()
-                        ? `border-[#3F76FF] bg-[#3F76FF] text-white ${
+                        ? `border-brand-accent bg-brand-accent ${
                             index === activeIntegrationState()
                               ? "border-opacity-100 bg-opacity-100"
                               : "border-opacity-80 bg-opacity-80"
                           }`
-                        : "border-gray-300"
+                        : "border-brand-base"
                     }`}
                   >
                     <integration.icon
@@ -213,8 +211,8 @@ export const GithubImporterRoot = () => {
                       key={index}
                       className={`border-b px-7 ${
                         index <= activeIntegrationState() - 1
-                          ? `border-[#3F76FF]`
-                          : `border-gray-300`
+                          ? `border-brand-accent`
+                          : `border-brand-base`
                       }`}
                     >
                       {" "}

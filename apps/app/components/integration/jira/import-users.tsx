@@ -52,11 +52,13 @@ export const JiraImportUsers: FC = () => {
     })) ?? [];
 
   return (
-    <div className="h-full w-full space-y-10 divide-y-2 overflow-y-auto">
+    <div className="h-full w-full space-y-10 divide-y-2 divide-brand-base overflow-y-auto">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
-          <h3 className="text-lg font-semibold">Users</h3>
-          <p className="text-sm text-gray-500">Update, invite or choose not to invite assignee</p>
+          <h3 className="font-semibold">Users</h3>
+          <p className="text-sm text-brand-secondary">
+            Update, invite or choose not to invite assignee
+          </p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -72,8 +74,8 @@ export const JiraImportUsers: FC = () => {
       {watch("data.invite_users") && (
         <div className="pt-6">
           <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-1 text-gray-500">Name</div>
-            <div className="col-span-1 text-gray-500">Import as</div>
+            <div className="col-span-1 text-sm text-brand-secondary">Name</div>
+            <div className="col-span-1 text-sm text-brand-secondary">Import as</div>
           </div>
 
           <div className="mt-5 space-y-3">

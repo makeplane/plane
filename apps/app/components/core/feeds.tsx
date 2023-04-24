@@ -67,15 +67,19 @@ const activityDetails: {
   },
   name: {
     message: "set the name to",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: (
+      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />
+    ),
   },
   description: {
     message: "updated the description.",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: (
+      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />
+    ),
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
   },
   target_date: {
     message: "set the due date to",
@@ -91,7 +95,7 @@ const activityDetails: {
   },
   estimate: {
     message: "updated the estimate",
-    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
   },
   link: {
     message: "updated the link",
@@ -153,11 +157,11 @@ export const Feeds: React.FC<any> = ({ activities }) => (
         ) {
           const { workspace_detail, project, issue } = activity;
           value = (
-            <span className="text-gray-600">
+            <span className="text-brand-secondary">
               created{" "}
               <Link href={`/${workspace_detail.slug}/projects/${project}/issues/${issue}`}>
                 <a className="inline-flex items-center hover:underline">
-                  this issue. <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5 ml-1" />
+                  this issue. <ArrowTopRightOnSquareIcon className="ml-1 h-3.5 w-3.5" />
                 </a>
               </Link>
             </span>
@@ -198,7 +202,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
 
         if (activity.field === "comment") {
           return (
-            <div key={activity.id}>
+            <div key={activity.id} className="mt-2">
               <div className="relative flex items-start space-x-3">
                 <div className="relative px-1">
                   {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
@@ -219,7 +223,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
 
                   <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-brand-surface-2 px-0.5 py-px">
                     <ChatBubbleLeftEllipsisIcon
-                      className="h-3.5 w-3.5 text-gray-400"
+                      className="h-3.5 w-3.5 text-brand-secondary"
                       aria-hidden="true"
                     />
                   </span>
@@ -242,9 +246,8 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                           : activity.old_value
                       }
                       editable={false}
-                      onBlur={() => ({})}
                       noBorder
-                      customClassName="text-xs bg-brand-surface-1"
+                      customClassName="text-xs border border-brand-base bg-brand-base"
                     />
                   </div>
                 </div>
@@ -268,7 +271,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                     <div>
                       <div className="relative px-1.5">
                         <div className="mt-1.5">
-                          <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-surface-1 ring-white">
+                          <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-surface-2 ring-white">
                             {activity.field ? (
                               activityDetails[activity.field as keyof typeof activityDetails]?.icon
                             ) : activity.actor_detail.avatar &&

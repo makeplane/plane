@@ -36,7 +36,7 @@ const EmojiIconPicker: React.FC<Props> = ({
 
   const [isOpen, setIsOpen] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
-  const [activeColor, setActiveColor] = useState<string>("#020617");
+  const [activeColor, setActiveColor] = useState<string>("#858e96");
 
   const [recentEmojis, setRecentEmojis] = useState<string[]>([]);
 
@@ -69,8 +69,8 @@ const EmojiIconPicker: React.FC<Props> = ({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] bg-brand-surface-2 shadow-lg">
-          <div className="h-[230px] w-[250px] overflow-auto border border-brand-base rounded-[4px] bg-brand-surface-2 p-2 shadow-xl">
+        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] border border-brand-base bg-brand-surface-2 shadow-lg">
+          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-brand-base bg-brand-surface-2 p-2 shadow-xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 p-1">
                 {tabOptions.map((tab) => (
@@ -82,7 +82,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                           setOpenColorPicker(false);
                         }}
                         className={`-my-1 w-1/2 border-b pb-2 text-center text-sm font-medium outline-none transition-colors ${
-                          selected ? "border-theme text-theme" : "border-transparent text-gray-500"
+                          selected ? "" : "border-transparent text-brand-secondary"
                         }`}
                       >
                         {tab.title}
@@ -95,12 +95,12 @@ const EmojiIconPicker: React.FC<Props> = ({
                 <Tab.Panel>
                   {recentEmojis.length > 0 && (
                     <div className="py-2">
-                      <h3 className="mb-2 ml-1 text-xs text-gray-400">Recent</h3>
+                      <h3 className="mb-2 text-xs text-brand-secondary">Recent</h3>
                       <div className="grid grid-cols-8 gap-2">
                         {recentEmojis.map((emoji) => (
                           <button
                             type="button"
-                            className="h-4 w-4 select-none text-sm hover:bg-brand-surface-2 flex items-center justify-between"
+                            className="flex h-4 w-4 select-none items-center justify-between text-sm"
                             key={emoji}
                             onClick={() => {
                               onChange(emoji);
@@ -113,13 +113,13 @@ const EmojiIconPicker: React.FC<Props> = ({
                       </div>
                     </div>
                   )}
-                  <hr className="w-full h-[1px] mb-2" />
+                  <hr className="mb-2 h-[1px] w-full border-brand-base" />
                   <div>
                     <div className="grid grid-cols-8 gap-x-2 gap-y-3">
                       {emojis.map((emoji) => (
                         <button
                           type="button"
-                          className="h-4 w-4 mb-1 select-none text-sm hover:bg-brand-surface-2 flex items-center"
+                          className="mb-1 flex h-4 w-4 select-none items-center text-sm"
                           key={emoji}
                           onClick={() => {
                             onChange(emoji);
@@ -136,7 +136,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                 <div className="py-2">
                   <Tab.Panel className="flex h-full w-full flex-col justify-center">
                     <div className="relative">
-                      <div className="pb-2 px-1 flex items-center justify-between">
+                      <div className="flex items-center justify-between px-1 pb-2">
                         {[
                           "#FF6B00",
                           "#8CC1FF",
@@ -147,7 +147,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                           "#000000",
                         ].map((curCol) => (
                           <span
-                            className="w-4 h-4 rounded-full cursor-pointer"
+                            className="h-4 w-4 cursor-pointer rounded-full"
                             style={{ backgroundColor: curCol }}
                             onClick={() => setActiveColor(curCol)}
                           />
@@ -158,14 +158,14 @@ const EmojiIconPicker: React.FC<Props> = ({
                           className="flex items-center gap-1"
                         >
                           <span
-                            className="w-4 h-4 rounded-full conical-gradient"
+                            className="conical-gradient h-4 w-4 rounded-full"
                             style={{ backgroundColor: activeColor }}
                           />
                         </button>
                       </div>
                       <div>
                         <TwitterPicker
-                          className={`m-2 !absolute top-4 left-4 z-10 ${
+                          className={`!absolute top-4 left-4 z-10 m-2 ${
                             openColorPicker ? "block" : "hidden"
                           }`}
                           color={activeColor}
@@ -178,13 +178,12 @@ const EmojiIconPicker: React.FC<Props> = ({
                         />
                       </div>
                     </div>
-                    <hr className="w-full h-[1px] mb-1" />
-
-                    <div className="grid grid-cols-8 mt-1 ml-1 gap-x-2 gap-y-3">
+                    <hr className="mb-1 h-[1px] w-full border-brand-base" />
+                    <div className="mt-1 ml-1 grid grid-cols-8 gap-x-2 gap-y-3">
                       {icons.material_rounded.map((icon) => (
                         <button
                           type="button"
-                          className="h-4 w-4 mb-1 select-none text-lg hover:bg-brand-surface-2 flex items-center"
+                          className="mb-1 flex h-4 w-4 select-none items-center text-lg"
                           key={icon.name}
                           onClick={() => {
                             if (onIconsClick) onIconsClick(icon.name);

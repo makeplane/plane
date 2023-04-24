@@ -36,7 +36,7 @@ export const GithubImportConfigure: React.FC<Props> = ({
       <div className="flex items-center gap-2 py-5">
         <div className="w-full">
           <div className="font-medium">Configure</div>
-          <div className="text-sm text-gray-600">Set up your GitHub import.</div>
+          <div className="text-sm text-brand-secondary">Set up your GitHub import.</div>
         </div>
         <div className="flex-shrink-0">
           <GithubAuth workspaceIntegration={workspaceIntegration} provider={provider} />

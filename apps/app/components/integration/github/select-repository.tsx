@@ -16,7 +16,7 @@ import { IWorkspaceIntegration } from "types";
 type Props = {
   integration: IWorkspaceIntegration;
   value: any;
-  label: string;
+  label: string | JSX.Element;
   onChange: (repo: any) => void;
   characterLimit?: number;
 };
