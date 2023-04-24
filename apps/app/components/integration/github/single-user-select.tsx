@@ -64,9 +64,9 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     })) ?? [];
 
   return (
-    <div className="bg-gray-50 px-2 py-3 rounded-md grid grid-cols-3 items-center gap-2">
+    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-brand-surface-2 px-2 py-3">
       <div className="flex items-center gap-2">
-        <div className="relative h-8 w-8 rounded flex-shrink-0">
+        <div className="relative h-8 w-8 flex-shrink-0 rounded">
           <Image
             src={collaborator.avatar_url}
             layout="fill"
@@ -112,7 +112,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
             setUsers(newUsers);
           }}
           placeholder="Enter email of the user"
-          className="py-1 border-gray-200 text-xs"
+          className="py-1 text-xs"
         />
       )}
       {users[index].import === "map" && members && (

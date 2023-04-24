@@ -18,28 +18,28 @@ const importersList: { [key: string]: string } = {
 };
 
 export const SingleImport: React.FC<Props> = ({ service, refreshing, handleDelete }) => (
-  <div className="py-3 flex justify-between items-center gap-2">
+  <div className="flex items-center justify-between gap-2 py-3">
     <div>
-      <h4 className="text-sm flex items-center gap-2">
+      <h4 className="flex items-center gap-2 text-sm">
         <span>
           Import from <span className="font-medium">{importersList[service.service]}</span> to{" "}
           <span className="font-medium">{service.project_detail.name}</span>
         </span>
         <span
-          className={`capitalize px-2 py-0.5 text-xs rounded ${
+          className={`rounded px-2 py-0.5 text-xs capitalize ${
             service.status === "completed"
-              ? "bg-green-100 text-green-500"
+              ? "bg-green-500/20 text-green-500"
               : service.status === "processing"
-              ? "bg-yellow-100 text-yellow-500"
+              ? "bg-yellow-500/20 text-yellow-500"
               : service.status === "failed"
-              ? "bg-red-100 text-red-500"
+              ? "bg-red-500/20 text-red-500"
               : ""
           }`}
         >
           {refreshing ? "Refreshing..." : service.status}
         </span>
       </h4>
-      <div className="text-gray-500 text-xs mt-2 flex items-center gap-2">
+      <div className="mt-2 flex items-center gap-2 text-xs text-brand-secondary">
         <span>{renderShortDateWithYearFormat(service.created_at)}</span>|
         <span>
           Imported by{" "}

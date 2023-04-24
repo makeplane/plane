@@ -36,7 +36,7 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Repository</h4>
-            <p className="text-gray-500 text-xs">
+            <p className="text-xs text-brand-secondary">
               Select the repository that you want the issues to be imported from.
             </p>
           </div>
@@ -49,7 +49,13 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
                   <SelectRepository
                     integration={integration}
                     value={value ? value.id : null}
-                    label={value ? `${value.full_name}` : "Select Repository"}
+                    label={
+                      value ? (
+                        `${value.full_name}`
+                      ) : (
+                        <span className="text-brand-secondary">Select Repository</span>
+                      )
+                    }
                     onChange={onChange}
                     characterLimit={50}
                   />
@@ -61,7 +67,9 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Project</h4>
-            <p className="text-gray-500 text-xs">Select the project to import the issues to.</p>
+            <p className="text-xs text-brand-secondary">
+              Select the project to import the issues to.
+            </p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             {projects && (
@@ -71,7 +79,13 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
                 render={({ field: { value, onChange } }) => (
                   <CustomSearchSelect
                     value={value}
-                    label={value ? projects.find((p) => p.id === value)?.name : "Select Project"}
+                    label={
+                      value ? (
+                        projects.find((p) => p.id === value)?.name
+                      ) : (
+                        <span className="text-brand-secondary">Select Project</span>
+                      )
+                    }
                     onChange={onChange}
                     options={options}
                     optionsClassName="w-full"
@@ -84,7 +98,9 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Sync Issues</h4>
-            <p className="text-gray-500 text-xs">Set whether you want to sync the issues or not.</p>
+            <p className="text-xs text-brand-secondary">
+              Set whether you want to sync the issues or not.
+            </p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             <Controller
