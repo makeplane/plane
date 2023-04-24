@@ -16,10 +16,12 @@ import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates"
 //hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Loader, SecondaryButton } from "components/ui";
+import { EmptyState, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
+// images
+import emptyEstimate from "public/empty-state/empty-estimate.svg";
 // types
 import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
@@ -135,28 +137,39 @@ const EstimatesSettings: NextPage = () => {
             </div>
           </div>
         </section>
-        {estimatesList && estimatesList.length > 0 && (
-          <section className="mt-4 mb-8 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
-            <>
-              {estimatesList ? (
-                estimatesList.map((estimate) => (
-                  <SingleEstimate
-                    key={estimate.id}
-                    estimate={estimate}
-                    editEstimate={(estimate) => editEstimate(estimate)}
-                    handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
-                  />
-                ))
-              ) : (
-                <Loader className="space-y-5">
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                </Loader>
-              )}
-            </>
-          </section>
+        {estimatesList ? (
+          estimatesList.length > 0 ? (
+            <section className="mt-4 mb-8 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
+              {estimatesList.map((estimate) => (
+                <SingleEstimate
+                  key={estimate.id}
+                  estimate={estimate}
+                  editEstimate={(estimate) => editEstimate(estimate)}
+                  handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
+                />
+              ))}
+            </section>
+          ) : (
+            <div className="mt-5">
+              <EmptyState
+                type="estimate"
+                title="Create New Estimate"
+                description="Estimates help you communicate the complexity of an issue. You can create your own estimate and communicate with your team."
+                imgURL={emptyEstimate}
+                action={() => {
+                  setEstimateToUpdate(undefined);
+                  setEstimateFormOpen(true);
+                }}
+              />
+            </div>
+          )
+        ) : (
+          <Loader className="mt-5 space-y-5">
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+          </Loader>
         )}
       </ProjectAuthorizationWrapper>
     </>

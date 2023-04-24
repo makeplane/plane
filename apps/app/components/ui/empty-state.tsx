@@ -9,7 +9,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 
 type Props = {
-  type: "cycle" | "module" | "project" | "issue" | "view" | "page";
+  type: "cycle" | "module" | "project" | "issue" | "view" | "page" | "estimate";
   title: string;
   description: React.ReactNode | string;
   imgURL: string;
@@ -30,7 +30,7 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, 
       case "view":
         return "V";
       case "page":
-        return "D"
+        return "D";
       default:
         return null;
     }
@@ -41,11 +41,11 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, 
         <Image src={imgURL} height="128" width="288" alt={type} />
       </div>
 
-      <h3 className="text-xl font-semibold text-brand-secondary">{title}</h3>
+      <h3 className="text-xl font-semibold">{title}</h3>
       {shortcutKey(type) && (
         <span>
           Use shortcut{" "}
-          <span className="mx-1 rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-brand-muted-1">
+          <span className="text-brand-muted-1 mx-1 rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium">
             {shortcutKey(type)}
           </span>{" "}
           to create {type} from anywhere.
