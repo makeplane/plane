@@ -1,8 +1,15 @@
+require("dotenv").config({ path: ".env" });
+
 const { withSentryConfig } = require("@sentry/nextjs");
 const path = require("path");
 const extraImageDomains = (process.env.NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS ?? "")
   .split(",")
   .filter((domain) => domain.length > 0);
+
+// So we can test deploy previews preview
+if (process.env.NEXT_PUBLIC_API_BASE_URL && !process.env.NEXT_PUBLIC_API_BASE_URL) {
+  process.env.NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+}
 
 const nextConfig = {
   reactStrictMode: false,
