@@ -59,7 +59,7 @@ const WorkspacePage: NextPage = () => {
                 onClick={() => setIsProductUpdatesModalOpen(true)}
                 className="rounded-md border-2 border-brand-base px-3 py-1.5 text-sm font-medium duration-300"
               >
-                What's New?
+                {`What's New?`}
               </button>
               <a
                 href="https://github.com/makeplane/plane"
