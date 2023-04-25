@@ -24,6 +24,7 @@ import useUser from "hooks/use-user";
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
+import { CreateLabelModal } from "components/labels";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { CustomSearchSelect, Loader, PrimaryButton, TextArea, Tooltip } from "components/ui";
@@ -55,6 +56,7 @@ import {
 
 const SinglePage: NextPage = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
+  const [labelModal, setLabelModal] = useState(false);
 
   const scrollToRef = useRef<HTMLDivElement>(null);
 
@@ -383,6 +385,20 @@ const SinglePage: NextPage = () => {
                   }
                   value={pageDetails.labels}
                   onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                  footerOption={
+                    <button
+                      type="button"
+                      className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
+                      onClick={() => {
+                        setLabelModal(true);
+                      }}
+                    >
+                      <span className="flex items-center justify-start gap-1 text-brand-secondary">
+                        <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                        <span>Create New Label</span>
+                      </span>
+                    </button>
+                  }
                   options={options}
                   multiple
                   noChevron
@@ -530,6 +546,13 @@ const SinglePage: NextPage = () => {
                       setGptAssistantModal={() => {}}
                     />
                   </div>
+                )}
+                {labelModal && typeof projectId === "string" && (
+                  <CreateLabelModal
+                    isOpen={labelModal}
+                    handleClose={() => setLabelModal(false)}
+                    projectId={projectId}
+                  />
                 )}
               </>
             ) : (
