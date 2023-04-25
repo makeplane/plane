@@ -42,7 +42,11 @@ export const WorkspaceSidebarMenu: React.FC = () => {
         <Link key={index} href={link.href}>
           <a
             className={`${
-              link.href === router.asPath
+              (
+                link.name === "Dashboard"
+                  ? router.asPath === link.href
+                  : router.asPath.includes(link.href)
+              )
                 ? "bg-brand-base text-brand-base"
                 : "text-brand-secondary hover:bg-brand-base hover:text-brand-base focus:bg-brand-base"
             } group flex w-full items-center gap-3 rounded-md p-2 text-sm font-medium outline-none ${
@@ -52,7 +56,13 @@ export const WorkspaceSidebarMenu: React.FC = () => {
             <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
               <link.icon
                 className={`${
-                  link.href === router.asPath ? "text-brand-base" : "text-brand-secondary"
+                  (
+                    link.name === "Dashboard"
+                      ? router.asPath === link.href
+                      : router.asPath.includes(link.href)
+                  )
+                    ? "text-brand-base"
+                    : "text-brand-secondary"
                 } group-hover:text-brand-base`}
                 aria-hidden="true"
                 height="20"
