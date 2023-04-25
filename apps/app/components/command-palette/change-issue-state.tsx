@@ -14,7 +14,7 @@ import stateService from "services/state.service";
 // types
 import { IIssue } from "types";
 // fetch keys
-import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, STATE_LIST } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, STATES_LIST } from "constants/fetch-keys";
 // icons
 import { CheckIcon, getStateGroupIcon } from "components/icons";
 
@@ -28,7 +28,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue }) =
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: stateGroups, mutate: mutateIssueDetails } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null

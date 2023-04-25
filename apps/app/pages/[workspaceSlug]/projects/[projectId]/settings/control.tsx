@@ -107,8 +107,8 @@ const ControlSettings: NextPage = () => {
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Project Lead</h4>
-              <p className="text-brand-secondary">Select the project leader.</p>
+              <h4 className="text-lg font-semibold">Project Lead</h4>
+              <p className="text-sm text-brand-secondary">Select the project leader.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -120,7 +120,7 @@ const ControlSettings: NextPage = () => {
                       {...field}
                       label={
                         people?.find((person) => person.member.id === field.value)?.member
-                          .first_name ?? "Select Lead"
+                          .first_name ?? <span className="text-brand-secondary">Select lead</span>
                       }
                       width="w-full"
                       input
@@ -167,8 +167,10 @@ const ControlSettings: NextPage = () => {
           </div>
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-xl font-semibold">Default Assignee</h4>
-              <p className="text-brand-secondary">Select the default assignee for the project.</p>
+              <h4 className="text-lg font-semibold">Default Assignee</h4>
+              <p className="text-sm text-brand-secondary">
+                Select the default assignee for the project.
+              </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -179,8 +181,9 @@ const ControlSettings: NextPage = () => {
                     <CustomSelect
                       {...field}
                       label={
-                        people?.find((p) => p.member.id === field.value)?.member.first_name ??
-                        "Select Default Assignee"
+                        people?.find((p) => p.member.id === field.value)?.member.first_name ?? (
+                          <span className="text-brand-secondary">Select default assignee</span>
+                        )
                       }
                       width="w-full"
                       input

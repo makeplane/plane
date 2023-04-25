@@ -26,7 +26,14 @@ import { CreateStateModal } from "components/states";
 import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu, Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
+import {
+  CustomMenu,
+  Input,
+  Loader,
+  PrimaryButton,
+  SecondaryButton,
+  ToggleSwitch,
+} from "components/ui";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -221,7 +228,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             </h3>
           </div>
           {watch("parent") && watch("parent") !== "" ? (
-            <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-1 p-2 text-xs">
+            <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs">
               <div className="flex items-center gap-2">
                 <span
                   className="block h-1.5 w-1.5 rounded-full"
@@ -230,7 +237,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                       .color,
                   }}
                 />
-                <span className="flex-shrink-0 text-gray-600">
+                <span className="flex-shrink-0 text-brand-secondary">
                   {/* {projects?.find((p) => p.id === projectId)?.identifier}- */}
                   {issues.find((i) => i.id === watch("parent"))?.sequence_id}
                 </span>
@@ -253,7 +260,6 @@ export const IssueForm: FC<IssueFormProps> = ({
                   onChange={handleTitleChange}
                   className="resize-none text-xl"
                   placeholder="Title"
-                  mode="transparent"
                   autoComplete="off"
                   error={errors.name}
                   register={register}
@@ -294,7 +300,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 )}
               </div>
               <div className="relative">
-                <div className="flex justify-end -mb-2">
+                <div className="-mb-2 flex justify-end">
                   {issueName && issueName !== "" && (
                     <button
                       type="button"
@@ -450,22 +456,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             onClick={() => setCreateMore((prevData) => !prevData)}
           >
             <span className="text-xs">Create more</span>
-            <button
-              type="button"
-              className={`pointer-events-none relative inline-flex h-4 w-7 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent ${
-                createMore ? "bg-brand-accent" : "bg-gray-300"
-              } transition-colors duration-300 ease-in-out focus:outline-none`}
-              role="switch"
-              aria-checked="false"
-            >
-              <span className="sr-only">Create more</span>
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none inline-block h-3 w-3 ${
-                  createMore ? "translate-x-3" : "translate-x-0"
-                } transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-300 ease-in-out`}
-              />
-            </button>
+            <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
             <SecondaryButton onClick={handleClose}>Discard</SecondaryButton>

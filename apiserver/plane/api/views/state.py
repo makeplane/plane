@@ -103,22 +103,3 @@ class StateViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except State.DoesNotExist:
             return Response({"error": "State does not exists"}, status=status.HTTP_404)
-
-
-class StateDeleteIssueCheckEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id, pk):
-        try:
-            issue_count = Issue.objects.filter(
-                state=pk, workspace__slug=slug, project_id=project_id
-            ).count()
-            return Response({"issue_count": issue_count}, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )

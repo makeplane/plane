@@ -31,6 +31,7 @@ export interface IEstimateFormData {
     description: string;
   };
   estimate_points: {
+    id?: string;
     key: number;
     value: string;
   }[];

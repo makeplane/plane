@@ -349,7 +349,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               />
             )}
             {properties.sub_issue_count && (
-              <div className="flex flex-shrink-0 items-center gap-1 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm">
+              <div className="flex flex-shrink-0 items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
                 {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
               </div>
             )}

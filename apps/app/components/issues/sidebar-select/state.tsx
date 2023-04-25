@@ -17,7 +17,7 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { UserAuth } from "types";
 // constants
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   value: string;
@@ -30,7 +30,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
   const { workspaceSlug, projectId } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null

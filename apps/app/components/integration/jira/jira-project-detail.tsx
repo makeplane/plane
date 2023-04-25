@@ -102,12 +102,12 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
   if (error) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-brand-secondary">
           Something went wrong. Please{" "}
           <button
             onClick={() => setCurrentStep({ state: "import-configure" })}
             type="button"
-            className="inline text-blue-500 underline"
+            className="inline text-brand-accent underline"
           >
             go back
           </button>{" "}
@@ -121,37 +121,37 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
     <div className="h-full w-full space-y-10 overflow-y-auto">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
-          <h3 className="text-lg font-semibold">Import Data</h3>
-          <p className="text-sm text-gray-500">Import Completed. We have found:</p>
+          <h3 className="font-semibold">Import Data</h3>
+          <p className="text-sm text-brand-secondary">Import Completed. We have found:</p>
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{projectInfo?.issues}</h4>
-            <p className="text-sm text-gray-500">Issues</p>
+            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.issues}</h4>
+            <p className="text-sm text-brand-secondary">Issues</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{projectInfo?.states}</h4>
-            <p className="text-sm text-gray-500">States</p>
+            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.states}</h4>
+            <p className="text-sm text-brand-secondary">States</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{projectInfo?.modules}</h4>
-            <p className="text-sm text-gray-500">Modules</p>
+            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.modules}</h4>
+            <p className="text-sm text-brand-secondary">Modules</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{projectInfo?.labels}</h4>
-            <p className="text-sm text-gray-500">Labels</p>
+            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.labels}</h4>
+            <p className="text-sm text-brand-secondary">Labels</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{projectInfo?.users?.length}</h4>
-            <p className="text-sm text-gray-500">Users</p>
+            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.users?.length}</h4>
+            <p className="text-sm text-brand-secondary">Users</p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
-          <h3 className="text-lg font-semibold">Import Epics</h3>
-          <p className="text-sm text-gray-500">Import epics as modules</p>
+          <h3 className="font-semibold">Import Epics</h3>
+          <p className="text-sm text-brand-secondary">Import epics as modules</p>
         </div>
         <div className="col-span-1">
           <Controller

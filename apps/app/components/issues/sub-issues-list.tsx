@@ -21,7 +21,7 @@ import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outli
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue } from "types";
+import { IIssue, ISubIssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -40,7 +40,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
 
   const { memberRole } = useProjectMyMembership();
 
-  const { data: subIssues } = useSWR<IIssue[] | undefined>(
+  const { data: subIssuesResponse } = useSWR<ISubIssueResponse>(
     workspaceSlug && projectId && issueId ? SUB_ISSUES(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
@@ -57,6 +57,22 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
       : null
   );
 
+  const updateSubIssuesState = (data: IIssue[]) => {
+    const backlogCount = data.filter((i) => i.state_detail.group === "backlog").length;
+    const unstartedCount = data.filter((i) => i.state_detail.group === "unstarted").length;
+    const startedCount = data.filter((i) => i.state_detail.group === "started").length;
+    const completedCount = data.filter((i) => i.state_detail.group === "completed").length;
+    const cancelledCount = data.filter((i) => i.state_detail.group === "cancelled").length;
+
+    return {
+      backlog: backlogCount ?? 0,
+      unstarted: unstartedCount ?? 0,
+      started: startedCount ?? 0,
+      completed: completedCount ?? 0,
+      cancelled: cancelledCount ?? 0,
+    };
+  };
+
   const addAsSubIssue = async (data: { issues: string[] }) => {
     if (!workspaceSlug || !projectId) return;
 
@@ -65,20 +81,20 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
         sub_issue_ids: data.issues,
       })
       .then((res) => {
-        mutate<IIssue[]>(
+        mutate<ISubIssueResponse>(
           SUB_ISSUES(parentIssue?.id ?? ""),
           (prevData) => {
-            let newSubIssues = [...(prevData as IIssue[])];
-
+            if (!prevData) return prevData;
+            let newSubIssues = prevData.sub_issues as IIssue[];
             data.issues.forEach((issueId: string) => {
               const issue = issues?.find((i) => i.id === issueId);
-
               if (issue) newSubIssues.push(issue);
             });
-
             newSubIssues = orderArrayBy(newSubIssues, "created_at", "descending");
-
-            return newSubIssues;
+            return {
+              state_distribution: updateSubIssuesState(newSubIssues),
+              sub_issues: newSubIssues,
+            };
           },
           false
         );
@@ -108,14 +124,21 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
   const handleSubIssueRemove = (issueId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    mutate<IIssue[]>(
+    mutate<ISubIssueResponse>(
       SUB_ISSUES(parentIssue.id ?? ""),
-      (prevData) => prevData?.filter((i) => i.id !== issueId),
+      (prevData) => {
+        if (!prevData) return prevData;
+        const updatedArray = (prevData.sub_issues ?? []).filter((i) => i.id !== issueId);
+        return {
+          state_distribution: updateSubIssuesState(updatedArray),
+          sub_issues: updatedArray,
+        };
+      },
       false
     );
 
     issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: null })
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null })
       .then((res) => {
         mutate(SUB_ISSUES(parentIssue.id ?? ""));
 
@@ -146,6 +169,21 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
     });
   };
 
+  const completedSubIssues =
+    subIssuesResponse && subIssuesResponse.state_distribution
+      ? (subIssuesResponse?.state_distribution.completed
+          ? subIssuesResponse?.state_distribution.completed
+          : 0) +
+        (subIssuesResponse?.state_distribution.cancelled
+          ? subIssuesResponse?.state_distribution.cancelled
+          : 0)
+      : 0;
+
+  const totalSubIssues =
+    subIssuesResponse && subIssuesResponse.sub_issues ? subIssuesResponse?.sub_issues.length : 0;
+
+  const completionPercentage = (completedSubIssues / totalSubIssues) * 100;
+
   const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
 
   return (
@@ -168,15 +206,49 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
         }
         handleOnSubmit={addAsSubIssue}
       />
-      {subIssues && subIssues.length > 0 ? (
+      {subIssuesResponse &&
+      subIssuesResponse.sub_issues &&
+      subIssuesResponse.sub_issues.length > 0 ? (
         <Disclosure defaultOpen={true}>
           {({ open }) => (
             <>
               <div className="flex items-center justify-between">
-                <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1">
-                  <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
-                  Sub-issues <span className="ml-1 text-gray-600">{subIssues.length}</span>
-                </Disclosure.Button>
+                <div className="flex items-center justify-start gap-3">
+                  <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1">
+                    <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
+                    Sub-issues{" "}
+                    <span className="ml-1 text-gray-600">
+                      {subIssuesResponse.sub_issues.length}
+                    </span>
+                  </Disclosure.Button>
+                  {subIssuesResponse.state_distribution && (
+                    <div className="flex gap-2 w-60 items-center text-gray-800">
+                      <div className="bar relative h-1.5 w-full rounded bg-gray-300">
+                        <div
+                          className="absolute top-0 left-0 h-1.5 rounded bg-green-500 duration-300"
+                          style={{
+                            width: `${
+                              isNaN(completionPercentage)
+                                ? 0
+                                : completionPercentage > 100
+                                ? 100
+                                : completionPercentage.toFixed(0)
+                            }%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs whitespace-nowrap">
+                        {isNaN(completionPercentage)
+                          ? 0
+                          : completionPercentage > 100
+                          ? 100
+                          : completionPercentage.toFixed(0)}
+                        % Done
+                      </span>
+                    </div>
+                  )}
+                </div>
+
                 {open && !isNotAllowed ? (
                   <div className="flex items-center">
                     <button
@@ -205,7 +277,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                 leaveTo="transform scale-95 opacity-0"
               >
                 <Disclosure.Panel className="mt-3 flex flex-col gap-y-1">
-                  {subIssues.map((issue) => (
+                  {subIssuesResponse.sub_issues.map((issue) => (
                     <Link
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}

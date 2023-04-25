@@ -127,6 +127,19 @@ export interface IIssue {
   labels_list: string[];
 }
 
+export interface ISubIssuesState {
+  backlog: number;
+  unstarted: number;
+  started: number;
+  completed: number;
+  cancelled: number;
+}
+
+export interface ISubIssueResponse {
+  state_distribution: ISubIssuesState;
+  sub_issues: IIssue[];
+}
+
 export interface BlockeIssue {
   id: string;
   blocked_issue_detail?: BlockeIssueDetail;

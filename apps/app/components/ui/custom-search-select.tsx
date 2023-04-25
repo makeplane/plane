@@ -102,9 +102,9 @@ export const CustomSearchSelect = ({
               } z-10 mt-1 origin-top-right rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none`}
             >
               <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-brand-base bg-brand-surface-1 px-2">
-                <MagnifyingGlassIcon className="text-brand-muted-1 h-3 w-3" />
+                <MagnifyingGlassIcon className="h-3 w-3 text-brand-secondary" />
                 <Combobox.Input
-                  className="text-brand-muted-1  w-full bg-transparent py-1  px-2 text-xs focus:outline-none"
+                  className="w-full bg-transparent py-1 px-2 text-xs text-brand-secondary focus:outline-none"
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Type to search..."
                   displayValue={(assigned: any) => assigned?.name}

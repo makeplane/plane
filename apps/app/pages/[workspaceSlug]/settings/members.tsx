@@ -157,7 +157,7 @@ const MembersSettings: NextPage = () => {
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="divide-y rounded-[10px] divide-brand-base border border-brand-base bg-brand-surface-1 px-6">
+            <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base px-6">
               {members.length > 0
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">
@@ -184,64 +184,63 @@ const MembersSettings: NextPage = () => {
                           <p className="text-xs text-brand-secondary">{member.email}</p>
                         </div>
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-2 text-xs">
                         {!member?.status && (
-                          <div className="flex mr-2 px-2 py-1 bg-yellow-200 text-yellow-700 text-center rounded-full text-xs items-center justify-center">
+                          <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
                             <p>Pending</p>
                           </div>
                         )}
-                        <div className="flex items-center gap-2 text-xs">
-                          <CustomSelect
-                            label={ROLE[member.role as keyof typeof ROLE]}
-                            value={member.role}
-                            onChange={(value: any) => {
-                              workspaceService
-                                .updateWorkspaceMember(activeWorkspace?.slug as string, member.id, {
-                                  role: value,
-                                })
-                                .then(() => {
-                                  mutateMembers(
-                                    (prevData) =>
-                                      prevData?.map((m) =>
-                                        m.id === member.id ? { ...m, role: value } : m
-                                      ),
-                                    false
-                                  );
-                                  setToastAlert({
-                                    title: "Success",
-                                    type: "success",
-                                    message: "Member role updated successfully.",
-                                  });
-                                })
-                                .catch(() => {
-                                  setToastAlert({
-                                    title: "Error",
-                                    type: "error",
-                                    message: "An error occurred while updating member role.",
-                                  });
+                        <CustomSelect
+                          label={ROLE[member.role as keyof typeof ROLE]}
+                          value={member.role}
+                          onChange={(value: any) => {
+                            workspaceService
+                              .updateWorkspaceMember(activeWorkspace?.slug as string, member.id, {
+                                role: value,
+                              })
+                              .then(() => {
+                                mutateMembers(
+                                  (prevData) =>
+                                    prevData?.map((m) =>
+                                      m.id === member.id ? { ...m, role: value } : m
+                                    ),
+                                  false
+                                );
+                                setToastAlert({
+                                  title: "Success",
+                                  type: "success",
+                                  message: "Member role updated successfully.",
                                 });
+                              })
+                              .catch(() => {
+                                setToastAlert({
+                                  title: "Error",
+                                  type: "error",
+                                  message: "An error occurred while updating member role.",
+                                });
+                              });
+                          }}
+                          position="right"
+                        >
+                          {Object.keys(ROLE).map((key) => (
+                            <CustomSelect.Option key={key} value={key}>
+                              <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                            </CustomSelect.Option>
+                          ))}
+                        </CustomSelect>
+                        <CustomMenu ellipsis>
+                          <CustomMenu.MenuItem
+                            onClick={() => {
+                              if (member.member) {
+                                setSelectedRemoveMember(member.id);
+                              } else {
+                                setSelectedInviteRemoveMember(member.id);
+                              }
                             }}
                           >
-                            {Object.keys(ROLE).map((key) => (
-                              <CustomSelect.Option key={key} value={key}>
-                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                              </CustomSelect.Option>
-                            ))}
-                          </CustomSelect>
-                          <CustomMenu ellipsis>
-                            <CustomMenu.MenuItem
-                              onClick={() => {
-                                if (member.member) {
-                                  setSelectedRemoveMember(member.id);
-                                } else {
-                                  setSelectedInviteRemoveMember(member.id);
-                                }
-                              }}
-                            >
-                              Remove member
-                            </CustomMenu.MenuItem>
-                          </CustomMenu>
-                        </div>
+                            Remove member
+                          </CustomMenu.MenuItem>
+                        </CustomMenu>
                       </div>
                     </div>
                   ))

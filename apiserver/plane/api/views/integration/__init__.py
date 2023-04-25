@@ -6,3 +6,4 @@ from .github import (
     GithubCommentSyncViewSet,
     GithubRepositoriesEndpoint,
 )
+from .slack import SlackProjectSyncViewSet
