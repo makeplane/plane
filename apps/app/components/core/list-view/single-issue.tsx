@@ -216,7 +216,7 @@ export const SingleListIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className="flex items-center justify-between gap-2 border-b border-brand-base bg-brand-base last:border-b-0"
+        className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-base bg-brand-base last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
@@ -224,7 +224,7 @@ export const SingleListIssue: React.FC<Props> = ({
         }}
       >
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
-          <div className="flex-grow cursor-pointer px-4 py-2.5">
+          <div className="flex-grow cursor-pointer px-4 pt-2.5 md:py-2.5">
             <a className="group relative flex items-center gap-2">
               {properties.key && (
                 <Tooltip
@@ -245,7 +245,7 @@ export const SingleListIssue: React.FC<Props> = ({
           </div>
         </Link>
 
-        <div className="flex flex-shrink flex-wrap items-center justify-end gap-2 py-2.5 pr-4 text-xs">
+        <div className="flex w-full flex-shrink flex-wrap items-center gap-2 px-4 pb-2.5 text-xs sm:w-auto md:px-0 md:py-2.5 md:pr-4">
           {properties.priority && (
             <ViewPrioritySelect
               issue={issue}
