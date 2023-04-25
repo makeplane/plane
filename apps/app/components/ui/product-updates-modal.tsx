@@ -3,10 +3,14 @@ import useSWR from "swr";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
+// component
+import { MarkdownRenderer, Spinner } from "components/ui";
 // icons
 import { XMarkIcon } from "@heroicons/react/20/solid";
+// services
 import workspaceService from "services/workspace.service";
-import { MarkdownRenderer } from "components/ui";
+// helper
+import { renderLongDateFormat } from "helpers/date-time.helper";
 
 type Props = {
   isOpen: boolean;
@@ -15,7 +19,6 @@ type Props = {
 
 export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const { data: updates } = useSWR("PRODUCT_UPDATES", () => workspaceService.getProductUpdates());
-  console.log("updates:", updates);
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={setIsOpen}>
@@ -60,9 +63,29 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           </button>
                         </span>
                       </Dialog.Title>
-                      {updates &&
-                        updates.length > 0 &&
-                        updates.map((item: any) => <MarkdownRenderer markdown={item.body} />)}
+                      {updates && updates.length > 0 ? (
+                        updates.map((item: any, index: number) => (
+                          <>
+                            <div className="flex items-center gap-2 text-xs text-brand-secondary">
+                              <span className="flex items-center rounded-full border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-xs">
+                                {item.tag_name}
+                              </span>
+                              <span>{renderLongDateFormat(item.published_at)}</span>
+                              {index === 0 && (
+                                <span className="flex items-center justify-center rounded-2xl bg-brand-accent p-1 px-2 text-xs text-white">
+                                  New
+                                </span>
+                              )}
+                            </div>
+                            <MarkdownRenderer markdown={item.body} />
+                          </>
+                        ))
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <Spinner />
+                          Loading...
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
