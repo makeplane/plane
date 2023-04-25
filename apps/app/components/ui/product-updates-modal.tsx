@@ -18,7 +18,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   console.log("updates:", updates);
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20 max-h-96 overflow-y-auto" onClose={setIsOpen}>
+      <Dialog as="div" className="relative z-20" onClose={setIsOpen}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -28,7 +28,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -42,19 +42,19 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
-                <div className="max-h-[600px] overflow-y-auto bg-white p-5">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="max-h-[600px] overflow-y-auto bg-brand-surface-2 p-5">
                   <div className="sm:flex sm:items-start">
                     <div className="flex w-full flex-col gap-y-4 text-center sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="flex justify-between text-lg font-medium leading-6 text-gray-900"
+                        className="flex justify-between text-lg font-medium leading-6 text-brand-base"
                       >
                         <span>Product Updates</span>
                         <span>
                           <button type="button" onClick={() => setIsOpen(false)}>
                             <XMarkIcon
-                              className="h-6 w-6 text-gray-400 hover:text-gray-500"
+                              className="h-6 w-6 text-gray-400 hover:text-brand-secondary"
                               aria-hidden="true"
                             />
                           </button>

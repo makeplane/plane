@@ -21,3 +21,4 @@ export * from "./spinner";
 export * from "./tooltip";
 export * from "./toggle-switch";
 export * from "./markdown-to-component";
+export * from "./product-updates-modal";

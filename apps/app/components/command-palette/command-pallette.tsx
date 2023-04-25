@@ -45,7 +45,6 @@ import {
   ChangeIssuePriority,
   ChangeIssueAssignee,
   ChangeInterfaceTheme,
-  ProductUpdatesModal,
 } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
 import { CreateUpdateCycleModal } from "components/cycles";
@@ -75,7 +74,6 @@ export const CommandPalette: React.FC = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
-  const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
@@ -223,8 +221,6 @@ export const CommandPalette: React.FC = () => {
           setIsCreateCycleModalOpen(true);
         } else if (keyPressed === "m") {
           setIsCreateModuleModalOpen(true);
-        } else if (keyPressed === "u") {
-          setIsProductUpdatesModalOpen(true);
         }
       }
     },
@@ -328,10 +324,6 @@ export const CommandPalette: React.FC = () => {
   return (
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
-      <ProductUpdatesModal
-        isOpen={isProductUpdatesModalOpen}
-        setIsOpen={setIsProductUpdatesModalOpen}
-      />
       {workspaceSlug && (
         <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
       )}
