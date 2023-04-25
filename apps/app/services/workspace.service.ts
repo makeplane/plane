@@ -206,6 +206,13 @@ class WorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
+  async getProductUpdates(): Promise<any> {
+    return this.get("/api/release-notes/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export default new WorkspaceService();
