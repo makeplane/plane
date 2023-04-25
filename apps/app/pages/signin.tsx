@@ -2,6 +2,8 @@ import React, { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 import Image from "next/image";
+import getConfig from 'next/config'
+
 
 // hooks
 import useUser from "hooks/use-user";
@@ -25,6 +27,9 @@ import Logo from "public/logo.png";
 import type { NextPage } from "next";
 
 const SignInPage: NextPage = () => {
+  const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
+  console.log(publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL)
+
   // router
   const router = useRouter();
   // user hook
