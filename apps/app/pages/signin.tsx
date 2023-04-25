@@ -27,8 +27,6 @@ import Logo from "public/logo.png";
 import type { NextPage } from "next";
 
 const SignInPage: NextPage = () => {
-  const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
-  console.log(publicRuntimeConfig.NEXT_PUBLIC_API_BASE_URL)
 
   // router
   const router = useRouter();
