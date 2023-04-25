@@ -20,3 +20,4 @@ export * from "./progress-bar";
 export * from "./spinner";
 export * from "./tooltip";
 export * from "./toggle-switch";
+export * from "./markdown-to-component";

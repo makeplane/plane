@@ -45,6 +45,7 @@ import {
   ChangeIssuePriority,
   ChangeIssueAssignee,
   ChangeInterfaceTheme,
+  ProductUpdatesModal,
 } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
 import { CreateUpdateCycleModal } from "components/cycles";
@@ -74,6 +75,7 @@ export const CommandPalette: React.FC = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
+  const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
@@ -221,6 +223,8 @@ export const CommandPalette: React.FC = () => {
           setIsCreateCycleModalOpen(true);
         } else if (keyPressed === "m") {
           setIsCreateModuleModalOpen(true);
+        } else if (keyPressed === "u") {
+          setIsProductUpdatesModalOpen(true);
         }
       }
     },
@@ -324,6 +328,10 @@ export const CommandPalette: React.FC = () => {
   return (
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
+      <ProductUpdatesModal
+        isOpen={isProductUpdatesModalOpen}
+        setIsOpen={setIsProductUpdatesModalOpen}
+      />
       {workspaceSlug && (
         <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
       )}
@@ -393,7 +401,7 @@ export const CommandPalette: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-brand-base divide-opacity-10 rounded-xl bg-brand-surface-2 border-brand-base border shadow-2xl transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-brand-base divide-opacity-10 rounded-xl border border-brand-base bg-brand-surface-2 shadow-2xl transition-all">
                 <Command
                   filter={(value, search) => {
                     if (value.toLowerCase().includes(search.toLowerCase())) return 1;
