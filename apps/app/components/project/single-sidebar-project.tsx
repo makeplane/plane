@@ -171,7 +171,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                   <Link key={item.name} href={item.href}>
                     <a
                       className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
-                        item.href === router.asPath
+                        router.asPath.includes(item.href)
                           ? "bg-brand-base text-brand-secondary"
                           : "text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-secondary focus:bg-brand-base focus:text-brand-secondary"
                       } ${sidebarCollapse ? "justify-center" : ""}`}
@@ -179,7 +179,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                       <div className="grid place-items-center">
                         <item.icon
                           className={`h-5 w-5 flex-shrink-0 ${
-                            item.href === router.asPath
+                            router.asPath.includes(item.href)
                               ? "text-brand-secondary"
                               : "text-brand-secondary group-hover:text-brand-base"
                           } ${!sidebarCollapse ? "mr-3" : ""}`}
