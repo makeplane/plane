@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
           toggleSidebar ? "left-0" : "-left-full md:left-0"
         } flex h-full flex-col bg-brand-sidebar duration-300 md:relative`}
       >
-        <div className="flex h-full flex-1 flex-col border-r border-brand-base">
+        <div className="flex h-full flex-1 flex-col">
           <div className="flex h-full flex-1 flex-col">
             <WorkspaceSidebarDropdown />
             <WorkspaceSidebarMenu />
