@@ -68,8 +68,9 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   return (
     <Container meta={meta}>
       <CommandPalette />
-      <div className="flex h-screen w-full overflow-hidden">
+      <div className="relative flex h-screen w-full overflow-hidden">
         <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
+
         {loading ? (
           <div className="grid h-full w-full place-items-center p-4">
             <div className="flex flex-col items-center gap-3 text-center">
@@ -108,7 +109,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
           />
         ) : (
           <main
-            className={`relative w-full overflow-hidden border-l border-red-500 ${
+            className={`relative flex h-full w-full flex-col overflow-hidden ${
               bg === "primary"
                 ? "bg-brand-surface-1"
                 : bg === "secondary"
@@ -124,10 +125,11 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                 setToggleSidebar={setToggleSidebar}
               />
             )}
+
             <div
               className={
                 issueView === "kanban"
-                  ? "h-full w-full border border-white"
+                  ? "h-full w-full overflow-hidden"
                   : `flex w-full flex-grow flex-col ${
                       noPadding || issueView === "list"
                         ? ""
@@ -148,7 +150,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                   <SettingsNavbar />
                 </div>
               )}
-              {/* {children} */}
+              <div className="relative h-full w-full overflow-hidden">{children}</div>
             </div>
           </main>
         )}

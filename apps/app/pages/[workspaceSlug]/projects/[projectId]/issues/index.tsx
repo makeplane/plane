@@ -21,7 +21,6 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage = () => {
-
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -51,7 +50,7 @@ const ProjectIssues: NextPage = () => {
                 document.dispatchEvent(e);
               }}
             >
-              <PlusIcon className="w-4 h-4" />
+              <PlusIcon className="h-4 w-4" />
               Add Issue
             </PrimaryButton>
           </div>
