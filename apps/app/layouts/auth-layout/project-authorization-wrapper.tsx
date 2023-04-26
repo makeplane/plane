@@ -68,7 +68,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   return (
     <Container meta={meta}>
       <CommandPalette />
-      <div className="flex h-screen w-full overflow-x-hidden">
+      <div className="flex h-screen w-full overflow-hidden">
         <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
         {loading ? (
           <div className="grid h-full w-full place-items-center p-4">
@@ -107,7 +107,15 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             type="project"
           />
         ) : (
-          <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
+          <main
+            className={`relative w-full overflow-hidden border-l border-red-500 ${
+              bg === "primary"
+                ? "bg-brand-surface-1"
+                : bg === "secondary"
+                ? "bg-brand-sidebar"
+                : "bg-brand-base"
+            }`}
+          >
             {!noHeader && (
               <AppHeader
                 breadcrumbs={breadcrumbs}
@@ -117,15 +125,17 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               />
             )}
             <div
-              className={`flex w-full flex-grow flex-col ${
-                noPadding || issueView === "list" ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
-              } ${
-                bg === "primary"
-                  ? "bg-brand-surface-1"
-                  : bg === "secondary"
-                  ? "bg-brand-sidebar"
-                  : "bg-brand-base"
-              }`}
+              className={
+                issueView === "kanban"
+                  ? "h-full w-full border border-white"
+                  : `flex w-full flex-grow flex-col ${
+                      noPadding || issueView === "list"
+                        ? ""
+                        : settingsLayout
+                        ? "p-8 lg:px-28"
+                        : "p-8"
+                    }`
+              }
             >
               {settingsLayout && (
                 <div className="mb-12 space-y-6">
@@ -138,7 +148,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                   <SettingsNavbar />
                 </div>
               )}
-              {children}
+              {/* {children} */}
             </div>
           </main>
         )}
