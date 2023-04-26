@@ -314,10 +314,26 @@ export const IssuesView: React.FC<Props> = ({
   );
 
   const removeIssueFromCycle = useCallback(
-    (bridgeId: string) => {
+    (bridgeId: string, issueId: string) => {
       if (!workspaceSlug || !projectId || !cycleId) return;
 
-      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+      mutate(
+        CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
+        (prevData: any) => {
+          if (!prevData) return prevData;
+          if (selectedGroup) {
+            const filteredData: any = {};
+            for (const key in prevData) {
+              filteredData[key] = prevData[key].filter((item: any) => item.id !== issueId);
+            }
+            return filteredData;
+          } else {
+            const filteredData = prevData.filter((i: any) => i.id !== issueId);
+            return filteredData;
+          }
+        },
+        false
+      );
 
       issuesService
         .removeIssueFromCycle(
