@@ -6,10 +6,8 @@ const extraImageDomains = (process.env.NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS ?? "")
   .split(",")
   .filter((domain) => domain.length > 0);
 
-// So we can test deploy previews preview
-if (process.env.NEXT_PUBLIC_API_BASE_URL && !process.env.NEXT_PUBLIC_API_BASE_URL) {
-  process.env.NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-}
+if (process.env.API_BASE_URL && !process.env.NEXT_PUBLIC_API_BASE_URL)
+  process.env.NEXT_PUBLIC_API_BASE_URL = process.env.API_BASE_URL;
 
 const nextConfig = {
   reactStrictMode: false,
@@ -36,4 +34,3 @@ if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {
 } else {
   module.exports = nextConfig;
 }
-

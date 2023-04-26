@@ -1,10 +1,6 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
 import Image from "next/image";
-import getConfig from 'next/config'
-
-
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -27,7 +23,6 @@ import Logo from "public/logo.png";
 import type { NextPage } from "next";
 
 const SignInPage: NextPage = () => {
-
   // router
   const router = useRouter();
   // user hook
