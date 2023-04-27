@@ -11,7 +11,6 @@ import useIssuesView from "hooks/use-issues-view";
 import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
-import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
@@ -30,7 +29,6 @@ type Meta = {
 type Props = {
   meta?: Meta;
   children: React.ReactNode;
-  noPadding?: boolean;
   noHeader?: boolean;
   bg?: "primary" | "secondary";
   breadcrumbs?: JSX.Element;
@@ -47,7 +45,6 @@ export const ProjectAuthorizationWrapper: React.FC<Props> = (props) => (
 const ProjectAuthorizationWrapped: React.FC<Props> = ({
   meta,
   children,
-  noPadding = false,
   noHeader = false,
   bg = "primary",
   breadcrumbs,
@@ -125,20 +122,10 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                 setToggleSidebar={setToggleSidebar}
               />
             )}
-
-            <div className={`h-full w-full overflow-hidden`}>
-              {settingsLayout && (
-                <div className="mb-12 space-y-6">
-                  <div>
-                    <h3 className="text-3xl font-semibold">Project Settings</h3>
-                    <p className="mt-1 text-brand-secondary">
-                      This information will be displayed to every member of the project.
-                    </p>
-                  </div>
-                  <SettingsNavbar />
-                </div>
-              )}
-              <div className="relative h-full w-full overflow-hidden">{children}</div>
+            <div className="h-full w-full overflow-hidden">
+              <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
+                {children}
+              </div>
             </div>
           </main>
         )}

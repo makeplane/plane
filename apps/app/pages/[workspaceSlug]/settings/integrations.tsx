@@ -9,6 +9,7 @@ import workspaceService from "services/workspace.service";
 import IntegrationService from "services/integration";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { SettingsHeader } from "components/workspace";
 // components
 import { SingleIntegrationCard } from "components/integration";
 // ui
@@ -44,21 +45,24 @@ const WorkspaceIntegrations: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <section className="space-y-8">
-        <h3 className="text-2xl font-semibold">Integrations</h3>
-        <div className="space-y-5">
-          {appIntegrations ? (
-            appIntegrations.map((integration) => (
-              <SingleIntegrationCard key={integration.id} integration={integration} />
-            ))
-          ) : (
-            <Loader className="space-y-5">
-              <Loader.Item height="60px" />
-              <Loader.Item height="60px" />
-            </Loader>
-          )}
-        </div>
-      </section>
+      <div className="px-24 py-8">
+        <SettingsHeader />
+        <section className="space-y-8">
+          <h3 className="text-2xl font-semibold">Integrations</h3>
+          <div className="space-y-5">
+            {appIntegrations ? (
+              appIntegrations.map((integration) => (
+                <SingleIntegrationCard key={integration.id} integration={integration} />
+              ))
+            ) : (
+              <Loader className="space-y-5">
+                <Loader.Item height="60px" />
+                <Loader.Item height="60px" />
+              </Loader>
+            )}
+          </div>
+        </section>
+      </div>
     </WorkspaceAuthorizationLayout>
   );
 };

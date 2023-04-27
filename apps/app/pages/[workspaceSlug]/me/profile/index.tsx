@@ -24,6 +24,7 @@ import type { NextPage } from "next";
 import type { IUser } from "types";
 // constants
 import { USER_ROLES } from "constants/workspace";
+import SettingsNavbar from "layouts/settings-navbar";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -130,7 +131,6 @@ const Profile: NextPage = () => {
           <BreadcrumbItem title="My Profile" />
         </Breadcrumbs>
       }
-      profilePage
     >
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
@@ -144,145 +144,158 @@ const Profile: NextPage = () => {
         userImage
       />
       {myProfile ? (
-        <div className="space-y-8 sm:space-y-12">
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold text-brand-base">Profile Picture</h4>
-              <p className="text-sm text-brand-secondary">
-                Max file size is 5MB. Supported file types are .jpg and .png.
+        <div className="px-24 py-8">
+          <div className="mb-12 space-y-6">
+            <div>
+              <h3 className="text-3xl font-semibold">Profile Settings</h3>
+              <p className="mt-1 text-brand-secondary">
+                This information will be visible to only you.
               </p>
             </div>
-            <div className="col-span-12 sm:col-span-6">
-              <div className="flex items-center gap-4">
-                <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
-                  {!watch("avatar") || watch("avatar") === "" ? (
-                    <div className="h-12 w-12 rounded-md bg-brand-surface-2 p-2">
-                      <UserIcon className="h-full w-full text-brand-secondary" />
-                    </div>
-                  ) : (
-                    <div className="relative h-12 w-12 overflow-hidden">
-                      <Image
-                        src={watch("avatar")}
-                        alt={myProfile.first_name}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-md"
-                        onClick={() => setIsImageUploadModalOpen(true)}
-                        priority
-                      />
-                    </div>
-                  )}
-                </button>
-                <div className="flex items-center gap-2">
-                  <SecondaryButton
-                    onClick={() => {
-                      setIsImageUploadModalOpen(true);
-                    }}
-                  >
-                    Upload
-                  </SecondaryButton>
-                  {myProfile.avatar && myProfile.avatar !== "" && (
-                    <DangerButton
-                      onClick={() => handleDelete(myProfile.avatar, true)}
-                      loading={isRemoving}
+            <SettingsNavbar profilePage />
+          </div>
+          <div className="space-y-8 sm:space-y-12">
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-brand-base">Profile Picture</h4>
+                <p className="text-sm text-brand-secondary">
+                  Max file size is 5MB. Supported file types are .jpg and .png.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <div className="flex items-center gap-4">
+                  <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
+                    {!watch("avatar") || watch("avatar") === "" ? (
+                      <div className="h-12 w-12 rounded-md bg-brand-surface-2 p-2">
+                        <UserIcon className="h-full w-full text-brand-secondary" />
+                      </div>
+                    ) : (
+                      <div className="relative h-12 w-12 overflow-hidden">
+                        <Image
+                          src={watch("avatar")}
+                          alt={myProfile.first_name}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-md"
+                          onClick={() => setIsImageUploadModalOpen(true)}
+                          priority
+                        />
+                      </div>
+                    )}
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <SecondaryButton
+                      onClick={() => {
+                        setIsImageUploadModalOpen(true);
+                      }}
                     >
-                      {isRemoving ? "Removing..." : "Remove"}
-                    </DangerButton>
-                  )}
+                      Upload
+                    </SecondaryButton>
+                    {myProfile.avatar && myProfile.avatar !== "" && (
+                      <DangerButton
+                        onClick={() => handleDelete(myProfile.avatar, true)}
+                        loading={isRemoving}
+                      >
+                        {isRemoving ? "Removing..." : "Remove"}
+                      </DangerButton>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold text-brand-base">Full Name</h4>
-              <p className="text-sm text-brand-secondary">
-                This name will be reflected on all the projects you are working on.
-              </p>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-brand-base">Full Name</h4>
+                <p className="text-sm text-brand-secondary">
+                  This name will be reflected on all the projects you are working on.
+                </p>
+              </div>
+              <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
+                <Input
+                  name="first_name"
+                  id="first_name"
+                  register={register}
+                  error={errors.first_name}
+                  placeholder="Enter your first name"
+                  autoComplete="off"
+                  validations={{
+                    required: "This field is required.",
+                  }}
+                />
+                <Input
+                  name="last_name"
+                  register={register}
+                  error={errors.last_name}
+                  id="last_name"
+                  placeholder="Enter your last name"
+                  autoComplete="off"
+                />
+              </div>
             </div>
-            <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
-              <Input
-                name="first_name"
-                id="first_name"
-                register={register}
-                error={errors.first_name}
-                placeholder="Enter your first name"
-                autoComplete="off"
-                validations={{
-                  required: "This field is required.",
-                }}
-              />
-              <Input
-                name="last_name"
-                register={register}
-                error={errors.last_name}
-                id="last_name"
-                placeholder="Enter your last name"
-                autoComplete="off"
-              />
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-brand-base">Email</h4>
+                <p className="text-sm text-brand-secondary">
+                  The email address that you are using.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <Input
+                  id="email"
+                  name="email"
+                  autoComplete="off"
+                  register={register}
+                  error={errors.name}
+                  className="w-full"
+                  disabled
+                />
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold text-brand-base">Email</h4>
-              <p className="text-sm text-brand-secondary">The email address that you are using.</p>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-brand-base">Role</h4>
+                <p className="text-sm text-brand-secondary">Add your role.</p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <Controller
+                  name="role"
+                  control={control}
+                  rules={{ required: "This field is required" }}
+                  render={({ field: { value, onChange } }) => (
+                    <CustomSelect
+                      value={value}
+                      onChange={onChange}
+                      label={value ? value.toString() : "Select your role"}
+                      width="w-full"
+                      input
+                      position="right"
+                    >
+                      {USER_ROLES.map((item) => (
+                        <CustomSelect.Option key={item.value} value={item.value}>
+                          {item.label}
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  )}
+                />
+              </div>
             </div>
-            <div className="col-span-12 sm:col-span-6">
-              <Input
-                id="email"
-                name="email"
-                autoComplete="off"
-                register={register}
-                error={errors.name}
-                className="w-full"
-                disabled
-              />
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-brand-base">Theme</h4>
+                <p className="text-sm text-brand-secondary">
+                  Select or customize your interface color scheme.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <ThemeSwitch />
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold text-brand-base">Role</h4>
-              <p className="text-sm text-brand-secondary">Add your role.</p>
+            <div className="sm:text-right">
+              <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Update profile"}
+              </SecondaryButton>
             </div>
-            <div className="col-span-12 sm:col-span-6">
-              <Controller
-                name="role"
-                control={control}
-                rules={{ required: "This field is required" }}
-                render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={value ? value.toString() : "Select your role"}
-                    width="w-full"
-                    input
-                    position="right"
-                  >
-                    {USER_ROLES.map((item) => (
-                      <CustomSelect.Option key={item.value} value={item.value}>
-                        {item.label}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                )}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold text-brand-base">Theme</h4>
-              <p className="text-sm text-brand-secondary">
-                Select or customize your interface color scheme.
-              </p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <ThemeSwitch />
-            </div>
-          </div>
-          <div className="sm:text-right">
-            <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Update profile"}
-            </SecondaryButton>
           </div>
         </div>
       ) : (

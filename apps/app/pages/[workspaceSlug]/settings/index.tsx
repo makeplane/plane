@@ -14,9 +14,10 @@ import fileService from "services/file.service";
 import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImageUploadModal } from "components/core";
-import { DeleteWorkspaceModal } from "components/workspace";
+import { DeleteWorkspaceModal, SettingsHeader } from "components/workspace";
 // ui
 import { Spinner, Input, CustomSelect, SecondaryButton, DangerButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -172,163 +173,167 @@ const WorkspaceSettings: NextPage = () => {
         }}
         data={activeWorkspace ?? null}
       />
-      {activeWorkspace ? (
-        <div className="space-y-8 sm:space-y-12">
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Logo</h4>
-              <p className="text-sm text-brand-secondary">
-                Max file size is 5MB. Supported file types are .jpg and .png.
-              </p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <div className="flex items-center gap-4">
-                <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
-                  {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
-                    <div className="relative mx-auto flex h-12 w-12">
-                      <Image
-                        src={watch("logo")!}
-                        alt="Workspace Logo"
-                        objectFit="cover"
-                        layout="fill"
-                        className="rounded-md"
-                        priority
-                      />
-                    </div>
-                  ) : (
-                    <div className="relative flex h-12 w-12 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                      {activeWorkspace?.name?.charAt(0) ?? "N"}
-                    </div>
-                  )}
-                </button>
-                <div className="flex gap-4">
-                  <SecondaryButton
-                    onClick={() => {
-                      setIsImageUploadModalOpen(true);
-                    }}
-                  >
-                    {isImageUploading ? "Uploading..." : "Upload"}
-                  </SecondaryButton>
-                  {activeWorkspace.logo && activeWorkspace.logo !== "" && (
-                    <DangerButton onClick={() => handleDelete(activeWorkspace.logo)}>
-                      {isImageRemoving ? "Removing..." : "Remove"}
-                    </DangerButton>
-                  )}
+      <div className="px-24 py-8">
+        <SettingsHeader />
+        {activeWorkspace ? (
+          <div className="space-y-8 sm:space-y-12">
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Logo</h4>
+                <p className="text-sm text-brand-secondary">
+                  Max file size is 5MB. Supported file types are .jpg and .png.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <div className="flex items-center gap-4">
+                  <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
+                    {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
+                      <div className="relative mx-auto flex h-12 w-12">
+                        <Image
+                          src={watch("logo")!}
+                          alt="Workspace Logo"
+                          objectFit="cover"
+                          layout="fill"
+                          className="rounded-md"
+                          priority
+                        />
+                      </div>
+                    ) : (
+                      <div className="relative flex h-12 w-12 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+                        {activeWorkspace?.name?.charAt(0) ?? "N"}
+                      </div>
+                    )}
+                  </button>
+                  <div className="flex gap-4">
+                    <SecondaryButton
+                      onClick={() => {
+                        setIsImageUploadModalOpen(true);
+                      }}
+                    >
+                      {isImageUploading ? "Uploading..." : "Upload"}
+                    </SecondaryButton>
+                    {activeWorkspace.logo && activeWorkspace.logo !== "" && (
+                      <DangerButton onClick={() => handleDelete(activeWorkspace.logo)}>
+                        {isImageRemoving ? "Removing..." : "Remove"}
+                      </DangerButton>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">URL</h4>
-              <p className="text-sm text-brand-secondary">Your workspace URL.</p>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">URL</h4>
+                <p className="text-sm text-brand-secondary">Your workspace URL.</p>
+              </div>
+              <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
+                <Input
+                  id="url"
+                  name="url"
+                  autoComplete="off"
+                  register={register}
+                  error={errors.name}
+                  className="w-full"
+                  value={`${
+                    typeof window !== "undefined" &&
+                    window.location.origin.replace("http://", "").replace("https://", "")
+                  }/${activeWorkspace.slug}`}
+                  disabled
+                />
+                <SecondaryButton
+                  className="h-min"
+                  onClick={() =>
+                    copyTextToClipboard(
+                      `${typeof window !== "undefined" && window.location.origin}/${
+                        activeWorkspace.slug
+                      }`
+                    ).then(() => {
+                      setToastAlert({
+                        type: "success",
+                        title: "Link Copied!",
+                        message: "Workspace link copied to clipboard.",
+                      });
+                    })
+                  }
+                  outline
+                >
+                  <LinkIcon className="h-[18px] w-[18px]" />
+                </SecondaryButton>
+              </div>
             </div>
-            <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
-              <Input
-                id="url"
-                name="url"
-                autoComplete="off"
-                register={register}
-                error={errors.name}
-                className="w-full"
-                value={`${
-                  typeof window !== "undefined" &&
-                  window.location.origin.replace("http://", "").replace("https://", "")
-                }/${activeWorkspace.slug}`}
-                disabled
-              />
-              <SecondaryButton
-                className="h-min"
-                onClick={() =>
-                  copyTextToClipboard(
-                    `${typeof window !== "undefined" && window.location.origin}/${
-                      activeWorkspace.slug
-                    }`
-                  ).then(() => {
-                    setToastAlert({
-                      type: "success",
-                      title: "Link Copied!",
-                      message: "Workspace link copied to clipboard.",
-                    });
-                  })
-                }
-                outline
-              >
-                <LinkIcon className="h-[18px] w-[18px]" />
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Name</h4>
+                <p className="text-sm text-brand-secondary">Give a name to your workspace.</p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="Name"
+                  autoComplete="off"
+                  register={register}
+                  error={errors.name}
+                  validations={{
+                    required: "Name is required",
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Company Size</h4>
+                <p className="text-sm text-brand-secondary">How big is your company?</p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <Controller
+                  name="company_size"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <CustomSelect
+                      value={value}
+                      onChange={onChange}
+                      label={value ? value.toString() : "Select company size"}
+                      input
+                    >
+                      {COMPANY_SIZE?.map((item) => (
+                        <CustomSelect.Option key={item.value} value={item.value}>
+                          {item.label}
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  )}
+                />
+              </div>
+            </div>
+            <div className="sm:text-right">
+              <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Update Workspace"}
               </SecondaryButton>
             </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Name</h4>
-              <p className="text-sm text-brand-secondary">Give a name to your workspace.</p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <Input
-                id="name"
-                name="name"
-                placeholder="Name"
-                autoComplete="off"
-                register={register}
-                error={errors.name}
-                validations={{
-                  required: "Name is required",
-                }}
-              />
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Danger Zone</h4>
+                <p className="text-sm text-brand-secondary">
+                  The danger zone of the workspace delete page is a critical area that requires
+                  careful consideration and attention. When deleting a workspace, all of the data
+                  and resources within that workspace will be permanently removed and cannot be
+                  recovered.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <DangerButton onClick={() => setIsOpen(true)} outline>
+                  Delete the workspace
+                </DangerButton>
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Company Size</h4>
-              <p className="text-sm text-brand-secondary">How big is your company?</p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <Controller
-                name="company_size"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={value ? value.toString() : "Select company size"}
-                    input
-                  >
-                    {COMPANY_SIZE?.map((item) => (
-                      <CustomSelect.Option key={item.value} value={item.value}>
-                        {item.label}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                )}
-              />
-            </div>
+        ) : (
+          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+            <Spinner />
           </div>
-          <div className="sm:text-right">
-            <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Update Workspace"}
-            </SecondaryButton>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Danger Zone</h4>
-              <p className="text-sm text-brand-secondary">
-                The danger zone of the workspace delete page is a critical area that requires
-                careful consideration and attention. When deleting a workspace, all of the data and
-                resources within that workspace will be permanently removed and cannot be recovered.
-              </p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <DangerButton onClick={() => setIsOpen(true)} outline>
-                Delete the workspace
-              </DangerButton>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-          <Spinner />
-        </div>
-      )}
+        )}
+      </div>
     </WorkspaceAuthorizationLayout>
   );
 };

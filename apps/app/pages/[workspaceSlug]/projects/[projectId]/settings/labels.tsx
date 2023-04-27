@@ -7,8 +7,6 @@ import useSWR from "swr";
 // services
 import projectService from "services/project.service";
 import issuesService from "services/issues.service";
-// lib
-import { requiredAdmin } from "lib/auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -24,10 +22,11 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssueLabels, UserAuth } from "types";
-import type { GetServerSidePropsContext, NextPage } from "next";
+import { IIssueLabels } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { SettingsHeader } from "components/project";
 
 const LabelsSettings: NextPage = () => {
   // create/edit label form
@@ -103,39 +102,57 @@ const LabelsSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <section className="grid grid-cols-12 gap-10">
-          <div className="col-span-12 sm:col-span-5">
-            <h3 className="text-2xl font-semibold">Labels</h3>
-            <p className="text-brand-secondary">Manage the labels of this project.</p>
-            <PrimaryButton onClick={newLabel} size="sm" className="mt-4">
-              <span className="flex items-center gap-2">
-                <PlusIcon className="h-4 w-4" />
-                New label
-              </span>
-            </PrimaryButton>
-          </div>
-          <div className="col-span-12 space-y-5 sm:col-span-7">
-            {labelForm && (
-              <CreateUpdateLabelInline
-                labelForm={labelForm}
-                setLabelForm={setLabelForm}
-                isUpdating={isUpdating}
-                labelToUpdate={labelToUpdate}
-                ref={scrollToRef}
-              />
-            )}
-            <>
-              {issueLabels ? (
-                issueLabels.map((label) => {
-                  const children = issueLabels?.filter((l) => l.parent === label.id);
+        <div className="px-24 py-8">
+          <SettingsHeader />
+          <section className="grid grid-cols-12 gap-10">
+            <div className="col-span-12 sm:col-span-5">
+              <h3 className="text-2xl font-semibold">Labels</h3>
+              <p className="text-brand-secondary">Manage the labels of this project.</p>
+              <PrimaryButton onClick={newLabel} size="sm" className="mt-4">
+                <span className="flex items-center gap-2">
+                  <PlusIcon className="h-4 w-4" />
+                  New label
+                </span>
+              </PrimaryButton>
+            </div>
+            <div className="col-span-12 space-y-5 sm:col-span-7">
+              {labelForm && (
+                <CreateUpdateLabelInline
+                  labelForm={labelForm}
+                  setLabelForm={setLabelForm}
+                  isUpdating={isUpdating}
+                  labelToUpdate={labelToUpdate}
+                  ref={scrollToRef}
+                />
+              )}
+              <>
+                {issueLabels ? (
+                  issueLabels.map((label) => {
+                    const children = issueLabels?.filter((l) => l.parent === label.id);
 
-                  if (children && children.length === 0) {
-                    if (!label.parent)
+                    if (children && children.length === 0) {
+                      if (!label.parent)
+                        return (
+                          <SingleLabel
+                            key={label.id}
+                            label={label}
+                            addLabelToGroup={() => addLabelToGroup(label)}
+                            editLabel={(label) => {
+                              editLabel(label);
+                              scrollToRef.current?.scrollIntoView({
+                                behavior: "smooth",
+                              });
+                            }}
+                            handleLabelDelete={handleLabelDelete}
+                          />
+                        );
+                    } else
                       return (
-                        <SingleLabel
+                        <SingleLabelGroup
                           key={label.id}
                           label={label}
-                          addLabelToGroup={() => addLabelToGroup(label)}
+                          labelChildren={children}
+                          addLabelToGroup={addLabelToGroup}
                           editLabel={(label) => {
                             editLabel(label);
                             scrollToRef.current?.scrollIntoView({
@@ -145,34 +162,19 @@ const LabelsSettings: NextPage = () => {
                           handleLabelDelete={handleLabelDelete}
                         />
                       );
-                  } else
-                    return (
-                      <SingleLabelGroup
-                        key={label.id}
-                        label={label}
-                        labelChildren={children}
-                        addLabelToGroup={addLabelToGroup}
-                        editLabel={(label) => {
-                          editLabel(label);
-                          scrollToRef.current?.scrollIntoView({
-                            behavior: "smooth",
-                          });
-                        }}
-                        handleLabelDelete={handleLabelDelete}
-                      />
-                    );
-                })
-              ) : (
-                <Loader className="space-y-5">
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                </Loader>
-              )}
-            </>
-          </div>
-        </section>
+                  })
+                ) : (
+                  <Loader className="space-y-5">
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                  </Loader>
+                )}
+              </>
+            </div>
+          </section>
+        </div>
       </ProjectAuthorizationWrapper>
     </>
   );

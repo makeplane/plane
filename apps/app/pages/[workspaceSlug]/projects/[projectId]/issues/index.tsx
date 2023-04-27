@@ -56,9 +56,7 @@ const ProjectIssues: NextPage = () => {
           </div>
         }
       >
-        <div className="h-full w-full overflow-hidden overflow-y-auto">
-          <IssuesView />
-        </div>
+        <IssuesView />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );

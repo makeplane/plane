@@ -122,7 +122,6 @@ const IssueDetailsPage: NextPage = () => {
 
   return (
     <ProjectAuthorizationWrapper
-      noPadding
       breadcrumbs={
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
