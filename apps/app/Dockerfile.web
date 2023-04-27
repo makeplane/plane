@@ -45,7 +45,9 @@ COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone ./
 
 COPY --from=installer --chown=captain:plane /app/apps/app/.next ./apps/app/.next
 
-COPY apps/app/.env.example /app/apps/app/.env
+
+COPY  ./scripts ./scripts
+
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
