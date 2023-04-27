@@ -31,7 +31,9 @@ export const generateMonthDataByMonth = (month: number) => {
     { month: 10, smallCase: "november", upperCase: "NOVEMBER" },
     { month: 11, smallCase: "december", upperCase: "DECEMBER" },
   ];
+
   const data = [];
+
   for (let i = 0; i < 12; i++) {
     data.push({
       month: months[i],
@@ -44,4 +46,6 @@ export const generateMonthDataByMonth = (month: number) => {
 
 export const generateYearDataByYear = (year: number) => {
   const currentYear: number = year;
+
+  console.log("currentYear", currentYear);
 };

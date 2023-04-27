@@ -1,12 +1,12 @@
 import React from "react";
 // helpers
-import { generateMonthData } from "../helpers/month-view";
+import { generateYearDataByYear } from "../helpers/month-view";
 
 export const GnattChartRoot = () => {
   const [enableSidebar, setEnableSidebar] = React.useState(true);
 
   React.useEffect(() => {
-    generateMonthData(1);
+    generateYearDataByYear(1997);
   }, []);
 
   return (
