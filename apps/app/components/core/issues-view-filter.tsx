@@ -10,7 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, ToggleSwitch } from "components/ui";
 // icons
 import {
   ChevronDownIcon,
@@ -213,23 +213,10 @@ export const IssuesFilterView: React.FC = () => {
                       <>
                         <div className="flex items-center justify-between">
                           <h4 className="text-brand-secondary">Show empty states</h4>
-                          <button
-                            type="button"
-                            className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                              showEmptyGroups ? "bg-green-500" : "bg-brand-surface-2"
-                            }`}
-                            role="switch"
-                            aria-checked={showEmptyGroups}
-                            onClick={() => setShowEmptyGroups(!showEmptyGroups)}
-                          >
-                            <span className="sr-only">Show empty groups</span>
-                            <span
-                              aria-hidden="true"
-                              className={`inline-block h-2.5 w-2.5 transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
-                                showEmptyGroups ? "translate-x-2.5" : "translate-x-0"
-                              }`}
-                            />
-                          </button>
+                          <ToggleSwitch
+                            value={showEmptyGroups}
+                            onChange={() => setShowEmptyGroups(!showEmptyGroups)}
+                          />
                         </div>
                         <div className="relative flex justify-end gap-x-3">
                           <button type="button" onClick={() => resetFilterToDefault()}>

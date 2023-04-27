@@ -156,7 +156,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           </div>
 
           <div className="flex flex-col items-start justify-center gap-2.5 border-t border-brand-base px-4 py-7">
-            <span>How large is your company</span>
+            <span>How large is your company?</span>
             <div className="w-full">
               <Controller
                 name="company_size"
