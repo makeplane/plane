@@ -126,19 +126,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               />
             )}
 
-            <div
-              className={
-                issueView === "kanban"
-                  ? "h-full w-full overflow-hidden"
-                  : `flex w-full flex-grow flex-col ${
-                      noPadding || issueView === "list"
-                        ? ""
-                        : settingsLayout
-                        ? "p-8 lg:px-28"
-                        : "p-8"
-                    }`
-              }
-            >
+            <div className={`h-full w-full overflow-hidden`}>
               {settingsLayout && (
                 <div className="mb-12 space-y-6">
                   <div>
