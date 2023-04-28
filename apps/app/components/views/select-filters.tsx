@@ -17,7 +17,8 @@ import { IIssueFilterOptions, IQuery } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 // constants
-import { PRIORITIES, DUE_DATES } from "constants/project";
+import { PRIORITIES } from "constants/project";
+import { DUE_DATES } from "constants/due-dates";
 
 type Props = {
   filters: IIssueFilterOptions | IQuery;
