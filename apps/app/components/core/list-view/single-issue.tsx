@@ -149,6 +149,18 @@ export const SingleListIssue: React.FC<Props> = ({
             mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
             mutate(MODULE_DETAILS(moduleId as string));
           } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+          setToastAlert({
+            type: "info",
+            title: "Issue Updated Successfully",
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again.",
+          });
         });
     },
     [
@@ -168,15 +180,22 @@ export const SingleListIssue: React.FC<Props> = ({
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-    ).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "info",
+          title: "Link Copied Successfully",
+          iconType: "copy",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
       });
-    });
   };
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
