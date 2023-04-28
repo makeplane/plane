@@ -31,7 +31,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -64,15 +64,15 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         </span>
                       </Dialog.Title>
                       {updates && updates.length > 0 ? (
-                        updates.map((item: any, index: number) => (
+                        updates.map((item, index: number) => (
                           <>
-                            <div className="flex items-center gap-2 text-xs text-brand-secondary">
-                              <span className="flex items-center rounded-full border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-xs">
+                            <div className="flex items-center gap-3 text-xs text-brand-secondary">
+                              <span className="flex items-center rounded-full border border-brand-base bg-brand-surface-1 px-3 py-1.5 text-xs">
                                 {item.tag_name}
                               </span>
                               <span>{renderLongDateFormat(item.published_at)}</span>
                               {index === 0 && (
-                                <span className="flex items-center justify-center rounded-2xl bg-brand-accent p-1 px-2 text-xs text-white">
+                                <span className="flex items-center rounded-full border border-brand-base bg-brand-accent px-3 py-1.5 text-xs text-white">
                                   New
                                 </span>
                               )}
