@@ -179,7 +179,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
         setToastAlert({
           type: "success",
-          title: "Success!",
+          title: "Success",
           message: "Issue updated successfully.",
         });
       })

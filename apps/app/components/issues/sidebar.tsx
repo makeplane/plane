@@ -156,7 +156,14 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
     await issuesService
       .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
-      .then(() => mutate(ISSUE_DETAILS(issueDetail.id)))
+      .then(() => {
+        mutate(ISSUE_DETAILS(issueDetail.id));
+        setToastAlert({
+          type: "success",
+          title: "Success",
+          message: "Link added successfully",
+        });
+      })
       .catch((err) => {
         if (err.status === 400)
           setToastAlert({
@@ -188,9 +195,19 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId)
       .then((res) => {
         mutate(ISSUE_DETAILS(issueDetail.id));
+        setToastAlert({
+          title: "Success",
+          message: "Link removed successfully",
+          type: "success",
+        });
       })
       .catch((err) => {
         console.log(err);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
       });
   };
 

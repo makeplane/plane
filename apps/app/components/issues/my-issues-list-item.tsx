@@ -58,8 +58,9 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
         .then((res) => {
           mutate(USER_ISSUE(workspaceSlug as string));
           setToastAlert({
-            type: "info",
-            title: "Issue Updated Successfully",
+            type: "success",
+            title: "Success",
+            message: "Issue updated successfully.",
           });
         })
         .catch((error) => {

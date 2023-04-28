@@ -7,6 +7,8 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
+// hooks
+import useToast from "hooks/use-toast";
 // services
 import issuesService from "services/issues.service";
 // layouts
@@ -49,6 +51,8 @@ const defaultValues = {
 const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -93,9 +97,19 @@ const IssueDetailsPage: NextPage = () => {
         .then((res) => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+          setToastAlert({
+            type: "success",
+            title: "Success",
+            message: "Issue updated successfully.",
+          });
         })
         .catch((e) => {
           console.error(e);
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again.",
+          });
         });
     },
     [workspaceSlug, issueId, projectId, mutateIssueDetails]

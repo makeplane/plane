@@ -150,8 +150,9 @@ export const SingleListIssue: React.FC<Props> = ({
             mutate(MODULE_DETAILS(moduleId as string));
           } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
           setToastAlert({
-            type: "info",
-            title: "Issue Updated Successfully",
+            type: "success",
+            title: "Success",
+            message: "Issue updated successfully.",
           });
         })
         .catch((error) => {
