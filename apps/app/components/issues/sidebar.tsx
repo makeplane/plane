@@ -219,9 +219,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`
     ).then(() => {
       setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
+        type: "info",
+        title: "Link Copied Successfully",
+        iconType: "copy",
       });
     });
   };

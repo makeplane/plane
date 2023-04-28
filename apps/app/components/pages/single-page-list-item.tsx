@@ -58,9 +58,9 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
       `${originURL}/${workspaceSlug}/projects/${projectId}/pages/${page.id}`
     ).then(() => {
       setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Page link copied to clipboard.",
+        type: "info",
+        title: "Link Copied Successfully",
+        iconType: "copy",
       });
     });
   };

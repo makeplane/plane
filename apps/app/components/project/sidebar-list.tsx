@@ -127,9 +127,9 @@ export const ProjectSidebarList: FC = () => {
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        type: "info",
+        title: "Link Copied Successfully",
+        iconType: "copy",
       });
     });
   };

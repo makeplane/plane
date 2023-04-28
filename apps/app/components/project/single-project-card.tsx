@@ -128,9 +128,9 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${project.id}/issues`).then(() => {
       setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        type: "info",
+        title: "Link Copied Successfully",
+        iconType: "copy",
       });
     });
   };

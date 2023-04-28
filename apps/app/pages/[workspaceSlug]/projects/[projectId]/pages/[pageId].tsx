@@ -247,9 +247,9 @@ const SinglePage: NextPage = () => {
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(
       () => {
         setToastAlert({
-          type: "success",
-          title: "Link Copied!",
-          message: "Page link copied to clipboard.",
+          type: "info",
+          title: "Link Copied Successfully",
+          iconType: "copy",
         });
       }
     );

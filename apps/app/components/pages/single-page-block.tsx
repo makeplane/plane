@@ -265,9 +265,9 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
       `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`
     ).then(() => {
       setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
+        type: "info",
+        title: "Link Copied Successfully",
+        iconType: "copy",
       });
     });
   };
