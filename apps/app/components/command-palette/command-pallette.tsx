@@ -393,7 +393,7 @@ export const CommandPalette: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-brand-base divide-opacity-10 rounded-xl bg-brand-surface-2 border-brand-base border shadow-2xl transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-brand-base divide-opacity-10 rounded-xl border border-brand-base bg-brand-surface-2 shadow-2xl transition-all">
                 <Command
                   filter={(value, search) => {
                     if (value.toLowerCase().includes(search.toLowerCase())) return 1;
@@ -675,7 +675,7 @@ export const CommandPalette: React.FC = () => {
 
                             <Command.Group heading="Page">
                               <Command.Item onSelect={createNewPage} className="focus:outline-none">
-                                <div className="flex items-center gap-2 text-gray-700">
+                                <div className="flex items-center gap-2 text-brand-secondary">
                                   <DocumentTextIcon className="h-4 w-4" color="#6b7280" />
                                   Create new page
                                 </div>
