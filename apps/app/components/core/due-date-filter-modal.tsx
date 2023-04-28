@@ -25,7 +25,7 @@ type Props = {
 };
 
 const defaultValues = {
-  range: 0,
+  range: "before",
   date1: new Date(),
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
 };
@@ -42,7 +42,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
 
   const handleFormSubmit = async (formData: any) => {
     const { range, date1, date2 } = formData;
-    if (range === 2) {
+    if (range === "range") {
       setFilters(
         {
           ...(filters ?? {}),
@@ -51,13 +51,30 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
         !Boolean(viewId)
       );
     } else {
-      setFilters(
-        {
-          ...(filters ?? {}),
-          target_date: [`${renderDateFormat(date1)};${range === 0 ? "before" : "after"}`],
-        },
-        !Boolean(viewId)
-      );
+      const filteredArray = filters?.target_date?.filter((item) => {
+        if (item?.includes(range)) {
+          return false;
+        }
+        return true;
+      });
+      const filterOne = filteredArray && filteredArray?.length > 0 ? filteredArray[0] : null;
+      if (filterOne !== null) {
+        setFilters(
+          {
+            ...(filters ?? {}),
+            target_date: [filterOne, `${renderDateFormat(date1)};${range}`],
+          },
+          !Boolean(viewId)
+        );
+      } else {
+        setFilters(
+          {
+            ...(filters ?? {}),
+            target_date: [`${renderDateFormat(date1)};${range}`],
+          },
+          !Boolean(viewId)
+        );
+      }
     }
     handleClose();
   };
@@ -76,7 +93,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
         >
           <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
-        <div className="fixed flex justify-center w-full inset-0 z-20 overflow-y-auto">
+        <div className="fixed inset-0 z-20 flex w-full justify-center overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
               as={Fragment}
@@ -114,7 +131,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
                       inline
                       value={watch("date1")}
                     />
-                    {watch("range") === 2 && (
+                    {watch("range") === "range" && (
                       <DatePicker
                         selected={watch("date2")}
                         onChange={(val) => {

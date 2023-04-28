@@ -1,7 +1,5 @@
 import { Fragment, useState } from "react";
 
-import { useRouter } from "next/router";
-
 // components
 import { DueDateFilterModal } from "components/core/due-date-filter-modal";
 // headless ui
@@ -9,10 +7,6 @@ import { Menu, Transition } from "@headlessui/react";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
-// helper
-import { renderDateFormat } from "helpers/date-time.helper";
 
 type MultiLevelDropdownProps = {
   label: string;
@@ -42,12 +36,6 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
 }) => {
   const [openChildFor, setOpenChildFor] = useState<string | null>(null);
   const [isDueDateFilterModalOpen, setIsDueDateFilterModalOpen] = useState<boolean>(false);
-
-  const { filters, setFilters } = useIssuesView();
-
-  const router = useRouter();
-
-  const { viewId } = router.query;
 
   return (
     <>
@@ -145,82 +133,10 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                               key={child.id}
                               type="button"
                               onClick={() => {
-                                if (option.id !== "due_date") {
-                                  onSelect(child.value);
+                                if (option.id === "target_date" && child.id === "Custom") {
+                                  setIsDueDateFilterModalOpen(true);
                                 } else {
-                                  switch (child.id) {
-                                    case "Custom":
-                                      setIsDueDateFilterModalOpen(true);
-                                      break;
-                                    case "Last week":
-                                      setFilters(
-                                        {
-                                          ...(filters ?? {}),
-                                          target_date: [
-                                            `${renderDateFormat(
-                                              new Date(
-                                                new Date().getTime() - 7 * 24 * 60 * 60 * 1000
-                                              )
-                                            )};after`,
-                                            `${renderDateFormat(new Date())};before`,
-                                          ],
-                                        },
-                                        !Boolean(viewId)
-                                      );
-                                      break;
-                                    case "2 Weeks from now":
-                                      setFilters(
-                                        {
-                                          ...(filters ?? {}),
-                                          target_date: [
-                                            `${renderDateFormat(new Date())};after`,
-                                            `${renderDateFormat(
-                                              new Date(
-                                                new Date().getTime() + 14 * 24 * 60 * 60 * 1000
-                                              )
-                                            )};before`,
-                                          ],
-                                        },
-                                        !Boolean(viewId)
-                                      );
-                                      break;
-                                    case "1 Month from now":
-                                      setFilters(
-                                        {
-                                          ...(filters ?? {}),
-                                          target_date: [
-                                            `${renderDateFormat(new Date())};after`,
-                                            `${renderDateFormat(
-                                              new Date(
-                                                new Date().getFullYear(),
-                                                new Date().getMonth() + 1,
-                                                new Date().getDate()
-                                              )
-                                            )};before`,
-                                          ],
-                                        },
-                                        !Boolean(viewId)
-                                      );
-                                      break;
-                                    case "2 Months from now":
-                                      setFilters(
-                                        {
-                                          ...(filters ?? {}),
-                                          target_date: [
-                                            `${renderDateFormat(new Date())};after`,
-                                            `${renderDateFormat(
-                                              new Date(
-                                                new Date().getFullYear(),
-                                                new Date().getMonth() + 2,
-                                                new Date().getDate()
-                                              )
-                                            )};before`,
-                                          ],
-                                        },
-                                        !Boolean(viewId)
-                                      );
-                                      break;
-                                  }
+                                  onSelect(child.value);
                                 }
                               }}
                               className={`${

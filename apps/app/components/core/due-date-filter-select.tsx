@@ -11,11 +11,17 @@ import {
 // fetch-keys
 
 type Props = {
-  value: number;
-  onChange: (value: number) => void;
+  value: string;
+  onChange: (value: string) => void;
 };
 
-const dueDateRange = [
+type DueDate = {
+  name: string;
+  value: string;
+  icon: any;
+}
+
+const dueDateRange: DueDate[] = [
   {
     name: "Due Date Before",
     value: "before",
@@ -33,16 +39,15 @@ const dueDateRange = [
   }
 ];
 
-export const DueDateFilterSelect: React.FC<Props> = ({ value, onChange }) => {
-  const [state, setState] = useState();
-  return (
+
+export const DueDateFilterSelect: React.FC<Props> = ({ value, onChange }) =>
     <CustomSelect
-      value={value ?? 0}
+      value={value ?? "before"}
       label={
         <div className="flex items-center gap-2 text-xs">
-          {dueDateRange[value]?.icon}
+          {dueDateRange.find((item)=> item.value === value)?.icon}
           <span className={value !== null ? "text-brand-base" : "text-brand-secondary"}>
-            {dueDateRange[value]?.name}
+            {dueDateRange.find((item)=> item.value === value)?.name}
           </span>
         </div>
       }
@@ -52,7 +57,7 @@ export const DueDateFilterSelect: React.FC<Props> = ({ value, onChange }) => {
       noChevron
     >
       {dueDateRange.map((option, index) => (
-        <CustomSelect.Option key={index} value={index} >
+        <CustomSelect.Option key={index} value={option.value} >
           <>
             <span>{option.icon}</span>
             {option.name}
@@ -60,5 +65,3 @@ export const DueDateFilterSelect: React.FC<Props> = ({ value, onChange }) => {
         </CustomSelect.Option>
       ))}
     </CustomSelect>
-  );
-};
