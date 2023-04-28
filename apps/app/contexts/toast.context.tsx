@@ -12,6 +12,7 @@ type ToastAlert = {
   title: string;
   message?: string;
   type: "success" | "error" | "warning" | "info";
+  iconType?: string;
 };
 
 type ReducerActionType = {
@@ -26,6 +27,7 @@ type ContextType = {
     title: string;
     type?: "success" | "error" | "warning" | "info" | undefined;
     message?: string | undefined;
+    iconType?: string | undefined;
   }) => void;
 };
 
@@ -67,7 +69,7 @@ export const ToastContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const removeAlert = useCallback((id: string) => {
     dispatch({
       type: "REMOVE_TOAST_ALERT",
-      payload: { id, title: "", message: "", type: "success" },
+      payload: { id, title: "", message: "", type: "success", iconType: "" },
     });
   }, []);
 
@@ -76,12 +78,13 @@ export const ToastContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
       title: string;
       type?: "success" | "error" | "warning" | "info";
       message?: string;
+      iconType?: string;
     }) => {
       const id = uuid();
-      const { title, type, message } = data;
+      const { title, type, message, iconType } = data;
       dispatch({
         type: "SET_TOAST_ALERT",
-        payload: { id, title, message, type: type ?? "success" },
+        payload: { id, title, message, type: type ?? "success", iconType },
       });
 
       const timer = setTimeout(() => {
