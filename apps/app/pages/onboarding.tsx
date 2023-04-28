@@ -27,7 +27,7 @@ import { ICurrentUserResponse } from "types";
 import { CURRENT_USER } from "constants/fetch-keys";
 
 const Onboarding: NextPage = () => {
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const [workspace, setWorkspace] = useState();
