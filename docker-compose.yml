@@ -38,11 +38,11 @@ services:
     build:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
-    command: ./scripts/start.sh
+    command: node apps/app/server.js
     ports:
       - 3000:3000
     environment:
-      NEXT_PUBLIC_API_BASE_URL: http://localhost
+      NEXT_PUBLIC_API_BASE_URL: http://localhost123
       NEXT_PUBLIC_GOOGLE_CLIENTID: ""
       NEXT_PUBLIC_GITHUB_APP_NAME: ""
       NEXT_PUBLIC_GITHUB_ID: ""

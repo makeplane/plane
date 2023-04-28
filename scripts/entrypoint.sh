@@ -1,31 +1,15 @@
 #!/bin/bash
-# no verbose
-set +x
-# config
-envFilename='.env.production'
-nextFolder='./.next/'
+set -Ex
+
 function apply_path {
-  # read all config file  
-  while read line; do
-    # no comment or not empty
-    if [ "${line:0:1}" == "#" ] || [ "${line}" == "" ]; then
-      continue
-    fi
-    
-    # split
-    configName="$(cut -d'=' -f1 <<<"$line")"
-    configValue="$(cut -d'=' -f2 <<<"$line")"
-    # get system env
-    envValue=$(env | grep "^$configName=" | grep -oe '[^=]*$');
-    
-    # if config found
-    if [ -n "$configValue" ] && [ -n "$envValue" ]; then
-      # replace all
-      echo "Replace: ${configValue} with: ${envValue}"
-      find $nextFolder \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s#$configValue#$envValue#g"
-    fi
-  done < $envFilename
+
+    echo "Check that we have NEXT_PUBLIC_API_BASE_URL vars"
+    test -n "$NEXT_PUBLIC_API_BASE_URL"
+    echo "$NEXT_PUBLIC_API_BASE_URL"
+    find apps/app/.next/ \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s#APP_NEXT_PUBLIC_ENVIROMENT_VAR#$NEXT_PUBLIC_API_BASE_URL#g"
+
 }
+
 apply_path
 echo "Starting Nextjs"
 exec "$@"
