@@ -17,7 +17,7 @@ import { IIssueFilterOptions, IQuery } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 // constants
-import { PRIORITIES } from "constants/project";
+import { PRIORITIES, DUE_DATES } from "constants/project";
 
 type Props = {
   filters: IIssueFilterOptions | IQuery;
@@ -173,6 +173,24 @@ export const SelectFilters: React.FC<Props> = ({
                 value: label.id,
               },
               selected: filters?.labels?.includes(label.id),
+            })) ?? []),
+          ],
+        },
+        {
+          id: "due_date",
+          label: "Due Date",
+          value: DUE_DATES,
+          children: [
+            ...(DUE_DATES?.map((option) => ({
+              id: option,
+              label: (
+                option
+              ),
+              value: {
+                key: "Due Date",
+                value: option,
+              },
+              selected: filters?.target_date?.includes(option ?? "none"),
             })) ?? []),
           ],
         },

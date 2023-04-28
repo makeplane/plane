@@ -1,13 +1,14 @@
 import { IJiraMetadata } from "types";
 
 const paramsToKey = (params: any) => {
-  const { state, priority, assignees, created_by, labels } = params;
+  const { state, priority, assignees, created_by, labels, target_date } = params;
 
   let stateKey = state ? state.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
+  let targetDatesKey = target_date ? target_date.split(",") : [];
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
@@ -18,8 +19,9 @@ const paramsToKey = (params: any) => {
   assigneesKey = assigneesKey.sort().join("_");
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
+  targetDatesKey = targetDatesKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDatesKey}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";

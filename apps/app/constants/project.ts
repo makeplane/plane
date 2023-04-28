@@ -26,3 +26,5 @@ export const MONTHS = [
 ];
 
 export const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+export const DUE_DATES = ["Last week", "2 Weeks from now", "1 Month from now", "2 Months from now","Custom"];
