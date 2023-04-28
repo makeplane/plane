@@ -42,10 +42,10 @@ const ToastAlerts = () => {
                     alert.type === "success"
                       ? "text-brand-base"
                       : alert.type === "error"
-                      ? "bg-[#ef476f]"
+                      ? "text-[#ef476f]"
                       : alert.type === "warning"
-                      ? "bg-[#e98601]"
-                      : "bg-[#1B9aaa]"
+                      ? "text-[#e98601]"
+                      : "text-[#1B9aaa]"
                   }`}
                 >
                   {alert.title}
