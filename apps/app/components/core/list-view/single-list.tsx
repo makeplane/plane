@@ -37,7 +37,7 @@ type Props = {
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
-  removeIssue: ((bridgeId: string) => void) | null;
+  removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
   userAuth: UserAuth;
 };
@@ -204,7 +204,7 @@ export const SingleList: React.FC<Props> = ({
                       makeIssueCopy={() => makeIssueCopy(issue)}
                       handleDeleteIssue={handleDeleteIssue}
                       removeIssue={() => {
-                        if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id);
+                        if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id, issue.id);
                       }}
                       isCompleted={isCompleted}
                       userAuth={userAuth}

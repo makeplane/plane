@@ -12,7 +12,7 @@ const useIntegrationPopup = (provider: string | undefined, stateParams?: string)
     github: `https://github.com/apps/${
       process.env.NEXT_PUBLIC_GITHUB_APP_NAME
     }/installations/new?state=${workspaceSlug?.toString()}`,
-    slack: `https://slack.com/oauth/v2/authorize?scope=chat%3Awrite%2Cim%3Ahistory%2Cim%3Awrite%2Clinks%3Aread%2Clinks%3Awrite%2Cusers%3Aread%2Cusers%3Aread.email&amp;user_scope=&amp;&client_id=${
+    slack: `https://slack.com/oauth/v2/authorize?scope=chat:write,im:history,im:write,links:read,links:write,users:read,users:read.email&amp;user_scope=&amp;&client_id=${
       process.env.NEXT_PUBLIC_SLACK_CLIENT_ID
     }&state=${workspaceSlug?.toString()}`,
     slackChannel: `https://slack.com/oauth/v2/authorize?scope=incoming-webhook&client_id=${
@@ -21,6 +21,7 @@ const useIntegrationPopup = (provider: string | undefined, stateParams?: string)
       stateParams ? "," + stateParams : ""
     }`,
   };
+
   const popup = useRef<any>();
 
   const checkPopup = () => {
