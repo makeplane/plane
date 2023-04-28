@@ -57,9 +57,18 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
         .then((res) => {
           mutate(USER_ISSUE(workspaceSlug as string));
+          setToastAlert({
+            type: "info",
+            title: "Issue Updated Successfully",
+          });
         })
         .catch((error) => {
           console.log(error);
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again.",
+          });
         });
     },
     [workspaceSlug, projectId, issue]
@@ -68,21 +77,28 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-    ).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "info",
+          title: "Link Copied Successfully",
+          iconType: "copy",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
       });
-    });
   };
 
   const isNotAllowed = false;
 
   return (
-    <div className="border-b border-brand-base last:border-b-0 mx-6">
+    <div className="mx-6 border-b border-brand-base last:border-b-0">
       <div key={issue.id} className="flex items-center justify-between gap-2 py-3">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
@@ -171,7 +187,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </Tooltip>
           )}
           {properties.link && (
-            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+            <div className="flex cursor-default items-center rounded-md border border-gray-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-gray-500">
                   <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
@@ -181,10 +197,10 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </div>
           )}
           {properties.attachment_count && (
-            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+            <div className="flex cursor-default items-center rounded-md border border-gray-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-gray-500">
-                  <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-gray-500" />
                   {issue.attachment_count}
                 </div>
               </Tooltip>
