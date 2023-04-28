@@ -92,8 +92,22 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
     cyclesService
       .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
-      .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
-      .catch((e) => console.log(e));
+      .then(() => {
+        mutate(CYCLE_DETAILS(cycleId as string));
+        setToastAlert({
+          type: "success",
+          title: "Success",
+          message: "Cycle updated successfully",
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
+      });
   };
 
   const handleCopyText = () => {
@@ -103,14 +117,16 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`)
       .then(() => {
         setToastAlert({
-          type: "success",
-          title: "Cycle link copied to clipboard",
+          type: "info",
+          title: "Link Copied Successfully",
+          iconType: "copy",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Some error occurred",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
         });
       });
   };

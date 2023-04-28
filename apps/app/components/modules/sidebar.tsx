@@ -87,8 +87,22 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
 
     modulesService
       .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-      .then(() => mutate(MODULE_DETAILS(moduleId as string)))
-      .catch((e) => console.log(e));
+      .then(() => {
+        mutate(MODULE_DETAILS(moduleId as string));
+        setToastAlert({
+          type: "success",
+          title: "Success",
+          message: "Module updated successfully",
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
+      });
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -98,7 +112,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
 
     await modulesService
       .createModuleLink(workspaceSlug as string, projectId as string, moduleId as string, payload)
-      .then(() => mutate(MODULE_DETAILS(moduleId as string)))
+      .then(() => {
+        mutate(MODULE_DETAILS(moduleId as string));
+        setToastAlert({
+          type: "success",
+          title: "Success",
+          message: "Link added successfully",
+        });
+      })
       .catch((err) => {
         if (err.status === 400)
           setToastAlert({
@@ -143,14 +164,16 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
     copyTextToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module?.id}`)
       .then(() => {
         setToastAlert({
-          type: "success",
-          title: "Module link copied to clipboard",
+          type: "info",
+          title: "Link Copied Successfully",
+          iconType: "copy",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Some error occurred",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
         });
       });
   };
