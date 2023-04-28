@@ -29,7 +29,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   handleTrashBox: (isDragging: boolean) => void;
-  removeIssue: ((bridgeId: string) => void) | null;
+  removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
   userAuth: UserAuth;
 };
@@ -130,7 +130,8 @@ export const SingleBoard: React.FC<Props> = ({
                         handleDeleteIssue={handleDeleteIssue}
                         handleTrashBox={handleTrashBox}
                         removeIssue={() => {
-                          if (removeIssue && issue.bridge_id) removeIssue(issue.bridge_id);
+                          if (removeIssue && issue.bridge_id)
+                            removeIssue(issue.bridge_id, issue.id);
                         }}
                         isCompleted={isCompleted}
                         userAuth={userAuth}
