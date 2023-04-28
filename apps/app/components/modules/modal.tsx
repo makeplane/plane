@@ -57,8 +57,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Module created successfully.",
+          title: "Success",
+          message: "Module created successfully",
         });
       })
       .catch(() => {
@@ -88,8 +88,8 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Module updated successfully.",
+          title: "Success",
+          message: "Module updated successfully",
         });
       })
       .catch(() => {

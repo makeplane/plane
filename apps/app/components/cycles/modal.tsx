@@ -62,8 +62,8 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
 
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Cycle created successfully.",
+          title: "Success",
+          message: "Cycle created successfully",
         });
       })
       .catch((err) => {
@@ -115,8 +115,8 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
 
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Cycle updated successfully.",
+          title: "Success",
+          message: "Cycle updated successfully",
         });
       })
       .catch((err) => {

@@ -104,9 +104,9 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
       `${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`
     ).then(() => {
       setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Module link copied to clipboard.",
+        type: "info",
+        title: "Link Copied Successfully",
+        iconType: "copy",
       });
     });
   };

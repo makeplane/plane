@@ -54,6 +54,11 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) 
       .then(() => {
         if (moduleId) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
         handleClose();
+        setToastAlert({
+          type: "success",
+          title: "Success",
+          message: "Module deleted successfully",
+        });
       })
       .catch(() => {
         setToastAlert({

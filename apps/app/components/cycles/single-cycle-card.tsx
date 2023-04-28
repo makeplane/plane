@@ -219,9 +219,9 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
       `${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`
     ).then(() => {
       setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Cycle link copied to clipboard.",
+        type: "info",
+        title: "Link Copied Successfully",
+        iconType: "copy",
       });
     });
   };
@@ -282,7 +282,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mt-4">
+              <div className="mt-4 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                     <Image
@@ -293,7 +293,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       alt={cycle.owned_by.first_name}
                     />
                   ) : (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-base capitalize  bg-brand-secondary">
+                    <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-brand-base  capitalize">
                       {cycle.owned_by.first_name.charAt(0)}
                     </span>
                   )}

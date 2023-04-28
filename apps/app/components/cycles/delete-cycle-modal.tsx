@@ -117,8 +117,8 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
         handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
+          title: "Success",
           message: "Cycle deleted successfully",
         });
       })
