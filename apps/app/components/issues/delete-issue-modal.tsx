@@ -65,9 +65,9 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
 
         handleClose();
         setToastAlert({
-          title: "Success",
+          title: "Issue Deleted Successfully",
           type: "success",
-          message: "Issue deleted successfully",
+          message: `${data.project_detail.identifier}-${data.sequence_id} is deleted successfully from the project ${data.project_detail.name}`,
         });
       })
       .catch((error) => {
