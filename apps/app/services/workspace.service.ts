@@ -11,6 +11,7 @@ import {
   IWorkspaceMemberInvitation,
   ILastActiveWorkspaceDetails,
   IWorkspaceSearchResults,
+  IProductUpdateResponse,
 } from "types";
 
 const trackEvent =
@@ -206,7 +207,7 @@ class WorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
-  async getProductUpdates(): Promise<any> {
+  async getProductUpdates(): Promise<IProductUpdateResponse[]> {
     return this.get("/api/release-notes/")
       .then((response) => response?.data)
       .catch((error) => {
