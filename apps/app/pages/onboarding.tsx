@@ -27,7 +27,7 @@ import { ICurrentUserResponse } from "types";
 import { CURRENT_USER } from "constants/fetch-keys";
 
 const Onboarding: NextPage = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const [workspace, setWorkspace] = useState();
@@ -42,7 +42,7 @@ const Onboarding: NextPage = () => {
         <div className="grid h-full place-items-center p-5">
           {step <= 3 ? (
             <div className="w-full">
-              <div className="text-center mb-8">
+              <div className="mb-8 text-center">
                 <Image src={Logo} height="50" alt="Plane Logo" />
               </div>
               {step === 1 ? (
@@ -55,15 +55,15 @@ const Onboarding: NextPage = () => {
             </div>
           ) : (
             <div className="flex w-full max-w-2xl flex-col gap-12">
-              <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-white pb-10 text-center shadow-md">
+              <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-brand-base pb-10 text-center shadow-md">
                 {step === 4 ? (
                   <OnboardingCard data={ONBOARDING_CARDS.welcome} />
                 ) : step === 5 ? (
                   <OnboardingCard data={ONBOARDING_CARDS.issue} gradient />
                 ) : step === 6 ? (
-                  <OnboardingCard data={ONBOARDING_CARDS.cycle} gradient/>
+                  <OnboardingCard data={ONBOARDING_CARDS.cycle} gradient />
                 ) : step === 7 ? (
-                  <OnboardingCard data={ONBOARDING_CARDS.module} gradient/>
+                  <OnboardingCard data={ONBOARDING_CARDS.module} gradient />
                 ) : (
                   <OnboardingCard data={ONBOARDING_CARDS.commandMenu} />
                 )}

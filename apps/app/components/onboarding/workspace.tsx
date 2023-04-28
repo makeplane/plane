@@ -68,7 +68,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     <div className="grid min-h-[490px] w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex h-full w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-surface-2 shadow-md"
+        className="flex h-full w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md"
       >
         <Tab.List
           as="div"
@@ -129,16 +129,14 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                                 alt={invitation.workspace.name}
                               />
                             ) : (
-                              <span className="flex h-full w-full items-center justify-center rounded bg-gray-500 p-4 uppercase text-white">
+                              <span className="flex h-full w-full items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
                                 {invitation.workspace.name.charAt(0)}
                               </span>
                             )}
                           </span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium text-brand-base">
-                            {invitation.workspace.name}
-                          </div>
+                          <div className="text-sm font-medium">{invitation.workspace.name}</div>
                           <p className="text-sm text-brand-secondary">
                             Invited by {invitation.workspace.owner.first_name}
                           </p>
@@ -165,7 +163,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   ))
                 ) : (
                   <div className="text-center">
-                    <h3 className="text-gray-400">You have no invitations</h3>
+                    <h3 className="text-brand-secondary">You have no invitations</h3>
                   </div>
                 )}
               </div>
