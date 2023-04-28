@@ -15,6 +15,7 @@ import {
   IssuesPieChart,
   IssuesStats,
 } from "components/workspace";
+import { ProductUpdatesModal } from "components/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -22,6 +23,7 @@ import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 
 const WorkspacePage: NextPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -39,6 +41,10 @@ const WorkspacePage: NextPage = () => {
 
   return (
     <WorkspaceAuthorizationLayout noHeader>
+      <ProductUpdatesModal
+        isOpen={isProductUpdatesModalOpen}
+        setIsOpen={setIsProductUpdatesModalOpen}
+      />
       <div className="h-full w-full">
         <div className="flex flex-col gap-8">
           <div
@@ -49,9 +55,12 @@ const WorkspacePage: NextPage = () => {
               Plane is open source, support us by starring us on GitHub.
             </p>
             <div className="flex items-center gap-2">
-              {/* <a href="#" target="_blank" rel="noopener noreferrer">
-                View roadmap
-              </a> */}
+              <button
+                onClick={() => setIsProductUpdatesModalOpen(true)}
+                className="rounded-md border-2 border-brand-base px-3 py-1.5 text-sm font-medium duration-300"
+              >
+                {`What's New?`}
+              </button>
               <a
                 href="https://github.com/makeplane/plane"
                 target="_blank"
