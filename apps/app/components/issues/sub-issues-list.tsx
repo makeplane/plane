@@ -57,22 +57,6 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
       : null
   );
 
-  const updateSubIssuesState = (data: IIssue[]) => {
-    const backlogCount = data.filter((i) => i.state_detail.group === "backlog").length;
-    const unstartedCount = data.filter((i) => i.state_detail.group === "unstarted").length;
-    const startedCount = data.filter((i) => i.state_detail.group === "started").length;
-    const completedCount = data.filter((i) => i.state_detail.group === "completed").length;
-    const cancelledCount = data.filter((i) => i.state_detail.group === "cancelled").length;
-
-    return {
-      backlog: backlogCount ?? 0,
-      unstarted: unstartedCount ?? 0,
-      started: startedCount ?? 0,
-      completed: completedCount ?? 0,
-      cancelled: cancelledCount ?? 0,
-    };
-  };
-
   const addAsSubIssue = async (data: { issues: string[] }) => {
     if (!workspaceSlug || !projectId) return;
 
@@ -86,13 +70,21 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
           (prevData) => {
             if (!prevData) return prevData;
             let newSubIssues = prevData.sub_issues as IIssue[];
+
+            const stateDistribution = { ...prevData.state_distribution };
+
             data.issues.forEach((issueId: string) => {
               const issue = issues?.find((i) => i.id === issueId);
-              if (issue) newSubIssues.push(issue);
+              if (issue) {
+                newSubIssues.push(issue);
+                const issueGroup = issue.state_detail.group;
+                stateDistribution[issueGroup] = stateDistribution[issueGroup] + 1;
+              }
             });
+
             newSubIssues = orderArrayBy(newSubIssues, "created_at", "descending");
             return {
-              state_distribution: updateSubIssuesState(newSubIssues),
+              state_distribution: stateDistribution,
               sub_issues: newSubIssues,
             };
           },
@@ -129,8 +121,12 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
       (prevData) => {
         if (!prevData) return prevData;
         const updatedArray = (prevData.sub_issues ?? []).filter((i) => i.id !== issueId);
+
+        const stateDistribution = { ...prevData.state_distribution };
+        const issueGroup = issues?.find((i) => i.id === issueId)?.state_detail.group ?? "backlog";
+        stateDistribution[issueGroup] = stateDistribution[issueGroup] - 1;
         return {
-          state_distribution: updateSubIssuesState(updatedArray),
+          state_distribution: stateDistribution,
           sub_issues: updatedArray,
         };
       },
@@ -222,7 +218,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                     </span>
                   </Disclosure.Button>
                   {subIssuesResponse.state_distribution && (
-                    <div className="flex gap-2 w-60 items-center text-gray-800">
+                    <div className="flex w-60 items-center gap-2 text-gray-800">
                       <div className="bar relative h-1.5 w-full rounded bg-gray-300">
                         <div
                           className="absolute top-0 left-0 h-1.5 rounded bg-green-500 duration-300"
@@ -237,7 +233,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                           }}
                         />
                       </div>
-                      <span className="text-xs whitespace-nowrap">
+                      <span className="whitespace-nowrap text-xs">
                         {isNaN(completionPercentage)
                           ? 0
                           : completionPercentage > 100

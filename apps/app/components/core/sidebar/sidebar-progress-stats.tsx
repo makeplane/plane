@@ -78,7 +78,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         return 2;
 
       default:
-        return 3;
+        return 0;
     }
   };
   return (
@@ -94,7 +94,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             return setTab("States");
 
           default:
-            return setTab("States");
+            return setTab("Assignees");
         }
       }}
     >
