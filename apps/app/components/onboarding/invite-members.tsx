@@ -34,7 +34,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
       .catch((err) => console.log(err));
   };
 
-  const checkEmail = watch("emails") && watch("emails").length > 0 ;
+  const checkEmail = watch("emails") && watch("emails").length > 0;
   return (
     <form
       className="flex w-full items-center justify-center"
@@ -44,9 +44,9 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
       }}
     >
       <div className="flex w-full max-w-xl flex-col gap-12">
-        <div className="flex flex-col gap-6  rounded-[10px] bg-brand-surface-2 px-10 py-7 shadow-md">
-          <h2 className="text-2xl font-medium ">Invite your team to your workspace.</h2>
-          <div className="flex flex-col items-start justify-center gap-2.5 ">
+        <div className="flex flex-col gap-6 rounded-[10px] bg-brand-base p-7 shadow-md">
+          <h2 className="text-xl font-medium">Invite your team to your workspace.</h2>
+          <div className="flex flex-col items-start justify-center gap-2.5">
             <div className="w-full">
               <MultiInput
                 name="emails"
@@ -59,11 +59,12 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-center gap-3 ">
+        <div className="flex w-full flex-col items-center justify-center gap-3">
           <PrimaryButton
             type="submit"
             className="flex w-1/2 items-center justify-center text-center"
-            disabled={isSubmitting || !checkEmail}
+            disabled={!checkEmail}
+            loading={isSubmitting}
             size="md"
           >
             {isSubmitting ? "Inviting..." : "Continue"}
@@ -71,7 +72,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
 
           <SecondaryButton
             type="button"
-            className="w-1/2 rounded-lg bg-transparent border-none"
+            className="w-1/2 rounded-lg border-none bg-transparent"
             size="md"
             outline
             onClick={() => setStep(4)}
