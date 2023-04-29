@@ -184,66 +184,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
         name: formData.name,
         description: formData.description,
       },
-      estimate_points: data
-        ? [
-            {
-              id: data.points[0].id,
-              key: 0,
-              value: formData.value1,
-            },
-            {
-              id: data.points[1].id,
-              key: 1,
-              value: formData.value2,
-            },
-            {
-              id: data.points[2].id,
-              key: 2,
-              value: formData.value3,
-            },
-            {
-              id: data.points[3].id,
-              key: 3,
-              value: formData.value4,
-            },
-            {
-              id: data.points[4].id,
-              key: 4,
-              value: formData.value5,
-            },
-            {
-              id: data.points[5].id,
-              key: 5,
-              value: formData.value6,
-            },
-          ]
-        : [
-            {
-              key: 0,
-              value: formData.value1,
-            },
-            {
-              key: 1,
-              value: formData.value2,
-            },
-            {
-              key: 2,
-              value: formData.value3,
-            },
-            {
-              key: 3,
-              value: formData.value4,
-            },
-            {
-              key: 4,
-              value: formData.value5,
-            },
-            {
-              key: 5,
-              value: formData.value6,
-            },
-          ],
+      estimate_points: [],
     };
+
+    for (let i = 0; i < 6; i++) {
+      const point = {
+        key: i,
+        value: formData[`value${i + 1}` as keyof FormValues],
+      };
+
+      if (data)
+        payload.estimate_points.push({
+          id: data.points[i].id,
+          ...point,
+        });
+      else payload.estimate_points.push({ ...point });
+    }
 
     if (data) await updateEstimate(payload);
     else await createEstimate(payload);
@@ -277,7 +233,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -291,7 +247,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+                <Dialog.Panel className="relative transform rounded-lg border border-brand-base bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
                       <div className="text-lg font-medium leading-6">
