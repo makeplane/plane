@@ -38,19 +38,16 @@ services:
     build:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
-    command: node apps/app/server.js
+    command:
+      [
+        "/usr/local/bin/replace-env-vars.sh",
+        "node",
+        "apps/app/server.js"
+      ]
     ports:
       - 3000:3000
     environment:
       NEXT_PUBLIC_API_BASE_URL: http://localhost123
-      NEXT_PUBLIC_GOOGLE_CLIENTID: ""
-      NEXT_PUBLIC_GITHUB_APP_NAME: ""
-      NEXT_PUBLIC_GITHUB_ID: ""
-      NEXT_PUBLIC_SENTRY_DSN: ""
-      NEXT_PUBLIC_ENABLE_OAUTH: 0
-      NEXT_PUBLIC_ENABLE_SENTRY: 0
-      NEXT_PUBLIC_ENABLE_SESSION_RECORDER: 0
-      NEXT_PUBLIC_TRACK_EVENTS: 0
   plane-api:
     container_name: planebackend
     build:

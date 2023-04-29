@@ -26,8 +26,6 @@ RUN yarn install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-ENV NEXT_PUBLIC_API_BASE_URL=APP_NEXT_PUBLIC_ENVIROMENT_VAR
-
 RUN yarn turbo run build --filter=app
 
 FROM node:18-alpine AS runner
@@ -47,12 +45,13 @@ COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone ./
 
 COPY --from=installer --chown=captain:plane /app/apps/app/.next ./apps/app/.next
 
-COPY  ./scripts ./scripts
 USER root
-RUN chmod +x ./scripts/entrypoint.sh
+COPY replace-env-vars.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/replace-env-vars.sh
+
+
 USER captain
 
-CMD ["/app/scripts/entrypoint.sh"]
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
