@@ -487,48 +487,59 @@ class BulkImportModulesEndpoint(BaseAPIView):
                 ignore_conflicts=True,
             )
 
-            _ = ModuleLink.objects.bulk_create(
-                [
-                    ModuleLink(
-                        module=module,
-                        url=module_data.get("link", {}).get("url", "https://plane.so"),
-                        title=module_data.get("link", {}).get(
-                            "title", "Original Issue"
-                        ),
-                        project_id=project_id,
-                        workspace_id=project.workspace_id,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
-                    for module, module_data in zip(modules, modules_data)
-                ],
-                batch_size=100,
-                ignore_conflicts=True,
-            )
+            modules = Module.objects.filter(id__in=[module.id for module in modules])
 
-            bulk_module_issues = []
-            for module, module_data in zip(modules, modules_data):
-                module_issues_list = module_data.get("module_issues_list", [])
-                bulk_module_issues = bulk_module_issues + [
-                    ModuleIssue(
-                        issue_id=issue,
-                        module=module,
-                        project_id=project_id,
-                        workspace_id=project.workspace_id,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
-                    for issue in module_issues_list
-                ]
+            if len(modules) == len(modules_data):
+                _ = ModuleLink.objects.bulk_create(
+                    [
+                        ModuleLink(
+                            module=module,
+                            url=module_data.get("link", {}).get(
+                                "url", "https://plane.so"
+                            ),
+                            title=module_data.get("link", {}).get(
+                                "title", "Original Issue"
+                            ),
+                            project_id=project_id,
+                            workspace_id=project.workspace_id,
+                            created_by=request.user,
+                            updated_by=request.user,
+                        )
+                        for module, module_data in zip(modules, modules_data)
+                    ],
+                    batch_size=100,
+                    ignore_conflicts=True,
+                )
 
-            _ = ModuleIssue.objects.bulk_create(
-                bulk_module_issues, batch_size=100, ignore_conflicts=True
-            )
+                bulk_module_issues = []
+                for module, module_data in zip(modules, modules_data):
+                    module_issues_list = module_data.get("module_issues_list", [])
+                    bulk_module_issues = bulk_module_issues + [
+                        ModuleIssue(
+                            issue_id=issue,
+                            module=module,
+                            project_id=project_id,
+                            workspace_id=project.workspace_id,
+                            created_by=request.user,
+                            updated_by=request.user,
+                        )
+                        for issue in module_issues_list
+                    ]
 
-            serializer = ModuleSerializer(modules, many=True)
-            return Response(
-                {"modules": serializer.data}, status=status.HTTP_201_CREATED
-            )
+                _ = ModuleIssue.objects.bulk_create(
+                    bulk_module_issues, batch_size=100, ignore_conflicts=True
+                )
+
+                serializer = ModuleSerializer(modules, many=True)
+                return Response(
+                    {"modules": serializer.data}, status=status.HTTP_201_CREATED
+                )
+
+            else:
+                return Response(
+                    {"message": "Modules created but issues could not be imported"},
+                    status=status.HTTP_200_OK,
+                )
         except Project.DoesNotExist:
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
