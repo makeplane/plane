@@ -54,7 +54,6 @@ class CycleViewSet(BaseViewSet):
                 "issue", flat=True
             )
         )
-        print(cycle_issues)
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(
