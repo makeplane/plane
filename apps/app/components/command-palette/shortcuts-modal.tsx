@@ -123,7 +123,9 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div key={shortcut.keys} className="flex w-full flex-col">
                                 <div className="flex flex-col gap-y-3">
                                   <div className="flex items-center justify-between">
-                                    <p className="text-sm text-brand-secondary">{shortcut.description}</p>
+                                    <p className="text-sm text-brand-secondary">
+                                      {shortcut.description}
+                                    </p>
                                     <div className="flex items-center gap-x-2.5">
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
@@ -132,7 +134,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                               <MacCommandIcon />
                                             </span>
                                           ) : (
-                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-gray-800">
+                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-brand-base">
                                               {key === "Ctrl" ? <MacCommandIcon /> : key}
                                             </kbd>
                                           )}
@@ -167,7 +169,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-brand-base text-brand-secondary bg-brand-surface-1 p-2">
+                                            <span className="flex h-full items-center rounded-sm border border-brand-base bg-brand-surface-1 p-2 text-brand-secondary">
                                               <MacCommandIcon />
                                             </span>
                                           ) : (
