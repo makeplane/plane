@@ -28,6 +28,7 @@ from plane.db.models import (
     Module,
     ModuleLink,
     ModuleIssue,
+    Label,
 )
 from plane.api.serializers import (
     ImporterSerializer,
@@ -235,11 +236,43 @@ class ImportServiceEndpoint(BaseAPIView):
 
     def delete(self, request, slug, service, pk):
         try:
-            importer = Importer.objects.filter(
+            importer = Importer.objects.get(
                 pk=pk, service=service, workspace__slug=slug
             )
+            # Delete all imported Issues
+            imported_issues = importer.imported_data.get("issues", [])
+            Issue.objects.filter(id__in=imported_issues).delete()
+
+            # Delete all imported Labels
+            imported_labels = importer.imported_data.get("labels", [])
+            Label.objects.filter(id__in=imported_labels).delete()
+
+            if importer.service == "jira":
+                imported_modules = importer.imported_data.get("modules", [])
+                Module.objects.filter(id__in=imported_modules).delete()
             importer.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def patch(self, request, slug, service, pk):
+        try:
+            importer = Importer.objects.get(
+                pk=pk, service=service, workspace__slug=slug
+            )
+            serializer = ImporterSerializer(importer, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Importer.DoesNotExist:
+            return Response(
+                {"error": "Importer Does not exists"}, status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
