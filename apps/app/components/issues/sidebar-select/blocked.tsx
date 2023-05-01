@@ -105,7 +105,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
 
   return (
     <div className="flex flex-wrap items-start py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <BlockedIcon height={16} width={16} />
         <p>Blocked by</p>
       </div>
@@ -115,7 +115,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
             ? watch("blocked_list").map((issue) => (
                 <div
                   key={issue}
-                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500 hover:bg-red-50"
+                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                 >
                   <Link
                     href={`/${workspaceSlug}/projects/${projectId}/issues/${
@@ -176,7 +176,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
+                <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-brand-surface-2 bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
                   <form>
                     <Combobox
                       onChange={(val: string) => {
@@ -191,12 +191,12 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                     >
                       <div className="relative m-1">
                         <MagnifyingGlassIcon
-                          className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
+                          className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
                           aria-hidden="true"
                         />
                         <input
                           type="text"
-                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                           placeholder="Search..."
                           onChange={(e) => setQuery(e.target.value)}
                         />
@@ -209,7 +209,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                         {filteredIssues.length > 0 ? (
                           <li className="p-2">
                             {query === "" && (
-                              <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                              <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-brand-base">
                                 Select blocked issues
                               </h2>
                             )}
@@ -226,7 +226,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                                       value={issue.id}
                                       className={({ active }) =>
                                         `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                          active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                          active ? "bg-gray-900 bg-opacity-5 text-brand-base" : ""
                                         }`
                                       }
                                     >
@@ -244,7 +244,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                                             backgroundColor: issue.state_detail.color,
                                           }}
                                         />
-                                        <span className="flex-shrink-0 text-xs text-gray-500">
+                                        <span className="flex-shrink-0 text-xs text-brand-secondary">
                                           {
                                             issues?.find((i) => i.id === issue.id)?.project_detail
                                               ?.identifier
@@ -262,9 +262,9 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                         ) : (
                           <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                             <LayerDiagonalIcon height="56" width="56" />
-                            <h3 className="text-gray-500">
+                            <h3 className="text-brand-secondary">
                               No issues found. Create a new issue with{" "}
-                              <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre>.
+                              <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre>.
                             </h3>
                           </div>
                         )}
@@ -287,9 +287,9 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
         </Transition.Root>
         <button
           type="button"
-          className={`flex w-full ${
-            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-          } items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
+          className={`flex w-full text-brand-secondary ${
+            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
+          } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
           onClick={() => setIsBlockedModalOpen(true)}
           disabled={isNotAllowed}
         >

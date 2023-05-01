@@ -2,30 +2,21 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
-
 // services
-import estimatesService from "services/estimates.service";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { EstimatePointsModal, DeleteEstimateModal } from "components/estimates";
+import { DeleteEstimateModal } from "components/estimates";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, SecondaryButton } from "components/ui";
 //icons
-import {
-  PencilIcon,
-  TrashIcon,
-  SquaresPlusIcon,
-  ListBulletIcon,
-} from "@heroicons/react/24/outline";
-// types
-import { IEstimate, IProject } from "types";
-// fetch-keys
-import { ESTIMATE_POINTS_LIST } from "constants/fetch-keys";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+// helpers
 import { orderArrayBy } from "helpers/array.helper";
+// types
+import { IEstimate } from "types";
 
 type Props = {
   estimate: IEstimate;
@@ -38,9 +29,7 @@ export const SingleEstimate: React.FC<Props> = ({
   editEstimate,
   handleEstimateDelete,
 }) => {
-  const [isEstimatePointsModalOpen, setIsEstimatePointsModalOpen] = useState(false);
   const [isDeleteEstimateModalOpen, setIsDeleteEstimateModalOpen] = useState(false);
-
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -48,18 +37,6 @@ export const SingleEstimate: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const { projectDetails, mutateProjectDetails } = useProjectDetails();
-
-  const { data: estimatePoints } = useSWR(
-    workspaceSlug && projectId ? ESTIMATE_POINTS_LIST(estimate.id) : null,
-    workspaceSlug && projectId
-      ? () =>
-          estimatesService.getEstimatesPointsList(
-            workspaceSlug as string,
-            projectId as string,
-            estimate.id
-          )
-      : null
-  );
 
   const handleUseEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
@@ -87,78 +64,61 @@ export const SingleEstimate: React.FC<Props> = ({
 
   return (
     <>
-      <EstimatePointsModal
-        isOpen={isEstimatePointsModalOpen}
-        estimate={estimate}
-        onClose={() => setIsEstimatePointsModalOpen(false)}
-        data={estimatePoints ? orderArrayBy(estimatePoints, "key") : undefined}
-      />
       <div className="gap-2 py-3">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div>
-            <h6 className="flex items-center gap-2 font-medium text-base w-[40vw] truncate">
+            <h6 className="flex w-[40vw] items-center gap-2 truncate text-sm font-medium">
               {estimate.name}
               {projectDetails?.estimate && projectDetails?.estimate === estimate.id && (
-                <span className="capitalize px-2 py-0.5 text-xs rounded bg-green-100 text-green-500">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs capitalize text-green-500">
                   In use
                 </span>
               )}
             </h6>
-            <p className="font-sm text-gray-400 font-normal text-[14px] w-[40vw] truncate">
+            <p className="font-sm w-[40vw] truncate text-[14px] font-normal text-brand-secondary">
               {estimate.description}
             </p>
           </div>
-          <CustomMenu ellipsis>
-            {projectDetails?.estimate !== estimate.id &&
-              estimatePoints &&
-              estimatePoints.length > 0 && (
-                <CustomMenu.MenuItem onClick={handleUseEstimate}>
-                  <div className="flex items-center justify-start gap-2">
-                    <SquaresPlusIcon className="h-3.5 w-3.5" />
-                    <span>Use estimate</span>
-                  </div>
-                </CustomMenu.MenuItem>
-              )}
-            <CustomMenu.MenuItem onClick={() => setIsEstimatePointsModalOpen(true)}>
-              <div className="flex items-center justify-start gap-2">
-                <ListBulletIcon className="h-3.5 w-3.5" />
-                <span>
-                  {estimatePoints && estimatePoints?.length > 0 ? "Edit points" : "Create points"}
-                </span>
-              </div>
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem
-              onClick={() => {
-                editEstimate(estimate);
-              }}
-            >
-              <div className="flex items-center justify-start gap-2">
-                <PencilIcon className="h-3.5 w-3.5" />
-                <span>Edit estimate</span>
-              </div>
-            </CustomMenu.MenuItem>
-            {projectDetails?.estimate !== estimate.id && (
+          <div className="flex items-center gap-2">
+            {projectDetails?.estimate !== estimate.id && estimate.points.length > 0 && (
+              <SecondaryButton onClick={handleUseEstimate} className="py-1">
+                Use
+              </SecondaryButton>
+            )}
+            <CustomMenu ellipsis>
               <CustomMenu.MenuItem
                 onClick={() => {
-                  setIsDeleteEstimateModalOpen(true);
+                  editEstimate(estimate);
                 }}
               >
                 <div className="flex items-center justify-start gap-2">
-                  <TrashIcon className="h-3.5 w-3.5" />
-                  <span>Delete estimate</span>
+                  <PencilIcon className="h-3.5 w-3.5" />
+                  <span>Edit estimate</span>
                 </div>
               </CustomMenu.MenuItem>
-            )}
-          </CustomMenu>
+              {projectDetails?.estimate !== estimate.id && (
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setIsDeleteEstimateModalOpen(true);
+                  }}
+                >
+                  <div className="flex items-center justify-start gap-2">
+                    <TrashIcon className="h-3.5 w-3.5" />
+                    <span>Delete estimate</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              )}
+            </CustomMenu>
+          </div>
         </div>
-        {estimatePoints && estimatePoints.length > 0 ? (
-          <div className="flex text-sm text-gray-400">
+        {estimate.points.length > 0 ? (
+          <div className="flex text-xs text-brand-secondary">
             Estimate points (
             <span className="flex gap-1">
-              {estimatePoints.map((point, index) => (
-                <h6 key={point.id}>
+              {orderArrayBy(estimate.points, "key").map((point, index) => (
+                <h6 key={point.id} className="text-brand-secondary">
                   {point.value}
-                  {index !== estimatePoints.length - 1 && ","}{" "}
+                  {index !== estimate.points.length - 1 && ","}{" "}
                 </h6>
               ))}
             </span>
@@ -166,7 +126,7 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
         ) : (
           <div>
-            <p className="text-sm text-gray-400">No estimate points</p>
+            <p className="text-xs text-brand-secondary">No estimate points</p>
           </div>
         )}
       </div>

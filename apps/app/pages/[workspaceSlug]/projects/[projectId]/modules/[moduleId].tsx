@@ -94,11 +94,8 @@ const SingleModule: React.FC = () => {
 
     await modulesService
       .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-      .then((res) => {
-        console.log(res);
-        mutate(MODULE_ISSUES(moduleId as string));
-      })
-      .catch((e) =>
+      .then(() => mutate(MODULE_ISSUES(moduleId as string)))
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -157,7 +154,7 @@ const SingleModule: React.FC = () => {
             <IssuesFilterView />
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
                 moduleSidebar ? "rotate-180" : ""
               }`}
               onClick={() => setModuleSidebar((prevData) => !prevData)}

@@ -52,10 +52,10 @@ const IntegrationGuide = () => {
         handleClose={() => setDeleteImportModal(false)}
         data={importToDelete}
       />
-      <div className="space-y-2">
+      <div className="h-full space-y-2">
         {!provider && (
           <>
-            <div className="flex items-center gap-2 mb-5">
+            <div className="mb-5 flex items-center gap-2">
               <div className="h-full w-full space-y-1">
                 <div className="text-lg font-medium">Relocation Guide</div>
                 <div className="text-sm">
@@ -72,7 +72,10 @@ const IntegrationGuide = () => {
             </div>
             <div className="space-y-2">
               {IMPORTERS_EXPORTERS_LIST.map((service) => (
-                <div key={service.provider} className="rounded-[10px] border bg-white p-4">
+                <div
+                  key={service.provider}
+                  className="rounded-[10px] border border-brand-base bg-brand-base p-4"
+                >
                   <div className="flex items-center gap-4 whitespace-nowrap">
                     <div className="relative h-10 w-10 flex-shrink-0">
                       <Image
@@ -84,7 +87,7 @@ const IntegrationGuide = () => {
                     </div>
                     <div className="w-full">
                       <h3>{service.title}</h3>
-                      <p className="text-sm text-gray-500">{service.description}</p>
+                      <p className="text-sm text-brand-secondary">{service.description}</p>
                     </div>
                     <div className="flex-shrink-0">
                       <Link
@@ -101,12 +104,12 @@ const IntegrationGuide = () => {
                 </div>
               ))}
             </div>
-            <div className="rounded-[10px] border bg-white p-4">
-              <h3 className="mb-2 font-medium text-lg flex gap-2">
+            <div className="rounded-[10px] border border-brand-base bg-brand-base p-4">
+              <h3 className="mb-2 flex gap-2 text-lg font-medium">
                 Previous Imports
                 <button
                   type="button"
-                  className="flex-shrink-0 flex items-center gap-1 outline-none text-xs py-1 px-1.5 bg-gray-100 rounded"
+                  className="flex flex-shrink-0 items-center gap-1 rounded bg-brand-surface-2 py-1 px-1.5 text-xs outline-none"
                   onClick={() => {
                     setRefreshing(true);
                     mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() =>
@@ -133,10 +136,12 @@ const IntegrationGuide = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="py-2 text-sm text-gray-800">No previous imports available.</div>
+                  <p className="py-2 text-sm text-brand-secondary">
+                    No previous imports available.
+                  </p>
                 )
               ) : (
-                <Loader className="grid grid-cols-1 gap-3 mt-6">
+                <Loader className="mt-6 grid grid-cols-1 gap-3">
                   <Loader.Item height="40px" width="100%" />
                   <Loader.Item height="40px" width="100%" />
                   <Loader.Item height="40px" width="100%" />

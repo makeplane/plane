@@ -24,19 +24,17 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
   const onSubmit = async (formData: IUser) => {
     await workspaceService
       .inviteWorkspace(workspace.slug, formData)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Invitations sent!",
         });
         setStep(4);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => console.log(err));
   };
 
+  const checkEmail = watch("emails") && watch("emails").length > 0;
   return (
     <form
       className="flex w-full items-center justify-center"
@@ -46,14 +44,13 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
       }}
     >
       <div className="flex w-full max-w-xl flex-col gap-12">
-        <div className="flex flex-col gap-6  rounded-[10px] bg-white px-10 py-7 shadow-md">
-          <h2 className="text-2xl font-medium ">Invite co-workers to your team</h2>
-          <div className="flex flex-col items-start justify-center gap-2.5 ">
-            <span>Email</span>
+        <div className="flex flex-col gap-6 rounded-[10px] bg-brand-base p-7 shadow-md">
+          <h2 className="text-xl font-medium">Invite your team to your workspace.</h2>
+          <div className="flex flex-col items-start justify-center gap-2.5">
             <div className="w-full">
               <MultiInput
                 name="emails"
-                placeholder="Enter co-workers email id"
+                placeholder="Enter co-workers Email IDs"
                 watch={watch}
                 setValue={setValue}
                 className="w-full"
@@ -62,11 +59,12 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-center gap-3 ">
+        <div className="flex w-full flex-col items-center justify-center gap-3">
           <PrimaryButton
             type="submit"
             className="flex w-1/2 items-center justify-center text-center"
-            disabled={isSubmitting}
+            disabled={!checkEmail}
+            loading={isSubmitting}
             size="md"
           >
             {isSubmitting ? "Inviting..." : "Continue"}
@@ -74,7 +72,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
 
           <SecondaryButton
             type="button"
-            className="w-1/2 rounded-lg bg-transparent border-none"
+            className="w-1/2 rounded-lg border-none bg-transparent"
             size="md"
             outline
             onClick={() => setStep(4)}

@@ -106,6 +106,7 @@ from .integration import (
     GithubCommentSyncViewSet,
     GithubRepositoriesEndpoint,
     BulkCreateGithubIssueSyncEndpoint,
+    SlackProjectSyncViewSet,
 )
 
 from .importer import (
@@ -133,8 +134,9 @@ from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 from .gpt import GPTIntegrationEndpoint
 
 from .estimate import (
-    EstimateViewSet,
-    EstimatePointViewSet,
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
 )
+
+
+from .release import ReleaseNotesEndpoint

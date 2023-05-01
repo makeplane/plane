@@ -164,7 +164,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -178,7 +178,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="transform rounded-lg bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="transform rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <div className="relative h-36 w-full rounded-t-lg bg-gray-300">
                   {watch("cover_image") !== null && (
                     <Image
@@ -231,7 +231,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                           error={errors.name}
                           register={register}
                           className="text-xl"
-                          mode="transparent"
                           validations={{
                             required: "Name is required",
                             maxLength: {
@@ -243,46 +242,32 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                       </div>
                     </div>
 
-                    <div>
-                      <Input
-                        id="identifier"
-                        name="identifier"
-                        type="text"
-                        mode="transparent"
-                        className="text-sm"
-                        placeholder="Enter Project Identifier"
-                        error={errors.identifier}
-                        register={register}
-                        onChange={() => setIsChangeIdentifierRequired(false)}
-                        validations={{
-                          required: "Identifier is required",
-                          validate: (value) =>
-                            /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
-                          minLength: {
-                            value: 1,
-                            message: "Identifier must at least be of 1 character",
-                          },
-                          maxLength: {
-                            value: 5,
-                            message: "Identifier must at most be of 5 characters",
-                          },
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <TextArea
-                        id="description"
-                        name="description"
-                        mode="transparent"
-                        className="text-sm"
-                        placeholder="Enter description"
-                        error={errors.description}
-                        register={register}
-                      />
-                    </div>
-
-                    <div className="w-40">
+                    <div className="grid grid-cols-4 gap-4">
+                      <div className="col-span-3">
+                        <Input
+                          id="identifier"
+                          name="identifier"
+                          type="text"
+                          className="text-sm"
+                          placeholder="Enter Project Identifier"
+                          error={errors.identifier}
+                          register={register}
+                          onChange={() => setIsChangeIdentifierRequired(false)}
+                          validations={{
+                            required: "Identifier is required",
+                            validate: (value) =>
+                              /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
+                            minLength: {
+                              value: 1,
+                              message: "Identifier must at least be of 1 character",
+                            },
+                            maxLength: {
+                              value: 5,
+                              message: "Identifier must at most be of 5 characters",
+                            },
+                          }}
+                        />
+                      </div>
                       <Controller
                         name="network"
                         control={control}
@@ -307,9 +292,20 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                         )}
                       />
                     </div>
+
+                    <div>
+                      <TextArea
+                        id="description"
+                        name="description"
+                        className="text-sm"
+                        placeholder="Enter description"
+                        error={errors.description}
+                        register={register}
+                      />
+                    </div>
                   </div>
 
-                  <div className="mt-5 flex justify-end gap-2 border-t-2 px-4 py-3">
+                  <div className="mt-5 flex justify-end gap-2 border-t-2 border-brand-base px-4 py-3">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                     <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
                       {isSubmitting ? "Adding project..." : "Add Project"}

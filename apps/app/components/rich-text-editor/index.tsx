@@ -29,6 +29,8 @@ import {
   OnChangeHTML,
 } from "@remirror/react";
 import { TableExtension } from "@remirror/extension-react-tables";
+// tlds
+import tlds from "tlds";
 // services
 import fileService from "services/file.service";
 // ui
@@ -136,7 +138,10 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       new CodeExtension(),
       new PlaceholderExtension({ placeholder: placeholder || "Enter text..." }),
       new HistoryExtension(),
-      new LinkExtension({ autoLink: true }),
+      new LinkExtension({
+        autoLink: true,
+        autoLinkAllowedTLDs: tlds,
+      }),
       new ImageExtension({
         enableResizing: true,
         uploadHandler: uploadImageHandler,
@@ -190,9 +195,11 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         manager={manager}
         initialContent={state}
         classNames={[
-          `p-4 relative focus:outline-none rounded-md focus:border-gray-200 ${
-            noBorder ? "" : "border"
-          } ${borderOnFocus ? "focus:border" : "focus:border-0"} ${customClassName}`,
+          `p-4 relative focus:outline-none rounded-md focus:border-brand-base ${
+            noBorder ? "" : "border border-brand-base"
+          } ${
+            borderOnFocus ? "focus:border border-brand-base" : "focus:border-0"
+          } ${customClassName}`,
         ]}
         editable={editable}
         onBlur={() => {
@@ -202,7 +209,9 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         {(!value || value === "" || value?.content?.[0]?.content === undefined) &&
           !(typeof value === "string" && value.includes("<")) &&
           placeholder && (
-            <p className="absolute pointer-events-none top-4 left-4 text-gray-300">{placeholder}</p>
+            <p className="pointer-events-none absolute top-4 left-4 text-sm text-brand-secondary">
+              {placeholder}
+            </p>
           )}
         <EditorComponent />
 

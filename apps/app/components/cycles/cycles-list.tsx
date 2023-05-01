@@ -25,7 +25,6 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectCycleType>();
-  const [showNoCurrentCycleMessage, setShowNoCurrentCycleMessage] = useState(true);
 
   const handleDeleteCycle = (cycle: ICycle) => {
     setSelectedCycleForDelete({ ...cycle, actionType: "delete" });
@@ -61,14 +60,9 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
             ))}
           </div>
         ) : type === "current" ? (
-          showNoCurrentCycleMessage && (
-            <div className="flex items-center justify-between bg-white w-full px-6 py-4 rounded-[10px]">
-              <h3 className="text-base font-medium text-black "> No current cycle is present.</h3>
-              <button onClick={() => setShowNoCurrentCycleMessage(false)}>
-                <XMarkIcon className="h-4 w-4" />
-              </button>
-            </div>
-          )
+          <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
+            <h3 className="text-base font-medium text-brand-base ">No current cycle is present.</h3>
+          </div>
         ) : (
           <EmptyState
             type="cycle"

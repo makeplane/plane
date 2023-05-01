@@ -70,9 +70,9 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 
   if (!workspaceMemberMe && !error)
     return (
-      <div className="h-screen grid place-items-center p-4">
+      <div className="grid h-screen place-items-center p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h3 className="text-xl">Setting up your workspace...</h3>
+          <h3 className="text-xl">Loading your workspace...</h3>
           <Spinner />
         </div>
       </div>
@@ -83,7 +83,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   // FIXME: show 404 for workspace not workspace member
   if (error?.status === 404) {
     return (
-      <div className="container h-screen flex justify-center items-center">
+      <div className="container flex h-screen items-center justify-center">
         <p className="text-2xl font-semibold">No such workspace exist. Create one?</p>
       </div>
     );
@@ -131,10 +131,10 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   noPadding ? "" : settingsLayout || profilePage ? "p-8 lg:px-28" : "p-8"
                 } ${
                   bg === "primary"
-                    ? "bg-primary"
+                    ? "bg-brand-surface-1"
                     : bg === "secondary"
-                    ? "bg-secondary"
-                    : "bg-primary"
+                    ? "bg-brand-surface-1"
+                    : "bg-brand-base"
                 }`}
               >
                 {(settingsLayout || profilePage) && (
@@ -143,7 +143,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                       <h3 className="text-3xl font-semibold">
                         {profilePage ? "Profile" : "Workspace"} Settings
                       </h3>
-                      <p className="mt-1 text-gray-600">
+                      <p className="mt-1 text-brand-secondary">
                         {profilePage
                           ? "This information will be visible to only you."
                           : "This information will be displayed to every member of the workspace."}

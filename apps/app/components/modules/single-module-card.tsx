@@ -14,7 +14,13 @@ import { DeleteModuleModal } from "components/modules";
 // ui
 import { AssigneesList, Avatar, CustomMenu, Tooltip } from "components/ui";
 // icons
-import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  CalendarDaysIcon,
+  LinkIcon,
+  PencilIcon,
+  StarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { CalendarMonthIcon, TargetIcon } from "components/icons";
 
 // helpers
@@ -122,14 +128,14 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
         setIsOpen={setModuleDeleteModal}
         data={module}
       />
-      <div className="flex flex-col divide-y overflow-hidden rounded-[10px] border bg-white text-xs">
+      <div className="flex flex-col divide-y divide-brand-base overflow-hidden rounded-[10px] border border-brand-base bg-brand-base text-xs">
         <div className="p-4">
           <div className="flex w-full flex-col gap-5">
             <div className="flex items-start justify-between gap-2">
               <Tooltip tooltipContent={module.name} position="top-left">
                 <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
                   <a className="w-auto max-w-[calc(100%-9rem)]">
-                    <h3 className="truncate break-all text-lg font-semibold text-black">
+                    <h3 className="truncate break-all text-lg font-semibold text-brand-base">
                       {truncateText(module.name, 75)}
                     </h3>
                   </a>
@@ -137,7 +143,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
               </Tooltip>
 
               <div className="flex items-center gap-1">
-                <div className="mr-2 flex whitespace-nowrap rounded bg-gray-100 px-2.5 py-2">
+                <div className="mr-2 flex whitespace-nowrap rounded bg-brand-surface-1 px-2.5 py-2 text-brand-secondary">
                   <span className="capitalize">{module?.status?.replace("-", " ")}</span>
                 </div>
                 {module.is_favorite ? (
@@ -172,24 +178,24 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                 </CustomMenu>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 text-brand-secondary">
               <div className="flex items-start gap-1">
-                <CalendarMonthIcon className="h-4 w-4 text-gray-900" />
-                <span className="text-gray-400">Start:</span>
+                <CalendarDaysIcon className="h-4 w-4" />
+                <span>Start:</span>
                 <span>{renderShortDateWithYearFormat(startDate)}</span>
               </div>
               <div className="flex items-start gap-1">
-                <TargetIcon className="h-4 w-4 text-gray-900" />
-                <span className="text-gray-400">End:</span>
+                <TargetIcon className="h-4 w-4" />
+                <span>End:</span>
                 <span>{renderShortDateWithYearFormat(endDate)}</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="flex h-20 flex-col items-end">
-          <div className="flex w-full items-center justify-between gap-2 justify-self-end bg-gray-100 p-4">
+        <div className="flex h-20 flex-col items-end bg-brand-surface-2">
+          <div className="flex w-full items-center justify-between gap-2 justify-self-end p-4 text-brand-secondary">
             <span>Progress</span>
-            <div className="bar relative h-1 w-full rounded bg-gray-300">
+            <div className="bar relative h-1 w-full rounded bg-brand-surface-1">
               <div
                 className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
                 style={{
@@ -199,12 +205,10 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             </div>
             <span>{isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%</span>
           </div>
-          <div className="item-center flex h-full w-full justify-between bg-gray-100 px-4 pb-4">
-            <p className="text-[#858E96]">
+          <div className="item-center flex h-full w-full justify-between px-4 pb-4 text-brand-secondary">
+            <p>
               Last updated:
-              <span className="font-medium text-black">
-                {renderShortDateWithYearFormat(lastUpdated)}
-              </span>
+              <span className="font-medium">{renderShortDateWithYearFormat(lastUpdated)}</span>
             </p>
             {module.members_detail.length > 0 && (
               <div className="flex items-center gap-1">

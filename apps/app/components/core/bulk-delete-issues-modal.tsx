@@ -121,7 +121,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-brand-surface-2 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <form>
                 <Combobox
                   onChange={(val: string) => {
@@ -136,12 +136,12 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                 >
                   <div className="relative m-1">
                     <MagnifyingGlassIcon
-                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
+                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
                       aria-hidden="true"
                     />
                     <input
                       type="text"
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                       placeholder="Search..."
                       onChange={(event) => setQuery(event.target.value)}
                     />
@@ -154,7 +154,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                     {filteredIssues.length > 0 ? (
                       <li className="p-2">
                         {query === "" && (
-                          <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                          <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-brand-base">
                             Select issues to delete
                           </h2>
                         )}
@@ -166,7 +166,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                               value={issue.id}
                               className={({ active }) =>
                                 `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                  active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                  active ? "bg-gray-900 bg-opacity-5 text-brand-base" : ""
                                 }`
                               }
                             >
@@ -182,7 +182,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                                     backgroundColor: issue.state_detail.color,
                                   }}
                                 />
-                                <span className="flex-shrink-0 text-xs text-gray-500">
+                                <span className="flex-shrink-0 text-xs text-brand-secondary">
                                   {issue.project_detail.identifier}-{issue.sequence_id}
                                 </span>
                                 <span>{issue.name}</span>
@@ -194,9 +194,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                     ) : (
                       <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                         <LayerDiagonalIcon height="56" width="56" />
-                        <h3 className="text-gray-500">
+                        <h3 className="text-brand-secondary">
                           No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre>.
+                          <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre>.
                         </h3>
                       </div>
                     )}

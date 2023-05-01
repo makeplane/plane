@@ -26,7 +26,7 @@ const PageNotFound: NextPage = () => (
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-brand-secondary">
             Sorry, the page you are looking for cannot be found. It may have been removed, had its
             name changed, or is temporarily unavailable.
           </p>

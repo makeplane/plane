@@ -14,14 +14,10 @@ const Loader = ({ children, className = "" }: Props) => (
 type ItemProps = {
   height?: string;
   width?: string;
-  light?: boolean;
 };
 
-const Item: React.FC<ItemProps> = ({ height = "auto", width = "auto", light }) => (
-  <div
-    className={`rounded-md ${light ? "bg-gray-200" : "bg-gray-300"}`}
-    style={{ height: height, width: width }}
-  />
+const Item: React.FC<ItemProps> = ({ height = "auto", width = "auto" }) => (
+  <div className="rounded-md bg-brand-surface-2" style={{ height: height, width: width }} />
 );
 
 Loader.Item = Item;

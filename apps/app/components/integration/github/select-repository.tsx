@@ -11,12 +11,12 @@ import { CustomSearchSelect } from "components/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegrations } from "types";
+import { IWorkspaceIntegration } from "types";
 
 type Props = {
-  integration: IWorkspaceIntegrations;
+  integration: IWorkspaceIntegration;
   value: any;
-  label: string;
+  label: string | JSX.Element;
   onChange: (repo: any) => void;
   characterLimit?: number;
 };

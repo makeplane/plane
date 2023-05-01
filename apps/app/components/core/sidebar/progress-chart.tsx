@@ -40,7 +40,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
   const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
     if (active && payload && payload.length) {
       return (
-        <div className="rounded-sm bg-gray-300 p-1 text-xs text-gray-800">
+        <div className="rounded-sm bg-brand-surface-1 p-1 text-xs text-brand-base">
           <p>{payload[0].payload.currentDate}</p>
         </div>
       );
@@ -68,20 +68,8 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
             <stop offset="100%" stopColor="#3F76FF" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <XAxis
-          dataKey="currentDate"
-          stroke="#9ca3af"
-          tick={{ fontSize: "12px", fill: "#1f2937" }}
-          tickSize={10}
-          minTickGap={10}
-        />
-        <YAxis
-          stroke="#9ca3af"
-          tick={{ fontSize: "12px", fill: "#1f2937" }}
-          tickSize={10}
-          minTickGap={10}
-          allowDecimals={false}
-        />
+        <XAxis dataKey="currentDate" tickSize={10} minTickGap={10} />
+        <YAxis tickSize={10} minTickGap={10} allowDecimals={false} />
         <Tooltip content={<CustomTooltip />} />
         <Area
           type="monotone"

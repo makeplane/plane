@@ -28,6 +28,7 @@ from plane.db.models import (
     Module,
     ModuleLink,
     ModuleIssue,
+    Label,
 )
 from plane.api.serializers import (
     ImporterSerializer,
@@ -104,7 +105,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -235,11 +236,43 @@ class ImportServiceEndpoint(BaseAPIView):
 
     def delete(self, request, slug, service, pk):
         try:
-            importer = Importer.objects.filter(
+            importer = Importer.objects.get(
                 pk=pk, service=service, workspace__slug=slug
             )
+            # Delete all imported Issues
+            imported_issues = importer.imported_data.get("issues", [])
+            Issue.objects.filter(id__in=imported_issues).delete()
+
+            # Delete all imported Labels
+            imported_labels = importer.imported_data.get("labels", [])
+            Label.objects.filter(id__in=imported_labels).delete()
+
+            if importer.service == "jira":
+                imported_modules = importer.imported_data.get("modules", [])
+                Module.objects.filter(id__in=imported_modules).delete()
             importer.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def patch(self, request, slug, service, pk):
+        try:
+            importer = Importer.objects.get(
+                pk=pk, service=service, workspace__slug=slug
+            )
+            serializer = ImporterSerializer(importer, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Importer.DoesNotExist:
+            return Response(
+                {"error": "Importer Does not exists"}, status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -487,48 +520,59 @@ class BulkImportModulesEndpoint(BaseAPIView):
                 ignore_conflicts=True,
             )
 
-            _ = ModuleLink.objects.bulk_create(
-                [
-                    ModuleLink(
-                        module=module,
-                        url=module_data.get("link", {}).get("url", "https://plane.so"),
-                        title=module_data.get("link", {}).get(
-                            "title", "Original Issue"
-                        ),
-                        project_id=project_id,
-                        workspace_id=project.workspace_id,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
-                    for module, module_data in zip(modules, modules_data)
-                ],
-                batch_size=100,
-                ignore_conflicts=True,
-            )
+            modules = Module.objects.filter(id__in=[module.id for module in modules])
 
-            bulk_module_issues = []
-            for module, module_data in zip(modules, modules_data):
-                module_issues_list = module_data.get("module_issues_list", [])
-                bulk_module_issues = bulk_module_issues + [
-                    ModuleIssue(
-                        issue_id=issue,
-                        module=module,
-                        project_id=project_id,
-                        workspace_id=project.workspace_id,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
-                    for issue in module_issues_list
-                ]
+            if len(modules) == len(modules_data):
+                _ = ModuleLink.objects.bulk_create(
+                    [
+                        ModuleLink(
+                            module=module,
+                            url=module_data.get("link", {}).get(
+                                "url", "https://plane.so"
+                            ),
+                            title=module_data.get("link", {}).get(
+                                "title", "Original Issue"
+                            ),
+                            project_id=project_id,
+                            workspace_id=project.workspace_id,
+                            created_by=request.user,
+                            updated_by=request.user,
+                        )
+                        for module, module_data in zip(modules, modules_data)
+                    ],
+                    batch_size=100,
+                    ignore_conflicts=True,
+                )
 
-            _ = ModuleIssue.objects.bulk_create(
-                bulk_module_issues, batch_size=100, ignore_conflicts=True
-            )
+                bulk_module_issues = []
+                for module, module_data in zip(modules, modules_data):
+                    module_issues_list = module_data.get("module_issues_list", [])
+                    bulk_module_issues = bulk_module_issues + [
+                        ModuleIssue(
+                            issue_id=issue,
+                            module=module,
+                            project_id=project_id,
+                            workspace_id=project.workspace_id,
+                            created_by=request.user,
+                            updated_by=request.user,
+                        )
+                        for issue in module_issues_list
+                    ]
 
-            serializer = ModuleSerializer(modules, many=True)
-            return Response(
-                {"modules": serializer.data}, status=status.HTTP_201_CREATED
-            )
+                _ = ModuleIssue.objects.bulk_create(
+                    bulk_module_issues, batch_size=100, ignore_conflicts=True
+                )
+
+                serializer = ModuleSerializer(modules, many=True)
+                return Response(
+                    {"modules": serializer.data}, status=status.HTTP_201_CREATED
+                )
+
+            else:
+                return Response(
+                    {"message": "Modules created but issues could not be imported"},
+                    status=status.HTTP_200_OK,
+                )
         except Project.DoesNotExist:
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND

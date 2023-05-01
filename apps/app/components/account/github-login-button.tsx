@@ -33,11 +33,11 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
   }, []);
 
   return (
-    <div className="px-1 w-full">
+    <div className="w-full px-1">
       <Link
         href={`https://github.com/login/oauth/authorize?client_id=${NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
       >
-        <button className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-200 p-2 text-sm font-medium text-gray-600 duration-300 hover:bg-gray-50">
+        <button className="flex w-full items-center justify-center gap-3 rounded-md border border-brand-base p-2 text-sm font-medium text-brand-secondary duration-300 hover:bg-brand-surface-2">
           <Image src={githubImage} height={22} width={22} color="#000" alt="GitHub Logo" />
           <span>Sign In with Github</span>
         </button>

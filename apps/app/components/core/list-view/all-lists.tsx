@@ -14,7 +14,7 @@ type Props = {
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
-  removeIssue: ((bridgeId: string) => void) | null;
+  removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
   userAuth: UserAuth;
 };
@@ -36,7 +36,7 @@ export const AllLists: React.FC<Props> = ({
   return (
     <>
       {groupedByIssues && (
-        <div className="flex flex-col space-y-5 bg-white">
+        <div>
           {Object.keys(groupedByIssues).map((singleGroup) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;

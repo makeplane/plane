@@ -54,16 +54,15 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
       onChange={onChange}
       options={options}
       label={
-        <div className="flex items-center gap-2 text-gray-500">
+        <div className="flex items-center gap-2 text-brand-secondary">
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="flex items-center justify-center gap-2">
-              <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className="text-gray-500">{value.length} Assignees</span>
+              <AssigneesList userIds={value} length={3} showLength={true} />
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
-              <UserGroupIcon className="h-4 w-4 text-gray-500" />
-              <span className="text-gray-500">Assignee</span>
+              <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+              <span className="text-brand-secondary">Assignee</span>
             </div>
           )}
         </div>

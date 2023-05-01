@@ -26,14 +26,17 @@ import {
 import { Popover, Transition } from "@headlessui/react";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Spinner, ToggleSwitch } from "components/ui";
 // icon
 import {
   CheckIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // services
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
@@ -48,19 +51,27 @@ import { IIssue } from "types";
 // constant
 import { monthOptions, yearOptions } from "constants/calendar";
 import modulesService from "services/modules.service";
+import { getStateGroupIcon } from "components/icons";
+
+type Props = {
+  addIssueToDate: (date: string) => void;
+};
 
 interface ICalendarRange {
   startDate: Date;
   endDate: Date;
 }
 
-export const CalendarView = () => {
-  const [showWeekEnds, setShowWeekEnds] = useState<boolean>(false);
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [isMonthlyView, setIsMonthlyView] = useState<boolean>(true);
+export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
+  const [showWeekEnds, setShowWeekEnds] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [isMonthlyView, setIsMonthlyView] = useState(true);
+  const [showAllIssues, setShowAllIssues] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { params } = useIssuesView();
 
   const [calendarDateRange, setCalendarDateRange] = useState<ICalendarRange>({
     startDate: startOfWeek(currentDate),
@@ -77,11 +88,13 @@ export const CalendarView = () => {
     workspaceSlug && projectId ? PROJECT_CALENDAR_ISSUES(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          issuesService.getIssuesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            targetDateFilter
-          )
+          issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, {
+            ...params,
+            target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
+              calendarDateRange.endDate
+            )};before`,
+            group_by: null,
+          })
       : null
   );
 
@@ -95,7 +108,13 @@ export const CalendarView = () => {
             workspaceSlug as string,
             projectId as string,
             cycleId as string,
-            targetDateFilter
+            {
+              ...params,
+              target_date: `${renderDateFormat(
+                calendarDateRange.startDate
+              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
+              group_by: null,
+            }
           )
       : null
   );
@@ -110,7 +129,13 @@ export const CalendarView = () => {
             workspaceSlug as string,
             projectId as string,
             moduleId as string,
-            targetDateFilter
+            {
+              ...params,
+              target_date: `${renderDateFormat(
+                calendarDateRange.startDate
+              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
+              group_by: null,
+            }
           )
       : null
   );
@@ -127,12 +152,16 @@ export const CalendarView = () => {
 
   const currentViewDays = showWeekEnds ? totalDate : onlyWeekDays;
 
-  const calendarIssues = cycleCalendarIssues ?? moduleCalendarIssues ?? projectCalendarIssues;
+  const calendarIssues = cycleId
+    ? (cycleCalendarIssues as IIssue[])
+    : moduleId
+    ? (moduleCalendarIssues as IIssue[])
+    : (projectCalendarIssues as IIssue[]);
 
   const currentViewDaysData = currentViewDays.map((date: Date) => {
     const filterIssue =
       calendarIssues && calendarIssues.length > 0
-        ? (calendarIssues as IIssue[]).filter(
+        ? calendarIssues.filter(
             (issue) =>
               issue.target_date && renderDateFormat(issue.target_date) === renderDateFormat(date)
           )
@@ -198,17 +227,17 @@ export const CalendarView = () => {
     });
   };
 
-  return (
+  return calendarIssues ? (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="h-full overflow-y-auto rounded-lg text-gray-600 -m-2">
+      <div className="-m-2 h-full overflow-y-auto rounded-lg text-brand-secondary">
         <div className="mb-4 flex items-center justify-between">
-          <div className="relative flex h-full w-full gap-2 items-center justify-start text-sm ">
+          <div className="relative flex h-full w-full items-center justify-start gap-2 text-sm ">
             <Popover className="flex h-full items-center justify-start rounded-lg">
               {({ open }) => (
                 <>
-                  <Popover.Button className={`group flex h-full items-start gap-1 text-gray-800`}>
+                  <Popover.Button className={`group flex h-full items-start gap-1 text-brand-base`}>
                     <div className="flex  items-center   justify-center gap-2 text-2xl font-semibold">
-                      <span className="text-black">{formatDate(currentDate, "Month")}</span>{" "}
+                      <span>{formatDate(currentDate, "Month")}</span>{" "}
                       <span>{formatDate(currentDate, "yyyy")}</span>
                     </div>
                   </Popover.Button>
@@ -222,30 +251,30 @@ export const CalendarView = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute top-10 left-0 z-20 w-full max-w-xs flex flex-col transform overflow-hidden bg-white shadow-lg rounded-[10px]">
-                      <div className="flex justify-center items-center text-sm gap-5 px-2 py-2">
+                    <Popover.Panel className="absolute top-10 left-0 z-20 flex w-full max-w-xs transform flex-col overflow-hidden rounded-[10px] bg-brand-surface-2 shadow-lg">
+                      <div className="flex items-center justify-center gap-5 px-2 py-2 text-sm">
                         {yearOptions.map((year) => (
                           <button
                             onClick={() => updateDate(updateDateWithYear(year.label, currentDate))}
                             className={` ${
                               isSameYear(year.value, currentDate)
-                                ? "text-sm font-medium text-gray-800"
-                                : "text-xs text-gray-400 "
-                            } hover:text-sm hover:text-gray-800 hover:font-medium `}
+                                ? "text-sm font-medium text-brand-base"
+                                : "text-xs text-brand-secondary "
+                            } hover:text-sm hover:font-medium hover:text-brand-base`}
                           >
                             {year.label}
                           </button>
                         ))}
                       </div>
-                      <div className="grid grid-cols-4  px-2 border-t border-gray-200">
+                      <div className="grid grid-cols-4  border-t border-brand-base px-2">
                         {monthOptions.map((month) => (
                           <button
                             onClick={() =>
                               updateDate(updateDateWithMonth(month.value, currentDate))
                             }
-                            className={`text-gray-400 text-xs px-2 py-2 hover:font-medium hover:text-gray-800 ${
+                            className={`px-2 py-2 text-xs text-brand-secondary hover:font-medium hover:text-brand-base ${
                               isSameMonth(month.value, currentDate)
-                                ? "font-medium text-gray-800"
+                                ? "font-medium text-brand-base"
                                 : ""
                             }`}
                           >
@@ -295,9 +324,9 @@ export const CalendarView = () => {
             </div>
           </div>
 
-          <div className="flex w-full gap-2 items-center justify-end">
+          <div className="flex w-full items-center justify-end gap-2">
             <button
-              className="group flex cursor-pointer items-center gap-2 rounded-md border bg-white px-4 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
+              className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base px-3 py-1 text-sm hover:bg-brand-surface-2 hover:text-brand-base focus:outline-none"
               onClick={() => {
                 if (isMonthlyView) {
                   updateDate(new Date());
@@ -310,13 +339,12 @@ export const CalendarView = () => {
                 }
               }}
             >
-              Today{" "}
+              Today
             </button>
+
             <CustomMenu
               customButton={
-                <div
-                  className={`group flex cursor-pointer items-center gap-2 rounded-md border bg-white px-3 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none `}
-                >
+                <div className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base px-3 py-1 text-sm hover:bg-brand-surface-2 hover:text-brand-base focus:outline-none ">
                   {isMonthlyView ? "Monthly" : "Weekly"}
                   <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                 </div>
@@ -330,7 +358,7 @@ export const CalendarView = () => {
                     endDate: lastDayOfWeek(currentDate),
                   });
                 }}
-                className="w-52 text-sm text-gray-600"
+                className="w-52 text-sm text-brand-secondary"
               >
                 <div className="flex w-full max-w-[260px] items-center justify-between gap-2">
                   <span className="flex items-center gap-2">Monthly View</span>
@@ -349,7 +377,7 @@ export const CalendarView = () => {
                     endDate: getCurrentWeekEndDate(currentDate),
                   });
                 }}
-                className="w-52 text-sm text-gray-600"
+                className="w-52 text-sm text-brand-secondary"
               >
                 <div className="flex w-full items-center justify-between gap-2">
                   <span className="flex items-center gap-2">Weekly View</span>
@@ -360,25 +388,12 @@ export const CalendarView = () => {
                   />
                 </div>
               </CustomMenu.MenuItem>
-              <div className="mt-1 flex w-52 items-center justify-between border-t border-gray-200 py-2 px-1  text-sm text-gray-600">
+              <div className="mt-1 flex w-52 items-center justify-between border-t border-brand-base py-2 px-1  text-sm text-brand-secondary">
                 <h4>Show weekends</h4>
-                <button
-                  type="button"
-                  className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    showWeekEnds ? "bg-green-500" : "bg-gray-200"
-                  }`}
-                  role="switch"
-                  aria-checked={showWeekEnds}
-                  onClick={() => setShowWeekEnds(!showWeekEnds)}
-                >
-                  <span className="sr-only">Show weekends</span>
-                  <span
-                    aria-hidden="true"
-                    className={`inline-block h-2.5 w-2.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      showWeekEnds ? "translate-x-2.5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
+                <ToggleSwitch
+                  value={showWeekEnds}
+                  onChange={() => setShowWeekEnds(!showWeekEnds)}
+                />
               </div>
             </CustomMenu>
           </div>
@@ -392,7 +407,7 @@ export const CalendarView = () => {
           {weeks.map((date, index) => (
             <div
               key={index}
-              className={`flex  items-center justify-start p-1.5 gap-2 border-gray-300 bg-gray-100 text-base font-medium text-gray-600 ${
+              className={`flex  items-center justify-start gap-2 border-brand-base bg-brand-surface-1 p-1.5 text-base font-medium text-brand-secondary ${
                 !isMonthlyView
                   ? showWeekEnds
                     ? (index + 1) % 7 === 0
@@ -417,54 +432,93 @@ export const CalendarView = () => {
             showWeekEnds ? "grid-cols-7" : "grid-cols-5"
           } `}
         >
-          {currentViewDaysData.map((date, index) => (
-            <StrictModeDroppable droppableId={date.date}>
-              {(provided, snapshot) => (
-                <div
-                  key={index}
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={`flex flex-col gap-1.5 border-t border-gray-300 p-2.5 text-left text-sm font-medium hover:bg-gray-100 ${
-                    showWeekEnds
-                      ? (index + 1) % 7 === 0
+          {currentViewDaysData.map((date, index) => {
+            const totalIssues = date.issues.length;
+
+            return (
+              <StrictModeDroppable droppableId={date.date}>
+                {(provided) => (
+                  <div
+                    key={index}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={`group relative flex flex-col gap-1.5 border-t border-brand-base p-2.5 text-left text-sm font-medium hover:bg-brand-surface-1 ${
+                      showWeekEnds
+                        ? (index + 1) % 7 === 0
+                          ? ""
+                          : "border-r"
+                        : (index + 1) % 5 === 0
                         ? ""
                         : "border-r"
-                      : (index + 1) % 5 === 0
-                      ? ""
-                      : "border-r"
-                  }`}
-                >
-                  {isMonthlyView && <span>{formatDate(new Date(date.date), "d")}</span>}
-                  {date.issues.length > 0 &&
-                    date.issues.map((issue: IIssue, index) => (
-                      <Draggable draggableId={issue.id} index={index}>
-                        {(provided, snapshot) => (
-                          <div
-                            key={index}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`w-full cursor-pointer truncate rounded bg-white p-1.5 hover:scale-105 ${
-                              snapshot.isDragging ? "shadow-lg" : ""
-                            }`}
-                          >
-                            <Link
-                              href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}
-                              className="w-full"
-                            >
-                              {issue.name}
-                            </Link>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </StrictModeDroppable>
-          ))}
+                    }`}
+                  >
+                    {isMonthlyView && <span>{formatDate(new Date(date.date), "d")}</span>}
+                    {totalIssues > 0 &&
+                      date.issues
+                        .slice(0, showAllIssues ? totalIssues : 4)
+                        .map((issue: IIssue, index) => (
+                          <Draggable draggableId={issue.id} index={index}>
+                            {(provided, snapshot) => (
+                              <div
+                                key={index}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`w-full cursor-pointer truncate rounded border border-brand-base px-1.5 py-1 text-xs duration-300 hover:cursor-move hover:bg-brand-surface-2 ${
+                                  snapshot.isDragging ? "bg-brand-surface-2 shadow-lg" : ""
+                                }`}
+                              >
+                                <Link
+                                  href={`/${workspaceSlug}/projects/${issue?.project_detail.id}/issues/${issue.id}`}
+                                >
+                                  <a className="flex w-full items-center gap-2">
+                                    {getStateGroupIcon(
+                                      issue.state_detail.group,
+                                      "12",
+                                      "12",
+                                      issue.state_detail.color
+                                    )}
+                                    {issue.name}
+                                  </a>
+                                </Link>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                    {totalIssues > 4 && (
+                      <button
+                        type="button"
+                        className="w-min whitespace-nowrap rounded-md border border-brand-base bg-brand-surface-2 px-1.5 py-1 text-xs"
+                        onClick={() => setShowAllIssues((prevData) => !prevData)}
+                      >
+                        {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
+                      </button>
+                    )}
+                    <div
+                      className={`absolute ${
+                        isMonthlyView ? "bottom-2" : "top-2"
+                      } right-2 flex items-center justify-center rounded-md bg-brand-surface-2 p-1 text-xs text-brand-secondary opacity-0 group-hover:opacity-100`}
+                    >
+                      <button
+                        className="flex items-center justify-center gap-1 text-center"
+                        onClick={() => addIssueToDate(date.date)}
+                      >
+                        <PlusIcon className="h-3 w-3 text-brand-secondary" />
+                        Add issue
+                      </button>
+                    </div>
+                    {provided.placeholder}
+                  </div>
+                )}
+              </StrictModeDroppable>
+            );
+          })}
         </div>
       </div>
     </DragDropContext>
+  ) : (
+    <div className="flex h-full w-full items-center justify-center">
+      <Spinner />
+    </div>
   );
 };

@@ -15,6 +15,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy, orderArrayBy } from "helpers/array.helper";
@@ -22,8 +23,7 @@ import { orderStateGroups } from "helpers/state.helper";
 // types
 import { IState } from "types";
 // fetch-keys
-import { STATE_LIST } from "constants/fetch-keys";
-import { getStateGroupIcon } from "components/icons";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   index: number;
@@ -60,7 +60,7 @@ export const SingleState: React.FC<Props> = ({
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
     mutate(
-      STATE_LIST(projectId as string),
+      STATES_LIST(projectId as string),
       orderStateGroups(groupBy(newStatesList, "group")),
       false
     );
@@ -76,7 +76,7 @@ export const SingleState: React.FC<Props> = ({
               default: true,
             })
             .then(() => {
-              mutate(STATE_LIST(projectId as string));
+              mutate(STATES_LIST(projectId as string));
               setIsSubmitting(false);
             })
             .catch(() => {
@@ -89,7 +89,7 @@ export const SingleState: React.FC<Props> = ({
           default: true,
         })
         .then(() => {
-          mutate(STATE_LIST(projectId as string));
+          mutate(STATES_LIST(projectId as string));
           setIsSubmitting(false);
         })
         .catch(() => {
@@ -115,7 +115,7 @@ export const SingleState: React.FC<Props> = ({
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
     mutate(
-      STATE_LIST(projectId as string),
+      STATES_LIST(projectId as string),
       orderStateGroups(groupBy(newStatesList, "group")),
       false
     );
@@ -126,7 +126,7 @@ export const SingleState: React.FC<Props> = ({
       })
       .then((res) => {
         console.log(res);
-        mutate(STATE_LIST(projectId as string));
+        mutate(STATES_LIST(projectId as string));
       })
       .catch((err) => {
         console.error(err);
@@ -134,21 +134,19 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className={`group flex items-center justify-between gap-2 bg-white p-5 first:rounded-t-[10px] last:rounded-b-[10px]`}
-    >
+    <div className="group flex items-center justify-between gap-2 border-brand-base bg-brand-base p-5 first:rounded-t-[10px] last:rounded-b-[10px]">
       <div className="flex items-center gap-3">
         {getStateGroupIcon(state.group, "20", "20", state.color)}
         <div>
-          <h6 className="font-medium text-gray-600">{addSpaceIfCamelCase(state.name)}</h6>
-          <p className="text-xs text-gray-400">{state.description}</p>
+          <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
+          <p className="text-xs text-brand-secondary">{state.description}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
         {index !== 0 && (
           <button
             type="button"
-            className="hidden text-gray-400 hover:text-gray-900 group-hover:inline-block"
+            className="hidden text-brand-secondary group-hover:inline-block"
             onClick={() => handleMove(state, "up")}
           >
             <ArrowUpIcon className="h-4 w-4" />
@@ -157,18 +155,18 @@ export const SingleState: React.FC<Props> = ({
         {!(index === groupLength - 1) && (
           <button
             type="button"
-            className="hidden text-gray-400 hover:text-gray-900 group-hover:inline-block"
+            className="hidden text-brand-secondary group-hover:inline-block"
             onClick={() => handleMove(state, "down")}
           >
             <ArrowDownIcon className="h-4 w-4" />
           </button>
         )}
         {state.default ? (
-          <span className="text-xs text-gray-400">Default</span>
+          <span className="text-xs text-brand-secondary">Default</span>
         ) : (
           <button
             type="button"
-            className="hidden text-xs text-gray-400 hover:text-gray-900 group-hover:inline-block"
+            className="hidden text-xs text-brand-secondary group-hover:inline-block"
             onClick={handleMakeDefault}
             disabled={isSubmitting}
           >
@@ -177,7 +175,7 @@ export const SingleState: React.FC<Props> = ({
         )}
 
         <button type="button" className="grid place-items-center" onClick={handleEditState}>
-          <PencilSquareIcon className="h-4 w-4 text-gray-400" />
+          <PencilSquareIcon className="h-4 w-4 text-brand-secondary" />
         </button>
         <button
           type="button"
@@ -189,14 +187,14 @@ export const SingleState: React.FC<Props> = ({
         >
           {state.default ? (
             <Tooltip tooltipContent="Cannot delete the default state.">
-              <TrashIcon className="h-4 w-4 text-red-400" />
+              <TrashIcon className="h-4 w-4 text-red-500" />
             </Tooltip>
           ) : groupLength === 1 ? (
             <Tooltip tooltipContent="Cannot have an empty group.">
-              <TrashIcon className="h-4 w-4 text-red-400" />
+              <TrashIcon className="h-4 w-4 text-red-500" />
             </Tooltip>
           ) : (
-            <TrashIcon className="h-4 w-4 text-red-400" />
+            <TrashIcon className="h-4 w-4 text-red-500" />
           )}
         </button>
       </div>

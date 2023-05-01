@@ -83,18 +83,18 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
   };
 
   return (
-    <li>
+    <div className="first:rounded-t-[10px] last:rounded-b-[10px] hover:bg-brand-surface-2">
       <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
         <a>
-          <div className="relative rounded p-4 hover:bg-gray-100">
+          <div className="relative rounded p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <StackedLayersIcon height={18} width={18} />
-                <p className="mr-2 truncate text-sm font-medium">{truncateText(view.name, 75)}</p>
+                <p className="mr-2 truncate text-sm">{truncateText(view.name, 75)}</p>
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-xs bg-gray-300 text-gray-600 py-0.5 px-2 rounded-full">
+                  <p className="rounded-full bg-brand-surface-2 py-0.5 px-2 text-xs text-brand-secondary">
                     {Object.keys(view.query_data)
                       .map((key: string) =>
                         view.query_data[key as keyof typeof view.query_data] !== null
@@ -109,7 +109,9 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
                       view.updated_at
                     )} ${renderShortDate(view.updated_at)}`}
                   >
-                    <p className="text-sm text-gray-400">{renderShortTime(view.updated_at)}</p>
+                    <p className="text-sm text-brand-secondary">
+                      {renderShortTime(view.updated_at)}
+                    </p>
                   </Tooltip>
                   {view.is_favorite ? (
                     <button
@@ -164,13 +166,13 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
               </div>
             </div>
             {view?.description && (
-              <p className="text-sm text-gray-400 font-normal leading-5 px-[27px]">
+              <p className="px-[27px] text-sm font-normal leading-5 text-brand-secondary">
                 {view.description}
               </p>
             )}
           </div>
         </a>
       </Link>
-    </li>
+    </div>
   );
 };

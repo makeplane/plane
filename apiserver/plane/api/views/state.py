@@ -1,6 +1,9 @@
 # Python imports
 from itertools import groupby
 
+# Django imports
+from django.db import IntegrityError
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,10 +11,10 @@ from sentry_sdk import capture_exception
 
 
 # Module imports
-from . import BaseViewSet
+from . import BaseViewSet, BaseAPIView
 from plane.api.serializers import StateSerializer
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import State
+from plane.db.models import State, Issue
 
 
 class StateViewSet(BaseViewSet):
@@ -35,6 +38,25 @@ class StateViewSet(BaseViewSet):
             .select_related("workspace")
             .distinct()
         )
+
+    def create(self, request, slug, project_id):
+        try:
+            serializer = StateSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            return Response(
+                {"error": "State with the name already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def list(self, request, slug, project_id):
         try:
@@ -64,6 +86,17 @@ class StateViewSet(BaseViewSet):
             if state.default:
                 return Response(
                     {"error": "Default state cannot be deleted"}, status=False
+                )
+
+            # Check for any issues in the state
+            issue_exist = Issue.objects.filter(state=pk).exists()
+
+            if issue_exist:
+                return Response(
+                    {
+                        "error": "The state is not empty, only empty states can be deleted"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             state.delete()

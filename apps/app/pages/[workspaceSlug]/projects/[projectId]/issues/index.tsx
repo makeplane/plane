@@ -8,6 +8,8 @@ import projectService from "services/project.service";
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
+// helper
+import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
@@ -21,7 +23,6 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage = () => {
-
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -38,7 +39,9 @@ const ProjectIssues: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
+            <BreadcrumbItem
+              title={`${truncateText(projectDetails?.name ?? "Project", 12)} Issues`}
+            />
           </Breadcrumbs>
         }
         right={
@@ -51,7 +54,7 @@ const ProjectIssues: NextPage = () => {
                 document.dispatchEvent(e);
               }}
             >
-              <PlusIcon className="w-4 h-4" />
+              <PlusIcon className="h-4 w-4" />
               Add Issue
             </PrimaryButton>
           </div>

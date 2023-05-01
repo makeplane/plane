@@ -27,6 +27,7 @@ from plane.db.models import (
     User,
 )
 from .workspace_invitation_task import workspace_invitation
+from plane.bgtasks.user_welcome_task import send_welcome_email
 
 
 @shared_task
@@ -40,7 +41,7 @@ def service_importer(service, importer_id):
 
         # Check if we need to import users as well
         if len(users):
-            # For all invited users create the uers
+            # For all invited users create the users
             new_users = User.objects.bulk_create(
                 [
                     User(
@@ -55,6 +56,13 @@ def service_importer(service, importer_id):
                 batch_size=10,
                 ignore_conflicts=True,
             )
+
+            [
+                send_welcome_email.delay(
+                    user, True, f"{user.email} was imported to Plane from {service}"
+                )
+                for user in new_users
+            ]
 
             workspace_users = User.objects.filter(
                 email__in=[

@@ -1,3 +1,3 @@
-export * from "./select-lead";
-export * from "./select-members";
-export * from "./select-status";
+export * from "./lead";
+export * from "./members";
+export * from "./status";

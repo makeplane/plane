@@ -31,7 +31,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
         }`}
       >
         <CustomDatePicker
-          placeholder="N/A"
+          placeholder="Due date"
           value={issue?.target_date}
           onChange={(val) => {
             partialUpdateIssue({
@@ -51,7 +51,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
               "ISSUE_PROPERTY_UPDATE_DUE_DATE"
             );
           }}
-          className={issue?.target_date ? "w-[6.5rem]" : "w-[3rem] text-center"}
+          className={issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}
           disabled={isNotAllowed}
         />
       </div>
