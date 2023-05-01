@@ -213,13 +213,13 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                   <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1">
                     <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
                     Sub-issues{" "}
-                    <span className="ml-1 text-gray-600">
+                    <span className="ml-1 text-brand-secondary">
                       {subIssuesResponse.sub_issues.length}
                     </span>
                   </Disclosure.Button>
                   {subIssuesResponse.state_distribution && (
-                    <div className="flex w-60 items-center gap-2 text-gray-800">
-                      <div className="bar relative h-1.5 w-full rounded bg-gray-300">
+                    <div className="flex w-60 items-center gap-2 text-brand-base">
+                      <div className="bar relative h-1.5 w-full rounded bg-brand-surface-2">
                         <div
                           className="absolute top-0 left-0 h-1.5 rounded bg-green-500 duration-300"
                           style={{
@@ -286,7 +286,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                               backgroundColor: issue.state_detail.color,
                             }}
                           />
-                          <span className="flex-shrink-0 text-gray-600">
+                          <span className="flex-shrink-0 text-brand-secondary">
                             {issue.project_detail.identifier}-{issue.sequence_id}
                           </span>
                           <span className="max-w-sm break-all font-medium">{issue.name}</span>

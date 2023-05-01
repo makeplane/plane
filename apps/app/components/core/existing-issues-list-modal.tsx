@@ -160,7 +160,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                                   Select issues to add
                                 </h2>
                               )}
-                              <ul className="text-sm text-gray-700">
+                              <ul className="text-sm text-brand-base">
                                 {filteredIssues.map((issue) => (
                                   <Combobox.Option
                                     key={issue.id}
