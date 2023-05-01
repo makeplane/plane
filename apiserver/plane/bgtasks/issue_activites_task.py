@@ -506,62 +506,6 @@ def track_blockings(
                 )
 
 
-def track_modules(
-    requested_data,
-    current_instance,
-    issue_id,
-    project,
-    actor,
-    issue_activities,
-):
-    # Updated Records:
-    updated_records = current_instance.get("updated_module_issues", [])
-    created_records = json.loads(current_instance.get("created_module_issues", []))
-
-    for updated_record in updated_records:
-        old_module = Module.objects.filter(
-            pk=updated_record.get("old_module_id", None)
-        ).first()
-        new_module = Module.objects.filter(
-            pk=updated_record.get("new_module_id", None)
-        ).first()
-
-        issue_activities.append(
-            IssueActivity(
-                issue_id=updated_record.get("issue_id"),
-                actor=actor,
-                verb="updated",
-                old_value=old_module.name,
-                new_value=new_module.name,
-                field="modules",
-                project=project,
-                workspace=project.workspace,
-                comment=f"{actor.email} updated module from {old_module.name} to {new_module.name}",
-                old_identifier=old_module.id,
-                new_identifier=new_module.id,
-            )
-        )
-
-    for created_record in created_records:
-        module = Module.objects.filter(
-            pk=created_record.get("fields").get("module")
-        ).first()
-        issue_activities.append(
-            IssueActivity(
-                issue_id=created_record.get("fields").get("issue"),
-                actor=actor,
-                verb="created",
-                old_value="",
-                new_value=module.name,
-                field="modules",
-                project=project,
-                workspace=project.workspace,
-                comment=f"{actor.email} added module {module.name}",
-                new_identifier=module.id,
-            )
-        )
-
-
 def create_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -815,6 +759,91 @@ def delete_cycle_issue_activity(
         )
 
 
+def create_module_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    # Updated Records:
+    updated_records = current_instance.get("updated_module_issues", [])
+    created_records = json.loads(current_instance.get("created_module_issues", []))
+
+    for updated_record in updated_records:
+        old_module = Module.objects.filter(
+            pk=updated_record.get("old_module_id", None)
+        ).first()
+        new_module = Module.objects.filter(
+            pk=updated_record.get("new_module_id", None)
+        ).first()
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=updated_record.get("issue_id"),
+                actor=actor,
+                verb="updated",
+                old_value=old_module.name,
+                new_value=new_module.name,
+                field="modules",
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} updated module from {old_module.name} to {new_module.name}",
+                old_identifier=old_module.id,
+                new_identifier=new_module.id,
+            )
+        )
+
+    for created_record in created_records:
+        module = Module.objects.filter(
+            pk=created_record.get("fields").get("module")
+        ).first()
+        issue_activities.append(
+            IssueActivity(
+                issue_id=created_record.get("fields").get("issue"),
+                actor=actor,
+                verb="created",
+                old_value="",
+                new_value=module.name,
+                field="modules",
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} added module {module.name}",
+                new_identifier=module.id,
+            )
+        )
+
+
+def delete_module_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    module_id = requested_data.get("module_id", "")
+    module = Module.objects.filter(pk=module_id).first()
+    issues = requested_data.get("issues")
+
+    for issue in issues:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue,
+                actor=actor,
+                verb="deleted",
+                old_value=module.name if module is not None else "",
+                new_value="",
+                field="modules",
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} removed this issue from {module.name if module is not None else None}",
+                old_identifier=module.id if module is not None else None,
+            )
+        )
+
+
 def create_link_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -939,6 +968,8 @@ def issue_activity(
             "comment.activity.deleted": delete_comment_activity,
             "cycle.activity.created": create_cycle_issue_activity,
             "cycle.activity.deleted": delete_cycle_issue_activity,
+            "module.activity.created": create_module_issue_activity,
+            "module.activity.deleted": delete_module_issue_activity,
             "link.activity.created": create_link_activity,
             "link.activity.updated": update_link_activity,
             "link.activity.deleted": delete_link_activity,
