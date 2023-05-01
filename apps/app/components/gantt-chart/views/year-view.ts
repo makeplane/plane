@@ -1,4 +1,5 @@
-import { weeks, months } from ".";
+// data
+import { weeks, months } from "../data";
 
 // getting all the week Numbers in a month and year
 const getWeekNumberByDate = (date: Date) => {

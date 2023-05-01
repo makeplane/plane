@@ -1,25 +1,18 @@
 import React, { createContext, useState } from "react";
-
-export type ChartContextType = {
-  view: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
-  viewData: any;
-  dispatch: (action: ChartActionContextType) => void;
-};
-
-export type ChartActionContextType = {
-  type: "CHART_VIEW" | "CHART_VIEW_DATA";
-  payload: any;
-};
+// types
+import { ChartActionContextType, ChartContextType } from "../types";
+// data
+import { allViewsWithData } from "../data";
 
 export const ChartContext = createContext<ChartContextType | undefined>(undefined);
 
-export const chartReducer = (
+const chartReducer = (
   state: ChartContextType,
   action: ChartActionContextType
 ): ChartContextType => {
   switch (action.type) {
     case "CHART_VIEW":
-      return { ...state, view: action.payload };
+      return { ...state, currentView: action.payload };
     case "CHART_VIEW_DATA":
       return { ...state, viewData: action.payload };
     default:
@@ -29,7 +22,8 @@ export const chartReducer = (
 
 export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useState<ChartContextType>({
-    view: "month",
+    allViews: allViewsWithData,
+    currentView: "month",
     viewData: null,
     dispatch: () => {},
   });
