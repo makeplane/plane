@@ -101,7 +101,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                   </Menu.Item>
                   {option.children && option.id === openChildFor && (
                     <div
-                      className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-brand-surface-1 shadow-lg focus:outline-none ${
+                      className={`absolute top-0 w-auto min-w-[144px] max-w-[192px] origin-top-right select-none overflow-y-scroll rounded-md bg-brand-surface-1 shadow-lg focus:outline-none ${
                         direction === "left"
                           ? "right-full -translate-x-1"
                           : "left-full translate-x-1"
@@ -127,7 +127,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                             }}
                             className={`${
                               child.selected ? "bg-brand-surface-2" : ""
-                            } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-2`}
+                            } flex w-full items-center whitespace-nowrap break-all rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-2`}
                           >
                             {child.label}
                           </button>
