@@ -76,7 +76,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
+          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -89,7 +89,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-brand-surface-2 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-brand-base bg-brand-base shadow-2xl transition-all">
               <Combobox>
                 <div className="relative m-1">
                   <MagnifyingGlassIcon
@@ -131,8 +131,8 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
                                     name: label.name,
                                   }}
                                   className={({ active }) =>
-                                    `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
-                                      active ? "bg-gray-900 bg-opacity-5 text-brand-base" : ""
+                                    `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
+                                      active ? "bg-brand-surface-2 text-brand-base" : ""
                                     }`
                                   }
                                   onClick={() => {
