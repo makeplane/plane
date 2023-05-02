@@ -59,7 +59,9 @@ def service_importer(service, importer_id):
 
             [
                 send_welcome_email.delay(
-                    user, True, f"{user.email} was imported to Plane from {service}"
+                    str(user.id),
+                    True,
+                    f"{user.email} was imported to Plane from {service}",
                 )
                 for user in new_users
             ]
