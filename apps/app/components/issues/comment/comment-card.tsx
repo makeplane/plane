@@ -67,8 +67,11 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           </div>
         )}
 
-        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-white px-0.5 py-px">
-          <ChatBubbleLeftEllipsisIcon className="h-3.5 w-3.5 text-gray-400" aria-hidden="true" />
+        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-brand-surface-2 px-0.5 py-px">
+          <ChatBubbleLeftEllipsisIcon
+            className="h-3.5 w-3.5 text-brand-secondary"
+            aria-hidden="true"
+          />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -77,7 +80,9 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             {comment.actor_detail.first_name}
             {comment.actor_detail.is_bot ? "Bot" : " " + comment.actor_detail.last_name}
           </div>
-          <p className="mt-0.5 text-xs text-gray-500">Commented {timeAgo(comment.created_at)}</p>
+          <p className="mt-0.5 text-xs text-brand-secondary">
+            Commented {timeAgo(comment.created_at)}
+          </p>
         </div>
         <div className="issue-comments-section p-0">
           {isEditing ? (
@@ -94,13 +99,13 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="group rounded border border-green-500 bg-green-100 p-2 shadow-md duration-300 hover:bg-green-500"
+                  className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
                 >
                   <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
                 </button>
                 <button
                   type="button"
-                  className="group rounded border border-red-500 bg-red-100 p-2 shadow-md duration-300 hover:bg-red-500"
+                  className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                   onClick={() => setIsEditing(false)}
                 >
                   <XMarkIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
@@ -108,16 +113,11 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               </div>
             </form>
           ) : (
-            // <div
-            //   className="mt-2 mb-6 text-sm text-gray-700"
-            //   dangerouslySetInnerHTML={{ __html: comment.comment_html }}
-            // />
             <RemirrorRichTextEditor
               value={comment.comment_html}
               editable={false}
-              onBlur={() => ({})}
               noBorder
-              customClassName="text-xs bg-gray-100"
+              customClassName="text-xs border border-brand-base bg-brand-base"
             />
           )}
         </div>

@@ -18,6 +18,7 @@ type CustomSearchSelectProps = {
   noChevron?: boolean;
   customButton?: JSX.Element;
   optionsClassName?: string;
+  input?: boolean;
   disabled?: boolean;
   selfPositioned?: boolean;
   multiple?: boolean;
@@ -34,6 +35,7 @@ export const CustomSearchSelect = ({
   noChevron = false,
   customButton,
   optionsClassName = "",
+  input = false,
   disabled = false,
   selfPositioned = false,
   multiple = false,
@@ -66,9 +68,11 @@ export const CustomSearchSelect = ({
             <Combobox.Button as="div">{customButton}</Combobox.Button>
           ) : (
             <Combobox.Button
-              className={`flex w-full ${
-                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-              } items-center justify-between gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+              className={`flex w-full border border-brand-base ${
+                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
+              } ${
+                input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+              } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-brand-base ${
                 textAlignment === "right"
                   ? "text-right"
                   : textAlignment === "center"
@@ -93,14 +97,14 @@ export const CustomSearchSelect = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Combobox.Options
-              className={`${optionsClassName} absolute min-w-[10rem] p-2 ${
+              className={`${optionsClassName} absolute min-w-[10rem] border border-brand-base p-2 ${
                 position === "right" ? "right-0" : "left-0"
-              } z-10 mt-1 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
+              } z-10 mt-1 origin-top-right rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none`}
             >
-              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-gray-100 px-2">
-                <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
+              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-brand-base bg-brand-surface-1 px-2">
+                <MagnifyingGlassIcon className="h-3 w-3 text-brand-secondary" />
                 <Combobox.Input
-                  className="w-full  bg-transparent py-1 px-2  text-xs text-gray-500 focus:outline-none"
+                  className="w-full bg-transparent py-1 px-2 text-xs text-brand-secondary focus:outline-none"
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Type to search..."
                   displayValue={(assigned: any) => assigned?.name}
@@ -126,9 +130,9 @@ export const CustomSearchSelect = ({
                         key={option.value}
                         value={option.value}
                         className={({ active, selected }) =>
-                          `${active || selected ? "bg-hover-gray" : ""} ${
+                          `${active || selected ? "bg-brand-surface-2" : ""} ${
                             selected ? "font-medium" : ""
-                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-gray-500`
+                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-brand-secondary`
                         }
                       >
                         {({ active, selected }) => (
@@ -154,10 +158,10 @@ export const CustomSearchSelect = ({
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-center text-gray-500">No matching results</p>
+                    <p className="text-center text-brand-secondary">No matching results</p>
                   )
                 ) : (
-                  <p className="text-center text-gray-500">Loading...</p>
+                  <p className="text-center text-brand-secondary">Loading...</p>
                 )}
               </div>
               {footerOption}

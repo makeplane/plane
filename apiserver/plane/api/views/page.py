@@ -96,6 +96,36 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    def partial_update(self, request, slug, project_id, pk):
+        try:
+            page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+            # Only update access if the page owner is the requesting  user
+            if (
+                page.access != request.data.get("access", page.access)
+                and page.owned_by_id != request.user.id
+            ):
+                return Response(
+                    {
+                        "error": "Access cannot be updated since this page is owned by someone else"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            serializer = PageSerializer(page, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Page.DoesNotExist:
+            return Response(
+                {"error": "Page Does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class PageBlockViewSet(BaseViewSet):
     serializer_class = PageBlockSerializer
@@ -344,7 +374,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

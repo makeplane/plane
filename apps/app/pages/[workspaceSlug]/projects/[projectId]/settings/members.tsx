@@ -10,6 +10,7 @@ import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -23,12 +24,7 @@ import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import {
-  PROJECT_DETAILS,
-  PROJECT_INVITATIONS,
-  PROJECT_MEMBERS,
-  WORKSPACE_DETAILS,
-} from "constants/fetch-keys";
+import { PROJECT_INVITATIONS, PROJECT_MEMBERS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
@@ -48,24 +44,13 @@ const MembersSettings: NextPage = () => {
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { projectDetails } = useProjectDetails();
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null,
-    {
-      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
-        if (err?.status === 403) return;
-        setTimeout(() => revalidate(revalidateOpts), 5000);
-      },
-    }
+      : null
   );
 
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
@@ -161,7 +146,7 @@ const MembersSettings: NextPage = () => {
             <h3 className="text-2xl font-semibold">Members</h3>
             <button
               type="button"
-              className="flex items-center gap-2 text-theme outline-none"
+              className="flex items-center gap-2 text-brand-accent outline-none"
               onClick={() => setInviteModal(true)}
             >
               <PlusIcon className="h-4 w-4" />
@@ -176,11 +161,11 @@ const MembersSettings: NextPage = () => {
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="divide-y rounded-[10px] border bg-white px-6">
+            <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base px-6">
               {members.length > 0
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">
-                      <div className="flex items-center gap-x-8 gap-y-2">
+                      <div className="flex items-center gap-x-6 gap-y-2">
                         <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
                           {member.avatar && member.avatar !== "" ? (
                             <Image
@@ -200,15 +185,15 @@ const MembersSettings: NextPage = () => {
                           <h4 className="text-sm">
                             {member.first_name} {member.last_name}
                           </h4>
-                          <p className="mt-0.5 text-xs text-gray-500">{member.email}</p>
+                          <p className="mt-0.5 text-xs text-brand-secondary">{member.email}</p>
                         </div>
                       </div>
-                      {!member.member && (
-                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-                          Request Pending
-                        </span>
-                      )}
                       <div className="flex items-center gap-2 text-xs">
+                        {!member.member && (
+                          <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
+                            Pending
+                          </div>
+                        )}
                         <CustomSelect
                           label={ROLE[member.role as keyof typeof ROLE]}
                           value={member.role}
@@ -242,6 +227,7 @@ const MembersSettings: NextPage = () => {
                                 console.log(err);
                               });
                           }}
+                          position="right"
                         >
                           {Object.keys(ROLE).map((key) => (
                             <CustomSelect.Option key={key} value={key}>

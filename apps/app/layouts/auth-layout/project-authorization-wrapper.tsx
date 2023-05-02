@@ -12,7 +12,6 @@ import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import SettingsNavbar from "layouts/settings-navbar";
-import { WorkspaceAuthorizationLayout } from "./workspace-authorization-wrapper";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
@@ -72,18 +71,18 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
       <div className="flex h-screen w-full overflow-x-hidden">
         <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
         {loading ? (
-          <div className="h-full w-full grid place-items-center p-4">
+          <div className="grid h-full w-full place-items-center p-4">
             <div className="flex flex-col items-center gap-3 text-center">
-              <h3 className="text-xl">Setting up your project...</h3>
+              <h3 className="text-xl">Loading your project...</h3>
               <Spinner />
             </div>
           </div>
         ) : error?.status === 401 || error?.status === 403 ? (
           <JoinProject />
         ) : error?.status === 404 ? (
-          <div className="container h-screen grid place-items-center">
-            <div className="text-center space-y-4">
-              <p className="text-2xl font-semibold">No such project exist. Create one?</p>
+          <div className="container grid h-screen place-items-center">
+            <div className="space-y-4 text-center">
+              <p className="text-2xl font-semibold">No such project exists. Create one?</p>
               <PrimaryButton
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", { key: "p" });
@@ -121,14 +120,18 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               className={`flex w-full flex-grow flex-col ${
                 noPadding || issueView === "list" ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
               } ${
-                bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
+                bg === "primary"
+                  ? "bg-brand-surface-1"
+                  : bg === "secondary"
+                  ? "bg-brand-sidebar"
+                  : "bg-brand-base"
               }`}
             >
               {settingsLayout && (
                 <div className="mb-12 space-y-6">
                   <div>
                     <h3 className="text-3xl font-semibold">Project Settings</h3>
-                    <p className="mt-1 text-gray-600">
+                    <p className="mt-1 text-brand-secondary">
                       This information will be displayed to every member of the project.
                     </p>
                   </div>

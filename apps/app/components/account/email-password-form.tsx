@@ -50,7 +50,7 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
         if (!error?.response?.data) return;
         Object.keys(error.response.data).forEach((key) => {
           const err = error.response.data[key];
-          console.log("err", err);
+          console.log(err);
           setError(key as keyof EmailPasswordFormValues, {
             type: "manual",
             message: Array.isArray(err) ? err.join(", ") : err,
@@ -94,7 +94,9 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
         <div className="mt-2 flex items-center justify-between">
           <div className="ml-auto text-sm">
             <Link href={"/forgot-password"}>
-              <a className="font-medium text-theme hover:text-indigo-500">Forgot your password?</a>
+              <a className="font-medium text-brand-accent hover:text-brand-accent">
+                Forgot your password?
+              </a>
             </Link>
           </div>
         </div>
@@ -102,7 +104,8 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
           <SecondaryButton
             type="submit"
             className="w-full text-center"
-            loading={isSubmitting || (!isValid && isDirty)}
+            disabled={!isValid && isDirty}
+            loading={isSubmitting}
           >
             {isSubmitting ? "Signing in..." : "Sign In"}
           </SecondaryButton>

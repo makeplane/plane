@@ -11,12 +11,12 @@ import { CustomSearchSelect } from "components/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegrations } from "types";
+import { IWorkspaceIntegration, IGithubRepository } from "types";
 
 type Props = {
-  integration: IWorkspaceIntegrations;
+  integration: IWorkspaceIntegration;
   value: any;
-  label: string;
+  label: string | JSX.Element;
   onChange: (repo: any) => void;
   characterLimit?: number;
 };
@@ -54,7 +54,9 @@ export const SelectRepository: React.FC<Props> = ({
     isValidating,
   } = useSWRInfinite(getKey, fetchGithubRepos);
 
-  const userRepositories = (paginatedData ?? []).map((data) => data.repositories).flat();
+  let userRepositories = (paginatedData ?? []).map((data) => data.repositories).flat();
+  userRepositories = userRepositories.filter((data) => data?.id);
+
   const totalCount = paginatedData && paginatedData.length > 0 ? paginatedData[0].total_count : 0;
 
   const options =

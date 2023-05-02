@@ -52,7 +52,7 @@ const ProjectsPage: NextPage = () => {
             document.dispatchEvent(e);
           }}
         >
-          <PlusIcon className="w-4 h-4" />
+          <PlusIcon className="h-4 w-4" />
           Add Project
         </PrimaryButton>
       }

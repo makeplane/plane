@@ -55,43 +55,47 @@ const activityDetails: {
   },
   modules: {
     message: "set the module to",
-    icon: <RectangleGroupIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <RectangleGroupIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   state: {
     message: "set the state to",
-    icon: <Squares2X2Icon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <Squares2X2Icon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   priority: {
     message: "set the priority to",
-    icon: <ChartBarIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <ChartBarIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   name: {
     message: "set the name to",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: (
+      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />
+    ),
   },
   description: {
     message: "updated the description.",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: (
+      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />
+    ),
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
   },
   target_date: {
     message: "set the due date to",
-    icon: <CalendarDaysIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <CalendarDaysIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   parent: {
     message: "set the parent to",
-    icon: <UserIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <UserIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   issue: {
     message: "deleted the issue.",
-    icon: <TrashIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <TrashIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   estimate: {
     message: "updated the estimate",
-    icon: <PlayIcon className="h-3 w-3 text-gray-500 -rotate-90" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
   },
   link: {
     message: "updated the link",
@@ -153,11 +157,11 @@ export const Feeds: React.FC<any> = ({ activities }) => (
         ) {
           const { workspace_detail, project, issue } = activity;
           value = (
-            <span className="text-gray-600">
+            <span className="text-brand-secondary">
               created{" "}
               <Link href={`/${workspace_detail.slug}/projects/${project}/issues/${issue}`}>
                 <a className="inline-flex items-center hover:underline">
-                  this issue. <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5 ml-1" />
+                  this issue. <ArrowTopRightOnSquareIcon className="ml-1 h-3.5 w-3.5" />
                 </a>
               </Link>
             </span>
@@ -198,7 +202,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
 
         if (activity.field === "comment") {
           return (
-            <div key={activity.id}>
+            <div key={activity.id} className="mt-2">
               <div className="relative flex items-start space-x-3">
                 <div className="relative px-1">
                   {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
@@ -217,9 +221,9 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                     </div>
                   )}
 
-                  <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-white px-0.5 py-px">
+                  <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-brand-surface-2 px-0.5 py-px">
                     <ChatBubbleLeftEllipsisIcon
-                      className="h-3.5 w-3.5 text-gray-400"
+                      className="h-3.5 w-3.5 text-brand-secondary"
                       aria-hidden="true"
                     />
                   </span>
@@ -230,7 +234,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                       {activity.actor_detail.first_name}
                       {activity.actor_detail.is_bot ? "Bot" : " " + activity.actor_detail.last_name}
                     </div>
-                    <p className="mt-0.5 text-xs text-gray-500">
+                    <p className="mt-0.5 text-xs text-brand-secondary">
                       Commented {timeAgo(activity.created_at)}
                     </p>
                   </div>
@@ -242,9 +246,8 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                           : activity.old_value
                       }
                       editable={false}
-                      onBlur={() => ({})}
                       noBorder
-                      customClassName="text-xs bg-gray-100"
+                      customClassName="text-xs border border-brand-base bg-brand-base"
                     />
                   </div>
                 </div>
@@ -259,7 +262,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
               <div className="relative pb-1">
                 {activities.length > 1 && activityIdx !== activities.length - 1 ? (
                   <span
-                    className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
+                    className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-surface-2"
                     aria-hidden="true"
                   />
                 ) : null}
@@ -268,7 +271,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                     <div>
                       <div className="relative px-1.5">
                         <div className="mt-1.5">
-                          <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 ring-white">
+                          <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-surface-2 ring-white">
                             {activity.field ? (
                               activityDetails[activity.field as keyof typeof activityDetails]?.icon
                             ) : activity.actor_detail.avatar &&
@@ -292,7 +295,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                       </div>
                     </div>
                     <div className="min-w-0 flex-1 py-3">
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-brand-secondary">
                         <span className="text-gray font-medium">
                           {activity.actor_detail.first_name}
                           {activity.actor_detail.is_bot
@@ -300,7 +303,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                             : " " + activity.actor_detail.last_name}
                         </span>
                         <span> {action} </span>
-                        <span className="text-xs font-medium text-gray-900"> {value} </span>
+                        <span className="text-xs font-medium text-brand-base"> {value} </span>
                         <span className="whitespace-nowrap">{timeAgo(activity.created_at)}</span>
                       </div>
                     </div>

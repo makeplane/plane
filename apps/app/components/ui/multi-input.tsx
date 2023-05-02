@@ -53,10 +53,14 @@ export const MultiInput = ({ label, name, placeholder, setValue, watch }: any) =
 
   return (
     <>
-      {label && <label className="mb-2 text-gray-500">{label}</label>}
-      <div className="rounded-md border p-2">
+      {label && <label className="mb-2 text-brand-secondary">{label}</label>}
+      <div className="rounded-md border border-brand-base p-2">
         {watch(name)?.map((tag: any, index: number) => (
-          <button type="button" className="m-1.5 rounded-full bg-slate-300 p-1.5" key={index}>
+          <button
+            type="button"
+            className="m-1.5 rounded-full bg-brand-surface-2 px-3 py-2 "
+            key={index}
+          >
             {tag.email} <span onClick={() => removeTag(index)}>&times;</span>
           </button>
         ))}

@@ -26,20 +26,25 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
         value={value}
         label={
           <div
-            className={`flex items-center justify-center h-6 gap-2 text-xs ${
+            className={`flex items-center justify-center gap-2 text-xs ${
               error ? "text-red-500" : ""
             }`}
           >
-            <Squares2X2Icon className={`h-3 w-3 ${error ? "text-red-500" : "text-gray-400"}`} />
-            {value && (
+            {value ? (
               <span
                 className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                 style={{
                   backgroundColor: MODULE_STATUS.find((s) => s.value === value)?.color,
                 }}
               />
+            ) : (
+              <Squares2X2Icon
+                className={`h-3 w-3 ${error ? "text-red-500" : "text-brand-secondary"}`}
+              />
             )}
-            {MODULE_STATUS.find((s) => s.value === value)?.label ?? "Status"}
+            {MODULE_STATUS.find((s) => s.value === value)?.label ?? (
+              <span className={`${error ? "text-red-500" : "text-brand-secondary"}`}>Status</span>
+            )}
           </div>
         }
         onChange={onChange}

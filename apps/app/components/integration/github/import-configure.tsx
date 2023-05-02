@@ -1,30 +1,23 @@
-import { FC } from "react";
-
-import { useRouter } from "next/router";
-
 // components
 import { GithubAuth, TIntegrationSteps } from "components/integration";
 // ui
 import { PrimaryButton } from "components/ui";
 // types
-import { IAppIntegrations, IWorkspaceIntegrations } from "types";
+import { IAppIntegration, IWorkspaceIntegration } from "types";
 
 type Props = {
   provider: string | undefined;
   handleStepChange: (value: TIntegrationSteps) => void;
-  appIntegrations: IAppIntegrations[] | undefined;
-  workspaceIntegrations: IWorkspaceIntegrations[] | undefined;
+  appIntegrations: IAppIntegration[] | undefined;
+  workspaceIntegrations: IWorkspaceIntegration[] | undefined;
 };
 
-export const GithubImportConfigure: FC<Props> = ({
+export const GithubImportConfigure: React.FC<Props> = ({
   handleStepChange,
   provider,
   appIntegrations,
   workspaceIntegrations,
 }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   // current integration from all the integrations available
   const integration =
     appIntegrations &&
@@ -43,13 +36,10 @@ export const GithubImportConfigure: FC<Props> = ({
       <div className="flex items-center gap-2 py-5">
         <div className="w-full">
           <div className="font-medium">Configure</div>
-          <div className="text-sm text-gray-600">Set up your GitHub import.</div>
+          <div className="text-sm text-brand-secondary">Set up your GitHub import.</div>
         </div>
         <div className="flex-shrink-0">
-          <GithubAuth
-            workspaceSlug={workspaceSlug as string}
-            workspaceIntegration={workspaceIntegration}
-          />
+          <GithubAuth workspaceIntegration={workspaceIntegration} provider={provider} />
         </div>
       </div>
 

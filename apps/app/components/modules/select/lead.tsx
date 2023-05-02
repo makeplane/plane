@@ -1,24 +1,25 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 import useSWR from "swr";
 
 // services
 import projectServices from "services/project.service";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
+import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
-  value: string[];
+  value: string | null;
   onChange: () => void;
 };
 
-export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
+export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -28,6 +29,7 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
       ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
+
   const options =
     members?.map((member) => ({
       value: member.member.id,
@@ -47,28 +49,31 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
       ),
     })) ?? [];
 
+  const selectedOption = members?.find((m) => m.member.id === value)?.member;
+
   return (
     <CustomSearchSelect
+      options={options}
       value={value}
       label={
-        <div className="flex items-center gap-2 text-gray-500">
-          {value && value.length > 0 && Array.isArray(value) ? (
-            <div className="flex items-center justify-center gap-2">
-              <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className="text-gray-500">{value.length} Assignees</span>
-            </div>
+        <div className="flex items-center gap-2">
+          {selectedOption ? (
+            <Avatar user={selectedOption} />
           ) : (
-            <div className="flex items-center justify-center gap-2">
-              <UserGroupIcon className="h-4 w-4 text-gray-500" />
-              <span className="text-gray-500">Assignee</span>
-            </div>
+            <UserCircleIcon className="h-4 w-4 text-brand-secondary" />
+          )}
+          {selectedOption ? (
+            selectedOption?.first_name && selectedOption.first_name !== "" ? (
+              selectedOption?.first_name
+            ) : (
+              selectedOption?.email
+            )
+          ) : (
+            <span className="text-brand-secondary">Lead</span>
           )}
         </div>
       }
-      options={options}
       onChange={onChange}
-      height="md"
-      multiple
       noChevron
     />
   );

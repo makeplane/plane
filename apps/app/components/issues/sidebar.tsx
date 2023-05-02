@@ -229,7 +229,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueDetail ?? null}
       />
-      <div className="sticky top-5 w-full divide-y-2 divide-gray-100">
+      <div className="sticky top-5 w-full divide-y-2 divide-brand-base">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
@@ -237,7 +237,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="rounded-md border border-brand-base p-2 shadow-sm duration-300 hover:bg-brand-surface-1 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent"
               onClick={handleCopyText}
             >
               <LinkIcon className="h-3.5 w-3.5" />
@@ -245,7 +245,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {!isNotAllowed && (
               <button
                 type="button"
-                className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-50 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
                 onClick={() => setDeleteIssueModal(true)}
               >
                 <TrashIcon className="h-3.5 w-3.5" />
@@ -253,7 +253,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
         </div>
-        <div className="divide-y-2 divide-gray-100">
+        <div className="divide-y-2 divide-brand-base">
           <div className="py-1">
             <Controller
               control={control}
@@ -316,14 +316,14 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 issueDetail?.parent_detail ? (
                   <button
                     type="button"
-                    className="flex items-center gap-2 rounded bg-gray-100 px-3 py-2 text-xs"
+                    className="flex items-center gap-2 rounded bg-brand-surface-2 px-3 py-2 text-xs"
                     onClick={() => submitChanges({ parent: null })}
                   >
                     {issueDetail.parent_detail?.name}
                     <XMarkIcon className="h-3 w-3" />
                   </button>
                 ) : (
-                  <div className="inline-block rounded bg-gray-100 px-3 py-2 text-xs">
+                  <div className="inline-block rounded bg-brand-surface-1 px-3 py-2 text-xs">
                     No parent selected
                   </div>
                 )
@@ -344,7 +344,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               userAuth={memberRole}
             />
             <div className="flex flex-wrap items-center py-2">
-              <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+              <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
                 <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
                 <p>Due date</p>
               </div>
@@ -354,6 +354,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   name="target_date"
                   render={({ field: { value } }) => (
                     <CustomDatePicker
+                      placeholder="Due date"
                       value={value}
                       onChange={(val) =>
                         submitChanges({
@@ -382,7 +383,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         </div>
         <div className="space-y-3 py-3">
           <div className="flex items-start justify-between">
-            <div className="flex basis-1/2 items-center gap-x-2 text-sm">
+            <div className="flex basis-1/2 items-center gap-x-2 text-sm text-brand-secondary">
               <TagIcon className="h-4 w-4" />
               <p>Label</p>
             </div>
@@ -395,7 +396,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     return (
                       <span
                         key={label.id}
-                        className="group flex cursor-pointer items-center gap-1 rounded-2xl border px-1 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                        className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
                         onClick={() => {
                           const updatedLabels = watchIssue("labels_list")?.filter(
                             (l) => l !== labelId
@@ -435,8 +436,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                             className={`flex ${
                               isNotAllowed
                                 ? "cursor-not-allowed"
-                                : "cursor-pointer hover:bg-gray-100"
-                            } items-center gap-2 rounded-2xl border px-2 py-0.5 text-xs`}
+                                : "cursor-pointer hover:bg-brand-surface-1"
+                            } items-center gap-2 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary`}
                           >
                             Select Label
                           </Listbox.Button>
@@ -448,7 +449,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-brand-surface-2 py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <div className="py-1">
                                 {issueLabels ? (
                                   issueLabels.length > 0 ? (
@@ -463,9 +464,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                             <Listbox.Option
                                               key={label.id}
                                               className={({ active, selected }) =>
-                                                `${active || selected ? "bg-indigo-50" : ""} ${
+                                                `${
+                                                  active || selected ? "bg-brand-surface-1" : ""
+                                                } ${
                                                   selected ? "font-medium" : ""
-                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-brand-base`
                                               }
                                               value={label.id}
                                             >
@@ -483,8 +486,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                           );
                                       } else
                                         return (
-                                          <div className="border-y border-gray-400 bg-gray-50">
-                                            <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-gray-900">
+                                          <div className="border-y border-brand-base bg-brand-surface-1">
+                                            <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-brand-base">
                                               <RectangleGroupIcon className="h-3 w-3" />{" "}
                                               {label.name}
                                             </div>
@@ -495,7 +498,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                                   className={({ active, selected }) =>
                                                     `${active || selected ? "bg-indigo-50" : ""} ${
                                                       selected ? "font-medium" : ""
-                                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-brand-base`
                                                   }
                                                   value={child.id}
                                                 >
@@ -530,8 +533,10 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <button
                     type="button"
                     className={`flex ${
-                      isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-                    } items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs`}
+                      isNotAllowed
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer hover:bg-brand-surface-1"
+                    } items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary`}
                     onClick={() => setCreateLabelForm((prevData) => !prevData)}
                   >
                     {createLabelForm ? (
@@ -555,7 +560,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   {({ open }) => (
                     <>
                       <Popover.Button
-                        className={`flex items-center gap-1 rounded-md bg-white p-1 outline-none focus:ring-2 focus:ring-indigo-500`}
+                        className={`flex items-center gap-1 rounded-md bg-brand-surface-2 p-1 outline-none focus:ring-2 focus:ring-brand-accent`}
                       >
                         {watch("color") && watch("color") !== "" && (
                           <span
@@ -627,7 +632,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {!isNotAllowed && (
               <button
                 type="button"
-                className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
+                className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1"
                 onClick={() => setLinkModal(true)}
               >
                 <PlusIcon className="h-4 w-4" />

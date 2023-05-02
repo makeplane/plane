@@ -238,7 +238,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
 
   return (
     <div>
-      <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
+      <div className="flex flex-col rounded-[10px] bg-brand-base text-xs shadow">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
@@ -269,20 +269,20 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                 )}
               </div>
 
-              <div className="flex items-center justify-start gap-5">
+              <div className="flex items-center justify-start gap-5 text-brand-secondary">
                 <div className="flex items-start gap-1 ">
-                  <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
-                  <span className="text-gray-400">Start :</span>
+                  <CalendarDaysIcon className="h-4 w-4" />
+                  <span>Start :</span>
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
                 <div className="flex items-start gap-1 ">
-                  <TargetIcon className="h-4 w-4 text-gray-900" />
-                  <span className="text-gray-400">End :</span>
+                  <TargetIcon className="h-4 w-4" />
+                  <span>End :</span>
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mt-4">
+              <div className="mt-4 flex items-center justify-between text-brand-secondary">
                 <div className="flex items-center gap-2.5">
                   {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                     <Image
@@ -293,11 +293,11 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       alt={cycle.owned_by.first_name}
                     />
                   ) : (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
+                    <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full capitalize">
                       {cycle.owned_by.first_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-gray-900">{cycle.owned_by.first_name}</span>
+                  <span>{cycle.owned_by.first_name}</span>
                 </div>
                 <div className="flex items-center">
                   {!isCompleted && (
@@ -306,7 +306,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                         e.preventDefault();
                         handleEditCycle();
                       }}
-                      className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-gray-100"
+                      className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-brand-surface-1"
                     >
                       <span>
                         <PencilIcon className="h-4 w-4" />
@@ -350,7 +350,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
           <Disclosure>
             {({ open }) => (
               <div
-                className={`flex h-full w-full flex-col border-t border-gray-200 bg-gray-100 ${
+                className={`flex h-full w-full flex-col rounded-b-[10px] border-t border-brand-base bg-brand-surface-2 text-brand-secondary ${
                   open ? "" : "flex-row"
                 }`}
               >
@@ -368,7 +368,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                 </div>
                 <Transition show={open}>
                   <Disclosure.Panel>
-                    <div className="overflow-hidden rounded-b-md bg-white py-3 shadow">
+                    <div className="overflow-hidden rounded-b-md bg-brand-surface-2 py-3 shadow">
                       <div className="col-span-2 space-y-3 px-4">
                         <div className="space-y-3 text-xs">
                           {stateGroups.map((group) => (
@@ -388,7 +388,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                               <div>
                                 <span>
                                   {cycle[group.key as keyof ICycle] as number}{" "}
-                                  <span className="text-gray-500">
+                                  <span className="text-brand-secondary">
                                     -{" "}
                                     {cycle.total_issues > 0
                                       ? `${Math.round(

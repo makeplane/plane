@@ -72,7 +72,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
     const updatedIssue = {
       ...prevData[issueIndex],
       ...formData,
-      assignees: formData?.assignees_list ?? prevData[issueIndex]?.assignees_list,
+      assignees: formData?.assignees_list ?? prevData[issueIndex]?.assignees,
     };
 
     prevData.splice(issueIndex, 1, updatedIssue);
@@ -89,7 +89,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
     const updatedIssue = {
       ...oldGroup[issueIndex],
       ...formData,
-      assignees: formData?.assignees_list ?? oldGroup[issueIndex]?.assignees_list,
+      assignees: formData?.assignees_list ?? oldGroup[issueIndex]?.assignees,
     };
 
     if (selectedGroupBy !== Object.keys(formData)[0])

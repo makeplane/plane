@@ -27,6 +27,7 @@ from plane.utils.integrations.github import (
 )
 from plane.api.permissions import WorkSpaceAdminPermission
 
+
 class IntegrationViewSet(BaseViewSet):
     serializer_class = IntegrationSerializer
     model = Integration
@@ -101,7 +102,6 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
         WorkSpaceAdminPermission,
     ]
 
-
     def get_queryset(self):
         return (
             super()
@@ -112,20 +112,29 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
 
     def create(self, request, slug, provider):
         try:
-            installation_id = request.data.get("installation_id", None)
-
-            if not installation_id:
-                return Response(
-                    {"error": "Installation ID is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
             workspace = Workspace.objects.get(slug=slug)
             integration = Integration.objects.get(provider=provider)
             config = {}
             if provider == "github":
+                installation_id = request.data.get("installation_id", None)
+                if not installation_id:
+                    return Response(
+                        {"error": "Installation ID is required"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
                 metadata = get_github_metadata(installation_id)
                 config = {"installation_id": installation_id}
+
+            if provider == "slack":
+                metadata = request.data.get("metadata", {})
+                access_token = metadata.get("access_token", False)
+                team_id = metadata.get("team", {}).get("id", False)
+                if not metadata or not access_token or not team_id:
+                    return Response(
+                        {"error": "Access token and team id is required"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                config = {"team_id": team_id, "access_token": access_token}
 
             # Create a bot user
             bot_user = User.objects.create(

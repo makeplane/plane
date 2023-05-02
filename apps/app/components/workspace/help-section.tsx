@@ -58,13 +58,13 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
 
   return (
     <div
-      className={`flex w-full items-center justify-between self-baseline border-t bg-white px-6 py-2 ${
+      className={`flex w-full items-center justify-between self-baseline border-t border-brand-base bg-brand-sidebar px-6 py-2 ${
         sidebarCollapse ? "flex-col" : ""
       }`}
     >
       <button
         type="button"
-        className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 ${
+        className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base ${
           sidebarCollapse ? "w-full justify-center" : ""
         }`}
         onClick={() => {
@@ -75,36 +75,36 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
         }}
         title="Shortcuts"
       >
-        <RocketLaunchIcon className="h-4 w-4 text-gray-500" />
+        <RocketLaunchIcon className="h-4 w-4 text-brand-secondary" />
         {!sidebarCollapse && <span>Shortcuts</span>}
       </button>
       <button
         type="button"
-        className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 ${
+        className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base ${
           sidebarCollapse ? "w-full justify-center" : ""
         }`}
         onClick={() => setIsNeedHelpOpen((prev) => !prev)}
         title="Help"
       >
-        <QuestionMarkCircleIcon className="h-4 w-4 text-gray-500" />
+        <QuestionMarkCircleIcon className="h-4 w-4 text-brand-secondary" />
         {!sidebarCollapse && <span>Help</span>}
       </button>
       <button
         type="button"
-        className="flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 md:hidden"
+        className="flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base md:hidden"
         onClick={() => setSidebarActive(false)}
       >
-        <ArrowLongLeftIcon className="h-4 w-4 flex-shrink-0 text-gray-500 group-hover:text-gray-900" />
+        <ArrowLongLeftIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary group-hover:text-brand-base" />
       </button>
       <button
         type="button"
-        className={`hidden items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 md:flex ${
+        className={`hidden items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base md:flex ${
           sidebarCollapse ? "w-full justify-center" : ""
         }`}
         onClick={() => toggleCollapsed()}
       >
         <ArrowLongLeftIcon
-          className={`h-4 w-4 flex-shrink-0 text-gray-500 duration-300 group-hover:text-gray-900 ${
+          className={`h-4 w-4 flex-shrink-0 text-brand-secondary duration-300 group-hover:text-brand-base ${
             sidebarCollapse ? "rotate-180" : ""
           }`}
         />
@@ -121,7 +121,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
           leaveTo="transform opacity-0 scale-95"
         >
           <div
-            className={`absolute bottom-2 ${helpOptionMode} space-y-2 rounded-sm bg-white p-1 shadow-md`}
+            className={`absolute bottom-2 ${helpOptionMode} space-y-2 rounded-sm bg-brand-surface-2 p-1 shadow-md`}
             ref={helpOptionsRef}
           >
             {helpOptions.map(({ name, Icon, href, onClick }) => {
@@ -130,9 +130,9 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
                   <Link href={href} key={name}>
                     <a
                       target="_blank"
-                      className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-gray-100"
+                      className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-brand-surface-1"
                     >
-                      <Icon className="h-4 w-4 text-gray-500" />
+                      <Icon className="h-4 w-4 text-brand-secondary" />
                       <span className="text-sm">{name}</span>
                     </a>
                   </Link>
@@ -143,9 +143,9 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
                     key={name}
                     type="button"
                     onClick={onClick ? onClick : undefined}
-                    className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-gray-100"
+                    className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-brand-surface-1"
                   >
-                    <Icon className="h-4 w-4 text-gray-500" />
+                    <Icon className="h-4 w-4 text-brand-secondary" />
                     <span className="text-sm">{name}</span>
                   </button>
                 );

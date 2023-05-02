@@ -17,9 +17,9 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
-import type { IState } from "types";
+import type { IState, IStateResponse } from "types";
 // fetch-keys
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
 
@@ -33,7 +33,7 @@ export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "ca
 
 const defaultValues: Partial<IState> = {
   name: "",
-  color: "#000000",
+  color: "#858e96",
   group: "backlog",
 };
 
@@ -47,7 +47,6 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setError,
     watch,
     reset,
     control,
@@ -81,47 +80,74 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
     const payload: IState = {
       ...formData,
     };
+
     if (!data) {
       await stateService
-        .createState(workspaceSlug as string, projectId as string, { ...payload })
+        .createState(workspaceSlug.toString(), projectId.toString(), { ...payload })
         .then((res) => {
-          mutate(STATE_LIST(projectId as string));
+          mutate<IStateResponse>(
+            STATES_LIST(projectId.toString()),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              return {
+                ...prevData,
+                [res.group]: [...prevData[res.group], res],
+              };
+            },
+            false
+          );
           handleClose();
 
           setToastAlert({
-            title: "Success",
             type: "success",
-            message: "State created successfully",
+            title: "Success!",
+            message: "State created successfully.",
           });
         })
         .catch((err) => {
-          Object.keys(err).map((key) => {
-            setError(key as keyof IState, {
-              message: err[key].join(", "),
+          if (err.status === 400)
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "State with that name already exists. Please try again with another name.",
             });
-          });
+          else
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "State could not be created. Please try again.",
+            });
         });
     } else {
       await stateService
-        .updateState(workspaceSlug as string, projectId as string, data.id, {
+        .updateState(workspaceSlug.toString(), projectId.toString(), data.id, {
           ...payload,
         })
-        .then((res) => {
-          mutate(STATE_LIST(projectId as string));
+        .then(() => {
+          mutate(STATES_LIST(projectId.toString()));
           handleClose();
 
           setToastAlert({
-            title: "Success",
             type: "success",
-            message: "State updated successfully",
+            title: "Success!",
+            message: "State updated successfully.",
           });
         })
         .catch((err) => {
-          Object.keys(err).map((key) => {
-            setError(key as keyof IState, {
-              message: err[key].join(", "),
+          if (err.status === 400)
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message:
+                "Another state exists with the same name. Please try again with another name.",
             });
-          });
+          else
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "State could not be updated. Please try again.",
+            });
         });
     }
   };
@@ -129,20 +155,20 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-white p-5"
+      className="flex items-center gap-x-2 rounded-[10px] bg-brand-base p-5"
     >
-      <div className="h-8 w-8 flex-shrink-0">
-        <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
+      <div className="flex-shrink-0">
+        <Popover className="relative flex h-full w-full items-center justify-center">
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                  open ? "text-gray-900" : "text-gray-500"
+                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
+                  open ? "text-brand-base" : "text-brand-secondary"
                 }`}
               >
                 {watch("color") && watch("color") !== "" && (
                   <span
-                    className="h-4 w-4 rounded"
+                    className="h-5 w-5 rounded"
                     style={{
                       backgroundColor: watch("color") ?? "black",
                     }}

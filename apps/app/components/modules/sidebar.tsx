@@ -87,13 +87,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
 
     modulesService
       .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-      .then((res) => {
-        console.log(res);
-        mutate(MODULE_DETAILS(moduleId as string));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      .then(() => mutate(MODULE_DETAILS(moduleId as string)))
+      .catch((e) => console.log(e));
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -190,7 +185,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 h-full w-[24rem] overflow-y-auto border-l bg-gray-50 py-5 duration-300`}
+        } z-20 h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar py-5 duration-300`}
       >
         {module ? (
           <>
@@ -203,9 +198,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     render={({ field: { value } }) => (
                       <CustomSelect
                         customButton={
-                          <span
-                            className={`flex cursor-pointer items-center rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-center text-sm capitalize text-gray-800 `}
-                          >
+                          <span className="flex cursor-pointer items-center rounded border-[0.5px] border-brand-base bg-brand-surface-1 px-2 py-1 text-center text-xs capitalize">
                             {capitalizeFirstLetter(`${watch("status")}`)}
                           </span>
                         }
@@ -223,17 +216,19 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     )}
                   />
                 </div>
-                <div className="relative flex h-full w-52 items-center justify-center gap-2 text-sm text-gray-800">
-                  <Popover className="flex h-full items-center  justify-center rounded-lg">
+                <div className="relative flex h-full w-52 items-center gap-2 text-sm">
+                  <Popover className="flex h-full items-center justify-center rounded-lg">
                     {({ open }) => (
                       <>
                         <Popover.Button
-                          className={`group flex h-full items-center gap-1 rounded border-[0.5px]  border-gray-200 bg-gray-100 px-2.5 py-1.5 text-gray-800   ${
-                            open ? "bg-gray-100" : ""
+                          className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-brand-base bg-brand-surface-1 px-2 py-1 text-xs ${
+                            module.start_date ? "" : "text-brand-secondary"
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
-                          <span>{renderShortDate(new Date(`${module.start_date}`))}</span>
+                          <span>
+                            {renderShortDate(new Date(`${module.start_date}`), "Start date")}
+                          </span>
                         </Popover.Button>
 
                         <Transition
@@ -270,19 +265,21 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     )}
                   </Popover>
                   <span>
-                    <ArrowLongRightIcon className="h-3 w-3" />
+                    <ArrowLongRightIcon className="h-3 w-3 text-brand-secondary" />
                   </span>
-                  <Popover className="flex h-full items-center  justify-center rounded-lg">
+                  <Popover className="flex h-full items-center justify-center rounded-lg">
                     {({ open }) => (
                       <>
                         <Popover.Button
-                          className={`group flex items-center gap-1 rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-gray-800  ${
-                            open ? "bg-gray-100" : ""
+                          className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-brand-base bg-brand-surface-1 px-2 py-1 text-xs ${
+                            module.target_date ? "" : "text-brand-secondary"
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3 " />
 
-                          <span>{renderShortDate(new Date(`${module?.target_date}`))}</span>
+                          <span>
+                            {renderShortDate(new Date(`${module?.target_date}`), "End date")}
+                          </span>
                         </Popover.Button>
 
                         <Transition
@@ -321,10 +318,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6 px-6 py-6 w-full">
-                <div className="flex flex-col items-start justify-start gap-2 w-full">
-                  <div className="flex items-start justify-between gap-2 w-full  ">
-                    <h4 className="text-xl font-semibold text-gray-900">{module.name}</h4>
+              <div className="flex w-full flex-col gap-6 px-6 py-6">
+                <div className="flex w-full flex-col items-start justify-start gap-2">
+                  <div className="flex w-full items-start justify-between gap-2  ">
+                    <h4 className="text-xl font-semibold text-brand-base">{module.name}</h4>
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
                         <span className="flex items-center justify-start gap-2">
@@ -341,7 +338,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     </CustomMenu>
                   </div>
 
-                  <span className="whitespace-normal text-sm leading-5 text-black">
+                  <span className="whitespace-normal text-sm leading-5 text-brand-secondary">
                     {module.description}
                   </span>
                 </div>
@@ -373,12 +370,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   />
 
                   <div className="flex items-center justify-start gap-1">
-                    <div className="flex w-40 items-center justify-start gap-2">
-                      <ChartPieIcon className="h-5 w-5 text-gray-400" />
+                    <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+                      <ChartPieIcon className="h-5 w-5" />
                       <span>Progress</span>
                     </div>
 
-                    <div className="flex items-center gap-2.5 text-gray-800">
+                    <div className="flex items-center gap-2.5 text-brand-secondary">
                       <span className="h-4 w-4">
                         <ProgressBar
                           value={module.completed_issues}
@@ -392,7 +389,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
               </div>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
@@ -400,7 +397,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   >
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
-                        <span className="font-medium text-gray-500">Progress</span>
+                        <span className="font-medium text-brand-secondary">Progress</span>
                         {!open && moduleIssues && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
                             {progressPercentage ? `${progressPercentage}%` : ""}
@@ -420,7 +417,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                       ) : (
                         <div className="flex items-center gap-1">
                           <ExclamationIcon height={14} width={14} />
-                          <span className="text-xs italic text-gray-500">
+                          <span className="text-xs italic text-brand-secondary">
                             Invalid date. Please enter valid date.
                           </span>
                         </div>
@@ -433,7 +430,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                             <div className="flex  items-start justify-between gap-4 py-2 text-xs">
                               <div className="flex items-center gap-1">
                                 <span>
-                                  <DocumentIcon className="h-3 w-3 text-gray-500" />
+                                  <DocumentIcon className="h-3 w-3 text-brand-secondary" />
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
@@ -442,7 +439,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                                 </span>
                               </div>
 
-                              <div className="flex items-center gap-3 text-gray-900">
+                              <div className="flex items-center gap-3 text-brand-base">
                                 <div className="flex items-center justify-center gap-1">
                                   <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
                                   <span>Ideal</span>
@@ -471,7 +468,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
@@ -479,7 +476,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   >
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
-                        <span className="font-medium text-gray-500">Other Information</span>
+                        <span className="font-medium text-brand-secondary">Other Information</span>
                       </div>
 
                       {module.total_issues > 0 ? (
@@ -492,7 +489,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                       ) : (
                         <div className="flex items-center gap-1">
                           <ExclamationIcon height={14} width={14} />
-                          <span className="text-xs italic text-gray-500">
+                          <span className="text-xs italic text-brand-secondary">
                             No issues found. Please add issue.
                           </span>
                         </div>
@@ -527,17 +524,17 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col text-xs border-t border-gray-300 px-6 py-6">
-              <div className="flex justify-between items-center w-full">
-                <h4 className="font-medium text-sm text-gray-500">Links</h4>
+            <div className="flex w-full flex-col border-t border-brand-base px-6 py-6 text-xs">
+              <div className="flex w-full items-center justify-between">
+                <h4 className="text-sm font-medium text-brand-secondary">Links</h4>
                 <button
-                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1"
                   onClick={() => setModuleLinkModal(true)}
                 >
                   <PlusIcon className="h-4 w-4" />
                 </button>
               </div>
-              <div className="mt-2 space-y-2 hover:bg-gray-100">
+              <div className="mt-2 space-y-2 hover:bg-brand-surface-2">
                 {memberRole && module.link_module && module.link_module.length > 0 ? (
                   <LinksList
                     links={module.link_module}

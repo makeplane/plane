@@ -17,7 +17,7 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
-  removeIssue: ((bridgeId: string) => void) | null;
+  removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
   userAuth: UserAuth;
 };
@@ -81,7 +81,7 @@ export const AllBoards: React.FC<Props> = ({
                     return (
                       <div
                         key={index}
-                        className="flex items-center justify-between gap-2 rounded bg-white p-2 shadow"
+                        className="flex items-center justify-between gap-2 rounded bg-brand-surface-1 p-2 shadow"
                       >
                         <div className="flex items-center gap-2">
                           {currentState &&
@@ -92,7 +92,7 @@ export const AllBoards: React.FC<Props> = ({
                               : addSpaceIfCamelCase(singleGroup)}
                           </h4>
                         </div>
-                        <span className="text-xs text-gray-500">0</span>
+                        <span className="text-xs text-brand-secondary">0</span>
                       </div>
                     );
                 })}

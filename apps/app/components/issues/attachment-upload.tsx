@@ -96,9 +96,9 @@ export const IssueAttachmentUpload = () => {
         ) : fileError ? (
           <p className="text-center text-red-500">{fileError}</p>
         ) : isLoading ? (
-          <p className="text-center">Uploading....</p>
+          <p className="text-center">Uploading...</p>
         ) : (
-          <p className="text-center">Drag and drop/Click to add</p>
+          <p className="text-center">Click or drag a file here</p>
         )}
       </span>
     </div>

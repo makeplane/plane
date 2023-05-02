@@ -58,29 +58,19 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     >
       {({ open }: any) => (
         <>
-          <Combobox.Button
-            className={({ open }) =>
-              `flex cursor-pointer items-center rounded-md border text-xs shadow-sm duration-200 
-              ${
-                open
-                  ? "border-theme bg-theme/5 outline-none ring-1 ring-theme "
-                  : "hover:bg-theme/5 "
-              }`
-            }
-          >
+          <Combobox.Button className="flex cursor-pointer items-center rounded-md border border-brand-base text-xs shadow-sm duration-200 hover:bg-brand-surface-2">
             {value && value.length > 0 ? (
               <span className="flex items-center justify-center gap-2 px-3 py-1 text-xs">
                 <IssueLabelsList
                   labels={value.map((v) => issueLabels?.find((l) => l.id === v)?.color) ?? []}
                   length={3}
-                  showLength
+                  showLength={true}
                 />
-                <span className=" text-gray-600">{value.length} Labels</span>
               </span>
             ) : (
-              <span className="flex items-center justify-center gap-2 px-3  py-1.5 text-xs">
-                <TagIcon className="h-3 w-3 text-gray-500" />
-                <span className=" text-gray-500">Label</span>
+              <span className="flex items-center justify-center gap-2 px-2.5 py-1 text-xs">
+                <TagIcon className="h-3.5 w-3.5 text-brand-secondary" />
+                <span className=" text-brand-secondary">Label</span>
               </span>
             )}
           </Combobox.Button>
@@ -97,12 +87,12 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           >
             <Combobox.Options
               className={`absolute z-10 mt-1 max-h-52 min-w-[8rem] overflow-auto rounded-md border-none
-                bg-white px-2 py-2 text-xs shadow-md focus:outline-none`}
+                bg-brand-surface-1 px-2 py-2 text-xs shadow-md focus:outline-none`}
             >
-              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-gray-100 px-2">
-                <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
+              <div className="flex w-full items-center justify-start rounded-sm  border-[0.6px] border-brand-base bg-brand-surface-1 px-2">
+                <MagnifyingGlassIcon className="h-3 w-3 text-brand-secondary" />
                 <Combobox.Input
-                  className="w-full  bg-transparent py-1 px-2 text-xs text-gray-500 focus:outline-none"
+                  className="w-full bg-transparent py-1 px-2 text-xs text-brand-secondary focus:outline-none"
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search for label..."
                   displayValue={(assigned: any) => assigned?.name}
@@ -121,8 +111,8 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                               key={label.id}
                               className={({ active }) =>
                                 `${
-                                  active ? "bg-gray-200" : ""
-                                } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-600`
+                                  active ? "bg-brand-surface-2" : ""
+                                } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-brand-secondary`
                               }
                               value={label.id}
                             >
@@ -130,10 +120,9 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                 <div className="flex w-full justify-between gap-2 rounded">
                                   <div className="flex items-center justify-start gap-2">
                                     <span
-                                      className="h-3 w-3 flex-shrink-0 rounded-full"
+                                      className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                                       style={{
-                                        backgroundColor:
-                                          label.color && label.color !== "" ? label.color : "#000",
+                                        backgroundColor: label.color,
                                       }}
                                     />
                                     <span>{label.name}</span>
@@ -151,8 +140,8 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                           );
                       } else
                         return (
-                          <div className="border-y border-gray-400 bg-gray-50">
-                            <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-gray-900">
+                          <div className="border-y border-brand-base">
+                            <div className="flex select-none items-center gap-2 truncate p-2 text-brand-base">
                               <RectangleGroupIcon className="h-3 w-3" /> {label.name}
                             </div>
                             <div>
@@ -161,8 +150,8 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                   key={child.id}
                                   className={({ active }) =>
                                     `${
-                                      active ? "bg-gray-200" : ""
-                                    } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-600`
+                                      active ? "bg-brand-surface-2" : ""
+                                    } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-brand-secondary`
                                   }
                                   value={child.id}
                                 >
@@ -170,9 +159,9 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                     <div className="flex w-full justify-between gap-2 rounded">
                                       <div className="flex items-center justify-start gap-2">
                                         <span
-                                          className="h-3 w-3 flex-shrink-0 rounded-full"
+                                          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                                           style={{
-                                            backgroundColor: child?.color ?? "black",
+                                            backgroundColor: child?.color,
                                           }}
                                         />
                                         <span>{child.name}</span>
@@ -193,19 +182,19 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                         );
                     })
                   ) : (
-                    <p className="px-2 text-xs text-gray-500">No labels found</p>
+                    <p className="px-2 text-xs text-brand-secondary">No labels found</p>
                   )
                 ) : (
-                  <p className="px-2 text-xs text-gray-500">Loading...</p>
+                  <p className="px-2 text-xs text-brand-secondary">Loading...</p>
                 )}
                 <button
                   type="button"
-                  className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-gray-200"
+                  className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
                   onClick={() => setIsOpen(true)}
                 >
-                  <span className="flex items-center justify-start gap-1">
-                    <PlusIcon className="h-4 w-4 text-gray-600" aria-hidden="true" />
-                    <span className="text-gray-600">Create New Label</span>
+                  <span className="flex items-center justify-start gap-1 text-brand-secondary">
+                    <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                    <span>Create New Label</span>
                   </span>
                 </button>
               </div>

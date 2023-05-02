@@ -105,7 +105,7 @@ if (
     AWS_S3_ADDRESSING_STYLE = "auto"
 
     # The full URL to the S3 endpoint. Leave blank to use the default region URL.
-    AWS_S3_ENDPOINT_URL = ""
+    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "")
 
     # A prefix to be applied to every stored file. This will be joined to every filename using the "/" separator.
     AWS_S3_KEY_PREFIX = ""
@@ -240,7 +240,15 @@ SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
 redis_url = os.environ.get("REDIS_URL")
-broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+broker_url = (
+    f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+)
 
-CELERY_RESULT_BACKEND = broker_url
-CELERY_BROKER_URL = broker_url
+if DOCKERIZED:
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
+else:
+    CELERY_RESULT_BACKEND = broker_url
+    CELERY_BROKER_URL = broker_url
+
+GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)

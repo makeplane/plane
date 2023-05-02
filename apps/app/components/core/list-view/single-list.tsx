@@ -37,7 +37,7 @@ type Props = {
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
-  removeIssue: ((bridgeId: string) => void) | null;
+  removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
   userAuth: UserAuth;
 };
@@ -104,17 +104,17 @@ export const SingleList: React.FC<Props> = ({
 
     switch (selectedGroup) {
       case "state":
-        icon = currentState && getStateGroupIcon(currentState.group, "18", "18", bgColor);
+        icon = currentState && getStateGroupIcon(currentState.group, "16", "16", bgColor);
         break;
       case "priority":
-        icon = getPriorityIcon(groupTitle, "h-[18px] w-[18px] flex items-center");
+        icon = getPriorityIcon(groupTitle, "text-lg");
         break;
       case "labels":
         const labelColor =
           issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
         icon = (
           <span
-            className="h-[18px] w-[18px] flex-shrink-0 rounded-full"
+            className="h-3 w-3 flex-shrink-0 rounded-full"
             style={{ backgroundColor: labelColor }}
           />
         );
@@ -130,27 +130,23 @@ export const SingleList: React.FC<Props> = ({
   };
 
   return (
-    <Disclosure key={groupTitle} as="div" defaultOpen>
+    <Disclosure as="div" defaultOpen>
       {({ open }) => (
-        <div className="bg-white">
-          <div
-            className={`flex items-center justify-between bg-gray-100 px-5 py-3 ${
-              open ? "" : "rounded-[10px]"
-            }`}
-          >
+        <div>
+          <div className="flex items-center justify-between px-4 py-2.5">
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
                 {selectedGroup !== null && (
-                  <span className="flex items-center">{getGroupIcon()}</span>
+                  <div className="flex items-center">{getGroupIcon()}</div>
                 )}
                 {selectedGroup !== null ? (
-                  <h2 className="text-base font-semibold capitalize leading-6 text-gray-800">
+                  <h2 className="text-sm font-semibold capitalize leading-6 text-brand-base">
                     {getGroupTitle()}
                   </h2>
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
-                <span className="rounded-full bg-gray-200 py-0.5 px-3 text-sm text-black">
+                <span className="text-brand-2 min-w-[2.5rem] rounded-full bg-brand-surface-2 py-1 text-center text-xs">
                   {groupedByIssues[groupTitle as keyof IIssue].length}
                 </span>
               </div>
@@ -158,7 +154,7 @@ export const SingleList: React.FC<Props> = ({
             {type === "issue" ? (
               <button
                 type="button"
-                className="p-1  text-gray-500 hover:bg-gray-100"
+                className="p-1  text-brand-secondary hover:bg-brand-surface-2"
                 onClick={addIssueToState}
               >
                 <PlusIcon className="h-4 w-4" />
@@ -168,7 +164,7 @@ export const SingleList: React.FC<Props> = ({
             ) : (
               <CustomMenu
                 customButton={
-                  <div className="flex items-center cursor-pointer">
+                  <div className="flex cursor-pointer items-center">
                     <PlusIcon className="h-4 w-4" />
                   </div>
                 }
@@ -208,14 +204,16 @@ export const SingleList: React.FC<Props> = ({
                       makeIssueCopy={() => makeIssueCopy(issue)}
                       handleDeleteIssue={handleDeleteIssue}
                       removeIssue={() => {
-                        if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id);
+                        if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id, issue.id);
                       }}
                       isCompleted={isCompleted}
                       userAuth={userAuth}
                     />
                   ))
                 ) : (
-                  <p className="px-4 py-3 text-sm text-gray-500">No issues.</p>
+                  <p className="bg-brand-base px-4 py-2.5 text-sm text-brand-secondary">
+                    No issues.
+                  </p>
                 )
               ) : (
                 <div className="flex h-full w-full items-center justify-center">Loading...</div>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -9,49 +9,44 @@ import useSWR, { mutate } from "swr";
 import IntegrationService from "services/integration";
 // hooks
 import useToast from "hooks/use-toast";
+import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { DangerButton, Loader, SecondaryButton } from "components/ui";
+import { DangerButton, Loader, PrimaryButton } from "components/ui";
 // icons
-import GithubLogo from "public/logos/github-square.png";
+import GithubLogo from "public/services/github.png";
+import SlackLogo from "public/services/slack.png";
 // types
-import { IWorkspaceIntegrations } from "types";
+import { IAppIntegration, IWorkspaceIntegration } from "types";
 // fetch-keys
 import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
-const OAuthPopUp = ({ integration }: any) => {
-  const [deletingIntegration, setDeletingIntegration] = useState(false);
+type Props = {
+  integration: IAppIntegration;
+};
 
-  const popup = useRef<any>();
+const integrationDetails: { [key: string]: any } = {
+  github: {
+    logo: GithubLogo,
+    installed:
+      "Activate GitHub integrations on individual projects to sync with specific repositories.",
+    notInstalled: "Connect with GitHub with your Plane workspace to sync project issues.",
+  },
+  slack: {
+    logo: SlackLogo,
+    installed: "Activate Slack integrations on individual projects to sync with specific channels.",
+    notInstalled: "Connect with Slack with your Plane workspace to sync project issues.",
+  },
+};
+
+export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
+  const [deletingIntegration, setDeletingIntegration] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const checkPopup = () => {
-    const check = setInterval(() => {
-      if (!popup || popup.current.closed || popup.current.closed === undefined) {
-        clearInterval(check);
-      }
-    }, 1000);
-  };
-
-  const openPopup = () => {
-    const width = 600,
-      height = 600;
-    const left = window.innerWidth / 2 - width / 2;
-    const top = window.innerHeight / 2 - height / 2;
-    const url = `https://github.com/apps/${
-      process.env.NEXT_PUBLIC_GITHUB_APP_NAME
-    }/installations/new?state=${workspaceSlug as string}`;
-
-    return window.open(url, "", `width=${width}, height=${height}, top=${top}, left=${left}`);
-  };
-
-  const startAuth = () => {
-    popup.current = openPopup();
-    checkPopup();
-  };
+  const { startAuth, isConnecting: isInstalling } = useIntegrationPopup(integration.provider);
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
@@ -75,7 +70,7 @@ const OAuthPopUp = ({ integration }: any) => {
       workspaceIntegrationId ?? ""
     )
       .then(() => {
-        mutate<IWorkspaceIntegrations[]>(
+        mutate<IWorkspaceIntegration[]>(
           WORKSPACE_INTEGRATIONS(workspaceSlug as string),
           (prevData) => prevData?.filter((i) => i.id !== workspaceIntegrationId),
           false
@@ -104,10 +99,13 @@ const OAuthPopUp = ({ integration }: any) => {
   );
 
   return (
-    <div className="flex items-center justify-between gap-2 rounded-[10px] border bg-white p-5">
+    <div className="flex items-center justify-between gap-2 rounded-[10px] border border-brand-base bg-brand-base p-5">
       <div className="flex items-start gap-4">
         <div className="h-12 w-12 flex-shrink-0">
-          <Image src={GithubLogo} alt="GithubLogo" />
+          <Image
+            src={integrationDetails[integration.provider].logo}
+            alt={`${integration.title} Logo`}
+          />
         </div>
         <div>
           <h3 className="flex items-center gap-4 text-xl font-semibold">
@@ -128,8 +126,8 @@ const OAuthPopUp = ({ integration }: any) => {
           <p className="text-sm text-gray-400">
             {workspaceIntegrations
               ? isInstalled
-                ? "Activate GitHub integrations on individual projects to sync with specific repositories."
-                : "Connect with GitHub with your Plane workspace to sync project issues."
+                ? integrationDetails[integration.provider].installed
+                : integrationDetails[integration.provider].notInstalled
               : "Loading..."}
           </p>
         </div>
@@ -141,9 +139,9 @@ const OAuthPopUp = ({ integration }: any) => {
             {deletingIntegration ? "Removing..." : "Remove installation"}
           </DangerButton>
         ) : (
-          <SecondaryButton onClick={startAuth} outline>
-            Add installation
-          </SecondaryButton>
+          <PrimaryButton onClick={startAuth} loading={isInstalling}>
+            {isInstalling ? "Installing..." : "Add installation"}
+          </PrimaryButton>
         )
       ) : (
         <Loader>
@@ -153,5 +151,3 @@ const OAuthPopUp = ({ integration }: any) => {
     </div>
   );
 };
-
-export default OAuthPopUp;

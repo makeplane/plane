@@ -6,13 +6,13 @@ import useSWR, { mutate } from "swr";
 
 // services
 import projectService from "services/project.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices, { MiscellaneousEventType } from "services/track-event.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { SecondaryButton } from "components/ui";
+import { SecondaryButton, ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
@@ -22,6 +22,52 @@ import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+
+const featuresList = [
+  {
+    title: "Cycles",
+    description:
+      "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
+    icon: <ContrastIcon color="#3f76ff" width={28} height={28} className="flex-shrink-0" />,
+    property: "cycle_view",
+  },
+  {
+    title: "Modules",
+    description:
+      "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
+    icon: <PeopleGroupIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />,
+    property: "module_view",
+  },
+  {
+    title: "Views",
+    description:
+      "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
+    icon: <ViewListIcon color="#05c3ff" width={28} height={28} className="flex-shrink-0" />,
+    property: "issue_views_view",
+  },
+  {
+    title: "Pages",
+    description:
+      "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
+    icon: <DocumentTextIcon color="#fcbe1d" width={28} height={28} className="flex-shrink-0" />,
+    property: "page_view",
+  },
+];
+
+const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType => {
+  switch (feature) {
+    case "Cycles":
+      return toggle ? "TOGGLE_CYCLE_ON" : "TOGGLE_CYCLE_OFF";
+    case "Modules":
+      return toggle ? "TOGGLE_MODULE_ON" : "TOGGLE_MODULE_OFF";
+    case "Views":
+      return toggle ? "TOGGLE_VIEW_ON" : "TOGGLE_VIEW_OFF";
+    case "Pages":
+      return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
+    default:
+      return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
+  }
+};
 
 const FeaturesSettings: NextPage = () => {
   const router = useRouter();
@@ -91,170 +137,41 @@ const FeaturesSettings: NextPage = () => {
       <section className="space-y-8">
         <h3 className="text-2xl font-semibold">Features</h3>
         <div className="space-y-5">
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
-            <div className="flex items-start gap-3">
-              <ContrastIcon color="#3F76FF" width={28} height={28} className="flex-shrink-0" />
-              <div>
-                <h4 className="text-xl font-semibold">Cycles</h4>
-                <p className="text-gray-500">
-                  Cycles are enabled for all the projects in this workspace. Access them from the
-                  navigation bar.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                projectDetails?.cycle_view ? "bg-green-500" : "bg-gray-200"
-              }`}
-              role="switch"
-              aria-checked={projectDetails?.cycle_view}
-              onClick={() => {
-                trackEventServices.trackMiscellaneousEvent(
-                  {
-                    workspaceId: (projectDetails?.workspace as any)?.id,
-                    workspaceSlug,
-                    projectId,
-                    projectIdentifier: projectDetails?.identifier,
-                    projectName: projectDetails?.name,
-                  },
-                  !projectDetails?.cycle_view ? "TOGGLE_CYCLE_ON" : "TOGGLE_CYCLE_OFF"
-                );
-                handleSubmit({ cycle_view: !projectDetails?.cycle_view });
-              }}
+          {featuresList.map((feature) => (
+            <div
+              key={feature.property}
+              className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-brand-base bg-brand-base p-5"
             >
-              <span className="sr-only">Use cycles</span>
-              <span
-                aria-hidden="true"
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                  projectDetails?.cycle_view ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </button>
-          </div>
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
-            <div className="flex items-start gap-3">
-              <PeopleGroupIcon color="#FF6B00" width={28} height={28} className="flex-shrink-0" />
-              <div>
-                <h4 className="-mt-1.5 text-xl font-semibold">Modules</h4>
-                <p className="text-gray-500">
-                  Modules are enabled for all the projects in this workspace. Access it from the
-                  navigation bar.
-                </p>
+              <div className="flex items-start gap-3">
+                {feature.icon}
+                <div>
+                  <h4 className="text-lg font-semibold">{feature.title}</h4>
+                  <p className="text-sm text-brand-secondary">{feature.description}</p>
+                </div>
               </div>
-            </div>
-            <button
-              type="button"
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                projectDetails?.module_view ? "bg-green-500" : "bg-gray-200"
-              }`}
-              role="switch"
-              aria-checked={projectDetails?.module_view}
-              onClick={() => {
-                trackEventServices.trackMiscellaneousEvent(
-                  {
-                    workspaceId: (projectDetails?.workspace as any)?.id,
-                    workspaceSlug,
-                    projectId,
-                    projectIdentifier: projectDetails?.identifier,
-                    projectName: projectDetails?.name,
-                  },
-                  !projectDetails?.module_view ? "TOGGLE_MODULE_ON" : "TOGGLE_MODULE_OFF"
-                );
-                handleSubmit({ module_view: !projectDetails?.module_view });
-              }}
-            >
-              <span className="sr-only">Use cycles</span>
-              <span
-                aria-hidden="true"
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                  projectDetails?.module_view ? "translate-x-5" : "translate-x-0"
-                }`}
+              <ToggleSwitch
+                value={projectDetails?.[feature.property as keyof IProject]}
+                onChange={() => {
+                  trackEventServices.trackMiscellaneousEvent(
+                    {
+                      workspaceId: (projectDetails?.workspace as any)?.id,
+                      workspaceSlug,
+                      projectId,
+                      projectIdentifier: projectDetails?.identifier,
+                      projectName: projectDetails?.name,
+                    },
+                    !projectDetails?.[feature.property as keyof IProject]
+                      ? getEventType(feature.title, true)
+                      : getEventType(feature.title, false)
+                  );
+                  handleSubmit({
+                    [feature.property]: !projectDetails?.[feature.property as keyof IProject],
+                  });
+                }}
+                size="lg"
               />
-            </button>
-          </div>
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
-            <div className="flex items-start gap-3">
-              <ViewListIcon color="#05C3FF" width={28} height={28} className="flex-shrink-0" />
-              <div>
-                <h4 className="-mt-1.5 text-xl font-semibold">Views</h4>
-                <p className="text-gray-500">
-                  Views are enabled for all the projects in this workspace. Access it from the
-                  navigation bar.
-                </p>
-              </div>
             </div>
-            <button
-              type="button"
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                projectDetails?.issue_views_view ? "bg-green-500" : "bg-gray-200"
-              }`}
-              role="switch"
-              aria-checked={projectDetails?.issue_views_view}
-              onClick={() => {
-                trackEventServices.trackMiscellaneousEvent(
-                  {
-                    workspaceId: (projectDetails?.workspace as any)?.id,
-                    workspaceSlug,
-                    projectId,
-                    projectIdentifier: projectDetails?.identifier,
-                    projectName: projectDetails?.name,
-                  },
-                  !projectDetails?.issue_views_view ? "TOGGLE_VIEW_ON" : "TOGGLE_VIEW_OFF"
-                );
-                handleSubmit({ issue_views_view: !projectDetails?.issue_views_view });
-              }}
-            >
-              <span className="sr-only">Use views</span>
-              <span
-                aria-hidden="true"
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                  projectDetails?.issue_views_view ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </button>
-          </div>
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
-            <div className="flex items-start gap-3">
-              <DocumentTextIcon color="#FCBE1D" width={28} height={28} className="flex-shrink-0" />
-              <div>
-                <h4 className="text-xl font-semibold">Pages</h4>
-                <p className="text-gray-500">
-                  Pages are enabled for all the projects in this workspace. Access them from the
-                  navigation bar.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                projectDetails?.page_view ? "bg-green-500" : "bg-gray-200"
-              }`}
-              role="switch"
-              aria-checked={projectDetails?.page_view}
-              onClick={() => {
-                trackEventServices.trackMiscellaneousEvent(
-                  {
-                    workspaceId: (projectDetails?.workspace as any)?.id,
-                    workspaceSlug,
-                    projectId,
-                    projectIdentifier: projectDetails?.identifier,
-                    projectName: projectDetails?.name,
-                  },
-                  !projectDetails?.page_view ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF"
-                );
-                handleSubmit({ page_view: !projectDetails?.page_view });
-              }}
-            >
-              <span className="sr-only">Use cycles</span>
-              <span
-                aria-hidden="true"
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                  projectDetails?.page_view ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </button>
-          </div>
+          ))}
         </div>
         <div className="flex items-center gap-2">
           <a href="https://plane.so/" target="_blank" rel="noreferrer">

@@ -21,7 +21,7 @@ export const CustomFloatingToolbar: React.FC<Props> = ({ gptOption, editorState 
   const active = useActive();
 
   return (
-    <div className="z-[99999] flex items-center gap-y-2 divide-x rounded border bg-white p-1 px-0.5 shadow-md">
+    <div className="z-[99999] flex items-center gap-y-2 divide-x divide-brand-base rounded border border-brand-base bg-brand-surface-2 p-1 px-0.5 shadow-md">
       <div className="flex items-center gap-x-1 px-2">
         <ToggleHeadingButton
           attrs={{
@@ -53,7 +53,7 @@ export const CustomFloatingToolbar: React.FC<Props> = ({ gptOption, editorState 
         <div className="flex items-center gap-x-1 px-2">
           <button
             type="button"
-            className="rounded py-1 px-1.5 text-xs hover:bg-gray-100"
+            className="rounded py-1 px-1.5 text-xs hover:bg-brand-surface-1"
             onClick={() => console.log(editorState.selection.$anchor.nodeBefore)}
           >
             AI

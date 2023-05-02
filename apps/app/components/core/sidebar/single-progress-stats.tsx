@@ -19,8 +19,8 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
 }) => (
   <div
     className={`flex w-full items-center justify-between rounded p-2 text-xs ${
-      onClick ? "cursor-pointer hover:bg-gray-100" : ""
-    } ${selected ? "bg-gray-100" : ""}`}
+      onClick ? "cursor-pointer hover:bg-brand-surface-1" : ""
+    } ${selected ? "bg-brand-surface-1" : ""}`}
     onClick={onClick}
   >
     <div className="flex w-1/2 items-center justify-start gap-2">{title}</div>

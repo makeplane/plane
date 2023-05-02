@@ -89,7 +89,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10">
@@ -103,33 +103,33 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-white py-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-brand-surface-1 py-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between px-5">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <TransferIcon className="h-4 w-5" color="#495057" />
-                      <h4 className="text-gray-700 font-medium text-[1.50rem]">Transfer Issues</h4>
+                      <h4 className="text-xl font-medium text-brand-base">Transfer Issues</h4>
                     </div>
                     <button onClick={handleClose}>
                       <XMarkIcon className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2 pb-3 mt-2 px-5 border-b border-gray-200">
-                    <MagnifyingGlassIcon className="h-4 w-4 text-gray-500" />
+                  <div className="flex items-center gap-2 border-b border-brand-base px-5 pb-3">
+                    <MagnifyingGlassIcon className="h-4 w-4 text-brand-secondary" />
                     <input
-                      className="outline-none"
+                      className="bg-brand-surface-1 outline-none"
                       placeholder="Search for a cycle..."
                       onChange={(e) => setQuery(e.target.value)}
                       value={query}
                     />
                   </div>
-                  <div className="flex flex-col items-start w-full gap-2 px-5">
+                  <div className="flex w-full flex-col items-start gap-2 px-5">
                     {filteredOptions ? (
                       filteredOptions.length > 0 ? (
                         filteredOptions.map((option: ICycle) => (
                           <button
                             key={option.id}
-                            className="flex items-center gap-4 py-3 px-2 text-gray-600 text-sm rounded w-full hover:bg-gray-100"
+                            className="flex w-full items-center gap-4 rounded px-4 py-3 text-sm text-brand-secondary hover:bg-brand-surface-1"
                             onClick={() => {
                               transferIssue({
                                 new_cycle_id: option?.id,
@@ -138,25 +138,25 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                             }}
                           >
                             <ContrastIcon className="h-5 w-5" />
-                            <div className="flex justify-between w-full">
+                            <div className="flex w-full justify-between">
                               <span>{option?.name}</span>
-                              <span className=" flex bg-gray-200 capitalize px-2 rounded-full items-center">
+                              <span className=" flex items-center rounded-full bg-brand-surface-2  px-2 capitalize">
                                 {getDateRangeStatus(option?.start_date, option?.end_date)}
                               </span>
                             </div>
                           </button>
                         ))
                       ) : (
-                        <div className="flex items-center justify-center gap-4 p-5 text-sm w-full">
+                        <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
                           <ExclamationIcon height={14} width={14} />
-                          <span className="text-center text-gray-500">
+                          <span className="text-center text-brand-secondary">
                             You don’t have any current cycle. Please create one to transfer the
                             issues.
                           </span>
                         </div>
                       )
                     ) : (
-                      <p className="text-center text-gray-500">Loading...</p>
+                      <p className="text-center text-brand-secondary">Loading...</p>
                     )}
                   </div>
                 </div>
