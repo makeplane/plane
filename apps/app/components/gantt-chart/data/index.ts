@@ -26,23 +26,64 @@ export const months = [
 
 // context data
 export const allViewsWithData = [
-  { title: "Hours", key: "hours", data: null },
-  { title: "Days", key: "days", data: null },
-  { title: "Week", key: "week", data: null },
-  { title: "Bi-Week", key: "bi_week", data: null },
-  { title: "Month", key: "month", data: null },
+  {
+    title: "Hours",
+    key: "hours",
+    data: { decrementYear: 2023, currentYear: 2023, incrementYear: 2023 },
+  },
+  {
+    title: "Days",
+    key: "days",
+    data: { decrementYear: 2023, currentYear: 2023, incrementYear: 2023 },
+  },
+  {
+    title: "Week",
+    key: "week",
+    data: {
+      decrementYear: 2023,
+      currentYear: 2023,
+      incrementYear: 2023,
+      width: 40, // it will preview week dates with weekends highlighted with 1 week limitations ex: title (Wed 1, Thu 2, Fri 3)
+    },
+  },
+  {
+    title: "Bi-Week",
+    key: "bi_week",
+    data: {
+      decrementYear: 2023,
+      currentYear: 2023,
+      incrementYear: 2023,
+      width: 40, // it will preview monthly all dates with weekends highlighted with 3 week limitations ex: title (Wed 1, Thu 2, Fri 3)
+    },
+  },
+  {
+    title: "Month",
+    key: "month",
+    data: {
+      decrementYear: 2023,
+      currentYear: 2023,
+      incrementYear: 2023,
+      width: 40, // it will preview monthly all dates with weekends highlighted with no limitations ex: title (1, 2, 3)
+    },
+  },
   {
     title: "Quarter",
     key: "quarter",
     data: {
-      // month wise week start date render (break year in to week wise data)
+      decrementYear: 2023,
+      currentYear: 2023,
+      incrementYear: 2023,
+      width: 100, // it will preview week starting dates all months data and there is 3 months limitation for preview ex: title (2, 9, 16, 23, 30)
     },
   },
   {
     title: "Year",
     key: "year",
     data: {
-      // month wise week start date render (break year in to week wise data)
+      decrementYear: 2023,
+      currentYear: 2023,
+      incrementYear: 2023,
+      width: 40, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
     },
   },
 ];

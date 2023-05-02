@@ -55,6 +55,8 @@ const generateWeekDataByWeek = (week: number, month: number, year: number) => {
   const currentYear: number = year;
 };
 
+
+
 const generateMonthDataByMonth = (month: number, year: number) => {
   const currentMonth: number = month;
   const currentYear: number = year;
