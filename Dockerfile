@@ -108,6 +108,12 @@ COPY nginx/nginx-single-docker-image.conf /etc/nginx/http.d/default.conf
 
 COPY nginx/supervisor.conf /code/supervisor.conf
 
+USER root
+COPY replace-env-vars.sh /usr/local/bin/
+COPY start.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/replace-env-vars.sh
+RUN chmod +x /usr/local/bin/start.sh
+
 
 CMD ["supervisord","-c","/code/supervisor.conf"]
 

@@ -9,7 +9,7 @@ if [ "${FROM}" = "${TO}" ]; then
 fi
 
 # Only peform action if $FROM and $TO are different.
-echo "Replacing all statically built instances of $FROM with $TO."
+echo "Replacing all statically built instances of $FROM with this string $TO ."
 
 find apps/app/.next -type f |
 while read file; do
