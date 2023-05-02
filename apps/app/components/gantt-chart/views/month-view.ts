@@ -61,6 +61,7 @@ const generateMonthDataByMonth = (month: number, year: number) => {
   const allWeekData = [];
 
   const monthPayload = {
+    year: currentYear,
     month: currentMonth,
     monthData: months[currentMonth],
     weeks: getAllWeeksInMonth(currentMonth, currentYear),
@@ -69,7 +70,7 @@ const generateMonthDataByMonth = (month: number, year: number) => {
   return monthPayload;
 };
 
-export const generateYearDataByYear = (year: number) => {
+export const generateMonthDataByYear = (year: number) => {
   const currentYear: number = year;
   const allMonthsData = [];
 
@@ -78,40 +79,5 @@ export const generateYearDataByYear = (year: number) => {
     allMonthsData.push(generateMonthDataByMonth(currentMonth, currentYear));
   }
 
-  const yearPayload = {
-    year: currentYear,
-    months: allMonthsData,
-  };
-
-  return yearPayload;
+  return allMonthsData;
 };
-
-export const returnPayload = [
-  {
-    year: 2023,
-    months: [
-      {
-        month: 0,
-        weeks: [
-          {
-            week: 0,
-            startDate: "",
-            endDate: "",
-            days: [
-              {
-                day: 0,
-                hours: [
-                  {
-                    hour: 0,
-                    minutes: 0,
-                    seconds: 0,
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
