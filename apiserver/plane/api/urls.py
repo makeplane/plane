@@ -148,6 +148,9 @@ from plane.api.views import (
     # Release Notes
     ReleaseNotesEndpoint,
     ## End Release Notes
+    # Analytics
+    PlaneAnalyticsEndpoint,
+    ## End Analytics
 )
 
 
@@ -1285,4 +1288,11 @@ urlpatterns = [
         name="release-notes",
     ),
     ## End Release Notes
+    # Analytics
+    path(
+        "workspaces/<str:slug>/analytics/",
+        PlaneAnalyticsEndpoint.as_view(),
+        name="plane-analytics",
+    ),
+    ## End Analytics
 ]

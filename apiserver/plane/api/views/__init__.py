@@ -140,3 +140,5 @@ from .estimate import (
 
 
 from .release import ReleaseNotesEndpoint
+
+from .analytics import PlaneAnalyticsEndpoint
