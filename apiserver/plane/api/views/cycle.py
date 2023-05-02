@@ -48,6 +48,28 @@ class CycleViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"), owned_by=self.request.user
         )
 
+    def perform_destroy(self, instance):
+        cycle_issues = list(
+            CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list(
+                "issue", flat=True
+            )
+        )
+        issue_activity.delay(
+            type="cycle.activity.deleted",
+            requested_data=json.dumps(
+                {
+                    "cycle_id": str(self.kwargs.get("pk")),
+                    "issues": [str(issue_id) for issue_id in cycle_issues],
+                }
+            ),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("pk", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+        )
+
+        return super().perform_destroy(instance)
+
     def get_queryset(self):
         subquery = CycleFavorite.objects.filter(
             user=self.request.user,
@@ -181,6 +203,22 @@ class CycleIssueViewSet(BaseViewSet):
             cycle_id=self.kwargs.get("cycle_id"),
         )
 
+    def perform_destroy(self, instance):
+        issue_activity.delay(
+            type="cycle.activity.deleted",
+            requested_data=json.dumps(
+                {
+                    "cycle_id": str(self.kwargs.get("cycle_id")),
+                    "issues": [str(instance.issue_id)],
+                }
+            ),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("pk", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+        )
+        return super().perform_destroy(instance)
+
     def get_queryset(self):
         return self.filter_queryset(
             super()
@@ -286,9 +324,9 @@ class CycleIssueViewSet(BaseViewSet):
 
             # Get all CycleIssues already created
             cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
-            records_to_update = []
             update_cycle_issue_activity = []
             record_to_create = []
+            records_to_update = []
 
             for issue in issues:
                 cycle_issue = [
@@ -333,7 +371,7 @@ class CycleIssueViewSet(BaseViewSet):
 
             # Capture Issue Activity
             issue_activity.delay(
-                type="issue.activity.updated",
+                type="cycle.activity.created",
                 requested_data=json.dumps({"cycles_list": issues}),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("pk", None)),
