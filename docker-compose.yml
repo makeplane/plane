@@ -78,7 +78,7 @@ services:
       DOCKERIZED: 1
       OPENAI_API_KEY: 0
       GPT_ENGINE: 0
-      SECRET_KEY: asdasdasdsd
+      SECRET_KEY: ${SECRET_KEY}
     depends_on:
       - db
       - redis
