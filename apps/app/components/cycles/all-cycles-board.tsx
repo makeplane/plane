@@ -17,7 +17,7 @@ type TCycleStatsViewProps = {
   type: "current" | "upcoming" | "draft";
 };
 
-export const CyclesList: React.FC<TCycleStatsViewProps> = ({
+export const AllCyclesBoard: React.FC<TCycleStatsViewProps> = ({
   cycles,
   setCreateUpdateCycleModal,
   setSelectedCycle,

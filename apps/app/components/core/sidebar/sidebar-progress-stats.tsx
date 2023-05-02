@@ -134,7 +134,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
       <Tab.Panels className="flex w-full items-center justify-between pt-1">
         <Tab.Panel as="div" className="flex w-full flex-col text-xs">
           {members?.map((member, index) => {
-            const totalArray = issues?.filter((i) => i.assignees?.includes(member.member.id));
+            const totalArray = issues?.filter((i) => i?.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
 
             if (totalArray.length > 0) {
@@ -150,19 +150,19 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   completed={completeArray.length}
                   total={totalArray.length}
                   onClick={() => {
-                    if (filters.assignees?.includes(member.member.id))
+                    if (filters?.assignees?.includes(member.member.id))
                       setFilters({
-                        assignees: filters.assignees?.filter((a) => a !== member.member.id),
+                        assignees: filters?.assignees?.filter((a) => a !== member.member.id),
                       });
                     else
                       setFilters({ assignees: [...(filters?.assignees ?? []), member.member.id] });
                   }}
-                  selected={filters.assignees?.includes(member.member.id)}
+                  selected={filters?.assignees?.includes(member.member.id)}
                 />
               );
             }
           })}
-          {issues?.filter((i) => i.assignees?.length === 0).length > 0 ? (
+          {issues?.filter((i) => i?.assignees?.length === 0).length > 0 ? (
             <SingleProgressStats
               title={
                 <>
@@ -180,10 +180,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
               }
               completed={
                 issues?.filter(
-                  (i) => i.state_detail.group === "completed" && i.assignees?.length === 0
+                  (i) => i?.state_detail.group === "completed" && i.assignees?.length === 0
                 ).length
               }
-              total={issues?.filter((i) => i.assignees?.length === 0).length}
+              total={issues?.filter((i) => i?.assignees?.length === 0).length}
             />
           ) : (
             ""
@@ -191,8 +191,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab.Panel>
         <Tab.Panel as="div" className="w-full space-y-1">
           {issueLabels?.map((label, index) => {
-            const totalArray = issues?.filter((i) => i.labels?.includes(label.id));
-            const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+            const totalArray = issues?.filter((i) => i?.labels?.includes(label.id));
+            const completeArray = totalArray?.filter((i) => i?.state_detail.group === "completed");
 
             if (totalArray.length > 0) {
               return (
@@ -207,7 +207,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                             label.color && label.color !== "" ? label.color : "#000000",
                         }}
                       />
-                      <span className="text-xs capitalize">{label.name}</span>
+                      <span className="text-xs capitalize">{label?.name}</span>
                     </div>
                   }
                   completed={completeArray.length}
@@ -215,11 +215,11 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   onClick={() => {
                     if (filters.labels?.includes(label.id))
                       setFilters({
-                        labels: filters.labels?.filter((l) => l !== label.id),
+                        labels: filters?.labels?.filter((l) => l !== label.id),
                       });
                     else setFilters({ labels: [...(filters?.labels ?? []), label.id] });
                   }}
-                  selected={filters.labels?.includes(label.id)}
+                  selected={filters?.labels?.includes(label.id)}
                 />
               );
             }
