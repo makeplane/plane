@@ -450,7 +450,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
       <div className="grid grid-cols-2 divide-x border-brand-base">
         <div className="px-4 py-2">
           <div className="text-brand-primary mb-2">High Priority Issues</div>
-          <div className="mb-2 flex max-h-[260px] min-h-[260px] flex-col overflow-y-scroll rounded-md border border-brand-base">
+          <div className="mb-2 flex max-h-[240px] min-h-[240px] flex-col overflow-y-scroll rounded-md border border-brand-base">
             {issues
               ?.filter((issue) => issue.priority === "urgent" || issue.priority === "high")
               .map((issue) => (
@@ -524,6 +524,42 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                   </div>
                 </div>
               ))}
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="h-1 w-full rounded-full bg-neutral-200">
+              <div
+                className="h-1 rounded-full bg-green-600"
+                style={{
+                  width:
+                    issues &&
+                    `${
+                      issues?.filter(
+                        (issue) =>
+                          issue?.state_detail?.group === "completed" &&
+                          (issue?.priority === "urgent" || issue?.priority === "high")
+                      )?.length /
+                        issues?.filter(
+                          (issue) => issue?.priority === "urgent" || issue?.priority === "high"
+                        )?.length * 100 ?? 0
+                    }%`,
+                }}
+              />
+            </div>
+            <div className="w-16 text-end text-xs text-brand-secondary">
+              {
+                issues?.filter(
+                  (issue) =>
+                    issue?.state_detail?.group === "completed" &&
+                    (issue?.priority === "urgent" || issue?.priority === "high")
+                )?.length
+              }{" "}
+              of{" "}
+              {
+                issues?.filter(
+                  (issue) => issue?.priority === "urgent" || issue?.priority === "high"
+                )?.length
+              }
+            </div>
           </div>
         </div>
         <div className="border-brand-base px-4">
