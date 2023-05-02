@@ -126,8 +126,9 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
                       <div className="mt-2">
                         <p className="text-sm text-brand-secondary">
                           Are you sure you want to delete state-{" "}
-                          <span className="italic">{data?.name}</span>? All of the data related to
-                          the state will be permanently removed. This action cannot be undone.
+                          <span className="font-medium text-brand-base">{data?.name}</span>? All of
+                          the data related to the state will be permanently removed. This action
+                          cannot be undone.
                         </p>
                       </div>
                     </div>

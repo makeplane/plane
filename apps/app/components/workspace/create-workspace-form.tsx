@@ -122,6 +122,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                     `Name can only contain (" "), ( - ), ( _ ) & Alphanumeric characters.`,
                 }}
                 placeholder="e.g. My Workspace"
+                className="placeholder:text-brand-secondary"
                 error={errors.name}
               />
             </div>

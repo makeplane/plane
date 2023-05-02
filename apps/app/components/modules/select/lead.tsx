@@ -10,7 +10,7 @@ import projectServices from "services/project.service";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
-import User from "public/user.png";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -60,9 +60,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
           {selectedOption ? (
             <Avatar user={selectedOption} />
           ) : (
-            <div className="h-4 w-4 rounded-full bg-brand-surface-2">
-              <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
-            </div>
+            <UserCircleIcon className="h-4 w-4 text-brand-secondary" />
           )}
           {selectedOption ? (
             selectedOption?.first_name && selectedOption.first_name !== "" ? (
