@@ -28,12 +28,16 @@ type Props = {
 };
 
 const restrictedUrls = [
+  "api",
   "create-workspace",
   "error",
+  "installations",
   "invitations",
   "magic-sign-in",
   "onboarding",
   "signin",
+  "workspace-member-invitation",
+  "404",
 ];
 
 export const CreateWorkspaceForm: React.FC<Props> = ({
@@ -100,10 +104,10 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       onSubmit={handleSubmit(handleCreateWorkspace)}
     >
       <div className="flex w-full max-w-xl flex-col">
-        <div className="flex flex-col rounded-[10px] bg-white shadow-md">
+        <div className="flex flex-col rounded-[10px] bg-brand-base">
           <div className="flex flex-col justify-between gap-3 px-4 py-7">
             <div className="flex flex-col items-start justify-center gap-2.5">
-              <span>Workspace name</span>
+              <span className="text-sm">Workspace name</span>
               <Input
                 name="name"
                 register={register}
@@ -118,13 +122,14 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                     `Name can only contain (" "), ( - ), ( _ ) & Alphanumeric characters.`,
                 }}
                 placeholder="e.g. My Workspace"
+                className="placeholder:text-brand-secondary"
                 error={errors.name}
               />
             </div>
             <div className="flex flex-col items-start justify-center gap-2.5">
-              <span>Workspace URL</span>
-              <div className="flex w-full items-center rounded-md border border-gray-300 px-3">
-                <span className="text-sm whitespace-nowrap text-slate-600">
+              <span className="text-sm">Workspace URL</span>
+              <div className="flex w-full items-center rounded-md border border-brand-base px-3">
+                <span className="whitespace-nowrap text-sm text-brand-secondary">
                   {typeof window !== "undefined" && window.location.origin}/
                 </span>
                 <Input
@@ -152,8 +157,8 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-gray-300 px-4 py-7">
-            <span>How large is your company</span>
+          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-brand-base px-4 py-7">
+            <span className="text-sm">How large is your company?</span>
             <div className="w-full">
               <Controller
                 name="company_size"
@@ -163,7 +168,13 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                   <CustomSelect
                     value={value}
                     onChange={onChange}
-                    label={value ? value.toString() : "Select company size"}
+                    label={
+                      value ? (
+                        value.toString()
+                      ) : (
+                        <span className="text-brand-secondary">Select company size</span>
+                      )
+                    }
                     input
                     width="w-full"
                   >

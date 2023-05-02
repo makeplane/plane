@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
@@ -7,15 +7,15 @@ import useProjects from "hooks/use-projects";
 // components
 import { SelectRepository, TFormValues, TIntegrationSteps } from "components/integration";
 // ui
-import { CustomSearchSelect, PrimaryButton, SecondaryButton } from "components/ui";
+import { CustomSearchSelect, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegrations } from "types";
+import { IWorkspaceIntegration } from "types";
 
 type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;
-  integration: IWorkspaceIntegrations | false | undefined;
+  integration: IWorkspaceIntegration | false | undefined;
   control: Control<TFormValues, any>;
   watch: UseFormWatch<TFormValues>;
 };
@@ -36,7 +36,7 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Repository</h4>
-            <p className="text-gray-500 text-xs">
+            <p className="text-xs text-brand-secondary">
               Select the repository that you want the issues to be imported from.
             </p>
           </div>
@@ -49,7 +49,13 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
                   <SelectRepository
                     integration={integration}
                     value={value ? value.id : null}
-                    label={value ? `${value.full_name}` : "Select Repository"}
+                    label={
+                      value ? (
+                        `${value.full_name}`
+                      ) : (
+                        <span className="text-brand-secondary">Select Repository</span>
+                      )
+                    }
                     onChange={onChange}
                     characterLimit={50}
                   />
@@ -61,7 +67,9 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Project</h4>
-            <p className="text-gray-500 text-xs">Select the project to import the issues to.</p>
+            <p className="text-xs text-brand-secondary">
+              Select the project to import the issues to.
+            </p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             {projects && (
@@ -71,7 +79,13 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
                 render={({ field: { value, onChange } }) => (
                   <CustomSearchSelect
                     value={value}
-                    label={value ? projects.find((p) => p.id === value)?.name : "Select Project"}
+                    label={
+                      value ? (
+                        projects.find((p) => p.id === value)?.name
+                      ) : (
+                        <span className="text-brand-secondary">Select Project</span>
+                      )
+                    }
                     onChange={onChange}
                     options={options}
                     optionsClassName="w-full"
@@ -84,30 +98,16 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Sync Issues</h4>
-            <p className="text-gray-500 text-xs">Set whether you want to sync the issues or not.</p>
+            <p className="text-xs text-brand-secondary">
+              Set whether you want to sync the issues or not.
+            </p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             <Controller
               control={control}
               name="sync"
               render={({ field: { value, onChange } }) => (
-                <button
-                  type="button"
-                  className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    value ? "bg-green-500" : "bg-gray-200"
-                  }`}
-                  role="switch"
-                  aria-checked={value ? true : false}
-                  onClick={() => onChange(!value)}
-                >
-                  <span className="sr-only">Show empty groups</span>
-                  <span
-                    aria-hidden="true"
-                    className={`inline-block h-2.5 w-2.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      value ? "translate-x-2.5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
+                <ToggleSwitch value={value} onChange={() => onChange(!value)} />
               )}
             />
           </div>

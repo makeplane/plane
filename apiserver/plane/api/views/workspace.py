@@ -145,7 +145,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
@@ -333,7 +332,6 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
@@ -780,7 +778,7 @@ class WorkspaceThemeViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -14,7 +14,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
-
+from sentry_sdk import capture_exception
 # sso authentication
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_auth_request
@@ -48,7 +48,7 @@ def validate_google_token(token, client_id):
         }
         return data
     except Exception as e:
-        print(e)
+        capture_exception(e)
         raise exceptions.AuthenticationFailed("Error with Google connection.")
 
 
@@ -305,8 +305,7 @@ class OauthEndpoint(BaseAPIView):
             )
             return Response(data, status=status.HTTP_201_CREATED)
         except Exception as e:
-            print(e)
-
+            capture_exception(e)
             return Response(
                 {
                     "error": "Something went wrong. Please try again later or contact the support team."

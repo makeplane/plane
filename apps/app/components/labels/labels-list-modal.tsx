@@ -61,10 +61,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
       .patchIssueLabel(workspaceSlug as string, projectId as string, label.id, {
         parent: parent?.id ?? "",
       })
-      .then((res) => {
-        console.log(res);
-        mutate();
-      });
+      .then(() => mutate());
   };
 
   return (
@@ -79,7 +76,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
+          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -92,15 +89,15 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-brand-base bg-brand-base shadow-2xl transition-all">
               <Combobox>
                 <div className="relative m-1">
                   <MagnifyingGlassIcon
-                    className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
+                    className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
                     aria-hidden="true"
                   />
                   <Combobox.Input
-                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                     placeholder="Search..."
                     onChange={(e) => setQuery(e.target.value)}
                   />
@@ -114,7 +111,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
                     <>
                       <li className="p-2">
                         {query === "" && (
-                          <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                          <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-brand-base">
                             Labels
                           </h2>
                         )}
@@ -134,8 +131,8 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
                                     name: label.name,
                                   }}
                                   className={({ active }) =>
-                                    `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
-                                      active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                    `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
+                                      active ? "bg-brand-surface-2 text-brand-base" : ""
                                     }`
                                   }
                                   onClick={() => {
@@ -162,10 +159,10 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
                 {query !== "" && filteredLabels.length === 0 && (
                   <div className="py-14 px-6 text-center sm:px-14">
                     <RectangleStackIcon
-                      className="mx-auto h-6 w-6 text-gray-900 text-opacity-40"
+                      className="mx-auto h-6 w-6 text-brand-base text-opacity-40"
                       aria-hidden="true"
                     />
-                    <p className="mt-4 text-sm text-gray-900">
+                    <p className="mt-4 text-sm text-brand-base">
                       We couldn{"'"}t find any label with that term. Please try again.
                     </p>
                   </div>

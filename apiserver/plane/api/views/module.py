@@ -109,6 +109,28 @@ class ModuleViewSet(BaseViewSet):
             .order_by("-is_favorite", "name")
         )
 
+    def perform_destroy(self, instance):
+        module_issues = list(
+            ModuleIssue.objects.filter(module_id=self.kwargs.get("pk")).values_list(
+                "issue", flat=True
+            )
+        )
+        issue_activity.delay(
+            type="module.activity.deleted",
+            requested_data=json.dumps(
+                {
+                    "module_id": str(self.kwargs.get("pk")),
+                    "issues": [str(issue_id) for issue_id in module_issues],
+                }
+            ),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("pk", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+        )
+
+        return super().perform_destroy(instance)
+
     def create(self, request, slug, project_id):
         try:
             project = Project.objects.get(workspace__slug=slug, pk=project_id)
@@ -157,6 +179,22 @@ class ModuleIssueViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             module_id=self.kwargs.get("module_id"),
         )
+
+    def perform_destroy(self, instance):
+        issue_activity.delay(
+            type="module.activity.deleted",
+            requested_data=json.dumps(
+                {
+                    "module_id": str(self.kwargs.get("module_id")),
+                    "issues": [str(instance.issue_id)],
+                }
+            ),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("pk", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+        )
+        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -302,7 +340,7 @@ class ModuleIssueViewSet(BaseViewSet):
 
             # Capture Issue Activity
             issue_activity.delay(
-                type="issue.activity.updated",
+                type="module.activity.created",
                 requested_data=json.dumps({"modules_list": issues}),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("pk", None)),

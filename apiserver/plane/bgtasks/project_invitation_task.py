@@ -2,6 +2,7 @@
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
 
 # Third party imports
 from celery import shared_task
@@ -22,7 +23,7 @@ def project_invitation(email, project_id, token, current_site):
         relativelink = f"/project-member-invitation/{project_member_invite.id}"
         abs_url = "http://" + current_site + relativelink
 
-        from_email_string = f"Team Plane <team@mailer.plane.so>"
+        from_email_string = settings.EMAIL_FROM
 
         subject = f"{project.created_by.first_name or project.created_by.email} invited you to join {project.name} on Plane"
 
@@ -49,6 +50,5 @@ def project_invitation(email, project_id, token, current_site):
     except (Project.DoesNotExist, ProjectMemberInvite.DoesNotExist) as e:
         return
     except Exception as e:
-        print(e)
         capture_exception(e)
         return

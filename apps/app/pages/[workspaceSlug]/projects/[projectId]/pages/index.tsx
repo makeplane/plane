@@ -25,7 +25,7 @@ import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "compone
 import { Input, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
+import {ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 // types
 import { IPage, TPageViewProps } from "types";
 import type { NextPage } from "next";
@@ -148,7 +148,6 @@ const ProjectPages: NextPage = () => {
       });
   };
 
-
   const currentTabValue = (tab: string | null) => {
     switch (tab) {
       case "Recent":
@@ -191,7 +190,7 @@ const ProjectPages: NextPage = () => {
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="w-4 h-4" />
+            <PlusIcon className="h-4 w-4" />
             Create Page
           </PrimaryButton>
         }
@@ -199,13 +198,13 @@ const ProjectPages: NextPage = () => {
         <div className="space-y-4">
           <form
             onSubmit={handleSubmit(createPage)}
-            className="flex items-center relative justify-between gap-2 mb-12 rounded-[6px] border border-gray-200 bg-white p-2 shadow"
+            className="relative mb-12 flex items-center justify-between gap-2 rounded-[6px] border border-brand-base p-2 shadow"
           >
             <Input
               type="text"
               name="name"
               register={register}
-              className="border-none font-medium flex break-all text-xl outline-none focus:ring-0"
+              className="flex break-all border-none text-xl font-medium outline-none focus:ring-0"
               placeholder="Title"
             />
             {watch("name") !== "" && (
@@ -235,7 +234,7 @@ const ProjectPages: NextPage = () => {
                 }
               }}
             >
-              <Tab.List as="div" className="flex items-center justify-between mb-6">
+              <Tab.List as="div" className="mb-6 flex items-center justify-between">
                 <div className="flex gap-4">
                   {["Recent", "All", "Favorites", "Created by me", "Created by others"].map(
                     (tab, index) => (
@@ -244,8 +243,8 @@ const ProjectPages: NextPage = () => {
                         className={({ selected }) =>
                           `rounded-full border px-5 py-1.5 text-sm outline-none ${
                             selected
-                              ? "border-theme bg-theme text-white"
-                              : "border-gray-300 bg-white hover:bg-hover-gray"
+                              ? "border-brand-accent bg-brand-accent text-white"
+                              : "border-brand-base bg-brand-base hover:bg-brand-surface-1"
                           }`
                         }
                       >
@@ -257,8 +256,8 @@ const ProjectPages: NextPage = () => {
                 <div className="flex gap-x-1">
                   <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                      viewType === "list" ? "bg-gray-200" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "list" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("list")}
                   >
@@ -266,8 +265,8 @@ const ProjectPages: NextPage = () => {
                   </button>
                   <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                      viewType === "detailed" ? "bg-gray-200" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "detailed" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("detailed")}
                   >
@@ -275,8 +274,8 @@ const ProjectPages: NextPage = () => {
                   </button>
                   {/* <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                      viewType === "masonry" ? "bg-gray-200" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "masonry" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("masonry")}
                   >

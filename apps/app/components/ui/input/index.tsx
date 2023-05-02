@@ -1,7 +1,7 @@
 import * as React from "react";
-// common
-import { Props } from "./types";
+
 // types
+import { Props } from "./types";
 
 export const Input: React.FC<Props> = ({
   label,
@@ -21,7 +21,7 @@ export const Input: React.FC<Props> = ({
 }) => (
   <>
     {label && (
-      <label htmlFor={id} className="mb-2 text-gray-500">
+      <label htmlFor={id} className="text-brand-muted-1 mb-2">
         {label}
       </label>
     )}
@@ -36,13 +36,13 @@ export const Input: React.FC<Props> = ({
       }}
       className={`block rounded-md bg-transparent text-sm focus:outline-none ${
         mode === "primary"
-          ? "rounded-md border border-gray-300"
+          ? "rounded-md border border-brand-base"
           : mode === "transparent"
-          ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-indigo-500"
+          ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-brand-accent"
           : mode === "trueTransparent"
           ? "rounded border-none bg-transparent ring-0"
           : ""
-      } ${error ? "border-red-500" : ""} ${error && mode === "primary" ? "bg-red-100" : ""} ${
+      } ${error ? "border-red-500" : ""} ${error && mode === "primary" ? "bg-red-500/20" : ""} ${
         fullWidth ? "w-full" : ""
       } ${size === "rg" ? "px-3 py-2" : size === "lg" ? "p-3" : ""} ${className}`}
       {...rest}

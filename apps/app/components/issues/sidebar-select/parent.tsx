@@ -52,7 +52,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <UserIcon className="h-4 w-4 flex-shrink-0" />
         <p>Parent</p>
       </div>
@@ -78,16 +78,18 @@ export const SidebarParentSelect: React.FC<Props> = ({
         <button
           type="button"
           className={`flex w-full ${
-            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-          } items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
+            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
+          } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
           onClick={() => setIsParentModalOpen(true)}
           disabled={isNotAllowed}
         >
-          {watch("parent") && watch("parent") !== ""
-            ? `${issues?.find((i) => i.id === watch("parent"))?.project_detail?.identifier}-${
-                issues?.find((i) => i.id === watch("parent"))?.sequence_id
-              }`
-            : "Select issue"}
+          {watch("parent") && watch("parent") !== "" ? (
+            `${issues?.find((i) => i.id === watch("parent"))?.project_detail?.identifier}-${
+              issues?.find((i) => i.id === watch("parent"))?.sequence_id
+            }`
+          ) : (
+            <span className="text-brand-secondary">Select issue</span>
+          )}
         </button>
       </div>
     </div>

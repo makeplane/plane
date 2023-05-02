@@ -17,7 +17,7 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { UserAuth } from "types";
 // constants
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   value: string;
@@ -30,7 +30,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
   const { workspaceSlug, projectId } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
@@ -43,14 +43,14 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
         <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
         <p>State</p>
       </div>
       <div className="sm:basis-1/2">
         <CustomSelect
           label={
-            <div className={`flex items-center gap-2 text-left ${value ? "" : "text-gray-900"}`}>
+            <div className="flex items-center gap-2 text-left text-brand-base">
               {getStateGroupIcon(
                 selectedState?.group ?? "backlog",
                 "16",

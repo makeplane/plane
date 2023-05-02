@@ -54,33 +54,25 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2">
-        <UserCircleIcon className="h-5 w-5 text-gray-400" />
+      <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+        <UserCircleIcon className="h-5 w-5" />
         <span>Lead</span>
       </div>
       <div className="sm:basis-1/2">
         <CustomSearchSelect
           value={value}
           label={
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2">
+              {selectedOption && <Avatar user={selectedOption} />}
               {selectedOption ? (
-                <Avatar user={selectedOption} />
+                selectedOption?.first_name && selectedOption.first_name !== "" ? (
+                  selectedOption?.first_name
+                ) : (
+                  selectedOption?.email
+                )
               ) : (
-                <div className="h-5 w-5 rounded-full border-2 border-transparent bg-white">
-                  <Image
-                    src={User}
-                    height="100%"
-                    width="100%"
-                    className="rounded-full"
-                    alt="No user"
-                  />
-                </div>
+                <span className="text-brand-secondary">No lead</span>
               )}
-              {selectedOption
-                ? selectedOption?.first_name && selectedOption.first_name !== ""
-                  ? selectedOption?.first_name
-                  : selectedOption?.email
-                : "N/A"}
             </div>
           }
           options={options}

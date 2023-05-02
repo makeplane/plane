@@ -15,7 +15,7 @@ import issuesService from "services/issues.service";
 import projectService from "services/project.service";
 import stateService from "services/state.service";
 // types
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 import { IIssueFilterOptions } from "types";
 
 export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
@@ -37,7 +37,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
   );
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
@@ -57,9 +57,9 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
           return (
             <div
               key={key}
-              className="flex items-center gap-x-2 rounded-full border bg-white px-2 py-1"
+              className="flex items-center gap-x-2 rounded-full border border-brand-base bg-brand-surface-2 px-2 py-1"
             >
-              <span className="font-medium capitalize text-gray-500">
+              <span className="capitalize text-brand-secondary">
                 {replaceUnderscoreIfSnakeCase(key)}:
               </span>
               {filters[key as keyof IIssueFilterOptions] === null ||
@@ -75,7 +75,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         return (
                           <p
                             key={state?.id}
-                            className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium text-white"
+                            className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium"
                             style={{
                               color: state?.color,
                               backgroundColor: `${state?.color}20`,
@@ -122,16 +122,16 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                       {filters.priority?.map((priority: any) => (
                         <p
                           key={priority}
-                          className={`inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium capitalize text-white ${
+                          className={`inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize ${
                             priority === "urgent"
-                              ? "bg-red-100 text-red-600 hover:bg-red-100"
+                              ? "bg-red-500/20 text-red-500"
                               : priority === "high"
-                              ? "bg-orange-100 text-orange-500 hover:bg-orange-100"
+                              ? "bg-orange-500/20 text-orange-500"
                               : priority === "medium"
-                              ? "bg-yellow-100 text-yellow-500 hover:bg-yellow-100"
+                              ? "bg-yellow-500/20 text-yellow-500"
                               : priority === "low"
-                              ? "bg-green-100 text-green-500 hover:bg-green-100"
-                              : "bg-gray-100 text-gray-700 hover:bg-gray-100"
+                              ? "bg-green-500/20 text-green-500"
+                              : "bg-brand-surface-1 text-brand-secondary"
                           }`}
                         >
                           <span>{getPriorityIcon(priority)}</span>
@@ -170,7 +170,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         return (
                           <div
                             key={memberId}
-                            className="inline-flex items-center gap-x-1 rounded-full px-1 font-medium capitalize"
+                            className="inline-flex items-center gap-x-1 rounded-full bg-brand-surface-1 px-1 capitalize"
                           >
                             <Avatar user={member} />
                             <span>{member?.first_name}</span>
@@ -203,7 +203,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         <XMarkIcon className="h-3 w-3" />
                       </button>
                     </div>
-                  ) : (key as keyof IIssueFilterOptions) === "created_by" ? (
+                  ) : key === "created_by" ? (
                     <div className="flex flex-wrap items-center gap-1">
                       {filters.created_by?.map((memberId: string) => {
                         const member = members?.find((m) => m.member.id === memberId)?.member;
@@ -211,7 +211,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         return (
                           <div
                             key={`${memberId}-${key}`}
-                            className="inline-flex items-center gap-x-1 rounded-full px-1 font-medium capitalize"
+                            className="inline-flex items-center gap-x-1 rounded-full bg-brand-surface-1 px-1 capitalize"
                           >
                             <Avatar user={member} />
                             <span>{member?.first_name}</span>
@@ -253,25 +253,20 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         const color = label.color !== "" ? label.color : "#0f172a";
                         return (
                           <div
-                            className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium"
+                            className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5"
                             style={{
-                              background: `${color}33`, // add 20% opacity
+                              color: color,
+                              backgroundColor: `${color}20`, // add 20% opacity
                             }}
                             key={labelId}
                           >
                             <div
-                              className="h-2 w-2 rounded-full"
+                              className="h-1.5 w-1.5 rounded-full"
                               style={{
                                 backgroundColor: color,
                               }}
                             />
-                            <span
-                              style={{
-                                color: color,
-                              }}
-                            >
-                              {label.name}
-                            </span>
+                            <span>{label.name}</span>
                             <span
                               className="cursor-pointer"
                               onClick={() =>
@@ -339,10 +334,10 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
               created_by: null,
             })
           }
-          className="flex items-center gap-x-1 rounded-full border bg-white px-3 py-1.5 text-xs"
+          className="flex items-center gap-x-1 rounded-full border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-xs"
         >
-          <span className="font-medium">Clear all filters</span>
-          <XMarkIcon className="h-4 w-4" />
+          <span>Clear all filters</span>
+          <XMarkIcon className="h-3 w-3" />
         </button>
       )}
     </div>

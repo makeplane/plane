@@ -15,7 +15,7 @@ import { getStatesList } from "helpers/state.helper";
 // types
 import { IIssue } from "types";
 // fetch-keys
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
@@ -36,7 +36,7 @@ export const ViewStateSelect: React.FC<Props> = ({
   const { workspaceSlug } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && issue ? STATE_LIST(issue.project) : null,
+    workspaceSlug && issue ? STATES_LIST(issue.project) : null,
     workspaceSlug && issue
       ? () => stateService.getStates(workspaceSlug as string, issue.project)
       : null
@@ -97,7 +97,7 @@ export const ViewStateSelect: React.FC<Props> = ({
           tooltipHeading="State"
           tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
         >
-          <div className="flex items-center gap-2 text-gray-500">
+          <div className="flex items-center gap-2 text-brand-secondary">
             {selectedOption &&
               getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
             {selectedOption?.name ?? "State"}

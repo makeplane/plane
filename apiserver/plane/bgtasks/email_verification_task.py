@@ -2,6 +2,7 @@
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
 
 # Third party imports
 from celery import shared_task
@@ -20,7 +21,7 @@ def email_verification(first_name, email, token, current_site):
         realtivelink = "/request-email-verification/" + "?token=" + str(token)
         abs_url = "http://" + current_site + realtivelink
 
-        from_email_string = f"Team Plane <team@mailer.plane.so>"
+        from_email_string = settings.EMAIL_FROM
 
         subject = f"Verify your Email!"
 

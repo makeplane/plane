@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -11,7 +9,7 @@ import useProjectDetails from "hooks/use-project-details";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // fetch-keys
-import { ESTIMATE_POINTS_LIST } from "constants/fetch-keys";
+import { ESTIMATE_DETAILS } from "constants/fetch-keys";
 
 const useEstimateOption = (estimateKey?: number | null) => {
   const router = useRouter();
@@ -19,31 +17,26 @@ const useEstimateOption = (estimateKey?: number | null) => {
 
   const { projectDetails } = useProjectDetails();
 
-  const { data: estimatePoints, error: estimatePointsError } = useSWR(
+  const { data: estimateDetails, error: estimateDetailsError } = useSWR(
     workspaceSlug && projectId && projectDetails && projectDetails?.estimate
-      ? ESTIMATE_POINTS_LIST(projectDetails.estimate as string)
+      ? ESTIMATE_DETAILS(projectDetails.estimate as string)
       : null,
     workspaceSlug && projectId && projectDetails && projectDetails.estimate
       ? () =>
-          estimatesService.getEstimatesPointsList(
-            workspaceSlug as string,
-            projectId as string,
+          estimatesService.getEstimateDetails(
+            workspaceSlug.toString(),
+            projectId.toString(),
             projectDetails.estimate as string
           )
       : null
   );
 
   const estimateValue: any =
-    (estimateKey && estimatePoints?.find((e) => e.key === estimateKey)?.value) ?? "None";
-
-  useEffect(() => {
-    if (estimatePointsError?.status === 404) router.push("/404");
-    else if (estimatePointsError) router.push("/error");
-  }, [estimatePointsError, router]);
+    (estimateKey && estimateDetails?.points?.find((e) => e.key === estimateKey)?.value) ?? "None";
 
   return {
     isEstimateActive: projectDetails?.estimate ? true : false,
-    estimatePoints: orderArrayBy(estimatePoints ?? [], "key"),
+    estimatePoints: orderArrayBy(estimateDetails?.points ?? [], "key"),
     estimateValue,
   };
 };

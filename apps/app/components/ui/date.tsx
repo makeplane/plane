@@ -17,28 +17,19 @@ export const DateSelect: React.FC<Props> = ({ value, onChange, label }) => (
   <Popover className="relative flex items-center justify-center  rounded-lg">
     {({ open }) => (
       <>
-        <Popover.Button
-          className={({ open }) =>
-            `flex cursor-pointer items-center rounded-md border text-xs shadow-sm duration-200 
-              ${
-                open
-                  ? "border-theme bg-theme/5 outline-none ring-1 ring-theme "
-                  : "hover:bg-theme/5 "
-              }`
-          }
-        >
-          <span className="flex items-center justify-center gap-2 px-3 py-1.5 text-xs">
+        <Popover.Button className="flex cursor-pointer items-center rounded-md border border-brand-base text-xs shadow-sm duration-300 hover:bg-brand-surface-2">
+          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-brand-secondary">
             {value ? (
               <>
-                <span className="text-gray-600">{value}</span>
+                <span className="text-brand-base">{value}</span>
                 <button onClick={() => onChange(null)}>
-                  <XMarkIcon className="h-3 w-3 text-gray-600" />
+                  <XMarkIcon className="h-3 w-3" />
                 </button>
               </>
             ) : (
               <>
-                <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 text-gray-500" />
-                <span className="text-gray-500">{label}</span>
+                <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                <span>{label}</span>
               </>
             )}
           </span>

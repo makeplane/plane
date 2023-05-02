@@ -36,16 +36,14 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
             alt="ProjectSettingImg"
           />
         </div>
-        <h1 className="text-xl font-medium text-gray-900">
-          Oops! You are not authorized to view this page
-        </h1>
+        <h1 className="text-xl font-medium">Oops! You are not authorized to view this page</h1>
 
-        <div className="w-full text-base text-gray-500 max-w-md ">
+        <div className="w-full max-w-md text-base text-brand-secondary">
           {user ? (
             <p>
               You have signed in as {user.email}. <br />
               <Link href={`/signin?next=${currentPath}`}>
-                <a className="text-gray-900 font-medium">Sign in</a>
+                <a className="font-medium text-brand-base">Sign in</a>
               </Link>{" "}
               with different account that has access to this page.
             </p>
@@ -53,7 +51,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
             <p>
               You need to{" "}
               <Link href={`/signin?next=${currentPath}`}>
-                <a className="text-gray-900 font-medium">Sign in</a>
+                <a className="font-medium text-brand-base">Sign in</a>
               </Link>{" "}
               with an account that has access to this page.
             </p>

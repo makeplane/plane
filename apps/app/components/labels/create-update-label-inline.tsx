@@ -78,8 +78,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
         labelToUpdate?.id ?? "",
         formData
       )
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         reset(defaultValues);
         mutate<IIssueLabels[]>(
           PROJECT_ISSUE_LABELS(projectId as string),
@@ -109,28 +108,26 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
 
   return (
     <div
-      className={`flex items-center gap-2 scroll-m-8 rounded-[10px] border bg-white p-5 ${
+      className={`flex scroll-m-8 items-center gap-2 rounded-[10px] border border-brand-base bg-brand-base p-5 ${
         labelForm ? "" : "hidden"
       }`}
       ref={ref}
     >
       <div className="h-8 w-8 flex-shrink-0">
-        <Popover className="relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
+        <Popover className="relative z-10 flex h-full w-full items-center justify-center">
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                  open ? "text-gray-900" : "text-gray-500"
+                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
+                  open ? "text-brand-base" : "text-brand-secondary"
                 }`}
               >
-                {watch("color") && watch("color") !== "" && (
-                  <span
-                    className="h-4 w-4 rounded"
-                    style={{
-                      backgroundColor: watch("color") ?? "#000",
-                    }}
-                  />
-                )}
+                <span
+                  className="h-5 w-5 rounded"
+                  style={{
+                    backgroundColor: watch("color"),
+                  }}
+                />
               </Popover.Button>
 
               <Transition

@@ -43,7 +43,7 @@ export * from "./user-icon";
 export * from "./grid-view-icons";
 export * from "./assignment-clipboard-icon";
 export * from "./tick-mark-icon";
-export * from "./target-icon"
+export * from "./target-icon";
 export * from "./contrast-icon";
 export * from "./people-group-icon";
 export * from "./cmd-icon";
@@ -73,3 +73,4 @@ export * from "./txt-file-icon";
 export * from "./default-file-icon";
 export * from "./video-file-icon";
 export * from "./audio-file-icon";
+export * from "./command-icon";

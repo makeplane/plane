@@ -115,7 +115,7 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    data: any
+    data: Partial<ICycle>
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,

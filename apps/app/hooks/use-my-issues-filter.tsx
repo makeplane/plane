@@ -12,7 +12,7 @@ import { getStatesList } from "helpers/state.helper";
 // types
 import { Properties, NestedKeyOf, IIssue } from "types";
 // fetch-keys
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { PRIORITIES } from "constants/project";
 
@@ -41,7 +41,7 @@ const useMyIssuesProperties = (issues?: IIssue[]) => {
   const { user } = useUser();
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
