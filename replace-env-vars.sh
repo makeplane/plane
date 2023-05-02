@@ -1,17 +1,17 @@
 #!/bin/sh
+FROM=$1
+TO=$2
 
-# Get all environment variables that start with "NEXT_PUBLIC_"
-next_public_vars=$(env | grep NEXT_PUBLIC_ | awk -F "=" '{print $1}')
-echo "env=$next_public_vars"
-# Iterate through each NEXT_PUBLIC environment variable
-for var in $next_public_vars; do
-  echo "var=$var"
-  # Get the value of the NEXT_PUBLIC variable
-  value=$(printenv "$var")
-    echo "value=$value"   
-  # Replace the NEXT_PUBLIC variable with the value in all build files
-  find apps/app/.next/ -type f -exec sed -i "s@NEXT_PUBLIC_${var#NEXT_PUBLIC_}@${value}@g" {} \;
+if [ "${FROM}" = "${TO}" ]; then
+    echo "Nothing to replace, the value is already set to ${TO}."
+
+    exit 0
+fi
+
+# Only peform action if $FROM and $TO are different.
+echo "Replacing all statically built instances of $FROM with $TO."
+
+find apps/app/.next -type f |
+while read file; do
+    sed -i "s|$FROM|$TO|g" "$file"
 done
-echo "$@"
-# Start the application using the command passed in as an argument
-exec "$@"
