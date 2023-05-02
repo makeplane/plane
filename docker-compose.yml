@@ -38,12 +38,9 @@ services:
     build:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
-    command:
-      [
-        "/usr/local/bin/replace-env-vars.sh",
-        "node",
-        "apps/app/server.js"
-      ]
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost123
+    command: ["node", "apps/app/server.js"]
     ports:
       - 3000:3000
     environment:
