@@ -505,7 +505,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                 .prefetch_related(
                     Prefetch(
                         "issue_cycle__issue__assignees",
-                        queryset=User.objects.only("avatar", "first_name", "id").distinct("id"),
+                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
                     )
                 )
                 .order_by("name", "-is_favorite")
@@ -555,7 +555,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                 .prefetch_related(
                     Prefetch(
                         "issue_cycle__issue__assignees",
-                        queryset=User.objects.only("avatar", "first_name", "id").distinct("id"),
+                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
                     )
                 )
                 .order_by("name", "-is_favorite")
@@ -634,7 +634,7 @@ class CompletedCyclesEndpoint(BaseAPIView):
                 .prefetch_related(
                     Prefetch(
                         "issue_cycle__issue__assignees",
-                        queryset=User.objects.only("avatar", "first_name", "id").distinct("id"),
+                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
                     )
                 )
                 .order_by("name", "-is_favorite")
@@ -715,7 +715,7 @@ class DraftCyclesEndpoint(BaseAPIView):
                 .prefetch_related(
                     Prefetch(
                         "issue_cycle__issue__assignees",
-                        queryset=User.objects.only("avatar", "first_name", "id").distinct("id"),
+                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
                     )
                 )
                 .order_by("name", "-is_favorite")
