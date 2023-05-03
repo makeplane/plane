@@ -35,24 +35,46 @@ services:
       - redisdata:/data
   plane-web:
     container_name: planefrontend
-    image: makeplane/plane-frontend:0.5-dev
+    image: makeplane/plane-frontend:0.6
     restart: always
-    command: node apps/app/server.js
-    env_file:
-      - ./apps/app/.env
+    command: [ "/usr/local/bin/start.sh" ]
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_GOOGLE_CLIENTID: 0
+      NEXT_PUBLIC_GITHUB_APP_NAME: 0
+      NEXT_PUBLIC_GITHUB_ID: 0
+      NEXT_PUBLIC_SENTRY_DSN: 0
+      NEXT_PUBLIC_ENABLE_OAUTH: 0
+      NEXT_PUBLIC_ENABLE_SENTRY: 0
     ports:
       - 3000:3000
   plane-api:
     container_name: planebackend
-    image: makeplane/plane-backend:0.5-dev
+    image: makeplane/plane-backend:0.6
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
     restart: always
     ports:
       - 8000:8000
-    env_file:
-      - ./apiserver/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: plane.settings.production
+      DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
+      REDIS_URL: redis://redis:6379/
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      WEB_URL: localhost/
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      DISABLE_COLLECTSTATIC: 1
+      DOCKERIZED: 1
+      OPENAI_API_KEY: 0
+      GPT_ENGINE: 0
+      SECRET_KEY: ${SECRET_KEY}
     depends_on:
       - db
       - redis
@@ -62,7 +84,7 @@ services:
       - redis:redis
   plane-worker:
     container_name: planerqworker
-    image: makeplane/plane-worker:0.5-dev
+    image: makeplane/plane-worker:0.6
     depends_on:
       - redis
       - db
@@ -71,8 +93,24 @@ services:
     links:
       - redis:redis
       - db:db
-    env_file:
-      - ./apiserver/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: plane.settings.production
+      DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
+      REDIS_URL: redis://redis:6379/
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      WEB_URL: localhost/
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      DISABLE_COLLECTSTATIC: 1
+      DOCKERIZED: 1
+      OPENAI_API_KEY: 0
+      GPT_ENGINE: 0
+      SECRET_KEY: ${SECRET_KEY}
 volumes:
   pgdata:
   redisdata:
