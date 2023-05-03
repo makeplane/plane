@@ -397,11 +397,7 @@ export const IssuesView: React.FC<Props> = ({
         isOpen={transferIssuesModal}
       />
       <>
-        <div
-          className={`flex items-center justify-between gap-2 ${
-            issueView === "list" ? (areFiltersApplied ? "mt-6 px-8" : "") : "-mt-2"
-          }`}
-        >
+        <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
           <FilterList filters={filters} setFilters={setFilters} />
           {areFiltersApplied && (
             <PrimaryButton
@@ -425,9 +421,7 @@ export const IssuesView: React.FC<Props> = ({
             </PrimaryButton>
           )}
         </div>
-        {areFiltersApplied && (
-          <div className={`${issueView === "list" ? "mt-4" : "my-4"} border-t border-brand-base`} />
-        )}
+        {areFiltersApplied && <div className="mt-3 border-t border-brand-base" />}
       </>
 
       <DragDropContext onDragEnd={handleOnDragEnd}>
