@@ -1,3 +1,6 @@
+// types
+import { ChartDataType } from "../types";
+
 // constants
 export const weeks = [
   { week: 0, shortTitle: "sun", title: "sunday" },
@@ -25,74 +28,88 @@ export const months = [
 ];
 
 // context data
-export const allViewsWithData = [
+export const allViewsWithData: ChartDataType[] = [
   {
-    title: "Hours",
     key: "hours",
-    data: { decrementYear: 2023, currentYear: 2023, incrementYear: 2023 },
-  },
-  {
-    title: "Days",
-    key: "days",
-    data: { decrementYear: 2023, currentYear: 2023, incrementYear: 2023 },
-  },
-  {
-    title: "Week",
-    key: "week",
+    title: "Hours",
     data: {
-      decrementYear: 2023,
-      currentYear: 2023,
-      incrementYear: 2023,
+      previousDate: new Date(),
+      currentDate: new Date(),
+      nextDate: new Date(),
+      approxRange: 4,
+      width: 40,
+    },
+  },
+  {
+    key: "days",
+    title: "Days",
+    data: {
+      previousDate: new Date(),
+      currentDate: new Date(),
+      nextDate: new Date(),
+      approxRange: 4,
+      width: 40,
+    },
+  },
+  {
+    key: "week",
+    title: "Week",
+    data: {
+      previousDate: new Date(),
+      currentDate: new Date(),
+      nextDate: new Date(),
+      approxRange: 4,
       width: 40, // it will preview week dates with weekends highlighted with 1 week limitations ex: title (Wed 1, Thu 2, Fri 3)
     },
   },
   {
-    title: "Bi-Week",
     key: "bi_week",
+    title: "Bi-Week",
     data: {
-      decrementYear: 2023,
-      currentYear: 2023,
-      incrementYear: 2023,
+      previousDate: new Date(),
+      currentDate: new Date(),
+      nextDate: new Date(),
+      approxRange: 4,
       width: 40, // it will preview monthly all dates with weekends highlighted with 3 week limitations ex: title (Wed 1, Thu 2, Fri 3)
     },
   },
   {
-    title: "Month",
     key: "month",
+    title: "Month",
     data: {
-      decrementYear: 2023,
-      currentYear: 2023,
-      incrementYear: 2023,
+      previousDate: new Date(),
+      currentDate: new Date(),
+      nextDate: new Date(),
+      approxRange: 4,
       width: 40, // it will preview monthly all dates with weekends highlighted with no limitations ex: title (1, 2, 3)
     },
   },
   {
-    title: "Quarter",
     key: "quarter",
+    title: "Quarter",
     data: {
-      decrementYear: 2023,
-      currentYear: 2023,
-      incrementYear: 2023,
+      previousDate: new Date(),
+      currentDate: new Date(),
+      nextDate: new Date(),
+      approxRange: 4,
       width: 100, // it will preview week starting dates all months data and there is 3 months limitation for preview ex: title (2, 9, 16, 23, 30)
     },
   },
   {
-    title: "Year",
     key: "year",
+    title: "Year",
     data: {
-      decrementYear: 2023,
-      currentYear: 2023,
-      incrementYear: 2023,
+      previousDate: new Date(),
+      currentDate: new Date(),
+      nextDate: new Date(),
+      approxRange: 4,
       width: 40, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
     },
   },
 ];
 
-const dummyIssues = [
-  {
-    title: "",
-    description: "",
-    start_date: "",
-    end_date: "",
-  },
-];
+export const currentViewDataWithView = (view: string | undefined) => {
+  let currentView = null;
+  currentView = view != undefined && allViewsWithData.find((_viewData) => _viewData.key === view);
+  return currentView;
+};

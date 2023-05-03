@@ -6,13 +6,28 @@ export type allViewsType = {
 };
 
 export type ChartActionContextType = {
-  type: "CHART_VIEW" | "CHART_VIEW_DATA";
+  type: "CURRENT_VIEW" | "CURRENT_VIEW_DATA" | "PARTIAL_UPDATE";
   payload: any;
 };
 
 export type ChartContextType = {
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
-  viewData: any;
+  currentViewData: any;
   dispatch: (action: ChartActionContextType) => void;
 };
+
+// chart render types
+export interface ChartDataType {
+  key: string;
+  title: string;
+  data: ChartDataTypeData;
+}
+
+export interface ChartDataTypeData {
+  previousDate: Date;
+  currentDate: Date;
+  nextDate: Date;
+  approxRange: number;
+  width: number;
+}
