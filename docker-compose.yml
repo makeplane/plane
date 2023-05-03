@@ -44,7 +44,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      NEXT_PUBLIC_API_BASE_URL: http://localhost1234
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
       NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
       NEXT_PUBLIC_GITHUB_APP_NAME: "0"
       NEXT_PUBLIC_GITHUB_ID: "0"
@@ -65,19 +65,19 @@ services:
       DJANGO_SETTINGS_MODULE: plane.settings.production
       DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
       REDIS_URL: redis://redis:6379/
-      EMAIL_HOST:
-      EMAIL_HOST_USER:
-      EMAIL_HOST_PASSWORD:
-      AWS_REGION:
-      AWS_ACCESS_KEY_ID:
-      AWS_SECRET_ACCESS_KEY:
-      AWS_S3_BUCKET_NAME:
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
       WEB_URL: localhost/
-      GITHUB_CLIENT_SECRET:
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       DISABLE_COLLECTSTATIC: 1
       DOCKERIZED: 1
-      OPENAI_API_KEY: 0
-      GPT_ENGINE: 0
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GPT_ENGINE: ${GPT_ENGINE}
       SECRET_KEY: ${SECRET_KEY}
     depends_on:
       - db
@@ -103,20 +103,20 @@ services:
       DJANGO_SETTINGS_MODULE: plane.settings.production
       DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
       REDIS_URL: redis://redis:6379/
-      EMAIL_HOST:
-      EMAIL_HOST_USER:
-      EMAIL_HOST_PASSWORD:
-      AWS_REGION:
-      AWS_ACCESS_KEY_ID:
-      AWS_SECRET_ACCESS_KEY:
-      AWS_S3_BUCKET_NAME:
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
       WEB_URL: localhost/
-      GITHUB_CLIENT_SECRET:
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       DISABLE_COLLECTSTATIC: 1
       DOCKERIZED: 1
-      OPENAI_API_KEY: 0
-      GPT_ENGINE: 0
-      SECRET_KEY: asdasdasdsd
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GPT_ENGINE: ${GPT_ENGINE}
+      SECRET_KEY: ${SECRET_KEY}
 volumes:
   pgdata:
   redisdata:
