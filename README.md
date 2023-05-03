@@ -58,11 +58,18 @@ cd plane
 
 > If running in a cloud env replace localhost with public facing IP address of the VM
 
+- Export Environment Variables
+
+```bash
+set -a
+source .env
+set +a
+```
 
 - Run Docker compose up
 
 ```bash
-docker-compose up
+docker-compose -f docker-compose-hub.yml up
 ```
 
 <strong>You can use the default email and password for your first login `captain@plane.so` and `password123`.</strong> 

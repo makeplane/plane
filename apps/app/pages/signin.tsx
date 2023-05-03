@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
 import Image from "next/image";
-
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
