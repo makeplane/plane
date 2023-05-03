@@ -96,6 +96,7 @@
 
 .react-datepicker__day:hover {
   background-color: rgba(var(--color-bg-surface-2)) !important;
+  color: rgba(var(--color-text-base)) !important;
 }
 
 .react-datepicker__day--selected {
