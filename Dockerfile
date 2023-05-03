@@ -36,7 +36,7 @@ RUN yarn turbo run build --filter=app
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
     BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
-RUN /usr/local/bin/replace-env-vars.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_WEBAPP_URL}
+RUN /usr/local/bin/replace-env-vars.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_API_BASE_URL}
 
 FROM python:3.11.1-alpine3.17 AS backend
 
