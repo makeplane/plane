@@ -231,6 +231,16 @@ export const IssueActivitySection: React.FC = () => {
             action = `${activityItem.verb} the`;
           } else if (activityItem.field === "estimate") {
             action = "updated the";
+          } else if (activityItem.field === "cycles") {
+            action =
+              activityItem.new_value && activityItem.new_value !== ""
+                ? "set the cycle to"
+                : "removed the cycle";
+          } else if (activityItem.field === "modules") {
+            action =
+              activityItem.new_value && activityItem.new_value !== ""
+                ? "set the module to"
+                : "removed the module";
           }
           // for values that are after the action clause
           let value: any = activityItem.new_value ? activityItem.new_value : activityItem.old_value;
@@ -282,6 +292,18 @@ export const IssueActivitySection: React.FC = () => {
             value = "description";
           } else if (activityItem.field === "attachment") {
             value = "attachment";
+          } else if (activityItem.field === "cycles") {
+            const cycles =
+              activityItem.new_value && activityItem.new_value !== ""
+                ? activityItem.new_value
+                : activityItem.old_value;
+            value = cycles ? addSpaceIfCamelCase(cycles) : "None";
+          } else if (activityItem.field === "modules") {
+            const modules =
+              activityItem.new_value && activityItem.new_value !== ""
+                ? activityItem.new_value
+                : activityItem.old_value;
+            value = modules ? addSpaceIfCamelCase(modules) : "None";
           } else if (activityItem.field === "link") {
             value = "link";
           } else if (activityItem.field === "estimate_point") {
