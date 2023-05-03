@@ -19,9 +19,17 @@ class CycleSerializer(BaseSerializer):
     started_issues = serializers.IntegerField(read_only=True)
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
+    assignees = serializers.SerializerMethodField()
 
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
+
+    def get_assignees(self, obj):
+        return [
+            assignee.avatar
+            for issue_cycle in obj.issue_cycle.all()
+            for assignee in issue_cycle.issue.assignees.all()
+        ]
 
     class Meta:
         model = Cycle
