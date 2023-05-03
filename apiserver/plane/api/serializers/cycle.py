@@ -26,7 +26,7 @@ class CycleSerializer(BaseSerializer):
 
     def get_assignees(self, obj):
         return [
-            assignee.avatar
+            {"avatar": assignee.avatar, "first_name": assignee.first_name}
             for issue_cycle in obj.issue_cycle.all()
             for assignee in issue_cycle.issue.assignees.all()
         ]
