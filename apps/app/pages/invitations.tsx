@@ -89,7 +89,7 @@ const OnBoard: NextPage = () => {
       >
         <div className="flex min-h-full flex-col items-center justify-center p-4 sm:p-0">
           {user && (
-            <div className="mb-10 w-96 rounded-lg bg-indigo-100 p-2 text-theme">
+            <div className="mb-10 w-96 rounded-lg bg-brand-accent/20 p-2 text-brand-accent">
               <p className="text-center text-sm">logged in as {user.email}</p>
             </div>
           )}
@@ -98,11 +98,14 @@ const OnBoard: NextPage = () => {
             {invitations && workspaces ? (
               invitations.length > 0 ? (
                 <div>
-                  <h2 className="text-lg font-medium text-gray-900">Workspace Invitations</h2>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <h2 className="text-lg font-medium">Workspace Invitations</h2>
+                  <p className="mt-1 text-sm text-brand-secondary">
                     Select invites that you want to accept.
                   </p>
-                  <ul role="list" className="mt-6 divide-y divide-gray-200 border-t border-b">
+                  <ul
+                    role="list"
+                    className="mt-6 divide-y divide-brand-base border-t border-b border-brand-base"
+                  >
                     {invitations.map((invitation) => (
                       <SingleInvitation
                         key={invitation.id}
@@ -115,7 +118,7 @@ const OnBoard: NextPage = () => {
                   <div className="mt-6 flex items-center gap-2">
                     <Link href="/">
                       <a className="w-full">
-                        <SecondaryButton className="w-full">Go to Home</SecondaryButton>
+                        <SecondaryButton className="w-full">Go Home</SecondaryButton>
                       </a>
                     </Link>
                     <PrimaryButton className="w-full" onClick={submitInvitations}>
@@ -124,18 +127,18 @@ const OnBoard: NextPage = () => {
                   </div>
                 </div>
               ) : workspaces && workspaces.length > 0 ? (
-                <div className="mt-3 flex flex-col gap-y-3">
-                  <h2 className="mb-4 text-2xl font-medium">Your workspaces</h2>
+                <div className="flex flex-col gap-y-3">
+                  <h2 className="mb-4 text-xl font-medium">Your workspaces</h2>
                   {workspaces.map((workspace) => (
                     <Link key={workspace.id} href={workspace.slug}>
                       <a>
-                        <div className="mb-2 flex items-center justify-between rounded border px-4 py-2">
-                          <div className="flex items-center gap-x-2">
-                            <CubeIcon className="h-5 w-5 text-gray-400" />
+                        <div className="mb-2 flex items-center justify-between rounded border border-brand-base px-4 py-2">
+                          <div className="flex items-center gap-x-2 text-sm">
+                            <CubeIcon className="h-5 w-5 text-brand-secondary" />
                             {workspace.name}
                           </div>
-                          <div className="flex items-center gap-x-2">
-                            <p className="text-sm">{workspace.owner.first_name}</p>
+                          <div className="flex items-center gap-x-2 text-xs text-brand-secondary">
+                            {workspace.owner.first_name}
                           </div>
                         </div>
                       </a>

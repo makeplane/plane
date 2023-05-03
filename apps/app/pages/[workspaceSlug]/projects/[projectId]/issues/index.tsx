@@ -8,6 +8,8 @@ import projectService from "services/project.service";
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
+// helper
+import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
@@ -37,7 +39,9 @@ const ProjectIssues: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
+            <BreadcrumbItem
+              title={`${truncateText(projectDetails?.name ?? "Project", 12)} Issues`}
+            />
           </Breadcrumbs>
         }
         right={

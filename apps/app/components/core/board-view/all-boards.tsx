@@ -17,7 +17,7 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
-  removeIssue: ((bridgeId: string) => void) | null;
+  removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
   userAuth: UserAuth;
 };

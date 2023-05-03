@@ -37,7 +37,7 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
     ? cycleDetails.backlog_issues + cycleDetails.unstarted_issues + cycleDetails.started_issues
     : 0;
   return (
-    <div className="flex items-center justify-between -mt-4 mb-4">
+    <div className="-mt-2 mb-4 flex items-center justify-between">
       <div className="flex items-center gap-2 text-sm text-brand-secondary">
         <ExclamationIcon height={14} width={14} />
         <span>Completed cycles are not editable.</span>
@@ -46,7 +46,7 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
       {transferableIssuesCount > 0 && (
         <div>
           <PrimaryButton onClick={handleClick} className="flex items-center gap-3 rounded-lg">
-            <TransferIcon className="h-4 w-4" color="white"/>
+            <TransferIcon className="h-4 w-4" color="white" />
             <span className="text-white">Transfer Issues</span>
           </PrimaryButton>
         </div>

@@ -178,11 +178,9 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     >
                       <div className="grid place-items-center">
                         <item.icon
-                          className={`h-5 w-5 flex-shrink-0 ${
-                            router.asPath.includes(item.href)
-                              ? "text-brand-secondary"
-                              : "text-brand-secondary group-hover:text-brand-base"
-                          } ${!sidebarCollapse ? "mr-3" : ""}`}
+                          className={`h-5 w-5 flex-shrink-0 text-brand-secondary ${
+                            !sidebarCollapse ? "mr-3" : ""
+                          }`}
                           color="#858e96"
                           aria-hidden="true"
                         />

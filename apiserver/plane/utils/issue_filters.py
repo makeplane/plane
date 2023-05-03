@@ -13,6 +13,17 @@ def filter_state(params, filter, method):
     return filter
 
 
+def filter_estimate_point(params, filter, method):
+    if method == "GET":
+        estimate_points = params.get("estimate_point").split(",")
+        if len(estimate_points) and "" not in estimate_points:
+            filter["estimate_point__in"] = estimate_points
+    else:
+        if params.get("estimate_point", None) and len(params.get("estimate_point")):
+            filter["estimate_point__in"] = params.get("estimate_point")
+    return filter
+
+
 def filter_priority(params, filter, method):
     if method == "GET":
         priorties = params.get("priority").split(",")
@@ -192,6 +203,7 @@ def issue_filters(query_params, method):
 
     ISSUE_FILTER = {
         "state": filter_state,
+        "estimate_point": filter_estimate_point,
         "priority": filter_priority,
         "parent": filter_parent,
         "labels": filter_labels,

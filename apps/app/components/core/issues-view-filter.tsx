@@ -246,7 +246,7 @@ export const IssuesFilterView: React.FC = () => {
                               type="button"
                               className={`rounded border px-2 py-1 text-xs capitalize ${
                                 properties[key as keyof Properties]
-                                  ? "border-brand-accent bg-brand-accent text-brand-base"
+                                  ? "border-brand-accent bg-brand-accent text-white"
                                   : "border-brand-base"
                               }`}
                               onClick={() => setProperties(key as keyof Properties)}

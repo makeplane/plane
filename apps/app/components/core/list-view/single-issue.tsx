@@ -216,7 +216,7 @@ export const SingleListIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className="flex items-center justify-between gap-2 border-b border-brand-base bg-brand-base px-4 py-2.5 last:border-b-0"
+        className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-base bg-brand-base last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
@@ -224,26 +224,28 @@ export const SingleListIssue: React.FC<Props> = ({
         }}
       >
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
-          <a className="group relative flex items-center gap-2">
-            {properties.key && (
-              <Tooltip
-                tooltipHeading="Issue ID"
-                tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
-              >
-                <span className="flex-shrink-0 text-xs text-brand-secondary">
-                  {issue.project_detail?.identifier}-{issue.sequence_id}
+          <div className="flex-grow cursor-pointer px-4 pt-2.5 md:py-2.5">
+            <a className="group relative flex items-center gap-2">
+              {properties.key && (
+                <Tooltip
+                  tooltipHeading="Issue ID"
+                  tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+                >
+                  <span className="flex-shrink-0 text-xs text-brand-secondary">
+                    {issue.project_detail?.identifier}-{issue.sequence_id}
+                  </span>
+                </Tooltip>
+              )}
+              <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                <span className="text-[0.825rem] text-brand-base">
+                  {truncateText(issue.name, 50)}
                 </span>
               </Tooltip>
-            )}
-            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="text-[0.825rem] text-brand-base">
-                {truncateText(issue.name, 50)}
-              </span>
-            </Tooltip>
-          </a>
+            </a>
+          </div>
         </Link>
 
-        <div className="flex flex-wrap items-center gap-2 text-xs">
+        <div className="flex w-full flex-shrink flex-wrap items-center gap-2 px-4 pb-2.5 text-xs sm:w-auto md:px-0 md:py-2.5 md:pr-4">
           {properties.priority && (
             <ViewPrioritySelect
               issue={issue}
