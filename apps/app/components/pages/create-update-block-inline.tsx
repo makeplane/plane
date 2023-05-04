@@ -32,8 +32,8 @@ type Props = {
 
 const defaultValues = {
   name: "",
-  description: { type: "doc", content: [] },
-  description_html: "<p></p>",
+  description: null,
+  description_html: null,
 };
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -44,6 +44,14 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
     </Loader>
   ),
 });
+import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+
+const WrappedRemirrorRichTextEditor = React.forwardRef<
+  IRemirrorRichTextEditor,
+  IRemirrorRichTextEditor
+>((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+
+WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 export const CreateUpdateBlockInline: React.FC<Props> = ({
   handleClose,
@@ -53,6 +61,8 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   setGptAssistantModal,
 }) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+
+  const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -94,6 +104,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
             (prevData) => [...(prevData as IPageBlock[]), res],
             false
           );
+          editorRef.current?.clearEditor();
         })
         .catch(() => {
           setToastAlert({
@@ -132,6 +143,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         })
         .then((res) => {
           mutate(PAGE_BLOCKS_LIST(pageId as string));
+          editorRef.current?.setEditorValue(res.description);
           if (data.issue && data.sync)
             issuesService
               .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
@@ -197,8 +209,14 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
     reset({
       ...defaultValues,
       name: data.name,
-      description: data.description,
-      description_html: data.description_html,
+      description:
+        !data.description || data.description === ""
+          ? {
+              type: "doc",
+              content: [{ type: "paragraph" }],
+            }
+          : data.description,
+      description_html: data.description_html ?? "<p></p>",
     });
   }, [reset, data, focus, setFocus]);
 
@@ -250,21 +268,43 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           <Controller
             name="description"
             control={control}
-            render={({ field: { value } }) => (
-              <RemirrorRichTextEditor
-                value={
-                  !value || (typeof value === "object" && Object.keys(value).length === 0)
-                    ? watch("description_html")
-                    : value
-                }
-                onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                placeholder="Write something..."
-                customClassName="text-sm"
-                noBorder
-                borderOnFocus={false}
-              />
-            )}
+            render={({ field: { value } }) => {
+              if (!data)
+                return (
+                  <WrappedRemirrorRichTextEditor
+                    value={value}
+                    onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                    onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                    placeholder="Write something..."
+                    customClassName="text-sm"
+                    noBorder
+                    borderOnFocus={false}
+                    ref={editorRef}
+                  />
+                );
+              else if (!value || !watch("description_html"))
+                return (
+                  <div className="h-32 w-full flex items-center justify-center text-brand-secondary text-sm" />
+                );
+
+              return (
+                <RemirrorRichTextEditor
+                  value={
+                    value && value !== ""
+                      ? value
+                      : watch("description_html") && watch("description_html") !== ""
+                      ? watch("description_html")
+                      : { type: "doc", content: [{ type: "paragraph" }] }
+                  }
+                  onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                  onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                  placeholder="Write something..."
+                  customClassName="text-sm"
+                  noBorder
+                  borderOnFocus={false}
+                />
+              );
+            }}
           />
           <div className="m-2 mt-6 flex">
             <button

@@ -34,8 +34,6 @@ import { TableExtension } from "@remirror/extension-react-tables";
 import tlds from "tlds";
 // services
 import fileService from "services/file.service";
-// ui
-import { Spinner } from "components/ui";
 // components
 import { CustomFloatingToolbar } from "./toolbar/float-tool-tip";
 import { MentionAutoComplete } from "./mention-autocomplete";
@@ -54,12 +52,15 @@ export interface IRemirrorRichTextEditor {
   gptOption?: boolean;
   noBorder?: boolean;
   borderOnFocus?: boolean;
+  forwardedRef?: any;
 }
 
 // eslint-disable-next-line no-duplicate-imports
 import { FloatingWrapper, FloatingToolbar } from "@remirror/react";
 
-const RemirrorRichTextEditor = forwardRef((props: IRemirrorRichTextEditor, ref: any) => {
+// <any, IRemirrorRichTextEditor>
+
+const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
   const {
     placeholder,
     mentions = [],
@@ -74,7 +75,10 @@ const RemirrorRichTextEditor = forwardRef((props: IRemirrorRichTextEditor, ref: 
     gptOption = false,
     noBorder = false,
     borderOnFocus = true,
+    forwardedRef,
   } = props;
+
+  const [disableToolbar, setDisableToolbar] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -162,20 +166,19 @@ const RemirrorRichTextEditor = forwardRef((props: IRemirrorRichTextEditor, ref: 
     onError,
   });
 
-  useImperativeHandle(
-    ref,
-    () => {
-      console.log("came here");
-      return {
-        clearEditor: () =>
-          manager.createState({
-            content: "",
-            selection: "start",
-          }),
-      };
+  useImperativeHandle(forwardedRef, () => ({
+    clearEditor: () => {
+      manager.view.updateState(manager.createState({ content: "", selection: "start" }));
     },
-    [manager]
-  );
+    setEditorValue: (value: any) => {
+      manager.view.updateState(
+        manager.createState({
+          content: value,
+          selection: "end",
+        })
+      );
+    },
+  }));
 
   return (
     <div className="relative">
@@ -194,17 +197,20 @@ const RemirrorRichTextEditor = forwardRef((props: IRemirrorRichTextEditor, ref: 
           const html = event.helpers.getHTML();
           const json = event.helpers.getJSON();
 
+          setDisableToolbar(true);
+
           onBlur(json, html);
         }}
+        onFocus={() => setDisableToolbar(false)}
       >
         <div className="prose prose-brand max-w-full prose-p:my-1">
           <EditorComponent />
         </div>
 
-        {editable && (
+        {editable && !disableToolbar && (
           <FloatingWrapper
             positioner="always"
-            hideWhenInvisible
+            renderOutsideEditor
             floatingLabel="Custom Floating Toolbar"
           >
             <FloatingToolbar className="z-50 overflow-hidden rounded">
@@ -219,7 +225,7 @@ const RemirrorRichTextEditor = forwardRef((props: IRemirrorRichTextEditor, ref: 
       </Remirror>
     </div>
   );
-});
+};
 
 RemirrorRichTextEditor.displayName = "RemirrorRichTextEditor";
 
