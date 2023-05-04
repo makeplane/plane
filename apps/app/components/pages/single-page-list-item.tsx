@@ -161,7 +161,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                     } on ${renderLongDateFormat(`${page.created_at}`)}`}
                   >
                     <span>
-                      <ExclamationIcon className="h-4 w-4 text-gray-400" />
+                      <ExclamationIcon className="h-4 w-4 fill-current text-brand-secondary" />
                     </span>
                   </Tooltip>
 
