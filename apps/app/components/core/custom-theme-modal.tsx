@@ -1,24 +1,54 @@
 import React from "react";
 
+import { useTheme } from "next-themes";
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // components
 import { ThemeForm } from "./custom-theme-form";
+// hooks
+import useUser from "hooks/use-user";
+// services
+import userService from "services/user.service";
 // helpers
 import { applyTheme } from "helpers/theme.helper";
-// fetch-keys
+// types
+import { ICustomTheme } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
+  preLoadedData?: Partial<ICustomTheme> | null;
 };
 
-export const CustomThemeModal: React.FC<Props> = ({ isOpen, handleClose }) => {
+export const CustomThemeModal: React.FC<Props> = ({ isOpen, handleClose, preLoadedData }) => {
+  const { setTheme } = useTheme();
+  const { mutateUser } = useUser();
+
   const onClose = () => {
     handleClose();
   };
 
   const handleFormSubmit = async (formData: any) => {
+    setTheme("custom");
+    await userService
+      .updateUser({
+        theme: {
+          accent: "#FFFFFF",
+          bgBase: "#FFF7F7",
+          bgSurface1: "#FFE0E0",
+          border: "#FFC9C9",
+          darkPalette: false,
+          palette: "#FFF7F7,#FFE0E0,#FFE0E0,#FFC9C9,#FFE0E0,#FFFFFF,#430000,#323232",
+          sidebar: "#FFE0E0",
+          textBase: "#430000",
+          textSecondary: "#323232",
+        },
+      })
+      .then(() => {
+        mutateUser();
+      })
+      .catch((err) => console.log(err));
     applyTheme(formData.palette, formData.darkPalette);
     onClose();
   };
@@ -54,6 +84,7 @@ export const CustomThemeModal: React.FC<Props> = ({ isOpen, handleClose }) => {
                   handleClose={handleClose}
                   handleFormSubmit={handleFormSubmit}
                   status={false}
+                  preLoadedData={preLoadedData}
                 />
               </Dialog.Panel>
             </Transition.Child>

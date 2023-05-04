@@ -4,12 +4,28 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+// type
+import { ICustomTheme } from "types";
 
 const defaultValues = {
   palette: "",
 };
 
-export const ThemeForm: React.FC<any> = ({ handleFormSubmit, handleClose, status, data }) => {
+type Props = {
+  handleFormSubmit: (values: ICustomTheme) => Promise<void>;
+  handleClose: () => void;
+  status: boolean;
+  data?: ICustomTheme | null;
+  preLoadedData?: Partial<ICustomTheme> | null;
+};
+
+export const ThemeForm: React.FC<Props> = ({
+  handleFormSubmit,
+  handleClose,
+  status,
+  data,
+  preLoadedData,
+}) => {
   const {
     register,
     formState: { errors, isSubmitting },
@@ -31,20 +47,10 @@ export const ThemeForm: React.FC<any> = ({ handleFormSubmit, handleClose, status
   useEffect(() => {
     reset({
       ...defaultValues,
+      ...preLoadedData,
       ...data,
     });
-  }, [data, reset]);
-
-  // --color-bg-base: 25, 27, 27;
-  //   --color-bg-surface-1: 31, 32, 35;
-  //   --color-bg-surface-2: 39, 42, 45;
-
-  //   --color-border: 46, 50, 52;
-  //   --color-bg-sidebar: 19, 20, 22;
-  //   --color-accent: 60, 133, 217;
-
-  //   --color-text-base: 255, 255, 255;
-  //   --color-text-secondary: 142, 148, 146;
+  }, [data, preLoadedData, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>

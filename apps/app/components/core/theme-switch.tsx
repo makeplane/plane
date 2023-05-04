@@ -3,11 +3,15 @@ import { useTheme } from "next-themes";
 import { THEMES_OBJ } from "constants/themes";
 import { CustomSelect } from "components/ui";
 import { CustomThemeModal } from "./custom-theme-modal";
+import useUser from "hooks/use-user";
+import { ICustomTheme } from "types";
 
 export const ThemeSwitch = () => {
   const [mounted, setMounted] = useState(false);
   const [customThemeModal, setCustomThemeModal] = useState(false);
+  const [preLoadedData, setPreLoadedData] = useState<ICustomTheme | null>(null);
   const { theme, setTheme } = useTheme();
+  const { user } = useUser();
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
@@ -25,6 +29,7 @@ export const ThemeSwitch = () => {
         label={theme ? THEMES_OBJ.find((t) => t.value === theme)?.label : "Select your theme"}
         onChange={({ value, type }: { value: string; type: string }) => {
           if (value === "custom") {
+            if (user?.theme) setPreLoadedData(user?.theme);
             if (!customThemeModal) setCustomThemeModal(true);
           } else {
             const cssVars = [
@@ -40,9 +45,9 @@ export const ThemeSwitch = () => {
               "--color-text-secondary",
             ];
             cssVars.forEach((cssVar) => document.documentElement.style.removeProperty(cssVar));
+            setTheme(value);
           }
           document.documentElement.style.setProperty("color-scheme", type);
-          setTheme(value);
         }}
         input
         width="w-full"
@@ -54,7 +59,11 @@ export const ThemeSwitch = () => {
           </CustomSelect.Option>
         ))}
       </CustomSelect>
-      {/* <CustomThemeModal isOpen={customThemeModal} handleClose={() => setCustomThemeModal(false)} /> */}
+      <CustomThemeModal
+        isOpen={customThemeModal}
+        handleClose={() => setCustomThemeModal(false)}
+        preLoadedData={preLoadedData}
+      />
     </>
   );
 };
