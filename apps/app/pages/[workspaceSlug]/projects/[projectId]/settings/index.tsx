@@ -222,7 +222,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Cover Photo</h4>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-brand-secondary">
                 Select your cover photo from the given library.
               </p>
             </div>
