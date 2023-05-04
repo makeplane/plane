@@ -34,7 +34,7 @@ export const IssueAttachments = () => {
     workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
-      issuesService.getIssueAttachment(
+          issuesService.getIssueAttachment(
             workspaceSlug as string,
             projectId as string,
             issueId as string
@@ -61,7 +61,7 @@ export const IssueAttachments = () => {
         attachments.map((file) => (
           <div
             key={file.id}
-            className="flex items-center justify-between h-[60px] gap-1 px-4 py-2 text-sm border border-gray-200 bg-white rounded-md"
+            className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-brand-surface-2 bg-brand-base px-4 py-2 text-sm"
           >
             <Link href={file.asset}>
               <a target="_blank">
@@ -87,7 +87,7 @@ export const IssueAttachments = () => {
                       </Tooltip>
                     </div>
 
-                    <div className="flex items-center gap-3 text-gray-500 text-xs">
+                    <div className="flex items-center gap-3 text-xs text-gray-500">
                       <span>{getFileExtension(file.asset).toUpperCase()}</span>
                       <span>{convertBytesToSize(file.attributes.size)}</span>
                     </div>

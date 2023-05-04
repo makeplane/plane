@@ -163,7 +163,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
+              <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
             </Transition.Child>
 
             <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -176,7 +176,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-brand-surface-2 bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
+                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-brand-base bg-brand-base shadow-2xl transition-all">
                   <Combobox
                     onChange={(val: string) => {
                       const selectedIssues = watchBlocker("blocker_issue_ids");
@@ -203,7 +203,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
 
                     <Combobox.Options
                       static
-                      className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
+                      className="max-h-80 scroll-py-2 divide-y divide-brand-base overflow-y-auto"
                     >
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
@@ -212,7 +212,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                               Select blocker issues
                             </h2>
                           )}
-                          <ul className="text-sm text-gray-700">
+                          <ul className="text-sm text-brand-base">
                             {filteredIssues.map((issue) => {
                               if (
                                 !watch("blockers_list").includes(issue.id) &&
@@ -224,9 +224,9 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                                     as="div"
                                     value={issue.id}
                                     className={({ active }) =>
-                                      `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                        active ? "bg-gray-900 bg-opacity-5 text-brand-base" : ""
-                                      }`
+                                      `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
+                                        active ? "bg-brand-surface-2 text-brand-base" : ""
+                                      } `
                                     }
                                   >
                                     <div className="flex items-center gap-2">
@@ -260,7 +260,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                       ) : (
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                           <LayerDiagonalIcon height="56" width="56" />
-                          <h3 className="text-brand-secondary">
+                          <h3 className="text-sm text-brand-secondary">
                             No issues found. Create a new issue with{" "}
                             <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre>.
                           </h3>

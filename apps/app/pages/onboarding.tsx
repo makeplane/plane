@@ -13,13 +13,17 @@ import useUser from "hooks/use-user";
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
 // components
-import { InviteMembers, OnboardingCard, UserDetails, Workspace } from "components/onboarding";
+import {
+  InviteMembers,
+  OnboardingCard,
+  OnboardingLogo,
+  UserDetails,
+  Workspace,
+} from "components/onboarding";
 // ui
 import { PrimaryButton } from "components/ui";
 // constant
 import { ONBOARDING_CARDS } from "constants/workspace";
-// images
-import Logo from "public/onboarding/logo.svg";
 // types
 import type { NextPage } from "next";
 import { ICurrentUserResponse } from "types";
@@ -42,8 +46,8 @@ const Onboarding: NextPage = () => {
         <div className="grid h-full place-items-center p-5">
           {step <= 3 ? (
             <div className="w-full">
-              <div className="mb-8 text-center">
-                <Image src={Logo} height="50" alt="Plane Logo" />
+              <div className="mb-8 flex items-center justify-center text-center">
+                <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
               </div>
               {step === 1 ? (
                 <UserDetails user={user} setStep={setStep} setUserRole={setUserRole} />
