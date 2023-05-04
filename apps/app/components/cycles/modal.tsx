@@ -166,10 +166,22 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
       });
 
       if (data?.start_date && data?.end_date) {
-        const cycleStatus = getDateRangeStatus(data.start_date, data.end_date);
+        const isDateValidForExistingCycle = await dateChecker({
+          start_date: payload.start_date,
+          end_date: payload.end_date,
+          cycle_id: data.id,
+        });
 
-        if (cycleStatus === "current") {
+        if (isDateValidForExistingCycle) {
           await updateCycle(data.id, payload);
+          return;
+        } else {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+          });
           return;
         }
       }
