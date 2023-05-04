@@ -1,5 +1,6 @@
-import { useCallback, FC, useState, useEffect } from "react";
+import { useCallback, useState, useImperativeHandle, forwardRef } from "react";
 import { useRouter } from "next/router";
+
 import { InvalidContentHandler } from "remirror";
 import {
   BoldExtension,
@@ -58,7 +59,7 @@ export interface IRemirrorRichTextEditor {
 // eslint-disable-next-line no-duplicate-imports
 import { FloatingWrapper, FloatingToolbar } from "@remirror/react";
 
-const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
+const RemirrorRichTextEditor = forwardRef((props: IRemirrorRichTextEditor, ref: any) => {
   const {
     placeholder,
     mentions = [],
@@ -75,10 +76,6 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
     borderOnFocus = true,
   } = props;
 
-  const [imageLoader, setImageLoader] = useState(false);
-  const [jsonValue, setJsonValue] = useState<any>();
-  const [htmlValue, setHtmlValue] = useState<any>();
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -91,14 +88,10 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
   );
 
   const uploadImageHandler = (value: any): any => {
-    setImageLoader(true);
-
     try {
       const formData = new FormData();
       formData.append("asset", value[0].file);
       formData.append("attributes", JSON.stringify({}));
-
-      setImageLoader(true);
 
       return [
         () =>
@@ -114,7 +107,6 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
               width: "100%",
               src: imageUrl,
             });
-            setImageLoader(false);
           }),
       ];
     } catch {
@@ -123,7 +115,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
   };
 
   // remirror manager
-  const { manager, state } = useRemirror({
+  const { manager, state, getContext } = useRemirror({
     extensions: () => [
       new BoldExtension(),
       new ItalicExtension(),
@@ -136,7 +128,10 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       new CalloutExtension({ defaultType: "warn" }),
       new CodeBlockExtension(),
       new CodeExtension(),
-      new PlaceholderExtension({ placeholder: placeholder || "Enter text..." }),
+      new PlaceholderExtension({
+        placeholder: placeholder || "Enter text...",
+        emptyNodeClass: "empty-node",
+      }),
       new HistoryExtension(),
       new LinkExtension({
         autoLink: true,
@@ -145,6 +140,11 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       new ImageExtension({
         enableResizing: true,
         uploadHandler: uploadImageHandler,
+        createPlaceholder() {
+          const div = document.createElement("div");
+          div.className = "w-full aspect-video bg-brand-surface-2 animate-pulse";
+          return div;
+        },
       }),
       new DropCursorExtension(),
       new StrikeExtension(),
@@ -156,38 +156,26 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       }),
       new TableExtension(),
     ],
-    content: !value || (typeof value === "object" && Object.keys(value).length === 0) ? "" : value,
+    content: value,
     selection: "start",
     stringHandler: "html",
     onError,
   });
 
-  const updateState = useCallback(
-    (value: any) => {
-      manager.view.updateState(
-        manager.createState({
-          content:
-            !value || (typeof value === "object" && Object.keys(value).length === 0) ? "" : value,
-          selection: value === "" ? "start" : manager.view.state.selection,
-        })
-      );
+  useImperativeHandle(
+    ref,
+    () => {
+      console.log("came here");
+      return {
+        clearEditor: () =>
+          manager.createState({
+            content: "",
+            selection: "start",
+          }),
+      };
     },
     [manager]
   );
-
-  useEffect(() => {
-    updateState(value);
-  }, [updateState, value]);
-
-  const handleJSONChange = (json: any) => {
-    setJsonValue(json);
-    onJSONChange(json);
-  };
-
-  const handleHTMLChange = (value: string) => {
-    setHtmlValue(value);
-    onHTMLChange(value);
-  };
 
   return (
     <div className="relative">
@@ -195,50 +183,44 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         manager={manager}
         initialContent={state}
         classNames={[
-          `p-4 relative focus:outline-none rounded-md focus:border-brand-base ${
+          `p-3 relative focus:outline-none rounded-md focus:border-brand-base ${
             noBorder ? "" : "border border-brand-base"
           } ${
             borderOnFocus ? "focus:border border-brand-base" : "focus:border-0"
           } ${customClassName}`,
         ]}
         editable={editable}
-        onBlur={() => {
-          onBlur(jsonValue, htmlValue);
+        onBlur={(event) => {
+          const html = event.helpers.getHTML();
+          const json = event.helpers.getJSON();
+
+          onBlur(json, html);
         }}
       >
-        {(!value || value === "" || value?.content?.[0]?.content === undefined) &&
-          !(typeof value === "string" && value.includes("<")) &&
-          placeholder && (
-            <p className="pointer-events-none absolute top-4 left-4 text-sm text-brand-secondary">
-              {placeholder}
-            </p>
-          )}
-        <EditorComponent />
-
-        {imageLoader && (
-          <div className="p-4">
-            <Spinner />
-          </div>
-        )}
+        <div className="prose prose-brand max-w-full prose-p:my-1">
+          <EditorComponent />
+        </div>
 
         {editable && (
           <FloatingWrapper
             positioner="always"
+            hideWhenInvisible
             floatingLabel="Custom Floating Toolbar"
-            renderOutsideEditor
           >
-            <FloatingToolbar className="z-[9999] overflow-hidden rounded">
+            <FloatingToolbar className="z-50 overflow-hidden rounded">
               <CustomFloatingToolbar gptOption={gptOption} editorState={state} />
             </FloatingToolbar>
           </FloatingWrapper>
         )}
 
         <MentionAutoComplete mentions={mentions} tags={tags} />
-        {<OnChangeJSON onChange={handleJSONChange} />}
-        {<OnChangeHTML onChange={handleHTMLChange} />}
+        {<OnChangeJSON onChange={onJSONChange} />}
+        {<OnChangeHTML onChange={onHTMLChange} />}
       </Remirror>
     </div>
   );
-};
+});
+
+RemirrorRichTextEditor.displayName = "RemirrorRichTextEditor";
 
 export default RemirrorRichTextEditor;

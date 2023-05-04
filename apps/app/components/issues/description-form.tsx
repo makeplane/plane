@@ -82,7 +82,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
   useEffect(() => {
     if (!issue) return;
 
-    reset(issue);
+    reset({
+      ...issue,
+      description: issue.description,
+    });
   }, [issue, reset]);
 
   const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
@@ -131,31 +134,35 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
       <Controller
         name="description"
         control={control}
-        render={({ field: { value } }) => (
-          <RemirrorRichTextEditor
-            value={
-              !value ||
-              value === "" ||
-              (typeof value === "object" && Object.keys(value).length === 0)
-                ? watch("description_html")
-                : value
-            }
-            onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-            onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-            onBlur={() => {
-              setIsSubmitting(true);
-              handleSubmit(handleDescriptionFormSubmit)()
-                .then(() => {
-                  setIsSubmitting(false);
-                })
-                .catch(() => {
-                  setIsSubmitting(false);
-                });
-            }}
-            placeholder="Describe the issue..."
-            editable={!isNotAllowed}
-          />
-        )}
+        render={({ field: { value } }) => {
+          if (!value || !watch("description_html")) return <></>;
+
+          return (
+            <RemirrorRichTextEditor
+              value={
+                !value ||
+                value === "" ||
+                (typeof value === "object" && Object.keys(value).length === 0)
+                  ? watch("description_html")
+                  : value
+              }
+              onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+              onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+              onBlur={() => {
+                setIsSubmitting(true);
+                handleSubmit(handleDescriptionFormSubmit)()
+                  .then(() => {
+                    setIsSubmitting(false);
+                  })
+                  .catch(() => {
+                    setIsSubmitting(false);
+                  });
+              }}
+              placeholder="Describe the issue..."
+              editable={!isNotAllowed}
+            />
+          );
+        }}
       />
       <div
         className={`absolute -bottom-8 right-0 text-sm text-brand-secondary ${
