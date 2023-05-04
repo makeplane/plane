@@ -211,7 +211,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
             try:
                 EstimatePoint.objects.bulk_update(
-                    updated_estimate_points, ["value"], ignore_conflicts=True, batch_size=10,
+                    updated_estimate_points, ["value"], batch_size=10,
                 )
             except IntegrityError as e:
                 return Response(
