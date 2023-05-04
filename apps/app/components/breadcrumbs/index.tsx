@@ -17,7 +17,17 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
         <button
           type="button"
           className="grid h-8 w-8 flex-shrink-0 cursor-pointer place-items-center rounded border border-brand-base text-center text-sm hover:bg-brand-surface-1"
-          onClick={() => router.back()}
+          onClick={() => {
+            const lastTenUrls = JSON.parse(localStorage.getItem("lastTenUrls") || "[]");
+            if (lastTenUrls.length > 0) {
+              const url = lastTenUrls[1];
+              lastTenUrls.splice(0, 2);
+              localStorage.setItem("lastTenUrls", JSON.stringify(lastTenUrls));
+              router.push(url);
+            } else {
+              router.push("/");
+            }
+          }}
         >
           <ArrowLeftIcon className="h-3 w-3" />
         </button>

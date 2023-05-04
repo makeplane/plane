@@ -31,6 +31,12 @@ NProgress.configure({ showSpinner: false });
 Router.events.on("routeChangeStart", NProgress.start);
 Router.events.on("routeChangeError", NProgress.done);
 Router.events.on("routeChangeComplete", NProgress.done);
+Router.events.on("routeChangeComplete", () => {
+  const urls = JSON.parse(localStorage.getItem("lastTenUrls") || "[]");
+  urls.unshift(Router.asPath);
+  const trimmedUrls = urls.slice(0, 10);
+  localStorage.setItem("lastTenUrls", JSON.stringify(trimmedUrls));
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
