@@ -25,7 +25,7 @@ class CycleSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
     def get_assignees(self, obj):
-        return [
+        members = [
             {
                 "avatar": assignee.avatar,
                 "first_name": assignee.first_name,
@@ -34,6 +34,13 @@ class CycleSerializer(BaseSerializer):
             for issue_cycle in obj.issue_cycle.all()
             for assignee in issue_cycle.issue.assignees.all()
         ]
+        # Use a set comprehension to return only the unique objects
+        unique_objects = {frozenset(item.items()) for item in members}
+
+        # Convert the set back to a list of dictionaries
+        unique_list = [dict(item) for item in unique_objects]
+
+        return unique_list
 
     class Meta:
         model = Cycle
