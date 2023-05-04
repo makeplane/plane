@@ -413,14 +413,16 @@ class CycleDateCheckEndpoint(BaseAPIView):
         try:
             start_date = request.data.get("start_date", False)
             end_date = request.data.get("end_date", False)
+            cycle_id = request.data.get("cycle_id", False)
 
-            if not start_date or not end_date:
+            if not start_date or not end_date or not cycle_id:
                 return Response(
-                    {"error": "Start date and end date both are required"},
+                    {"error": "Cycle ID, start date and end date are required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             cycles = Cycle.objects.filter(
+                ~Q(pk=cycle_id),
                 Q(start_date__lte=start_date, end_date__gte=start_date)
                 | Q(start_date__lte=end_date, end_date__gte=end_date)
                 | Q(start_date__gte=start_date, end_date__lte=end_date),
