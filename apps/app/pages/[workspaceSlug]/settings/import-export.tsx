@@ -18,7 +18,7 @@ const ImportExport: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title={`${workspaceSlug ?? "Workspace"}`} link={`/${workspaceSlug}`} />
-          <BreadcrumbItem title="Members Settings" />
+          <BreadcrumbItem title="Import/ Export Settings" />
         </Breadcrumbs>
       }
     >

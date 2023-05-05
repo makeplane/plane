@@ -8,7 +8,9 @@ export interface IEstimate {
   updated_by: string;
   points: IEstimatePoint[];
   project: string;
+  project_detail: IProject;
   workspace: string;
+  workspace_detail: IWorkspace;
 }
 
 export interface IEstimatePoint {

@@ -1,4 +1,4 @@
-import { useCallback, useState, useImperativeHandle, forwardRef } from "react";
+import { useCallback, useState, useImperativeHandle } from "react";
 import { useRouter } from "next/router";
 
 import { InvalidContentHandler } from "remirror";
@@ -28,6 +28,8 @@ import {
   EditorComponent,
   OnChangeJSON,
   OnChangeHTML,
+  FloatingToolbar,
+  FloatingWrapper,
 } from "@remirror/react";
 import { TableExtension } from "@remirror/extension-react-tables";
 // tlds
@@ -54,11 +56,6 @@ export interface IRemirrorRichTextEditor {
   borderOnFocus?: boolean;
   forwardedRef?: any;
 }
-
-// eslint-disable-next-line no-duplicate-imports
-import { FloatingWrapper, FloatingToolbar } from "@remirror/react";
-
-// <any, IRemirrorRichTextEditor>
 
 const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
   const {
@@ -119,7 +116,7 @@ const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
   };
 
   // remirror manager
-  const { manager, state, getContext } = useRemirror({
+  const { manager, state } = useRemirror({
     extensions: () => [
       new BoldExtension(),
       new ItalicExtension(),
@@ -140,6 +137,8 @@ const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
       new LinkExtension({
         autoLink: true,
         autoLinkAllowedTLDs: tlds,
+        selectTextOnClick: true,
+        defaultTarget: "_blank",
       }),
       new ImageExtension({
         enableResizing: true,
@@ -214,7 +213,11 @@ const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
             floatingLabel="Custom Floating Toolbar"
           >
             <FloatingToolbar className="z-50 overflow-hidden rounded">
-              <CustomFloatingToolbar gptOption={gptOption} editorState={state} />
+              <CustomFloatingToolbar
+                gptOption={gptOption}
+                editorState={state}
+                setDisableToolbar={setDisableToolbar}
+              />
             </FloatingToolbar>
           </FloatingWrapper>
         )}

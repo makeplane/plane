@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import { Controller, useForm } from "react-hook-form";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
+// hooks
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import { Loader, TextArea } from "components/ui";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -35,6 +37,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { memberRole } = useProjectMyMembership();
+
+  const { setShowAlert } = useReloadConfirmations();
 
   const {
     handleSubmit,
@@ -146,13 +150,20 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
                   ? watch("description_html")
                   : value
               }
-              onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-              onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+              onJSONChange={(jsonValue) => {
+                setShowAlert(true);
+                setValue("description", jsonValue);
+              }}
+              onHTMLChange={(htmlValue) => {
+                setShowAlert(true);
+                setValue("description_html", htmlValue);
+              }}
               onBlur={() => {
                 setIsSubmitting(true);
                 handleSubmit(handleDescriptionFormSubmit)()
                   .then(() => {
                     setIsSubmitting(false);
+                    setShowAlert(false);
                   })
                   .catch(() => {
                     setIsSubmitting(false);
