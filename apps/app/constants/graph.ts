@@ -1,4 +1,6 @@
+// nivo
 import { Theme } from "@nivo/core";
+import { BarDatum } from "@nivo/bar";
 
 export const CHARTS_THEME: Theme = {
   background: "rgb(var(--color-bg-base))",
@@ -31,3 +33,35 @@ export const DEFAULT_MARGIN = {
   bottom: 50,
   left: 50,
 };
+
+export const convertPayloadToBarGraphData = (payload: any, segmented: boolean) => {
+  if (!payload || !(typeof payload === "object") || Object.keys(payload).length === 0) return [];
+
+  const data: BarDatum[] = [];
+
+  Object.keys(payload).forEach((key) => {
+    if (segmented) {
+      const segments: { [key: string]: number } = {};
+
+      payload[key].map((item: any) => {
+        segments[item.segment] = item.count;
+      });
+
+      data.push({
+        name: key,
+        ...segments,
+      });
+    } else {
+      const item = payload[key][0];
+
+      data.push({
+        name: item.date,
+        count: item.count,
+      });
+    }
+  });
+
+  return data;
+};
+
+export const convertPayloadToScatterGraphData = (payload: any) => {};
