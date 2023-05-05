@@ -1,3 +1,5 @@
+from itertools import groupby
+
 # Django imports
 from django.db.models import Count
 from django.db.models import CharField, Count, OuterRef, Func, F, Q, DateField
@@ -20,44 +22,36 @@ class PlaneAnalyticsEndpoint(BaseAPIView):
     ]
 
     def build_graph_plot(self, queryset, x_axis, y_axis, segment=None):
-        y_axis_choices = [
-            "issue_count",
-            "effort",
-            "triage_time",
-            "issue_age",
-            "lead_time",
-        ]
         if x_axis in ["created_at", "completed_at"]:
             queryset = queryset.annotate(date=Cast(x_axis, DateField()))
             x_axis = "date"
+
+        # Group queryset by x_axis field
+        queryset = queryset.values(x_axis).annotate()
 
         if segment:
             queryset = queryset.annotate(segment=F(segment))
 
         if y_axis == "issue_count":
-            queryset = queryset.annotate(y_axis=Count(x_axis)).order_by(x_axis)
+            queryset = queryset.annotate(count=Count(x_axis)).order_by(x_axis)
         if y_axis == "effort":
-            queryset = queryset.annotate(y_axis=Count("estimate_point")).order_by(
+            queryset = queryset.annotate(effort=Count("estimate_point")).order_by(
                 x_axis
             )
+        if y_axis == "lead_time":
+            queryset = queryset.filter(
+                completed_at__isnull=False,
+            )
 
-        result_dict = {}
-        for row in queryset:
-            x_value = row[x_axis]
-            y_value = row["y_axis"]
-            if x_value not in result_dict:
-                result_dict[x_value] = [y_value]
-            else:
-                result_dict[x_value].append(y_value)
+        result_values = list(queryset)
+        grouped_data = {}
+        for date, items in groupby(result_values, key=lambda x: x[str(x_axis)]):
+            grouped_data[str(date)] = list(items)
 
-        result_list = []
-        for x, y_values in result_dict.items():
-            result_list.append({x_axis: x, y_axis: sum(y_values) / len(y_values)})
-
-        return result_list
+        return grouped_data
 
     def get(self, request, slug):
-        # try:
+        try:
             x_axis = request.GET.get("x_axis", False)
             y_axis = request.GET.get("y_axis", False)
 
@@ -89,9 +83,10 @@ class PlaneAnalyticsEndpoint(BaseAPIView):
                 {"total": total_issues, "distribution": distribution},
                 status=status.HTTP_200_OK,
             )
-        # except Exception as e:
-        #     print(e)
-        #     return Response(
-        #         {"error": "Something went wrong please try again later"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
