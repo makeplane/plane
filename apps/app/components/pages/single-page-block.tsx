@@ -2,12 +2,11 @@ import { useEffect, useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 
 import { mutate } from "swr";
 
 // react-hook-form
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 // react-beautiful-dnd
 import { Draggable } from "react-beautiful-dnd";
 // services
@@ -21,7 +20,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
 // ui
-import { CustomMenu, Loader } from "components/ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 import { ArrowPathIcon, LinkIcon } from "@heroicons/react/20/solid";
@@ -45,15 +44,6 @@ type Props = {
   projectDetails: IProject | undefined;
   index: number;
 };
-
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="mx-4 mt-6">
-      <Loader.Item height="100px" width="100%" />
-    </Loader>
-  ),
-});
 
 export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index }) => {
   const [isSyncing, setIsSyncing] = useState(false);
@@ -291,7 +281,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
               {...provided.dragHandleProps}
             >
               <CreateUpdateBlockInline
-                setGptAssistantModal={() => setGptAssistantModal((prev) => !prev)}
+                handleAiAssistance={handleAiAssistance}
                 handleClose={() => setCreateBlockForm(false)}
                 data={block}
                 setIsSyncing={setIsSyncing}

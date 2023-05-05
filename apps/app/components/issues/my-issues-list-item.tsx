@@ -82,7 +82,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="border-b border-brand-base last:border-b-0 mx-6">
+    <div className="mx-6 border-b border-brand-base last:border-b-0">
       <div key={issue.id} className="flex items-center justify-between gap-2 py-3">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
@@ -91,13 +91,13 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
                 tooltipHeading="Issue ID"
                 tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
               >
-                <span className="flex-shrink-0 text-xs text-gray-400">
+                <span className="flex-shrink-0 text-xs text-brand-secondary">
                   {issue.project_detail?.identifier}-{issue.sequence_id}
                 </span>
               </Tooltip>
             )}
             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="break-all text-sm text-brand-base">
+              <span className="text-[0.825rem] text-brand-base">
                 {truncateText(issue.name, 50)}
               </span>
             </Tooltip>
@@ -127,7 +127,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             />
           )}
           {properties.sub_issue_count && (
-            <div className="flex items-center gap-1 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm">
+            <div className="flex items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
               {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}
@@ -136,10 +136,10 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               {issue.label_details.map((label) => (
                 <span
                   key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
+                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
                 >
                   <span
-                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    className="h-1.5 w-1.5 rounded-full"
                     style={{
                       backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
                     }}
@@ -171,20 +171,20 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </Tooltip>
           )}
           {properties.link && (
-            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
+                <div className="flex items-center gap-1 text-brand-secondary">
+                  <LinkIcon className="h-3.5 w-3.5 text-brand-secondary" />
                   {issue.link_count}
                 </div>
               </Tooltip>
             </div>
           )}
           {properties.attachment_count && (
-            <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                <div className="flex items-center gap-1 text-brand-secondary">
+                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-brand-secondary" />
                   {issue.attachment_count}
                 </div>
               </Tooltip>

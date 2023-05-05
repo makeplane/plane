@@ -121,7 +121,7 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-brand-base bg-brand-surface-2 p-4 shadow ${
+      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-brand-base bg-brand-base p-4 shadow ${
         isOpen ? "block" : "hidden"
       }`}
     >
@@ -138,7 +138,7 @@ export const GptAssistantModal: React.FC<Props> = ({
         </div>
       )}
       {response !== "" && (
-        <div className="text-sm page-block-section">
+        <div className="page-block-section text-sm">
           Response:
           <RemirrorRichTextEditor
             value={`<p>${response}</p>`}
