@@ -1,29 +1,25 @@
-import React from "react";
-
 // nivo
-import { ResponsiveBar, BarDatum } from "@nivo/bar";
-import { Theme, Margin } from "@nivo/core";
+import { BarDatum, ResponsiveBar } from "@nivo/bar";
+// types
+import { TGraph } from "./types";
 // constants
-import { CHARTS_THEME } from "constants/themes";
+import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
 
 type Props = {
   data: BarDatum[];
   indexBy: string;
   keys: string[];
-  height?: string;
-  width?: string;
-  margin?: Partial<Margin>;
+  padding?: number;
   colors?: { [key: string]: string };
-  tooltip?: (datum: { id: string | number; value: number; color: string }) => JSX.Element;
-  theme?: Theme;
   xTickValues?: number[];
   yTickValues?: number[];
-};
+} & TGraph;
 
 export const BarGraph: React.FC<Props> = ({
   data,
   indexBy,
   keys,
+  padding = 0.3,
   height = "400px",
   width = "100%",
   margin,
@@ -32,34 +28,25 @@ export const BarGraph: React.FC<Props> = ({
   xTickValues,
   yTickValues,
   theme,
-}) => {
-  const graphMargin = {
-    top: 50,
-    right: 50,
-    bottom: 50,
-    left: 50,
-  };
-
-  return (
-    <div style={{ height, width }}>
-      <ResponsiveBar
-        data={data}
-        keys={keys}
-        indexBy={indexBy}
-        margin={margin ?? graphMargin}
-        padding={0.3}
-        axisBottom={{
-          tickValues: xTickValues,
-        }}
-        axisLeft={{
-          tickValues: yTickValues,
-        }}
-        labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
-        theme={theme ?? CHARTS_THEME}
-        animate={true}
-        colors={colors ? (datum) => colors[datum.id] : undefined}
-        tooltip={tooltip ?? undefined}
-      />
-    </div>
-  );
-};
+}) => (
+  <div style={{ height, width }}>
+    <ResponsiveBar
+      data={data}
+      keys={keys}
+      indexBy={indexBy}
+      margin={margin ?? DEFAULT_MARGIN}
+      padding={padding}
+      axisBottom={{
+        tickValues: xTickValues,
+      }}
+      axisLeft={{
+        tickValues: yTickValues,
+      }}
+      labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
+      theme={theme ?? CHARTS_THEME}
+      animate={true}
+      colors={colors ? (datum) => colors[datum.id] : undefined}
+      tooltip={tooltip ?? undefined}
+    />
+  </div>
+);
