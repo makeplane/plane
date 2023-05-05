@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch
+from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch, Sum
 from django.core import serializers
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -119,15 +119,15 @@ class CycleViewSet(BaseViewSet):
                     filter=Q(issue_cycle__issue__state__group="backlog"),
                 )
             )
-            .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+            .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
             .annotate(
-                completed_estimates=Count(
+                completed_estimates=Sum(
                     "issue_cycle__issue__estimate_point",
                     filter=Q(issue_cycle__issue__state__group="completed"),
                 )
             )
             .annotate(
-                started_estimates=Count(
+                started_estimates=Sum(
                     "issue_cycle__issue__estimate_point",
                     filter=Q(issue_cycle__issue__state__group="started"),
                 )
@@ -521,15 +521,15 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
-                .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+                .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
                 .annotate(
-                    completed_estimates=Count(
+                    completed_estimates=Sum(
                         "issue_cycle__issue__estimate_point",
                         filter=Q(issue_cycle__issue__state__group="completed"),
                     )
                 )
                 .annotate(
-                    started_estimates=Count(
+                    started_estimates=Sum(
                         "issue_cycle__issue__estimate_point",
                         filter=Q(issue_cycle__issue__state__group="started"),
                     )
@@ -586,15 +586,15 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
-                .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+                .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
                 .annotate(
-                    completed_estimates=Count(
+                    completed_estimates=Sum(
                         "issue_cycle__issue__estimate_point",
                         filter=Q(issue_cycle__issue__state__group="completed"),
                     )
                 )
                 .annotate(
-                    started_estimates=Count(
+                    started_estimates=Sum(
                         "issue_cycle__issue__estimate_point",
                         filter=Q(issue_cycle__issue__state__group="started"),
                     )
@@ -680,15 +680,15 @@ class CompletedCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
-                .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+                .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
                 .annotate(
-                    completed_estimates=Count(
+                    completed_estimates=Sum(
                         "issue_cycle__issue__estimate_point",
                         filter=Q(issue_cycle__issue__state__group="completed"),
                     )
                 )
                 .annotate(
-                    started_estimates=Count(
+                    started_estimates=Sum(
                         "issue_cycle__issue__estimate_point",
                         filter=Q(issue_cycle__issue__state__group="started"),
                     )
@@ -776,15 +776,15 @@ class DraftCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
-                .annotate(total_estimates=Count("issue_cycle__issue__estimate_point"))
+                .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
                 .annotate(
-                    completed_estimates=Count(
+                    completed_estimates=Sum(
                         "issue_cycle__issue__estimate_point",
                         filter=Q(issue_cycle__issue__state__group="completed"),
                     )
                 )
                 .annotate(
-                    started_estimates=Count(
+                    started_estimates=Sum(
                         "issue_cycle__issue__estimate_point",
                         filter=Q(issue_cycle__issue__state__group="started"),
                     )
