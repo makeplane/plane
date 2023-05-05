@@ -1,5 +1,5 @@
 // nivo
-import { BarDatum, ResponsiveBar } from "@nivo/bar";
+import { BarDatum, ResponsiveBar, BarLegendProps } from "@nivo/bar";
 // types
 import { TGraph } from "./types";
 // constants
@@ -13,6 +13,9 @@ type Props = {
   colors?: { [key: string]: string };
   xTickValues?: number[];
   yTickValues?: number[];
+
+  // legends
+  legends?: BarLegendProps[];
 } & TGraph;
 
 export const BarGraph: React.FC<Props> = ({
@@ -28,6 +31,7 @@ export const BarGraph: React.FC<Props> = ({
   xTickValues,
   yTickValues,
   theme,
+  legends,
 }) => (
   <div style={{ height, width }}>
     <ResponsiveBar
@@ -47,6 +51,7 @@ export const BarGraph: React.FC<Props> = ({
       animate={true}
       colors={colors ? (datum) => colors[datum.id] : undefined}
       tooltip={tooltip ?? undefined}
+      legends={legends}
     />
   </div>
 );
