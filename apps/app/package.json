@@ -15,6 +15,7 @@
     "@heroicons/react": "^2.0.12",
     "@jitsu/nextjs": "^3.1.5",
     "@nivo/bar": "0.80.0",
+    "@nivo/calendar": "0.80.0",
     "@nivo/core": "0.80.0",
     "@nivo/legends": "0.80.0",
     "@nivo/line": "0.80.0",
