@@ -83,7 +83,7 @@ const ProjectsPage: NextPage = () => {
         data={projects?.find((item) => item.id === deleteProject) ?? null}
       />
       {projects ? (
-        <>
+        <div className="p-8">
           {projects.length === 0 ? (
             <EmptyState
               type="project"
@@ -103,7 +103,7 @@ const ProjectsPage: NextPage = () => {
               ))}
             </div>
           )}
-        </>
+        </div>
       ) : (
         <Loader className="grid grid-cols-3 gap-4">
           <Loader.Item height="100px" />

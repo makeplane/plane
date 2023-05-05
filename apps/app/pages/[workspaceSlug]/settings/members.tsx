@@ -11,6 +11,7 @@ import useToast from "hooks/use-toast";
 import workspaceService from "services/workspace.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { SettingsHeader } from "components/workspace";
 // components
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
@@ -137,117 +138,120 @@ const MembersSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <section className="space-y-8">
-          <div className="flex items-end justify-between gap-4">
-            <h3 className="text-2xl font-semibold">Members</h3>
-            <button
-              type="button"
-              className="flex items-center gap-2 text-brand-accent outline-none"
-              onClick={() => setInviteModal(true)}
-            >
-              <PlusIcon className="h-4 w-4" />
-              Add Member
-            </button>
-          </div>
-          {!workspaceMembers || !workspaceInvitations ? (
-            <Loader className="space-y-5">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
-          ) : (
-            <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base px-6">
-              {members.length > 0
-                ? members.map((member) => (
-                    <div key={member.id} className="flex items-center justify-between py-6">
-                      <div className="flex items-center gap-x-8 gap-y-2">
-                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-                          {member.avatar && member.avatar !== "" ? (
-                            <Image
-                              src={member.avatar}
-                              alt={member.first_name}
-                              layout="fill"
-                              objectFit="cover"
-                              className="rounded-lg"
-                            />
-                          ) : member.first_name !== "" ? (
-                            member.first_name.charAt(0)
-                          ) : (
-                            member.email.charAt(0)
-                          )}
-                        </div>
-                        <div>
-                          <h4 className="text-sm">
-                            {member.first_name} {member.last_name}
-                          </h4>
-                          <p className="text-xs text-brand-secondary">{member.email}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        {!member?.status && (
-                          <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
-                            <p>Pending</p>
-                          </div>
-                        )}
-                        <CustomSelect
-                          label={ROLE[member.role as keyof typeof ROLE]}
-                          value={member.role}
-                          onChange={(value: any) => {
-                            workspaceService
-                              .updateWorkspaceMember(activeWorkspace?.slug as string, member.id, {
-                                role: value,
-                              })
-                              .then(() => {
-                                mutateMembers(
-                                  (prevData) =>
-                                    prevData?.map((m) =>
-                                      m.id === member.id ? { ...m, role: value } : m
-                                    ),
-                                  false
-                                );
-                                setToastAlert({
-                                  title: "Success",
-                                  type: "success",
-                                  message: "Member role updated successfully.",
-                                });
-                              })
-                              .catch(() => {
-                                setToastAlert({
-                                  title: "Error",
-                                  type: "error",
-                                  message: "An error occurred while updating member role.",
-                                });
-                              });
-                          }}
-                          position="right"
-                        >
-                          {Object.keys(ROLE).map((key) => (
-                            <CustomSelect.Option key={key} value={key}>
-                              <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                            </CustomSelect.Option>
-                          ))}
-                        </CustomSelect>
-                        <CustomMenu ellipsis>
-                          <CustomMenu.MenuItem
-                            onClick={() => {
-                              if (member.member) {
-                                setSelectedRemoveMember(member.id);
-                              } else {
-                                setSelectedInviteRemoveMember(member.id);
-                              }
-                            }}
-                          >
-                            Remove member
-                          </CustomMenu.MenuItem>
-                        </CustomMenu>
-                      </div>
-                    </div>
-                  ))
-                : null}
+        <div className="px-24 py-8">
+          <SettingsHeader />
+          <section className="space-y-8">
+            <div className="flex items-end justify-between gap-4">
+              <h3 className="text-2xl font-semibold">Members</h3>
+              <button
+                type="button"
+                className="flex items-center gap-2 text-brand-accent outline-none"
+                onClick={() => setInviteModal(true)}
+              >
+                <PlusIcon className="h-4 w-4" />
+                Add Member
+              </button>
             </div>
-          )}
-        </section>
+            {!workspaceMembers || !workspaceInvitations ? (
+              <Loader className="space-y-5">
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+              </Loader>
+            ) : (
+              <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base px-6">
+                {members.length > 0
+                  ? members.map((member) => (
+                      <div key={member.id} className="flex items-center justify-between py-6">
+                        <div className="flex items-center gap-x-8 gap-y-2">
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                            {member.avatar && member.avatar !== "" ? (
+                              <Image
+                                src={member.avatar}
+                                alt={member.first_name}
+                                layout="fill"
+                                objectFit="cover"
+                                className="rounded-lg"
+                              />
+                            ) : member.first_name !== "" ? (
+                              member.first_name.charAt(0)
+                            ) : (
+                              member.email.charAt(0)
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="text-sm">
+                              {member.first_name} {member.last_name}
+                            </h4>
+                            <p className="text-xs text-brand-secondary">{member.email}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {!member?.status && (
+                            <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
+                              <p>Pending</p>
+                            </div>
+                          )}
+                          <CustomSelect
+                            label={ROLE[member.role as keyof typeof ROLE]}
+                            value={member.role}
+                            onChange={(value: any) => {
+                              workspaceService
+                                .updateWorkspaceMember(activeWorkspace?.slug as string, member.id, {
+                                  role: value,
+                                })
+                                .then(() => {
+                                  mutateMembers(
+                                    (prevData) =>
+                                      prevData?.map((m) =>
+                                        m.id === member.id ? { ...m, role: value } : m
+                                      ),
+                                    false
+                                  );
+                                  setToastAlert({
+                                    title: "Success",
+                                    type: "success",
+                                    message: "Member role updated successfully.",
+                                  });
+                                })
+                                .catch(() => {
+                                  setToastAlert({
+                                    title: "Error",
+                                    type: "error",
+                                    message: "An error occurred while updating member role.",
+                                  });
+                                });
+                            }}
+                            position="right"
+                          >
+                            {Object.keys(ROLE).map((key) => (
+                              <CustomSelect.Option key={key} value={key}>
+                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                              </CustomSelect.Option>
+                            ))}
+                          </CustomSelect>
+                          <CustomMenu ellipsis>
+                            <CustomMenu.MenuItem
+                              onClick={() => {
+                                if (member.member) {
+                                  setSelectedRemoveMember(member.id);
+                                } else {
+                                  setSelectedInviteRemoveMember(member.id);
+                                }
+                              }}
+                            >
+                              Remove member
+                            </CustomMenu.MenuItem>
+                          </CustomMenu>
+                        </div>
+                      </div>
+                    ))
+                  : null}
+              </div>
+            )}
+          </section>
+        </div>
       </WorkspaceAuthorizationLayout>
     </>
   );

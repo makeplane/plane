@@ -82,8 +82,8 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="mx-6 border-b border-brand-base last:border-b-0">
-      <div key={issue.id} className="flex items-center justify-between gap-2 py-3">
+    <div className="border-b border-brand-base bg-brand-base px-4 py-2.5 last:border-b-0">
+      <div key={issue.id} className="flex items-center justify-between gap-2">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties?.key && (
@@ -171,7 +171,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </Tooltip>
           )}
           {properties.link && (
-            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-brand-secondary">
                   <LinkIcon className="h-3.5 w-3.5 text-brand-secondary" />
@@ -181,7 +181,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </div>
           )}
           {properties.attachment_count && (
-            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-brand-secondary">
                   <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-brand-secondary" />
