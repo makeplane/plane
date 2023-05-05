@@ -57,7 +57,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             serializer = EstimateReadSerializer(estimates, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -211,7 +211,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
             try:
                 EstimatePoint.objects.bulk_update(
-                    updated_estimate_points, ["value"], batch_size=10
+                    updated_estimate_points, ["value"], batch_size=10,
                 )
             except IntegrityError as e:
                 return Response(
