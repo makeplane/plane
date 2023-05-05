@@ -7,6 +7,7 @@ const trackEvent =
 // types
 import type {
   ICycle,
+  IEstimate,
   IGptResponse,
   IIssue,
   IIssueComment,
@@ -45,7 +46,10 @@ type PagesEventType = "PAGE_CREATE" | "PAGE_UPDATE" | "PAGE_DELETE";
 
 type ViewEventType = "VIEW_CREATE" | "VIEW_UPDATE" | "VIEW_DELETE";
 
-type IssueCommentType = "ISSUE_COMMENT_CREATE" | "ISSUE_COMMENT_UPDATE" | "ISSUE_COMMENT_DELETE";
+type IssueCommentEventType =
+  | "ISSUE_COMMENT_CREATE"
+  | "ISSUE_COMMENT_UPDATE"
+  | "ISSUE_COMMENT_DELETE";
 
 export type MiscellaneousEventType =
   | "TOGGLE_CYCLE_ON"
@@ -73,6 +77,13 @@ type IssueLabelEventType = "ISSUE_LABEL_CREATE" | "ISSUE_LABEL_UPDATE" | "ISSUE_
 
 type GptEventType = "ASK_GPT" | "USE_GPT_RESPONSE_IN_ISSUE" | "USE_GPT_RESPONSE_IN_PAGE_BLOCK";
 
+type IssueEstimateEventType = "ESTIMATE_CREATE" | "ESTIMATE_UPDATE" | "ESTIMATE_DELETE";
+
+type ImporterEventType =
+  | "GITHUB_IMPORTER_CREATE"
+  | "GITHUB_IMPORTER_DELETE"
+  | "JIRA_IMPORTER_CREATE"
+  | "JIRA_IMPORTER_DELETE";
 class TrackEventServices extends APIService {
   constructor() {
     super("/");
@@ -209,7 +220,7 @@ class TrackEventServices extends APIService {
 
   async trackIssueCommentEvent(
     data: Partial<IIssueComment> | any,
-    eventName: IssueCommentType
+    eventName: IssueCommentEventType
   ): Promise<any> {
     let payload: any;
     if (eventName !== "ISSUE_COMMENT_DELETE")
@@ -545,6 +556,61 @@ class TrackEventServices extends APIService {
         eventName,
         extra: {
           ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssueEstimateEvent(
+    data: { estimate: IEstimate },
+    eventName: IssueEstimateEventType
+  ): Promise<any> {
+    let payload: any;
+    if (eventName === "ESTIMATE_DELETE") payload = data;
+    else
+      payload = {
+        workspaceId: data?.estimate?.workspace_detail?.id,
+        workspaceName: data?.estimate?.workspace_detail?.name,
+        workspaceSlug: data?.estimate?.workspace_detail?.slug,
+        projectId: data?.estimate?.project_detail?.id,
+        projectName: data?.estimate?.project_detail?.name,
+        projectIdentifier: data?.estimate?.project_detail?.identifier,
+        estimateId: data.estimate?.id,
+      };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...payload,
+        },
+      },
+    });
+  }
+
+  async trackImporterEvent(data: any, eventName: ImporterEventType): Promise<any> {
+    let payload: any;
+    if (eventName === "GITHUB_IMPORTER_DELETE" || eventName === "JIRA_IMPORTER_DELETE")
+      payload = data;
+    else
+      payload = {
+        workspaceId: data?.workspace_detail?.id,
+        workspaceName: data?.workspace_detail?.name,
+        workspaceSlug: data?.workspace_detail?.slug,
+        projectId: data?.project_detail?.id,
+        projectName: data?.project_detail?.name,
+        projectIdentifier: data?.project_detail?.identifier,
+      };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...payload,
         },
       },
     });

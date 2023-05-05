@@ -543,7 +543,6 @@ const SinglePage: NextPage = () => {
                     <CreateUpdateBlockInline
                       handleClose={() => setCreateBlockForm(false)}
                       focus="name"
-                      setGptAssistantModal={() => {}}
                     />
                   </div>
                 )}

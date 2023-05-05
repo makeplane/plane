@@ -51,7 +51,7 @@ const MyIssuesPage: NextPage = () => {
                 <>
                   <Popover.Button
                     className={`group flex items-center gap-2 rounded-md border border-brand-base bg-transparent px-3 py-1.5 text-xs hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none ${
-                      open ? "bg-brand-surface-1 text-brand-base" : "text-brand-muted-1"
+                      open ? "bg-brand-surface-1 text-brand-base" : "text-brand-secondary"
                     }`}
                   >
                     <span>View</span>
@@ -68,29 +68,27 @@ const MyIssuesPage: NextPage = () => {
                     leaveTo="opacity-0 translate-y-1"
                   >
                     <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-brand-base p-3 shadow-lg">
-                      <div className="relative flex flex-col gap-1 gap-y-4">
-                        <div className="relative flex flex-col gap-1">
-                          <h4 className="text-base text-gray-600">Properties</h4>
-                          <div className="flex flex-wrap items-center gap-2">
-                            {Object.keys(properties).map((key) => {
-                              if (key === "estimate") return null;
+                      <div className="space-y-2 py-3">
+                        <h4 className="text-sm text-brand-secondary">Properties</h4>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {Object.keys(properties).map((key) => {
+                            if (key === "estimate") return null;
 
-                              return (
-                                <button
-                                  key={key}
-                                  type="button"
-                                  className={`rounded border border-brand-base px-2 py-1 text-xs capitalize text-brand-secondary ${
-                                    properties[key as keyof Properties]
-                                      ? "border-brand-accent bg-theme text-brand-base"
-                                      : ""
-                                  }`}
-                                  onClick={() => setProperties(key as keyof Properties)}
-                                >
-                                  {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                                </button>
-                              );
-                            })}
-                          </div>
+                            return (
+                              <button
+                                key={key}
+                                type="button"
+                                className={`rounded border px-2 py-1 text-xs capitalize ${
+                                  properties[key as keyof Properties]
+                                    ? "border-brand-accent bg-brand-accent text-white"
+                                    : "border-brand-base"
+                                }`}
+                                onClick={() => setProperties(key as keyof Properties)}
+                              >
+                                {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     </Popover.Panel>

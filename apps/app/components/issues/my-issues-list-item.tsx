@@ -82,7 +82,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="px-4 py-2.5 border-b border-brand-base bg-brand-base last:border-b-0">
+    <div className="border-b border-brand-base bg-brand-base px-4 py-2.5 last:border-b-0">
       <div key={issue.id} className="flex items-center justify-between gap-2">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
@@ -91,13 +91,13 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
                 tooltipHeading="Issue ID"
                 tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
               >
-                <span className="flex-shrink-0 text-xs text-gray-400">
+                <span className="flex-shrink-0 text-xs text-brand-secondary">
                   {issue.project_detail?.identifier}-{issue.sequence_id}
                 </span>
               </Tooltip>
             )}
             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="break-all text-sm text-brand-base">
+              <span className="text-[0.825rem] text-brand-base">
                 {truncateText(issue.name, 50)}
               </span>
             </Tooltip>
@@ -136,10 +136,10 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               {issue.label_details.map((label) => (
                 <span
                   key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
+                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
                 >
                   <span
-                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    className="h-1.5 w-1.5 rounded-full"
                     style={{
                       backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
                     }}
