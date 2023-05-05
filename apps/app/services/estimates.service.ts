@@ -1,9 +1,13 @@
 // services
 import APIService from "services/api.service";
 // types
-import type { IEstimate, IEstimateFormData, IEstimatePoint } from "types";
+import type { IEstimate, IEstimateFormData } from "types";
+import trackEventServices from "services/track-event.service";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class ProjectEstimateServices extends APIService {
   constructor() {
@@ -16,7 +20,11 @@ class ProjectEstimateServices extends APIService {
     data: IEstimateFormData
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_CREATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response;
       });
@@ -32,7 +40,11 @@ class ProjectEstimateServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -64,7 +76,11 @@ class ProjectEstimateServices extends APIService {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_DELETE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
