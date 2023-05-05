@@ -32,6 +32,7 @@ export interface ICustomTheme {
   accent: string;
   bgBase: string;
   bgSurface1: string;
+  bgSurface2: string;
   border: string;
   darkPalette: boolean;
   palette: string;

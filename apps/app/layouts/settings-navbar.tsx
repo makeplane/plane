@@ -85,6 +85,10 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
       label: "Activity",
       href: `/${workspaceSlug}/me/profile/activity`,
     },
+    {
+      label: "Preferences",
+      href: `/${workspaceSlug}/me/profile/preferences`,
+    },
   ];
 
   return (
