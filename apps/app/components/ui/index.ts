@@ -1,4 +1,5 @@
 export * from "./buttons";
+export * from "./graphs";
 export * from "./input";
 export * from "./text-area";
 export * from "./avatar";
