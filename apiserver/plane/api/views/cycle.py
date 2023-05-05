@@ -30,6 +30,7 @@ from plane.db.models import (
     CycleFavorite,
     IssueLink,
     IssueAttachment,
+    User,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -501,6 +502,12 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_cycle__issue__assignees",
+                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                    )
+                )
                 .order_by("name", "-is_favorite")
             )
 
@@ -545,6 +552,12 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_cycle__issue__assignees",
+                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                    )
+                )
                 .order_by("name", "-is_favorite")
             )
 
@@ -557,7 +570,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
             )
 
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -616,6 +629,12 @@ class CompletedCyclesEndpoint(BaseAPIView):
                     backlog_issues=Count(
                         "issue_cycle__issue__state__group",
                         filter=Q(issue_cycle__issue__state__group="backlog"),
+                    )
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_cycle__issue__assignees",
+                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
                     )
                 )
                 .order_by("name", "-is_favorite")
@@ -691,6 +710,12 @@ class DraftCyclesEndpoint(BaseAPIView):
                     backlog_issues=Count(
                         "issue_cycle__issue__state__group",
                         filter=Q(issue_cycle__issue__state__group="backlog"),
+                    )
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_cycle__issue__assignees",
+                        queryset=User.objects.only("avatar", "first_name", "id").distinct(),
                     )
                 )
                 .order_by("name", "-is_favorite")
