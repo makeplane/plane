@@ -30,7 +30,7 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
-      label: "Import/Export",
+      label: "Import/ Export",
       href: `/${workspaceSlug}/settings/import-export`,
     },
   ];

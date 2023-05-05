@@ -39,7 +39,6 @@ class EstimatePoint(ProjectBaseModel):
         return f"{self.estimate.name} <{self.key}> <{self.value}>"
 
     class Meta:
-        unique_together = ["value", "estimate"]
         verbose_name = "Estimate Point"
         verbose_name_plural = "Estimate Points"
         db_table = "estimate_points"

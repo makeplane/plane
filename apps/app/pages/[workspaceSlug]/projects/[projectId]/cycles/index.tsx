@@ -124,7 +124,7 @@ const ProjectCycles: NextPage = () => {
         handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycle}
       />
-      <div className="space-y-8">
+      <div className="space-y-8 p-8">
         <div className="flex flex-col gap-5">
           {currentAndUpcomingCycles && currentAndUpcomingCycles.current_cycle.length > 0 && (
             <h3 className="text-3xl font-semibold text-brand-base">Current Cycle</h3>
