@@ -290,7 +290,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
               return (
                 <RemirrorRichTextEditor
                   value={
-                    value && value !== ""
+                    value && value !== "" && Object.keys(value).length > 0
                       ? value
                       : watch("description_html") && watch("description_html") !== ""
                       ? watch("description_html")

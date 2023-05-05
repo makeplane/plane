@@ -46,15 +46,6 @@ type Props = {
   index: number;
 };
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="mx-4 mt-6">
-      <Loader.Item height="100px" width="100%" />
-    </Loader>
-  ),
-});
-
 export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
