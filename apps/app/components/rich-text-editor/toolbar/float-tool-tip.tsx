@@ -120,12 +120,23 @@ const useFloatingLinkState = () => {
       linkShortcut,
       linkPositioner,
       isEditing,
+      setIsEditing,
       clickEdit,
       onRemove,
       submitHref,
       cancelHref,
     }),
-    [href, linkShortcut, linkPositioner, isEditing, clickEdit, onRemove, submitHref, cancelHref]
+    [
+      href,
+      linkShortcut,
+      linkPositioner,
+      isEditing,
+      clickEdit,
+      onRemove,
+      submitHref,
+      cancelHref,
+      setIsEditing,
+    ]
   );
 };
 
@@ -159,20 +170,26 @@ const DelayAutoFocusInput = ({
   }, [setDisableToolbar]);
 
   return (
-    <input
-      ref={inputRef}
-      {...rest}
-      onKeyDown={(e) => {
-        if (rest.onKeyDown) rest.onKeyDown(e);
-        setDisableToolbar(false);
-      }}
-      onFocus={() => {
-        setDisableToolbar(false);
-      }}
-      onBlur={() => {
-        setDisableToolbar(true);
-      }}
-    />
+    <>
+      <label htmlFor="link-input" className="text-sm">
+        Add Link
+      </label>
+      <input
+        ref={inputRef}
+        {...rest}
+        onKeyDown={(e) => {
+          if (rest.onKeyDown) rest.onKeyDown(e);
+          setDisableToolbar(false);
+        }}
+        className={`${rest.className} mt-1`}
+        onFocus={() => {
+          setDisableToolbar(false);
+        }}
+        onBlur={() => {
+          setDisableToolbar(true);
+        }}
+      />
+    </>
   );
 };
 
@@ -181,7 +198,7 @@ export const CustomFloatingToolbar: React.FC<Props> = ({
   editorState,
   setDisableToolbar,
 }) => {
-  const { isEditing, clickEdit, onRemove, submitHref, href, setHref, cancelHref } =
+  const { isEditing, setIsEditing, clickEdit, onRemove, submitHref, href, setHref, cancelHref } =
     useFloatingLinkState();
 
   const active = useActive();
@@ -192,80 +209,92 @@ export const CustomFloatingToolbar: React.FC<Props> = ({
   }, [clickEdit]);
 
   return (
-    <div className="z-[99999] flex items-center gap-y-2 divide-x divide-brand-base rounded border border-brand-base bg-brand-surface-2 p-1 px-0.5 shadow-md">
-      <div
-        onBlur={() => console.log("blurred")}
-        onFocus={() => console.log("focused")}
-        className="flex items-center gap-x-1 px-2"
-      >
-        <ToggleHeadingButton
-          attrs={{
-            level: 1,
-          }}
-        />
-        <ToggleHeadingButton
-          attrs={{
-            level: 2,
-          }}
-        />
-        <ToggleHeadingButton
-          attrs={{
-            level: 3,
-          }}
-        />
-      </div>
-      <div className="flex items-center gap-x-1 px-2">
-        <ToggleBoldButton />
-        <ToggleItalicButton />
-        <ToggleUnderlineButton />
-        <ToggleStrikeButton />
-      </div>
-      <div className="flex items-center gap-x-1 px-2">
-        <ToggleOrderedListButton />
-        <ToggleBulletListButton />
-      </div>
-      {gptOption && (
+    <div className="z-[99999] flex flex-col items-center gap-y-2 divide-x divide-y divide-brand-base rounded border border-brand-base bg-brand-surface-2 p-1 px-0.5 shadow-md">
+      <div className="flex items-center gap-y-2 divide-x divide-brand-base">
         <div className="flex items-center gap-x-1 px-2">
-          <button
-            type="button"
-            className="rounded py-1 px-1.5 text-xs hover:bg-brand-surface-1"
-            onClick={() => console.log(editorState.selection.$anchor.nodeBefore)}
-          >
-            AI
-          </button>
-        </div>
-      )}
-      <div className="flex items-center gap-x-1 px-2">
-        <ToggleCodeButton />
-      </div>
-      {activeLink ? (
-        <div className="flex items-center gap-x-1 px-2">
-          <CommandButton
-            commandName="openLink"
-            onSelect={() => {
-              window.open(href, "_blank");
+          <ToggleHeadingButton
+            attrs={{
+              level: 1,
             }}
-            icon="externalLinkFill"
-            enabled
           />
+          <ToggleHeadingButton
+            attrs={{
+              level: 2,
+            }}
+          />
+          <ToggleHeadingButton
+            attrs={{
+              level: 3,
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-x-1 px-2">
+          <ToggleBoldButton />
+          <ToggleItalicButton />
+          <ToggleUnderlineButton />
+          <ToggleStrikeButton />
+        </div>
+        <div className="flex items-center gap-x-1 px-2">
+          <ToggleOrderedListButton />
+          <ToggleBulletListButton />
+        </div>
+        {gptOption && (
+          <div className="flex items-center gap-x-1 px-2">
+            <button
+              type="button"
+              className="rounded py-1 px-1.5 text-xs hover:bg-brand-surface-1"
+              onClick={() => console.log(editorState.selection.$anchor.nodeBefore)}
+            >
+              AI
+            </button>
+          </div>
+        )}
+        <div className="flex items-center gap-x-1 px-2">
+          <ToggleCodeButton />
+        </div>
+        {activeLink ? (
+          <div className="flex items-center gap-x-1 px-2">
+            <CommandButton
+              commandName="openLink"
+              onSelect={() => {
+                window.open(href, "_blank");
+              }}
+              icon="externalLinkFill"
+              enabled
+            />
+            <CommandButton
+              commandName="updateLink"
+              onSelect={handleClickEdit}
+              icon="pencilLine"
+              enabled
+            />
+            <CommandButton commandName="removeLink" onSelect={onRemove} icon="linkUnlink" enabled />
+          </div>
+        ) : (
           <CommandButton
             commandName="updateLink"
-            onSelect={handleClickEdit}
-            icon="pencilLine"
+            onSelect={() => {
+              if (isEditing) {
+                setIsEditing(false);
+              } else {
+                handleClickEdit();
+              }
+            }}
+            icon="link"
             enabled
+            active={isEditing}
           />
-          <CommandButton commandName="removeLink" onSelect={onRemove} icon="linkUnlink" enabled />
-        </div>
-      ) : (
-        <CommandButton commandName="updateLink" onSelect={handleClickEdit} icon="link" enabled />
-      )}
+        )}
+      </div>
 
       {isEditing && (
-        <div className="px-2">
+        <div className="p-2 w-full">
           <DelayAutoFocusInput
             autoFocus
-            placeholder="Enter link..."
+            placeholder="Paste your link here..."
+            id="link-input"
             setDisableToolbar={setDisableToolbar}
+            className="w-full px-2 py-0.5"
             onChange={(e: ChangeEvent<HTMLInputElement>) => setHref(e.target.value)}
             value={href}
             onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
