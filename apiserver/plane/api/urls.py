@@ -149,7 +149,8 @@ from plane.api.views import (
     ReleaseNotesEndpoint,
     ## End Release Notes
     # Analytics
-    PlaneAnalyticsEndpoint,
+    AnalyticsEndpoint,
+    AnalyticViewViewset,
     ## End Analytics
 )
 
@@ -1291,8 +1292,18 @@ urlpatterns = [
     # Analytics
     path(
         "workspaces/<str:slug>/analytics/",
-        PlaneAnalyticsEndpoint.as_view(),
+        AnalyticsEndpoint.as_view(),
         name="plane-analytics",
     ),
+    path(
+        "workspaces/<str:slug>/analytic-view/",
+        AnalyticViewViewset.as_view({"get": "list", "post": "create"}),
+    ),
+    path(
+        "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
+        AnalyticViewViewset.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+    )
     ## End Analytics
 ]

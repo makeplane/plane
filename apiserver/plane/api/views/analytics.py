@@ -2,8 +2,8 @@ from itertools import groupby
 
 # Django imports
 from django.db.models import Count
-from django.db.models import CharField, Count, OuterRef, Func, F, Q, DateField
-from django.db.models.functions import Cast, Trunc
+from django.db.models import Count, F, DateField, Sum
+from django.db.models.functions import Cast
 
 # Third party imports
 from rest_framework import status
@@ -11,12 +11,13 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.api.views import BaseAPIView
+from plane.api.views import BaseAPIView, BaseViewSet
 from plane.api.permissions import WorkSpaceAdminPermission, ProjectBasePermission
-from plane.db.models import Issue
+from plane.db.models import Issue, AnalyticView, Workspace
+from plane.api.serializers import AnalyticViewSerializer
 
 
-class PlaneAnalyticsEndpoint(BaseAPIView):
+class AnalyticsEndpoint(BaseAPIView):
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
@@ -35,9 +36,7 @@ class PlaneAnalyticsEndpoint(BaseAPIView):
         if y_axis == "issue_count":
             queryset = queryset.annotate(count=Count(x_axis)).order_by(x_axis)
         if y_axis == "effort":
-            queryset = queryset.annotate(effort=Count("estimate_point")).order_by(
-                x_axis
-            )
+            queryset = queryset.annotate(effort=Sum("estimate_point")).order_by(x_axis)
         if y_axis == "lead_time":
             queryset = queryset.filter(
                 completed_at__isnull=False,
@@ -61,18 +60,19 @@ class PlaneAnalyticsEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            project_id = request.GET.get("project_id", False)
-            cycle_id = request.GET.get("cycle_id", False)
-            module_id = request.GET.get("module_id", False)
+            project_ids = request.GET.getlist("project_id")
+            cycle_ids = request.GET.getlist("cycle_id")
+            module_ids = request.GET.getlist("module_id")
+
             segment = request.GET.get("segment", False)
 
             queryset = Issue.objects.filter(workspace__slug=slug)
-            if project_id:
-                queryset = queryset.filter(project_id=project_id)
-            if cycle_id:
-                queryset = queryset.filter(issue_cycle__cycle_id=cycle_id)
-            if module_id:
-                queryset = queryset.filter(issue_module__module_id=module_id)
+            if project_ids:
+                queryset = queryset.filter(project_id__in=project_ids)
+            if cycle_ids:
+                queryset = queryset.filter(issue_cycle__cycle_id__in=cycle_ids)
+            if module_ids:
+                queryset = queryset.filter(issue_module__module_id__in=module_ids)
 
             total_issues = queryset.count()
             distribution = self.build_graph_plot(
@@ -90,3 +90,14 @@ class PlaneAnalyticsEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class AnalyticViewViewset(BaseViewSet):
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
+    model = AnalyticView
+    serializer_class = AnalyticViewSerializer
+
+    def get_queryset(self):
+        return self.filter_queryset(workspace__slug=self.kwargs.get("slug"))
