@@ -47,8 +47,8 @@ export const WorkspaceSidebarMenu: React.FC = () => {
                   ? router.asPath === link.href
                   : router.asPath.includes(link.href)
               )
-                ? "bg-brand-base text-brand-base"
-                : "text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-secondary focus:bg-brand-base focus:text-brand-secondary"
+                ? "bg-brand-surface-2 text-brand-base"
+                : "text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-secondary focus:bg-brand-surface-2 focus:text-brand-secondary"
             } group flex w-full items-center gap-3 rounded-md p-2 text-sm font-medium outline-none ${
               sidebarCollapse ? "justify-center" : ""
             }`}

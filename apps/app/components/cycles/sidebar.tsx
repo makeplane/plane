@@ -370,7 +370,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} />
+                          <ExclamationIcon
+                            height={14}
+                            width={14}
+                            className="fill-current text-brand-secondary"
+                          />
                           <span className="text-xs italic text-brand-secondary">
                             {cycleStatus === "upcoming"
                               ? "Cycle is yet to start."
@@ -444,7 +448,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} />
+                          <ExclamationIcon
+                            height={14}
+                            width={14}
+                            className="fill-current text-brand-secondary"
+                          />
                           <span className="text-xs italic text-brand-secondary">
                             No issues found. Please add issue.
                           </span>
