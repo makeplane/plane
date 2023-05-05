@@ -81,7 +81,7 @@ export const SelectRepository: React.FC<Props> = ({
           {userRepositories && options.length < totalCount && (
             <button
               type="button"
-              className="w-full p-1 text-center text-[0.6rem] text-gray-500 hover:bg-hover-gray"
+              className="w-full p-1 text-center text-[0.6rem] text-brand-secondary hover:bg-brand-surface-2"
               onClick={() => setSize(size + 1)}
               disabled={isValidating}
             >

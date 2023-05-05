@@ -65,7 +65,11 @@ export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
         completedCycles.completed_cycles.length > 0 ? (
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2 text-sm text-brand-secondary">
-              <ExclamationIcon height={14} width={14} />
+              <ExclamationIcon
+                height={14}
+                width={14}
+                className="fill-current text-brand-secondary"
+              />
               <span>Completed cycles are not editable.</span>
             </div>
             <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">

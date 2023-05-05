@@ -25,7 +25,7 @@ import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "compone
 import { Input, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import {ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 // types
 import { IPage, TPageViewProps } from "types";
 import type { NextPage } from "next";
@@ -195,7 +195,7 @@ const ProjectPages: NextPage = () => {
           </PrimaryButton>
         }
       >
-        <div className="space-y-4">
+        <div className="space-y-4 p-8">
           <form
             onSubmit={handleSubmit(createPage)}
             className="relative mb-12 flex items-center justify-between gap-2 rounded-[6px] border border-brand-base p-2 shadow"
