@@ -63,7 +63,11 @@ const IntegrationGuide = () => {
                   services. This tool will guide you to relocate the issue to Plane.
                 </div>
               </div>
-              <a href="https://docs.plane.so" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://docs.plane.so/importers/github"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <div className="flex flex-shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap text-sm font-medium text-[#3F76FF] hover:text-opacity-80">
                   Read More
                   <ArrowRightIcon width={"18px"} color={"#3F76FF"} />
@@ -124,7 +128,7 @@ const IntegrationGuide = () => {
               {importerServices ? (
                 importerServices.length > 0 ? (
                   <div className="space-y-2">
-                    <div className="divide-y">
+                    <div className="divide-y divide-brand-base">
                       {importerServices.map((service) => (
                         <SingleImport
                           key={service.id}

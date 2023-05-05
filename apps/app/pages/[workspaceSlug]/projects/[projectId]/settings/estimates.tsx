@@ -27,6 +27,7 @@ import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { SettingsHeader } from "components/project";
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -98,6 +99,14 @@ const EstimatesSettings: NextPage = () => {
 
   return (
     <>
+      <CreateUpdateEstimateModal
+        isOpen={estimateFormOpen}
+        data={estimateToUpdate}
+        handleClose={() => {
+          setEstimateFormOpen(false);
+          setEstimateToUpdate(undefined);
+        }}
+      />
       <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
@@ -109,68 +118,63 @@ const EstimatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <CreateUpdateEstimateModal
-          isOpen={estimateFormOpen}
-          data={estimateToUpdate}
-          handleClose={() => {
-            setEstimateFormOpen(false);
-            setEstimateToUpdate(undefined);
-          }}
-        />
-        <section className="flex items-center justify-between">
-          <h3 className="text-2xl font-semibold">Estimates</h3>
-          <div className="col-span-12 space-y-5 sm:col-span-7">
-            <div className="flex items-center gap-2">
-              <span
-                className="flex cursor-pointer items-center gap-2 text-theme"
-                onClick={() => {
-                  setEstimateToUpdate(undefined);
-                  setEstimateFormOpen(true);
-                }}
-              >
-                <PlusIcon className="h-4 w-4" />
-                Create New Estimate
-              </span>
-              {projectDetails?.estimate && (
-                <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
-              )}
+        <div className="px-24 py-8">
+          <SettingsHeader />
+          <section className="flex items-center justify-between">
+            <h3 className="text-2xl font-semibold">Estimates</h3>
+            <div className="col-span-12 space-y-5 sm:col-span-7">
+              <div className="flex items-center gap-2">
+                <span
+                  className="flex cursor-pointer items-center gap-2 text-theme"
+                  onClick={() => {
+                    setEstimateToUpdate(undefined);
+                    setEstimateFormOpen(true);
+                  }}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  Create New Estimate
+                </span>
+                {projectDetails?.estimate && (
+                  <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
+                )}
+              </div>
             </div>
-          </div>
-        </section>
-        {estimatesList ? (
-          estimatesList.length > 0 ? (
-            <section className="mt-4 mb-8 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
-              {estimatesList.map((estimate) => (
-                <SingleEstimate
-                  key={estimate.id}
-                  estimate={estimate}
-                  editEstimate={(estimate) => editEstimate(estimate)}
-                  handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
+          </section>
+          {estimatesList ? (
+            estimatesList.length > 0 ? (
+              <section className="mt-4 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
+                {estimatesList.map((estimate) => (
+                  <SingleEstimate
+                    key={estimate.id}
+                    estimate={estimate}
+                    editEstimate={(estimate) => editEstimate(estimate)}
+                    handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
+                  />
+                ))}
+              </section>
+            ) : (
+              <div className="mt-5">
+                <EmptyState
+                  type="estimate"
+                  title="Create New Estimate"
+                  description="Estimates help you communicate the complexity of an issue. You can create your own estimate and communicate with your team."
+                  imgURL={emptyEstimate}
+                  action={() => {
+                    setEstimateToUpdate(undefined);
+                    setEstimateFormOpen(true);
+                  }}
                 />
-              ))}
-            </section>
+              </div>
+            )
           ) : (
-            <div className="mt-5">
-              <EmptyState
-                type="estimate"
-                title="Create New Estimate"
-                description="Estimates help you communicate the complexity of an issue. You can create your own estimate and communicate with your team."
-                imgURL={emptyEstimate}
-                action={() => {
-                  setEstimateToUpdate(undefined);
-                  setEstimateFormOpen(true);
-                }}
-              />
-            </div>
-          )
-        ) : (
-          <Loader className="mt-5 space-y-5">
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-          </Loader>
-        )}
+            <Loader className="mt-5 space-y-5">
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+            </Loader>
+          )}
+        </div>
       </ProjectAuthorizationWrapper>
     </>
   );
