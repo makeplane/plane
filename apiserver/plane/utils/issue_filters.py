@@ -256,7 +256,6 @@ def issue_filters(query_params, method):
 
     for key, value in ISSUE_FILTER.items():
         if key in query_params:
-            print(key)
             func = value
             func(query_params, filter, method)
 
