@@ -18,22 +18,20 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
   const { collapsed: sidebarCollapse } = useTheme();
 
   return (
-    <nav className="relative z-20 h-screen">
-      <div
-        className={`${sidebarCollapse ? "" : "w-auto md:w-[17rem]"} fixed inset-y-0 top-0 ${
-          toggleSidebar ? "left-0" : "-left-full md:left-0"
-        } flex h-full flex-col bg-brand-sidebar duration-300 md:relative`}
-      >
-        <div className="flex h-full flex-1 flex-col border-r border-brand-base">
-          <div className="flex h-full flex-1 flex-col">
-            <WorkspaceSidebarDropdown />
-            <WorkspaceSidebarMenu />
-            <ProjectSidebarList />
-            <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />
-          </div>
-        </div>
+    <div
+      className={`z-20 h-full flex-shrink-0 border-r border-brand-base ${
+        sidebarCollapse ? "" : "w-auto md:w-[17rem]"
+      } fixed inset-y-0 top-0 ${
+        toggleSidebar ? "left-0" : "-left-full md:left-0"
+      } flex h-full flex-col bg-brand-sidebar duration-300 md:relative`}
+    >
+      <div className="flex h-full flex-1 flex-col">
+        <WorkspaceSidebarDropdown />
+        <WorkspaceSidebarMenu />
+        <ProjectSidebarList />
+        <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />
       </div>
-    </nav>
+    </div>
   );
 };
 

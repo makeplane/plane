@@ -22,6 +22,7 @@ import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { SettingsHeader } from "components/project";
 
 const featuresList = [
   {
@@ -134,54 +135,57 @@ const FeaturesSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <section className="space-y-8">
-        <h3 className="text-2xl font-semibold">Features</h3>
-        <div className="space-y-5">
-          {featuresList.map((feature) => (
-            <div
-              key={feature.property}
-              className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-brand-base bg-brand-base p-5"
-            >
-              <div className="flex items-start gap-3">
-                {feature.icon}
-                <div>
-                  <h4 className="text-lg font-semibold">{feature.title}</h4>
-                  <p className="text-sm text-brand-secondary">{feature.description}</p>
+      <div className="px-24 py-8">
+        <SettingsHeader />
+        <section className="space-y-8">
+          <h3 className="text-2xl font-semibold">Features</h3>
+          <div className="space-y-5">
+            {featuresList.map((feature) => (
+              <div
+                key={feature.property}
+                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-brand-base bg-brand-base p-5"
+              >
+                <div className="flex items-start gap-3">
+                  {feature.icon}
+                  <div>
+                    <h4 className="text-lg font-semibold">{feature.title}</h4>
+                    <p className="text-sm text-brand-secondary">{feature.description}</p>
+                  </div>
                 </div>
+                <ToggleSwitch
+                  value={projectDetails?.[feature.property as keyof IProject]}
+                  onChange={() => {
+                    trackEventServices.trackMiscellaneousEvent(
+                      {
+                        workspaceId: (projectDetails?.workspace as any)?.id,
+                        workspaceSlug,
+                        projectId,
+                        projectIdentifier: projectDetails?.identifier,
+                        projectName: projectDetails?.name,
+                      },
+                      !projectDetails?.[feature.property as keyof IProject]
+                        ? getEventType(feature.title, true)
+                        : getEventType(feature.title, false)
+                    );
+                    handleSubmit({
+                      [feature.property]: !projectDetails?.[feature.property as keyof IProject],
+                    });
+                  }}
+                  size="lg"
+                />
               </div>
-              <ToggleSwitch
-                value={projectDetails?.[feature.property as keyof IProject]}
-                onChange={() => {
-                  trackEventServices.trackMiscellaneousEvent(
-                    {
-                      workspaceId: (projectDetails?.workspace as any)?.id,
-                      workspaceSlug,
-                      projectId,
-                      projectIdentifier: projectDetails?.identifier,
-                      projectName: projectDetails?.name,
-                    },
-                    !projectDetails?.[feature.property as keyof IProject]
-                      ? getEventType(feature.title, true)
-                      : getEventType(feature.title, false)
-                  );
-                  handleSubmit({
-                    [feature.property]: !projectDetails?.[feature.property as keyof IProject],
-                  });
-                }}
-                size="lg"
-              />
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <a href="https://plane.so/" target="_blank" rel="noreferrer">
-            <SecondaryButton outline>Plane is open-source, view Roadmap</SecondaryButton>
-          </a>
-          <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
-            <SecondaryButton outline>Star us on GitHub</SecondaryButton>
-          </a>
-        </div>
-      </section>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <a href="https://plane.so/" target="_blank" rel="noreferrer">
+              <SecondaryButton outline>Plane is open-source, view Roadmap</SecondaryButton>
+            </a>
+            <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
+              <SecondaryButton outline>Star us on GitHub</SecondaryButton>
+            </a>
+          </div>
+        </section>
+      </div>
     </ProjectAuthorizationWrapper>
   );
 };

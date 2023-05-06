@@ -112,6 +112,7 @@ body {
 .horizontal-scroll-enable::-webkit-scrollbar {
   display: block;
   height: 7px;
+  width: 0;
 }
 
 .horizontal-scroll-enable::-webkit-scrollbar-track {

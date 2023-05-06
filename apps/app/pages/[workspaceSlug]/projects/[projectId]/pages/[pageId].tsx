@@ -312,7 +312,7 @@ const SinglePage: NextPage = () => {
       }
     >
       {pageDetails ? (
-        <div className="h-full w-full space-y-4 rounded-md border border-brand-base bg-brand-base p-4">
+        <div className="space-y-4 p-4">
           <div className="flex items-center justify-between gap-2 px-3">
             <button
               type="button"
@@ -543,7 +543,6 @@ const SinglePage: NextPage = () => {
                     <CreateUpdateBlockInline
                       handleClose={() => setCreateBlockForm(false)}
                       focus="name"
-                      setGptAssistantModal={() => {}}
                     />
                   </div>
                 )}
