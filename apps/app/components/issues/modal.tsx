@@ -31,6 +31,9 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   CYCLE_DETAILS,
   MODULE_DETAILS,
+  PROJECT_CALENDAR_ISSUES,
+  CYCLE_CALENDAR_ISSUES,
+  MODULE_CALENDAR_ISSUES,
 } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
@@ -133,6 +136,14 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
+
+        const calendarFetchKey = cycleId
+          ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+          : moduleId
+          ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
+          : PROJECT_CALENDAR_ISSUES(projectId as string);
+
+        mutate<IIssue[]>(calendarFetchKey);
 
         if (!createMore) handleClose();
 
