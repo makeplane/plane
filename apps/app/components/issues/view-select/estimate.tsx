@@ -15,7 +15,7 @@ import { IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
   isNotAllowed: boolean;
@@ -41,7 +41,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
     <CustomSelect
       value={issue.estimate_point}
       onChange={(val: number) => {
-        partialUpdateIssue({ estimate_point: val });
+        partialUpdateIssue({ estimate_point: val }, issue.id);
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,
