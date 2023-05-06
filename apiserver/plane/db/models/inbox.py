@@ -1,0 +1,32 @@
+# Django imports
+from django.db import models
+
+# Module imports
+from plane.db.models import ProjectBaseModel
+
+
+class Inbox(ProjectBaseModel):
+    name = models.CharField(max_length=255)
+    description = models.TextField(verbose_name="Inbox Description", blank=True)
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        """Return name of the Inbox"""
+        return f"{self.name} <{self.project.name}>"
+
+    class Meta:
+        unique_together = ["name", "project"]
+        verbose_name = "Inbox"
+        verbose_name_plural = "Inboxes"
+        db_table = "inboxes"
+        ordering = ("name",)
+
+
+class InboxIssue(ProjectBaseModel):
+    inbox = models.ForeignKey(
+        "db.Inbox", related_name="issue_inbox", on_delete=models.CASCADE
+    )
+    issue = models.ForeignKey(
+        "db.Issue", related_name="issue_inbox", on_delete=models.CASCADE
+    )
+    status = models.IntegerField()
