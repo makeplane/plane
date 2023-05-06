@@ -1,6 +1,8 @@
 // nivo
 import { Theme } from "@nivo/core";
 import { BarDatum } from "@nivo/bar";
+// types
+import { IAnalyticsData, TYAxisValues } from "types";
 
 export const CHARTS_THEME: Theme = {
   background: "rgb(var(--color-bg-base))",
@@ -34,17 +36,28 @@ export const DEFAULT_MARGIN = {
   left: 50,
 };
 
-export const convertPayloadToBarGraphData = (payload: any, segmented: boolean) => {
-  if (!payload || !(typeof payload === "object") || Object.keys(payload).length === 0) return [];
+export const convertResponseToBarGraphData = (
+  response: IAnalyticsData | undefined,
+  segmented: boolean,
+  yAxis: TYAxisValues
+): { data: BarDatum[]; xAxisKeys: string[] } => {
+  if (!response || !(typeof response === "object") || Object.keys(response).length === 0)
+    return { data: [], xAxisKeys: [] };
 
   const data: BarDatum[] = [];
 
-  Object.keys(payload).forEach((key) => {
-    if (segmented) {
-      const segments: { [key: string]: number } = {};
+  let xAxisKeys: string[] = [];
+  const yAxisKey = yAxis === "issue_count" ? "count" : "effort";
 
-      payload[key].map((item: any) => {
-        segments[item.segment] = item.count;
+  Object.keys(response).forEach((key) => {
+    const segments: { [key: string]: number } = {};
+
+    if (segmented) {
+      response[key].map((item: any) => {
+        segments[item.segment ?? "None"] = item[yAxisKey] ?? 0;
+
+        // store the segment in the xAxisKeys array
+        if (!xAxisKeys.includes(item.segment ?? "None")) xAxisKeys.push(item.segment ?? "None");
       });
 
       data.push({
@@ -52,16 +65,18 @@ export const convertPayloadToBarGraphData = (payload: any, segmented: boolean) =
         ...segments,
       });
     } else {
-      const item = payload[key][0];
+      xAxisKeys = [yAxisKey];
+
+      const item = response[key][0];
 
       data.push({
-        name: item.date,
-        count: item.count,
+        name: item.dimension ?? "None",
+        [yAxisKey]: item[yAxisKey] ?? 0,
       });
     }
   });
 
-  return data;
+  return { data, xAxisKeys };
 };
 
-export const convertPayloadToScatterGraphData = (payload: any) => {};
+export const convertResponseToScatterPlotGraphData = (response: IAnalyticsData | undefined) => {};
