@@ -141,4 +141,4 @@ from .estimate import (
 
 from .release import ReleaseNotesEndpoint
 
-from .analytics import AnalyticsEndpoint, AnalyticViewViewset
+from .analytics import AnalyticsEndpoint, AnalyticViewViewset, SavedAnalyticEndpoint

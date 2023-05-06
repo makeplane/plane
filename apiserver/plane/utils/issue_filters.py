@@ -249,13 +249,14 @@ def issue_filters(query_params, method):
         "target_date": filter_target_date,
         "completed_at": filter_completed_at,
         "type": filter_issue_state_type,
-        "project_id": filter_project,
-        "cycle_id": filter_cycle,
-        "module_id": filter_module,
+        "project": filter_project,
+        "cycle": filter_cycle,
+        "module": filter_module,
     }
 
     for key, value in ISSUE_FILTER.items():
         if key in query_params:
+            print(key)
             func = value
             func(query_params, filter, method)
 
