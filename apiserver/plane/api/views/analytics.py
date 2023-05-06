@@ -12,18 +12,33 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.api.views import BaseAPIView, BaseViewSet
-from plane.api.permissions import WorkSpaceAdminPermission, ProjectBasePermission
+from plane.api.permissions import WorkSpaceAdminPermission
 from plane.db.models import Issue, AnalyticView, Workspace
 from plane.api.serializers import AnalyticViewSerializer
 
 
 def build_graph_plot(queryset, x_axis, y_axis, segment=None):
+    if x_axis in ["state__name", "state__group"]:
+        queryset = queryset.values("state__color")
+
     if x_axis in ["created_at", "completed_at"]:
-        queryset = queryset.annotate(date=Cast(x_axis, DateField()))
-        x_axis = "date"
+        queryset = queryset.annotate(dimension=Cast(x_axis, DateField()))
+        x_axis = "dimension"
+    else:
+        queryset = queryset.annotate(dimension=F(x_axis))
+        x_axis = "dimension"
+
+
+    queryset = queryset.values(x_axis)
+    
+    
+    if x_axis in ["labels__name"]:
+        queryset = queryset.values("labels__color")
+    
+    if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
+        queryset = queryset.filter(completed_at__isnull=False)
 
     # Group queryset by x_axis field
-    queryset = queryset.values(x_axis).annotate()
 
     if segment:
         queryset = queryset.annotate(segment=F(segment))
@@ -32,10 +47,6 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
         queryset = queryset.annotate(count=Count(x_axis)).order_by(x_axis)
     if y_axis == "effort":
         queryset = queryset.annotate(effort=Sum("estimate_point")).order_by(x_axis)
-    if y_axis == "lead_time":
-        queryset = queryset.filter(
-            completed_at__isnull=False,
-        )
 
     result_values = list(queryset)
     grouped_data = {}
@@ -86,7 +97,7 @@ class AnalyticsEndpoint(BaseAPIView):
             )
 
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
