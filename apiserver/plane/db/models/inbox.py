@@ -29,4 +29,16 @@ class InboxIssue(ProjectBaseModel):
     issue = models.ForeignKey(
         "db.Issue", related_name="issue_inbox", on_delete=models.CASCADE
     )
-    status = models.IntegerField()
+    status = models.IntegerField(
+        choices=((-1, "Rejected"), (0, "Snoozed"), (1, "Accepted")), default=0
+    )
+
+    class Meta:
+        verbose_name = "InboxIssue"
+        verbose_name_plural = "InboxIssues"
+        db_table = "inbox_issues"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return name of the Issue"""
+        return f"{self.issue.name} <{self.inbox.name}>"
