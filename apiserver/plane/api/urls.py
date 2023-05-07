@@ -152,6 +152,7 @@ from plane.api.views import (
     AnalyticsEndpoint,
     AnalyticViewViewset,
     SavedAnalyticEndpoint,
+    ExportAnalyticsEndpoint,
     ## End Analytics
 )
 
@@ -1312,6 +1313,11 @@ urlpatterns = [
         "workspaces/<str:slug>/saved-analytic-view/<uuid:analytic_id>/",
         SavedAnalyticEndpoint.as_view(),
         name="saved-analytic-view",
-    )
+    ),
+    path(
+        "workspaces/<str:slug>/export-analytics/",
+        ExportAnalyticsEndpoint.as_view(),
+        name="export-analytics",
+    ),
     ## End Analytics
 ]
