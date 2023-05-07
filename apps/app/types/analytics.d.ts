@@ -28,6 +28,6 @@ export type TYAxisValues = "issue_count" | "effort";
 export interface IAnalyticsParams {
   x_axis: TXAxisValues;
   y_axis: TYAxisValues;
-  segment?: TXAxisValues;
-  project_id?: string;
+  segment?: TXAxisValues | null;
+  project_id?: string | null;
 }

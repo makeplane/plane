@@ -19,8 +19,8 @@ import { convertResponseToBarGraphData } from "constants/graph";
 const defaultValues: IAnalyticsParams = {
   x_axis: "priority",
   y_axis: "issue_count",
-  segment: undefined,
-  project_id: undefined,
+  segment: null,
+  project_id: null,
 };
 
 const Analytics = () => {
@@ -29,7 +29,7 @@ const Analytics = () => {
 
   const { projects } = useProjects();
 
-  const { control, watch } = useForm<IAnalyticsParams>({ defaultValues });
+  const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
 
   const params: IAnalyticsParams = {
     x_axis: watch("x_axis"),
@@ -49,11 +49,16 @@ const Analytics = () => {
     watch("y_axis")
   );
 
+  const formatTick = (value: number) => {
+    const roundedValue = value.toFixed(0);
+    return `${roundedValue}`;
+  };
+
   return (
     <div className="space-y-8 p-8">
       <div className="grid grid-cols-6 items-center gap-4">
         <div>
-          <h6 className="text-xs text-brand-secondary">Measure(y-axis)</h6>
+          <h6 className="text-xs text-brand-secondary">Measure (y-axis)</h6>
           <Controller
             name="y_axis"
             control={control}
@@ -79,19 +84,19 @@ const Analytics = () => {
           />
         </div>
         <div>
-          <h6 className="text-xs text-brand-secondary">Dimension(x-axis)</h6>
+          <h6 className="text-xs text-brand-secondary">Dimension (x-axis)</h6>
           <Controller
             name="x_axis"
             control={control}
             render={({ field: { value, onChange } }) => (
               <CustomSelect
                 value={value}
-                label={
-                  <span>
-                    {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label ?? "None"}
-                  </span>
-                }
-                onChange={onChange}
+                label={<span>{ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label}</span>}
+                onChange={(val: string) => {
+                  if (watch("segment") === val) setValue("segment", null);
+
+                  onChange(val);
+                }}
                 width="w-full"
                 noChevron
               >
@@ -114,19 +119,25 @@ const Analytics = () => {
                 value={value}
                 label={
                   <span>
-                    {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label ?? "No value"}
+                    {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label ?? (
+                      <span className="text-brand-secondary">No value</span>
+                    )}
                   </span>
                 }
                 onChange={onChange}
                 width="w-full"
                 noChevron
               >
-                <CustomSelect.Option value={undefined}>No value</CustomSelect.Option>
-                {ANALYTICS_X_AXIS_VALUES.map((item) => (
-                  <CustomSelect.Option key={item.value} value={item.value}>
-                    {item.label}
-                  </CustomSelect.Option>
-                ))}
+                <CustomSelect.Option value={null}>No value</CustomSelect.Option>
+                {ANALYTICS_X_AXIS_VALUES.map((item) => {
+                  if (watch("x_axis") === item.value) return null;
+
+                  return (
+                    <CustomSelect.Option key={item.value} value={item.value}>
+                      {item.label}
+                    </CustomSelect.Option>
+                  );
+                })}
               </CustomSelect>
             )}
           />
@@ -139,12 +150,18 @@ const Analytics = () => {
             render={({ field: { value, onChange } }) => (
               <CustomSelect
                 value={value}
-                label={<span>{projects.find((p) => p.id === value)?.name ?? "None"}</span>}
+                label={
+                  <span>
+                    {projects.find((p) => p.id === value)?.name ?? (
+                      <span className="text-brand-secondary">None</span>
+                    )}
+                  </span>
+                }
                 onChange={onChange}
                 width="w-full"
                 noChevron
               >
-                <CustomSelect.Option value={undefined}>None</CustomSelect.Option>
+                <CustomSelect.Option value={null}>None</CustomSelect.Option>
                 {projects.map((project) => (
                   <CustomSelect.Option key={project.id} value={project.id}>
                     {project.name}
