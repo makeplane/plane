@@ -25,11 +25,10 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     else:
         queryset = queryset.annotate(dimension=F(x_axis))
         x_axis = "dimension"
-
+    if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
+        queryset = queryset.exclude(x_axis__is_null=True)
 
     queryset = queryset.values(x_axis)
-    if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
-        queryset = queryset.filter(completed_at__isnull=False)
 
     # Group queryset by x_axis field
 
@@ -37,7 +36,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
         queryset = queryset.annotate(segment=F(segment))
 
     if y_axis == "issue_count":
-        queryset = queryset.annotate(count=Count(x_axis)).order_by(x_axis)
+        queryset = queryset.annotate(count=Count("dimension")).order_by("dimension")
     if y_axis == "effort":
         queryset = queryset.annotate(effort=Sum("estimate_point")).order_by(x_axis)
 
