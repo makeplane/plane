@@ -18,8 +18,6 @@ from plane.api.serializers import AnalyticViewSerializer
 
 
 def build_graph_plot(queryset, x_axis, y_axis, segment=None):
-    if x_axis in ["state__name", "state__group"]:
-        queryset = queryset.values("state__color")
 
     if x_axis in ["created_at", "completed_at"]:
         queryset = queryset.annotate(dimension=Cast(x_axis, DateField()))
@@ -30,11 +28,6 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
 
     queryset = queryset.values(x_axis)
-    
-    
-    if x_axis in ["labels__name"]:
-        queryset = queryset.values("labels__color")
-    
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
         queryset = queryset.filter(completed_at__isnull=False)
 
