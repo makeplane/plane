@@ -80,7 +80,7 @@ export const SingleBoard: React.FC<Props> = ({
           <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
             {(provided, snapshot) => (
               <div
-                className={`relative h-full overflow-y-auto p-1  ${
+                className={`relative h-full p-1 ${
                   snapshot.isDraggingOver ? "bg-brand-base/20" : ""
                 } ${!isCollapsed ? "hidden" : "block"}`}
                 ref={provided.innerRef}
