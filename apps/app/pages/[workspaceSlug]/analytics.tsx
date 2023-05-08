@@ -10,9 +10,11 @@ import analyticsService from "services/analytics.service";
 import useProjects from "hooks/use-projects";
 // ui
 import { BarGraph, CustomSelect } from "components/ui";
+// types
+import { IAnalyticsParams } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
-import { IAnalyticsParams } from "types";
+// constants
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
 import { convertResponseToBarGraphData } from "constants/graph";
 
@@ -45,14 +47,9 @@ const Analytics = () => {
 
   const barGraphData = convertResponseToBarGraphData(
     analytics?.distribution,
-    watch("segment") === undefined ? false : true,
+    watch("segment") === null ? false : true,
     watch("y_axis")
   );
-
-  const formatTick = (value: number) => {
-    const roundedValue = value.toFixed(0);
-    return `${roundedValue}`;
-  };
 
   return (
     <div className="space-y-8 p-8">
