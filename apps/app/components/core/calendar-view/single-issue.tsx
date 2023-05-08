@@ -110,6 +110,10 @@ export const SingleCalendarIssue: React.FC<Props> = ({
     });
   };
 
+  const displayProperties = properties
+    ? Object.values(properties).some((value) => value === true)
+    : false;
+
   return (
     <div
       key={index}
@@ -162,94 +166,96 @@ export const SingleCalendarIssue: React.FC<Props> = ({
             </Tooltip>
           </a>
         </Link>
-        <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
-          {properties.priority && (
-            <ViewPrioritySelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.state && (
-            <ViewStateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
+        {displayProperties && (
+          <div className="relative mt-1.5 flex flex-wrap items-center gap-2 text-xs">
+            {properties.priority && (
+              <ViewPrioritySelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="left"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.state && (
+              <ViewStateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="left"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
 
-          {properties.due_date && (
-            <ViewDueDateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.sub_issue_count && (
-            <div className="flex items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
-              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-            </div>
-          )}
-          {properties.labels && issue.label_details.length > 0 ? (
-            <div className="flex flex-wrap gap-1">
-              {issue.label_details.map((label) => (
-                <span
-                  key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                >
+            {properties.due_date && (
+              <ViewDueDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.sub_issue_count && (
+              <div className="flex items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
+                {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
+              </div>
+            )}
+            {properties.labels && issue.label_details.length > 0 ? (
+              <div className="flex flex-wrap gap-1">
+                {issue.label_details.map((label) => (
                   <span
-                    className="h-1.5 w-1.5  rounded-full"
-                    style={{
-                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                    }}
-                  />
-                  {label.name}
-                </span>
-              ))}
-            </div>
-          ) : (
-            ""
-          )}
-          {properties.assignee && (
-            <ViewAssigneeSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.estimate && (
-            <ViewEstimateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
+                    key={label.id}
+                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
+                  >
+                    <span
+                      className="h-1.5 w-1.5  rounded-full"
+                      style={{
+                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                      }}
+                    />
+                    {label.name}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              ""
+            )}
+            {properties.assignee && (
+              <ViewAssigneeSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="left"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.estimate && (
+              <ViewEstimateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="left"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
 
-          {properties.link && (
-            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
-              <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-                <div className="flex items-center gap-1 text-brand-secondary">
-                  <LinkIcon className="h-3.5 w-3.5" />
-                  {issue.link_count}
-                </div>
-              </Tooltip>
-            </div>
-          )}
-          {properties.attachment_count && (
-            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
-              <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-                <div className="flex items-center gap-1 text-brand-secondary">
-                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
-                  {issue.attachment_count}
-                </div>
-              </Tooltip>
-            </div>
-          )}
-        </div>
+            {properties.link && (
+              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+                <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
+                  <div className="flex items-center gap-1 text-brand-secondary">
+                    <LinkIcon className="h-3.5 w-3.5" />
+                    {issue.link_count}
+                  </div>
+                </Tooltip>
+              </div>
+            )}
+            {properties.attachment_count && (
+              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+                <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
+                  <div className="flex items-center gap-1 text-brand-secondary">
+                    <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
+                    {issue.attachment_count}
+                  </div>
+                </Tooltip>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
