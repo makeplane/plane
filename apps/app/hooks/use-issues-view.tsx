@@ -115,7 +115,17 @@ const useIssuesView = () => {
       : null
   );
   const statesList = getStatesList(states ?? {});
-  const stateIds = statesList.map((state) => state.id);
+  const activeStatesList = statesList.filter(
+    (state) => state.group === "started" || state.group === "unstarted"
+  );
+  const backlogStatesList = statesList.filter((state) => state.group === "backlog");
+
+  const stateIds =
+    filters && filters?.type === "active"
+      ? activeStatesList.map((state) => state.id)
+      : filters?.type === "backlog"
+      ? backlogStatesList.map((state) => state.id)
+      : statesList.map((state) => state.id);
 
   const emptyStatesObject: { [key: string]: [] } = {};
   for (let i = 0; i < stateIds.length; i++) {
