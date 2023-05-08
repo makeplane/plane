@@ -18,7 +18,7 @@ class AnalyticsEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
-        # try:
+        try:
             x_axis = request.GET.get("x_axis", False)
             y_axis = request.GET.get("y_axis", False)
 
@@ -78,12 +78,12 @@ class AnalyticsEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        # except Exception as e:
-        #     capture_exception(e)
-        #     return Response(
-        #         {"error": "Something went wrong please try again later"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class AnalyticViewViewset(BaseViewSet):
