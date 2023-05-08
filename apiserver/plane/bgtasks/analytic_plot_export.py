@@ -45,10 +45,7 @@ def analytic_export_task(email, data, slug):
             queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
         )
 
-        if y_axis == "issue_count":
-            key = "count"
-        else:
-            key = "effort"
+        key = "count" if y_axis == "issue_count" else "effort"
 
         if segment:
             row_zero = [
@@ -137,5 +134,5 @@ def analytic_export_task(email, data, slug):
 
     except Exception as e:
         print(e)
-        # capture_exception(e)
+        capture_exception(e)
         return

@@ -6,7 +6,7 @@ from sentry_sdk import capture_exception
 # Module imports
 from plane.api.views import BaseAPIView, BaseViewSet
 from plane.api.permissions import WorkSpaceAdminPermission
-from plane.db.models import Issue, AnalyticView, Workspace
+from plane.db.models import Issue, AnalyticView, Workspace, State, Label
 from plane.api.serializers import AnalyticViewSerializer
 from plane.utils.analytics_plot import build_graph_plot
 from plane.bgtasks.analytic_plot_export import analytic_export_task
@@ -18,7 +18,7 @@ class AnalyticsEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
-        try:
+        # try:
             x_axis = request.GET.get("x_axis", False)
             y_axis = request.GET.get("y_axis", False)
 
@@ -47,17 +47,43 @@ class AnalyticsEndpoint(BaseAPIView):
                 queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
             )
 
+            colors = dict()
+            if x_axis in ["state__name", "state__group"]:
+                key = "name" if x_axis == "state__name" else "group"
+                colors = (
+                    State.objects.filter(
+                        workspace__slug=slug, project_id__in=project_ids
+                    ).values(key, "color")
+                    if project_ids
+                    else State.objects.filter(workspace__slug=slug).values(key, "color")
+                )
+
+            if x_axis in ["labels__name"]:
+                colors = (
+                    Label.objects.filter(
+                        workspace__slug=slug, project_id__in=project_ids
+                    ).values("name", "color")
+                    if project_ids
+                    else Label.objects.filter(workspace__slug=slug).values(
+                        "name", "color"
+                    )
+                )
+
             return Response(
-                {"total": total_issues, "distribution": distribution},
+                {
+                    "total": total_issues,
+                    "distribution": distribution,
+                    "extras": {"colors": colors},
+                },
                 status=status.HTTP_200_OK,
             )
 
-        except Exception as e:
-            print(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # except Exception as e:
+        #     capture_exception(e)
+        #     return Response(
+        #         {"error": "Something went wrong please try again later"},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
 
 
 class AnalyticViewViewset(BaseViewSet):
