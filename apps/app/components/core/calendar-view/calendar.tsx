@@ -237,7 +237,9 @@ export const CalendarView: React.FC<Props> = ({
         </div>
 
         <div
-          className={`grid h-full auto-rows-min  ${showWeekEnds ? "grid-cols-7" : "grid-cols-5"} `}
+          className={`grid h-full ${isMonthlyView ? "auto-rows-min" : ""} ${
+            showWeekEnds ? "grid-cols-7" : "grid-cols-5"
+          } `}
         >
           {currentViewDaysData.map((date, index) => (
             <SingleCalendarDate
