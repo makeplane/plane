@@ -5,12 +5,18 @@ import Link from "next/link";
 import { GridViewIcon, AssignmentClipboardIcon, TickMarkIcon, SettingIcon } from "components/icons";
 // hooks
 import useTheme from "hooks/use-theme";
+import { ChartBarIcon } from "@heroicons/react/24/outline";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {
     icon: GridViewIcon,
     name: "Dashboard",
     href: `/${workspaceSlug}`,
+  },
+  {
+    icon: ChartBarIcon,
+    name: "Analytics",
+    href: `/${workspaceSlug}/analytics`,
   },
   {
     icon: AssignmentClipboardIcon,

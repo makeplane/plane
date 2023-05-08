@@ -23,6 +23,18 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
     label: "Assignee",
   },
   {
+    value: "estimate_point",
+    label: "Estimate",
+  },
+  {
+    value: "issue_cycle__cycle__name",
+    label: "Cycle",
+  },
+  {
+    value: "issue_module__module__name",
+    label: "Module",
+  },
+  {
     value: "completed_at",
     label: "Completed date",
   },

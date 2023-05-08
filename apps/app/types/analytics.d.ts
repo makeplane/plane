@@ -17,6 +17,9 @@ export type TXAxisValues =
   | "state__group"
   | "labels__name"
   | "assignees__email"
+  | "estimate_point"
+  | "issue_cycle__cycle__name"
+  | "issue_module__module__name"
   | "priority"
   | "start_date"
   | "target_date"
@@ -30,4 +33,11 @@ export interface IAnalyticsParams {
   y_axis: TYAxisValues;
   segment?: TXAxisValues | null;
   project?: string | null;
+}
+
+export interface IExportAnalyticsFormData {
+  x_axis: TXAxisValues;
+  y_axis: TYAxisValues;
+  segment?: TXAxisValues | null;
+  project?: string[];
 }
