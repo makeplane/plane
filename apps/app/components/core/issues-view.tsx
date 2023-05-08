@@ -533,6 +533,8 @@ export const IssuesView: React.FC<Props> = ({
                 />
               ) : (
                 <CalendarView
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
                   addIssueToDate={addIssueToDate}
                   isCompleted={isCompleted}
                   userAuth={memberRole}

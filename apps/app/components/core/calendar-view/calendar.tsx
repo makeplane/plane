@@ -35,12 +35,16 @@ import {
 import { ICalendarRange, IIssue, UserAuth } from "types";
 
 type Props = {
+  handleEditIssue: (issue: IIssue) => void;
+  handleDeleteIssue: (issue: IIssue) => void;
   addIssueToDate: (date: string) => void;
   isCompleted: boolean;
   userAuth: UserAuth;
 };
 
 export const CalendarView: React.FC<Props> = ({
+  handleEditIssue,
+  handleDeleteIssue,
   addIssueToDate,
   isCompleted = false,
   userAuth,
@@ -245,6 +249,8 @@ export const CalendarView: React.FC<Props> = ({
             <SingleCalendarDate
               index={index}
               date={date}
+              handleEditIssue={handleEditIssue}
+              handleDeleteIssue={handleDeleteIssue}
               addIssueToDate={addIssueToDate}
               isMonthlyView={isMonthlyView}
               showWeekEnds={showWeekEnds}

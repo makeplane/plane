@@ -11,8 +11,9 @@ import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import issuesService from "services/issues.service";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
+import useToast from "hooks/use-toast";
 // components
-import { Tooltip } from "components/ui";
+import { CustomMenu, Tooltip } from "components/ui";
 import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
@@ -21,9 +22,9 @@ import {
   ViewStateSelect,
 } from "components/issues";
 // icons
-import { LinkIcon, PaperClipIcon } from "@heroicons/react/24/outline";
+import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helper
-import { truncateText } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // type
 import { IIssue } from "types";
 // fetch-keys
@@ -34,6 +35,8 @@ import {
 } from "constants/fetch-keys";
 
 type Props = {
+  handleEditIssue: (issue: IIssue) => void;
+  handleDeleteIssue: (issue: IIssue) => void;
   index: number;
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
@@ -42,6 +45,8 @@ type Props = {
 };
 
 export const SingleCalendarIssue: React.FC<Props> = ({
+  handleEditIssue,
+  handleDeleteIssue,
   index,
   provided,
   snapshot,
@@ -50,6 +55,8 @@ export const SingleCalendarIssue: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
@@ -89,6 +96,20 @@ export const SingleCalendarIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId]
   );
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
+      });
+    });
+  };
+
   return (
     <div
       key={index}
@@ -99,7 +120,31 @@ export const SingleCalendarIssue: React.FC<Props> = ({
         snapshot.isDragging ? "bg-brand-surface-2 shadow-lg" : ""
       }`}
     >
-      <div className="flex w-full flex-col items-start justify-center gap-1.5 text-xs sm:w-auto ">
+      <div className="group/card relative flex w-full flex-col items-start justify-center gap-1.5 text-xs sm:w-auto ">
+        {!isNotAllowed && (
+          <div className="z-1 absolute top-1.5 right-1.5 opacity-0 group-hover/card:opacity-100">
+            <CustomMenu width="auto" ellipsis>
+              <CustomMenu.MenuItem onClick={() => handleEditIssue(issue)}>
+                <div className="flex items-center justify-start gap-2">
+                  <PencilIcon className="h-4 w-4" />
+                  <span>Edit issue</span>
+                </div>
+              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                <div className="flex items-center justify-start gap-2">
+                  <TrashIcon className="h-4 w-4" />
+                  <span>Delete issue</span>
+                </div>
+              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={handleCopyText}>
+                <div className="flex items-center justify-start gap-2">
+                  <LinkIcon className="h-4 w-4" />
+                  <span>Copy issue Link</span>
+                </div>
+              </CustomMenu.MenuItem>
+            </CustomMenu>
+          </div>
+        )}
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail.id}/issues/${issue.id}`}>
           <a className="flex w-full cursor-pointer flex-col items-start justify-center gap-1.5">
             {properties.key && (
