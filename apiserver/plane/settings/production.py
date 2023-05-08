@@ -29,9 +29,10 @@ DATABASES = {
 DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
+# Set the variable true if running in docker-compose environment
 DOCKERIZED = os.environ.get(
-    "DOCKERIZED", False
-)  # Set the variable true if running in docker-compose environment
+    "DOCKERIZED", "0"
+)  == "1"
 
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
