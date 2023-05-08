@@ -8,7 +8,7 @@ export interface IAnalyticsData {
     dimension: string | null;
     segment?: string;
     count?: number;
-    effort: number | null;
+    effort?: number | null;
   }[];
 }
 
@@ -29,5 +29,5 @@ export interface IAnalyticsParams {
   x_axis: TXAxisValues;
   y_axis: TYAxisValues;
   segment?: TXAxisValues | null;
-  project_id?: string | null;
+  project?: string | null;
 }

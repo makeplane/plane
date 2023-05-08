@@ -22,7 +22,7 @@ const defaultValues: IAnalyticsParams = {
   x_axis: "priority",
   y_axis: "issue_count",
   segment: null,
-  project_id: null,
+  project: null,
 };
 
 const Analytics = () => {
@@ -37,7 +37,7 @@ const Analytics = () => {
     x_axis: watch("x_axis"),
     y_axis: watch("y_axis"),
     segment: watch("segment"),
-    project_id: watch("project_id"),
+    project: watch("project"),
   };
 
   const { data: analytics } = useSWR(
@@ -142,7 +142,7 @@ const Analytics = () => {
         <div>
           <h6 className="text-xs text-brand-secondary">Project</h6>
           <Controller
-            name="project_id"
+            name="project"
             control={control}
             render={({ field: { value, onChange } }) => (
               <CustomSelect
