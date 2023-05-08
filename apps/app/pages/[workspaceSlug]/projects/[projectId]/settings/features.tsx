@@ -104,21 +104,21 @@ const FeaturesSettings: NextPage = () => {
           }),
         false
       );
-    else
-      mutate<IProject[]>(
-        PROJECTS_LIST(workspaceSlug.toString()),
-        (prevData) =>
-          prevData?.map((p) => {
-            if (p.id === projectId)
-              return {
-                ...p,
-                ...formData,
-              };
 
-            return p;
-          }),
-        false
-      );
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug.toString()),
+      (prevData) =>
+        prevData?.map((p) => {
+          if (p.id === projectId)
+            return {
+              ...p,
+              ...formData,
+            };
+
+          return p;
+        }),
+      false
+    );
 
     mutate<IProject>(
       PROJECT_DETAILS(projectId as string),
