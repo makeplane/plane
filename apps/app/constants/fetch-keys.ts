@@ -171,5 +171,5 @@ export const ESTIMATE_DETAILS = (estimateId: string) =>
 // analytics
 export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
   `ANALYTICS${workspaceSlug.toUpperCase()}_${params.x_axis}_${params.y_axis}_${params.segment}_${
-    params.project_id
+    params.project
   }`;
