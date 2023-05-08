@@ -153,6 +153,7 @@ from plane.api.views import (
     AnalyticViewViewset,
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
+    DefaultAnalyticsEndpoint,
     ## End Analytics
 )
 
@@ -1318,6 +1319,11 @@ urlpatterns = [
         "workspaces/<str:slug>/export-analytics/",
         ExportAnalyticsEndpoint.as_view(),
         name="export-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/default-analytics/",
+        DefaultAnalyticsEndpoint.as_view(),
+        name="default-analytics",
     ),
     ## End Analytics
 ]

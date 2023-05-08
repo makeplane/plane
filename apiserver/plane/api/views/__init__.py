@@ -146,4 +146,5 @@ from .analytic import (
     AnalyticViewViewset,
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
+    DefaultAnalyticsEndpoint,
 )

@@ -1,3 +1,7 @@
+# Django imports
+from django.db.models import Q, Count
+from django.db.models.functions import TruncMonth
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -177,6 +181,60 @@ class ExportAnalyticsEndpoint(BaseAPIView):
             )
         except Exception as e:
             capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class DefaultAnalyticsEndpoint(BaseAPIView):
+    def get(self, request, slug):
+        try:
+            queryset = Issue.objects.filter(workspace__slug=slug)
+
+            project_ids = request.GET.getlist("project")
+            cycle_ids = request.GET.getlist("cycle")
+            module_ids = request.GET.getlist("module")
+
+            if project_ids:
+                queryset = queryset.filter(project_id__in=project_ids)
+            if cycle_ids:
+                queryset = queryset.filter(issue_cycle__cycle_id__in=cycle_ids)
+            if module_ids:
+                queryset = queryset.filter(issue_module__module_id__in=module_ids)
+
+            total_issues = queryset.count()
+
+            open_issues = queryset.filter(
+                state__group__in=["backlog", "unstarted", "started"]
+            ).count()
+
+            issue_completed_month_wise = (
+                queryset.filter(completed_at__isnull=False)
+                .annotate(month=TruncMonth("completed_at"))
+                .values("month")
+                .annotate(count=Count("*"))
+                .order_by("month")
+            )
+
+            most_issue_created_user = (
+                queryset.filter(created_by__isnull=False).values("created_by__email")
+                .annotate(record_count=Count("id"))
+                .order_by("-record_count")
+            )
+
+            return Response(
+                {
+                    "total_issues": total_issues,
+                    "open_issues": open_issues,
+                    "issue_completed_month_wise": issue_completed_month_wise,
+                    "most_issue_created_user": most_issue_created_user,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
