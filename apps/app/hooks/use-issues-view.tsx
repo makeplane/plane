@@ -21,6 +21,7 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATES_LIST,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 const useIssuesView = () => {
@@ -40,7 +41,7 @@ const useIssuesView = () => {
   } = useContext(issueViewContext);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const params: any = {
     order_by: orderBy,
@@ -99,6 +100,14 @@ const useIssuesView = () => {
       : null
   );
 
+  const { data: viewIssues } = useSWR(
+    workspaceSlug && projectId && viewId && params ? VIEW_ISSUES(viewId.toString(), params) : null,
+    workspaceSlug && projectId && viewId && params
+      ? () =>
+          issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
+      : null
+  );
+
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
@@ -118,7 +127,13 @@ const useIssuesView = () => {
         [key: string]: IIssue[];
       }
     | undefined = useMemo(() => {
-    const issuesToGroup = cycleId ? cycleIssues : moduleId ? moduleIssues : projectIssues;
+    const issuesToGroup = cycleId
+      ? cycleIssues
+      : moduleId
+      ? moduleIssues
+      : viewId
+      ? viewIssues
+      : projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
     if (groupByProperty === "state")
@@ -129,9 +144,11 @@ const useIssuesView = () => {
     projectIssues,
     cycleIssues,
     moduleIssues,
+    viewIssues,
     groupByProperty,
     cycleId,
     moduleId,
+    viewId,
     emptyStatesObject,
   ]);
 
