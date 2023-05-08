@@ -1,3 +1,7 @@
+# Django import
+from django.utils import timezone
+from django.db.models import Q
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -69,6 +73,7 @@ class InboxIssueViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(
+                Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
                 inbox_id=self.kwargs.get("inbox_id"),
