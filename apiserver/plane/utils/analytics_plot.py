@@ -20,7 +20,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     queryset = queryset.values(x_axis)
 
-
+    # Group queryset by x_axis field
 
     if y_axis == "issue_count":
         queryset = (
@@ -33,15 +33,17 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
                 dimension_ex=Coalesce("dimension", Value("null")),
             )
             .values("dimension")
-            .annotate(count=Count("*"))
-            .order_by("dimension")
         )
+        if segment:
+            queryset = queryset.annotate(segment=F(segment)).values("dimension", "segment")
+        else:
+            queryset = queryset.values("dimension")
+
+        queryset = queryset.annotate(count=Count("*")).order_by("dimension")
+
+
     if y_axis == "effort":
         queryset = queryset.annotate(effort=Sum("estimate_point")).order_by(x_axis)
-
-    # Group queryset by x_axis field
-    if segment:
-        queryset = queryset.annotate(segment=F(segment)).values(segment)
 
     result_values = list(queryset)
     grouped_data = {}
