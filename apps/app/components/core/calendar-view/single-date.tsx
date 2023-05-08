@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+// react-beautiful-dnd
 import { Draggable } from "react-beautiful-dnd";
 // component
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
@@ -57,17 +58,14 @@ export const SingleCalendarDate: React.FC<Props> = ({
             date.issues.slice(0, showAllIssues ? totalIssues : 4).map((issue: IIssue, index) => (
               <Draggable key={issue.id} draggableId={issue.id} index={index}>
                 {(provided, snapshot) => (
-                  <div
+                  <SingleCalendarIssue
                     key={index}
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className={`w-full cursor-pointer truncate rounded border border-brand-base px-1.5 py-1.5 text-xs duration-300 hover:cursor-move hover:bg-brand-surface-2 ${
-                      snapshot.isDragging ? "bg-brand-surface-2 shadow-lg" : ""
-                    }`}
-                  >
-                    <SingleCalendarIssue issue={issue} key={issue.id} isNotAllowed={isNotAllowed} />
-                  </div>
+                    index={index}
+                    provided={provided}
+                    snapshot={snapshot}
+                    issue={issue}
+                    isNotAllowed={isNotAllowed}
+                  />
                 )}
               </Draggable>
             ))}
