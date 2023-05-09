@@ -1,7 +1,8 @@
-import { useState } from "react";
-
 // nivo
 import { BarDatum } from "@nivo/bar";
+// components
+import { CustomTick } from "./custom-tick";
+import { CustomTooltip } from "./custom-tooltip";
 // ui
 import { BarGraph } from "components/ui";
 // types
@@ -58,42 +59,9 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
       tickValue += tickInterval;
     }
 
+    if (!tickValues.includes(maxValue)) tickValues.push(maxValue);
+
     return tickValues;
-  };
-
-  const CustomTick = (datum: any) => {
-    const [isTickHovered, setIsTickHovered] = useState(false);
-
-    const handleTickMouseEnter = () => {
-      setIsTickHovered(true);
-    };
-
-    const handleTickMouseLeave = () => {
-      setIsTickHovered(false);
-    };
-
-    return (
-      <g
-        transform={`translate(${datum.x},${datum.y + 4})`}
-        className="custom-tick cursor-pointer"
-        onMouseEnter={handleTickMouseEnter}
-        onMouseLeave={handleTickMouseLeave}
-      >
-        <text
-          x={0}
-          y={0}
-          dy={16}
-          textAnchor="middle"
-          fill={`${
-            isTickHovered ? "rgb(var(--color-text-base))" : "rgb(var(--color-text-secondary))"
-          }`}
-          fontSize={11}
-          className={`${params.x_axis === "priority" ? "capitalize" : ""}`}
-        >
-          {datum.value}
-        </text>
-      </g>
-    );
   };
 
   return (
@@ -107,26 +75,23 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
         tickValues: generateYAxisTickValues(),
       }}
       axisBottom={{
-        renderTick: CustomTick,
+        renderTick: (datum) => <CustomTick datum={datum} params={params} />,
       }}
       enableLabel={false}
       colors={(datum) =>
         generateBarColor(
-          `${datum[params.segment ? "id" : "indexValue"]}`,
+          params.segment ? `${datum.id}` : `${datum.indexValue}`,
           analytics,
           params,
           params.segment ? "segment" : "x_axis"
         )
       }
-      // padding={0.9}
+      tooltip={(datum) => <CustomTooltip datum={datum} params={params} />}
       margin={{ ...DEFAULT_MARGIN, right: 20 }}
       theme={{
         ...CHARTS_THEME,
         background: "rgb(var(--color-bg-surface-1))",
         axis: {},
-      }}
-      onMouseEnter={(data) => {
-        console.log(data);
       }}
     />
   );
