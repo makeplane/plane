@@ -3,7 +3,7 @@ import { useState } from "react";
 // nivo
 import { BarDatum } from "@nivo/bar";
 // ui
-import { BarGraph, Loader } from "components/ui";
+import { BarGraph } from "components/ui";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
@@ -11,7 +11,7 @@ import { generateBarColor } from "constants/analytics";
 import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
 
 type Props = {
-  analytics: IAnalyticsResponse | undefined;
+  analytics: IAnalyticsResponse;
   barGraphData: {
     data: BarDatum[];
     xAxisKeys: string[];
@@ -95,13 +95,6 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
       </g>
     );
   };
-
-  if (!analytics)
-    return (
-      <Loader>
-        <Loader.Item height="400px" />
-      </Loader>
-    );
 
   return (
     <BarGraph

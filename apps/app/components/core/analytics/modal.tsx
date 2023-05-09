@@ -19,6 +19,8 @@ import {
 } from "components/core";
 // ui
 import { PrimaryButton } from "components/ui";
+// icons
+import { XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import { IAnalyticsParams } from "types";
 // fetch-keys
@@ -77,63 +79,83 @@ export const AnalyticsModal: React.FC<Props> = ({ isOpen, onClose }) => {
         handleClose={() => setSaveAnalyticsModal(false)}
         params={params}
       />
-      <div className={`absolute z-20 h-full w-full ${isOpen ? "block" : "hidden"}`}>
-        <div className="h-full overflow-y-auto">
-          <div className="flex h-full items-center justify-center p-2 text-center">
-            <div className="relative h-full w-full transform overflow-y-hidden rounded-lg border border-brand-base bg-brand-surface-1 text-left transition-all">
-              <div className="grid h-full grid-cols-4 overflow-y-auto">
-                <div className="col-span-3 h-full">
-                  {!analyticsError ? (
-                    analytics && analytics.total > 0 ? (
-                      <div>
-                        <AnalyticsGraph
+      <div
+        className={`absolute z-20 h-full w-full bg-brand-surface-1 p-2 ${
+          isOpen ? "block" : "hidden"
+        }`}
+      >
+        <div className="relative flex h-full flex-col overflow-y-hidden rounded-lg border border-brand-base bg-brand-surface-1 text-left">
+          <div className="flex items-center justify-between gap-2 border-b border-b-brand-base bg-brand-sidebar p-3 text-sm">
+            <h3>Workspace Analytics</h3>
+            <div>
+              <button
+                type="button"
+                className="grid place-items-center p-1 text-brand-secondary hover:text-brand-base"
+                onClick={handleClose}
+              >
+                <XMarkIcon className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <div className="grid h-full grid-cols-4 overflow-y-auto">
+            <div className="col-span-3">
+              {!analyticsError ? (
+                analytics ? (
+                  analytics.total > 0 ? (
+                    <div>
+                      <AnalyticsGraph
+                        analytics={analytics}
+                        barGraphData={barGraphData}
+                        params={params}
+                        yAxisKey={yAxisKey}
+                      />
+                      <div className="m-5 mt-0">
+                        <AnalyticsTable
                           analytics={analytics}
                           barGraphData={barGraphData}
                           params={params}
                           yAxisKey={yAxisKey}
                         />
-                        <div className="m-5 mt-0">
-                          <AnalyticsTable
-                            analytics={analytics}
-                            barGraphData={barGraphData}
-                            params={params}
-                            yAxisKey={yAxisKey}
-                          />
-                        </div>
                       </div>
-                    ) : (
-                      <div className="grid h-full place-items-center p-5">
-                        <div className="space-y-4 text-brand-secondary">
-                          <p className="text-sm">
-                            No matching issues found. Try changing the parameters.
-                          </p>
-                        </div>
-                      </div>
-                    )
+                    </div>
                   ) : (
                     <div className="grid h-full place-items-center p-5">
                       <div className="space-y-4 text-brand-secondary">
                         <p className="text-sm">
-                          There was some error in fetching the data. Please refresh the page and try
-                          again.
+                          No matching issues found. Try changing the parameters.
                         </p>
-                        <div className="flex items-center justify-center gap-2">
-                          <PrimaryButton onClick={() => router.reload()}>
-                            Refresh page
-                          </PrimaryButton>
-                        </div>
                       </div>
                     </div>
-                  )}
+                  )
+                ) : (
+                  <div className="grid h-full place-items-center p-5">
+                    <div className="space-y-4 text-brand-secondary">
+                      <p className="text-sm">Loading analytics...</p>
+                    </div>
+                  </div>
+                )
+              ) : (
+                <div className="grid h-full place-items-center p-5">
+                  <div className="space-y-4 text-brand-secondary">
+                    <p className="text-sm">
+                      There was some error in fetching the data. Please refresh the page and try
+                      again.
+                    </p>
+                    <div className="flex items-center justify-center gap-2">
+                      <PrimaryButton onClick={() => router.reload()}>Refresh page</PrimaryButton>
+                    </div>
+                  </div>
                 </div>
-                <AnalyticsSidebar
-                  analytics={analytics}
-                  params={params}
-                  control={control}
-                  setValue={setValue}
-                  setSaveAnalyticsModal={setSaveAnalyticsModal}
-                />
-              </div>
+              )}
+            </div>
+            <div className="h-full">
+              <AnalyticsSidebar
+                analytics={analytics}
+                params={params}
+                control={control}
+                setValue={setValue}
+                setSaveAnalyticsModal={setSaveAnalyticsModal}
+              />
             </div>
           </div>
         </div>
