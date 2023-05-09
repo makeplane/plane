@@ -3,11 +3,11 @@ import { Theme } from "@nivo/core";
 
 export const CHARTS_THEME: Theme = {
   background: "rgb(var(--color-bg-base))",
-  textColor: "rgb(var(--color-text-base))",
+  textColor: "rgb(var(--color-text-secondary))",
   axis: {
     domain: {
       line: {
-        stroke: "rgb(var(--color-text-base))",
+        stroke: "rgb(var(--color-border))",
         strokeWidth: 0.5,
       },
     },

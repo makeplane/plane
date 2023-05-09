@@ -1,7 +1,12 @@
 // services
 import APIService from "services/api.service";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData } from "types";
+import {
+  IAnalyticsParams,
+  IAnalyticsResponse,
+  IExportAnalyticsFormData,
+  ISaveAnalyticsFormData,
+} from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -14,6 +19,14 @@ class AnalyticsServices extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/analytics/`, {
       params,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async saveAnalytics(workspaceSlug: string, data: ISaveAnalyticsFormData): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/analytic-view/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

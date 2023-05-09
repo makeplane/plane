@@ -1,0 +1,18 @@
+.custom-tick text {
+  position: relative;
+}
+
+.custom-tick::before {
+  content: "";
+  width: 10px;
+  height: 20px;
+  background-color: lightgray;
+  position: absolute;
+  top: 0;
+  left: -5px;
+  z-index: 20;
+}
+
+.custom-tick:hover::before {
+  background-color: red;
+}

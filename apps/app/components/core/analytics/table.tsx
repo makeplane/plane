@@ -46,9 +46,23 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                     <th
                       key={`segment-${key}`}
                       scope="col"
-                      className="px-2.5 py-3 text-left font-medium capitalize"
+                      className={`px-2.5 py-3 text-left font-medium ${
+                        params.segment === "priority" ? "capitalize" : ""
+                      }`}
                     >
-                      {key}
+                      <div className="flex items-center gap-2">
+                        {params.segment === "priority" ? (
+                          getPriorityIcon(key)
+                        ) : (
+                          <span
+                            className="h-3 w-3 rounded"
+                            style={{
+                              backgroundColor: generateBarColor(key, analytics, params, "segment"),
+                            }}
+                          />
+                        )}
+                        {key}
+                      </div>
                     </th>
                   ))
                 ) : (
@@ -75,8 +89,12 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                       <span
                         className="h-3 w-3 rounded"
                         style={{
-                          backgroundColor:
-                            generateBarColor(`${item.name}`, analytics, params) ?? "black",
+                          backgroundColor: generateBarColor(
+                            `${item.name}`,
+                            analytics,
+                            params,
+                            "x_axis"
+                          ),
                         }}
                       />
                     )}

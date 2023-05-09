@@ -118,24 +118,20 @@ export const convertResponseToBarGraphData = (
 export const generateBarColor = (
   value: string,
   analytics: IAnalyticsResponse,
-  params: IAnalyticsParams
+  params: IAnalyticsParams,
+  type: "x_axis" | "segment"
 ): string => {
   let color: string | undefined = "rgb(var(--color-accent))";
 
   if (!analytics) return color;
 
-  if (
-    params.segment === "state__name" ||
-    params.segment === "labels__name" ||
-    params.x_axis === "state__name" ||
-    params.x_axis === "labels__name"
-  )
+  if (params[type] === "state__name" || params[type] === "labels__name")
     color = analytics.extras.colors.find((c) => c.name === value)?.color;
 
-  if (params.segment === "state__group" || params.x_axis === "state__group")
+  if (params[type] === "state__group")
     color = STATE_GROUP_COLORS[value];
 
-  if (params.segment === "priority" || params.x_axis === "priority")
+  if (params[type] === "priority")
     color =
       value === "urgent"
         ? "#ef4444"

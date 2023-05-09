@@ -10,7 +10,7 @@ import analyticsService from "services/analytics.service";
 import useProjects from "hooks/use-projects";
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, CustomSelect } from "components/ui";
+import { CustomMenu, CustomSelect, PrimaryButton } from "components/ui";
 // icons
 import { ArrowPathIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 // types
@@ -25,9 +25,16 @@ type Props = {
   params: IAnalyticsParams;
   control: Control<IAnalyticsParams, any>;
   setValue: UseFormSetValue<IAnalyticsParams>;
+  setSaveAnalyticsModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, control, setValue }) => {
+export const AnalyticsSidebar: React.FC<Props> = ({
+  analytics,
+  params,
+  control,
+  setValue,
+  setSaveAnalyticsModal,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -136,6 +143,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, control, 
                     onChange(val);
                   }}
                   width="w-full"
+                  maxHeight="lg"
                 >
                   {ANALYTICS_X_AXIS_VALUES.map((item) => (
                     <CustomSelect.Option key={item.value} value={item.value}>
@@ -163,6 +171,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, control, 
                   }
                   onChange={onChange}
                   width="w-full"
+                  maxHeight="lg"
                 >
                   <CustomSelect.Option value={null}>No value</CustomSelect.Option>
                   {ANALYTICS_X_AXIS_VALUES.map((item) => {
@@ -195,6 +204,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, control, 
                   }
                   onChange={onChange}
                   width="w-full"
+                  maxHeight="lg"
                 >
                   <CustomSelect.Option value={null}>None</CustomSelect.Option>
                   {projects.map((project) => (
@@ -206,6 +216,11 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, control, 
               )}
             />
           </div>
+        </div>
+        <div className="flex items-center justify-end gap-2">
+          <PrimaryButton className="py-1" onClick={() => setSaveAnalyticsModal(true)}>
+            Save analytics
+          </PrimaryButton>
         </div>
       </div>
     </div>
