@@ -70,6 +70,31 @@ const Analytics = () => {
     watch("y_axis")
   );
 
+  const generateYAxisTicks = () => {
+    if (!analytics) return [];
+
+    const data = barGraphData.data.map((d) => d[yAxisKey] as number);
+
+    const minValue = Math.min(...data);
+    const maxValue = Math.max(...data);
+
+    const valueRange = maxValue - minValue;
+
+    let tickInterval = 1;
+    if (valueRange > 10) tickInterval = 2;
+    if (valueRange > 50) tickInterval = 5;
+    if (valueRange > 100) tickInterval = 10;
+
+    const tickValues = [];
+    let tickValue = minValue;
+    while (tickValue <= maxValue) {
+      tickValues.push(tickValue);
+      tickValue += tickInterval;
+    }
+
+    return tickValues;
+  };
+
   const exportAnalytics = () => {
     if (!workspaceSlug) return;
 
@@ -132,6 +157,9 @@ const Analytics = () => {
                     data={barGraphData.data}
                     indexBy="name"
                     keys={barGraphData.xAxisKeys}
+                    axisLeft={{
+                      tickValues: generateYAxisTicks(),
+                    }}
                     padding={0.9}
                     margin={{ ...DEFAULT_MARGIN, right: 20 }}
                     theme={{ ...CHARTS_THEME, background: "rgb(var(--color-bg-surface-1))" }}
