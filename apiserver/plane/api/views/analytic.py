@@ -68,7 +68,11 @@ class AnalyticsEndpoint(BaseAPIView):
                 "state__name",
                 "state__group",
             ]:
-                key = "name" if x_axis == "state__name" else "group"
+                if x_axis in ["state__name", "state__group"]:
+                    key = "name" if x_axis == "state__name" else "group"
+                else:
+                    key = "name" if segment == "state__name" else "group"
+
                 colors = (
                     State.objects.filter(
                         workspace__slug=slug, project_id__in=project_ids
