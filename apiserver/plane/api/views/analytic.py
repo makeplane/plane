@@ -64,7 +64,10 @@ class AnalyticsEndpoint(BaseAPIView):
             )
 
             colors = dict()
-            if x_axis in ["state__name", "state__group"] or segment in ["state__name", "state__group"]:
+            if x_axis in ["state__name", "state__group"] or segment in [
+                "state__name",
+                "state__group",
+            ]:
                 key = "name" if x_axis == "state__name" else "group"
                 colors = (
                     State.objects.filter(
@@ -221,9 +224,24 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
 
             total_issues = queryset.count()
 
+            total_issues_classified = (
+                total_issues.annotate(state_group=F("state__group"))
+                .values("state_group")
+                .annotate(state_count=Count("state_group"))
+                .order_by("state_group")
+            )
+
             open_issues = queryset.filter(
                 state__group__in=["backlog", "unstarted", "started"]
             ).count()
+
+            open_issues_classified = (
+                queryset.filter(state__group__in=["backlog", "unstarted", "started"])
+                .annotate(state_group=F("state__group"))
+                .values("state_group")
+                .annotate(state_count=Count("state_group"))
+                .order_by("state_group")
+            )
 
             issue_completed_month_wise = (
                 queryset.filter(completed_at__isnull=False)
@@ -256,7 +274,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             return Response(
                 {
                     "total_issues": total_issues,
+                    "total_issues_classified": total_issues_classified,
                     "open_issues": open_issues,
+                    "open_issues_classified": open_issues_classified,
                     "issue_completed_month_wise": issue_completed_month_wise,
                     "most_issue_created_user": most_issue_created_user,
                     "most_issue_closed_user": most_issue_closed_user,
