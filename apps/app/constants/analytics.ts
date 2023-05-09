@@ -116,7 +116,7 @@ export const convertResponseToBarGraphData = (
 };
 
 export const generateBarColor = (
-  datum: ComputedDatum<any>,
+  value: string,
   analytics: IAnalyticsResponse,
   params: IAnalyticsParams
 ): string => {
@@ -124,28 +124,26 @@ export const generateBarColor = (
 
   if (!analytics) return color;
 
-  const key = params.segment ? "id" : "indexValue";
-
   if (
     params.segment === "state__name" ||
     params.segment === "labels__name" ||
     params.x_axis === "state__name" ||
     params.x_axis === "labels__name"
   )
-    color = analytics.extras.colors.find((c) => c.name === datum[key])?.color;
+    color = analytics.extras.colors.find((c) => c.name === value)?.color;
 
   if (params.segment === "state__group" || params.x_axis === "state__group")
-    color = STATE_GROUP_COLORS[datum[key]];
+    color = STATE_GROUP_COLORS[value];
 
   if (params.segment === "priority" || params.x_axis === "priority")
     color =
-      datum[key] === "urgent"
+      value === "urgent"
         ? "#ef4444"
-        : datum[key] === "high"
+        : value === "high"
         ? "#f97316"
-        : datum[key] === "medium"
+        : value === "medium"
         ? "#eab308"
-        : datum[key] === "low"
+        : value === "low"
         ? "#22c55e"
         : "#ced4da";
 

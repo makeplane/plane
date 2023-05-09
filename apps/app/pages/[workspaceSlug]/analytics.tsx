@@ -1,39 +1,29 @@
-import { useState } from "react";
-
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
 // react-hook-form
-import { Controller, useForm } from "react-hook-form";
-// nivo
-import { ComputedDatum } from "@nivo/bar";
+import { useForm } from "react-hook-form";
 // services
 import analyticsService from "services/analytics.service";
 // hooks
 import useWorkspaces from "hooks/use-workspaces";
-import useProjects from "hooks/use-projects";
-import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+// components
+import { AnalyticsSidebar, AnalyticsTable } from "components/workspace";
 // ui
-import { BarGraph, CustomMenu, CustomSelect, PrimaryButton } from "components/ui";
+import { BarGraph, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ArrowPathIcon, ArrowUpTrayIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IAnalyticsParams, IExportAnalyticsFormData } from "types";
+import { IAnalyticsParams } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 // constants
-import {
-  ANALYTICS_X_AXIS_VALUES,
-  ANALYTICS_Y_AXIS_VALUES,
-  convertResponseToBarGraphData,
-  generateBarColor,
-} from "constants/analytics";
+import { convertResponseToBarGraphData, generateBarColor } from "constants/analytics";
 import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
-import { addSpaceIfCamelCase } from "helpers/string.helper";
 
 const defaultValues: IAnalyticsParams = {
   x_axis: "priority",
@@ -43,15 +33,10 @@ const defaultValues: IAnalyticsParams = {
 };
 
 const Analytics = () => {
-  const [isExporting, setIsExporting] = useState(false);
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { activeWorkspace } = useWorkspaces();
-  const { projects } = useProjects();
-
-  const { setToastAlert } = useToast();
 
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
 
@@ -62,11 +47,7 @@ const Analytics = () => {
     project: watch("project"),
   };
 
-  const {
-    data: analytics,
-    error: analyticsError,
-    mutate: mutateAnalytics,
-  } = useSWR(
+  const { data: analytics, error: analyticsError } = useSWR(
     workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
     workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
   );
@@ -114,38 +95,6 @@ const Analytics = () => {
     }
 
     return tickValues;
-  };
-
-  const exportAnalytics = () => {
-    if (!workspaceSlug) return;
-
-    setIsExporting(true);
-
-    const data: IExportAnalyticsFormData = {
-      x_axis: params.x_axis,
-      y_axis: params.y_axis,
-    };
-
-    if (params.segment) data.segment = params.segment;
-    if (params.project) data.project = [params.project];
-
-    analyticsService
-      .exportAnalytics(workspaceSlug.toString(), data)
-      .then((res) =>
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: res.message,
-        })
-      )
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "There was some error in exporting the analytics. Please try again.",
-        })
-      )
-      .finally(() => setIsExporting(false));
   };
 
   return (
@@ -198,74 +147,24 @@ const Analytics = () => {
                         </g>
                       ),
                     }}
-                    colors={(datum) => generateBarColor(datum, analytics, params)}
+                    colors={(datum) =>
+                      generateBarColor(
+                        `${datum[params.segment ? "id" : "indexValue"]}`,
+                        analytics,
+                        params
+                      )
+                    }
                     padding={0.9}
                     margin={{ ...DEFAULT_MARGIN, right: 20 }}
                     theme={{ ...CHARTS_THEME, background: "rgb(var(--color-bg-surface-1))" }}
                   />
-                  <div className="m-5 -mt-5">
-                    <div className="mt-8 flow-root">
-                      <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                          <table className="min-w-full divide-y divide-brand-base border border-brand-base">
-                            <thead className="bg-brand-base">
-                              <tr className="divide-x divide-brand-base text-sm text-brand-base">
-                                <th scope="col" className="py-3 px-2.5 text-left font-medium">
-                                  {
-                                    ANALYTICS_X_AXIS_VALUES.find((v) => v.value === params.x_axis)
-                                      ?.label
-                                  }
-                                </th>
-                                {params.segment ? (
-                                  barGraphData.xAxisKeys.map((key) => (
-                                    <th
-                                      scope="col"
-                                      className="px-2.5 py-3 text-left font-medium capitalize"
-                                    >
-                                      {key}
-                                    </th>
-                                  ))
-                                ) : (
-                                  <th
-                                    scope="col"
-                                    className="py-3 px-2.5 text-left font-medium sm:pr-0"
-                                  >
-                                    {
-                                      ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === params.y_axis)
-                                        ?.label
-                                    }
-                                  </th>
-                                )}
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-brand-base">
-                              {barGraphData.data.map((item) => (
-                                <tr className="divide-x divide-brand-base text-xs text-brand-secondary">
-                                  <td
-                                    className={`whitespace-nowrap py-2 px-2.5 font-medium ${
-                                      params.x_axis === "priority" ? "capitalize" : ""
-                                    }`}
-                                  >
-                                    {addSpaceIfCamelCase(`${item.name}`)}
-                                  </td>
-                                  {params.segment ? (
-                                    barGraphData.xAxisKeys.map((key) => (
-                                      <td className="whitespace-nowrap py-2 px-2.5 sm:pr-0">
-                                        {item[key] ?? 0}
-                                      </td>
-                                    ))
-                                  ) : (
-                                    <td className="whitespace-nowrap py-2 px-2.5 sm:pr-0">
-                                      {item[yAxisKey]}
-                                    </td>
-                                  )}
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="m-5 mt-0">
+                    <AnalyticsTable
+                      analytics={analytics}
+                      barGraphData={barGraphData}
+                      params={params}
+                      yAxisKey={yAxisKey}
+                    />
                   </div>
                 </div>
               ) : (
@@ -291,147 +190,12 @@ const Analytics = () => {
               </div>
             )}
           </div>
-          <div className="h-full gap-4 border-l border-brand-base bg-brand-sidebar p-5">
-            <div className="sticky top-5 space-y-6">
-              <div className="flex items-center justify-between gap-2">
-                <h5 className="text-lg font-medium">
-                  {analytics?.total ?? 0}{" "}
-                  <span className="text-xs font-normal text-brand-secondary">issues</span>
-                </h5>
-                <CustomMenu ellipsis>
-                  <CustomMenu.MenuItem onClick={mutateAnalytics}>
-                    <div className="flex items-center gap-2">
-                      <ArrowPathIcon className="h-3 w-3" />
-                      Refresh
-                    </div>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={exportAnalytics}>
-                    <div className="flex items-center gap-2">
-                      <ArrowUpTrayIcon className="h-3 w-3" />
-                      {isExporting ? "Exporting..." : "Export analytics as CSV"}
-                    </div>
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <h6 className="text-xs text-brand-secondary">Measure (y-axis)</h6>
-                  <Controller
-                    name="y_axis"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <CustomSelect
-                        value={value}
-                        label={
-                          <span>
-                            {ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === value)?.label ??
-                              "None"}
-                          </span>
-                        }
-                        onChange={onChange}
-                        width="w-full"
-                      >
-                        {ANALYTICS_Y_AXIS_VALUES.map((item) => (
-                          <CustomSelect.Option key={item.value} value={item.value}>
-                            {item.label}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
-                    )}
-                  />
-                </div>
-                <div>
-                  <h6 className="text-xs text-brand-secondary">Dimension (x-axis)</h6>
-                  <Controller
-                    name="x_axis"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <CustomSelect
-                        value={value}
-                        label={
-                          <span>
-                            {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label}
-                          </span>
-                        }
-                        onChange={(val: string) => {
-                          if (params.segment === val) setValue("segment", null);
-
-                          onChange(val);
-                        }}
-                        width="w-full"
-                      >
-                        {ANALYTICS_X_AXIS_VALUES.map((item) => (
-                          <CustomSelect.Option key={item.value} value={item.value}>
-                            {item.label}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
-                    )}
-                  />
-                </div>
-                <div>
-                  <h6 className="text-xs text-brand-secondary">Segment</h6>
-                  <Controller
-                    name="segment"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <CustomSelect
-                        value={value}
-                        label={
-                          <span>
-                            {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label ?? (
-                              <span className="text-brand-secondary">No value</span>
-                            )}
-                          </span>
-                        }
-                        onChange={onChange}
-                        width="w-full"
-                      >
-                        <CustomSelect.Option value={null}>No value</CustomSelect.Option>
-                        {ANALYTICS_X_AXIS_VALUES.map((item) => {
-                          if (params.x_axis === item.value) return null;
-
-                          return (
-                            <CustomSelect.Option key={item.value} value={item.value}>
-                              {item.label}
-                            </CustomSelect.Option>
-                          );
-                        })}
-                      </CustomSelect>
-                    )}
-                  />
-                </div>
-                <div>
-                  <h6 className="text-xs text-brand-secondary">Project</h6>
-                  <Controller
-                    name="project"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <CustomSelect
-                        value={value}
-                        label={
-                          <span>
-                            {projects.find((p) => p.id === value)?.name ?? (
-                              <span className="text-brand-secondary">None</span>
-                            )}
-                          </span>
-                        }
-                        onChange={onChange}
-                        width="w-full"
-                      >
-                        <CustomSelect.Option value={null}>None</CustomSelect.Option>
-                        {projects.map((project) => (
-                          <CustomSelect.Option key={project.id} value={project.id}>
-                            {project.name}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
-                    )}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <AnalyticsSidebar
+            analytics={analytics}
+            params={params}
+            control={control}
+            setValue={setValue}
+          />
         </div>
       </div>
     </WorkspaceAuthorizationLayout>
