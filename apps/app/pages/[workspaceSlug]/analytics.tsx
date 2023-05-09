@@ -6,6 +6,8 @@ import useSWR from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// nivo
+import { ComputedDatum } from "@nivo/bar";
 // services
 import analyticsService from "services/analytics.service";
 // hooks
@@ -15,7 +17,7 @@ import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // ui
-import { BarGraph, CustomMenu, CustomSelect, PrimaryButton, SecondaryButton } from "components/ui";
+import { BarGraph, CustomMenu, CustomSelect, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ArrowPathIcon, ArrowUpTrayIcon, PlusIcon } from "@heroicons/react/24/outline";
@@ -24,8 +26,14 @@ import { IAnalyticsParams, IExportAnalyticsFormData } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 // constants
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
-import { CHARTS_THEME, DEFAULT_MARGIN, convertResponseToBarGraphData } from "constants/graph";
+import {
+  ANALYTICS_X_AXIS_VALUES,
+  ANALYTICS_Y_AXIS_VALUES,
+  convertResponseToBarGraphData,
+  generateBarColor,
+} from "constants/analytics";
+import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 
 const defaultValues: IAnalyticsParams = {
   x_axis: "priority",
@@ -70,10 +78,23 @@ const Analytics = () => {
     watch("y_axis")
   );
 
-  const generateYAxisTicks = () => {
+  const generateYAxisTickValues = () => {
     if (!analytics) return [];
 
-    const data = barGraphData.data.map((d) => d[yAxisKey] as number);
+    let data: number[] = [];
+
+    if (params.segment)
+      // find the total no of issues in each segment
+      data = Object.keys(analytics.distribution).map((segment) => {
+        let totalSegmentIssues = 0;
+
+        analytics.distribution[segment].map((s) => {
+          totalSegmentIssues += s[yAxisKey] as number;
+        });
+
+        return totalSegmentIssues;
+      });
+    else data = barGraphData.data.map((d) => d[yAxisKey] as number);
 
     const minValue = Math.min(...data);
     const maxValue = Math.max(...data);
@@ -158,8 +179,26 @@ const Analytics = () => {
                     indexBy="name"
                     keys={barGraphData.xAxisKeys}
                     axisLeft={{
-                      tickValues: generateYAxisTicks(),
+                      tickValues: generateYAxisTickValues(),
                     }}
+                    axisBottom={{
+                      renderTick: (tick) => (
+                        <g transform={`translate(${tick.x},${tick.y + 4})`}>
+                          <text
+                            x={0}
+                            y={0}
+                            dy={16}
+                            textAnchor="middle"
+                            fill="rgb(var(--color-text-base))"
+                            fontSize={11}
+                            className={params.x_axis === "priority" ? "capitalize" : ""}
+                          >
+                            {tick.value}
+                          </text>
+                        </g>
+                      ),
+                    }}
+                    colors={(datum) => generateBarColor(datum, analytics, params)}
                     padding={0.9}
                     margin={{ ...DEFAULT_MARGIN, right: 20 }}
                     theme={{ ...CHARTS_THEME, background: "rgb(var(--color-bg-surface-1))" }}
@@ -181,7 +220,7 @@ const Analytics = () => {
                                   barGraphData.xAxisKeys.map((key) => (
                                     <th
                                       scope="col"
-                                      className="px-2.5 py-2 text-left font-medium capitalize"
+                                      className="px-2.5 py-3 text-left font-medium capitalize"
                                     >
                                       {key}
                                     </th>
@@ -189,7 +228,7 @@ const Analytics = () => {
                                 ) : (
                                   <th
                                     scope="col"
-                                    className="py-3 px-2.5 text-left text-sm font-medium sm:pr-0"
+                                    className="py-3 px-2.5 text-left font-medium sm:pr-0"
                                   >
                                     {
                                       ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === params.y_axis)
@@ -202,8 +241,12 @@ const Analytics = () => {
                             <tbody className="divide-y divide-brand-base">
                               {barGraphData.data.map((item) => (
                                 <tr className="divide-x divide-brand-base text-xs text-brand-secondary">
-                                  <td className="whitespace-nowrap py-2 px-2.5 font-medium capitalize">
-                                    {item.name}
+                                  <td
+                                    className={`whitespace-nowrap py-2 px-2.5 font-medium ${
+                                      params.x_axis === "priority" ? "capitalize" : ""
+                                    }`}
+                                  >
+                                    {addSpaceIfCamelCase(`${item.name}`)}
                                   </td>
                                   {params.segment ? (
                                     barGraphData.xAxisKeys.map((key) => (
@@ -311,7 +354,7 @@ const Analytics = () => {
                           </span>
                         }
                         onChange={(val: string) => {
-                          if (watch("segment") === val) setValue("segment", null);
+                          if (params.segment === val) setValue("segment", null);
 
                           onChange(val);
                         }}
@@ -346,7 +389,7 @@ const Analytics = () => {
                       >
                         <CustomSelect.Option value={null}>No value</CustomSelect.Option>
                         {ANALYTICS_X_AXIS_VALUES.map((item) => {
-                          if (watch("x_axis") === item.value) return null;
+                          if (params.x_axis === item.value) return null;
 
                           return (
                             <CustomSelect.Option key={item.value} value={item.value}>

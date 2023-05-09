@@ -1,6 +1,9 @@
-export interface IAnalytics {
+export interface IAnalyticsResponse {
   total: number;
   distribution: IAnalyticsData;
+  extras: {
+    colors: IAnalyticsExtra[];
+  };
 }
 
 export interface IAnalyticsData {
@@ -10,6 +13,11 @@ export interface IAnalyticsData {
     count?: number;
     effort?: number | null;
   }[];
+}
+
+export interface IAnalyticsExtra {
+  name: string;
+  color: string;
 }
 
 export type TXAxisValues =

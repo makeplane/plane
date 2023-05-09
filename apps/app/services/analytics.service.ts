@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // types
-import { IAnalyticsParams, IAnalytics, IExportAnalyticsFormData } from "types";
+import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -10,7 +10,7 @@ class AnalyticsServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async getAnalytics(workspaceSlug: string, params: IAnalyticsParams): Promise<IAnalytics> {
+  async getAnalytics(workspaceSlug: string, params: IAnalyticsParams): Promise<IAnalyticsResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/analytics/`, {
       params,
     })
