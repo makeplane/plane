@@ -1,6 +1,18 @@
 # Django imports
-from django.db.models import Q, Count
-from django.db.models.functions import TruncMonth
+from django.db.models import (
+    Q,
+    Count,
+    Sum,
+    Value,
+    Case,
+    When,
+    FloatField,
+    Subquery,
+    OuterRef,
+    F,
+    ExpressionWrapper,
+)
+from django.db.models.functions import ExtractMonth
 
 # Third party imports
 from rest_framework import status
@@ -52,7 +64,7 @@ class AnalyticsEndpoint(BaseAPIView):
             )
 
             colors = dict()
-            if x_axis in ["state__name", "state__group"]:
+            if x_axis in ["state__name", "state__group"] or segment in ["state__name", "state__group"]:
                 key = "name" if x_axis == "state__name" else "group"
                 colors = (
                     State.objects.filter(
@@ -62,7 +74,7 @@ class AnalyticsEndpoint(BaseAPIView):
                     else State.objects.filter(workspace__slug=slug).values(key, "color")
                 )
 
-            if x_axis in ["labels__name"]:
+            if x_axis in ["labels__name"] or segment in ["labels__name"]:
                 colors = (
                     Label.objects.filter(
                         workspace__slug=slug, project_id__in=project_ids
@@ -188,6 +200,10 @@ class ExportAnalyticsEndpoint(BaseAPIView):
 
 
 class DefaultAnalyticsEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
+
     def get(self, request, slug):
         try:
             queryset = Issue.objects.filter(workspace__slug=slug)
@@ -211,16 +227,30 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
 
             issue_completed_month_wise = (
                 queryset.filter(completed_at__isnull=False)
-                .annotate(month=TruncMonth("completed_at"))
+                .annotate(month=ExtractMonth("completed_at"))
                 .values("month")
                 .annotate(count=Count("*"))
                 .order_by("month")
             )
-
             most_issue_created_user = (
-                queryset.filter(created_by__isnull=False).values("created_by__email")
-                .annotate(record_count=Count("id"))
-                .order_by("-record_count")
+                queryset.filter(created_by__isnull=False)
+                .values("created_by__email")
+                .annotate(count=Count("id"))
+                .order_by("-count")
+            )[:5]
+
+            most_issue_closed_user = (
+                queryset.filter(completed_at__isnull=False, assignees__isnull=False)
+                .values("assignees__email")
+                .annotate(count=Count("id"))
+                .order_by("-count")
+            )[:5]
+
+            pending_issue_user = (
+                queryset.filter(completed_at__isnull=True)
+                .values("assignees__email")
+                .annotate(count=Count("id"))
+                .order_by("-count")
             )
 
             return Response(
@@ -229,12 +259,14 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                     "open_issues": open_issues,
                     "issue_completed_month_wise": issue_completed_month_wise,
                     "most_issue_created_user": most_issue_created_user,
+                    "most_issue_closed_user": most_issue_closed_user,
+                    "pending_issue_user": pending_issue_user,
                 },
                 status=status.HTTP_200_OK,
             )
 
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
