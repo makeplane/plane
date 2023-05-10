@@ -13,7 +13,6 @@ type Props = {
 export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height" | "width">> = ({
   indexBy,
   keys,
-  padding = 0.8,
   height = "400px",
   width = "100%",
   margin,
@@ -25,7 +24,7 @@ export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height"
       indexBy={indexBy}
       keys={keys}
       margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
-      padding={padding}
+      padding={rest.padding ?? rest.data.length > 7 ? 0.8 : 0.9}
       axisBottom={{
         tickSize: 0,
         tickPadding: 10,
