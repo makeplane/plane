@@ -4,6 +4,7 @@ import APIService from "services/api.service";
 import {
   IAnalyticsParams,
   IAnalyticsResponse,
+  IDefaultAnalyticsResponse,
   IExportAnalyticsFormData,
   ISaveAnalyticsFormData,
 } from "types";
@@ -19,6 +20,17 @@ class AnalyticsServices extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/analytics/`, {
       params,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getDefaultAnalytics(
+    workspaceSlug: string,
+    params: IAnalyticsParams
+  ): Promise<IDefaultAnalyticsResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/default-analytics/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

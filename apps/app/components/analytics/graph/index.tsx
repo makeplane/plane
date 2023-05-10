@@ -76,10 +76,6 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
         tickPadding: 10,
         tickValues: generateYAxisTickValues(),
       }}
-      axisBottom={{
-        tickRotation: -45,
-      }}
-      enableLabel={false}
       colors={(datum) =>
         generateBarColor(
           params.segment ? `${datum.id}` : `${datum.indexValue}`,
@@ -91,7 +87,6 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
       tooltip={(datum) => <CustomTooltip datum={datum} params={params} />}
       margin={{ right: 20, bottom: longestXAxisLabel.length * 5 + 20 }}
       theme={{
-        background: "rgb(var(--color-bg-surface-1))",
         axis: {},
       }}
     />

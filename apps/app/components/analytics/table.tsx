@@ -39,7 +39,9 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                     key={`segment-${key}`}
                     scope="col"
                     className={`px-2.5 py-3 text-left font-medium ${
-                      params.segment === "priority" ? "capitalize" : ""
+                      params.segment === "priority" || params.segment === "state__group"
+                        ? "capitalize"
+                        : ""
                     }`}
                   >
                     <div className="flex items-center gap-2">

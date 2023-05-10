@@ -19,10 +19,10 @@ export const CustomTooltip: React.FC<Props> = ({ datum, params }) => (
     <span
       className={`font-medium text-brand-secondary ${
         params.segment
-          ? params.segment === "priority"
+          ? params.segment === "priority" || params.segment === "state__group"
             ? "capitalize"
             : ""
-          : params.x_axis === "priority"
+          : params.x_axis === "priority" || params.x_axis === "state__group"
           ? "capitalize"
           : ""
       }`}

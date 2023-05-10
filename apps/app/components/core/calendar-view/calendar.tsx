@@ -49,7 +49,7 @@ import {
 // type
 import { IIssue } from "types";
 // constant
-import { monthOptions, yearOptions } from "constants/calendar";
+import { MONTHS_LIST, YEARS_LIST } from "constants/calendar";
 import modulesService from "services/modules.service";
 import { getStateGroupIcon } from "components/icons";
 
@@ -253,7 +253,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                   >
                     <Popover.Panel className="absolute top-10 left-0 z-20 flex w-full max-w-xs transform flex-col overflow-hidden rounded-[10px] bg-brand-surface-2 shadow-lg">
                       <div className="flex items-center justify-center gap-5 px-2 py-2 text-sm">
-                        {yearOptions.map((year) => (
+                        {YEARS_LIST.map((year) => (
                           <button
                             onClick={() => updateDate(updateDateWithYear(year.label, currentDate))}
                             className={` ${
@@ -267,13 +267,13 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
                         ))}
                       </div>
                       <div className="grid grid-cols-4  border-t border-brand-base px-2">
-                        {monthOptions.map((month) => (
+                        {MONTHS_LIST.map((month) => (
                           <button
                             onClick={() =>
-                              updateDate(updateDateWithMonth(month.value, currentDate))
+                              updateDate(updateDateWithMonth(`${month.value}`, currentDate))
                             }
                             className={`px-2 py-2 text-xs text-brand-secondary hover:font-medium hover:text-brand-base ${
-                              isSameMonth(month.value, currentDate)
+                              isSameMonth(`${month.value}`, currentDate)
                                 ? "font-medium text-brand-base"
                                 : ""
                             }`}

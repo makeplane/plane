@@ -56,13 +56,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 
   const { data: workspaceMemberMe, error } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null,
-    {
-      onErrorRetry(err, key, config, revalidate, revalidateOpts) {
-        if (err.status === 401 || err.status === 403) return;
-        revalidateOpts.retryCount = 5;
-      },
-    }
+    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null
   );
 
   if (!workspaceMemberMe && !error)
