@@ -24,16 +24,16 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
   const [darkPalette, setDarkPalette] = useState(false);
 
   const defaultValues = {
-    accent: preLoadedData?.accent ?? "#3F76FF",
-    bgBase: preLoadedData?.bgBase ?? "#FFFFFF",
-    bgSurface1: preLoadedData?.bgSurface1 ?? "#F9FAFB",
-    bgSurface2: preLoadedData?.bgSurface2 ?? "#F3F4F6",
-    border: preLoadedData?.border ?? "#E5E7EB",
+    accent: preLoadedData?.accent ?? "#FE5050",
+    bgBase: preLoadedData?.bgBase ?? "#FFF7F7",
+    bgSurface1: preLoadedData?.bgSurface1 ?? "#FFE0E0",
+    bgSurface2: preLoadedData?.bgSurface2 ?? "#FFF7F7",
+    border: preLoadedData?.border ?? "#FFC9C9",
     darkPalette: preLoadedData?.darkPalette ?? false,
     palette: preLoadedData?.palette ?? "",
     sidebar: preLoadedData?.sidebar ?? "#FFFFFF",
-    textBase: preLoadedData?.textBase ?? "#030712",
-    textSecondary: preLoadedData?.textSecondary ?? "#374151",
+    textBase: preLoadedData?.textBase ?? "#430000",
+    textSecondary: preLoadedData?.textSecondary ?? "#323232",
   };
 
   const {
