@@ -36,16 +36,45 @@ export const ThemeSwitch: React.FC<Props> = ({
     return null;
   }
 
+  const currentThemeObj = THEMES_OBJ.find((t) => t.value === theme);
+
   return (
     <>
       <CustomSelect
         value={theme}
-        label={theme ? THEMES_OBJ.find((t) => t.value === theme)?.label : "Select your theme"}
+        label={
+          currentThemeObj ? (
+            <div className="flex items-center gap-2">
+              <div
+                className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
+                style={{
+                  borderColor: currentThemeObj.icon.border,
+                }}
+              >
+                <div
+                  className="h-full w-1/2 rounded-l-full"
+                  style={{
+                    background: currentThemeObj.icon.color1,
+                  }}
+                />
+                <div
+                  className="h-full w-1/2 rounded-r-full border-l"
+                  style={{
+                    borderLeftColor: currentThemeObj.icon.border,
+                    background: currentThemeObj.icon.color2,
+                  }}
+                />
+              </div>
+              {currentThemeObj.label}
+            </div>
+          ) : (
+            "Select your theme"
+          )
+        }
         onChange={({ value, type }: { value: string; type: string }) => {
           if (value === "custom") {
-            if (user && user.theme.palette) {
+            if (user?.theme.palette) {
               setPreLoadedData(user.theme);
-              setTheme("custom");
             }
             if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
           } else {
@@ -63,17 +92,39 @@ export const ThemeSwitch: React.FC<Props> = ({
               "--color-text-secondary",
             ];
             cssVars.forEach((cssVar) => document.documentElement.style.removeProperty(cssVar));
-            setTheme(value);
           }
+          setTheme(value);
           document.documentElement.style.setProperty("color-scheme", type);
         }}
         input
         width="w-full"
         position="right"
       >
-        {THEMES_OBJ.map(({ value, label, type }) => (
+        {THEMES_OBJ.map(({ value, label, type, icon }) => (
           <CustomSelect.Option key={value} value={{ value, type }}>
-            {label}
+            <div className="flex items-center gap-2">
+              <div
+                className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
+                style={{
+                  borderColor: icon.border,
+                }}
+              >
+                <div
+                  className="h-full w-1/2 rounded-l-full"
+                  style={{
+                    background: icon.color1,
+                  }}
+                />
+                <div
+                  className="h-full w-1/2 rounded-r-full border-l"
+                  style={{
+                    borderLeftColor: icon.border,
+                    background: icon.color2,
+                  }}
+                />
+              </div>
+              {label}
+            </div>
           </CustomSelect.Option>
         ))}
       </CustomSelect>

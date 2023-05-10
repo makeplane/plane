@@ -7,7 +7,8 @@ import { useForm } from "react-hook-form";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { PrimaryButton } from "components/ui";
+import { ColorPickerInput } from "components/core";
 // services
 import userService from "services/user.service";
 // helper
@@ -15,22 +16,32 @@ import { applyTheme } from "helpers/theme.helper";
 // types
 import { ICustomTheme } from "types";
 
-const defaultValues = {
-  palette: "",
-};
-
 type Props = {
-  data?: ICustomTheme | null;
   preLoadedData?: Partial<ICustomTheme> | null;
 };
 
-export const CustomThemeSelector: React.FC<Props> = ({ data, preLoadedData }) => {
+export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
   const [darkPalette, setDarkPalette] = useState(false);
+
+  const defaultValues = {
+    accent: preLoadedData?.accent ?? "#3F76FF",
+    bgBase: preLoadedData?.bgBase ?? "#FFFFFF",
+    bgSurface1: preLoadedData?.bgSurface1 ?? "#F9FAFB",
+    bgSurface2: preLoadedData?.bgSurface2 ?? "#F3F4F6",
+    border: preLoadedData?.border ?? "#E5E7EB",
+    darkPalette: preLoadedData?.darkPalette ?? false,
+    palette: preLoadedData?.palette ?? "",
+    sidebar: preLoadedData?.sidebar ?? "#FFFFFF",
+    textBase: preLoadedData?.textBase ?? "#030712",
+    textSecondary: preLoadedData?.textSecondary ?? "#374151",
+  };
 
   const {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    watch,
+    setValue,
     reset,
   } = useForm<any>({
     defaultValues,
@@ -75,9 +86,8 @@ export const CustomThemeSelector: React.FC<Props> = ({ data, preLoadedData }) =>
     reset({
       ...defaultValues,
       ...preLoadedData,
-      ...data,
     });
-  }, [data, preLoadedData, reset]);
+  }, [preLoadedData, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>
@@ -85,163 +95,91 @@ export const CustomThemeSelector: React.FC<Props> = ({ data, preLoadedData }) =>
         <h3 className="text-lg font-semibold text-brand-base">Customize your theme</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-base text-brand-secondary">Background</h3>
-              <Input
-                id="bgBase"
+              <ColorPickerInput
                 name="bgBase"
-                type="name"
-                placeholder="#FFFFFF"
-                autoComplete="off"
                 error={errors.bgBase}
+                watch={watch}
+                setValue={setValue}
                 register={register}
-                validations={{
-                  required: "Background color is required",
-                  pattern: {
-                    value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
-                    message: "Background color should be hex format",
-                  },
-                }}
               />
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-base text-brand-secondary">Background surface 1</h3>
-              <Input
-                id="bgSurface1"
+              <ColorPickerInput
                 name="bgSurface1"
-                type="name"
-                placeholder="#FFFFFF"
-                autoComplete="off"
                 error={errors.bgSurface1}
+                watch={watch}
+                setValue={setValue}
                 register={register}
-                validations={{
-                  required: "Background surface 1 color is required",
-                  pattern: {
-                    value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
-                    message: "Background surface 1 color should be hex format",
-                  },
-                }}
               />
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-base text-brand-secondary">Background surface 2</h3>
-              <Input
-                id="bgSurface2"
+              <ColorPickerInput
                 name="bgSurface2"
-                type="name"
-                placeholder="#FFFFFF"
-                autoComplete="off"
-                error={errors.bgSurface1}
+                error={errors.bgSurface2}
+                watch={watch}
+                setValue={setValue}
                 register={register}
-                validations={{
-                  required: "Background surface 2 color is required",
-                  pattern: {
-                    value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
-                    message: "Background surface 2 color should be hex format",
-                  },
-                }}
               />
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-base text-brand-secondary">Border</h3>
-              <Input
-                id="border"
+              <ColorPickerInput
                 name="border"
-                type="name"
-                placeholder="#FFFFFF"
-                autoComplete="off"
                 error={errors.border}
+                watch={watch}
+                setValue={setValue}
                 register={register}
-                validations={{
-                  required: "Border color is required",
-                  pattern: {
-                    value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
-                    message: "Border color should be hex format",
-                  },
-                }}
               />
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-base text-brand-secondary">Sidebar</h3>
-              <Input
-                id="sidebar"
+              <ColorPickerInput
                 name="sidebar"
-                type="name"
-                placeholder="#FFFFFF"
-                autoComplete="off"
                 error={errors.sidebar}
+                watch={watch}
+                setValue={setValue}
                 register={register}
-                validations={{
-                  required: "Sidebar color is required",
-                  pattern: {
-                    value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
-                    message: "Sidebar color should be hex format",
-                  },
-                }}
               />
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-base text-brand-secondary">Accent</h3>
-              <Input
-                id="accent"
+              <ColorPickerInput
                 name="accent"
-                type="name"
-                placeholder="#FFFFFF"
-                autoComplete="off"
                 error={errors.accent}
+                watch={watch}
+                setValue={setValue}
                 register={register}
-                validations={{
-                  required: "Accent color is required",
-                  pattern: {
-                    value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
-                    message: "Accent color should be hex format",
-                  },
-                }}
               />
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-base text-brand-secondary">Text primary</h3>
-              <Input
-                id="textBase"
+              <ColorPickerInput
                 name="textBase"
-                type="name"
-                placeholder="#FFFFFF"
-                autoComplete="off"
                 error={errors.textBase}
+                watch={watch}
+                setValue={setValue}
                 register={register}
-                validations={{
-                  required: "Text primary color is required",
-                  pattern: {
-                    value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
-                    message: "Text primary color should be hex format",
-                  },
-                }}
               />
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-base text-brand-secondary">Text secondary</h3>
-              <Input
-                id="textSecondary"
+              <ColorPickerInput
                 name="textSecondary"
-                type="name"
-                placeholder="#FFFFFF"
-                autoComplete="off"
                 error={errors.textSecondary}
+                watch={watch}
+                setValue={setValue}
                 register={register}
-                validations={{
-                  required: "Text secondary color is required",
-                  pattern: {
-                    value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
-                    message: "Text secondary color should be hex format",
-                  },
-                }}
               />
             </div>
           </div>

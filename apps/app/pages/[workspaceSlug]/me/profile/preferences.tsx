@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 
 // hooks
 import useUser from "hooks/use-user";
@@ -14,8 +15,16 @@ import { ICustomTheme } from "types";
 
 const ProfilePreferences = () => {
   const { user: myProfile } = useUser();
+  const { theme } = useTheme();
   const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
   const [preLoadedData, setPreLoadedData] = useState<ICustomTheme | null>(null);
+
+  useEffect(() => {
+    if (theme === "custom") {
+      if (myProfile?.theme.palette) setPreLoadedData(myProfile.theme);
+      if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
+    }
+  }, [theme]);
 
   return (
     <WorkspaceAuthorizationLayout

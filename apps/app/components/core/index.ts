@@ -13,3 +13,4 @@ export * from "./filter-list";
 export * from "./feeds";
 export * from "./theme-switch";
 export * from "./custom-theme-selector";
+export * from "./color-picker-input";
