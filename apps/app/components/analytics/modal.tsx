@@ -56,7 +56,11 @@ export const AnalyticsModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const handleClose = () => {
     onClose();
   };
-  const { data: analytics, error: analyticsError } = useSWR(
+  const {
+    data: analytics,
+    error: analyticsError,
+    mutate: mutateAnalytics,
+  } = useSWR(
     workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
     workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
   );
@@ -138,7 +142,7 @@ export const AnalyticsModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       again.
                     </p>
                     <div className="flex items-center justify-center gap-2">
-                      <PrimaryButton onClick={() => router.reload()}>Refresh page</PrimaryButton>
+                      <PrimaryButton onClick={mutateAnalytics}>Refresh page</PrimaryButton>
                     </div>
                   </div>
                 </div>
