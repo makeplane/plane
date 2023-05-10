@@ -60,7 +60,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
           bgSurface2: formData.bgSurface2,
           border: formData.border,
           darkPalette: darkPalette,
-          palette: `${formData.accent},${formData.bgBase},${formData.bgSurface1},${formData.bgSurface2},${formData.border},${formData.sidebar},${formData.textBase},${formData.textSecondary}`,
+          palette: `${formData.bgBase},${formData.bgSurface1},${formData.bgSurface2},${formData.border},${formData.sidebar},${formData.accent},${formData.textBase},${formData.textSecondary}`,
           sidebar: formData.sidebar,
           textBase: formData.textBase,
           textSecondary: formData.textSecondary,
