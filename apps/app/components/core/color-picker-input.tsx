@@ -15,7 +15,7 @@ import { ColorResult, SketchPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 import { Input } from "components/ui";
 // icons
-import { ColorPalletteIcon } from "components/icons";
+import { ColorPickerIcon } from "components/icons";
 
 type Props = {
   name: string;
@@ -91,7 +91,11 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
                     }}
                   />
                 ) : (
-                  <ColorPalletteIcon height={16} width={16} />
+                  <ColorPickerIcon
+                    height={14}
+                    width={14}
+                    className="fill-current text-brand-base"
+                  />
                 )}
               </Popover.Button>
 
