@@ -212,7 +212,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
-        try:
+        # try:
             queryset = Issue.objects.filter(workspace__slug=slug)
 
             project_ids = request.GET.getlist("project")
@@ -229,7 +229,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             total_issues = queryset.count()
 
             total_issues_classified = (
-                total_issues.annotate(state_group=F("state__group"))
+                queryset.annotate(state_group=F("state__group"))
                 .values("state_group")
                 .annotate(state_count=Count("state_group"))
                 .order_by("state_group")
@@ -289,9 +289,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # except Exception as e:
+        #     print(e)
+        #     return Response(
+        #         {"error": "Something went wrong please try again later"},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
