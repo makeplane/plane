@@ -9,7 +9,7 @@ import { ScopeAndDemand } from "components/analytics";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-const CustomAnalytics = dynamic(
+const CustomAnalytics = dynamic<Readonly<{}>>(
   () => import("components/analytics").then((a) => a.CustomAnalytics),
   { ssr: false }
 );
