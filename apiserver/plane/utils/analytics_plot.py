@@ -44,6 +44,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     if y_axis == "effort":
         queryset = queryset.annotate(effort=Sum("estimate_point")).order_by(x_axis)
+        queryset = queryset.annotate(segment=F(segment)).values("dimension", "segment", "effort")
 
     result_values = list(queryset)
     grouped_data = {}
