@@ -117,7 +117,21 @@ services:
       DOCKERIZED: 1
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       GPT_ENGINE: ${GPT_ENGINE}
-      SECRET_KEY: ${SECRET_KEY}
+      SECRET_KEY: abcdefghij
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    restart: always
+    volumes:
+      - miniodata:/data
+    environment:
+      MINIO_ROOT_USER : ROOTUSER
+      MINIO_ROOT_PASSWORD: CHANGEME123
+    command: server /data --console-address ":9090"
+    ports:
+      - 9000:9000
+      - 9090:9090
 volumes:
   pgdata:
   redisdata:
+  miniodata:
