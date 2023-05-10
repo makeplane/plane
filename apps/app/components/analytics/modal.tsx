@@ -8,8 +8,6 @@ import useSWR from "swr";
 import { useForm } from "react-hook-form";
 // services
 import analyticsService from "services/analytics.service";
-// hooks
-import useTheme from "hooks/use-theme";
 // components
 import {
   AnalyticsGraph,
@@ -45,8 +43,6 @@ export const AnalyticsModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { collapsed } = useTheme();
 
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
 

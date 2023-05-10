@@ -217,11 +217,11 @@ export const AnalyticsSidebar: React.FC<Props> = ({
             />
           </div>
         </div>
-        <div className="flex items-center justify-end gap-2">
+        {/* <div className="flex items-center justify-end gap-2">
           <PrimaryButton className="py-1" onClick={() => setSaveAnalyticsModal(true)}>
             Save analytics
           </PrimaryButton>
-        </div>
+        </div> */}
       </div>
     </div>
   );
