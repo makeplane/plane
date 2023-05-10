@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useRef } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -34,6 +34,14 @@ type FormData = {
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
 });
+
+import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+
+const WrappedRemirrorRichTextEditor = forwardRef<IRemirrorRichTextEditor, IRemirrorRichTextEditor>(
+  (props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />
+);
+
+WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
@@ -125,7 +133,7 @@ export const GptAssistantModal: React.FC<Props> = ({
         isOpen ? "block" : "hidden"
       }`}
     >
-      {((content && content !== "") || htmlContent !== "<p></p>") && (
+      {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="remirror-section text-sm">
           Content:
           <RemirrorRichTextEditor

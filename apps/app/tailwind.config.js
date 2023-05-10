@@ -6,6 +6,10 @@ function withOpacity(variableName) {
   };
 }
 
+function convertToRGB(variableName) {
+  return `rgb(var(${variableName}))`;
+}
+
 module.exports = {
   darkMode: "class",
   content: ["./pages/**/*.tsx", "./components/**/*.tsx", "./layouts/**/*.tsx", "./ui/**/*.tsx"],
@@ -49,9 +53,32 @@ module.exports = {
           "100%": { right: "0" },
         },
       },
+      typography: ({ theme }) => ({
+        brand: {
+          css: {
+            "--tw-prose-body": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-p": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-headings": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-lead": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-links": `${convertToRGB("--color-accent")}`,
+            "--tw-prose-bold": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-counters": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-bullets": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-hr": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-quotes": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-quote-borders": `${convertToRGB("--color-border")}`,
+            "--tw-prose-code": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-pre-code": `${convertToRGB("--color-text-base")}`,
+            "--tw-prose-pre-bg": `${convertToRGB("--color-bg-base")}`,
+            "--tw-prose-th-borders": `${convertToRGB("--color-border")}`,
+            "--tw-prose-td-borders": `${convertToRGB("--color-border")}`,
+          },
+        },
+      }),
     },
     fontFamily: {
       custom: ["Inter", "sans-serif"],
     },
   },
+  plugins: [require("@tailwindcss/typography")],
 };
