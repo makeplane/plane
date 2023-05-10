@@ -353,7 +353,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, cycleId, params]
+    [workspaceSlug, projectId, cycleId, params, selectedGroup, setToastAlert]
   );
 
   const removeIssueFromModule = useCallback(
@@ -396,7 +396,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, moduleId, params]
+    [workspaceSlug, projectId, moduleId, params, selectedGroup, setToastAlert]
   );
 
   const handleTrashBox = useCallback(
@@ -442,39 +442,35 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setTransferIssuesModal(false)}
         isOpen={transferIssuesModal}
       />
-      <>
-        <div
-          className={`flex items-center justify-between gap-2 ${
-            issueView === "list" ? (areFiltersApplied ? "mt-6 px-8" : "") : "-mt-2"
-          }`}
-        >
-          <FilterList filters={filters} setFilters={setFilters} />
-          {areFiltersApplied && (
-            <PrimaryButton
-              onClick={() => {
-                if (viewId) {
-                  setFilters({}, true);
-                  setToastAlert({
-                    title: "View updated",
-                    message: "Your view has been updated",
-                    type: "success",
-                  });
-                } else
-                  setCreateViewModal({
-                    query: filters,
-                  });
-              }}
-              className="flex items-center gap-2 text-sm"
-            >
-              {!viewId && <PlusIcon className="h-4 w-4" />}
-              {viewId ? "Update" : "Save"} view
-            </PrimaryButton>
-          )}
-        </div>
-        {areFiltersApplied && (
-          <div className={`${issueView === "list" ? "mt-4" : "my-4"} border-t border-brand-base`} />
-        )}
-      </>
+      {areFiltersApplied && (
+        <>
+          <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
+            <FilterList filters={filters} setFilters={setFilters} />
+            {areFiltersApplied && (
+              <PrimaryButton
+                onClick={() => {
+                  if (viewId) {
+                    setFilters({}, true);
+                    setToastAlert({
+                      title: "View updated",
+                      message: "Your view has been updated",
+                      type: "success",
+                    });
+                  } else
+                    setCreateViewModal({
+                      query: filters,
+                    });
+                }}
+                className="flex items-center gap-2 text-sm"
+              >
+                {!viewId && <PlusIcon className="h-4 w-4" />}
+                {viewId ? "Update" : "Save"} view
+              </PrimaryButton>
+            )}
+          </div>
+          {<div className="mt-3 border-t border-brand-base" />}
+        </>
+      )}
 
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">

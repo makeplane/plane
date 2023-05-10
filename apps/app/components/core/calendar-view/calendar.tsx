@@ -229,7 +229,7 @@ export const CalendarView: React.FC<Props> = ({ addIssueToDate }) => {
 
   return calendarIssues ? (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="-m-2 h-full overflow-y-auto rounded-lg text-brand-secondary">
+      <div className="-m-2 h-full overflow-y-auto rounded-lg p-8 text-brand-secondary">
         <div className="mb-4 flex items-center justify-between">
           <div className="relative flex h-full w-full items-center justify-start gap-2 text-sm ">
             <Popover className="flex h-full items-center justify-start rounded-lg">

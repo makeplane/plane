@@ -20,6 +20,7 @@ import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, PROJECT_MEMBERS } from "constants/fetch-keys";
+import { SettingsHeader } from "components/project";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -103,7 +104,8 @@ const ControlSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="px-24 py-8">
+        <SettingsHeader />
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">

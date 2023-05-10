@@ -9,8 +9,8 @@ type Props = {
 };
 
 const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar }) => (
-  <div className="flex w-full flex-row flex-wrap items-center justify-between gap-y-4 border-b border-brand-base bg-brand-sidebar px-5 py-4">
-    <div className="flex flex-wrap items-center gap-2">
+  <div className="relative flex w-full flex-shrink-0 flex-row items-center justify-between gap-y-4 border border-b border-brand-base bg-brand-sidebar px-5 py-4">
+    <div className="flex items-center gap-2">
       <div className="block md:hidden">
         <button
           type="button"

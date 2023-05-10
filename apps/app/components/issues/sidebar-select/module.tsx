@@ -82,7 +82,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
               </span>
             </Tooltip>
           }
-          value={issueModule?.module_detail?.id}
+          value={issueModule ? issueModule.module_detail?.id : null}
           onChange={(value: any) => {
             !value
               ? removeIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")

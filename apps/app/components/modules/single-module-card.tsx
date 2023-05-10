@@ -44,7 +44,8 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
 
   const { setToastAlert } = useToast();
 
-  const completionPercentage = (module.completed_issues / module.total_issues) * 100;
+  const completionPercentage =
+    ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
 
   const handleDeleteModule = () => {
     if (!module) return;

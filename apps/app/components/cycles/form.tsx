@@ -1,21 +1,10 @@
-import { useEffect, useState } from "react";
-
-import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// services
-import cyclesService from "services/cycles.service";
-// hooks
-import useToast from "hooks/use-toast";
+
 // ui
 import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-// helpers
-import {
-  getDateRangeStatus,
-  isDateGreaterThanToday,
-  isDateRangeValid,
-} from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
 
@@ -34,13 +23,6 @@ const defaultValues: Partial<ICycle> = {
 };
 
 export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { setToastAlert } = useToast();
-
-  const [isDateValid, setIsDateValid] = useState(true);
-
   const {
     register,
     formState: { errors, isSubmitting },
@@ -59,43 +41,6 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
       ...defaultValues,
     });
   };
-
-  const cycleStatus =
-    data?.start_date && data?.end_date ? getDateRangeStatus(data?.start_date, data?.end_date) : "";
-
-  const dateChecker = async (payload: any) => {
-    if (isDateGreaterThanToday(payload.end_date)) {
-      await cyclesService
-        .cycleDateCheck(workspaceSlug as string, projectId as string, payload)
-        .then((res) => {
-          if (res.status) {
-            setIsDateValid(true);
-          } else {
-            setIsDateValid(false);
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message:
-                "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      setIsDateValid(false);
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Unable to create cycle in past date. Please enter a valid date.",
-      });
-    }
-  };
-
-  const checkEmptyDate =
-    (watch("start_date") === "" && watch("end_date") === "") ||
-    (!watch("start_date") && !watch("end_date"));
 
   useEffect(() => {
     reset({
@@ -147,30 +92,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 control={control}
                 name="start_date"
                 render={({ field: { value, onChange } }) => (
-                  <DateSelect
-                    label="Start date"
-                    value={value}
-                    onChange={(val) => {
-                      onChange(val);
-                      if (val && watch("end_date")) {
-                        if (isDateRangeValid(val, `${watch("end_date")}`)) {
-                          cycleStatus != "current" &&
-                            dateChecker({
-                              start_date: val,
-                              end_date: watch("end_date"),
-                            });
-                        } else {
-                          setIsDateValid(false);
-                          setToastAlert({
-                            type: "error",
-                            title: "Error!",
-                            message:
-                              "The date you have entered is invalid. Please check and enter a valid date.",
-                          });
-                        }
-                      }
-                    }}
-                  />
+                  <DateSelect label="Start date" value={value} onChange={(val) => onChange(val)} />
                 )}
               />
             </div>
@@ -179,30 +101,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 control={control}
                 name="end_date"
                 render={({ field: { value, onChange } }) => (
-                  <DateSelect
-                    label="End date"
-                    value={value}
-                    onChange={(val) => {
-                      onChange(val);
-                      if (watch("start_date") && val) {
-                        if (isDateRangeValid(`${watch("start_date")}`, val)) {
-                          cycleStatus != "current" &&
-                            dateChecker({
-                              start_date: watch("start_date"),
-                              end_date: val,
-                            });
-                        } else {
-                          setIsDateValid(false);
-                          setToastAlert({
-                            type: "error",
-                            title: "Error!",
-                            message:
-                              "The date you have entered is invalid. Please check and enter a valid date.",
-                          });
-                        }
-                      }
-                    }}
-                  />
+                  <DateSelect label="End date" value={value} onChange={(val) => onChange(val)} />
                 )}
               />
             </div>
@@ -211,18 +110,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
       </div>
       <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-brand-base px-5 pt-5">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton
-          type="submit"
-          className={
-            checkEmptyDate
-              ? "cursor-pointer"
-              : isDateValid
-              ? "cursor-pointer"
-              : "cursor-not-allowed"
-          }
-          disabled={checkEmptyDate ? false : isDateValid ? false : true}
-          loading={isSubmitting}
-        >
+        <PrimaryButton type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating Cycle..."
