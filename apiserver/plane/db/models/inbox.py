@@ -35,7 +35,7 @@ class InboxIssue(ProjectBaseModel):
     )
     snoozed_till = models.DateTimeField(null=True)
     duplicate_to = models.ForeignKey(
-        "db.Issue", related_name="inbox_duplicate", on_delete=models.CASCADE
+        "db.Issue", related_name="inbox_duplicate", on_delete=models.SET_NULL, null=True
     )
 
     class Meta:
