@@ -12,8 +12,8 @@ import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 // components
-import { AnalyticsModal } from "components/core";
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
+import { AnalyticsModal } from "components/analytics";
 import { CommandPalette } from "components/command-palette";
 // ui
 import { PrimaryButton, Spinner } from "components/ui";
@@ -121,7 +121,9 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                 : "bg-brand-base"
             }`}
           >
-            <AnalyticsModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+            {analyticsModal && (
+              <AnalyticsModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+            )}
             {!noHeader && (
               <AppHeader
                 breadcrumbs={breadcrumbs}

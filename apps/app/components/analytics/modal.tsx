@@ -16,7 +16,7 @@ import {
   AnalyticsSidebar,
   AnalyticsTable,
   CreateUpdateAnalyticsModal,
-} from "components/core";
+} from "components/analytics";
 // ui
 import { PrimaryButton } from "components/ui";
 // icons

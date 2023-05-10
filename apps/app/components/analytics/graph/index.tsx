@@ -1,15 +1,15 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // components
-import { CustomTick } from "./custom-tick";
 import { CustomTooltip } from "./custom-tooltip";
 // ui
 import { BarGraph } from "components/ui";
+// helpers
+import { findStringWithMostCharacters } from "helpers/array.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
 import { generateBarColor } from "constants/analytics";
-import { CHARTS_THEME, DEFAULT_MARGIN } from "constants/graph";
 
 type Props = {
   analytics: IAnalyticsResponse;
@@ -64,6 +64,8 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
     return tickValues;
   };
 
+  const longestXAxisLabel = findStringWithMostCharacters(barGraphData.data.map((d) => `${d.name}`));
+
   return (
     <BarGraph
       data={barGraphData.data}
@@ -75,7 +77,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
         tickValues: generateYAxisTickValues(),
       }}
       axisBottom={{
-        renderTick: (datum) => <CustomTick datum={datum} params={params} />,
+        tickRotation: -45,
       }}
       enableLabel={false}
       colors={(datum) =>
@@ -87,9 +89,8 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
         )
       }
       tooltip={(datum) => <CustomTooltip datum={datum} params={params} />}
-      margin={{ ...DEFAULT_MARGIN, right: 20 }}
+      margin={{ right: 20, bottom: longestXAxisLabel.length * 5 + 20 }}
       theme={{
-        ...CHARTS_THEME,
         background: "rgb(var(--color-bg-surface-1))",
         axis: {},
       }}

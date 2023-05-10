@@ -24,10 +24,10 @@ export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height"
     <ResponsiveBar
       indexBy={indexBy}
       keys={keys}
-      margin={margin ?? DEFAULT_MARGIN}
+      margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
       padding={padding}
       labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
-      theme={theme ?? CHARTS_THEME}
+      theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
       animate={true}
       {...rest}
     />

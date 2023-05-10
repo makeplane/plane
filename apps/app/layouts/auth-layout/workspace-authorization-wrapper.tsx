@@ -13,8 +13,8 @@ import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
-import { AnalyticsModal } from "components/core";
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
+import { AnalyticsModal } from "components/analytics";
 import { CommandPalette } from "components/command-palette";
 // icons
 import { PrimaryButton, Spinner } from "components/ui";
@@ -128,7 +128,9 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   : "bg-brand-base"
               }`}
             >
-              <AnalyticsModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+              {analyticsModal && (
+                <AnalyticsModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+              )}
               {!noHeader && (
                 <AppHeader
                   breadcrumbs={breadcrumbs}
