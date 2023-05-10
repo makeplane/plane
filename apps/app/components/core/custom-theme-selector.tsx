@@ -66,8 +66,11 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
           textSecondary: formData.textSecondary,
         },
       })
-      .then(() => {
-        mutateUser();
+      .then((res) => {
+        mutateUser((prevData) => {
+          if (!prevData) return prevData;
+          return { ...prevData, user: res };
+        }, false);
         applyTheme(formData.palette, darkPalette);
         setTheme("custom");
       })

@@ -24,7 +24,7 @@ const ProfilePreferences = () => {
       if (myProfile?.theme.palette) setPreLoadedData(myProfile.theme);
       if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
     }
-  }, [theme]);
+  }, [myProfile, theme]);
 
   return (
     <WorkspaceAuthorizationLayout
