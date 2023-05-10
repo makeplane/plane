@@ -275,6 +275,15 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                 .order_by("-count")
             )
 
+            open_estimate_sum = (
+                Issue.objects.filter(
+                    state__group__in=["backlog", "unstarted", "started"]
+                ).aggregate(open_estimate_sum=Sum("estimate_point"))
+            )["open_estimate_sum"]
+            total_estimate_sum = Issue.objects.aggregate(
+                total_estimate_sum=Sum("estimate_point")
+            )["total_estimate_sum"]
+
             return Response(
                 {
                     "total_issues": total_issues,
@@ -285,6 +294,8 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                     "most_issue_created_user": most_issue_created_user,
                     "most_issue_closed_user": most_issue_closed_user,
                     "pending_issue_user": pending_issue_user,
+                    "open_estimate_sum": open_estimate_sum,
+                    "total_estimate_sum": total_estimate_sum,
                 },
                 status=status.HTTP_200_OK,
             )
