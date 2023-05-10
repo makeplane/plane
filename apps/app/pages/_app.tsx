@@ -9,7 +9,6 @@ import "styles/editor.css";
 import "styles/command-pallette.css";
 import "styles/nprogress.css";
 import "styles/react-datepicker.css";
-import "styles/graph.css";
 
 // router
 import Router from "next/router";
