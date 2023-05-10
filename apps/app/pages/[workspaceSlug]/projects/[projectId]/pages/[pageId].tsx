@@ -314,197 +314,202 @@ const SinglePage: NextPage = () => {
       {pageDetails ? (
         <div className="space-y-4 p-4">
           <div className="flex items-center justify-between gap-2 px-3">
-            <button
-              type="button"
-              className="flex items-center gap-2 text-sm text-brand-secondary"
-              onClick={() => router.back()}
-            >
-              <ArrowLeftIcon className="h-4 w-4" />
-              Back
-            </button>
-            <div className="flex flex-wrap gap-1">
-              {pageDetails.labels.length > 0 ? (
-                <>
-                  {pageDetails.labels.map((labelId) => {
-                    const label = labels?.find((label) => label.id === labelId);
+            <div className="flex w-full flex-col gap-2">
+              <div className="flex w-full items-center gap-2">
+                <button
+                  type="button"
+                  className="flex items-center gap-2 text-sm text-brand-secondary"
+                  onClick={() => router.back()}
+                >
+                  <ArrowLeftIcon className="h-4 w-4" />
+                </button>
 
-                    if (!label) return;
+                <TextArea
+                  id="name"
+                  name="name"
+                  placeholder="Page Title"
+                  value={watch("name")}
+                  onBlur={handleSubmit(updatePage)}
+                  onChange={(e) => setValue("name", e.target.value)}
+                  required={true}
+                  className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
+                  role="textbox"
+                />
+              </div>
 
-                    return (
-                      <div
-                        key={label.id}
-                        className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
-                        onClick={() => {
-                          const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
-                          partialUpdatePage({ labels_list: updatedLabels });
-                        }}
-                        style={{
-                          backgroundColor: `${
-                            label?.color && label.color !== "" ? label.color : "#000000"
-                          }20`,
-                        }}
-                      >
-                        <span
-                          className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                          style={{
-                            backgroundColor:
-                              label?.color && label.color !== "" ? label.color : "#000000",
+              <div className="flex w-full flex-wrap gap-1">
+                {pageDetails.labels.length > 0 ? (
+                  <>
+                    {pageDetails.labels.map((labelId) => {
+                      const label = labels?.find((label) => label.id === labelId);
+
+                      if (!label) return;
+
+                      return (
+                        <div
+                          key={label.id}
+                          className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                          onClick={() => {
+                            const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
+                            partialUpdatePage({ labels_list: updatedLabels });
                           }}
-                        />
-                        {label.name}
-                        <XMarkIcon className="h-2.5 w-2.5 group-hover:text-red-500" />
-                      </div>
-                    );
-                  })}
+                          style={{
+                            backgroundColor: `${
+                              label?.color && label.color !== "" ? label.color : "#000000"
+                            }20`,
+                          }}
+                        >
+                          <span
+                            className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                            style={{
+                              backgroundColor:
+                                label?.color && label.color !== "" ? label.color : "#000000",
+                            }}
+                          />
+                          {label.name}
+                          <XMarkIcon className="h-2.5 w-2.5 group-hover:text-red-500" />
+                        </div>
+                      );
+                    })}
+                    <CustomSearchSelect
+                      customButton={
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 rounded-md bg-brand-surface-2 p-1.5 text-xs"
+                        >
+                          <PlusIcon className="h-3.5 w-3.5" />
+                        </button>
+                      }
+                      value={pageDetails.labels}
+                      onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                      options={options}
+                      multiple
+                      noChevron
+                    />
+                  </>
+                ) : (
                   <CustomSearchSelect
                     customButton={
                       <button
                         type="button"
-                        className="flex items-center gap-1 rounded-md bg-brand-surface-2 p-1.5 text-xs"
+                        className="flex items-center gap-1 rounded-md bg-brand-surface-2 px-3 py-1.5 text-xs"
                       >
-                        <PlusIcon className="h-3.5 w-3.5" />
+                        <PlusIcon className="h-3 w-3" />
+                        Add label
                       </button>
                     }
                     value={pageDetails.labels}
                     onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                    footerOption={
+                      <button
+                        type="button"
+                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
+                        onClick={() => {
+                          setLabelModal(true);
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-1 text-brand-secondary">
+                          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                          <span>Create New Label</span>
+                        </span>
+                      </button>
+                    }
                     options={options}
                     multiple
                     noChevron
                   />
-                </>
-              ) : (
-                <CustomSearchSelect
-                  customButton={
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 rounded-md bg-brand-surface-2 px-3 py-1.5 text-xs"
-                    >
-                      <PlusIcon className="h-3 w-3" />
-                      Add label
-                    </button>
-                  }
-                  value={pageDetails.labels}
-                  onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
-                  footerOption={
-                    <button
-                      type="button"
-                      className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
-                      onClick={() => {
-                        setLabelModal(true);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-1 text-brand-secondary">
-                        <PlusIcon className="h-4 w-4" aria-hidden="true" />
-                        <span>Create New Label</span>
-                      </span>
-                    </button>
-                  }
-                  options={options}
-                  multiple
-                  noChevron
-                />
-              )}
-            </div>
-            <div className="flex items-center gap-6 text-brand-secondary">
-              <Tooltip
-                tooltipContent={`Last updated at ${renderShortTime(
-                  pageDetails.updated_at
-                )} on ${renderShortDate(pageDetails.updated_at)}`}
-              >
-                <p className="text-sm">{renderShortTime(pageDetails.updated_at)}</p>
-              </Tooltip>
-              <button className="flex items-center gap-2" onClick={handleCopyText}>
-                <LinkIcon className="h-4 w-4" />
-              </button>
-              <div className="flex-shrink-0">
-                <Popover className="relative grid place-items-center">
-                  {({ open }) => (
-                    <>
-                      <Popover.Button
-                        type="button"
-                        className={`group inline-flex items-center outline-none ${
-                          open ? "text-brand-base" : "text-brand-secondary"
-                        }`}
-                      >
-                        {watch("color") && watch("color") !== "" ? (
-                          <span
-                            className="h-4 w-4 rounded"
-                            style={{
-                              backgroundColor: watch("color") ?? "black",
-                            }}
-                          />
-                        ) : (
-                          <ColorPalletteIcon height={16} width={16} />
-                        )}
-                      </Popover.Button>
-
-                      <Transition
-                        as={React.Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="opacity-0 translate-y-1"
-                        enterTo="opacity-100 translate-y-0"
-                        leave="transition ease-in duration-150"
-                        leaveFrom="opacity-100 translate-y-0"
-                        leaveTo="opacity-0 translate-y-1"
-                      >
-                        <Popover.Panel className="absolute top-full right-0 z-20 mt-1 max-w-xs px-2 sm:px-0">
-                          <TwitterPicker
-                            color={pageDetails.color}
-                            onChange={(val) => partialUpdatePage({ color: val.hex })}
-                          />
-                        </Popover.Panel>
-                      </Transition>
-                    </>
-                  )}
-                </Popover>
+                )}
               </div>
-              {pageDetails.created_by === user?.id && (
-                <Tooltip
-                  tooltipContent={`${
-                    pageDetails.access
-                      ? "This page is only visible to you."
-                      : "This page can be viewed by anyone in the project."
-                  }`}
-                  theme="dark"
-                >
-                  {pageDetails.access ? (
-                    <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
-                      <LockClosedIcon className="h-4 w-4" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => partialUpdatePage({ access: 1 })}
-                      type="button"
-                      className="z-10"
-                    >
-                      <LockOpenIcon className="h-4 w-4" />
-                    </button>
-                  )}
-                </Tooltip>
-              )}
-              {pageDetails.is_favorite ? (
-                <button onClick={handleRemoveFromFavorites} className="z-10">
-                  <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                </button>
-              ) : (
-                <button onClick={handleAddToFavorites} type="button" className="z-10">
-                  <StarIcon className="h-4 w-4" />
-                </button>
-              )}
             </div>
-          </div>
-          <div className="px-4 pt-6">
-            <TextArea
-              id="name"
-              name="name"
-              placeholder="Page Title"
-              value={watch("name")}
-              onBlur={handleSubmit(updatePage)}
-              onChange={(e) => setValue("name", e.target.value)}
-              required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
-              role="textbox"
-            />
+            <div className="flex items-center">
+              <div className="flex items-center gap-6 text-brand-secondary">
+                <Tooltip
+                  tooltipContent={`Last updated at ${renderShortTime(
+                    pageDetails.updated_at
+                  )} on ${renderShortDate(pageDetails.updated_at)}`}
+                >
+                  <p className="text-sm">{renderShortTime(pageDetails.updated_at)}</p>
+                </Tooltip>
+                <button className="flex items-center gap-2" onClick={handleCopyText}>
+                  <LinkIcon className="h-4 w-4" />
+                </button>
+                <div className="flex-shrink-0">
+                  <Popover className="relative grid place-items-center">
+                    {({ open }) => (
+                      <>
+                        <Popover.Button
+                          type="button"
+                          className={`group inline-flex items-center outline-none ${
+                            open ? "text-brand-base" : "text-brand-secondary"
+                          }`}
+                        >
+                          {watch("color") && watch("color") !== "" ? (
+                            <span
+                              className="h-4 w-4 rounded"
+                              style={{
+                                backgroundColor: watch("color") ?? "black",
+                              }}
+                            />
+                          ) : (
+                            <ColorPalletteIcon height={16} width={16} />
+                          )}
+                        </Popover.Button>
+
+                        <Transition
+                          as={React.Fragment}
+                          enter="transition ease-out duration-200"
+                          enterFrom="opacity-0 translate-y-1"
+                          enterTo="opacity-100 translate-y-0"
+                          leave="transition ease-in duration-150"
+                          leaveFrom="opacity-100 translate-y-0"
+                          leaveTo="opacity-0 translate-y-1"
+                        >
+                          <Popover.Panel className="absolute top-full right-0 z-20 mt-1 max-w-xs px-2 sm:px-0">
+                            <TwitterPicker
+                              color={pageDetails.color}
+                              onChange={(val) => partialUpdatePage({ color: val.hex })}
+                            />
+                          </Popover.Panel>
+                        </Transition>
+                      </>
+                    )}
+                  </Popover>
+                </div>
+                {pageDetails.created_by === user?.id && (
+                  <Tooltip
+                    tooltipContent={`${
+                      pageDetails.access
+                        ? "This page is only visible to you."
+                        : "This page can be viewed by anyone in the project."
+                    }`}
+                    theme="dark"
+                  >
+                    {pageDetails.access ? (
+                      <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
+                        <LockClosedIcon className="h-4 w-4" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => partialUpdatePage({ access: 1 })}
+                        type="button"
+                        className="z-10"
+                      >
+                        <LockOpenIcon className="h-4 w-4" />
+                      </button>
+                    )}
+                  </Tooltip>
+                )}
+                {pageDetails.is_favorite ? (
+                  <button onClick={handleRemoveFromFavorites} className="z-10">
+                    <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  </button>
+                ) : (
+                  <button onClick={handleAddToFavorites} type="button" className="z-10">
+                    <StarIcon className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
           <div className="px-7">
             {pageBlocks ? (
