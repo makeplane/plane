@@ -256,21 +256,21 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             )
             most_issue_created_user = (
                 queryset.filter(created_by__isnull=False)
-                .values("created_by__email")
+                .values("assignees__email", "assignees__avatar")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             most_issue_closed_user = (
                 queryset.filter(completed_at__isnull=False, assignees__isnull=False)
-                .values("assignees__email")
+                .values("assignees__email", "assignees__avatar")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             pending_issue_user = (
                 queryset.filter(completed_at__isnull=True)
-                .values("assignees__email")
+                .values("assignees__email", "assignees__avatar")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )
