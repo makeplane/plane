@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState, useEffect } from "react";
+import React, { ChangeEvent, FC, useState, useEffect, useRef } from "react";
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -49,6 +49,15 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
     </Loader>
   ),
 });
+
+import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+
+const WrappedRemirrorRichTextEditor = React.forwardRef<
+  IRemirrorRichTextEditor,
+  IRemirrorRichTextEditor
+>((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+
+WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -104,6 +113,8 @@ export const IssueForm: FC<IssueFormProps> = ({
 
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+
+  const editorRef = useRef<any>(null);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -346,7 +357,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                   name="description"
                   control={control}
                   render={({ field: { value } }) => (
-                    <RemirrorRichTextEditor
+                    <WrappedRemirrorRichTextEditor
                       value={
                         !value || (typeof value === "object" && Object.keys(value).length === 0)
                           ? watch("description_html")
@@ -354,7 +365,8 @@ export const IssueForm: FC<IssueFormProps> = ({
                       }
                       onJSONChange={(jsonValue) => setValue("description", jsonValue)}
                       onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                      placeholder="Describe the issue..."
+                      placeholder="Description"
+                      ref={editorRef}
                     />
                   )}
                 />
@@ -368,7 +380,10 @@ export const IssueForm: FC<IssueFormProps> = ({
                   inset="top-2 left-0"
                   content=""
                   htmlContent={watch("description_html")}
-                  onResponse={handleAiAssistance}
+                  onResponse={(response) => {
+                    handleAiAssistance(response);
+                    editorRef.current?.setEditorValue(`${watch("description_html")}`);
+                  }}
                   projectId={projectId}
                 />
               </div>

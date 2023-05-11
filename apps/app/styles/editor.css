@@ -1,13 +1,11 @@
 .empty-node::after {
   content: attr(data-placeholder);
-  color: #ccc;
-  font-style: italic;
+  color: #9ca3af;
 
   position: absolute;
   pointer-events: none;
   top: 15px;
   margin-left: 1px;
-  z-index: -1;
 }
 
 .ProseMirror {
@@ -92,6 +90,7 @@
   fill: rgb(var(--color-text-base)) !important;
 }
 
-.MuiButtonBase-root.Mui-selected, .MuiButtonBase-root:hover {
+.MuiButtonBase-root.Mui-selected,
+.MuiButtonBase-root:hover {
   background-color: rgb(var(--color-bg-base)) !important;
 }
