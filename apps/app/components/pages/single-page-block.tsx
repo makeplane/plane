@@ -20,7 +20,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, TextArea } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 import { ArrowPathIcon, LinkIcon } from "@heroicons/react/20/solid";
@@ -392,7 +392,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                   className="w-full cursor-pointer overflow-hidden break-all px-4"
                   onClick={() => setCreateBlockForm(true)}
                 >
-                  <div className="flex">
+                  <div className="flex items-center">
                     {block.issue && (
                       <div className="mr-1.5 flex">
                         <Link
@@ -405,9 +405,11 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                         </Link>
                       </div>
                     )}
-                    <h3 className="max-w-[1000px] overflow-hidden text-sm text-brand-base">
-                      {block.name}
-                    </h3>
+                    <TextArea
+                      name="blockName"
+                      value={block.name}
+                      className="min-h-5 block w-full resize-none overflow-hidden border-none bg-transparent px-0 py-0 text-sm text-brand-base"
+                    />
                   </div>
                   {block?.description_stripped.length > 0 && (
                     <p className="mt-3 h-5 truncate text-sm font-normal text-brand-secondary">

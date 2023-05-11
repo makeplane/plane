@@ -71,9 +71,10 @@ export const CreateBlock = () => {
   };
 
   const handleKeyDown = (e: any) => {
-    if (((e.ctrlKey || e.metaKey) && e.key === "Enter") || (e.shiftKey && e.key === "Enter")) {
-      e.preventDefault();
-    } else if (e.key === "Enter") {
+    const keyCombination =
+      ((e.ctrlKey || e.metaKey) && e.key === "Enter") || (e.shiftKey && e.key === "Enter");
+
+    if (e.key === "Enter" && !keyCombination) {
       if (watch("name") && watch("name") !== "") {
         e.preventDefault();
         createPageBlock();
@@ -94,7 +95,7 @@ export const CreateBlock = () => {
             name="name"
             placeholder="Title"
             register={register}
-            className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent text-sm font-medium"
+            className="min-h-10 block max-h-24 w-full resize-none overflow-hidden border-none bg-transparent px-1 py-1 text-sm font-medium"
             role="textbox"
             onKeyDown={handleKeyDown}
             maxLength={255}
