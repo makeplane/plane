@@ -10,9 +10,15 @@ from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+# Module imports
+from plane.db.models import User
+
+
 @shared_task
-def send_welcome_email(instance, created, message):
+def send_welcome_email(user_id, created, message):
     try:
+        instance = User.objects.get(pk=user_id)
+
         if created and not instance.is_bot:
             first_name = instance.first_name.capitalize()
             to_email = instance.email

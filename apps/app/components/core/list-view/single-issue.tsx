@@ -313,8 +313,8 @@ export const SingleListIssue: React.FC<Props> = ({
           {properties.link && (
             <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
+                <div className="flex items-center gap-1 text-brand-secondary">
+                  <LinkIcon className="h-3.5 w-3.5 text-brand-secondary" />
                   {issue.link_count}
                 </div>
               </Tooltip>
@@ -323,8 +323,8 @@ export const SingleListIssue: React.FC<Props> = ({
           {properties.attachment_count && (
             <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-gray-500" />
+                <div className="flex items-center gap-1 text-brand-secondary">
+                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-brand-secondary" />
                   {issue.attachment_count}
                 </div>
               </Tooltip>
