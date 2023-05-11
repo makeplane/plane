@@ -233,31 +233,30 @@ export const IssuesFilterView: React.FC = () => {
                       </>
                     )}
                   </div>
-                  {issueView !== "calendar" && (
-                    <div className="space-y-2 py-3">
-                      <h4 className="text-sm text-brand-secondary">Display Properties</h4>
-                      <div className="flex flex-wrap items-center gap-2">
-                        {Object.keys(properties).map((key) => {
-                          if (key === "estimate" && !isEstimateActive) return null;
 
-                          return (
-                            <button
-                              key={key}
-                              type="button"
-                              className={`rounded border px-2 py-1 text-xs capitalize ${
-                                properties[key as keyof Properties]
-                                  ? "border-brand-accent bg-brand-accent text-white"
-                                  : "border-brand-base"
-                              }`}
-                              onClick={() => setProperties(key as keyof Properties)}
-                            >
-                              {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                            </button>
-                          );
-                        })}
-                      </div>
+                  <div className="space-y-2 py-3">
+                    <h4 className="text-sm text-brand-secondary">Display Properties</h4>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {Object.keys(properties).map((key) => {
+                        if (key === "estimate" && !isEstimateActive) return null;
+
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            className={`rounded border px-2 py-1 text-xs capitalize ${
+                              properties[key as keyof Properties]
+                                ? "border-brand-accent bg-brand-accent text-white"
+                                : "border-brand-base"
+                            }`}
+                            onClick={() => setProperties(key as keyof Properties)}
+                          >
+                            {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                          </button>
+                        );
+                      })}
                     </div>
-                  )}
+                  </div>
                 </div>
               </Popover.Panel>
             </Transition>

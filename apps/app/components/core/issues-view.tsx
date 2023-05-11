@@ -17,14 +17,13 @@ import { useProjectMyMembership } from "contexts/project-member.context";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 // components
-import { AllLists, AllBoards, FilterList } from "components/core";
+import { AllLists, AllBoards, FilterList, CalendarView } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
 import { EmptySpace, EmptySpaceItem, EmptyState, PrimaryButton, Spinner } from "components/ui";
-import { CalendarView } from "./calendar-view";
 // icons
 import {
   ListBulletIcon,
@@ -533,7 +532,13 @@ export const IssuesView: React.FC<Props> = ({
                   userAuth={memberRole}
                 />
               ) : (
-                <CalendarView addIssueToDate={addIssueToDate} />
+                <CalendarView
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
+                  addIssueToDate={addIssueToDate}
+                  isCompleted={isCompleted}
+                  userAuth={memberRole}
+                />
               )}
             </>
           ) : type === "issue" ? (
