@@ -106,13 +106,19 @@ export const MODULE_ISSUES_WITH_PARAMS = (moduleId: string, params?: any) => {
 
   const paramsKey = paramsToKey(params);
 
-  return `MODULE_ISSUES_WITH_PARAMS_${moduleId}_${paramsKey.toUpperCase()}`;
+  return `MODULE_ISSUES_WITH_PARAMS_${moduleId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 export const MODULE_DETAILS = (moduleId: string) => `MODULE_DETAILS_${moduleId.toUpperCase()}`;
 
 export const VIEWS_LIST = (projectId: string) => `VIEWS_LIST_${projectId.toUpperCase()}`;
-export const VIEW_ISSUES = (viewId: string) => `VIEW_ISSUES_${viewId.toUpperCase()}`;
 export const VIEW_DETAILS = (viewId: string) => `VIEW_DETAILS_${viewId.toUpperCase()}`;
+export const VIEW_ISSUES = (viewId: string, params: any) => {
+  if (!params) return `VIEW_ISSUES_${viewId.toUpperCase()}`;
+
+  const paramsKey = paramsToKey(params);
+
+  return `VIEW_ISSUES_${viewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
+};
 
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;

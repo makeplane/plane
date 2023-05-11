@@ -164,7 +164,7 @@ const IssueDetailsPage: NextPage = () => {
                     </a>
                   </Link>
 
-                  <CustomMenu ellipsis optionsPosition="left">
+                  <CustomMenu ellipsis position="left">
                     {siblingIssues && siblingIssues.length > 0 ? (
                       siblingIssues.map((issue: IIssue) => (
                         <CustomMenu.MenuItem key={issue.id}>

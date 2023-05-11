@@ -563,7 +563,7 @@ const SinglePage: NextPage = () => {
           </div>
         </div>
       ) : (
-        <Loader>
+        <Loader className="p-8">
           <Loader.Item height="200px" />
         </Loader>
       )}

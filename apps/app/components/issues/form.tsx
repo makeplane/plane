@@ -53,7 +53,14 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
 const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
-  description: { type: "doc", content: [] },
+  description: {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+      },
+    ],
+  },
   description_html: "<p></p>",
   estimate_point: null,
   state: "",
@@ -132,7 +139,14 @@ export const IssueForm: FC<IssueFormProps> = ({
     reset({
       ...defaultValues,
       project: projectId,
-      description: "",
+      description: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+          },
+        ],
+      },
       description_html: "<p></p>",
     });
   };
