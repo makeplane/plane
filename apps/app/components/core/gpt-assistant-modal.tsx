@@ -60,6 +60,8 @@ export const GptAssistantModal: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const editorRef = useRef<any>(null);
+
   const { setToastAlert } = useToast();
 
   const {
@@ -127,6 +129,10 @@ export const GptAssistantModal: React.FC<Props> = ({
     if (isOpen) setFocus("task");
   }, [isOpen, setFocus]);
 
+  useEffect(() => {
+    editorRef.current?.setEditorValue(htmlContent ?? `<p>${content}</p>`);
+  }, [htmlContent, editorRef, content]);
+
   return (
     <div
       className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-brand-base bg-brand-base p-4 shadow ${
@@ -136,12 +142,13 @@ export const GptAssistantModal: React.FC<Props> = ({
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="remirror-section text-sm">
           Content:
-          <RemirrorRichTextEditor
+          <WrappedRemirrorRichTextEditor
             value={htmlContent ?? <p>{content}</p>}
             customClassName="-m-3"
             noBorder
             borderOnFocus={false}
             editable={false}
+            ref={editorRef}
           />
         </div>
       )}
