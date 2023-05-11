@@ -223,6 +223,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                                 algorithm="HS256",
                             ),
                             role=email.get("role", 10),
+                            created_by=request.user,
                         )
                     )
                 except ValidationError:
@@ -381,6 +382,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
                         workspace=invitation.workspace,
                         member=request.user,
                         role=invitation.role,
+                        created_by=request.user,
                     )
                     for invitation in workspace_invitations
                 ],
@@ -783,4 +785,3 @@ class WorkspaceThemeViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-

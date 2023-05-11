@@ -161,6 +161,7 @@ class ProjectViewSet(BaseViewSet):
                             workspace=serializer.instance.workspace,
                             group=state["group"],
                             default=state.get("default", False),
+                            created_by=request.user,
                         )
                         for state in states
                     ]
@@ -344,6 +345,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                         workspace=invitation.project.workspace,
                         member=request.user,
                         role=invitation.role,
+                        created_by=request.user,
                     )
                     for invitation in project_invitations
                 ]
@@ -465,6 +467,7 @@ class AddTeamToProjectEndpoint(BaseAPIView):
                         project_id=project_id,
                         member_id=member,
                         workspace=workspace,
+                        created_by=request.user,
                     )
                 )
 
@@ -612,6 +615,7 @@ class ProjectJoinEndpoint(BaseAPIView):
                         if workspace_role >= 15
                         else (15 if workspace_role == 10 else workspace_role),
                         workspace=workspace,
+                        created_by=request.user,
                     )
                     for project_id in project_ids
                 ],

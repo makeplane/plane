@@ -167,7 +167,7 @@ export const SingleBoard: React.FC<Props> = ({
                           Add Issue
                         </button>
                       }
-                      optionsPosition="left"
+                      position="left"
                       noBorder
                     >
                       <CustomMenu.MenuItem onClick={addIssueToState}>

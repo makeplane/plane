@@ -24,6 +24,7 @@ import type { NextPage } from "next";
 import type { IUser } from "types";
 // constants
 import { USER_ROLES } from "constants/workspace";
+import SettingsNavbar from "layouts/settings-navbar";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -130,7 +131,6 @@ const Profile: NextPage = () => {
           <BreadcrumbItem title="My Profile" />
         </Breadcrumbs>
       }
-      profilePage
     >
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}

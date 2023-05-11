@@ -322,7 +322,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                 Add sub-issue
               </>
             }
-            optionsPosition="left"
+            position="left"
             noBorder
             noChevron
           >

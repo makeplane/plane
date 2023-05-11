@@ -11,7 +11,6 @@ import useIssuesView from "hooks/use-issues-view";
 import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
-import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
@@ -30,7 +29,6 @@ type Meta = {
 type Props = {
   meta?: Meta;
   children: React.ReactNode;
-  noPadding?: boolean;
   noHeader?: boolean;
   bg?: "primary" | "secondary";
   breadcrumbs?: JSX.Element;
@@ -47,7 +45,6 @@ export const ProjectAuthorizationWrapper: React.FC<Props> = (props) => (
 const ProjectAuthorizationWrapped: React.FC<Props> = ({
   meta,
   children,
-  noPadding = false,
   noHeader = false,
   bg = "primary",
   breadcrumbs,
@@ -68,8 +65,9 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   return (
     <Container meta={meta}>
       <CommandPalette />
-      <div className="flex h-screen w-full overflow-x-hidden">
+      <div className="relative flex h-screen w-full overflow-hidden">
         <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
+
         {loading ? (
           <div className="grid h-full w-full place-items-center p-4">
             <div className="flex flex-col items-center gap-3 text-center">
@@ -107,7 +105,15 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             type="project"
           />
         ) : (
-          <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
+          <main
+            className={`relative flex h-full w-full flex-col overflow-hidden ${
+              bg === "primary"
+                ? "bg-brand-surface-1"
+                : bg === "secondary"
+                ? "bg-brand-sidebar"
+                : "bg-brand-base"
+            }`}
+          >
             {!noHeader && (
               <AppHeader
                 breadcrumbs={breadcrumbs}
@@ -116,29 +122,10 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                 setToggleSidebar={setToggleSidebar}
               />
             )}
-            <div
-              className={`flex w-full flex-grow flex-col ${
-                noPadding || issueView === "list" ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
-              } ${
-                bg === "primary"
-                  ? "bg-brand-surface-1"
-                  : bg === "secondary"
-                  ? "bg-brand-sidebar"
-                  : "bg-brand-base"
-              }`}
-            >
-              {settingsLayout && (
-                <div className="mb-12 space-y-6">
-                  <div>
-                    <h3 className="text-3xl font-semibold">Project Settings</h3>
-                    <p className="mt-1 text-brand-secondary">
-                      This information will be displayed to every member of the project.
-                    </p>
-                  </div>
-                  <SettingsNavbar />
-                </div>
-              )}
-              {children}
+            <div className="h-full w-full overflow-hidden">
+              <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
+                {children}
+              </div>
             </div>
           </main>
         )}

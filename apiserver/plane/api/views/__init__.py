@@ -140,3 +140,11 @@ from .estimate import (
 
 
 from .release import ReleaseNotesEndpoint
+
+from .analytic import (
+    AnalyticsEndpoint,
+    AnalyticViewViewset,
+    SavedAnalyticEndpoint,
+    ExportAnalyticsEndpoint,
+    DefaultAnalyticsEndpoint,
+)

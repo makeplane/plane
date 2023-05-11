@@ -18,13 +18,16 @@ const EmptySpace: React.FC<EmptySpaceProps> = ({ title, description, children, I
     <div className="max-w-lg">
       {Icon ? (
         <div className="mb-4">
-          <Icon className="h-14 w-14 text-gray-400" />
+          <Icon className="h-14 w-14 text-brand-secondary" />
         </div>
       ) : null}
 
       <h2 className="text-lg font-medium text-brand-base">{title}</h2>
       <div className="mt-1 text-sm text-brand-secondary">{description}</div>
-      <ul role="list" className="mt-6 divide-y divide-gray-200 border-t border-brand-base border-b">
+      <ul
+        role="list"
+        className="mt-6 divide-y divide-brand-base border-t border-b border-brand-base"
+      >
         {children}
       </ul>
       {link ? (
@@ -57,7 +60,7 @@ const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({ title, description, Ico
         } space-x-3 py-4`}
       >
         <div className="flex-shrink-0">
-          <span className={`inline-flex h-10 w-10 items-center justify-center rounded-lg bg-brand-accent`}>
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-brand-accent">
             <Icon className="h-6 w-6 text-white" aria-hidden="true" />
           </span>
         </div>
@@ -67,7 +70,7 @@ const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({ title, description, Ico
         </div>
         <div className="flex-shrink-0 self-center">
           <ChevronRightIcon
-            className="h-5 w-5 text-gray-400 group-hover:text-brand-secondary"
+            className="h-5 w-5 text-brand-base group-hover:text-brand-secondary"
             aria-hidden="true"
           />
         </div>

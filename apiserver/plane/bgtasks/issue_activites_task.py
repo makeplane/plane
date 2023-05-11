@@ -136,7 +136,6 @@ def track_priority(
                     comment=f"{actor.email} updated the priority to {requested_data.get('priority')}",
                 )
             )
-    print(issue_activities)
 
 
 # Track chnages in state of the issue
