@@ -57,7 +57,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             else:
                 q |= Q(**{f"{field}__icontains": query})
         return (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 q,
                 project__project_projectmember__member=self.request.user,
                 workspace__slug=slug,
@@ -218,11 +218,11 @@ class IssueSearchEndpoint(BaseAPIView):
             )
 
             if parent == "true" and issue_id:
-                issue = Issue.objects.get(pk=issue_id)
+                issue = Issue.issue_objects.get(pk=issue_id)
                 issues = issues.filter(
                     ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
                 ).exclude(
-                    pk__in=Issue.objects.filter(parent__isnull=False).values_list(
+                    pk__in=Issue.issue_objects.filter(parent__isnull=False).values_list(
                         "parent_id", flat=True
                     )
                 )
