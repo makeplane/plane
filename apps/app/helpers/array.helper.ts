@@ -12,6 +12,8 @@ export const orderArrayBy = (
   key: string,
   ordering: "ascending" | "descending" = "ascending"
 ) => {
+  if (!array || !Array.isArray(array) || array.length === 0) return [];
+
   if (key[0] === "-") {
     ordering = "descending";
     key = key.slice(1);

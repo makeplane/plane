@@ -11,7 +11,7 @@ import { IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   isNotAllowed: boolean;
 };
 
@@ -34,11 +34,14 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
           placeholder="Due date"
           value={issue?.target_date}
           onChange={(val) => {
-            partialUpdateIssue({
-              target_date: val,
-              priority: issue.priority,
-              state: issue.state,
-            });
+            partialUpdateIssue(
+              {
+                target_date: val,
+                priority: issue.priority,
+                state: issue.state,
+              },
+              issue.id
+            );
             trackEventServices.trackIssuePartialPropertyUpdateEvent(
               {
                 workspaceSlug,

@@ -84,7 +84,7 @@ export const SingleListIssue: React.FC<Props> = ({
   const { groupByProperty: selectedGroup, orderBy, params } = useIssueView();
 
   const partialUpdateIssue = useCallback(
-    (formData: Partial<IIssue>) => {
+    (formData: Partial<IIssue>, issueId: string) => {
       if (!workspaceSlug || !projectId) return;
 
       if (cycleId)
@@ -140,7 +140,7 @@ export const SingleListIssue: React.FC<Props> = ({
       );
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
         .then(() => {
           if (cycleId) {
             mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
@@ -151,18 +151,7 @@ export const SingleListIssue: React.FC<Props> = ({
           } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         });
     },
-    [
-      workspaceSlug,
-      projectId,
-      cycleId,
-      moduleId,
-      issue,
-      groupTitle,
-      index,
-      selectedGroup,
-      orderBy,
-      params,
-    ]
+    [workspaceSlug, projectId, cycleId, moduleId, groupTitle, index, selectedGroup, orderBy, params]
   );
 
   const handleCopyText = () => {

@@ -18,7 +18,7 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
   tooltipPosition?: "left" | "right";
@@ -71,7 +71,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
         else newData.push(data);
 
-        partialUpdateIssue({ assignees_list: data });
+        partialUpdateIssue({ assignees_list: data }, issue.id);
 
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {

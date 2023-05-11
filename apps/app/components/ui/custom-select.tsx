@@ -13,6 +13,7 @@ type CustomSelectProps = {
   textAlignment?: "left" | "center" | "right";
   maxHeight?: "sm" | "rg" | "md" | "lg" | "none";
   position?: "right" | "left";
+  verticalPosition?: "top" | "bottom";
   width?: "auto" | string;
   input?: boolean;
   noChevron?: boolean;
@@ -30,6 +31,7 @@ const CustomSelect = ({
   onChange,
   maxHeight = "none",
   position = "left",
+  verticalPosition = "bottom",
   width = "auto",
   input = false,
   noChevron = false,
@@ -80,6 +82,8 @@ const CustomSelect = ({
       <Listbox.Options
         className={`${optionsClassName} absolute border border-brand-base ${
           position === "right" ? "right-0" : "left-0"
+        } ${
+          verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"
         } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none ${
           width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
         } ${input ? "max-h-48" : ""} ${
