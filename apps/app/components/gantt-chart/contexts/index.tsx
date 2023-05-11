@@ -15,6 +15,8 @@ const chartReducer = (
       return { ...state, currentView: action.payload };
     case "CURRENT_VIEW_DATA":
       return { ...state, currentViewData: action.payload };
+    case "RENDER_VIEW":
+      return { ...state, currentViewData: action.payload };
     case "PARTIAL_UPDATE":
       return {
         ...state,
@@ -22,6 +24,7 @@ const chartReducer = (
         currentViewData: action.payload.currentViewData
           ? action.payload.currentViewData
           : state.currentViewData,
+        renderView: action.payload.renderView ? action.payload.renderView : state.renderView,
       };
     default:
       return state;
@@ -35,6 +38,7 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     allViews: allViewsWithData,
     currentView: initialView,
     currentViewData: currentViewDataWithView(initialView),
+    renderView: [],
     dispatch: () => {},
   });
 

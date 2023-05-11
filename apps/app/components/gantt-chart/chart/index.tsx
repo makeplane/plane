@@ -1,63 +1,116 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 // context
 import { useChart } from "../hooks";
 // helper views
 import { generateMonthDataByYear } from "../views";
+// data helpers
+import { datePreview, issueData } from "../data";
 
-export const ChartViewRoot = () => {
-  const { allViews, currentView, currentViewData, dispatch } = useChart();
-
-  const [renderView, setRenderView] = useState<any>([]);
+export const ChartViewRoot = ({ title }: any) => {
+  const { allViews, currentView, currentViewData, renderView, dispatch } = useChart();
 
   const handleChartView = (key: string) => {
     dispatch({ type: "CURRENT_VIEW", payload: key });
   };
 
   const updateCurrentViewRenderPayload = (side: null | "left" | "right") => {
-    let viewData: any;
+    let currentRender: any;
 
-    if (currentView === "hours") viewData = generateMonthDataByYear(currentViewData, side);
-    if (currentView === "day") viewData = generateMonthDataByYear(currentViewData, side);
-    if (currentView === "week") viewData = generateMonthDataByYear(currentViewData, side);
-    if (currentView === "bi_week") viewData = generateMonthDataByYear(currentViewData, side);
-    if (currentView === "month") viewData = generateMonthDataByYear(currentViewData, side);
-    if (currentView === "quarter") viewData = generateMonthDataByYear(currentViewData, side);
-    if (currentView === "year") viewData = generateMonthDataByYear(currentViewData, side);
+    if (currentView === "hours") currentRender = generateMonthDataByYear(currentViewData, side);
+    if (currentView === "day") currentRender = generateMonthDataByYear(currentViewData, side);
+    if (currentView === "week") currentRender = generateMonthDataByYear(currentViewData, side);
+    if (currentView === "bi_week") currentRender = generateMonthDataByYear(currentViewData, side);
+    if (currentView === "month") currentRender = generateMonthDataByYear(currentViewData, side);
+    if (currentView === "quarter") currentRender = generateMonthDataByYear(currentViewData, side);
+    if (currentView === "year") currentRender = generateMonthDataByYear(currentViewData, side);
 
     // updating the prevData, currentData and nextData
-
-    if (side === "left") setRenderView((prevData: any) => [...viewData, ...prevData]);
-    else setRenderView((prevData: any) => [...prevData, ...viewData]);
+    if (currentRender.payload.length > 0) {
+      if (side === "left") {
+        dispatch({
+          type: "PARTIAL_UPDATE",
+          payload: {
+            currentViewData: currentRender.state,
+            renderView: [...currentRender.payload, ...renderView],
+          },
+        });
+      } else if (side === "right") {
+        console.log("currentRender", currentRender);
+        console.log("renderView", renderView);
+        dispatch({
+          type: "PARTIAL_UPDATE",
+          payload: {
+            currentViewData: currentRender.state,
+            renderView: [...renderView, ...currentRender.payload],
+          },
+        });
+      } else {
+        dispatch({
+          type: "PARTIAL_UPDATE",
+          payload: {
+            currentViewData: currentRender.state,
+            renderView: [...currentRender.payload],
+          },
+        });
+      }
+    }
   };
 
-  const handleToday = () => {
-    updateCurrentViewRenderPayload(null);
-  };
+  const handleToday = () => updateCurrentViewRenderPayload(null);
 
   // handling the scroll positioning from left and right
   useEffect(() => {
-    // init chart
-    updateCurrentViewRenderPayload(null);
-
-    // init scroll handler
-    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-
-    let currentScrollPosition: number = scrollContainer.scrollLeft;
-    const approxRangeLeft: number = scrollContainer.clientWidth * 2;
-    const approxRangeRight: number = scrollContainer.scrollWidth - approxRangeLeft;
-
-    scrollContainer.addEventListener("scroll", () => {
-      currentScrollPosition = scrollContainer.scrollLeft;
-      if (currentScrollPosition <= approxRangeLeft) updateCurrentViewRenderPayload("left");
-      if (currentScrollPosition >= approxRangeRight) updateCurrentViewRenderPayload("right");
-    });
+    handleToday();
   }, []);
 
+  // handling scroll functionality
+  const onScroll = () => {
+    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+
+    const scrollWidth: number = scrollContainer.scrollWidth;
+    const clientVisibleWidth: number = scrollContainer.clientWidth;
+    const currentScrollPosition: number = scrollContainer.scrollLeft;
+
+    const approxRangeLeft: number =
+      scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
+    const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
+
+    console.log("scrollWidth", scrollWidth);
+    console.log("clientVisibleWidth", clientVisibleWidth);
+    console.log("approxRangeLeft", approxRangeLeft);
+    console.log("approxRangeRight", approxRangeRight);
+    console.log("currentScrollPosition", currentScrollPosition);
+    console.log("-------------------------------------------");
+
+    if (currentScrollPosition >= approxRangeRight) updateCurrentViewRenderPayload("right");
+  };
+
+  useEffect(() => {
+    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+
+    scrollContainer.addEventListener("scroll", onScroll);
+    return () => {
+      scrollContainer.removeEventListener("scroll", onScroll);
+    };
+  }, [renderView]);
+
+  console.log("currentViewData", currentViewData);
+
   return (
-    <div className="relative rounded-sm border border-gray-300">
+    <div className="relative flex h-full flex-col rounded-sm border border-gray-300">
+      {/* chart title */}
+      <div className="flex w-full flex-shrink-0 select-none flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
+        <div className="text-lg font-medium">{title}</div>
+      </div>
+
       {/* chart header */}
-      <div className="flex select-none items-center justify-end gap-6 p-2">
-        <div className="flex items-center justify-end gap-2">
+      <div className="flex w-full flex-shrink-0 select-none flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap border-t border-gray-300 p-2">
+        <div className="mr-auto text-sm font-medium">
+          {`${datePreview(currentViewData?.data?.startDate)} - ${datePreview(
+            currentViewData?.data?.endDate
+          )}`}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
           {allViews &&
             allViews.length > 0 &&
             allViews.map((_chatView: any, _idx: any) => (
@@ -72,7 +125,6 @@ export const ChartViewRoot = () => {
               </div>
             ))}
         </div>
-
         <div className="flex items-center gap-1">
           <div
             className={`cursor-pointer p-1 px-2 text-sm font-medium hover:bg-gray-200`}
@@ -84,45 +136,80 @@ export const ChartViewRoot = () => {
       </div>
 
       {/* content */}
-      <div className="border-t border-gray-300">
+      <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-gray-300">
         <div
-          className="relative flex h-full w-full divide-x divide-gray-300 overflow-hidden overflow-x-auto"
+          className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
           id="scroll-container"
         >
-          {renderView &&
-            renderView.length > 0 &&
-            renderView.map((_itemRoot: any, _idxRoot: any) => (
-              <div key={`title-${_idxRoot}`} className="relative flex flex-col">
-                <div className="relative border-b border-gray-300">
-                  <div className="sticky left-0 inline-flex font-medium capitalize">
-                    {_itemRoot?.title}
+          {/* <div className="relative z-10 mt-[58px] flex h-full w-[4000px] divide-x divide-gray-300 overflow-y-auto bg-[#999] bg-opacity-5">
+            <div>
+              <div className="sticky left-0 z-30 w-[280px] flex-shrink-0 divide-y divide-gray-300">
+                {issueData &&
+                  issueData.length > 0 &&
+                  issueData.map((issue) => (
+                    <div className="flex h-[36.5px] items-center bg-white p-1 px-2 font-medium capitalize">
+                      {issue?.name}
+                    </div>
+                  ))}
+              </div>
+            </div>
+            <div className="z-20 w-full ">
+              {issueData &&
+                issueData.length > 0 &&
+                issueData.map((issue) => (
+                  <div className="relative flex h-[36.5px] items-center">
+                    <div className="group inline-flex cursor-pointer items-center gap-2 font-medium transition-all">
+                      <div className="invisible rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium group-hover:visible">
+                        {datePreview(issue?.start_date, true)}
+                      </div>
+                      <div className="rounded-sm bg-white px-4 py-1 text-sm capitalize shadow-sm">
+                        {issue?.name}
+                      </div>
+                      <div className="invisible rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium group-hover:visible">
+                        {datePreview(issue?.target_date, true)}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex divide-x divide-gray-300">
-                  {_itemRoot.weeks &&
-                    _itemRoot.weeks.length > 0 &&
-                    _itemRoot.weeks.map((_item: any, _idx: any) => (
-                      <div
-                        key={`sub-title-${_idxRoot}-${_idx}`}
-                        className="relative flex !w-[70px] flex-col overflow-hidden"
-                      >
-                        <div className="flex-shrink-0">
-                          <div>{_item.title}</div>
-                        </div>
-                        {Array.from(Array(200).keys()).map((_key: number) => (
+                ))}
+            </div>
+          </div> */}
+
+          <div className="absolute flex h-full flex-grow divide-x divide-gray-300">
+            {renderView &&
+              renderView.length > 0 &&
+              renderView.map((_itemRoot: any, _idxRoot: any) => (
+                <div key={`title-${_idxRoot}`} className="relative flex flex-col">
+                  <div className="relative border-b border-gray-300">
+                    <div className="sticky left-0 inline-flex whitespace-nowrap px-2 py-1 text-sm font-medium capitalize">
+                      {_itemRoot?.title}
+                    </div>
+                  </div>
+
+                  <div className="flex h-full w-full divide-x divide-gray-300">
+                    {_itemRoot.children &&
+                      _itemRoot.children.length > 0 &&
+                      _itemRoot.children.map((_item: any, _idx: any) => (
+                        <div
+                          key={`sub-title-${_idxRoot}-${_idx}`}
+                          className="relative flex h-full !w-[70px] flex-col overflow-hidden whitespace-nowrap"
+                          style={{ width: `${70}px !important` }}
+                        >
+                          <div className="flex-shrink-0 border-b border-gray-300 py-1 text-center text-sm font-medium capitalize">
+                            <div>{_item.title}</div>
+                          </div>
                           <div
-                            key={`items-${_idxRoot}-${_idx}-${_key}`}
-                            className="h-[30px] w-full border border-red-500"
+                            className={`h-full w-full flex-1 ${
+                              ["sat", "sun"].includes(_item.dayData.shortTitle) ? `bg-gray-100` : ``
+                            }`}
                           >
                             {" "}
                           </div>
-                        ))}
-                        <div className="flex-shrink-0 border border-black"> </div>
-                      </div>
-                    ))}
+                        </div>
+                      ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
         </div>
       </div>
     </div>

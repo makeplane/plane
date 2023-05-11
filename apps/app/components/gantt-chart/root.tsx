@@ -4,8 +4,8 @@ import { ChartViewRoot } from "./chart";
 // context
 import { ChartContextProvider } from "./contexts";
 
-export const GanttChartRoot = () => (
+export const GanttChartRoot = ({ title = "No Title" }: any) => (
   <ChartContextProvider>
-    <ChartViewRoot />
+    <ChartViewRoot title={title} />
   </ChartContextProvider>
 );

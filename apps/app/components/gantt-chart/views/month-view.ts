@@ -3,7 +3,6 @@ import { ChartDataType } from "../types";
 // data
 import { weeks, months } from "../data";
 
-// getting all the week Numbers in a month and year
 export const getWeekNumberByDate = (date: Date) => {
   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
   const daysOffset = firstDayOfYear.getDay();
@@ -29,15 +28,39 @@ export const getNumberOfDaysInMonth = (month: number, year: number) => {
 export const generateDate = (day: number, month: number, year: number) =>
   new Date(year, month, day);
 
-type GetAllWeeksInMonthType = {
+export const getMonthDatesBetweenTwoDates = (startDate: Date, endDate: Date) => {
+  const months = [];
+
+  const startYear = startDate.getFullYear();
+  const startMonth = startDate.getMonth();
+
+  const endYear = endDate.getFullYear();
+  const endMonth = endDate.getMonth();
+
+  const currentDate = new Date(startYear, startMonth);
+
+  while (currentDate <= endDate) {
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    months.push(new Date(currentYear, currentMonth));
+    currentDate.setMonth(currentDate.getMonth() + 1);
+  }
+  if (endYear === currentDate.getFullYear() && endMonth === currentDate.getMonth())
+    months.push(endDate);
+
+  return months;
+};
+
+type GetAllDaysInMonthType = {
   date: any;
   day: any;
   dayData: any;
   weekNumber: number;
   title: string;
+  today: boolean;
 };
-const getAllWeeksInMonth = (month: number, year: number) => {
-  const day: GetAllWeeksInMonthType[] = [];
+const getAllDaysInMonth = (month: number, year: number) => {
+  const day: GetAllDaysInMonthType[] = [];
 
   const numberOfDaysInMonth = getNumberOfDaysInMonth(month, year);
 
@@ -49,6 +72,7 @@ const getAllWeeksInMonth = (month: number, year: number) => {
       dayData: weeks[date.getDay()],
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
+      today: false,
     });
   });
 
@@ -63,64 +87,98 @@ const generateMonthDataByMonth = (month: number, year: number) => {
     year: currentYear,
     month: currentMonth,
     monthData: months[currentMonth],
-    weeks: getAllWeeksInMonth(currentMonth, currentYear),
+    children: getAllDaysInMonth(currentMonth, currentYear),
     title: `${months[currentMonth].title} ${currentYear}`,
   };
 
   return monthPayload;
 };
 
-const getDatePlusSixMonths = (date: Date) => {
-  const futureDate = new Date(date.getFullYear(), date.getMonth() + 6, date.getDate());
-  return futureDate;
-};
-
-const getDateMinusSixMonths = (date: Date) => {
-  const pastDate = new Date(date.getFullYear(), date.getMonth() - 6, date.getDate());
-  return pastDate;
-};
-
 export const generateMonthDataByYear = (
   monthPayload: ChartDataType,
   side: null | "left" | "right"
 ) => {
-  const allMonthsData: any = [];
+  let renderState = monthPayload;
+  const renderPayload: any = [];
+
+  const range: number = renderState.data.approxFilterRange || 6;
+  let filteredDates: Date[] = [];
+  let minusDate: Date = new Date();
+  let plusDate: Date = new Date();
 
   if (side === null) {
-    const currentDate = new Date(monthPayload.data.currentDate);
-    const currentYear = currentDate.getFullYear();
+    const currentDate = renderState.data.currentDate;
 
-    for (const month in months) {
-      const currentMonth = parseInt(month);
-      allMonthsData.push(generateMonthDataByMonth(currentMonth, currentYear));
-    }
+    minusDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - range,
+      currentDate.getDate()
+    );
+    plusDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + range,
+      currentDate.getDate()
+    );
+
+    if (minusDate && plusDate) filteredDates = getMonthDatesBetweenTwoDates(minusDate, plusDate);
+
+    renderState = {
+      ...renderState,
+      data: {
+        ...renderState.data,
+        startDate: filteredDates[0],
+        endDate: filteredDates[filteredDates.length - 1],
+      },
+    };
   } else if (side === "left") {
-    monthPayload = {
-      ...monthPayload,
-      data: { ...monthPayload.data, previousDate: monthPayload.data.previousDate },
+    const currentDate = renderState.data.startDate;
+
+    minusDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - range,
+      currentDate.getDate()
+    );
+    plusDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      currentDate.getDate()
+    );
+
+    if (minusDate && plusDate) filteredDates = getMonthDatesBetweenTwoDates(minusDate, plusDate);
+
+    renderState = {
+      ...renderState,
+      data: { ...renderState.data, startDate: filteredDates[0] },
     };
-
-    const currentDate = new Date(monthPayload.data.previousDate);
-    const currentYear = currentDate.getFullYear();
-
-    // for (const month in months) {
-    //   const currentMonth = parseInt(month);
-    //   allMonthsData.push(generateMonthDataByMonth(currentMonth, currentYear));
-    // }
   } else if (side === "right") {
-    monthPayload = {
-      ...monthPayload,
-      data: { ...monthPayload.data, nextDate: monthPayload.data.nextDate },
+    const currentDate = renderState.data.endDate;
+
+    minusDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      currentDate.getDate()
+    );
+    plusDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + range,
+      currentDate.getDate()
+    );
+
+    if (minusDate && plusDate) filteredDates = getMonthDatesBetweenTwoDates(minusDate, plusDate);
+
+    renderState = {
+      ...renderState,
+      data: { ...renderState.data, endDate: filteredDates[filteredDates.length - 1] },
     };
-
-    const currentDate = new Date(monthPayload.data.nextDate);
-    const currentYear = currentDate.getFullYear();
-
-    // for (const month in months) {
-    //   const currentMonth = parseInt(month);
-    //   allMonthsData.push(generateMonthDataByMonth(currentMonth, currentYear));
-    // }
   }
 
-  return allMonthsData;
+  if (filteredDates && filteredDates.length > 0)
+    for (const currentDate in filteredDates) {
+      const date = filteredDates[parseInt(currentDate)];
+      const currentYear = date.getFullYear();
+      const currentMonth = date.getMonth();
+      renderPayload.push(generateMonthDataByMonth(currentMonth, currentYear));
+    }
+
+  return { state: renderState, payload: renderPayload };
 };

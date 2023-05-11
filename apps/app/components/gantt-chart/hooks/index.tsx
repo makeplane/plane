@@ -8,7 +8,7 @@ export const useChart = (): ChartContextType => {
   const context = useContext(ChartContext);
 
   if (!context) {
-    throw new Error("useMyContext must be used within a MyContextProvider");
+    throw new Error("useChart must be used within a GanttChart");
   }
 
   return context;

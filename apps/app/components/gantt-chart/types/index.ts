@@ -6,7 +6,7 @@ export type allViewsType = {
 };
 
 export type ChartActionContextType = {
-  type: "CURRENT_VIEW" | "CURRENT_VIEW_DATA" | "PARTIAL_UPDATE";
+  type: "CURRENT_VIEW" | "CURRENT_VIEW_DATA" | "PARTIAL_UPDATE" | "RENDER_VIEW";
   payload: any;
 };
 
@@ -14,10 +14,17 @@ export type ChartContextType = {
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
   currentViewData: any;
+  renderView: any;
   dispatch: (action: ChartActionContextType) => void;
 };
 
 // chart render types
+export interface WeekMonthDataType {
+  key: number;
+  shortTitle: string;
+  title: string;
+}
+
 export interface ChartDataType {
   key: string;
   title: string;
@@ -25,9 +32,9 @@ export interface ChartDataType {
 }
 
 export interface ChartDataTypeData {
-  previousDate: Date;
+  startDate: Date;
   currentDate: Date;
-  nextDate: Date;
-  approxRange: number;
+  endDate: Date;
+  approxFilterRange: number;
   width: number;
 }
