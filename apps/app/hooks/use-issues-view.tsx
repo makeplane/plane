@@ -40,7 +40,10 @@ const useIssuesView = () => {
   } = useContext(issueViewContext);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { cycleId, moduleId } = router.query;
+
+  const projectId = "f5462100-2156-41a9-af13-50d76077b01d";
+  const workspaceSlug = "laland";
 
   const params: any = {
     order_by: orderBy,

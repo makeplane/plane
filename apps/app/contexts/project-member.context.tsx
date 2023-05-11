@@ -31,7 +31,9 @@ export const ProjectMemberProvider: React.FC<Props> = (props) => {
   const { children } = props;
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  // const { workspaceSlug, projectId } = router.query;
+  const projectId = "f5462100-2156-41a9-af13-50d76077b01d";
+  const workspaceSlug = "laland";
 
   const { data: memberDetails, error } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,

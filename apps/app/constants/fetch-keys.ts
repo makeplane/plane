@@ -114,6 +114,10 @@ export const VIEWS_LIST = (projectId: string) => `VIEWS_LIST_${projectId.toUpper
 export const VIEW_ISSUES = (viewId: string) => `VIEW_ISSUES_${viewId.toUpperCase()}`;
 export const VIEW_DETAILS = (viewId: string) => `VIEW_DETAILS_${viewId.toUpperCase()}`;
 
+export const INBOX_LIST = (projectId: string) => `VIEWS_LIST_${projectId.toUpperCase()}`;
+export const INBOX_ISSUES = (inboxId: string) => `VIEW_ISSUES_${inboxId.toUpperCase()}`;
+export const INBOX_DETAILS = (inboxId: string) => `VIEW_DETAILS_${inboxId.toUpperCase()}`;
+
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase()}`;
