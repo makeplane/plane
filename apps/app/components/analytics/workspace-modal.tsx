@@ -56,7 +56,7 @@ export const AnalyticsWorkspaceModal: React.FC<Props> = ({ isOpen, onClose }) =>
             </Tab.List>
             <Tab.Panels as={Fragment}>
               <Tab.Panel as={Fragment}>
-                <ScopeAndDemand />
+                <ScopeAndDemand isProjectLevel={false} />
               </Tab.Panel>
               <Tab.Panel as={Fragment}>
                 <CustomAnalytics />

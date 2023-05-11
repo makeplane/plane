@@ -10,14 +10,14 @@ type Props = {
 };
 
 export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="space-y-3 self-start rounded-[10px] border border-brand-base p-3">
+  <div className="space-y-3 rounded-[10px] border border-brand-base p-3">
     <h5 className="text-xs text-red-500">DEMAND</h5>
     <div>
       <h4 className="text-brand-bas text-base font-medium">Total open tasks</h4>
       <h3 className="mt-1 text-xl font-semibold">{defaultAnalytics.open_issues}</h3>
     </div>
     <div className="space-y-6">
-      {defaultAnalytics.open_issues_classified.map((group) => {
+      {defaultAnalytics?.open_issues_classified.map((group) => {
         const percentage = ((group.state_count / defaultAnalytics.total_issues) * 100).toFixed(0);
 
         return (

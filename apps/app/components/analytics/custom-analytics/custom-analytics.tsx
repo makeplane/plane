@@ -17,8 +17,8 @@ import {
 } from "components/analytics";
 // ui
 import { Loader, PrimaryButton } from "components/ui";
-// types
-import { convertResponseToBarGraphData } from "constants/analytics";
+// helpers
+import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams } from "types";
 // fetch-keys
@@ -125,7 +125,7 @@ export const CustomAnalytics: React.FC<Props> = ({ isProjectLevel = false, fullS
               <div className="space-y-4 text-brand-secondary">
                 <p className="text-sm">There was some error in fetching the data.</p>
                 <div className="flex items-center justify-center gap-2">
-                  <PrimaryButton onClick={mutateAnalytics}>Refresh</PrimaryButton>
+                  <PrimaryButton onClick={() => mutateAnalytics()}>Refresh</PrimaryButton>
                 </div>
               </div>
             </div>

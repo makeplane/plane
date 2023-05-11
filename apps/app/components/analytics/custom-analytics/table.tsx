@@ -4,14 +4,12 @@ import { BarDatum } from "@nivo/bar";
 import { getPriorityIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
+// helpers
+import { generateBarColor } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
-import {
-  ANALYTICS_X_AXIS_VALUES,
-  ANALYTICS_Y_AXIS_VALUES,
-  generateBarColor,
-} from "constants/analytics";
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
 
 type Props = {
   analytics: IAnalyticsResponse;
