@@ -53,11 +53,19 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true, isProjectLe
               <AnalyticsDemand defaultAnalytics={defaultAnalytics} />
               <AnalyticsScope defaultAnalytics={defaultAnalytics} />
               <AnalyticsLeaderboard
-                users={defaultAnalytics.most_issue_created_user}
+                users={defaultAnalytics.most_issue_created_user.map((user) => ({
+                  avatar: user.created_by__avatar,
+                  email: user.created_by__email,
+                  count: user.count,
+                }))}
                 title="Most issues created"
               />
               <AnalyticsLeaderboard
-                users={defaultAnalytics.most_issue_closed_user}
+                users={defaultAnalytics.most_issue_closed_user.map((user) => ({
+                  avatar: user.assignees__avatar,
+                  email: user.assignees__email,
+                  count: user.count,
+                }))}
                 title="Most issues closed"
               />
               <div className={fullScreen ? "md:col-span-2" : ""}>

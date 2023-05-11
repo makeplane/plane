@@ -1,10 +1,11 @@
 import Image from "next/image";
 
-// types
-import { IDefaultAnalyticsUser } from "types";
-
 type Props = {
-  users: IDefaultAnalyticsUser[];
+  users: {
+    avatar: string | null;
+    email: string | null;
+    count: number;
+  }[];
   title: string;
 };
 
@@ -13,26 +14,24 @@ export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
     <h6 className="text-base font-medium">{title}</h6>
     <div className="mt-3 space-y-3">
       {users.map((user) => (
-        <div key={user.assignees__email} className="flex items-start justify-between gap-4 text-xs">
+        <div key={user.email} className="flex items-start justify-between gap-4 text-xs">
           <div className="flex items-center gap-2">
-            {user && user.assignees__avatar && user.assignees__avatar !== "" ? (
+            {user && user.avatar && user.avatar !== "" ? (
               <div className="rounded-full h-4 w-4 flex-shrink-0">
                 <Image
-                  src={user.assignees__avatar}
+                  src={user.avatar}
                   height="100%"
                   width="100%"
                   className="rounded-full"
-                  alt={user.assignees__email}
+                  alt={user.email ?? "No assignee"}
                 />
               </div>
             ) : (
               <div className="grid place-items-center flex-shrink-0 rounded-full bg-gray-700 text-[11px] capitalize text-white h-4 w-4">
-                {(user.assignees__email ?? "No assignee").charAt(0)}
+                {(user.email ?? "No assignee").charAt(0)}
               </div>
             )}
-            <span className="break-all text-brand-secondary">
-              {user.assignees__email ?? "No assignee"}
-            </span>
+            <span className="break-all text-brand-secondary">{user.email ?? "No assignee"}</span>
           </div>
           <span className="flex-shrink-0">{user.count}</span>
         </div>
