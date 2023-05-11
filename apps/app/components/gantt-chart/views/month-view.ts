@@ -186,6 +186,7 @@ export const generateMonthDataByYear = (
 };
 
 export const setMonthChartItemPosition = (chartData: ChartDataType, itemData: any) => {
+  let scrollPosition: number = 0;
   const { startDate } = chartData.data;
   const { start_date: itemStartDate } = itemData;
 
@@ -194,7 +195,21 @@ export const setMonthChartItemPosition = (chartData: ChartDataType, itemData: an
 
   const timeDifference: number = startDate.getTime() - itemStartDate.getTime();
   const daysDifference: number = Math.abs(Math.floor((timeDifference / (1000 * 60 * 60 * 24))));
-  const scrollWidth: number = (daysDifference * chartData.data.width);
+  scrollPosition = (daysDifference * chartData.data.width);
 
-  return scrollWidth + 1;
+  return scrollPosition;
+};
+
+export const setMonthChartItemWidth = (chartData: ChartDataType, itemData: any,) => {
+  let scrollWidth: number = 0;
+  const { start_date: itemStartDate, target_date: itemTargetDate } = itemData;
+
+  itemStartDate.setHours(0, 0, 0, 0);
+  itemTargetDate.setHours(0, 0, 0, 0);
+
+  const timeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
+  const daysDifference: number = Math.abs(Math.floor((timeDifference / (1000 * 60 * 60 * 24))));
+  scrollWidth = (daysDifference * chartData.data.width);
+
+  return scrollWidth;
 };

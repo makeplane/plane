@@ -143,11 +143,15 @@ export const currentViewDataWithView = (view: string | undefined) => {
 
 export const issueData = Array.from(Array(100).keys()).map((key: number) => {
   const start_date = new Date();
+  const target_date = new Date();
+
   start_date.setDate(start_date.getDate() + key);
+  target_date.setDate(target_date.getDate() + key + 10);
+
   return {
     name: `issue - ${key + 1}`,
     start_date: start_date,
-    target_date: new Date(),
+    target_date: target_date,
     state: "backlog",
   }
 });

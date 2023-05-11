@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 // context
 import { useChart } from "../hooks";
 // helper views
-import { setMonthChartItemPosition, generateMonthDataByYear } from "../views";
+import {
+  setMonthChartItemPosition,
+  setMonthChartItemWidth,
+  generateMonthDataByYear,
+} from "../views";
 // data helpers
 import { datePreview, issueData } from "../data";
 
@@ -154,7 +158,7 @@ export const ChartViewRoot = ({ title }: any) => {
             className="relative z-10 mt-[58px] flex h-full w-[4000px] divide-x divide-gray-300 overflow-y-auto bg-[#999] bg-opacity-5"
             style={{ width: `${itemsContainerWidth}px` }}
           >
-            {sidebarToggle && (
+            {sidebarToggle ? (
               <div>
                 <div className="absolute left-0 z-30 w-[280px] flex-shrink-0 divide-y divide-gray-300">
                   {issueData &&
@@ -169,6 +173,8 @@ export const ChartViewRoot = ({ title }: any) => {
                     ))}
                 </div>
               </div>
+            ) : (
+              <div> </div>
             )}
             <div className="z-20 w-full">
               {issueData &&
@@ -186,15 +192,20 @@ export const ChartViewRoot = ({ title }: any) => {
                     >
                       <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
                         <div className="absolute right-0 mr-[5px] rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium">
-                          {datePreview(issue?.start_date)}
+                          {issue?.start_date ? datePreview(issue?.start_date) : "-"}
                         </div>
                       </div>
-                      <div className="rounded-sm bg-white px-4 py-1 text-sm capitalize shadow-sm">
+                      <div
+                        className="rounded-sm bg-white px-4 py-1 text-sm capitalize shadow-sm border border-gray-300"
+                        style={{
+                          width: `${setMonthChartItemWidth(currentViewData, issue)}px`,
+                        }}
+                      >
                         {issue?.name}
                       </div>
                       <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                        <div className="absolute left-0 ml-[5px] rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium">
-                          {datePreview(issue?.target_date)}
+                        <div className="absolute left-0 ml-[5px] mr-[5px] rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium">
+                          {issue?.target_date ? datePreview(issue?.target_date) : "-"}
                         </div>
                       </div>
                     </div>
