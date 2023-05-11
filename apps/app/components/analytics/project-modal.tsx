@@ -27,16 +27,20 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className={`absolute top-0 right-0 z-30 h-full bg-brand-surface-1 ${
+      className={`absolute top-0 z-30 h-full bg-brand-surface-1 ${
         fullScreen ? "p-2 w-full" : "w-1/2"
-      } duration-300 transition-all ${isOpen ? "block" : "hidden"}`}
+      } ${isOpen ? "right-0" : "-right-full"} duration-300 transition-all`}
     >
       <div
         className={`flex h-full flex-col overflow-hidden border-brand-base bg-brand-surface-1 text-left ${
           fullScreen ? "rounded-lg border" : "border-l"
         }`}
       >
-        <div className="flex items-center justify-between gap-2 border-b border-b-brand-base bg-brand-sidebar p-3 text-sm">
+        <div
+          className={`flex items-center justify-between gap-2 border-b border-b-brand-base bg-brand-sidebar p-3 text-sm ${
+            fullScreen ? "" : "py-[1.3rem]"
+          }`}
+        >
           <h3>Project Analytics</h3>
           <div className="flex items-center gap-2">
             <button
@@ -45,7 +49,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
               onClick={() => setFullScreen((prevData) => !prevData)}
             >
               {fullScreen ? (
-                <ArrowsPointingInIcon className="h-3 w-3" />
+                <ArrowsPointingInIcon className="h-4 w-4" />
               ) : (
                 <ArrowsPointingOutIcon className="h-3 w-3" />
               )}

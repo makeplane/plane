@@ -54,10 +54,10 @@ const ProjectIssues: NextPage = () => {
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 text-brand-secondary"
+              className="!py-1.5 rounded-md font-normal text-brand-secondary"
               outline
             >
-              Insights
+              Analytics
             </SecondaryButton>
             <PrimaryButton
               className="flex items-center gap-2"
@@ -72,9 +72,7 @@ const ProjectIssues: NextPage = () => {
           </div>
         }
       >
-        {analyticsModal && (
-          <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
-        )}
+        <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <IssuesView />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

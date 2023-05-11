@@ -153,10 +153,10 @@ const SingleCycle: React.FC = () => {
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 text-brand-secondary"
+              className="!py-1.5 font-normal rounded-md text-brand-secondary"
               outline
             >
-              Insights
+              Analytics
             </SecondaryButton>
             <button
               type="button"
@@ -170,9 +170,7 @@ const SingleCycle: React.FC = () => {
           </div>
         }
       >
-        {analyticsModal && (
-          <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
-        )}
+        <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <div
           className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} ${
             analyticsModal ? "mr-[50%]" : ""
