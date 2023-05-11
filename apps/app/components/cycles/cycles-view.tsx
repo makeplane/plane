@@ -5,7 +5,13 @@ import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { ActiveCycleDetails, CompletedCyclesListProps, AllCyclesBoard, AllCyclesList, CompletedCycles } from "components/cycles";
+import {
+  ActiveCycleDetails,
+  CompletedCyclesListProps,
+  AllCyclesBoard,
+  AllCyclesList,
+  CompletedCycles,
+} from "components/cycles";
 // ui
 import { Loader } from "components/ui";
 // icons
@@ -69,8 +75,16 @@ export const CyclesView: React.FC<Props> = ({
     }
   );
 
+  const tabs = [
+    { name: "Active", key: "Active" },
+    { name: "All", key: "All" },
+    { name: "Upcoming", key: "Upcoming" },
+    { name: "Completed", key: "Completed" },
+    { name: "Drafts", key: "Drafts" },
+  ];
+
   return (
-    <div>
+    <div className=" bg-brand-surface-1">
       <Tab.Group
         defaultIndex={currentTabValue(cycleTab)}
         onChange={(i) => {
@@ -97,61 +111,21 @@ export const CyclesView: React.FC<Props> = ({
             as="div"
             className="flex items-center justify-start gap-4 text-base font-medium"
           >
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
-                }`
-              }
-            >
-              Active
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
-                }`
-              }
-            >
-              All
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
-                }`
-              }
-            >
-              Upcoming
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
-                }`
-              }
-            >
-              Completed
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
-                }`
-              }
-            >
-              Drafts
-            </Tab>
+            {tabs &&
+              tabs.map((tab: any, index: number) => (
+                <Tab
+                  key={index}
+                  className={({ selected }) =>
+                    `rounded-3xl border px-6 py-1 outline-none ${
+                      selected
+                        ? "border-brand-accent bg-brand-accent text-white"
+                        : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
+                    }`
+                  }
+                >
+                  {tab.name}
+                </Tab>
+              ))}
           </Tab.List>
           {cycleTab !== "Active" && (
             <div className="flex items-center gap-x-1">
@@ -173,6 +147,7 @@ export const CyclesView: React.FC<Props> = ({
           )}
         </div>
         <Tab.Panels>
+          {/* active */}
           <Tab.Panel as="div" className={`mt-8 space-y-5 ${cycleView === "list" && "mx-8"}`}>
             {currentAndUpcomingCycles?.current_cycle?.[0] && (
               <ActiveCycleDetails cycle={currentAndUpcomingCycles?.current_cycle?.[0]} />
@@ -214,14 +189,14 @@ export const CyclesView: React.FC<Props> = ({
               />
             )}
           </Tab.Panel>
-          <Tab.Panel as="div" className="mt-8 space-y-5">
+          <Tab.Panel as="div" className="mt-8 space-y-5 bg-brand-surface-1">
             <CompletedCycles
               cycleView={cycleView}
               setCreateUpdateCycleModal={setCreateUpdateCycleModal}
               setSelectedCycle={setSelectedCycle}
             />
           </Tab.Panel>
-          <Tab.Panel as="div" className="mt-8 space-y-5">
+          <Tab.Panel as="div" className="mt-8 space-y-5  bg-brand-surface-1">
             {cycleView === "list" && (
               <AllCyclesList
                 cycles={draftCycles?.draft_cycles}

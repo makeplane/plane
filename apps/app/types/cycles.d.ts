@@ -34,6 +34,7 @@ export interface ICycle {
   };
   workspace: string;
   workspace_detail: IWorkspaceLite;
+  assignees:[];
 }
 
 export interface CurrentAndUpcomingCyclesResponse {

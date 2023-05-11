@@ -10,6 +10,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import issueServices from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useIssuesView from "hooks/use-issues-view";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
@@ -18,14 +19,13 @@ import { SecondaryButton, DangerButton } from "components/ui";
 import type { CycleIssueResponse, IIssue, ModuleIssueResponse } from "types";
 // fetch-keys
 import {
-  CYCLE_ISSUES,
+  CYCLE_CALENDAR_ISSUES,
   CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_ISSUES,
+  MODULE_CALENDAR_ISSUES,
   MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_CALENDAR_ISSUES,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
-  USER_ISSUE,
 } from "constants/fetch-keys";
-import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
   isOpen: boolean;
@@ -39,7 +39,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const { params } = useIssuesView();
+  const { issueView, params } = useIssuesView();
 
   const { setToastAlert } = useToast();
 
@@ -59,9 +59,19 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
     await issueServices
       .deleteIssue(workspaceSlug as string, projectId as string, data.id)
       .then(() => {
-        if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-        else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-        else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+        if (issueView === "calendar") {
+          const calendarFetchKey = cycleId
+            ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+            : moduleId
+            ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
+            : PROJECT_CALENDAR_ISSUES(projectId as string);
+
+          mutate<IIssue[]>(calendarFetchKey);
+        } else {
+          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+          else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+        }
 
         handleClose();
         setToastAlert({

@@ -44,7 +44,7 @@ export const AllBoards: React.FC<Props> = ({
   return (
     <>
       {groupedByIssues ? (
-        <div className="horizontal-scroll-enable flex h-[calc(100vh-140px)] gap-x-4">
+        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8">
           {Object.keys(groupedByIssues).map((singleGroup, index) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;

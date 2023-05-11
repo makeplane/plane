@@ -1,4 +1,4 @@
-name: Build Frontend Docker Image
+name: Build and Push Frontend Docker Image
 
 on:
   push:
@@ -12,9 +12,6 @@ jobs:
   build_push_frontend:
     name: Build Frontend Docker Image
     runs-on: ubuntu-20.04
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: Check out the repo
@@ -35,13 +32,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: "registry.hub.docker.com"
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      
+      - name: Extract metadata (tags, labels) for Docker (Docker Hub)
+        id: ghmeta
+        uses: docker/metadata-action@v4.3.0
+        with:
+          images: makeplane/plane-frontend
+
+      - name: Extract metadata (tags, labels) for Docker (Github)
         id: meta
         uses: docker/metadata-action@v4.3.0
         with:
           images: ghcr.io/${{ github.repository }}-frontend
 
-      - name: Build Frontend Server
+      - name: Build and Push to GitHub Container Registry
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
@@ -50,5 +60,18 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.ghmeta.outputs.tags }}
+          labels: ${{ steps.ghmeta.outputs.labels }}
+      
+      - name: Build and Push to Docker Container Registry
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          file: ./apps/app/Dockerfile.web
+          platforms: linux/arm64,linux/amd64
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha
+          tags: ${{ steps.dkrmeta.outputs.tags }}
+          labels: ${{ steps.dkrmeta.outputs.labels }}
+

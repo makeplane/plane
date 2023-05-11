@@ -1,10 +1,14 @@
 import APIService from "services/api.service";
+import trackEventServices from "services/track-event.service";
+
 import { IGithubRepoInfo, IGithubServiceImportFormData } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
-const integrationServiceType: string = "github";
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
+const integrationServiceType: string = "github";
 class GithubIntegrationService extends APIService {
   constructor() {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
@@ -41,7 +45,11 @@ class GithubIntegrationService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/importers/${integrationServiceType}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackImporterEvent(response?.data, "GITHUB_IMPORTER_CREATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

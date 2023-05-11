@@ -252,17 +252,18 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
         : 0,
     color: group.color,
   }));
-
+  console.log("High Priority Issue", cycle);
   return (
-    <div className="grid-row-2 grid divide-y border border-brand-base">
-      <div className="grid grid-cols-3 divide-x border-brand-base">
+    <div className="grid-row-2 grid divide-y rounded-lg border border-brand-base bg-brand-base shadow">
+      <div className="grid grid-cols-1 divide-y border-brand-base lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
+        {/* section 1 */}
         <div className="flex flex-col text-xs">
           <a className="w-full">
             <div className="flex h-full flex-col gap-5 rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
                 <span className="flex items-center gap-1">
                   <ContrastIcon
-                    className="h-5 w-5"
+                    className="h-5 w-5 flex-shrink-0"
                     color={`${
                       cycleStatus === "current"
                         ? "#09A953"
@@ -334,7 +335,10 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                         handleRemoveFromFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <StarIcon
+                        className="h-4 w-4 text-orange-400"
+                        fill={cycle.is_favorite ? "#f6ad55" : "#858E96"}
+                      />
                     </button>
                   ) : (
                     <button
@@ -360,25 +364,8 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2.5 text-brand-secondary">
-                {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                  <Image
-                    src={cycle.owned_by.avatar}
-                    height={16}
-                    width={16}
-                    className="rounded-full"
-                    alt={cycle.owned_by.first_name}
-                  />
-                ) : (
-                  <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-brand-base  capitalize">
-                    {cycle.owned_by.first_name.charAt(0)}
-                  </span>
-                )}
-                <span className="text-brand-base">{cycle.owned_by.first_name}</span>
-              </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-8">
                 <div className="flex items-center gap-2.5 text-brand-secondary">
-                  Members:
                   {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                     <Image
                       src={cycle.owned_by.avatar}
@@ -392,27 +379,47 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                       {cycle.owned_by.first_name.charAt(0)}
                     </span>
                   )}
-                  <span>{cycle.owned_by.first_name}</span>
+                  <span className="text-brand-base">{cycle.owned_by.first_name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5 text-brand-secondary">
+                    {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
+                      <Image
+                        src={cycle.owned_by.avatar}
+                        height={16}
+                        width={16}
+                        className="rounded-full"
+                        alt={cycle.owned_by.first_name}
+                      />
+                    ) : (
+                      <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-brand-base  capitalize">
+                        {cycle.owned_by.first_name.charAt(0)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary" />
-                {cycle.total_issues} issues
-              </div>
-              <div className="flex gap-2">
-                <CompletedStateIcon width={16} height={16} color="#438AF3" />
-                {cycle.completed_issues} issues
+              <div className="flex items-center gap-8">
+                <div className="flex gap-2">
+                  <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary" />
+                  {cycle.total_issues} issues
+                </div>
+                <div className="flex gap-2">
+                  <CompletedStateIcon width={16} height={16} color="#438AF3" />
+                  {cycle.completed_issues} issues
+                </div>
               </div>
             </div>
           </a>
         </div>
+        {/* section 2 */}
         <div className="flex h-full flex-col border-brand-base">
           <div className={`mt-3 flex h-full w-full flex-col text-brand-secondary`}>
             <div className="mb-2 flex w-full items-center gap-2 px-4 py-1">
               <span>Progress</span>
               <LinearProgressIndicator data={progressIndicatorData} />
             </div>
-            <div className="ml-2">
+            <div className="ml-2 space-y-2.5 pb-2.5">
               {Object.keys(groupedIssues).map((group, index) => (
                 <SingleProgressStats
                   key={index}
@@ -434,6 +441,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
             </div>
           </div>
         </div>
+        {/* section 3 */}
         <div className="border-brand-base p-2">
           <SidebarProgressStats
             issues={issues ?? []}
@@ -444,19 +452,21 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               completed: cycle.completed_issues,
               cancelled: cycle.cancelled_issues,
             }}
+            display_states={false}
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 divide-x border-brand-base">
-        <div className="px-4 py-2">
-          <div className="text-brand-primary mb-2">High Priority Issues</div>
-          <div className="mb-2 flex max-h-[260px] min-h-[260px] flex-col overflow-y-scroll rounded-md border border-brand-base">
+      <div className="grid divide-y border-brand-base lg:grid-cols-2 lg:divide-y-0 lg:divide-x">
+        {/* section 4 */}
+        <div className="p-4">
+          <div className="text-brand-primary mb-2 font-medium">High Priority Issues</div>
+          <div className="mb-2 flex max-h-[260px] min-h-[280px] flex-col space-y-3 overflow-y-scroll rounded-md">
             {issues
               ?.filter((issue) => issue.priority === "urgent" || issue.priority === "high")
               .map((issue) => (
                 <div
                   key={issue.id}
-                  className="flex flex-wrap items-center justify-between gap-2 border border-brand-base bg-brand-base p-4 "
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-brand-base bg-brand-surface-1 p-2.5"
                 >
                   <div className="flex-grow">
                     <div>
@@ -470,7 +480,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                       </Tooltip>
                     </div>
                     <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                      <span className="text-[0.825rem] text-brand-base">
+                      <span className="line-clamp-1 text-sm font-medium text-brand-base">
                         {truncateText(issue.name, 25)}
                       </span>
                     </Tooltip>
@@ -526,7 +536,8 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               ))}
           </div>
         </div>
-        <div className="border-brand-base px-4">
+        {/* section 5 */}
+        <div className="border-brand-base p-4">
           <div className="flex items-start justify-between gap-4 py-2 text-xs">
             <div className="flex items-center gap-3 text-brand-base">
               <div className="flex items-center justify-center gap-1">
