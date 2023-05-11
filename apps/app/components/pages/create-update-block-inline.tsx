@@ -235,7 +235,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   return (
     <div className="relative">
       <form
-        className="divide-y divide-brand-base rounded-[10px] border border-brand-base shadow"
+        className="divide-y divide-brand-base rounded border border-brand-base shadow"
         onSubmit={data ? handleSubmit(updatePageBlock) : handleSubmit(createPageBlock)}
       >
         <div className="pt-2">
