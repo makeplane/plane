@@ -408,7 +408,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                     <TextArea
                       name="blockName"
                       value={block.name}
-                      className="min-h-5 block w-full resize-none overflow-hidden border-none bg-transparent px-0 py-0 text-sm text-brand-base"
+                      className="min-h-[20px] block w-full resize-none overflow-hidden border-none bg-transparent text-sm text-brand-base"
+                      noPadding
                     />
                   </div>
                   {block?.description_stripped.length > 0 && (
