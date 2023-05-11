@@ -106,7 +106,7 @@ export const CyclesView: React.FC<Props> = ({
         }}
       >
         {" "}
-        <div className={`flex justify-between ${cycleView === "list" && "px-8"}`}>
+        <div className={`flex justify-between ${cycleView === "list" ? "px-8" : "px-8"}`}>
           <Tab.List
             as="div"
             className="flex items-center justify-start gap-4 text-base font-medium"
@@ -131,14 +131,18 @@ export const CyclesView: React.FC<Props> = ({
             <div className="flex items-center gap-x-1">
               <button
                 type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2`}
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                  cycleView == "list" ? "bg-brand-surface-2" : ""
+                }`}
                 onClick={() => setCycleView("list")}
               >
                 <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
               </button>
               <button
                 type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2`}
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                  cycleView == "board" ? "bg-brand-surface-2" : ""
+                }`}
                 onClick={() => setCycleView("board")}
               >
                 <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
@@ -148,7 +152,7 @@ export const CyclesView: React.FC<Props> = ({
         </div>
         <Tab.Panels>
           {/* active */}
-          <Tab.Panel as="div" className={`mt-8 space-y-5 ${cycleView === "list" && "mx-8"}`}>
+          <Tab.Panel as="div" className={`mt-8 space-y-5 mx-8`}>
             {currentAndUpcomingCycles?.current_cycle?.[0] && (
               <ActiveCycleDetails cycle={currentAndUpcomingCycles?.current_cycle?.[0]} />
             )}
@@ -189,7 +193,10 @@ export const CyclesView: React.FC<Props> = ({
               />
             )}
           </Tab.Panel>
-          <Tab.Panel as="div" className="mt-8 space-y-5 bg-brand-surface-1">
+          <Tab.Panel
+            as="div"
+            className={`mt-8 ${cycleView == "board" ? "px-8" : ""}  space-y-5 bg-brand-surface-1`}
+          >
             <CompletedCycles
               cycleView={cycleView}
               setCreateUpdateCycleModal={setCreateUpdateCycleModal}

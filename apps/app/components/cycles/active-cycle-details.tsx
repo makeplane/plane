@@ -30,6 +30,9 @@ import {
   LayerDiagonalIcon,
   CompletedStateIcon,
   UserGroupIcon,
+  TriangleIcon,
+  BacklogStateIcon,
+  StartedStateIcon,
 } from "components/icons";
 import {
   ChevronDownIcon,
@@ -93,6 +96,7 @@ const stateGroups = [
     color: "#09a953",
   },
 ];
+2;
 
 export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isCompleted = false }) => {
   const router = useRouter();
@@ -352,7 +356,6 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                   )}
                 </span>
               </div>
-
               <div className="flex items-center justify-start gap-5 text-brand-secondary">
                 <div className="flex items-start gap-1 ">
                   <CalendarDaysIcon className="h-4 w-4 text-brand-base" />
@@ -407,6 +410,35 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                 <div className="flex gap-2">
                   <CompletedStateIcon width={16} height={16} color="#438AF3" />
                   {cycle.completed_issues} issues
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <div className="whitespace-nowrap">Estimates Scope</div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-1 border text-brand-secondary rounded-full px-1.5 py-0.5">
+                    <BacklogStateIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary" />
+                    <TriangleIcon
+                      className="h-3 w-3 flex-shrink-0 text-brand-secondary"
+                      color="#858E96"
+                    />
+                    <div className="font-bold">{cycle.total_issues}</div>
+                  </div>
+                  <div className="flex items-center gap-1 border border-orange-300 bg-orange-300/5 text-orange-300 rounded-full px-1.5 py-0.5">
+                    <StartedStateIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary" />
+                    <TriangleIcon
+                      className="h-3 w-3 flex-shrink-0 text-brand-secondary"
+                      color="#FCBE1D"
+                    />
+                    <div className="font-bold">{cycle.total_issues}</div>
+                  </div>
+                  <div className="flex items-center gap-1 border border-blue-500 bg-blue-500/5 text-blue-500 rounded-full px-1.5 py-0.5">
+                    <CompletedStateIcon width={16} height={16} color="#438AF3" />
+                    <TriangleIcon
+                      className="h-3 w-3 flex-shrink-0 text-brand-secondary"
+                      color="#438AF3"
+                    />
+                    <div className="font-bold">{cycle.completed_issues}</div>
+                  </div>
                 </div>
               </div>
             </div>
