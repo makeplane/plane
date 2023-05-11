@@ -14,8 +14,8 @@ export const LineGraph: React.FC<TGraph & LineSvgProps> = ({
 }) => (
   <div style={{ height, width }}>
     <ResponsiveLine
-      margin={margin ?? DEFAULT_MARGIN}
-      theme={theme ?? CHARTS_THEME}
+      margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
+      theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
       animate={true}
       {...rest}
     />

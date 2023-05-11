@@ -1,4 +1,4 @@
-import { IJiraMetadata } from "types";
+import { IAnalyticsParams, IJiraMetadata } from "types";
 
 const paramsToKey = (params: any) => {
   const { state, priority, assignees, created_by, labels } = params;
@@ -173,3 +173,13 @@ export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${page
 export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
 export const ESTIMATE_DETAILS = (estimateId: string) =>
   `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
+
+// analytics
+export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
+  `ANALYTICS${workspaceSlug.toUpperCase()}_${params.x_axis}_${params.y_axis}_${params.segment}_${
+    params.project
+  }`;
+export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnalyticsParams>) =>
+  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project}_${params?.cycle}_${
+    params?.module
+  }`;

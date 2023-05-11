@@ -10,9 +10,9 @@ export const ScatterPlotGraph: React.FC<
 > = ({ height = "400px", width = "100%", margin, theme, ...rest }) => (
   <div style={{ height, width }}>
     <ResponsiveScatterPlot
-      margin={margin ?? DEFAULT_MARGIN}
+      margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
       animate={true}
-      theme={theme ?? CHARTS_THEME}
+      theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
       {...rest}
     />
   </div>
