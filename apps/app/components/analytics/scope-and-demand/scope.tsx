@@ -46,10 +46,10 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => {
             <div className="mt-3 space-y-3">
               {defaultAnalytics.most_issue_created_user.map((user) => (
                 <div
-                  key={user.created_by__email}
+                  key={user.assignees__email}
                   className="flex items-start justify-between gap-4 text-xs"
                 >
-                  <span className="break-all text-brand-secondary">{user.created_by__email}</span>
+                  <span className="break-all text-brand-secondary">{user.assignees__email}</span>
                   <span className="flex-shrink-0">{user.count}</span>
                 </div>
               ))}

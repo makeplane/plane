@@ -13,7 +13,7 @@ import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
-import { AnalyticsModal } from "components/analytics";
+import { AnalyticsWorkspaceModal } from "components/analytics";
 import { CommandPalette } from "components/command-palette";
 // ui
 import { PrimaryButton, Spinner } from "components/ui";
@@ -122,7 +122,10 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             }`}
           >
             {analyticsModal && (
-              <AnalyticsModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+              <AnalyticsWorkspaceModal
+                isOpen={analyticsModal}
+                onClose={() => setAnalyticsModal(false)}
+              />
             )}
             {!noHeader && (
               <AppHeader
@@ -133,9 +136,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               />
             )}
             <div className="h-full w-full overflow-hidden">
-              <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
-                {children}
-              </div>
+              <div className="h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
             </div>
           </main>
         )}

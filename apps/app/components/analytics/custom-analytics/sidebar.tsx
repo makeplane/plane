@@ -26,6 +26,8 @@ type Props = {
   control: Control<IAnalyticsParams, any>;
   setValue: UseFormSetValue<IAnalyticsParams>;
   setSaveAnalyticsModal: React.Dispatch<React.SetStateAction<boolean>>;
+  fullScreen: boolean;
+  isProjectLevel?: boolean;
 };
 
 export const AnalyticsSidebar: React.FC<Props> = ({
@@ -34,6 +36,8 @@ export const AnalyticsSidebar: React.FC<Props> = ({
   control,
   setValue,
   setSaveAnalyticsModal,
+  fullScreen,
+  isProjectLevel = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -72,9 +76,13 @@ export const AnalyticsSidebar: React.FC<Props> = ({
   };
 
   return (
-    <div className="h-full gap-4 border-l border-brand-base bg-brand-sidebar p-5">
-      <div className="sticky top-5 space-y-6">
-        <div className="flex items-center justify-between gap-2">
+    <div
+      className={`gap-4 p-5 ${
+        fullScreen ? "border-l border-brand-base bg-brand-sidebar h-full" : ""
+      }`}
+    >
+      <div className={`sticky top-5 ${fullScreen ? "space-y-4" : "space-y-2"}`}>
+        <div className="flex items-center justify-between gap-2 flex-shrink-0">
           <h5 className="text-lg font-medium">
             {analytics?.total ?? 0}{" "}
             <span className="text-xs font-normal text-brand-secondary">issues</span>
@@ -100,30 +108,32 @@ export const AnalyticsSidebar: React.FC<Props> = ({
             </CustomMenu.MenuItem>
           </CustomMenu>
         </div>
-        <div className="space-y-4">
-          <div>
-            <h6 className="text-xs text-brand-secondary">Project</h6>
-            <Controller
-              name="project"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  label={projects.find((p) => p.id === value)?.name ?? "All projects"}
-                  onChange={onChange}
-                  width="w-full"
-                  maxHeight="lg"
-                >
-                  <CustomSelect.Option value={null}>All projects</CustomSelect.Option>
-                  {projects.map((project) => (
-                    <CustomSelect.Option key={project.id} value={project.id}>
-                      {project.name}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
-              )}
-            />
-          </div>
+        <div className={`${fullScreen ? "space-y-4" : "grid items-center gap-4 grid-cols-3"}`}>
+          {isProjectLevel === false && (
+            <div>
+              <h6 className="text-xs text-brand-secondary">Project</h6>
+              <Controller
+                name="project"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <CustomSelect
+                    value={value}
+                    label={projects.find((p) => p.id === value)?.name ?? "All projects"}
+                    onChange={onChange}
+                    width="w-full"
+                    maxHeight="lg"
+                  >
+                    <CustomSelect.Option value={null}>All projects</CustomSelect.Option>
+                    {projects.map((project) => (
+                      <CustomSelect.Option key={project.id} value={project.id}>
+                        {project.name}
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                )}
+              />
+            </div>
+          )}
           <div>
             <h6 className="text-xs text-brand-secondary">Measure (y-axis)</h6>
             <Controller

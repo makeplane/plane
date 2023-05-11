@@ -28,9 +28,11 @@ class AnalyticsServices extends APIService {
 
   async getDefaultAnalytics(
     workspaceSlug: string,
-    params?: IAnalyticsParams
+    params?: Partial<IAnalyticsParams>
   ): Promise<IDefaultAnalyticsResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/default-analytics/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/default-analytics/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -41,6 +41,8 @@ export interface IAnalyticsParams {
   y_axis: TYAxisValues;
   segment?: TXAxisValues | null;
   project?: string | null;
+  cycle?: string | null;
+  module?: string | null;
 }
 
 export interface ISaveAnalyticsFormData {
@@ -57,12 +59,24 @@ export interface IExportAnalyticsFormData {
 
 export interface IDefaultAnalyticsResponse {
   issue_completed_month_wise: { month: number; count: number }[];
-  most_issue_closed_user: { assignees__email: string; count: number }[];
-  most_issue_created_user: { created_by__email: string; count: number }[];
+  most_issue_closed_user: {
+    assignees__avatar: string | null;
+    assignees__email: string;
+    count: number;
+  }[];
+  most_issue_created_user: {
+    assignees__avatar: string | null;
+    assignees__email: string;
+    count: number;
+  }[];
   open_estimate_sum: number;
   open_issues: number;
   open_issues_classified: { state_group: string; state_count: number }[];
-  pending_issue_user: { assignees__email: string | null; count: number }[];
+  pending_issue_user: {
+    assignees__avatar: string | null;
+    assignees__email: string;
+    count: number;
+  }[];
   total_estimate_sum: number;
   total_issues: number;
   total_issues_classified: { state_group: string; state_count: number }[];

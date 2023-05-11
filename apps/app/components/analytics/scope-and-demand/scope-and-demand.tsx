@@ -11,17 +11,29 @@ import { Loader, PrimaryButton } from "components/ui";
 // fetch-keys
 import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
 
-export const ScopeAndDemand: React.FC = () => {
+type Props = {
+  fullScreen?: boolean;
+};
+
+export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const params = {
+    project: projectId ? projectId.toString() : null,
+    cycle: cycleId ? cycleId.toString() : null,
+    module: moduleId ? moduleId.toString() : null,
+  };
 
   const {
     data: defaultAnalytics,
     error: defaultAnalyticsError,
     mutate: mutateDefaultAnalytics,
   } = useSWR(
-    workspaceSlug ? DEFAULT_ANALYTICS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => analyticsService.getDefaultAnalytics(workspaceSlug.toString()) : null
+    workspaceSlug ? DEFAULT_ANALYTICS(workspaceSlug.toString(), params) : null,
+    workspaceSlug
+      ? () => analyticsService.getDefaultAnalytics(workspaceSlug.toString(), params)
+      : null
   );
 
   return (
@@ -29,7 +41,7 @@ export const ScopeAndDemand: React.FC = () => {
       {!defaultAnalyticsError ? (
         defaultAnalytics ? (
           <div className="h-full overflow-y-auto p-5 text-sm">
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <div className={`grid grid-cols-1 gap-5 ${fullScreen ? "lg:grid-cols-2" : ""}`}>
               <AnalyticsDemand defaultAnalytics={defaultAnalytics} />
               <AnalyticsScope defaultAnalytics={defaultAnalytics} />
             </div>

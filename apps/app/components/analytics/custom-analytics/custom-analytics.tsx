@@ -31,18 +31,26 @@ const defaultValues: IAnalyticsParams = {
   project: null,
 };
 
-export const CustomAnalytics: React.FC = () => {
+type Props = {
+  isProjectLevel?: boolean;
+  fullScreen?: boolean;
+};
+
+export const CustomAnalytics: React.FC<Props> = ({ isProjectLevel = false, fullScreen = true }) => {
   const [saveAnalyticsModal, setSaveAnalyticsModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
 
   const params: IAnalyticsParams = {
     x_axis: watch("x_axis"),
     y_axis: watch("y_axis"),
     segment: watch("segment"),
-    project: watch("project"),
+    project: isProjectLevel ? projectId?.toString() : watch("project"),
+    cycle: isProjectLevel && cycleId ? cycleId.toString() : null,
+    module: isProjectLevel && moduleId ? moduleId.toString() : null,
   };
 
   const {
@@ -68,7 +76,11 @@ export const CustomAnalytics: React.FC = () => {
         handleClose={() => setSaveAnalyticsModal(false)}
         params={params}
       />
-      <div className="grid h-full grid-cols-4 overflow-y-auto">
+      <div
+        className={`overflow-y-auto ${
+          fullScreen ? "grid grid-cols-4 h-full" : "flex flex-col-reverse"
+        }`}
+      >
         <div className="col-span-3">
           {!analyticsError ? (
             analytics ? (
@@ -79,6 +91,7 @@ export const CustomAnalytics: React.FC = () => {
                     barGraphData={barGraphData}
                     params={params}
                     yAxisKey={yAxisKey}
+                    fullScreen={fullScreen}
                   />
                   <AnalyticsTable
                     analytics={analytics}
@@ -118,13 +131,15 @@ export const CustomAnalytics: React.FC = () => {
             </div>
           )}
         </div>
-        <div className="h-full">
+        <div className={fullScreen ? "h-full" : ""}>
           <AnalyticsSidebar
             analytics={analytics}
             params={params}
             control={control}
             setValue={setValue}
             setSaveAnalyticsModal={setSaveAnalyticsModal}
+            fullScreen={fullScreen}
+            isProjectLevel={isProjectLevel}
           />
         </div>
       </div>

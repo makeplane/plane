@@ -14,7 +14,7 @@ import AppHeader from "layouts/app-layout/app-header";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
-import { AnalyticsModal } from "components/analytics";
+import { AnalyticsWorkspaceModal } from "components/analytics";
 import { CommandPalette } from "components/command-palette";
 // icons
 import { PrimaryButton, Spinner } from "components/ui";
@@ -123,7 +123,10 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
               }`}
             >
               {analyticsModal && (
-                <AnalyticsModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+                <AnalyticsWorkspaceModal
+                  isOpen={analyticsModal}
+                  onClose={() => setAnalyticsModal(false)}
+                />
               )}
               {!noHeader && (
                 <AppHeader

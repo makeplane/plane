@@ -14,7 +14,7 @@ type Props = {
 
 const tabsList = ["Scope and Demand", "Custom Analytics"];
 
-export const AnalyticsModal: React.FC<Props> = ({ isOpen, onClose }) => {
+export const AnalyticsWorkspaceModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const handleClose = () => {
     onClose();
   };

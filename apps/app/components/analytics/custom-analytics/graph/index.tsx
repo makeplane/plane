@@ -19,9 +19,16 @@ type Props = {
   };
   params: IAnalyticsParams;
   yAxisKey: "effort" | "count";
+  fullScreen: boolean;
 };
 
-export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, params, yAxisKey }) => {
+export const AnalyticsGraph: React.FC<Props> = ({
+  analytics,
+  barGraphData,
+  params,
+  yAxisKey,
+  fullScreen,
+}) => {
   const generateYAxisTickValues = () => {
     if (!analytics) return [];
 
@@ -85,6 +92,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
         )
       }
       tooltip={(datum) => <CustomTooltip datum={datum} params={params} />}
+      height={fullScreen ? "400px" : "300px"}
       margin={{ right: 20, bottom: longestXAxisLabel.length * 5 + 20 }}
       theme={{
         axis: {},

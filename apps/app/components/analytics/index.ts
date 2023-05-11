@@ -1,3 +1,4 @@
 export * from "./custom-analytics";
 export * from "./scope-and-demand";
-export * from "./modal";
+export * from "./project-modal";
+export * from "./workspace-modal";
