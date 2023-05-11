@@ -34,6 +34,7 @@ export const ChartViewRoot = ({ title }: any) => {
             renderView: [...currentRender.payload, ...renderView],
           },
         });
+        updatingCurrentLeftScrollPosition(currentRender.scrollWidth);
       } else if (side === "right") {
         console.log("currentRender", currentRender);
         console.log("renderView", renderView);
@@ -63,6 +64,11 @@ export const ChartViewRoot = ({ title }: any) => {
     handleToday();
   }, []);
 
+  const updatingCurrentLeftScrollPosition = (width: number) => {
+    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+    scrollContainer.scrollLeft = width + scrollContainer.scrollLeft;
+  };
+
   // handling scroll functionality
   const onScroll = () => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
@@ -75,14 +81,8 @@ export const ChartViewRoot = ({ title }: any) => {
       scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
     const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
 
-    console.log("scrollWidth", scrollWidth);
-    console.log("clientVisibleWidth", clientVisibleWidth);
-    console.log("approxRangeLeft", approxRangeLeft);
-    console.log("approxRangeRight", approxRangeRight);
-    console.log("currentScrollPosition", currentScrollPosition);
-    console.log("-------------------------------------------");
-
     if (currentScrollPosition >= approxRangeRight) updateCurrentViewRenderPayload("right");
+    if (currentScrollPosition <= approxRangeLeft) updateCurrentViewRenderPayload("left");
   };
 
   useEffect(() => {
@@ -93,8 +93,6 @@ export const ChartViewRoot = ({ title }: any) => {
       scrollContainer.removeEventListener("scroll", onScroll);
     };
   }, [renderView]);
-
-  console.log("currentViewData", currentViewData);
 
   return (
     <div className="relative flex h-full flex-col rounded-sm border border-gray-300">
@@ -191,8 +189,8 @@ export const ChartViewRoot = ({ title }: any) => {
                       _itemRoot.children.map((_item: any, _idx: any) => (
                         <div
                           key={`sub-title-${_idxRoot}-${_idx}`}
-                          className="relative flex h-full !w-[70px] flex-col overflow-hidden whitespace-nowrap"
-                          style={{ width: `${70}px !important` }}
+                          className="relative flex h-full flex-col overflow-hidden whitespace-nowrap"
+                          style={{ width: `${currentViewData.data.width}px` }}
                         >
                           <div className="flex-shrink-0 border-b border-gray-300 py-1 text-center text-sm font-medium capitalize">
                             <div>{_item.title}</div>

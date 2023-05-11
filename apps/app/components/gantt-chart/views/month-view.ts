@@ -180,5 +180,7 @@ export const generateMonthDataByYear = (
       renderPayload.push(generateMonthDataByMonth(currentMonth, currentYear));
     }
 
-  return { state: renderState, payload: renderPayload };
+  const scrollWidth = ((renderPayload.map((monthData:any) =>monthData.children.length)).reduce((partialSum:number, a:number) => partialSum + a, 0)) * monthPayload.data.width;
+
+  return { state: renderState, payload: renderPayload, scrollWidth:scrollWidth };
 };
