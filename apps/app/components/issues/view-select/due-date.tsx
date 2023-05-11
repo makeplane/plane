@@ -22,7 +22,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
   return (
     <Tooltip tooltipHeading="Due Date" tooltipContent={issue.target_date ?? "N/A"}>
       <div
-        className={`group relative ${
+        className={`group relative max-w-[6.5rem] ${
           issue.target_date === null
             ? ""
             : issue.target_date < new Date().toISOString()
