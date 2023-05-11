@@ -19,7 +19,10 @@ class CycleSerializer(BaseSerializer):
     started_issues = serializers.IntegerField(read_only=True)
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
-    assignees = serializers.SerializerMethodField()
+    assignees = serializers.SerializerMethodField(read_only=True)
+    total_estimates = serializers.IntegerField(read_only=True)
+    completed_estimates = serializers.IntegerField(read_only=True)
+    started_estimates = serializers.IntegerField(read_only=True)
 
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
