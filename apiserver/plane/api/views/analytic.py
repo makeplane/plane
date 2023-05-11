@@ -1,16 +1,8 @@
 # Django imports
 from django.db.models import (
-    Q,
     Count,
     Sum,
-    Value,
-    Case,
-    When,
-    FloatField,
-    Subquery,
-    OuterRef,
     F,
-    ExpressionWrapper,
 )
 from django.db.models.functions import ExtractMonth
 

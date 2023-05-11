@@ -213,7 +213,7 @@ def filter_cycle(params, filter, method):
     if method == "GET":
         cycles = params.get("cycle").split(",")
         if len(cycles) and "" not in cycles:
-            filter["cycle__in"] = cycles
+            filter["issue_cycle__cycle_id__in"] = cycles
     else:
         if params.get("cycle", None) and len(params.get("cycle")):
             filter["issue_cycle__cycle_id__in"] = params.get("cycle")
@@ -224,7 +224,7 @@ def filter_module(params, filter, method):
     if method == "GET":
         modules = params.get("module").split(",")
         if len(modules) and "" not in modules:
-            filter["module__in"] = modules
+            filter["issue_module__module_id__in"] = modules
     else:
         if params.get("module", None) and len(params.get("module")):
             filter["issue_module__module_id__in"] = params.get("module")
