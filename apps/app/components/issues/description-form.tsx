@@ -69,26 +69,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
     [handleFormSubmit]
   );
 
-  // useEffect(() => {
-  //   const alertUser = (e: BeforeUnloadEvent) => {
-  //     e.preventDefault();
-  //     e.returnValue = "";
-  //     return "Are you sure you want to leave?";
-  //   };
-
-  //   window.addEventListener("beforeunload", alertUser);
-  //   return () => {
-  //     window.removeEventListener("beforeunload", alertUser);
-  //   };
-  // }, [isSubmitting]);
-
   // reset form values
   useEffect(() => {
     if (!issue) return;
 
     reset({
       ...issue,
-      description: issue.description,
     });
   }, [issue, reset]);
 
@@ -139,7 +125,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
         name="description"
         control={control}
         render={({ field: { value } }) => {
-          if (!value || !watch("description_html")) return <></>;
+          if (!value && !watch("description_html")) return <></>;
 
           return (
             <RemirrorRichTextEditor
@@ -169,7 +155,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
                     setIsSubmitting(false);
                   });
               }}
-              placeholder="Describe the issue..."
+              placeholder="Description"
               editable={!isNotAllowed}
             />
           );
