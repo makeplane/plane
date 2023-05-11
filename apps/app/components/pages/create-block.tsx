@@ -95,10 +95,11 @@ export const CreateBlock = () => {
             name="name"
             placeholder="Title"
             register={register}
-            className="min-h-10 block max-h-24 w-full resize-none overflow-hidden border-none bg-transparent px-1 py-1 text-sm font-medium"
+            className="min-h-[20px] block max-h-24 w-full resize-none overflow-hidden border-none bg-transparent px-1 py-1 text-sm font-medium"
             role="textbox"
             onKeyDown={handleKeyDown}
             maxLength={255}
+            noPadding
           />
         </div>
 
