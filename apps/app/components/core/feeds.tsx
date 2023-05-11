@@ -79,7 +79,7 @@ const activityDetails: {
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-brand-secondary" aria-hidden="true" />,
   },
   target_date: {
     message: "set the due date to",

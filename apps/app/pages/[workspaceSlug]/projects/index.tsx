@@ -19,12 +19,12 @@ import { Loader, EmptyState, PrimaryButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
+// images
+import emptyProject from "public/empty-state/empty-project.svg";
 // types
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
-// image
-import emptyProject from "public/empty-state/empty-project.svg";
 
 const ProjectsPage: NextPage = () => {
   // router

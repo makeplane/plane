@@ -64,8 +64,8 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         </span>
                       </Dialog.Title>
                       {updates && updates.length > 0 ? (
-                        updates.map((item, index: number) => (
-                          <>
+                        updates.map((item, index) => (
+                          <React.Fragment key={item.id}>
                             <div className="flex items-center gap-3 text-xs text-brand-secondary">
                               <span className="flex items-center rounded-full border border-brand-base bg-brand-surface-1 px-3 py-1.5 text-xs">
                                 {item.tag_name}
@@ -78,7 +78,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               )}
                             </div>
                             <MarkdownRenderer markdown={item.body} />
-                          </>
+                          </React.Fragment>
                         ))
                       ) : (
                         <div className="flex h-full w-full items-center justify-center">

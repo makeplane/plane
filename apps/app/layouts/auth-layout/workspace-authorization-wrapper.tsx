@@ -11,10 +11,10 @@ import workspaceServices from "services/workspace.service";
 import Container from "layouts/container";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
-import SettingsNavbar from "layouts/settings-navbar";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
+import { AnalyticsWorkspaceModal } from "components/analytics";
 import { CommandPalette } from "components/command-palette";
 // icons
 import { PrimaryButton, Spinner } from "components/ui";
@@ -49,19 +49,14 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   right,
 }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
+  const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { data: workspaceMemberMe, error } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null,
-    {
-      onErrorRetry(err, key, config, revalidate, revalidateOpts) {
-        if (err.status === 401 || err.status === 403) return;
-        revalidateOpts.retryCount = 5;
-      },
-    }
+    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null
   );
 
   if (!workspaceMemberMe && !error)
@@ -98,7 +93,12 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
       <Container meta={meta}>
         <CommandPalette />
         <div className="relative flex h-screen w-full overflow-hidden">
-          <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
+          <AppSidebar
+            toggleSidebar={toggleSidebar}
+            setToggleSidebar={setToggleSidebar}
+            isAnalyticsModalOpen={analyticsModal}
+            setAnalyticsModal={setAnalyticsModal}
+          />
           {settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
             <NotAuthorizedView
               actionButton={
@@ -122,6 +122,12 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   : "bg-brand-base"
               }`}
             >
+              {analyticsModal && (
+                <AnalyticsWorkspaceModal
+                  isOpen={analyticsModal}
+                  onClose={() => setAnalyticsModal(false)}
+                />
+              )}
               {!noHeader && (
                 <AppHeader
                   breadcrumbs={breadcrumbs}

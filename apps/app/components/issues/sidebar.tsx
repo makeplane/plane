@@ -120,11 +120,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   };
 
   const handleCycleChange = useCallback(
-    (cycleDetail: ICycle) => {
+    (cycleDetails: ICycle) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
       issuesService
-        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetails.id, {
           issues: [issueDetail.id],
         })
         .then((res) => {
@@ -361,6 +361,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           target_date: val,
                         })
                       }
+                      className="bg-brand-surface-1"
                       disabled={isNotAllowed}
                     />
                   )}

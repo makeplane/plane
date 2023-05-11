@@ -152,6 +152,9 @@ export const IssueActivitySection: React.FC = () => {
 
   const handleCommentDelete = async (commentId: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
+
+    mutateIssueActivities((prevData) => prevData?.filter((p) => p.id !== commentId), false);
+
     await issuesService
       .deleteIssueComment(
         workspaceSlug as string,
