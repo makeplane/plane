@@ -126,10 +126,9 @@ export const generateBarColor = (
   if (!analytics) return color;
 
   if (params[type] === "state__name" || params[type] === "labels__name")
-    color = analytics.extras.colors.find((c) => c.name === value)?.color;
+    color = analytics?.extras?.colors.find((c) => c.name === value)?.color;
 
-  if (params[type] === "state__group")
-    color = STATE_GROUP_COLORS[value];
+  if (params[type] === "state__group") color = STATE_GROUP_COLORS[value];
 
   if (params[type] === "priority")
     color =

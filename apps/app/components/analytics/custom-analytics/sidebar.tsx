@@ -102,6 +102,29 @@ export const AnalyticsSidebar: React.FC<Props> = ({
         </div>
         <div className="space-y-4">
           <div>
+            <h6 className="text-xs text-brand-secondary">Project</h6>
+            <Controller
+              name="project"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CustomSelect
+                  value={value}
+                  label={projects.find((p) => p.id === value)?.name ?? "All projects"}
+                  onChange={onChange}
+                  width="w-full"
+                  maxHeight="lg"
+                >
+                  <CustomSelect.Option value={null}>All projects</CustomSelect.Option>
+                  {projects.map((project) => (
+                    <CustomSelect.Option key={project.id} value={project.id}>
+                      {project.name}
+                    </CustomSelect.Option>
+                  ))}
+                </CustomSelect>
+              )}
+            />
+          </div>
+          <div>
             <h6 className="text-xs text-brand-secondary">Measure (y-axis)</h6>
             <Controller
               name="y_axis"
@@ -183,35 +206,6 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                       </CustomSelect.Option>
                     );
                   })}
-                </CustomSelect>
-              )}
-            />
-          </div>
-          <div>
-            <h6 className="text-xs text-brand-secondary">Project</h6>
-            <Controller
-              name="project"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  label={
-                    <span>
-                      {projects.find((p) => p.id === value)?.name ?? (
-                        <span className="text-brand-secondary">None</span>
-                      )}
-                    </span>
-                  }
-                  onChange={onChange}
-                  width="w-full"
-                  maxHeight="lg"
-                >
-                  <CustomSelect.Option value={null}>None</CustomSelect.Option>
-                  {projects.map((project) => (
-                    <CustomSelect.Option key={project.id} value={project.id}>
-                      {project.name}
-                    </CustomSelect.Option>
-                  ))}
                 </CustomSelect>
               )}
             />

@@ -27,7 +27,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
   <div className="flow-root">
     <div className="overflow-x-auto">
       <div className="inline-block min-w-full align-middle">
-        <table className="min-w-full divide-y divide-brand-base whitespace-nowrap border border-brand-base">
+        <table className="min-w-full divide-y divide-brand-base whitespace-nowrap border-y border-brand-base">
           <thead className="bg-brand-base">
             <tr className="divide-x divide-brand-base text-sm text-brand-base">
               <th scope="col" className="py-3 px-2.5 text-left font-medium">

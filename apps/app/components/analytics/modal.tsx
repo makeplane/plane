@@ -1,18 +1,11 @@
 import React, { Fragment } from "react";
 
-import dynamic from "next/dynamic";
-
 // headless ui
 import { Tab } from "@headlessui/react";
 // components
-import { ScopeAndDemand } from "components/analytics";
+import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-
-const CustomAnalytics = dynamic<Readonly<{}>>(
-  () => import("components/analytics").then((a) => a.CustomAnalytics),
-  { ssr: false }
-);
 
 type Props = {
   isOpen: boolean;

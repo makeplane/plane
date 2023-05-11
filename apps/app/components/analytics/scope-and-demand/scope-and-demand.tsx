@@ -7,7 +7,7 @@ import analyticsService from "services/analytics.service";
 // components
 import { AnalyticsDemand, AnalyticsScope } from "components/analytics";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Loader, PrimaryButton } from "components/ui";
 // fetch-keys
 import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
 
@@ -35,11 +35,10 @@ export const ScopeAndDemand: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="grid h-full place-items-center p-5">
-            <div className="space-y-4 text-brand-secondary">
-              <p className="text-sm">Loading analytics...</p>
-            </div>
-          </div>
+          <Loader className="grid grid-cols-1 gap-5 p-5 lg:grid-cols-2">
+            <Loader.Item height="300px" />
+            <Loader.Item height="300px" />
+          </Loader>
         )
       ) : (
         <div className="grid h-full place-items-center p-5">
