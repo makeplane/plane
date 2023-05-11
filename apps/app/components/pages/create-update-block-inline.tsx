@@ -18,7 +18,7 @@ import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
 // ui
-import { Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
+import { Loader, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { IPageBlock } from "types";
 // fetch-keys
@@ -253,17 +253,17 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   return (
     <div className="relative">
       <form
-        className="divide-y divide-brand-base rounded-[10px] border border-brand-base shadow"
+        className="divide-y divide-brand-base rounded border border-brand-base shadow"
         onSubmit={data ? handleSubmit(updatePageBlock) : handleSubmit(createPageBlock)}
       >
         <div className="pt-2">
           <div className="flex justify-between">
-            <Input
+            <TextArea
               id="name"
               name="name"
               placeholder="Title"
               register={register}
-              className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-lg font-medium"
+              className="min-h-10 font medium block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base"
               autoComplete="off"
               maxLength={255}
             />

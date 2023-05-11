@@ -18,6 +18,7 @@ export interface IUser {
   is_onboarded: boolean;
   token: string;
   role: string;
+  theme: ICustomTheme;
 
   my_issues_prop?: {
     properties: Properties;
@@ -25,6 +26,19 @@ export interface IUser {
   };
 
   [...rest: string]: any;
+}
+
+export interface ICustomTheme {
+  accent: string;
+  bgBase: string;
+  bgSurface1: string;
+  bgSurface2: string;
+  border: string;
+  darkPalette: boolean;
+  palette: string;
+  sidebar: string;
+  textBase: string;
+  textSecondary: string;
 }
 
 export interface ICurrentUserResponse {
