@@ -50,9 +50,8 @@ export const datePreview = (date: Date, timeInclude: boolean = false) => {
   month = months[month as number] as WeekMonthDataType;
   const year = date.getFullYear();
 
-  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${
-    timeInclude ? `, ${timePreview(date)}` : ``
-  }`;
+  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${timeInclude ? `, ${timePreview(date)}` : ``
+    }`;
 };
 
 // context data
@@ -142,9 +141,13 @@ export const currentViewDataWithView = (view: string | undefined) => {
   return currentView;
 };
 
-export const issueData = Array.from(Array(100).keys()).map((key: number) => ({
-  name: `issue - ${key + 1}`,
-  start_date: new Date(),
-  target_date: new Date(),
-  state: "backlog",
-}));
+export const issueData = Array.from(Array(100).keys()).map((key: number) => {
+  const start_date = new Date();
+  start_date.setDate(start_date.getDate() + key);
+  return {
+    name: `issue - ${key + 1}`,
+    start_date: start_date,
+    target_date: new Date(),
+    state: "backlog",
+  }
+});

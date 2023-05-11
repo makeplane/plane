@@ -51,7 +51,7 @@ export const getMonthDatesBetweenTwoDates = (startDate: Date, endDate: Date) => 
   return months;
 };
 
-type GetAllDaysInMonthType = {
+export type GetAllDaysInMonthType = {
   date: any;
   day: any;
   dayData: any;
@@ -59,7 +59,7 @@ type GetAllDaysInMonthType = {
   title: string;
   today: boolean;
 };
-const getAllDaysInMonth = (month: number, year: number) => {
+export const getAllDaysInMonth = (month: number, year: number) => {
   const day: GetAllDaysInMonthType[] = [];
 
   const numberOfDaysInMonth = getNumberOfDaysInMonth(month, year);
@@ -79,7 +79,7 @@ const getAllDaysInMonth = (month: number, year: number) => {
   return day;
 };
 
-const generateMonthDataByMonth = (month: number, year: number) => {
+export const generateMonthDataByMonth = (month: number, year: number) => {
   const currentMonth: number = month;
   const currentYear: number = year;
 
@@ -180,7 +180,21 @@ export const generateMonthDataByYear = (
       renderPayload.push(generateMonthDataByMonth(currentMonth, currentYear));
     }
 
-  const scrollWidth = ((renderPayload.map((monthData:any) =>monthData.children.length)).reduce((partialSum:number, a:number) => partialSum + a, 0)) * monthPayload.data.width;
+  const scrollWidth = ((renderPayload.map((monthData: any) => monthData.children.length)).reduce((partialSum: number, a: number) => partialSum + a, 0)) * monthPayload.data.width;
 
-  return { state: renderState, payload: renderPayload, scrollWidth:scrollWidth };
+  return { state: renderState, payload: renderPayload, scrollWidth: scrollWidth };
+};
+
+export const setMonthChartItemPosition = (chartData: ChartDataType, itemData: any) => {
+  const { startDate } = chartData.data;
+  const { start_date: itemStartDate } = itemData;
+
+  startDate.setHours(0, 0, 0, 0);
+  itemStartDate.setHours(0, 0, 0, 0);
+
+  const timeDifference: number = startDate.getTime() - itemStartDate.getTime();
+  const daysDifference: number = Math.abs(Math.floor((timeDifference / (1000 * 60 * 60 * 24))));
+  const scrollWidth: number = (daysDifference * chartData.data.width);
+
+  return scrollWidth + 1;
 };

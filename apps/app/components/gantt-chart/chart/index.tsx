@@ -1,16 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // context
 import { useChart } from "../hooks";
 // helper views
-import { generateMonthDataByYear } from "../views";
+import { setMonthChartItemPosition, generateMonthDataByYear } from "../views";
 // data helpers
 import { datePreview, issueData } from "../data";
 
 export const ChartViewRoot = ({ title }: any) => {
   const { allViews, currentView, currentViewData, renderView, dispatch } = useChart();
+  const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
+  const [sidebarToggle, setSidebarToggle] = useState<boolean>(false);
 
   const handleChartView = (key: string) => {
     dispatch({ type: "CURRENT_VIEW", payload: key });
+    updateCurrentViewRenderPayload(null);
   };
 
   const updateCurrentViewRenderPayload = (side: null | "left" | "right") => {
@@ -54,6 +57,7 @@ export const ChartViewRoot = ({ title }: any) => {
           },
         });
       }
+      setItemsContainerWidth(itemsContainerWidth + currentRender.scrollWidth);
     }
   };
 
@@ -67,6 +71,7 @@ export const ChartViewRoot = ({ title }: any) => {
   const updatingCurrentLeftScrollPosition = (width: number) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
     scrollContainer.scrollLeft = width + scrollContainer.scrollLeft;
+    setItemsContainerWidth(width + scrollContainer.scrollLeft);
   };
 
   // handling scroll functionality
@@ -103,6 +108,12 @@ export const ChartViewRoot = ({ title }: any) => {
 
       {/* chart header */}
       <div className="flex w-full flex-shrink-0 select-none flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap border-t border-gray-300 p-2">
+        <div
+          className="border border-gray-300 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-gray-100"
+          onClick={() => setSidebarToggle(!sidebarToggle)}
+        >
+          {!sidebarToggle ? "O" : "C"}
+        </div>
         <div className="mr-auto text-sm font-medium">
           {`${datePreview(currentViewData?.data?.startDate)} - ${datePreview(
             currentViewData?.data?.endDate
@@ -139,40 +150,60 @@ export const ChartViewRoot = ({ title }: any) => {
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
           id="scroll-container"
         >
-          {/* <div className="relative z-10 mt-[58px] flex h-full w-[4000px] divide-x divide-gray-300 overflow-y-auto bg-[#999] bg-opacity-5">
-            <div>
-              <div className="sticky left-0 z-30 w-[280px] flex-shrink-0 divide-y divide-gray-300">
-                {issueData &&
-                  issueData.length > 0 &&
-                  issueData.map((issue) => (
-                    <div className="flex h-[36.5px] items-center bg-white p-1 px-2 font-medium capitalize">
-                      {issue?.name}
-                    </div>
-                  ))}
+          <div
+            className="relative z-10 mt-[58px] flex h-full w-[4000px] divide-x divide-gray-300 overflow-y-auto bg-[#999] bg-opacity-5"
+            style={{ width: `${itemsContainerWidth}px` }}
+          >
+            {sidebarToggle && (
+              <div>
+                <div className="absolute left-0 z-30 w-[280px] flex-shrink-0 divide-y divide-gray-300">
+                  {issueData &&
+                    issueData.length > 0 &&
+                    issueData.map((issue) => (
+                      <div
+                        className="flex h-[36.5px] items-center bg-white p-1 px-2 font-medium capitalize"
+                        key={`sidebar-items-${issue.name}`}
+                      >
+                        {issue?.name}
+                      </div>
+                    ))}
+                </div>
               </div>
-            </div>
-            <div className="z-20 w-full ">
+            )}
+            <div className="z-20 w-full">
               {issueData &&
                 issueData.length > 0 &&
                 issueData.map((issue) => (
-                  <div className="relative flex h-[36.5px] items-center">
-                    <div className="group inline-flex cursor-pointer items-center gap-2 font-medium transition-all">
-                      <div className="invisible rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium group-hover:visible">
-                        {datePreview(issue?.start_date, true)}
+                  <div
+                    className="relative flex h-[36.5px] items-center"
+                    key={`items-${issue.name}`}
+                  >
+                    <div
+                      className="relative group inline-flex cursor-pointer items-center font-medium transition-all"
+                      style={{
+                        marginLeft: `${setMonthChartItemPosition(currentViewData, issue)}px`,
+                      }}
+                    >
+                      <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
+                        <div className="absolute right-0 mr-[5px] rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium">
+                          {datePreview(issue?.start_date)}
+                        </div>
                       </div>
                       <div className="rounded-sm bg-white px-4 py-1 text-sm capitalize shadow-sm">
                         {issue?.name}
                       </div>
-                      <div className="invisible rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium group-hover:visible">
-                        {datePreview(issue?.target_date, true)}
+                      <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
+                        <div className="absolute left-0 ml-[5px] rounded-sm bg-[#111] bg-opacity-10 px-2 py-0.5 text-xs font-medium">
+                          {datePreview(issue?.target_date)}
+                        </div>
                       </div>
                     </div>
                   </div>
                 ))}
             </div>
-          </div> */}
+          </div>
 
-          <div className="absolute flex h-full flex-grow divide-x divide-gray-300">
+          <div className="absolute flex h-full flex-grow">
             {renderView &&
               renderView.length > 0 &&
               renderView.map((_itemRoot: any, _idxRoot: any) => (
