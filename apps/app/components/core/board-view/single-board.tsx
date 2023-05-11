@@ -79,9 +79,9 @@ export const SingleBoard: React.FC<Props> = ({
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
-              className={`relative h-full ${snapshot.isDraggingOver ? "bg-brand-base/20" : ""} ${
-                !isCollapsed ? "hidden" : "flex flex-col"
-              }`}
+              className={`relative h-full ${
+                orderBy !== "sort_order" && snapshot.isDraggingOver ? "bg-brand-base/20" : ""
+              } ${!isCollapsed ? "hidden" : "flex flex-col"}`}
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
@@ -139,6 +139,13 @@ export const SingleBoard: React.FC<Props> = ({
                     )}
                   </Draggable>
                 ))}
+                <span
+                  style={{
+                    display: orderBy === "sort_order" ? "inline" : "none",
+                  }}
+                >
+                  {provided.placeholder}
+                </span>
               </div>
               <div>
                 {type === "issue" ? (
@@ -177,13 +184,6 @@ export const SingleBoard: React.FC<Props> = ({
                   )
                 )}
               </div>
-              <span
-                style={{
-                  display: orderBy === "sort_order" ? "inline" : "none",
-                }}
-              >
-                {provided.placeholder}
-              </span>
             </div>
           )}
         </StrictModeDroppable>
