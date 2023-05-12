@@ -6,11 +6,12 @@ export type allViewsType = {
 };
 
 export type ChartActionContextType = {
-  type: "CURRENT_VIEW" | "CURRENT_VIEW_DATA" | "PARTIAL_UPDATE" | "RENDER_VIEW";
+  type: "BLOCK_SIDEBAR_TOGGLE" | "CURRENT_VIEW" | "CURRENT_VIEW_DATA" | "PARTIAL_UPDATE" | "RENDER_VIEW";
   payload: any;
 };
 
 export type ChartContextType = {
+  blockSidebarToggle: boolean;
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
   currentViewData: any;

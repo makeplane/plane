@@ -56,28 +56,28 @@ export const datePreview = (date: Date, timeInclude: boolean = false) => {
 
 // context data
 export const allViewsWithData: ChartDataType[] = [
-  {
-    key: "hours",
-    title: "Hours",
-    data: {
-      startDate: new Date(),
-      currentDate: new Date(),
-      endDate: new Date(),
-      approxFilterRange: 4,
-      width: 40,
-    },
-  },
-  {
-    key: "days",
-    title: "Days",
-    data: {
-      startDate: new Date(),
-      currentDate: new Date(),
-      endDate: new Date(),
-      approxFilterRange: 4,
-      width: 40,
-    },
-  },
+  // {
+  //   key: "hours",
+  //   title: "Hours",
+  //   data: {
+  //     startDate: new Date(),
+  //     currentDate: new Date(),
+  //     endDate: new Date(),
+  //     approxFilterRange: 4,
+  //     width: 40,
+  //   },
+  // },
+  // {
+  //   key: "days",
+  //   title: "Days",
+  //   data: {
+  //     startDate: new Date(),
+  //     currentDate: new Date(),
+  //     endDate: new Date(),
+  //     approxFilterRange: 4,
+  //     width: 40,
+  //   },
+  // },
   {
     key: "week",
     title: "Week",
@@ -89,17 +89,17 @@ export const allViewsWithData: ChartDataType[] = [
       width: 40, // it will preview week dates with weekends highlighted with 1 week limitations ex: title (Wed 1, Thu 2, Fri 3)
     },
   },
-  {
-    key: "bi_week",
-    title: "Bi-Week",
-    data: {
-      startDate: new Date(),
-      currentDate: new Date(),
-      endDate: new Date(),
-      approxFilterRange: 4,
-      width: 40, // it will preview monthly all dates with weekends highlighted with 3 week limitations ex: title (Wed 1, Thu 2, Fri 3)
-    },
-  },
+  // {
+  //   key: "bi_week",
+  //   title: "Bi-Week",
+  //   data: {
+  //     startDate: new Date(),
+  //     currentDate: new Date(),
+  //     endDate: new Date(),
+  //     approxFilterRange: 4,
+  //     width: 40, // it will preview monthly all dates with weekends highlighted with 3 week limitations ex: title (Wed 1, Thu 2, Fri 3)
+  //   },
+  // },
   {
     key: "month",
     title: "Month",
@@ -111,17 +111,17 @@ export const allViewsWithData: ChartDataType[] = [
       width: 70, // it will preview monthly all dates with weekends highlighted with no limitations ex: title (1, 2, 3)
     },
   },
-  {
-    key: "quarter",
-    title: "Quarter",
-    data: {
-      startDate: new Date(),
-      currentDate: new Date(),
-      endDate: new Date(),
-      approxFilterRange: 4,
-      width: 100, // it will preview week starting dates all months data and there is 3 months limitation for preview ex: title (2, 9, 16, 23, 30)
-    },
-  },
+  // {
+  //   key: "quarter",
+  //   title: "Quarter",
+  //   data: {
+  //     startDate: new Date(),
+  //     currentDate: new Date(),
+  //     endDate: new Date(),
+  //     approxFilterRange: 12,
+  //     width: 140, // it will preview week starting dates all months data and there is 3 months limitation for preview ex: title (2, 9, 16, 23, 30)
+  //   },
+  // },
   {
     key: "year",
     title: "Year",
@@ -129,8 +129,8 @@ export const allViewsWithData: ChartDataType[] = [
       startDate: new Date(),
       currentDate: new Date(),
       endDate: new Date(),
-      approxFilterRange: 4,
-      width: 40, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
+      approxFilterRange: 12,
+      width: 70, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
     },
   },
 ];
@@ -141,7 +141,7 @@ export const currentViewDataWithView = (view: string | undefined) => {
   return currentView;
 };
 
-export const issueData = Array.from(Array(100).keys()).map((key: number) => {
+export const blockData = Array.from(Array(100).keys()).map((key: number) => {
   const start_date = new Date();
   const target_date = new Date();
 

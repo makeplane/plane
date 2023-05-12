@@ -2,56 +2,10 @@
 import { ChartDataType } from "../types";
 // data
 import { weeks, months } from "../data";
+// helpers
+import { generateDate, getWeekNumberByDate, getNumberOfDaysInMonth, getDatesBetweenTwoDates } from './helpers'
 
-export const getWeekNumberByDate = (date: Date) => {
-  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-  const daysOffset = firstDayOfYear.getDay();
-
-  const firstWeekStart = firstDayOfYear.getTime() - daysOffset * 24 * 60 * 60 * 1000;
-  const weekStart = new Date(firstWeekStart);
-
-  const weekNumber =
-    Math.floor((date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
-
-  return weekNumber;
-};
-
-export const getNumberOfDaysInMonth = (month: number, year: number) => {
-  const date = new Date(year, month, 1);
-
-  date.setMonth(date.getMonth() + 1);
-  date.setDate(date.getDate() - 1);
-
-  return date.getDate();
-};
-
-export const generateDate = (day: number, month: number, year: number) =>
-  new Date(year, month, day);
-
-export const getMonthDatesBetweenTwoDates = (startDate: Date, endDate: Date) => {
-  const months = [];
-
-  const startYear = startDate.getFullYear();
-  const startMonth = startDate.getMonth();
-
-  const endYear = endDate.getFullYear();
-  const endMonth = endDate.getMonth();
-
-  const currentDate = new Date(startYear, startMonth);
-
-  while (currentDate <= endDate) {
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    months.push(new Date(currentYear, currentMonth));
-    currentDate.setMonth(currentDate.getMonth() + 1);
-  }
-  if (endYear === currentDate.getFullYear() && endMonth === currentDate.getMonth())
-    months.push(endDate);
-
-  return months;
-};
-
-export type GetAllDaysInMonthType = {
+type GetAllDaysInMonthInMonthViewType = {
   date: any;
   day: any;
   dayData: any;
@@ -59,27 +13,27 @@ export type GetAllDaysInMonthType = {
   title: string;
   today: boolean;
 };
-export const getAllDaysInMonth = (month: number, year: number) => {
-  const day: GetAllDaysInMonthType[] = [];
-
+const getAllDaysInMonthInMonthView = (month: number, year: number) => {
+  const day: GetAllDaysInMonthInMonthViewType[] = [];
   const numberOfDaysInMonth = getNumberOfDaysInMonth(month, year);
+  const currentDate = new Date();
 
   Array.from(Array(numberOfDaysInMonth).keys()).map((_day: number) => {
-    const date: Date = generateDate(_day, month, year);
+    const date: Date = generateDate(_day + 1, month, year);
     day.push({
       date: date,
       day: _day + 1,
       dayData: weeks[date.getDay()],
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
-      today: false,
+      today: currentDate.getFullYear() === year && currentDate.getMonth() === month && currentDate.getDate() === (_day + 1) ? true : false,
     });
   });
 
   return day;
 };
 
-export const generateMonthDataByMonth = (month: number, year: number) => {
+export const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number) => {
   const currentMonth: number = month;
   const currentYear: number = year;
 
@@ -87,14 +41,14 @@ export const generateMonthDataByMonth = (month: number, year: number) => {
     year: currentYear,
     month: currentMonth,
     monthData: months[currentMonth],
-    children: getAllDaysInMonth(currentMonth, currentYear),
+    children: getAllDaysInMonthInMonthView(currentMonth, currentYear),
     title: `${months[currentMonth].title} ${currentYear}`,
   };
 
   return monthPayload;
 };
 
-export const generateMonthDataByYear = (
+export const generateMonthChart = (
   monthPayload: ChartDataType,
   side: null | "left" | "right"
 ) => {
@@ -120,7 +74,7 @@ export const generateMonthDataByYear = (
       currentDate.getDate()
     );
 
-    if (minusDate && plusDate) filteredDates = getMonthDatesBetweenTwoDates(minusDate, plusDate);
+    if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
     renderState = {
       ...renderState,
@@ -144,7 +98,7 @@ export const generateMonthDataByYear = (
       currentDate.getDate()
     );
 
-    if (minusDate && plusDate) filteredDates = getMonthDatesBetweenTwoDates(minusDate, plusDate);
+    if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
     renderState = {
       ...renderState,
@@ -164,7 +118,7 @@ export const generateMonthDataByYear = (
       currentDate.getDate()
     );
 
-    if (minusDate && plusDate) filteredDates = getMonthDatesBetweenTwoDates(minusDate, plusDate);
+    if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
     renderState = {
       ...renderState,
@@ -177,7 +131,7 @@ export const generateMonthDataByYear = (
       const date = filteredDates[parseInt(currentDate)];
       const currentYear = date.getFullYear();
       const currentMonth = date.getMonth();
-      renderPayload.push(generateMonthDataByMonth(currentMonth, currentYear));
+      renderPayload.push(generateMonthDataByMonthAndYearInMonthView(currentMonth, currentYear));
     }
 
   const scrollWidth = ((renderPayload.map((monthData: any) => monthData.children.length)).reduce((partialSum: number, a: number) => partialSum + a, 0)) * monthPayload.data.width;
@@ -200,7 +154,7 @@ export const setMonthChartItemPosition = (chartData: ChartDataType, itemData: an
   return scrollPosition;
 };
 
-export const setMonthChartItemWidth = (chartData: ChartDataType, itemData: any,) => {
+export const setMonthChartItemWidth = (chartData: ChartDataType, itemData: any) => {
   let scrollWidth: number = 0;
   const { start_date: itemStartDate, target_date: itemTargetDate } = itemData;
 
@@ -209,7 +163,18 @@ export const setMonthChartItemWidth = (chartData: ChartDataType, itemData: any,)
 
   const timeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
   const daysDifference: number = Math.abs(Math.floor((timeDifference / (1000 * 60 * 60 * 24))));
-  scrollWidth = (daysDifference * chartData.data.width);
+  scrollWidth = ((daysDifference + 1) * chartData.data.width);
 
   return scrollWidth;
+};
+
+export const getNumberOfDaysBetweenTwoDates = (startDate: Date, endDate: Date) => {
+  let daysDifference: number = 0;
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+
+  const timeDifference: number = startDate.getTime() - endDate.getTime();
+  daysDifference = Math.abs(Math.floor((timeDifference / (1000 * 60 * 60 * 24))));
+
+  return daysDifference;
 };
