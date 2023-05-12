@@ -303,7 +303,7 @@ const SinglePage: NextPage = () => {
       {pageDetails ? (
         <div className="flex h-full flex-col justify-between space-y-4 overflow-hidden p-4">
           <div className="h-full w-full overflow-y-auto">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <div className="flex w-full flex-col gap-2">
                 <div className="flex w-full items-center gap-2">
                   <button
@@ -324,6 +324,7 @@ const SinglePage: NextPage = () => {
                     required={true}
                     className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
                     role="textbox"
+                    noPadding
                   />
                 </div>
 
@@ -502,7 +503,7 @@ const SinglePage: NextPage = () => {
               </div>
             </div>
 
-            <div className="mt-4 h-full w-full">
+            <div className="mt-5 h-full w-full">
               {pageBlocks ? (
                 <>
                   <DragDropContext onDragEnd={handleOnDragEnd}>
