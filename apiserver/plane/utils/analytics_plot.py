@@ -11,7 +11,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
         year = ExtractYear(x_axis)
         month = ExtractMonth(x_axis)
-        dimension = Concat(year, Value('-'), month, output_field=CharField())
+        dimension = Concat(year, Value("-"), month, output_field=CharField())
         queryset = queryset.annotate(dimension=dimension)
         x_axis = "dimension"
     else:
@@ -20,6 +20,13 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
         queryset = queryset.exclude(x_axis__is_null=True)
+
+    if segment in ["created_at", "start_date", "target_date", "completed_at"]:
+        year = ExtractYear(segment)
+        month = ExtractMonth(segment)
+        dimension = Concat(year, Value("-"), month, output_field=CharField())
+        queryset = queryset.annotate(segmented=dimension)
+        segment = "segmented"
 
     queryset = queryset.values(x_axis)
 
