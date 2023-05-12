@@ -86,7 +86,7 @@ def analytic_export_task(email, data, slug):
             html_content = render_to_string("emails/exports/analytics.html", {})
 
             text_content = strip_tags(html_content)
-
+            csv_buffer.seek(0)
             msg = EmailMultiAlternatives(
                 subject, text_content, settings.EMAIL_FROM, [email]
             )
@@ -125,12 +125,12 @@ def analytic_export_task(email, data, slug):
 
             text_content = strip_tags(html_content)
 
+            csv_buffer.seek(0)
             msg = EmailMultiAlternatives(
                 subject, text_content, settings.EMAIL_FROM, [email]
             )
             msg.attach(f"{slug}-analytics.csv", csv_buffer.read())
             msg.send(fail_silently=False)
-
 
     except Exception as e:
         print(e)
