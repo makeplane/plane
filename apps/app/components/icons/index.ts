@@ -74,3 +74,4 @@ export * from "./default-file-icon";
 export * from "./video-file-icon";
 export * from "./audio-file-icon";
 export * from "./command-icon";
+export * from "./color-picker-icon";

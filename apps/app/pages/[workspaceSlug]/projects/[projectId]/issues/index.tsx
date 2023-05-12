@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -12,8 +14,9 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
+import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { PrimaryButton } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -23,6 +26,8 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage = () => {
+  const [analyticsModal, setAnalyticsModal] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -47,6 +52,13 @@ const ProjectIssues: NextPage = () => {
         right={
           <div className="flex items-center gap-2">
             <IssuesFilterView />
+            <SecondaryButton
+              onClick={() => setAnalyticsModal(true)}
+              className="!py-1.5 rounded-md font-normal text-brand-secondary"
+              outline
+            >
+              Analytics
+            </SecondaryButton>
             <PrimaryButton
               className="flex items-center gap-2"
               onClick={() => {
@@ -60,6 +72,7 @@ const ProjectIssues: NextPage = () => {
           </div>
         }
       >
+        <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <IssuesView />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

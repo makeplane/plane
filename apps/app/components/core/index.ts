@@ -13,3 +13,5 @@ export * from "./link-modal";
 export * from "./image-picker-popover";
 export * from "./feeds";
 export * from "./theme-switch";
+export * from "./custom-theme-selector";
+export * from "./color-picker-input";

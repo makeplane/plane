@@ -113,7 +113,7 @@ const ProjectModules: NextPage = () => {
           />
         )
       ) : (
-        <Loader className="grid grid-cols-3 gap-4">
+        <Loader className="grid grid-cols-3 gap-4 p-8">
           <Loader.Item height="100px" />
           <Loader.Item height="100px" />
           <Loader.Item height="100px" />

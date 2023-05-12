@@ -40,7 +40,7 @@ import { IJiraImporterForm } from "types";
 const integrationWorkflowData: Array<{
   title: string;
   key: TJiraIntegrationSteps;
-  icon: React.FC<React.SVGProps<SVGSVGElement> & React.RefAttributes<SVGSVGElement>>;
+  icon: any;
 }> = [
   {
     title: "Configure",
