@@ -17,6 +17,7 @@ import {
   SingleState,
   StateGroup,
 } from "components/states";
+import { SettingsHeader } from "components/project";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -28,7 +29,6 @@ import { getStatesList, orderStateGroups } from "helpers/state.helper";
 import type { NextPage } from "next";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
-import { SettingsHeader } from "components/project";
 
 const StatesSettings: NextPage = () => {
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
@@ -67,7 +67,7 @@ const StatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="px-24 py-8">
+        <div className="p-8 lg:px-24">
           <SettingsHeader />
           <div className="grid grid-cols-12 gap-10">
             <div className="col-span-12 sm:col-span-5">

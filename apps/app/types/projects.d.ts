@@ -59,6 +59,7 @@ type ProjectViewTheme = {
 };
 
 export interface IProjectMember {
+  id: string;
   member: IUserLite;
   project: IProject;
   workspace: IWorkspace;

@@ -173,7 +173,7 @@ const WorkspaceSettings: NextPage = () => {
         }}
         data={activeWorkspace ?? null}
       />
-      <div className="px-24 py-8">
+      <div className="p-8 lg:px-24">
         <SettingsHeader />
         {activeWorkspace ? (
           <div className="space-y-8 sm:space-y-12">

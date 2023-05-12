@@ -16,6 +16,7 @@ import {
   SingleLabel,
   SingleLabelGroup,
 } from "components/labels";
+import { SettingsHeader } from "components/project";
 // ui
 import { Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -26,7 +27,6 @@ import { IIssueLabels } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import { SettingsHeader } from "components/project";
 
 const LabelsSettings: NextPage = () => {
   // create/edit label form
@@ -102,7 +102,7 @@ const LabelsSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="px-24 py-8">
+        <div className="p-8 lg:px-24">
           <SettingsHeader />
           <section className="grid grid-cols-12 gap-10">
             <div className="col-span-12 sm:col-span-5">
