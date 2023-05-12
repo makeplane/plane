@@ -194,7 +194,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           });
         });
   };
-
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
       .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
