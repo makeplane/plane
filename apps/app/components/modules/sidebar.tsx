@@ -183,9 +183,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
         data={module}
       />
       <div
-        className={`fixed top-0 ${
+        className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar py-5 duration-300`}
+        } h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar py-5 duration-300`}
       >
         {module ? (
           <>

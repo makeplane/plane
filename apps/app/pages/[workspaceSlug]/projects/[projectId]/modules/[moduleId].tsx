@@ -150,9 +150,7 @@ const SingleModule: React.FC = () => {
           </CustomMenu>
         }
         right={
-          <div
-            className={`flex items-center gap-2 ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}
-          >
+          <div className={`flex items-center gap-2 duration-300`}>
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
