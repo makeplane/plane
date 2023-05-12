@@ -229,7 +229,7 @@ const GeneralSettings: NextPage = () => {
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border p-1">
+                <div className="h-32 w-full rounded border border-brand-base p-1">
                   <div className="relative h-full w-full rounded">
                     <Image
                       src={watch("cover_image")!}

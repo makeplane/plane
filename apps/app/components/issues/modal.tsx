@@ -33,6 +33,9 @@ import {
   CYCLE_DETAILS,
   MODULE_DETAILS,
   INBOX_ISSUES,
+  PROJECT_CALENDAR_ISSUES,
+  CYCLE_CALENDAR_ISSUES,
+  MODULE_CALENDAR_ISSUES,
 } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
@@ -57,7 +60,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, inboxId } = router.query;
 
-  const { params } = useIssuesView();
+  const { issueView, params } = useIssuesView();
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
@@ -143,7 +146,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             message: "Issue created successfully.",
           });
 
-          if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
+          const calendarFetchKey = cycleId
+            ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+            : moduleId
+            ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
+            : PROJECT_CALENDAR_ISSUES(projectId as string);
+
+          mutate<IIssue[]>(calendarFetchKey);
+
+          if (!createMore) handleClose();
 
           if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
         })
@@ -191,14 +202,29 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
-          mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params),
-            (prevData) =>
+          if (issueView === "calendar") {
+            const calendarFetchKey = cycleId
+              ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+              : moduleId
+              ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
+              : PROJECT_CALENDAR_ISSUES(projectId as string);
+
+            mutate<IIssue[]>(calendarFetchKey, (prevData) =>
               (prevData ?? []).map((i) => {
                 if (i.id === res.id) return { ...i, ...res };
                 return i;
               })
-          );
+            );
+          } else {
+            mutate<IIssue[]>(
+              PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params),
+              (prevData) =>
+                (prevData ?? []).map((i) => {
+                  if (i.id === res.id) return { ...i, ...res };
+                  return i;
+                })
+            );
+          }
         }
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);

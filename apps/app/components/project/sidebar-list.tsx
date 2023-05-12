@@ -37,8 +37,8 @@ export const ProjectSidebarList: FC = () => {
   const { setToastAlert } = useToast();
 
   const { data: favoriteProjects } = useSWR(
-    workspaceSlug ? FAVORITE_PROJECTS_LIST(workspaceSlug as string) : null,
-    () => (workspaceSlug ? projectService.getFavoriteProjects(workspaceSlug as string) : null)
+    workspaceSlug ? FAVORITE_PROJECTS_LIST(workspaceSlug.toString()) : null,
+    () => (workspaceSlug ? projectService.getFavoriteProjects(workspaceSlug.toString()) : null)
   );
 
   const { data: projects } = useSWR(

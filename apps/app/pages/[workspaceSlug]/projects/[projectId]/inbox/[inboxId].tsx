@@ -1,19 +1,26 @@
+import { useState, useEffect, useCallback, useRef } from "react";
+
+import Link from "next/link";
 import Router, { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react hook form
+import { useForm } from "react-hook-form";
 // services
+import inboxServices from "services/inbox.service";
+import issuesService from "services/issues.service";
 import projectService from "services/project.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
+// components
+import { SelectDuplicateInboxIssueModal, SelectSnoozeTillModal } from "components/inbox";
 // helper
 import { truncateText } from "helpers/string.helper";
-// components
-import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { CustomMenu, PrimaryButton } from "components/ui";
+import { CustomMenu, PrimaryButton, Spinner, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
@@ -27,8 +34,7 @@ import {
   PROJECT_ISSUES_ACTIVITY,
   SUB_ISSUES,
 } from "constants/fetch-keys";
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import useIssuesView from "hooks/use-issues-view";
+
 import {
   AddComment,
   IssueActivitySection,
@@ -38,11 +44,9 @@ import {
   IssueDetailsSidebar,
   SubIssuesList,
 } from "components/issues";
-import issuesService from "services/issues.service";
-import inboxServices from "services/inbox.service";
-import Link from "next/link";
-import { IIssue } from "types";
-import { useForm } from "react-hook-form";
+
+// types
+import type { IIssue } from "types";
 
 const defaultValues = {
   name: "",
@@ -63,11 +67,12 @@ const defaultValues = {
 const ProjectIssues: NextPage = () => {
   const router = useRouter();
 
-  const [isCreateInboxModalOpen, setIsCreateInboxModalOpen] = useState(false);
-
   const { workspaceSlug, projectId, inboxId, issueId } = router.query;
 
   const activeIssueRef = useRef<HTMLDivElement>(null);
+
+  const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
+  const [selectSnoozeModalOpen, setSelectSnoozeModalOpen] = useState(false);
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
@@ -84,8 +89,6 @@ const ProjectIssues: NextPage = () => {
           )
       : null
   );
-
-  console.log("inboxIssues: ", inboxIssues);
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -212,6 +215,25 @@ const ProjectIssues: NextPage = () => {
     });
   }, [inboxIssues, workspaceSlug, projectId, inboxId]);
 
+  useEffect(() => {
+    if (!issueDetails) return;
+
+    mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+    reset({
+      ...issueDetails,
+      blockers_list:
+        issueDetails.blockers_list ??
+        issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
+      blocked_list:
+        issueDetails.blocks_list ??
+        issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
+      assignees_list:
+        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+      labels: issueDetails.labels_list ?? issueDetails.labels,
+    });
+  }, [issueDetails, reset, issueId]);
+
   return (
     <IssueViewContextProvider>
       <ProjectAuthorizationWrapper
@@ -280,8 +302,8 @@ const ProjectIssues: NextPage = () => {
             </div>
           </div>
 
-          <div className="col-span-2 flex h-full flex-col overflow-auto">
-            <div className="flex justify-between border-b border-brand-base p-3">
+          <div className="col-span-3 flex h-full flex-col overflow-auto">
+            <div className="flex w-full justify-between border-b border-brand-base p-3">
               <div className="flex gap-x-3">
                 <button
                   type="button"
@@ -308,100 +330,232 @@ const ProjectIssues: NextPage = () => {
                   {inboxIssues?.length}
                 </div>
               </div>
-              <div>actions button comes here</div>
+              <div className="flex gap-x-3">
+                <SecondaryButton
+                  size="sm"
+                  onClick={() => {
+                    inboxServices
+                      .markInboxStatus(
+                        workspaceSlug!.toString(),
+                        projectId!.toString(),
+                        inboxId!.toString(),
+                        inboxIssues?.find((inboxIssue) => inboxIssue.issue === issueId)?.id!,
+                        {
+                          status: 1,
+                        }
+                      )
+                      .then(() => {
+                        mutateIssueDetails();
+                      });
+                  }}
+                >
+                  Accept
+                </SecondaryButton>
+                <SecondaryButton
+                  size="sm"
+                  onClick={() => {
+                    setSelectDuplicateIssue(true);
+                  }}
+                >
+                  Mark as duplicate
+                </SecondaryButton>
+                <SecondaryButton
+                  size="sm"
+                  onClick={() => {
+                    inboxServices
+                      .markInboxStatus(
+                        workspaceSlug!.toString(),
+                        projectId!.toString(),
+                        inboxId!.toString(),
+                        inboxIssues?.find((inboxIssue) => inboxIssue.issue === issueId)?.id!,
+                        {
+                          status: -1,
+                        }
+                      )
+                      .then(() => {
+                        mutateIssueDetails();
+                      });
+                  }}
+                >
+                  Decline
+                </SecondaryButton>
+                <SecondaryButton
+                  size="sm"
+                  onClick={() => {
+                    setSelectSnoozeModalOpen(true);
+                  }}
+                >
+                  Snooze
+                </SecondaryButton>
+              </div>
             </div>
 
-            <div className="h-full space-y-5 divide-y-2 divide-brand-base p-5">
-              {issueDetails && (
-                <div className="rounded-lg">
-                  {issueDetails?.parent && issueDetails.parent !== "" ? (
-                    <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs">
-                      <Link
-                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
-                          issueDetails.parent
-                        }`}
-                      >
-                        <a className="flex items-center gap-2 text-brand-secondary">
-                          <span
-                            className="block h-1.5 w-1.5 rounded-full"
-                            style={{
-                              backgroundColor: issueDetails?.state_detail?.color,
-                            }}
-                          />
-                          <span className="flex-shrink-0">
-                            {issueDetails.project_detail.identifier}-
-                            {issueDetails.parent_detail?.sequence_id}
-                          </span>
-                          <span className="truncate">
-                            {issueDetails.parent_detail?.name.substring(0, 50)}
-                          </span>
-                        </a>
-                      </Link>
+            <div className="h-full">
+              {!issueDetails && !issueDetailError && (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Spinner />
+                </div>
+              )}
 
-                      <CustomMenu ellipsis optionsPosition="left">
-                        {siblingIssues && siblingIssues.length > 0 ? (
-                          siblingIssues.map((issue: IIssue) => (
-                            <CustomMenu.MenuItem key={issue.id}>
-                              <Link
-                                href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
-                                  issue.id
-                                }`}
-                              >
-                                <a>
-                                  {issueDetails.project_detail.identifier}-{issue.sequence_id}
-                                </a>
-                              </Link>
-                            </CustomMenu.MenuItem>
-                          ))
-                        ) : (
-                          <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-brand-secondary">
-                            No other sibling issues
-                          </CustomMenu.MenuItem>
-                        )}
-                      </CustomMenu>
+              {issueDetails && (
+                <div className="flex h-full divide-x">
+                  <div className="basis-2/3 h-full overflow-auto p-5">
+                    <div>
+                      {issueDetails?.parent && issueDetails.parent !== "" ? (
+                        <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs">
+                          <Link
+                            href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                              issueDetails.parent
+                            }`}
+                          >
+                            <a className="flex items-center gap-2 text-brand-secondary">
+                              <span
+                                className="block h-1.5 w-1.5 rounded-full"
+                                style={{
+                                  backgroundColor: issueDetails?.state_detail?.color,
+                                }}
+                              />
+                              <span className="flex-shrink-0">
+                                {issueDetails.project_detail.identifier}-
+                                {issueDetails.parent_detail?.sequence_id}
+                              </span>
+                              <span className="truncate">
+                                {issueDetails.parent_detail?.name.substring(0, 50)}
+                              </span>
+                            </a>
+                          </Link>
+
+                          <CustomMenu ellipsis>
+                            {siblingIssues && siblingIssues.length > 0 ? (
+                              siblingIssues.map((issue: IIssue) => (
+                                <CustomMenu.MenuItem key={issue.id}>
+                                  <Link
+                                    href={`/${workspaceSlug}/projects/${
+                                      projectId as string
+                                    }/issues/${issue.id}`}
+                                  >
+                                    <a>
+                                      {issueDetails.project_detail.identifier}-{issue.sequence_id}
+                                    </a>
+                                  </Link>
+                                </CustomMenu.MenuItem>
+                              ))
+                            ) : (
+                              <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-brand-secondary">
+                                No other sibling issues
+                              </CustomMenu.MenuItem>
+                            )}
+                          </CustomMenu>
+                        </div>
+                      ) : null}
+                      <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
+                      <div className="mt-2 space-y-2">
+                        <SubIssuesList parentIssue={issueDetails} />
+                      </div>
+
+                      <div className="flex flex-col gap-3 py-3">
+                        <h3 className="text-lg">Attachments</h3>
+                        <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                          <IssueAttachmentUpload />
+                          <IssueAttachments />
+                        </div>
+                      </div>
+                      <div className="space-y-5 pt-3">
+                        <h3 className="text-lg text-brand-base">Comments/Activity</h3>
+                        <IssueActivitySection />
+                        <AddComment />
+                      </div>
                     </div>
-                  ) : null}
-                  <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
-                  <div className="mt-2 space-y-2">
-                    <SubIssuesList parentIssue={issueDetails} />
+                  </div>
+
+                  <div className="basis-1/3 space-y-5 border-brand-base p-5">
+                    <IssueDetailsSidebar
+                      control={control}
+                      issueDetail={issueDetails}
+                      submitChanges={submitChanges}
+                      watch={watch}
+                    />
                   </div>
                 </div>
               )}
 
               {!issueDetails && issueDetailError && (
-                <div>Add accept button to accept inbox issue</div>
-              )}
-
-              {issueDetails && (
-                <>
-                  <div className="flex flex-col gap-3 py-3">
-                    <h3 className="text-lg">Attachments</h3>
-                    <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                      <IssueAttachmentUpload />
-                      <IssueAttachments />
-                    </div>
-                  </div>
-                  <div className="space-y-5 pt-3">
-                    <h3 className="text-lg text-brand-base">Comments/Activity</h3>
-                    <IssueActivitySection />
-                    <AddComment />
-                  </div>
-                </>
+                <div className="w-full h-full flex flex-col justify-center items-center">
+                  <PrimaryButton
+                    onClick={() => {
+                      inboxServices
+                        .markInboxStatus(
+                          workspaceSlug!.toString(),
+                          projectId!.toString(),
+                          inboxId!.toString(),
+                          inboxIssues?.find((inboxIssue) => inboxIssue.issue === issueId)?.id!,
+                          {
+                            status: 1,
+                          }
+                        )
+                        .then(() => {
+                          mutateIssueDetails();
+                        });
+                    }}
+                  >
+                    Accept Inbox Issue
+                  </PrimaryButton>
+                  <p>You have to accept the issue to view it.</p>
+                </div>
               )}
             </div>
           </div>
-
-          {issueDetails && (
-            <div className="col-span-1 p-5">
-              <IssueDetailsSidebar
-                control={control}
-                issueDetail={issueDetails}
-                submitChanges={submitChanges}
-                watch={watch}
-              />
-            </div>
-          )}
         </div>
+
+        <SelectDuplicateInboxIssueModal
+          isOpen={selectDuplicateIssue}
+          onClose={() => setSelectDuplicateIssue(false)}
+          onSubmit={(dupIssueId: string) => {
+            inboxServices
+              .markInboxStatus(
+                workspaceSlug!.toString(),
+                projectId!.toString(),
+                inboxId!.toString(),
+                inboxIssues?.find((inboxIssue) => inboxIssue.issue === issueId)?.id!,
+                {
+                  status: 2,
+                  duplicate_to: dupIssueId,
+                }
+              )
+              .then(() => {
+                mutateIssueDetails();
+                setSelectDuplicateIssue(false);
+              })
+              .catch(() => {
+                setSelectDuplicateIssue(false);
+              });
+          }}
+        />
+
+        <SelectSnoozeTillModal
+          isOpen={selectSnoozeModalOpen}
+          onClose={() => setSelectSnoozeModalOpen(false)}
+          onSubmit={(snoozeTill) => {
+            inboxServices
+              .markInboxStatus(
+                workspaceSlug!.toString(),
+                projectId!.toString(),
+                inboxId!.toString(),
+                inboxIssues?.find((inboxIssue) => inboxIssue.issue === issueId)?.id!,
+                {
+                  status: 0,
+                  snoozed_till: new Date(snoozeTill),
+                }
+              )
+              .then(() => {
+                mutateIssueDetails();
+                setSelectSnoozeModalOpen(false);
+              })
+              .catch(() => {
+                setSelectSnoozeModalOpen(false);
+              });
+          }}
+        />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );

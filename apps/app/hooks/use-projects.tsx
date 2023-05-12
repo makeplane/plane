@@ -1,7 +1,11 @@
-import useSWR from "swr";
 import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
 // services
 import projectService from "services/project.service";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
@@ -20,7 +24,7 @@ const useProjects = () => {
     .filter((_item, index) => index < 3);
 
   return {
-    projects: projects || [],
+    projects: orderArrayBy(projects ?? [], "is_favorite", "descending") || [],
     recentProjects: recentProjects || [],
     mutateProjects,
   };

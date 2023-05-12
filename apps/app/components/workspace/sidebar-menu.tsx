@@ -43,9 +43,9 @@ export const WorkspaceSidebarMenu: React.FC = () => {
           <a
             className={`${
               (
-                link.name === "Dashboard"
-                  ? router.asPath === link.href
-                  : router.asPath.includes(link.href)
+                link.name === "Settings"
+                  ? router.asPath.includes(link.href)
+                  : router.asPath === link.href
               )
                 ? "bg-brand-surface-2 text-brand-base"
                 : "text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-secondary focus:bg-brand-surface-2 focus:text-brand-secondary"
