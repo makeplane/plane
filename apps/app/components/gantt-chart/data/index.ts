@@ -50,8 +50,9 @@ export const datePreview = (date: Date, timeInclude: boolean = false) => {
   month = months[month as number] as WeekMonthDataType;
   const year = date.getFullYear();
 
-  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${timeInclude ? `, ${timePreview(date)}` : ``
-    }`;
+  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${
+    timeInclude ? `, ${timePreview(date)}` : ``
+  }`;
 };
 
 // context data
@@ -153,5 +154,5 @@ export const blockData = Array.from(Array(100).keys()).map((key: number) => {
     start_date: start_date,
     target_date: target_date,
     state: "backlog",
-  }
+  };
 });

@@ -3,7 +3,13 @@ import { ChartDataType } from "../types";
 // data
 import { weeks, months } from "../data";
 // helpers
-import { generateDate, getWeekNumberByDate, getNumberOfDaysInMonth, getDatesBetweenTwoDates } from './helpers'
+import {
+  generateDate,
+  getWeekNumberByDate,
+  getNumberOfDaysInMonth,
+  getWeeksBetweenTwoDates,
+  getAllDatesInWeekByWeekNumber,
+} from "./helpers";
 
 export type GetAllDaysInMonthType = {
   date: any;
@@ -26,7 +32,12 @@ export const getAllDaysInMonth = (month: number, year: number) => {
       dayData: weeks[date.getDay()],
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
-      today: currentDate.getFullYear() === year && currentDate.getMonth() === month && currentDate.getDate() === (_day + 1) ? true : false,
+      today:
+        currentDate.getFullYear() === year &&
+        currentDate.getMonth() === month &&
+        currentDate.getDate() === _day + 1
+          ? true
+          : false,
     });
   });
 
@@ -48,15 +59,12 @@ export const generateMonthDataByMonth = (month: number, year: number) => {
   return monthPayload;
 };
 
-export const generateYearChart = (
-  monthPayload: ChartDataType,
-  side: null | "left" | "right"
-) => {
+export const generateYearChart = (monthPayload: ChartDataType, side: null | "left" | "right") => {
   let renderState = monthPayload;
   const renderPayload: any = [];
 
   const range: number = renderState.data.approxFilterRange || 6;
-  let filteredDates: Date[] = [];
+  let filteredDates: number[] | Date[] = [];
   let minusDate: Date = new Date();
   let plusDate: Date = new Date();
 
@@ -74,16 +82,22 @@ export const generateYearChart = (
       currentDate.getDate()
     );
 
-    if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
+    console.log("minusDate", minusDate);
+    console.log("plusDate", plusDate);
 
-    renderState = {
-      ...renderState,
-      data: {
-        ...renderState.data,
-        startDate: filteredDates[0],
-        endDate: filteredDates[filteredDates.length - 1],
-      },
-    };
+    if (minusDate && plusDate) filteredDates = getWeeksBetweenTwoDates(minusDate, plusDate);
+    
+
+    console.log("filteredDates", filteredDates);
+
+    // renderState = {
+    //   ...renderState,
+    //   data: {
+    //     ...renderState.data,
+    //     startDate: filteredDates[0],
+    //     endDate: filteredDates[filteredDates.length - 1],
+    //   },
+    // };
   } else if (side === "left") {
     const currentDate = renderState.data.startDate;
 
@@ -98,12 +112,12 @@ export const generateYearChart = (
       currentDate.getDate()
     );
 
-    if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
+    if (minusDate && plusDate) filteredDates = getWeeksBetweenTwoDates(minusDate, plusDate);
 
-    renderState = {
-      ...renderState,
-      data: { ...renderState.data, startDate: filteredDates[0] },
-    };
+    // renderState = {
+    //   ...renderState,
+    //   data: { ...renderState.data, startDate: filteredDates[0] },
+    // };
   } else if (side === "right") {
     const currentDate = renderState.data.endDate;
 
@@ -118,23 +132,26 @@ export const generateYearChart = (
       currentDate.getDate()
     );
 
-    if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
+    if (minusDate && plusDate) filteredDates = getWeeksBetweenTwoDates(minusDate, plusDate);
 
-    renderState = {
-      ...renderState,
-      data: { ...renderState.data, endDate: filteredDates[filteredDates.length - 1] },
-    };
+    // renderState = {
+    //   ...renderState,
+    //   data: { ...renderState.data, endDate: filteredDates[filteredDates.length - 1] },
+    // };
   }
 
-  if (filteredDates && filteredDates.length > 0)
-    for (const currentDate in filteredDates) {
-      const date = filteredDates[parseInt(currentDate)];
-      const currentYear = date.getFullYear();
-      const currentMonth = date.getMonth();
-      renderPayload.push(generateMonthDataByMonth(currentMonth, currentYear));
-    }
+  // if (filteredDates && filteredDates.length > 0)
+  //   for (const currentDate in filteredDates) {
+  //     const date = filteredDates[parseInt(currentDate)];
+  //     const currentYear = date.getFullYear();
+  //     const currentMonth = date.getMonth();
+  //     renderPayload.push(generateMonthDataByMonth(currentMonth, currentYear));
+  //   }
 
-  const scrollWidth = ((renderPayload.map((monthData: any) => monthData.children.length)).reduce((partialSum: number, a: number) => partialSum + a, 0)) * monthPayload.data.width;
+  const scrollWidth =
+    renderPayload
+      .map((monthData: any) => monthData.children.length)
+      .reduce((partialSum: number, a: number) => partialSum + a, 0) * monthPayload.data.width;
 
   return { state: renderState, payload: renderPayload, scrollWidth: scrollWidth };
 };

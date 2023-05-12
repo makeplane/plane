@@ -3,7 +3,12 @@ import { ChartDataType } from "../types";
 // data
 import { weeks, months } from "../data";
 // helpers
-import { generateDate, getWeekNumberByDate, getNumberOfDaysInMonth, getDatesBetweenTwoDates } from './helpers'
+import {
+  generateDate,
+  getWeekNumberByDate,
+  getNumberOfDaysInMonth,
+  getDatesBetweenTwoDates,
+} from "./helpers";
 
 type GetAllDaysInMonthInMonthViewType = {
   date: any;
@@ -26,7 +31,12 @@ const getAllDaysInMonthInMonthView = (month: number, year: number) => {
       dayData: weeks[date.getDay()],
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
-      today: currentDate.getFullYear() === year && currentDate.getMonth() === month && currentDate.getDate() === (_day + 1) ? true : false,
+      today:
+        currentDate.getFullYear() === year &&
+        currentDate.getMonth() === month &&
+        currentDate.getDate() === _day + 1
+          ? true
+          : false,
     });
   });
 
@@ -48,10 +58,7 @@ export const generateMonthDataByMonthAndYearInMonthView = (month: number, year: 
   return monthPayload;
 };
 
-export const generateMonthChart = (
-  monthPayload: ChartDataType,
-  side: null | "left" | "right"
-) => {
+export const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "right") => {
   let renderState = monthPayload;
   const renderPayload: any = [];
 
@@ -134,7 +141,10 @@ export const generateMonthChart = (
       renderPayload.push(generateMonthDataByMonthAndYearInMonthView(currentMonth, currentYear));
     }
 
-  const scrollWidth = ((renderPayload.map((monthData: any) => monthData.children.length)).reduce((partialSum: number, a: number) => partialSum + a, 0)) * monthPayload.data.width;
+  const scrollWidth =
+    renderPayload
+      .map((monthData: any) => monthData.children.length)
+      .reduce((partialSum: number, a: number) => partialSum + a, 0) * monthPayload.data.width;
 
   return { state: renderState, payload: renderPayload, scrollWidth: scrollWidth };
 };
@@ -148,8 +158,8 @@ export const setMonthChartItemPosition = (chartData: ChartDataType, itemData: an
   itemStartDate.setHours(0, 0, 0, 0);
 
   const timeDifference: number = startDate.getTime() - itemStartDate.getTime();
-  const daysDifference: number = Math.abs(Math.floor((timeDifference / (1000 * 60 * 60 * 24))));
-  scrollPosition = (daysDifference * chartData.data.width);
+  const daysDifference: number = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
+  scrollPosition = daysDifference * chartData.data.width;
 
   return scrollPosition;
 };
@@ -162,8 +172,8 @@ export const setMonthChartItemWidth = (chartData: ChartDataType, itemData: any) 
   itemTargetDate.setHours(0, 0, 0, 0);
 
   const timeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
-  const daysDifference: number = Math.abs(Math.floor((timeDifference / (1000 * 60 * 60 * 24))));
-  scrollWidth = ((daysDifference + 1) * chartData.data.width);
+  const daysDifference: number = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
+  scrollWidth = (daysDifference + 1) * chartData.data.width;
 
   return scrollWidth;
 };
@@ -174,7 +184,7 @@ export const getNumberOfDaysBetweenTwoDates = (startDate: Date, endDate: Date) =
   endDate.setHours(0, 0, 0, 0);
 
   const timeDifference: number = startDate.getTime() - endDate.getTime();
-  daysDifference = Math.abs(Math.floor((timeDifference / (1000 * 60 * 60 * 24))));
+  daysDifference = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
 
   return daysDifference;
 };
