@@ -1,28 +1,20 @@
-import React, { useState } from "react";
-
-// swr
-import useSWR, { mutate } from "swr";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-// ui
-import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
-import { SingleCalendarDate, CalendarHeader } from "components/core";
+import { mutate } from "swr";
 
-import { Spinner } from "components/ui";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
+// react-beautiful-dnd
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
-import cyclesService from "services/cycles.service";
-import modulesService from "services/modules.service";
-// fetch key
-import {
-  CYCLE_CALENDAR_ISSUES,
-  MODULE_CALENDAR_ISSUES,
-  PROJECT_CALENDAR_ISSUES,
-} from "constants/fetch-keys";
-// helper
+// hooks
+import useCalendarIssuesView from "hooks/use-calendar-issues-view";
+// components
+import { SingleCalendarDate, CalendarHeader } from "components/core";
+// ui
+import { Spinner } from "components/ui";
+// helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 import {
   startOfWeek,
@@ -31,8 +23,15 @@ import {
   weekDayInterval,
   formatDate,
 } from "helpers/calendar.helper";
-// type
+// types
 import { ICalendarRange, IIssue, UserAuth } from "types";
+// fetch-keys
+import {
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  VIEW_ISSUES,
+} from "constants/fetch-keys";
 
 type Props = {
   handleEditIssue: (issue: IIssue) => void;
@@ -53,93 +52,31 @@ export const CalendarView: React.FC<Props> = ({
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isMonthlyView, setIsMonthlyView] = useState(true);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
-
-  const { params } = useIssuesView();
-
-  const [calendarDateRange, setCalendarDateRange] = useState<ICalendarRange>({
+  const [calendarDates, setCalendarDates] = useState<ICalendarRange>({
     startDate: startOfWeek(currentDate),
     endDate: lastDayOfWeek(currentDate),
   });
 
-  const { data: projectCalendarIssues } = useSWR(
-    workspaceSlug && projectId ? PROJECT_CALENDAR_ISSUES(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, {
-            ...params,
-            target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
-              calendarDateRange.endDate
-            )};before`,
-            group_by: null,
-          })
-      : null
-  );
+  const router = useRouter();
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  const { data: cycleCalendarIssues } = useSWR(
-    workspaceSlug && projectId && cycleId
-      ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
-      : null,
-    workspaceSlug && projectId && cycleId
-      ? () =>
-          cyclesService.getCycleIssuesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            cycleId as string,
-            {
-              ...params,
-              target_date: `${renderDateFormat(
-                calendarDateRange.startDate
-              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
-              group_by: null,
-            }
-          )
-      : null
-  );
-
-  const { data: moduleCalendarIssues } = useSWR(
-    workspaceSlug && projectId && moduleId
-      ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
-      : null,
-    workspaceSlug && projectId && moduleId
-      ? () =>
-          modulesService.getModuleIssuesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            moduleId as string,
-            {
-              ...params,
-              target_date: `${renderDateFormat(
-                calendarDateRange.startDate
-              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
-              group_by: null,
-            }
-          )
-      : null
-  );
+  const { calendarIssues, params, setCalendarDateRange } = useCalendarIssuesView();
 
   const totalDate = eachDayOfInterval({
-    start: calendarDateRange.startDate,
-    end: calendarDateRange.endDate,
+    start: calendarDates.startDate,
+    end: calendarDates.endDate,
   });
 
   const onlyWeekDays = weekDayInterval({
-    start: calendarDateRange.startDate,
-    end: calendarDateRange.endDate,
+    start: calendarDates.startDate,
+    end: calendarDates.endDate,
   });
 
   const currentViewDays = showWeekEnds ? totalDate : onlyWeekDays;
 
-  const calendarIssues = cycleId
-    ? (cycleCalendarIssues as IIssue[])
-    : moduleId
-    ? (moduleCalendarIssues as IIssue[])
-    : (projectCalendarIssues as IIssue[]);
-
   const currentViewDaysData = currentViewDays.map((date: Date) => {
     const filterIssue =
-      calendarIssues && calendarIssues.length > 0
+      calendarIssues.length > 0
         ? calendarIssues.filter(
             (issue) =>
               issue.target_date && renderDateFormat(issue.target_date) === renderDateFormat(date)
@@ -170,13 +107,16 @@ export const CalendarView: React.FC<Props> = ({
     const { source, destination, draggableId } = result;
 
     if (!destination || !workspaceSlug || !projectId) return;
+
     if (source.droppableId === destination.droppableId) return;
 
     const fetchKey = cycleId
-      ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
       : moduleId
-      ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
-      : PROJECT_CALENDAR_ISSUES(projectId as string);
+      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
+      : viewId
+      ? VIEW_ISSUES(viewId.toString(), params)
+      : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
 
     mutate<IIssue[]>(
       fetchKey,
@@ -187,15 +127,37 @@ export const CalendarView: React.FC<Props> = ({
               ...p,
               target_date: destination.droppableId,
             };
+
           return p;
         }),
       false
     );
 
-    issuesService.patchIssue(workspaceSlug as string, projectId as string, draggableId, {
-      target_date: destination?.droppableId,
-    });
+    issuesService
+      .patchIssue(workspaceSlug as string, projectId as string, draggableId, {
+        target_date: destination?.droppableId,
+      })
+      .then(() => mutate(fetchKey));
   };
+
+  const changeDateRange = (startDate: Date, endDate: Date) => {
+    setCalendarDates({
+      startDate,
+      endDate,
+    });
+
+    setCalendarDateRange(
+      `${renderDateFormat(startDate)};after,${renderDateFormat(endDate)};before`
+    );
+  };
+
+  useEffect(() => {
+    setCalendarDateRange(
+      `${renderDateFormat(startOfWeek(currentDate))};after,${renderDateFormat(
+        lastDayOfWeek(currentDate)
+      )};before`
+    );
+  }, [currentDate]);
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
@@ -210,7 +172,7 @@ export const CalendarView: React.FC<Props> = ({
             setShowWeekEnds={setShowWeekEnds}
             currentDate={currentDate}
             setCurrentDate={setCurrentDate}
-            setCalendarDateRange={setCalendarDateRange}
+            changeDateRange={changeDateRange}
           />
 
           <div

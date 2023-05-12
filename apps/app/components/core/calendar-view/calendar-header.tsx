@@ -1,4 +1,17 @@
+import React from "react";
+
+// headless ui
 import { Popover, Transition } from "@headlessui/react";
+// ui
+import { CustomMenu, ToggleSwitch } from "components/ui";
+// icons
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
+// helpers
 import {
   addMonths,
   addSevenDaysToDate,
@@ -14,26 +27,17 @@ import {
   updateDateWithMonth,
   updateDateWithYear,
 } from "helpers/calendar.helper";
-import React from "react";
+// constants
 import { MONTHS_LIST, YEARS_LIST } from "constants/calendar";
-
-import { ICalendarRange } from "types";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/24/outline";
-import { CustomMenu, ToggleSwitch } from "components/ui";
 
 type Props = {
   isMonthlyView: boolean;
   setIsMonthlyView: React.Dispatch<React.SetStateAction<boolean>>;
   currentDate: Date;
   setCurrentDate: React.Dispatch<React.SetStateAction<Date>>;
-  setCalendarDateRange: React.Dispatch<React.SetStateAction<ICalendarRange>>;
   showWeekEnds: boolean;
   setShowWeekEnds: React.Dispatch<React.SetStateAction<boolean>>;
+  changeDateRange: (startDate: Date, endDate: Date) => void;
 };
 
 export const CalendarHeader: React.FC<Props> = ({
@@ -41,18 +45,16 @@ export const CalendarHeader: React.FC<Props> = ({
   isMonthlyView,
   currentDate,
   setCurrentDate,
-  setCalendarDateRange,
   showWeekEnds,
   setShowWeekEnds,
+  changeDateRange,
 }) => {
   const updateDate = (date: Date) => {
     setCurrentDate(date);
 
-    setCalendarDateRange({
-      startDate: startOfWeek(date),
-      endDate: lastDayOfWeek(date),
-    });
+    changeDateRange(startOfWeek(date), lastDayOfWeek(date));
   };
+
   return (
     <div className="mb-4 flex items-center justify-between">
       <div className="relative flex h-full w-full items-center justify-start gap-2 text-sm ">
@@ -93,9 +95,13 @@ export const CalendarHeader: React.FC<Props> = ({
                   <div className="grid grid-cols-4  border-t border-brand-base px-2">
                     {MONTHS_LIST.map((month) => (
                       <button
-                        onClick={() => updateDate(updateDateWithMonth(`${month.value}`, currentDate))}
+                        onClick={() =>
+                          updateDate(updateDateWithMonth(`${month.value}`, currentDate))
+                        }
                         className={`px-2 py-2 text-xs text-brand-secondary hover:font-medium hover:text-brand-base ${
-                          isSameMonth(`${month.value}`, currentDate) ? "font-medium text-brand-base" : ""
+                          isSameMonth(`${month.value}`, currentDate)
+                            ? "font-medium text-brand-base"
+                            : ""
                         }`}
                       >
                         {month.label}
@@ -116,10 +122,10 @@ export const CalendarHeader: React.FC<Props> = ({
                 updateDate(subtractMonths(currentDate, 1));
               } else {
                 setCurrentDate(subtract7DaysToDate(currentDate));
-                setCalendarDateRange({
-                  startDate: getCurrentWeekStartDate(subtract7DaysToDate(currentDate)),
-                  endDate: getCurrentWeekEndDate(subtract7DaysToDate(currentDate)),
-                });
+                changeDateRange(
+                  getCurrentWeekStartDate(subtract7DaysToDate(currentDate)),
+                  getCurrentWeekEndDate(subtract7DaysToDate(currentDate))
+                );
               }
             }}
           >
@@ -132,10 +138,10 @@ export const CalendarHeader: React.FC<Props> = ({
                 updateDate(addMonths(currentDate, 1));
               } else {
                 setCurrentDate(addSevenDaysToDate(currentDate));
-                setCalendarDateRange({
-                  startDate: getCurrentWeekStartDate(addSevenDaysToDate(currentDate)),
-                  endDate: getCurrentWeekEndDate(addSevenDaysToDate(currentDate)),
-                });
+                changeDateRange(
+                  getCurrentWeekStartDate(addSevenDaysToDate(currentDate)),
+                  getCurrentWeekEndDate(addSevenDaysToDate(currentDate))
+                );
               }
             }}
           >
@@ -152,10 +158,10 @@ export const CalendarHeader: React.FC<Props> = ({
               updateDate(new Date());
             } else {
               setCurrentDate(new Date());
-              setCalendarDateRange({
-                startDate: getCurrentWeekStartDate(new Date()),
-                endDate: getCurrentWeekEndDate(new Date()),
-              });
+              changeDateRange(
+                getCurrentWeekStartDate(new Date()),
+                getCurrentWeekEndDate(new Date())
+              );
             }
           }}
         >
@@ -173,10 +179,7 @@ export const CalendarHeader: React.FC<Props> = ({
           <CustomMenu.MenuItem
             onClick={() => {
               setIsMonthlyView(true);
-              setCalendarDateRange({
-                startDate: startOfWeek(currentDate),
-                endDate: lastDayOfWeek(currentDate),
-              });
+              changeDateRange(startOfWeek(currentDate), lastDayOfWeek(currentDate));
             }}
             className="w-52 text-sm text-brand-secondary"
           >
@@ -190,10 +193,10 @@ export const CalendarHeader: React.FC<Props> = ({
           <CustomMenu.MenuItem
             onClick={() => {
               setIsMonthlyView(false);
-              setCalendarDateRange({
-                startDate: getCurrentWeekStartDate(currentDate),
-                endDate: getCurrentWeekEndDate(currentDate),
-              });
+              changeDateRange(
+                getCurrentWeekStartDate(currentDate),
+                getCurrentWeekEndDate(currentDate)
+              );
             }}
             className="w-52 text-sm text-brand-secondary"
           >
