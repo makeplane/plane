@@ -4,11 +4,11 @@ import { TXAxisValues, TYAxisValues } from "types";
 export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] = [
   {
     value: "state__name",
-    label: "State Name",
+    label: "State name",
   },
   {
     value: "state__group",
-    label: "State Group",
+    label: "State group",
   },
   {
     value: "priority",
@@ -24,7 +24,7 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
   },
   {
     value: "estimate_point",
-    label: "Estimate",
+    label: "Estimate point",
   },
   {
     value: "issue_cycle__cycle__name",
@@ -42,10 +42,10 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
     value: "target_date",
     label: "Due date",
   },
-  {
-    value: "start_date",
-    label: "Start Date",
-  },
+  // {
+  //   value: "start_date",
+  //   label: "Start date",
+  // },
   {
     value: "created_at",
     label: "Created date",
@@ -62,3 +62,5 @@ export const ANALYTICS_Y_AXIS_VALUES: { value: TYAxisValues; label: string }[] =
     label: "Effort",
   },
 ];
+
+export const DATE_KEYS = ["completed_at", "target_date", "start_date", "created_at"];

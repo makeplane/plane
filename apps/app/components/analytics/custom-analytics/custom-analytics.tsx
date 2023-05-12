@@ -63,11 +63,7 @@ export const CustomAnalytics: React.FC<Props> = ({ isProjectLevel = false, fullS
   );
 
   const yAxisKey = params.y_axis === "issue_count" ? "count" : "effort";
-  const barGraphData = convertResponseToBarGraphData(
-    analytics?.distribution,
-    watch("segment") ? true : false,
-    watch("y_axis")
-  );
+  const barGraphData = convertResponseToBarGraphData(analytics?.distribution, params);
 
   return (
     <>

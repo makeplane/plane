@@ -5,11 +5,12 @@ import { getPriorityIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // helpers
-import { generateBarColor } from "helpers/analytics.helper";
+import { generateBarColor, renderMonthAndYear } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, DATE_KEYS } from "constants/analytics";
+import { MONTHS_LIST } from "constants/calendar";
 
 type Props = {
   analytics: IAnalyticsResponse;

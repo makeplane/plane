@@ -22,11 +22,12 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
           {
             id: "issues_closed",
             color: "rgb(var(--color-accent))",
-            data: quarterMonthsList.map((month) => ({
-              x: MONTHS_LIST.find((m) => m.value === month)?.label.substring(0, 3),
+            data: MONTHS_LIST.map((month) => ({
+              x: month.label.substring(0, 3),
               y:
-                defaultAnalytics.issue_completed_month_wise.find((data) => data.month === month)
-                  ?.count || 0,
+                defaultAnalytics.issue_completed_month_wise.find(
+                  (data) => data.month === month.value
+                )?.count || 0,
             })),
           },
         ]}

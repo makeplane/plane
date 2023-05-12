@@ -1,14 +1,15 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // types
-import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TYAxisValues } from "types";
+import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
+import { MONTHS_LIST } from "constants/calendar";
+import { DATE_KEYS } from "constants/analytics";
 
 export const convertResponseToBarGraphData = (
   response: IAnalyticsData | undefined,
-  segmented: boolean,
-  yAxis: TYAxisValues
+  params: IAnalyticsParams
 ): { data: BarDatum[]; xAxisKeys: string[] } => {
   if (!response || !(typeof response === "object") || Object.keys(response).length === 0)
     return { data: [], xAxisKeys: [] };
@@ -16,12 +17,12 @@ export const convertResponseToBarGraphData = (
   const data: BarDatum[] = [];
 
   let xAxisKeys: string[] = [];
-  const yAxisKey = yAxis === "issue_count" ? "count" : "effort";
+  const yAxisKey = params.y_axis === "issue_count" ? "count" : "effort";
 
   Object.keys(response).forEach((key) => {
     const segments: { [key: string]: number } = {};
 
-    if (segmented) {
+    if (params.segment) {
       response[key].map((item: any) => {
         segments[item.segment ?? "None"] = item[yAxisKey] ?? 0;
 
@@ -30,7 +31,7 @@ export const convertResponseToBarGraphData = (
       });
 
       data.push({
-        name: key,
+        name: DATE_KEYS.includes(params.x_axis) ? renderMonthAndYear(key) : key,
         ...segments,
       });
     } else {
@@ -39,7 +40,9 @@ export const convertResponseToBarGraphData = (
       const item = response[key][0];
 
       data.push({
-        name: item.dimension ?? "None",
+        name: DATE_KEYS.includes(params.x_axis)
+          ? renderMonthAndYear(item.dimension)
+          : item.dimension ?? "None",
         [yAxisKey]: item[yAxisKey] ?? 0,
       });
     }
@@ -78,25 +81,11 @@ export const generateBarColor = (
   return color ?? "rgb(var(--color-accent))";
 };
 
-export const generateYAxisTickValues = (data: number[]) => {
-  const minValue = 0;
-  const maxValue = Math.max(...data);
+export const renderMonthAndYear = (date: string | number | null): string => {
+  if (!date) return "";
 
-  const valueRange = maxValue - minValue;
-
-  let tickInterval = 1;
-
-  if (valueRange < 10) tickInterval = 1;
-  else if (valueRange < 20) tickInterval = 2;
-  else if (valueRange < 50) tickInterval = 5;
-  else tickInterval = (Math.ceil(valueRange / 100) * 100) / 10;
-
-  const tickValues = [];
-  let tickValue = minValue;
-  while (tickValue <= maxValue) {
-    tickValues.push(tickValue);
-    tickValue += tickInterval;
-  }
-
-  return tickValues;
+  return (
+    (MONTHS_LIST.find((m) => `${m.value}` === `${date}`.split("-")[1])?.label.substring(0, 3) ??
+      "None") + ` ${date}`.split("-")[0] ?? ""
+  );
 };
