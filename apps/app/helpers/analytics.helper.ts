@@ -82,7 +82,7 @@ export const generateBarColor = (
 };
 
 export const renderMonthAndYear = (date: string | number | null): string => {
-  if (!date) return "";
+  if (!date || date === "") return "";
 
   return (
     (MONTHS_LIST.find((m) => `${m.value}` === `${date}`.split("-")[1])?.label.substring(0, 3) ??

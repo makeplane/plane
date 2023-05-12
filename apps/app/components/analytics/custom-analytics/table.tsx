@@ -54,7 +54,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                           }}
                         />
                       )}
-                      {key}
+                      {DATE_KEYS.includes(params.segment ?? "") ? renderMonthAndYear(key) : key}
                     </div>
                   </th>
                 ))
@@ -73,7 +73,9 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
               >
                 <td
                   className={`flex items-center gap-2 whitespace-nowrap py-2 px-2.5 font-medium ${
-                    params.x_axis === "priority" ? "capitalize" : ""
+                    params.x_axis === "priority" || params.x_axis === "state__group"
+                      ? "capitalize"
+                      : ""
                   }`}
                 >
                   {params.x_axis === "priority" ? (
