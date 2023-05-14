@@ -50,9 +50,7 @@ export const datePreview = (date: Date, timeInclude: boolean = false) => {
   month = months[month as number] as WeekMonthDataType;
   const year = date.getFullYear();
 
-  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${
-    timeInclude ? `, ${timePreview(date)}` : ``
-  }`;
+  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${timeInclude ? `, ${timePreview(date)}` : ``}`;
 };
 
 // context data
@@ -130,15 +128,14 @@ export const allViewsWithData: ChartDataType[] = [
       startDate: new Date(),
       currentDate: new Date(),
       endDate: new Date(),
-      approxFilterRange: 12,
-      width: 70, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
+      approxFilterRange: 10,
+      width: 160, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
     },
   },
 ];
 
-export const currentViewDataWithView = (view: string | undefined) => {
-  let currentView = null;
-  currentView = view != undefined && allViewsWithData.find((_viewData) => _viewData.key === view);
+export const currentViewDataWithView = (view: string = 'month') => {
+  const currentView: ChartDataType | undefined = allViewsWithData.find((_viewData) => _viewData.key === view);
   return currentView;
 };
 

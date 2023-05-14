@@ -16,7 +16,7 @@ type GetAllDaysInMonthInMonthViewType = {
   dayData: any;
   weekNumber: number;
   title: string;
-  today: boolean;
+  active: boolean;
 };
 const getAllDaysInMonthInMonthView = (month: number, year: number) => {
   const day: GetAllDaysInMonthInMonthViewType[] = [];
@@ -31,10 +31,10 @@ const getAllDaysInMonthInMonthView = (month: number, year: number) => {
       dayData: weeks[date.getDay()],
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
-      today:
+      active:
         currentDate.getFullYear() === year &&
-        currentDate.getMonth() === month &&
-        currentDate.getDate() === _day + 1
+          currentDate.getMonth() === month &&
+          currentDate.getDate() === _day + 1
           ? true
           : false,
     });

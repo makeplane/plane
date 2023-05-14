@@ -10,6 +10,38 @@ import { ChartDataType } from "../types";
 export const GanttChartBlocks: FC<any> = ({ itemsContainerWidth }) => {
   const { allViews, currentView, currentViewData, renderView, dispatch } = useChart();
 
+  const handleItemsContainerWidth = (currentViewData: ChartDataType, block: any) => {
+    let width = 0;
+
+    if (currentViewData && block) {
+      // if (currentView === "hours") width = generateHourChart(currentViewData, side);
+      // if (currentView === "day") width = generateDayChart(currentViewData, side);
+      // if (currentView === "week") width = generateWeekChart(currentViewData, side);
+      // if (currentView === "bi_week") width = generateBiWeekChart(currentViewData, side);
+      if (currentView === "month") width = setMonthChartItemPosition(currentViewData, block);
+      // if (currentView === "quarter") width = generateQuarterChart(currentViewData, side);
+      // if (currentView === "year") width = generateYearChart(currentViewData, side);
+    }
+
+    return width;
+  };
+
+  const handleItemsChartBlockPosition = (currentViewData: ChartDataType, block: any) => {
+    let position = 0;
+
+    if (currentViewData && block) {
+      // if (currentView === "hours") position = generateHourChart(currentViewData, side);
+      // if (currentView === "day") position = generateDayChart(currentViewData, side);
+      // if (currentView === "week") position = generateWeekChart(currentViewData, side);
+      // if (currentView === "bi_week") position = generateBiWeekChart(currentViewData, side);
+      if (currentView === "month") position = setMonthChartItemPosition(currentViewData, block);
+      // if (currentView === "quarter") position = generateQuarterChart(currentViewData, side);
+      // if (currentView === "year") position = generateYearChart(currentViewData, side);
+    }
+
+    return position;
+  };
+
   return (
     <div
       className="relative z-10 mt-[58px] flex h-full w-[4000px] divide-x divide-gray-300 overflow-y-auto bg-[#999] bg-opacity-5"
@@ -38,7 +70,7 @@ export const GanttChartBlocks: FC<any> = ({ itemsContainerWidth }) => {
               <div
                 className="relative group inline-flex cursor-pointer items-center font-medium transition-all"
                 style={{
-                  marginLeft: `${setMonthChartItemPosition(currentViewData, block)}px`,
+                  marginLeft: `${handleItemsChartBlockPosition(currentViewData, block)}px`,
                 }}
               >
                 <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
@@ -49,7 +81,7 @@ export const GanttChartBlocks: FC<any> = ({ itemsContainerWidth }) => {
                 <div
                   className="rounded-sm bg-white px-4 py-1 text-sm capitalize shadow-sm border border-gray-300"
                   style={{
-                    width: `${setMonthChartItemWidth(currentViewData, block)}px`,
+                    width: `${handleItemsContainerWidth(currentViewData, block)}px`,
                   }}
                 >
                   {block?.name}

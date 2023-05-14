@@ -1,6 +1,13 @@
 import { FC, useEffect, useState } from "react";
 // components
 import { GanttChartBlocks } from "../blocks";
+import { HourChartView } from "./hours";
+import { DayChartView } from "./day";
+import { WeekChartView } from "./week";
+import { BiWeekChartView } from "./bi-week";
+import { MonthChartView } from "./month";
+import { QuarterChartView } from "./quarter";
+import { YearChartView } from "./year";
 // views
 import {
   setMonthChartItemPosition,
@@ -24,35 +31,37 @@ import { useChart } from "../hooks";
 export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
   const { blockSidebarToggle, currentView, currentViewData, renderView, dispatch, allViews } =
     useChart();
+
+  console.log("--------------------------------------");
+  console.log("blockSidebarToggle", blockSidebarToggle);
+  console.log("currentView", currentView);
+  console.log("currentViewData", currentViewData);
+  console.log("renderView", renderView);
+  console.log("allViews", allViews);
+  console.log("--------------------------------------");
+
   const [currentScrollPosition, setCurrentScrollPosition] = useState<number>(0);
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
 
-  const handleChartView = async (key: string) => {
-    dispatch({ type: "CURRENT_VIEW", payload: key });
-    await dispatch({
-      type: "PARTIAL_UPDATE",
-      payload: {
-        currentView: key,
-        currentViewData: currentViewDataWithView(key),
-        renderView: [],
-      },
-    });
-    updateCurrentViewRenderPayload(null, key);
-  };
+  const handleChartView = (key: string) => updateCurrentViewRenderPayload(null, key);
 
-  const updateCurrentViewRenderPayload = (
-    side: null | "left" | "right",
-    view: string | null = "month"
-  ) => {
+  const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: string) => {
+    const selectedCurrentView = view;
+    const selectedCurrentViewData: ChartDataType | undefined = currentViewDataWithView(view);
+
+    if (selectedCurrentViewData === undefined) return;
+
     let currentRender: any;
 
-    // if (view === "hours") currentRender = generateHourChart(currentViewData, side);
-    // if (view === "day") currentRender = generateDayChart(currentViewData, side);
-    // if (view === "week") currentRender = generateWeekChart(currentViewData, side);
-    // if (view === "bi_week") currentRender = generateBiWeekChart(currentViewData, side);
-    if (view === "month") currentRender = generateMonthChart(currentViewData, side);
-    // if (view === "quarter") currentRender = generateQuarterChart(currentViewData, side);
-    if (view === "year") currentRender = generateYearChart(currentViewData, side);
+    // if (view === "hours") currentRender = generateHourChart(selectedCurrentViewData, side);
+    // if (view === "day") currentRender = generateDayChart(selectedCurrentViewData, side);
+    // if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
+    // if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
+    if (selectedCurrentView === "month")
+      currentRender = generateMonthChart(selectedCurrentViewData, side);
+    // if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
+    if (selectedCurrentView === "year")
+      currentRender = generateYearChart(selectedCurrentViewData, side);
 
     // updating the prevData, currentData and nextData
     if (currentRender.payload.length > 0) {
@@ -60,6 +69,7 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
+            currentView: selectedCurrentView,
             currentViewData: currentRender.state,
             renderView: [...currentRender.payload, ...renderView],
           },
@@ -70,6 +80,7 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
+            currentView: view,
             currentViewData: currentRender.state,
             renderView: [...renderView, ...currentRender.payload],
           },
@@ -79,6 +90,7 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
+            currentView: view,
             currentViewData: currentRender.state,
             renderView: [...currentRender.payload],
           },
@@ -202,52 +214,16 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
           id="scroll-container"
         >
           {/* blocks components */}
-          {/* <GanttChartBlocks itemsContainerWidth={itemsContainerWidth} /> */}
+          <GanttChartBlocks itemsContainerWidth={itemsContainerWidth} />
 
           {/* chart */}
-          {/* divide-x divide-gray-200 */}
-          <div className="absolute flex h-full flex-grow">
-            {renderView &&
-              renderView.length > 0 &&
-              renderView.map((_itemRoot: any, _idxRoot: any) => (
-                <div key={`title-${_idxRoot}`} className="relative flex flex-col">
-                  <div className="relative border-b border-gray-200">
-                    <div className="sticky left-0 inline-flex whitespace-nowrap px-2 py-1 text-sm font-medium capitalize">
-                      {_itemRoot?.title}
-                    </div>
-                  </div>
-
-                  <div className="flex h-full w-full divide-x divide-gray-200">
-                    {_itemRoot.children &&
-                      _itemRoot.children.length > 0 &&
-                      _itemRoot.children.map((_item: any, _idx: any) => (
-                        <div
-                          key={`sub-title-${_idxRoot}-${_idx}`}
-                          className="relative flex h-full flex-col overflow-hidden whitespace-nowrap"
-                          style={{ width: `${currentViewData.data.width}px` }}
-                        >
-                          <div
-                            className={`flex-shrink-0 border-b py-1 text-center text-sm capitalize font-medium ${
-                              _item?.today ? `text-red-500 border-red-500` : `border-gray-200`
-                            }`}
-                          >
-                            <div>{_item.title}</div>
-                          </div>
-                          <div
-                            className={`relative h-full w-full flex-1 flex justify-center ${
-                              ["sat", "sun"].includes(_item.dayData.shortTitle) ? `bg-gray-100` : ``
-                            }`}
-                          >
-                            {_item?.today && (
-                              <div className="absolute top-0 bottom-0 border border-red-500"> </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              ))}
-          </div>
+          {/* {currentView && currentView === "hours" && <HourChartView />}
+          {currentView && currentView === "day" && <DayChartView />}
+          {currentView && currentView === "week" && <WeekChartView />}
+          {currentView && currentView === "bi_week" && <BiWeekChartView />} */}
+          {currentView && currentView === "month" && <MonthChartView />}
+          {/* {currentView && currentView === "quarter" && <QuarterChartView />} */}
+          {currentView && currentView === "year" && <YearChartView />}
         </div>
       </div>
     </div>

@@ -28,12 +28,12 @@ export const getWeekNumberByDate = (date: Date) => {
 
 // Getting all weeks between two dates
 export const getWeeksBetweenTwoDates = (startDate: Date, endDate: Date) => {
-  const currentWeek: Date = new Date(startDate.getTime());
-  const weekNumbers: number[] = [];
+  const currentWeek: Date = startDate;
+  const weekNumbers: Object[] = [];
 
   while (currentWeek < endDate) {
     var weekNumber = getWeekNumberByDate(currentWeek);
-    weekNumbers.push(weekNumber);
+    weekNumbers.push({ date: currentWeek.getDate(), year: currentWeek.getFullYear(), month: currentWeek.getMonth(), weekNumber: weekNumber });
     currentWeek.setDate(currentWeek.getDate() + 7);
   }
 

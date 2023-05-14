@@ -20,6 +20,7 @@ const chartReducer = (
     case "RENDER_VIEW":
       return { ...state, currentViewData: action.payload };
     case "PARTIAL_UPDATE":
+      console.log("action.payload", action.payload);
       return {
         ...state,
         blockSidebarToggle: action.payload.blockSidebarToggle
@@ -36,13 +37,11 @@ const chartReducer = (
   }
 };
 
-const initialView = "year";
-
 export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useState<ChartContextType>({
     blockSidebarToggle: false,
-    currentView: initialView,
-    currentViewData: currentViewDataWithView(initialView),
+    currentView: "year",
+    currentViewData: currentViewDataWithView("year"),
     renderView: [],
     allViews: allViewsWithData,
     dispatch: () => {},
