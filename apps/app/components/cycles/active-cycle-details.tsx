@@ -567,6 +567,42 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                 </div>
               ))}
           </div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="h-1 w-full rounded-full bg-neutral-200">
+              <div
+                className="h-1 rounded-full bg-green-600"
+                style={{
+                  width:
+                    issues &&
+                    `${
+                      issues?.filter(
+                        (issue) =>
+                          issue?.state_detail?.group === "completed" &&
+                          (issue?.priority === "urgent" || issue?.priority === "high")
+                      )?.length /
+                        issues?.filter(
+                          (issue) => issue?.priority === "urgent" || issue?.priority === "high"
+                        )?.length * 100 ?? 0
+                    }%`,
+                }}
+              />
+            </div>
+            <div className="w-16 text-end text-xs text-brand-secondary">
+              {
+                issues?.filter(
+                  (issue) =>
+                    issue?.state_detail?.group === "completed" &&
+                    (issue?.priority === "urgent" || issue?.priority === "high")
+                )?.length
+              }{" "}
+              of{" "}
+              {
+                issues?.filter(
+                  (issue) => issue?.priority === "urgent" || issue?.priority === "high"
+                )?.length
+              }
+            </div>
+          </div>
         </div>
         {/* section 5 */}
         <div className="border-brand-base p-4">
