@@ -34,6 +34,7 @@ type IssueViewProps = {
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
+  calendarDateRange: string;
   filters: IIssueFilterOptions;
 };
 
@@ -43,6 +44,7 @@ type ReducerActionType = {
     | "SET_ISSUE_VIEW"
     | "SET_ORDER_BY_PROPERTY"
     | "SET_SHOW_EMPTY_STATES"
+    | "SET_CALENDAR_DATE_RANGE"
     | "SET_FILTERS"
     | "SET_GROUP_BY_PROPERTY"
     | "RESET_TO_DEFAULT";
@@ -53,6 +55,7 @@ type ContextType = IssueViewProps & {
   setGroupByProperty: (property: TIssueGroupByOptions) => void;
   setOrderBy: (property: TIssueOrderByOptions) => void;
   setShowEmptyGroups: (property: boolean) => void;
+  setCalendarDateRange: (property: string) => void;
   setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
@@ -64,6 +67,7 @@ type StateType = {
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
+  calendarDateRange: string;
   filters: IIssueFilterOptions;
 };
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
@@ -73,6 +77,7 @@ export const initialState: StateType = {
   groupByProperty: null,
   orderBy: "-created_at",
   showEmptyGroups: true,
+  calendarDateRange: "",
   filters: {
     type: null,
     priority: null,
@@ -136,6 +141,18 @@ export const reducer: ReducerFunctionType = (state, action) => {
       const newState = {
         ...state,
         showEmptyGroups: payload?.showEmptyGroups || true,
+      };
+
+      return {
+        ...state,
+        ...newState,
+      };
+    }
+
+    case "SET_CALENDAR_DATE_RANGE": {
+      const newState = {
+        ...state,
+        calendarDateRange: payload?.calendarDateRange || "",
       };
 
       return {
@@ -410,6 +427,37 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
+  const setCalendarDateRange = useCallback(
+    (value: string) => {
+      dispatch({
+        type: "SET_CALENDAR_DATE_RANGE",
+        payload: {
+          calendarDateRange: value,
+        },
+      });
+
+      if (!workspaceSlug || !projectId) return;
+
+      mutateMyViewProps((prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          view_props: {
+            ...state,
+            calendarDateRange: value,
+          },
+        };
+      }, false);
+
+      saveDataToServer(workspaceSlug as string, projectId as string, {
+        ...state,
+        calendarDateRange: value,
+      });
+    },
+    [projectId, workspaceSlug, state, mutateMyViewProps]
+  );
+
   const setFilters = useCallback(
     (property: Partial<IIssueFilterOptions>, saveToServer = true) => {
       Object.keys(property).forEach((key) => {
@@ -577,6 +625,8 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         setGroupByProperty,
         orderBy: state.orderBy,
         showEmptyGroups: state.showEmptyGroups,
+        calendarDateRange: state.calendarDateRange,
+        setCalendarDateRange,
         setOrderBy,
         setShowEmptyGroups,
         filters: state.filters,

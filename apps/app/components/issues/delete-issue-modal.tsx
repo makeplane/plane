@@ -9,22 +9,21 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import issueServices from "services/issues.service";
 // hooks
-import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
+import useCalendarIssuesView from "hooks/use-calendar-issues-view";
+import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { CycleIssueResponse, IIssue, ModuleIssueResponse } from "types";
+import type { IIssue } from "types";
 // fetch-keys
 import {
-  CYCLE_CALENDAR_ISSUES,
   CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_CALENDAR_ISSUES,
   MODULE_ISSUES_WITH_PARAMS,
-  PROJECT_CALENDAR_ISSUES,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -37,9 +36,10 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { issueView, params } = useIssuesView();
+  const { params: calendarParams } = useCalendarIssuesView();
 
   const { setToastAlert } = useToast();
 
@@ -61,12 +61,18 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
       .then(() => {
         if (issueView === "calendar") {
           const calendarFetchKey = cycleId
-            ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+            ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
             : moduleId
-            ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
-            : PROJECT_CALENDAR_ISSUES(projectId as string);
+            ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
+            : viewId
+            ? VIEW_ISSUES(viewId.toString(), calendarParams)
+            : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), calendarParams);
 
-          mutate<IIssue[]>(calendarFetchKey);
+          mutate<IIssue[]>(
+            calendarFetchKey,
+            (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
+            false
+          );
         } else {
           if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));

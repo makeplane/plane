@@ -11,6 +11,8 @@ import trackEventServices, { MiscellaneousEventType } from "services/track-event
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { SettingsHeader } from "components/project";
 // ui
 import { SecondaryButton, ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -22,7 +24,6 @@ import { IFavoriteProject, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-import { SettingsHeader } from "components/project";
 
 const featuresList = [
   {
@@ -163,7 +164,7 @@ const FeaturesSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="px-24 py-8">
+      <div className="p-8 lg:px-24">
         <SettingsHeader />
         <section className="space-y-8">
           <h3 className="text-2xl font-semibold">Features</h3>

@@ -27,6 +27,7 @@ row_mapping = {
     "completed_at": "Completed At",
     "created_at": "Created At",
     "issue_count": "Issue Count",
+    "priority": "Priority",
     "effort": "Effort",
 }
 
@@ -48,9 +49,6 @@ def analytic_export_task(email, data, slug):
         key = "count" if y_axis == "issue_count" else "effort"
 
         if segment:
-            row_zero = [
-                row_mapping.get(x_axis, "X-Axis"),
-            ]
             segment_zero = []
             for item in distribution:
                 current_dict = distribution.get(item)
@@ -58,18 +56,28 @@ def analytic_export_task(email, data, slug):
                     segment_zero.append(current.get("segment"))
 
             segment_zero = list(set(segment_zero))
-            row_zero = row_zero + segment_zero
+            row_zero = (
+                [
+                    row_mapping.get(x_axis, "X-Axis"),
+                ]
+                + [
+                    row_mapping.get(y_axis, "Y-Axis"),
+                ]
+                + segment_zero
+            )
 
             rows = []
             for item in distribution:
-                generated_row = []
+                generated_row = [
+                    item,
+                ]
                 data = distribution.get(item)
                 for segment in segment_zero[1:]:
                     value = [x for x in data if x.get("segment") == segment]
                     if len(value):
                         generated_row.append(value[0].get(key))
                     else:
-                        generated_row.append("")
+                        generated_row.append("0")
 
                 rows.append(tuple(generated_row))
 
@@ -86,7 +94,7 @@ def analytic_export_task(email, data, slug):
             html_content = render_to_string("emails/exports/analytics.html", {})
 
             text_content = strip_tags(html_content)
-
+            csv_buffer.seek(0)
             msg = EmailMultiAlternatives(
                 subject, text_content, settings.EMAIL_FROM, [email]
             )
@@ -125,12 +133,12 @@ def analytic_export_task(email, data, slug):
 
             text_content = strip_tags(html_content)
 
+            csv_buffer.seek(0)
             msg = EmailMultiAlternatives(
                 subject, text_content, settings.EMAIL_FROM, [email]
             )
             msg.attach(f"{slug}-analytics.csv", csv_buffer.read())
             msg.send(fail_silently=False)
-
 
     except Exception as e:
         print(e)

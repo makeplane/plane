@@ -57,26 +57,24 @@ export interface IExportAnalyticsFormData {
   project?: string[];
 }
 
+export interface IDefaultAnalyticsUser {
+  assignees__avatar: string | null;
+  assignees__email: string;
+  count: number;
+}
+
 export interface IDefaultAnalyticsResponse {
   issue_completed_month_wise: { month: number; count: number }[];
-  most_issue_closed_user: {
-    assignees__avatar: string | null;
-    assignees__email: string;
-    count: number;
-  }[];
+  most_issue_closed_user: IDefaultAnalyticsUser[];
   most_issue_created_user: {
-    assignees__avatar: string | null;
-    assignees__email: string;
+    created_by__avatar: string | null;
+    created_by__email: string;
     count: number;
   }[];
   open_estimate_sum: number;
   open_issues: number;
   open_issues_classified: { state_group: string; state_count: number }[];
-  pending_issue_user: {
-    assignees__avatar: string | null;
-    assignees__email: string;
-    count: number;
-  }[];
+  pending_issue_user: IDefaultAnalyticsUser[];
   total_estimate_sum: number;
   total_issues: number;
   total_issues_classified: { state_group: string; state_count: number }[];
