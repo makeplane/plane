@@ -39,7 +39,7 @@ const BillingSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="px-24 py-8">
+      <div className="p-8 lg:px-24">
         <SettingsHeader />
         <section className="space-y-8">
           <div>
