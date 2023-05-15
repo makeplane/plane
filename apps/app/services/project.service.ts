@@ -158,7 +158,7 @@ class ProjectServices extends APIService {
     memberId: string,
     data: Partial<IProjectMember>
   ): Promise<IProjectMember> {
-    return this.put(
+    return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`,
       data
     )
