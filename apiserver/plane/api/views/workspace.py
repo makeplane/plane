@@ -423,6 +423,43 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .select_related("member")
         )
 
+    def partial_update(self, request, slug, pk):
+        try:
+            workspace_member = WorkspaceMember.objects.get(pk=pk, workspace__slug=slug)
+            if request.user.id == workspace_member.member_id:
+                return Response(
+                    {"error": "You cannot update your own role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if request.data.get("role", 10) > workspace_member.role:
+                return Response(
+                    {
+                        "error": "You cannot update a role that is higher than your own role"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = WorkSpaceMemberSerializer(
+                workspace_member, data=request.data, partial=True
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace Member does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class TeamMemberViewSet(BaseViewSet):
     serializer_class = TeamSerializer

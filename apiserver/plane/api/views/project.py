@@ -409,6 +409,41 @@ class ProjectMemberViewSet(BaseViewSet):
             .select_related("workspace", "workspace__owner")
         )
 
+    def partial_update(self, request, slug, project_id, pk):
+        try:
+            project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+            if request.user.id == project_member.member_id:
+                return Response(
+                    {"error": "You cannot update your own role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if request.data.get("role", 10) > project_member.role:
+                return Response(
+                    {
+                        "error": "You cannot update a role that is higher than your own role"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = ProjectMemberSerializer(
+                project_member, data=request.data, partial=True
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ProjectMember.DoesNotExist:
+            return Response(
+                {"error": "Project Member does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class AddMemberToProjectEndpoint(BaseAPIView):
     permission_classes = [
