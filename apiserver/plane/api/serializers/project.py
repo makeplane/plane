@@ -82,6 +82,9 @@ class ProjectDetailSerializer(BaseSerializer):
     default_assignee = UserLiteSerializer(read_only=True)
     project_lead = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
+    total_members = serializers.IntegerField(read_only=True)
+    total_cycles = serializers.IntegerField(read_only=True)
+    total_modules = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Project
