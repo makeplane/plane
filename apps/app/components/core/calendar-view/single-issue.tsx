@@ -120,11 +120,11 @@ export const SingleCalendarIssue: React.FC<Props> = ({
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
-      className={`w-full cursor-pointer rounded border border-brand-base px-1.5 py-1.5 text-xs duration-300 hover:cursor-move hover:bg-brand-surface-2 ${
+      className={`w-full relative cursor-pointer rounded border border-brand-base px-1.5 py-1.5 text-xs duration-300 hover:cursor-move hover:bg-brand-surface-2 ${
         snapshot.isDragging ? "bg-brand-surface-2 shadow-lg" : ""
       }`}
     >
-      <div className="group/card relative flex w-full flex-col items-start justify-center gap-1.5 text-xs sm:w-auto ">
+      <div className="group/card flex w-full flex-col items-start justify-center gap-1.5 text-xs sm:w-auto ">
         {!isNotAllowed && (
           <div className="z-1 absolute top-1.5 right-1.5 opacity-0 group-hover/card:opacity-100">
             <CustomMenu width="auto" ellipsis>
