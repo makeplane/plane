@@ -293,11 +293,11 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
             >
               <button
                 type="button"
-                className="absolute top-4 -left-0 hidden rounded p-0.5 hover:bg-brand-surface-2 group-hover:!flex"
+                className="absolute top-4 -left-0 hidden rounded p-0.5 group-hover:!flex"
                 {...provided.dragHandleProps}
               >
                 <EllipsisVerticalIcon className="h-[18px]" />
-                <EllipsisVerticalIcon className="-ml-3 h-[18px]" />
+                <EllipsisVerticalIcon className="-ml-2.5 h-[18px]" />
               </button>
               <div
                 ref={actionSectionRef}

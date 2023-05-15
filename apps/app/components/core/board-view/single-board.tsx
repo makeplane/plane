@@ -66,45 +66,45 @@ export const SingleBoard: React.FC<Props> = ({
   }, [currentState]);
 
   return (
-    <div className={`h-full flex-shrink-0 ${!isCollapsed ? "" : "w-96"}`}>
-      <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3"}`}>
-        <BoardHeader
-          addIssueToState={addIssueToState}
-          currentState={currentState}
-          groupTitle={groupTitle}
-          isCollapsed={isCollapsed}
-          setIsCollapsed={setIsCollapsed}
-          isCompleted={isCompleted}
-        />
-        {isCollapsed && (
-          <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
-            {(provided, snapshot) => (
-              <div
-                className={`relative h-full overflow-y-auto p-1  ${
-                  snapshot.isDraggingOver ? "bg-brand-base/20" : ""
-                } ${!isCollapsed ? "hidden" : "block"}`}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                {orderBy !== "sort_order" && (
-                  <>
-                    <div
-                      className={`absolute ${
-                        snapshot.isDraggingOver ? "block" : "hidden"
-                      } pointer-events-none top-0 left-0 z-[99] h-full w-full bg-brand-surface-1 opacity-50`}
-                    />
-                    <div
-                      className={`absolute ${
-                        snapshot.isDraggingOver ? "block" : "hidden"
-                      } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-brand-base p-2 text-xs`}
-                    >
-                      This board is ordered by{" "}
-                      {replaceUnderscoreIfSnakeCase(
-                        orderBy ? (orderBy[0] === "-" ? orderBy.slice(1) : orderBy) : "created_at"
-                      )}
-                    </div>
-                  </>
-                )}
+    <div className={`flex-shrink-0 ${!isCollapsed ? "" : "flex h-full flex-col w-96"}`}>
+      <BoardHeader
+        addIssueToState={addIssueToState}
+        currentState={currentState}
+        groupTitle={groupTitle}
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
+        isCompleted={isCompleted}
+      />
+      {isCollapsed && (
+        <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
+          {(provided, snapshot) => (
+            <div
+              className={`relative h-full ${
+                orderBy !== "sort_order" && snapshot.isDraggingOver ? "bg-brand-base/20" : ""
+              } ${!isCollapsed ? "hidden" : "flex flex-col"}`}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {orderBy !== "sort_order" && (
+                <>
+                  <div
+                    className={`absolute ${
+                      snapshot.isDraggingOver ? "block" : "hidden"
+                    } pointer-events-none top-0 left-0 z-[99] h-full w-full bg-brand-surface-1 opacity-50`}
+                  />
+                  <div
+                    className={`absolute ${
+                      snapshot.isDraggingOver ? "block" : "hidden"
+                    } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-brand-base p-2 text-xs`}
+                  >
+                    This board is ordered by{" "}
+                    {replaceUnderscoreIfSnakeCase(
+                      orderBy ? (orderBy[0] === "-" ? orderBy.slice(1) : orderBy) : "created_at"
+                    )}
+                  </div>
+                </>
+              )}
+              <div className="overflow-y-auto pt-3">
                 {groupedByIssues?.[groupTitle].map((issue, index) => (
                   <Draggable
                     key={issue.id}
@@ -146,10 +146,12 @@ export const SingleBoard: React.FC<Props> = ({
                 >
                   {provided.placeholder}
                 </span>
+              </div>
+              <div>
                 {type === "issue" ? (
                   <button
                     type="button"
-                    className="flex items-center gap-2 font-medium text-brand-accent outline-none"
+                    className="flex items-center gap-2 font-medium text-brand-accent outline-none p-1"
                     onClick={addIssueToState}
                   >
                     <PlusIcon className="h-4 w-4" />
@@ -182,10 +184,10 @@ export const SingleBoard: React.FC<Props> = ({
                   )
                 )}
               </div>
-            )}
-          </StrictModeDroppable>
-        )}
-      </div>
+            </div>
+          )}
+        </StrictModeDroppable>
+      )}
     </div>
   );
 };

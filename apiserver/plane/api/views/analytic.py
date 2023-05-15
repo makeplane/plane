@@ -1,16 +1,8 @@
 # Django imports
 from django.db.models import (
-    Q,
     Count,
     Sum,
-    Value,
-    Case,
-    When,
-    FloatField,
-    Subquery,
-    OuterRef,
     F,
-    ExpressionWrapper,
 )
 from django.db.models.functions import ExtractMonth
 
@@ -238,8 +230,8 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                 .order_by("month")
             )
             most_issue_created_user = (
-                queryset.filter(created_by__isnull=False)
-                .values("assignees__email", "assignees__avatar")
+                queryset.exclude(created_by=None)
+                .values("created_by__email", "created_by__avatar")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]

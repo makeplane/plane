@@ -23,8 +23,8 @@
 
 .react-datepicker {
   font-family: "Inter" !important;
-  border: none !important;
   background-color: rgba(var(--color-bg-base)) !important;
+  border: 1px solid rgba(var(--color-border)) !important;
 }
 
 .react-datepicker__month-container {
@@ -114,5 +114,9 @@
 
 .react-datepicker__day--keyboard-selected {
   background-color: #216ba5 !important;
+  color: white !important;
+}
+
+.react-datepicker__day--in-range {
   color: white !important;
 }
