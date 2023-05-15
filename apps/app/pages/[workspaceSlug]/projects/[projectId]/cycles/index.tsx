@@ -119,13 +119,7 @@ const ProjectCycles: NextPage = () => {
       />
       <div className="space-y-8 p-8">
         <div className="flex flex-col gap-5">
-          <h3
-            className={`text-2xl font-semibold text-brand-base ${
-              cycleView === "list" ? "pt-8 px-8" : ""
-            }`}
-          >
-            Cycles
-          </h3>
+          <h3 className="text-2xl font-semibold text-brand-base">Cycles</h3>
           <CyclesView
             cycleView={cycleView}
             setCycleView={setCycleView}

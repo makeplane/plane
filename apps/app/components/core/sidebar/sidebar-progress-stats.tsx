@@ -29,6 +29,8 @@ type Props = {
   issues: IIssue[];
   module?: IModule;
   userAuth?: UserAuth;
+  roundedTab?: boolean;
+  noBackground?: boolean;
 };
 
 const stateGroupColours: {
@@ -46,6 +48,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
   issues,
   module,
   userAuth,
+  roundedTab,
+  noBackground,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -100,12 +104,14 @@ export const SidebarProgressStats: React.FC<Props> = ({
     >
       <Tab.List
         as="div"
-        className={`flex w-full items-center justify-between rounded-md bg-brand-surface-1 px-1 py-1.5 
+        className={`flex w-full items-center gap-2 justify-between rounded-md ${
+          noBackground ? "" : "bg-brand-surface-1"
+        } px-1 py-1.5 
         ${module ? "text-xs" : "text-sm"} `}
       >
         <Tab
           className={({ selected }) =>
-            `w-full rounded px-3 py-1 text-brand-base  ${
+            `w-full  ${roundedTab ? "rounded-3xl" : "rounded"} px-3 py-1 text-brand-base  ${
               selected ? " bg-brand-accent text-white" : "  hover:bg-brand-surface-2"
             }`
           }
@@ -114,7 +120,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-full rounded px-3 py-1 text-brand-base ${
+            `w-full ${roundedTab ? "rounded-3xl" : "rounded"} px-3 py-1 text-brand-base ${
               selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
             }`
           }
@@ -123,7 +129,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-full rounded px-3 py-1  text-brand-base ${
+            `w-full ${roundedTab ? "rounded-3xl" : "rounded"} px-3 py-1  text-brand-base ${
               selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
             }`
           }
@@ -131,7 +137,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
           States
         </Tab>
       </Tab.List>
-      <Tab.Panels className="flex w-full items-center justify-between pt-1">
+      <Tab.Panels className="flex w-full items-center justify-between pt-1 text-brand-secondary">
         <Tab.Panel as="div" className="flex w-full flex-col text-xs">
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i?.assignees?.includes(member.member.id));

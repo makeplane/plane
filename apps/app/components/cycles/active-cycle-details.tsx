@@ -254,7 +254,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
   }));
 
   return (
-    <div className="grid-row-2 grid divide-y border border-brand-base">
+    <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-brand-base border border-brand-base">
       <div className="grid grid-cols-3 divide-x border-brand-base">
         <div className="flex flex-col text-xs">
           <a className="w-full">
@@ -350,35 +350,19 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               </div>
 
               <div className="flex items-center justify-start gap-5 text-brand-secondary">
-                <div className="flex items-start gap-1 ">
-                  <CalendarDaysIcon className="h-4 w-4 text-brand-base" />
+                <div className="flex items-start gap-1">
+                  <CalendarDaysIcon className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
                 <ArrowRightIcon className="h-4 w-4 text-brand-secondary" />
-                <div className="flex items-start gap-1 ">
-                  <TargetIcon className="h-4 w-4 text-brand-base" />
+                <div className="flex items-start gap-1">
+                  <TargetIcon className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2.5 text-brand-secondary">
-                {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                  <Image
-                    src={cycle.owned_by.avatar}
-                    height={16}
-                    width={16}
-                    className="rounded-full"
-                    alt={cycle.owned_by.first_name}
-                  />
-                ) : (
-                  <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-brand-base  capitalize">
-                    {cycle.owned_by.first_name.charAt(0)}
-                  </span>
-                )}
-                <span className="text-brand-base">{cycle.owned_by.first_name}</span>
-              </div>
-              <div className="flex items-center justify-between">
+
+              <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2.5 text-brand-secondary">
-                  Members:
                   {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                     <Image
                       src={cycle.owned_by.avatar}
@@ -392,27 +376,36 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                       {cycle.owned_by.first_name.charAt(0)}
                     </span>
                   )}
-                  <span>{cycle.owned_by.first_name}</span>
+                  <span className="text-brand-secondary">{cycle.owned_by.first_name}</span>
                 </div>
+
+                {cycle.assignees.length > 0 && (
+                  <div className="flex items-center gap-1 text-brand-secondary">
+                    <AssigneesList users={cycle.assignees} length={4} />
+                  </div>
+                )}
               </div>
-              <div className="flex gap-2">
-                <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary" />
-                {cycle.total_issues} issues
-              </div>
-              <div className="flex gap-2">
-                <CompletedStateIcon width={16} height={16} color="#438AF3" />
-                {cycle.completed_issues} issues
+
+              <div className="flex items-center gap-4 text-brand-secondary">
+                <div className="flex gap-2">
+                  <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0" />
+                  {cycle.total_issues} issues
+                </div>
+                <div className="flex gap-2">
+                  <CompletedStateIcon width={16} height={16} color="#438AF3" />
+                  {cycle.completed_issues} issues
+                </div>
               </div>
             </div>
           </a>
         </div>
         <div className="flex h-full flex-col border-brand-base">
-          <div className={`mt-3 flex h-full w-full flex-col text-brand-secondary`}>
-            <div className="mb-2 flex w-full items-center gap-2 px-4 py-1">
+          <div className="flex h-full w-full flex-col text-brand-secondary p-4">
+            <div className="flex w-full items-center gap-2 py-1">
               <span>Progress</span>
               <LinearProgressIndicator data={progressIndicatorData} />
             </div>
-            <div className="ml-2">
+            <div className="flex flex-col mt-2 gap-1 items-center">
               {Object.keys(groupedIssues).map((group, index) => (
                 <SingleProgressStats
                   key={index}
@@ -434,7 +427,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
             </div>
           </div>
         </div>
-        <div className="border-brand-base p-2">
+        <div className="border-brand-base p-4">
           <SidebarProgressStats
             issues={issues ?? []}
             groupedIssues={{
@@ -444,103 +437,121 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               completed: cycle.completed_issues,
               cancelled: cycle.cancelled_issues,
             }}
+            roundedTab
+            noBackground
           />
         </div>
       </div>
       <div className="grid grid-cols-2 divide-x border-brand-base">
-        <div className="px-4 py-2">
-          <div className="text-brand-primary mb-2">High Priority Issues</div>
-          <div className="mb-2 flex max-h-[240px] min-h-[240px] flex-col overflow-y-scroll rounded-md border border-brand-base">
-            {issues
-              ?.filter((issue) => issue.priority === "urgent" || issue.priority === "high")
-              .map((issue) => (
-                <div
-                  key={issue.id}
-                  className="flex flex-wrap items-center justify-between gap-2 border border-brand-base bg-brand-base p-4 "
-                >
-                  <div className="flex-grow">
-                    <div>
+        <div className="flex flex-col justify-between p-4">
+          <div>
+            <div className="text-brand-primary mb-2">High Priority Issues</div>
+
+            <div className="mb-2 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
+              {issues
+                ?.filter((issue) => issue.priority === "urgent" || issue.priority === "high")
+                .map((issue) => (
+                  <div
+                    key={issue.id}
+                    className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-brand-base bg-brand-surface-1 px-3 py-1.5"
+                  >
+                    <div className="flex flex-col gap-1">
+                      <div>
+                        <Tooltip
+                          tooltipHeading="Issue ID"
+                          tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+                        >
+                          <span className="flex-shrink-0 text-xs text-brand-secondary">
+                            {issue.project_detail?.identifier}-{issue.sequence_id}
+                          </span>
+                        </Tooltip>
+                      </div>
                       <Tooltip
-                        tooltipHeading="Issue ID"
-                        tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+                        position="top-left"
+                        tooltipHeading="Title"
+                        tooltipContent={issue.name}
                       >
-                        <span className="flex-shrink-0 text-xs text-brand-secondary">
-                          {issue.project_detail?.identifier}-{issue.sequence_id}
+                        <span className="text-[0.825rem] text-brand-base">
+                          {truncateText(issue.name, 30)}
                         </span>
                       </Tooltip>
                     </div>
-                    <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                      <span className="text-[0.825rem] text-brand-base">
-                        {truncateText(issue.name, 25)}
-                      </span>
-                    </Tooltip>
-                  </div>
-                  <div
-                    className={`grid h-6 w-6 place-items-center items-center rounded border shadow-sm ${
-                      issue.priority === "urgent"
-                        ? "border-red-500/20 bg-red-500/20 text-red-500"
-                        : issue.priority === "high"
-                        ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
-                        : issue.priority === "medium"
-                        ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
-                        : issue.priority === "low"
-                        ? "border-green-500/20 bg-green-500/20 text-green-500"
-                        : "border-brand-base"
-                    }`}
-                  >
-                    {getPriorityIcon(issue.priority, "text-sm")}
-                  </div>
-                  {issue.label_details.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
-                      {issue.label_details.map((label) => (
-                        <span
-                          key={label.id}
-                          className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                        >
-                          <span
-                            className="h-1.5 w-1.5  rounded-full"
-                            style={{
-                              backgroundColor:
-                                label?.color && label.color !== "" ? label.color : "#000",
-                            }}
-                          />
-                          {label.name}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  <div className={`flex items-center gap-2 text-brand-secondary`}>
-                    {issue.assignees &&
-                    issue.assignees.length > 0 &&
-                    Array.isArray(issue.assignees) ? (
-                      <div className="-my-0.5 flex items-center justify-center gap-2">
-                        <AssigneesList userIds={issue.assignees} length={3} showLength={false} />
+
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className={`grid h-6 w-6 place-items-center items-center rounded border shadow-sm ${
+                          issue.priority === "urgent"
+                            ? "border-red-500/20 bg-red-500/20 text-red-500"
+                            : issue.priority === "high"
+                            ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+                            : issue.priority === "medium"
+                            ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                            : issue.priority === "low"
+                            ? "border-green-500/20 bg-green-500/20 text-green-500"
+                            : "border-brand-base"
+                        }`}
+                      >
+                        {getPriorityIcon(issue.priority, "text-sm")}
                       </div>
-                    ) : (
-                      ""
-                    )}
+                      {issue.label_details.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {issue.label_details.map((label) => (
+                            <span
+                              key={label.id}
+                              className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
+                            >
+                              <span
+                                className="h-1.5 w-1.5  rounded-full"
+                                style={{
+                                  backgroundColor:
+                                    label?.color && label.color !== "" ? label.color : "#000",
+                                }}
+                              />
+                              {label.name}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      <div className={`flex items-center gap-2 text-brand-secondary`}>
+                        {issue.assignees &&
+                        issue.assignees.length > 0 &&
+                        Array.isArray(issue.assignees) ? (
+                          <div className="-my-0.5 flex items-center justify-center gap-2">
+                            <AssigneesList
+                              userIds={issue.assignees}
+                              length={3}
+                              showLength={false}
+                            />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+            </div>
           </div>
+
           <div className="flex items-center justify-between gap-2">
-            <div className="h-1 w-full rounded-full bg-neutral-200">
+            <div className="h-1 w-full rounded-full bg-brand-surface-2">
               <div
                 className="h-1 rounded-full bg-green-600"
                 style={{
                   width:
                     issues &&
                     `${
-                      issues?.filter(
+                      (issues?.filter(
                         (issue) =>
                           issue?.state_detail?.group === "completed" &&
                           (issue?.priority === "urgent" || issue?.priority === "high")
                       )?.length /
                         issues?.filter(
                           (issue) => issue?.priority === "urgent" || issue?.priority === "high"
-                        )?.length * 100 ?? 0
+                        )?.length) *
+                        100 ?? 0
                     }%`,
                 }}
               />
@@ -562,8 +573,8 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
             </div>
           </div>
         </div>
-        <div className="border-brand-base px-4">
-          <div className="flex items-start justify-between gap-4 py-2 text-xs">
+        <div className="flex flex-col justify-between border-brand-base p-4">
+          <div className="flex items-start justify-between gap-4 py-1.5 text-xs">
             <div className="flex items-center gap-3 text-brand-base">
               <div className="flex items-center justify-center gap-1">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
@@ -584,13 +595,13 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               </span>
             </div>
           </div>
-          <div className="relative h-72">
+          <div className="relative h-64">
             <ProgressChart
               issues={issues ?? []}
               start={cycle?.start_date ?? ""}
               end={cycle?.end_date ?? ""}
-              width={550}
-              height={250}
+              width={475}
+              height={256}
             />
           </div>
         </div>

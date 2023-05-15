@@ -5,7 +5,13 @@ import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { ActiveCycleDetails, CompletedCyclesListProps, AllCyclesBoard, AllCyclesList, CompletedCycles } from "components/cycles";
+import {
+  ActiveCycleDetails,
+  CompletedCyclesListProps,
+  AllCyclesBoard,
+  AllCyclesList,
+  CompletedCycles,
+} from "components/cycles";
 // ui
 import { Loader } from "components/ui";
 // icons
@@ -92,17 +98,14 @@ export const CyclesView: React.FC<Props> = ({
         }}
       >
         {" "}
-        <div className={`flex justify-between ${cycleView === "list" && "px-8"}`}>
-          <Tab.List
-            as="div"
-            className="flex items-center justify-start gap-4 text-base font-medium"
-          >
+        <div className="flex justify-between">
+          <Tab.List as="div" className="flex items-center justify-start gap-4 text-base">
             <Tab
               className={({ selected }) =>
                 `rounded-3xl border px-6 py-1 outline-none ${
                   selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
+                    ? "border-brand-accent bg-brand-accent text-white font-medium"
+                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
                 }`
               }
             >
@@ -112,8 +115,8 @@ export const CyclesView: React.FC<Props> = ({
               className={({ selected }) =>
                 `rounded-3xl border px-6 py-1 outline-none ${
                   selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
+                    ? "border-brand-accent bg-brand-accent text-white font-medium"
+                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
                 }`
               }
             >
@@ -123,8 +126,8 @@ export const CyclesView: React.FC<Props> = ({
               className={({ selected }) =>
                 `rounded-3xl border px-6 py-1 outline-none ${
                   selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
+                    ? "border-brand-accent bg-brand-accent text-white font-medium"
+                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
                 }`
               }
             >
@@ -134,8 +137,8 @@ export const CyclesView: React.FC<Props> = ({
               className={({ selected }) =>
                 `rounded-3xl border px-6 py-1 outline-none ${
                   selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
+                    ? "border-brand-accent bg-brand-accent text-white font-medium"
+                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
                 }`
               }
             >
@@ -145,8 +148,8 @@ export const CyclesView: React.FC<Props> = ({
               className={({ selected }) =>
                 `rounded-3xl border px-6 py-1 outline-none ${
                   selected
-                    ? "border-brand-accent bg-brand-accent text-white"
-                    : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
+                    ? "border-brand-accent bg-brand-accent text-white font-medium"
+                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
                 }`
               }
             >
@@ -173,7 +176,7 @@ export const CyclesView: React.FC<Props> = ({
           )}
         </div>
         <Tab.Panels>
-          <Tab.Panel as="div" className={`mt-8 space-y-5 ${cycleView === "list" && "mx-8"}`}>
+          <Tab.Panel as="div" className="mt-7 space-y-5">
             {currentAndUpcomingCycles?.current_cycle?.[0] && (
               <ActiveCycleDetails cycle={currentAndUpcomingCycles?.current_cycle?.[0]} />
             )}
