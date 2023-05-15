@@ -257,7 +257,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
 
   return (
     <div>
-      <div className="flex flex-col rounded-[10px] bg-brand-base text-xs shadow">
+      <div className="flex flex-col rounded-[10px] bg-brand-base border border-brand-base text-xs shadow">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
@@ -362,39 +362,39 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
-              <div className="flex justify-between">
-                <div className="flex items-center gap-2.5 text-brand-secondary">
-                  {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                    <Image
-                      src={cycle.owned_by.avatar}
-                      height={16}
-                      width={16}
-                      className="rounded-full"
-                      alt={cycle.owned_by.first_name}
-                    />
-                  ) : (
-                    <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 capitalize  text-white">
-                      {cycle.owned_by.first_name.charAt(0)}
-                    </span>
-                  )}
-                  <span className="text-brand-base">{cycle.owned_by.first_name}</span>
-                </div>
-                <div className="flex items-center gap-2.5 text-brand-secondary">
-                  <div className="-my-0.5 flex items-center justify-center gap-2">
-                    <AssigneesList
-                      userIds={[
-                        cycle.owned_by.id,
-                        cycle.owned_by.id,
-                        cycle.owned_by.id,
-                        cycle.owned_by.id,
-                        cycle.owned_by.id,
-                        cycle.owned_by.id,
-                      ]}
-                      length={3}
-                      showLength={true}
-                    />
+              <div className="flex justify-between items-end">
+                <div className="flex flex-col gap-2 text-xs text-brand-secondary">
+                  <div className="flex items-center gap-2">
+                    <div className="w-16">Creator:</div>
+                    <div className="flex items-center gap-2.5 text-brand-secondary">
+                      {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
+                        <Image
+                          src={cycle.owned_by.avatar}
+                          height={16}
+                          width={16}
+                          className="rounded-full"
+                          alt={cycle.owned_by.first_name}
+                        />
+                      ) : (
+                        <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 capitalize  text-white">
+                          {cycle.owned_by.first_name.charAt(0)}
+                        </span>
+                      )}
+                      <span className="text-brand-secondary">{cycle.owned_by.first_name}</span>
+                    </div>
+                  </div>
+                  <div className="flex h-5 items-center gap-2">
+                    <div className="w-16">Members:</div>
+                    {cycle.assignees.length > 0 ? (
+                      <div className="flex items-center gap-1 text-brand-secondary">
+                        <AssigneesList users={cycle.assignees} length={4} />
+                      </div>
+                    ) : (
+                      "No members"
+                    )}
                   </div>
                 </div>
+
                 <div className="flex items-center">
                   {!isCompleted && (
                     <button
@@ -402,7 +402,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                         e.preventDefault();
                         handleEditCycle();
                       }}
-                      className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-brand-surface-1"
+                      className="flex cursor-pointer items-center rounded p-1 text-brand-secondary duration-300 hover:bg-brand-surface-1"
                     >
                       <span>
                         <PencilIcon className="h-4 w-4" />
