@@ -55,6 +55,7 @@ type ProjectViewTheme = {
   issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
+  calendarDateRange: string;
   filters: IIssueFilterOptions;
 };
 

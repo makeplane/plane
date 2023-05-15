@@ -10,6 +10,7 @@ import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
 // hooks
+import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useIssuesProperties from "hooks/use-issue-properties";
 import useToast from "hooks/use-toast";
 // components
@@ -29,9 +30,10 @@ import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { IIssue } from "types";
 // fetch-keys
 import {
-  CYCLE_CALENDAR_ISSUES,
-  MODULE_CALENDAR_ISSUES,
-  PROJECT_CALENDAR_ISSUES,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -54,9 +56,11 @@ export const SingleCalendarIssue: React.FC<Props> = ({
   isNotAllowed,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { params } = useCalendarIssuesView();
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
@@ -65,20 +69,25 @@ export const SingleCalendarIssue: React.FC<Props> = ({
       if (!workspaceSlug || !projectId) return;
 
       const fetchKey = cycleId
-        ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+        ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
         : moduleId
-        ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
-        : PROJECT_CALENDAR_ISSUES(projectId as string);
+        ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
+        : viewId
+        ? VIEW_ISSUES(viewId.toString(), params)
+        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
 
       mutate<IIssue[]>(
         fetchKey,
         (prevData) =>
           (prevData ?? []).map((p) => {
-            if (p.id === issueId)
+            if (p.id === issueId) {
               return {
                 ...p,
-                formData,
+                ...formData,
+                assignees: formData?.assignees_list ?? p.assignees,
               };
+            }
+
             return p;
           }),
         false
@@ -87,13 +96,13 @@ export const SingleCalendarIssue: React.FC<Props> = ({
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData)
         .then(() => {
-          mutate<IIssue[]>(fetchKey);
+          mutate(fetchKey);
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId]
+    [workspaceSlug, projectId, cycleId, moduleId, params]
   );
 
   const handleCopyText = () => {
@@ -205,7 +214,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                     className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
                   >
                     <span
-                      className="h-1.5 w-1.5  rounded-full"
+                      className="h-1.5 w-1.5 rounded-full"
                       style={{
                         backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
                       }}
