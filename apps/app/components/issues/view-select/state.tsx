@@ -19,7 +19,7 @@ import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
   isNotAllowed: boolean;
@@ -60,11 +60,14 @@ export const ViewStateSelect: React.FC<Props> = ({
     <CustomSearchSelect
       value={issue.state}
       onChange={(data: string) => {
-        partialUpdateIssue({
-          state: data,
-          priority: issue.priority,
-          target_date: issue.target_date,
-        });
+        partialUpdateIssue(
+          {
+            state: data,
+            priority: issue.priority,
+            target_date: issue.target_date,
+          },
+          issue.id
+        );
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,

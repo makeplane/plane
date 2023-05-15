@@ -23,12 +23,7 @@ import {
   TriangleExclamationIcon,
   AlarmClockIcon,
 } from "components/icons";
-import {
-  LinkIcon,
-  PencilIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import {
   getDateRangeStatus,
@@ -285,17 +280,16 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
         : 0,
     color: group.color,
   }));
-
   return (
     <div>
-      <div className="flex flex-col border-b border-brand-base bg-brand-base text-xs  shadow hover:bg-brand-surface-2">
+      <div className="flex flex-col border-b border-brand-base hover:bg-brand-surface-2">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
-            <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
-              <div className="flex items-start justify-between gap-1">
+            <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4 py-3">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <span className="flex items-start gap-2">
                   <ContrastIcon
-                    className="mt-1 h-5 w-5"
+                    className="mt-1 h-5 w-5 flex-shrink-0"
                     color={`${
                       cycleStatus === "current"
                         ? "#09A953"
@@ -310,16 +304,16 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                   />
                   <div>
                     <Tooltip tooltipContent={cycle.name} position="top-left">
-                      <h3 className="break-all text-lg font-semibold">
+                      <h3 className="break-all text-base font-medium">
                         {truncateText(cycle.name, 70)}
                       </h3>
                     </Tooltip>
-                    <p className="mt-2 text-brand-secondary">{cycle.description}</p>
+                    <p className="mt-1 text-sm text-brand-secondary">{cycle.description}</p>
                   </div>
                 </span>
-                <span className="flex items-center gap-4 capitalize">
+                <span className="flex items-center gap-2 capitalize">
                   <span
-                    className={`rounded-full px-1.5 py-0.5
+                    className={`font-medium rounded-full px-1.5 py-0.5 text-xs
                     ${
                       cycleStatus === "current"
                         ? "bg-green-600/5 text-green-600"
@@ -343,17 +337,18 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1.5">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
+                            position="bottom"
                             tooltipContent={`${
                               cycle.total_issues - cycle.completed_issues
                             } more pending ${
                               cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
                             }`}
                           >
-                            <span>
-                              <TriangleExclamationIcon className="h-4 w-4" />
+                            <span className="h-3.5 w-3.5">
+                              <TriangleExclamationIcon className="h-3.5 w-3.5" />
                             </span>
                           </Tooltip>
                         )}{" "}
@@ -363,42 +358,47 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       cycleStatus
                     )}
                   </span>
-                  <span className="flex items-center justify-start gap-2 text-brand-secondary">
-                    <div className="flex items-start gap-1 ">
-                      <CalendarDaysIcon className="h-4 w-4 text-brand-base" />
-                      <span>{renderShortDateWithYearFormat(startDate)}</span>
+                  <div className="flex w-[210px] items-center justify-center gap-1 py-0.5 text-[11px] text-brand-secondary">
+                    <div className="flex items-center gap-1 ">
+                      <CalendarDaysIcon className="h-3.5 w-3.5 flex-shrink-0 text-brand-base" />
+                      <span className="whitespace-nowrap">
+                        {renderShortDateWithYearFormat(startDate)}
+                      </span>
                     </div>
                     <ArrowRightIcon className="h-4 w-4 text-brand-secondary" />
-                    <div className="flex items-start gap-1 ">
-                      <TargetIcon className="h-4 w-4 text-brand-base" />
-                      <span>{renderShortDateWithYearFormat(endDate)}</span>
+                    <div className="flex items-center gap-1 ">
+                      <TargetIcon className="h-3.5 w-3.5 flex-shrink-0 text-brand-base" />
+                      <span className="whitespace-nowrap">
+                        {renderShortDateWithYearFormat(endDate)}
+                      </span>
                     </div>
-                  </span>
-                  <div className="flex items-center gap-2.5 text-brand-secondary">
+                  </div>
+                  <div className="flex h-4 w-4 flex-shrink-0 items-center gap-2.5 text-brand-secondary">
                     {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                       <Image
                         src={cycle.owned_by.avatar}
                         height={16}
                         width={16}
-                        className="rounded-full"
+                        className="rounded-full "
                         alt={cycle.owned_by.first_name}
                       />
                     ) : (
-                      <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 capitalize  text-white">
+                      <span className="bg-brand-secondary flex h-4 w-4 items-center justify-center rounded-full bg-orange-300 capitalize  text-white">
                         {cycle.owned_by.first_name.charAt(0)}
                       </span>
                     )}
                   </div>
                   <Tooltip
+                    position="bottom"
                     tooltipContent={
-                      <div className="flex flex-col w-[240px] items-center gap-2 px-4 py-1">
-                        <span>Progress</span>
+                      <div className="flex w-[240px] items-center gap-1 px-4 py-1">
+                        <div>Progress</div>
                         <LinearProgressIndicator data={progressIndicatorData} />
                       </div>
                     }
                   >
                     <span
-                      className={`rounded-md px-1.5 py-1
+                      className={`flex w-[75px] font-medium flex-shrink-0 justify-center rounded-md px-1.5 py-1 text-xs
                     ${
                       cycleStatus === "current"
                         ? "border border-green-600 bg-green-600/5 text-green-600"
@@ -414,31 +414,20 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       {cycleStatus === "current" ? (
                         <span className="flex gap-1">
                           <RadialProgressBar
-                            progress={
-                              (cycle.completed_issues / cycle.total_issues) *
-                              100
-                            }
+                            progress={(cycle.completed_issues / cycle.total_issues) * 100}
                           />
                           <span>
-                            {Math.floor(
-                              (cycle.completed_issues / cycle.total_issues) *
-                                100
-                            )}{" "}
-                            %
+                            {Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %
                           </span>
                         </span>
                       ) : cycleStatus === "upcoming" ? (
-                        <span className="flex gap-1">
-                          <RadialProgressBar progress={100} /> Yet to start
+                        <span className="flex flex-shrink-0 gap-1 text-[10px]">
+                          <RadialProgressBar progress={100} /> Upcoming
                         </span>
                       ) : cycleStatus === "completed" ? (
                         <span className="flex gap-1">
-                          <RadialProgressBar
-                            progress={100}
-                          />
-                          <span>
-                            {100} %
-                          </span>
+                          <RadialProgressBar progress={100} />
+                          <span>{100} %</span>
                         </span>
                       ) : (
                         <span className="flex gap-1">
@@ -469,7 +458,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       <StarIcon className="h-4 w-4 " color="#858E96" />
                     </button>
                   )}
-                  <div className="flex items-center">
+                  <div className="ml-auto flex items-center">
                     <CustomMenu width="auto" verticalEllipsis>
                       {!isCompleted && (
                         <CustomMenu.MenuItem

@@ -35,7 +35,6 @@ export const AllCyclesBoard: React.FC<TCycleStatsViewProps> = ({
     setSelectedCycle({ ...cycle, actionType: "edit" });
     setCreateUpdateCycleModal(true);
   };
-
   return (
     <>
       <DeleteCycleModal
@@ -49,7 +48,7 @@ export const AllCyclesBoard: React.FC<TCycleStatsViewProps> = ({
       />
       {cycles ? (
         cycles.length > 0 ? (
-          <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 px-8">
             {cycles.map((cycle) => (
               <SingleCycleCard
                 key={cycle.id}
@@ -73,7 +72,7 @@ export const AllCyclesBoard: React.FC<TCycleStatsViewProps> = ({
           />
         )
       ) : (
-        <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+        <Loader className="grid grid-cols-1 gap-x-6 gap-y-5 px-5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
           <Loader.Item height="200px" />
         </Loader>
       )}

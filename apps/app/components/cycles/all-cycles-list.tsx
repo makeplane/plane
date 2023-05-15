@@ -50,18 +50,18 @@ export const AllCyclesList: React.FC<TCycleStatsViewProps> = ({
       {cycles ? (
         cycles.length > 0 ? (
           <div>
-              {cycles.map((cycle) => (
-                <div className="bg-brand-base px-8 hover:bg-brand-surface-2">
-                  <div className="flex flex-col border-brand-base">
-                    <SingleCycleList
-                      key={cycle.id}
-                      cycle={cycle}
-                      handleDeleteCycle={() => handleDeleteCycle(cycle)}
-                      handleEditCycle={() => handleEditCycle(cycle)}
-                    />
-                  </div>
+            {cycles.map((cycle) => (
+              <div className="px-8">
+                <div className="flex flex-col">
+                  <SingleCycleList
+                    key={cycle.id}
+                    cycle={cycle}
+                    handleDeleteCycle={() => handleDeleteCycle(cycle)}
+                    handleEditCycle={() => handleEditCycle(cycle)}
+                  />
                 </div>
-              ))}
+              </div>
+            ))}
           </div>
         ) : type === "current" ? (
           <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
@@ -77,7 +77,8 @@ export const AllCyclesList: React.FC<TCycleStatsViewProps> = ({
           />
         )
       ) : (
-        <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+        <Loader className="grid grid-cols-1 gap-x-6 gap-y-5 px-5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+          <Loader.Item height="200px" /> <Loader.Item height="200px" />
           <Loader.Item height="200px" />
         </Loader>
       )}

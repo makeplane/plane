@@ -163,7 +163,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   ))
                 ) : (
                   <div className="text-center">
-                    <h3 className="text-brand-secondary">You have no invitations</h3>
+                    <h3 className="text-brand-secondary">{`You don't have any invitations yet.`}</h3>
                   </div>
                 )}
               </div>

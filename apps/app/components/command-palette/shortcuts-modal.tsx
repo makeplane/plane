@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { MacCommandIcon } from "components/icons";
+import { CommandIcon } from "components/icons";
 // ui
 import { Input } from "components/ui";
 
@@ -123,17 +123,23 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div key={shortcut.keys} className="flex w-full flex-col">
                                 <div className="flex flex-col gap-y-3">
                                   <div className="flex items-center justify-between">
-                                    <p className="text-sm text-brand-secondary">{shortcut.description}</p>
+                                    <p className="text-sm text-brand-secondary">
+                                      {shortcut.description}
+                                    </p>
                                     <div className="flex items-center gap-x-2.5">
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-brand-base bg-brand-surface-1 p-2">
-                                              <MacCommandIcon />
+                                            <span className="flex h-full items-center rounded-sm border border-brand-base bg-brand-surface-1 p-1.5">
+                                              <CommandIcon className="h-4 w-4 fill-current text-brand-secondary" />
                                             </span>
+                                          ) : key === "Ctrl" ? (
+                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 p-1.5 text-sm font-medium text-brand-secondary">
+                                              <CommandIcon className="h-4 w-4 fill-current text-brand-secondary" />
+                                            </kbd>
                                           ) : (
-                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-gray-800">
-                                              {key === "Ctrl" ? <MacCommandIcon /> : key}
+                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-brand-secondary">
+                                              {key}
                                             </kbd>
                                           )}
                                         </span>
@@ -167,12 +173,16 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-brand-base text-brand-secondary bg-brand-surface-1 p-2">
-                                              <MacCommandIcon />
+                                            <span className="flex h-full items-center rounded-sm border border-brand-base bg-brand-surface-1 p-1.5 text-brand-secondary">
+                                              <CommandIcon className="h-4 w-4 fill-current text-brand-secondary" />
                                             </span>
+                                          ) : key === "Ctrl" ? (
+                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 p-1.5 text-sm font-medium text-brand-secondary">
+                                              <CommandIcon className="h-4 w-4 fill-current text-brand-secondary" />
+                                            </kbd>
                                           ) : (
                                             <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-brand-secondary">
-                                              {key === "Ctrl" ? <MacCommandIcon /> : key}
+                                              {key}
                                             </kbd>
                                           )}
                                         </span>

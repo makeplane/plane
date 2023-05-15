@@ -29,6 +29,7 @@ type Props = {
   issues: IIssue[];
   module?: IModule;
   userAuth?: UserAuth;
+  display_states?: boolean;
 };
 
 const stateGroupColours: {
@@ -46,6 +47,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
   issues,
   module,
   userAuth,
+  display_states = true,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -121,18 +123,22 @@ export const SidebarProgressStats: React.FC<Props> = ({
         >
           Labels
         </Tab>
-        <Tab
-          className={({ selected }) =>
-            `w-full rounded px-3 py-1  text-brand-base ${
-              selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
-            }`
-          }
-        >
-          States
-        </Tab>
+        {display_states && (
+          <>
+            <Tab
+              className={({ selected }) =>
+                `w-full rounded px-3 py-1  text-brand-base ${
+                  selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
+                }`
+              }
+            >
+              States
+            </Tab>
+          </>
+        )}
       </Tab.List>
       <Tab.Panels className="flex w-full items-center justify-between pt-1">
-        <Tab.Panel as="div" className="flex w-full flex-col text-xs">
+        <Tab.Panel as="div" className="flex w-full flex-col space-y-2 text-xs">
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i?.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
@@ -189,7 +195,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             ""
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="w-full space-y-1">
+        <Tab.Panel as="div" className="w-full space-y-2">
           {issueLabels?.map((label, index) => {
             const totalArray = issues?.filter((i) => i?.labels?.includes(label.id));
             const completeArray = totalArray?.filter((i) => i?.state_detail.group === "completed");
@@ -225,7 +231,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             }
           })}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex w-full flex-col ">
+        <Tab.Panel as="div" className="flex w-full flex-col space-y-2">
           {Object.keys(groupedIssues).map((group, index) => (
             <SingleProgressStats
               key={index}

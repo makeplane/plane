@@ -65,7 +65,7 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
       />
       {completedCycles ? (
         completedCycles.completed_cycles.length > 0 ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 ">
             <div className="ml-8 flex items-center gap-2 text-sm text-brand-secondary">
               <ExclamationIcon height={14} width={14} />
               <span>Completed cycles are not editable.</span>
@@ -73,7 +73,7 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
             {cycleView === "list" ? (
               <div>
                 {completedCycles.completed_cycles.map((cycle) => (
-                  <div className="bg-brand-base px-8 hover:bg-brand-surface-2">
+                  <div className="mx-8 hover:bg-brand-surface-2">
                     <div className="flex flex-col border-brand-base">
                       <SingleCycleList
                         key={cycle.id}
@@ -110,7 +110,7 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
           />
         )
       ) : (
-        <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+        <Loader className="grid grid-cols-1 gap-x-6 gap-y-5 px-5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
           <Loader.Item height="200px" />
           <Loader.Item height="200px" />
           <Loader.Item height="200px" />
