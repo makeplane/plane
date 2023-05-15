@@ -5,7 +5,7 @@ from datetime import datetime
 # Django imports
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Q, Exists, OuterRef
+from django.db.models import Q, Exists, OuterRef, Func, F
 from django.core.validators import validate_email
 from django.conf import settings
 
@@ -46,6 +46,8 @@ from plane.db.models import (
     ProjectMemberInvite,
     User,
     ProjectIdentifier,
+    Cycle,
+    Module,
 )
 from plane.bgtasks.project_invitation_task import project_invitation
 
@@ -92,6 +94,26 @@ class ProjectViewSet(BaseViewSet):
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
                 .order_by("-is_favorite", "name")
+                .annotate(
+                    total_members=ProjectMember.objects.filter(
+                        project_id=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    total_modules=Module.objects.filter(project_id=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
             return Response(ProjectDetailSerializer(projects, many=True).data)
         except Exception as e:
