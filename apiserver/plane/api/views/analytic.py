@@ -76,11 +76,17 @@ class AnalyticsEndpoint(BaseAPIView):
                     )
                 )
 
+            assignee_avatars = {}
+            if x_axis in ["assignees__email"]:
+                assignee_avatars = Issue.objects.filter(
+                    workspace__slug=slug, **filters
+                ).values("assignees__avatar")
+
             return Response(
                 {
                     "total": total_issues,
                     "distribution": distribution,
-                    "extras": {"colors": colors},
+                    "extras": {"colors": colors, "assignee_avatars": assignee_avatars},
                 },
                 status=status.HTTP_200_OK,
             )
