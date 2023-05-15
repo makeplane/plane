@@ -38,7 +38,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
       >
         <div
           className={`flex items-center justify-between gap-2 border-b border-b-brand-base bg-brand-sidebar p-3 text-sm ${
-            fullScreen ? "" : "py-[1.3rem]"
+            fullScreen ? "" : "py-[1.275rem]"
           }`}
         >
           <h3>Project Analytics</h3>
@@ -80,7 +80,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
           </Tab.List>
           <Tab.Panels as={Fragment}>
             <Tab.Panel as={Fragment}>
-              <ScopeAndDemand fullScreen={fullScreen} />
+              <ScopeAndDemand fullScreen={fullScreen} isProjectLevel />
             </Tab.Panel>
             <Tab.Panel as={Fragment}>
               <CustomAnalytics fullScreen={fullScreen} isProjectLevel />

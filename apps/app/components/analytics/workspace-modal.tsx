@@ -22,7 +22,7 @@ export const AnalyticsWorkspaceModal: React.FC<Props> = ({ isOpen, onClose }) =>
   return (
     <>
       <div
-        className={`absolute z-20 h-full w-full bg-brand-surface-1 p-2 ${
+        className={`absolute z-40 h-full w-full bg-brand-surface-1 p-2 ${
           isOpen ? "block" : "hidden"
         }`}
       >
@@ -56,7 +56,7 @@ export const AnalyticsWorkspaceModal: React.FC<Props> = ({ isOpen, onClose }) =>
             </Tab.List>
             <Tab.Panels as={Fragment}>
               <Tab.Panel as={Fragment}>
-                <ScopeAndDemand />
+                <ScopeAndDemand isProjectLevel={false} />
               </Tab.Panel>
               <Tab.Panel as={Fragment}>
                 <CustomAnalytics />

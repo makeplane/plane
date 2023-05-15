@@ -4,14 +4,13 @@ import { BarDatum } from "@nivo/bar";
 import { getPriorityIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
+// helpers
+import { generateBarColor, renderMonthAndYear } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
-import {
-  ANALYTICS_X_AXIS_VALUES,
-  ANALYTICS_Y_AXIS_VALUES,
-  generateBarColor,
-} from "constants/analytics";
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, DATE_KEYS } from "constants/analytics";
+import { MONTHS_LIST } from "constants/calendar";
 
 type Props = {
   analytics: IAnalyticsResponse;
@@ -55,7 +54,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                           }}
                         />
                       )}
-                      {key}
+                      {DATE_KEYS.includes(params.segment ?? "") ? renderMonthAndYear(key) : key}
                     </div>
                   </th>
                 ))
@@ -74,7 +73,9 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
               >
                 <td
                   className={`flex items-center gap-2 whitespace-nowrap py-2 px-2.5 font-medium ${
-                    params.x_axis === "priority" ? "capitalize" : ""
+                    params.x_axis === "priority" || params.x_axis === "state__group"
+                      ? "capitalize"
+                      : ""
                   }`}
                 >
                   {params.x_axis === "priority" ? (
