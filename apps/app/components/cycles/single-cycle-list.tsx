@@ -23,12 +23,7 @@ import {
   TriangleExclamationIcon,
   AlarmClockIcon,
 } from "components/icons";
-import {
-  LinkIcon,
-  PencilIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import {
   getDateRangeStatus,
@@ -288,7 +283,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
 
   return (
     <div>
-      <div className="flex flex-col border-b border-brand-base bg-brand-base text-xs  shadow hover:bg-brand-surface-2">
+      <div className="flex flex-col border-b border-brand-base text-xs  hover:bg-brand-surface-2">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
@@ -310,7 +305,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                   />
                   <div>
                     <Tooltip tooltipContent={cycle.name} position="top-left">
-                      <h3 className="break-all text-lg font-semibold">
+                      <h3 className="break-all text-base font-semibold">
                         {truncateText(cycle.name, 70)}
                       </h3>
                     </Tooltip>
@@ -365,12 +360,12 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                   </span>
                   <span className="flex items-center justify-start gap-2 text-brand-secondary">
                     <div className="flex items-start gap-1 ">
-                      <CalendarDaysIcon className="h-4 w-4 text-brand-base" />
+                      <CalendarDaysIcon className="h-4 w-4" />
                       <span>{renderShortDateWithYearFormat(startDate)}</span>
                     </div>
-                    <ArrowRightIcon className="h-4 w-4 text-brand-secondary" />
+                    <ArrowRightIcon className="h-4 w-4" />
                     <div className="flex items-start gap-1 ">
-                      <TargetIcon className="h-4 w-4 text-brand-base" />
+                      <TargetIcon className="h-4 w-4" />
                       <span>{renderShortDateWithYearFormat(endDate)}</span>
                     </div>
                   </span>
@@ -390,8 +385,9 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     )}
                   </div>
                   <Tooltip
+                    position="top-right"
                     tooltipContent={
-                      <div className="flex flex-col w-[240px] items-center gap-2 px-4 py-1">
+                      <div className="flex w-80 items-center gap-2 px-4 py-1">
                         <span>Progress</span>
                         <LinearProgressIndicator data={progressIndicatorData} />
                       </div>
@@ -414,17 +410,10 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       {cycleStatus === "current" ? (
                         <span className="flex gap-1">
                           <RadialProgressBar
-                            progress={
-                              (cycle.completed_issues / cycle.total_issues) *
-                              100
-                            }
+                            progress={(cycle.completed_issues / cycle.total_issues) * 100}
                           />
                           <span>
-                            {Math.floor(
-                              (cycle.completed_issues / cycle.total_issues) *
-                                100
-                            )}{" "}
-                            %
+                            {Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %
                           </span>
                         </span>
                       ) : cycleStatus === "upcoming" ? (
@@ -433,12 +422,8 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         </span>
                       ) : cycleStatus === "completed" ? (
                         <span className="flex gap-1">
-                          <RadialProgressBar
-                            progress={100}
-                          />
-                          <span>
-                            {100} %
-                          </span>
+                          <RadialProgressBar progress={100} />
+                          <span>{100} %</span>
                         </span>
                       ) : (
                         <span className="flex gap-1">

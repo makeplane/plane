@@ -77,7 +77,7 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
             {cycleView === "list" ? (
               <div>
                 {completedCycles.completed_cycles.map((cycle) => (
-                  <div className="bg-brand-base hover:bg-brand-surface-2">
+                  <div className="hover:bg-brand-surface-2">
                     <div className="flex flex-col border-brand-base">
                       <SingleCycleList
                         key={cycle.id}

@@ -111,7 +111,9 @@ export const SidebarProgressStats: React.FC<Props> = ({
       >
         <Tab
           className={({ selected }) =>
-            `w-full  ${roundedTab ? "rounded-3xl" : "rounded"} px-3 py-1 text-brand-base  ${
+            `w-full  ${
+              roundedTab ? "rounded-3xl border border-brand-base" : "rounded"
+            } px-3 py-1 text-brand-base ${
               selected ? " bg-brand-accent text-white" : "  hover:bg-brand-surface-2"
             }`
           }
@@ -120,7 +122,9 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-full ${roundedTab ? "rounded-3xl" : "rounded"} px-3 py-1 text-brand-base ${
+            `w-full ${
+              roundedTab ? "rounded-3xl border border-brand-base" : "rounded"
+            } px-3 py-1 text-brand-base ${
               selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
             }`
           }
@@ -129,7 +133,9 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-full ${roundedTab ? "rounded-3xl" : "rounded"} px-3 py-1  text-brand-base ${
+            `w-full ${
+              roundedTab ? "rounded-3xl border border-brand-base" : "rounded"
+            } px-3 py-1  text-brand-base ${
               selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
             }`
           }

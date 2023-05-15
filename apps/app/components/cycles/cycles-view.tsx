@@ -43,13 +43,13 @@ export const CyclesView: React.FC<Props> = ({
   currentAndUpcomingCycles,
   draftCycles,
 }) => {
-  const { storedValue: cycleTab, setValue: setCycleTab } = useLocalStorage("cycleTab", "Active");
+  const { storedValue: cycleTab, setValue: setCycleTab } = useLocalStorage("cycleTab", "All");
 
   const currentTabValue = (tab: string | null) => {
     switch (tab) {
-      case "Active":
-        return 0;
       case "All":
+        return 0;
+      case "Active":
         return 1;
       case "Upcoming":
         return 2;
@@ -82,9 +82,10 @@ export const CyclesView: React.FC<Props> = ({
         onChange={(i) => {
           switch (i) {
             case 0:
-              return setCycleTab("Active");
-            case 1:
               return setCycleTab("All");
+            case 1:
+              return setCycleTab("Active");
+
             case 2:
               return setCycleTab("Upcoming");
             case 3:
@@ -93,7 +94,7 @@ export const CyclesView: React.FC<Props> = ({
               return setCycleTab("Drafts");
 
             default:
-              return setCycleTab("Active");
+              return setCycleTab("All");
           }
         }}
       >
@@ -109,7 +110,7 @@ export const CyclesView: React.FC<Props> = ({
                 }`
               }
             >
-              Active
+              All
             </Tab>
             <Tab
               className={({ selected }) =>
@@ -120,7 +121,7 @@ export const CyclesView: React.FC<Props> = ({
                 }`
               }
             >
-              All
+              Active
             </Tab>
             <Tab
               className={({ selected }) =>
@@ -177,29 +178,29 @@ export const CyclesView: React.FC<Props> = ({
         </div>
         <Tab.Panels>
           <Tab.Panel as="div" className="mt-7 space-y-5">
+            {cycleView === "list" && (
+              <AllCyclesList
+                cycles={cyclesCompleteList}
+                setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                setSelectedCycle={setSelectedCycle}
+                type="current"
+              />
+            )}
+            {cycleView === "board" && (
+              <AllCyclesBoard
+                cycles={cyclesCompleteList}
+                setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                setSelectedCycle={setSelectedCycle}
+                type="current"
+              />
+            )}
+          </Tab.Panel>
+          <Tab.Panel as="div" className="mt-7 space-y-5">
             {currentAndUpcomingCycles?.current_cycle?.[0] && (
               <ActiveCycleDetails cycle={currentAndUpcomingCycles?.current_cycle?.[0]} />
             )}
           </Tab.Panel>
-          <Tab.Panel as="div" className="mt-8 space-y-5">
-            {cycleView === "list" && (
-              <AllCyclesList
-                cycles={cyclesCompleteList}
-                setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-                setSelectedCycle={setSelectedCycle}
-                type="current"
-              />
-            )}
-            {cycleView === "board" && (
-              <AllCyclesBoard
-                cycles={cyclesCompleteList}
-                setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-                setSelectedCycle={setSelectedCycle}
-                type="current"
-              />
-            )}
-          </Tab.Panel>
-          <Tab.Panel as="div" className="mt-8 space-y-5">
+          <Tab.Panel as="div" className="mt-7 space-y-5">
             {cycleView === "list" && (
               <AllCyclesList
                 cycles={currentAndUpcomingCycles?.upcoming_cycle}
@@ -217,14 +218,14 @@ export const CyclesView: React.FC<Props> = ({
               />
             )}
           </Tab.Panel>
-          <Tab.Panel as="div" className="mt-8 space-y-5">
+          <Tab.Panel as="div" className="mt-7 space-y-5">
             <CompletedCycles
               cycleView={cycleView}
               setCreateUpdateCycleModal={setCreateUpdateCycleModal}
               setSelectedCycle={setSelectedCycle}
             />
           </Tab.Panel>
-          <Tab.Panel as="div" className="mt-8 space-y-5">
+          <Tab.Panel as="div" className="mt-7 space-y-5">
             {cycleView === "list" && (
               <AllCyclesList
                 cycles={draftCycles?.draft_cycles}
