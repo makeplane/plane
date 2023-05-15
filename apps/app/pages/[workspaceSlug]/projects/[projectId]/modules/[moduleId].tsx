@@ -24,8 +24,9 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
+import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
+import { CustomMenu, EmptySpace, EmptySpaceItem, SecondaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
@@ -43,6 +44,7 @@ import {
 const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [moduleSidebar, setModuleSidebar] = useState(true);
+  const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -148,10 +150,15 @@ const SingleModule: React.FC = () => {
           </CustomMenu>
         }
         right={
-          <div
-            className={`flex items-center gap-2 ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}
-          >
+          <div className={`flex items-center gap-2 duration-300`}>
             <IssuesFilterView />
+            <SecondaryButton
+              onClick={() => setAnalyticsModal(true)}
+              className="!py-1.5 font-normal rounded-md text-brand-secondary"
+              outline
+            >
+              Analytics
+            </SecondaryButton>
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
@@ -164,6 +171,7 @@ const SingleModule: React.FC = () => {
           </div>
         }
       >
+        <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         {moduleIssues ? (
           moduleIssues.length > 0 ? (
             <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>

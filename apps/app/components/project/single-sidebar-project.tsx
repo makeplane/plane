@@ -172,8 +172,8 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     <a
                       className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
                         router.asPath.includes(item.href)
-                          ? "bg-brand-base text-brand-secondary"
-                          : "text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-secondary focus:bg-brand-base focus:text-brand-secondary"
+                          ? "bg-brand-surface-2 text-brand-base"
+                          : "text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-secondary focus:bg-brand-surface-2 focus:text-brand-secondary"
                       } ${sidebarCollapse ? "justify-center" : ""}`}
                     >
                       <div className="grid place-items-center">

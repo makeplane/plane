@@ -37,8 +37,8 @@ export const ProjectSidebarList: FC = () => {
   const { setToastAlert } = useToast();
 
   const { data: favoriteProjects } = useSWR(
-    workspaceSlug ? FAVORITE_PROJECTS_LIST(workspaceSlug as string) : null,
-    () => (workspaceSlug ? projectService.getFavoriteProjects(workspaceSlug as string) : null)
+    workspaceSlug ? FAVORITE_PROJECTS_LIST(workspaceSlug.toString()) : null,
+    () => (workspaceSlug ? projectService.getFavoriteProjects(workspaceSlug.toString()) : null)
   );
 
   const { data: projects } = useSWR(
@@ -180,7 +180,9 @@ export const ProjectSidebarList: FC = () => {
               ) : (
                 <div className="space-y-3 text-center">
                   {!sidebarCollapse && (
-                    <h4 className="text-sm text-gray-700">You don{"'"}t have any project yet</h4>
+                    <h4 className="text-sm text-brand-secondary">
+                      You don{"'"}t have any project yet
+                    </h4>
                   )}
                   <button
                     type="button"

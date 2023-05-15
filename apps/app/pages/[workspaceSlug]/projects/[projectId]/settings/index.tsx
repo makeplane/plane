@@ -12,7 +12,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
 import projectService from "services/project.service";
 // components
-import { DeleteProjectModal } from "components/project";
+import { DeleteProjectModal, SettingsHeader } from "components/project";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
@@ -151,7 +151,8 @@ const GeneralSettings: NextPage = () => {
           router.push(`/${workspaceSlug}/projects`);
         }}
       />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="p-8 lg:px-24">
+        <SettingsHeader />
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
@@ -222,13 +223,13 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Cover Photo</h4>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-brand-secondary">
                 Select your cover photo from the given library.
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border p-1">
+                <div className="h-32 w-full rounded border border-brand-base p-1">
                   <div className="relative h-full w-full rounded">
                     <Image
                       src={watch("cover_image")!}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useRef } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -35,6 +35,14 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ssr: false,
 });
 
+import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+
+const WrappedRemirrorRichTextEditor = forwardRef<IRemirrorRichTextEditor, IRemirrorRichTextEditor>(
+  (props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />
+);
+
+WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
   handleClose,
@@ -51,6 +59,8 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const editorRef = useRef<any>(null);
 
   const { setToastAlert } = useToast();
 
@@ -119,26 +129,31 @@ export const GptAssistantModal: React.FC<Props> = ({
     if (isOpen) setFocus("task");
   }, [isOpen, setFocus]);
 
+  useEffect(() => {
+    editorRef.current?.setEditorValue(htmlContent ?? `<p>${content}</p>`);
+  }, [htmlContent, editorRef, content]);
+
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-brand-base bg-brand-surface-2 p-4 shadow ${
+      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-brand-base bg-brand-base p-4 shadow ${
         isOpen ? "block" : "hidden"
       }`}
     >
-      {((content && content !== "") || htmlContent !== "<p></p>") && (
+      {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="remirror-section text-sm">
           Content:
-          <RemirrorRichTextEditor
+          <WrappedRemirrorRichTextEditor
             value={htmlContent ?? <p>{content}</p>}
             customClassName="-m-3"
             noBorder
             borderOnFocus={false}
             editable={false}
+            ref={editorRef}
           />
         </div>
       )}
       {response !== "" && (
-        <div className="text-sm page-block-section">
+        <div className="page-block-section text-sm">
           Response:
           <RemirrorRichTextEditor
             value={`<p>${response}</p>`}

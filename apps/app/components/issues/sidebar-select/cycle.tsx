@@ -78,7 +78,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
               </span>
             </Tooltip>
           }
-          value={issueCycle?.cycle_detail.id}
+          value={issueCycle ? issueCycle.cycle_detail.id : null}
           onChange={(value: any) => {
             !value
               ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")

@@ -59,7 +59,9 @@ def service_importer(service, importer_id):
 
             [
                 send_welcome_email.delay(
-                    user, True, f"{user.email} was imported to Plane from {service}"
+                    str(user.id),
+                    True,
+                    f"{user.email} was imported to Plane from {service}",
                 )
                 for user in new_users
             ]
@@ -76,7 +78,11 @@ def service_importer(service, importer_id):
             # Add new users to Workspace and project automatically
             WorkspaceMember.objects.bulk_create(
                 [
-                    WorkspaceMember(member=user, workspace_id=importer.workspace_id)
+                    WorkspaceMember(
+                        member=user,
+                        workspace_id=importer.workspace_id,
+                        created_by=importer.created_by,
+                    )
                     for user in workspace_users
                 ],
                 batch_size=100,
@@ -89,6 +95,7 @@ def service_importer(service, importer_id):
                         project_id=importer.project_id,
                         workspace_id=importer.workspace_id,
                         member=user,
+                        created_by=importer.created_by,
                     )
                     for user in workspace_users
                 ],

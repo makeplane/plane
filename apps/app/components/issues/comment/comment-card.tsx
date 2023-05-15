@@ -18,6 +18,15 @@ import type { IIssueComment } from "types";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 
+import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+
+const WrappedRemirrorRichTextEditor = React.forwardRef<
+  IRemirrorRichTextEditor,
+  IRemirrorRichTextEditor
+>((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+
+WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+
 type Props = {
   comment: IIssueComment;
   onSubmit: (comment: IIssueComment) => void;
@@ -26,6 +35,9 @@ type Props = {
 
 export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion }) => {
   const { user } = useUser();
+
+  const editorRef = React.useRef<any>(null);
+  const showEditorRef = React.useRef<any>(null);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -42,6 +54,10 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
     if (isSubmitting) return;
     setIsEditing(false);
     onSubmit(formData);
+    console.log(formData);
+
+    editorRef.current?.setEditorValue(formData.comment_json);
+    showEditorRef.current?.setEditorValue(formData.comment_json);
   };
 
   useEffect(() => {
@@ -85,41 +101,45 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           </p>
         </div>
         <div className="issue-comments-section p-0">
-          {isEditing ? (
-            <form className="flex flex-col gap-2" onSubmit={handleSubmit(onEnter)}>
-              <RemirrorRichTextEditor
-                value={comment.comment_html}
-                onBlur={(jsonValue, htmlValue) => {
-                  setValue("comment_json", jsonValue);
-                  setValue("comment_html", htmlValue);
-                }}
-                placeholder="Enter Your comment..."
-              />
-              <div className="flex gap-1 self-end">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
-                >
-                  <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
-                </button>
-                <button
-                  type="button"
-                  className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
-                  onClick={() => setIsEditing(false)}
-                >
-                  <XMarkIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
-                </button>
-              </div>
-            </form>
-          ) : (
-            <RemirrorRichTextEditor
+          <form
+            className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
+            onSubmit={handleSubmit(onEnter)}
+          >
+            <WrappedRemirrorRichTextEditor
+              value={comment.comment_html}
+              onBlur={(jsonValue, htmlValue) => {
+                setValue("comment_json", jsonValue);
+                setValue("comment_html", htmlValue);
+              }}
+              placeholder="Enter Your comment..."
+              ref={editorRef}
+            />
+            <div className="flex gap-1 self-end">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
+              >
+                <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
+              </button>
+              <button
+                type="button"
+                className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+                onClick={() => setIsEditing(false)}
+              >
+                <XMarkIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
+              </button>
+            </div>
+          </form>
+          <div className={`${isEditing ? "hidden" : ""}`}>
+            <WrappedRemirrorRichTextEditor
               value={comment.comment_html}
               editable={false}
               noBorder
               customClassName="text-xs border border-brand-base bg-brand-base"
+              ref={showEditorRef}
             />
-          )}
+          </div>
         </div>
       </div>
       {user?.id === comment.actor && (

@@ -55,10 +55,12 @@ type ProjectViewTheme = {
   issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
+  calendarDateRange: string;
   filters: IIssueFilterOptions;
 };
 
 export interface IProjectMember {
+  id: string;
   member: IUserLite;
   project: IProject;
   workspace: IWorkspace;

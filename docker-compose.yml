@@ -38,12 +38,21 @@ services:
     build:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
-    restart: always
-    command: node apps/app/server.js
-    env_file:
-      - ./apps/app/.env
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    command: [ "/usr/local/bin/start.sh" ]
     ports:
       - 3000:3000
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
+      NEXT_PUBLIC_GITHUB_APP_NAME: "0"
+      NEXT_PUBLIC_GITHUB_ID: "0"
+      NEXT_PUBLIC_SENTRY_DSN: "0"
+      NEXT_PUBLIC_ENABLE_OAUTH: "0"
+      NEXT_PUBLIC_ENABLE_SENTRY: "0"
+      NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
+      NEXT_PUBLIC_TRACK_EVENTS: "0"
   plane-api:
     container_name: planebackend
     build:
@@ -52,8 +61,24 @@ services:
     restart: always
     ports:
       - 8000:8000
-    env_file:
-      - ./apiserver/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: plane.settings.production
+      DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
+      REDIS_URL: redis://redis:6379/
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      WEB_URL: localhost/
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      DISABLE_COLLECTSTATIC: 1
+      DOCKERIZED: 1
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GPT_ENGINE: ${GPT_ENGINE}
+      SECRET_KEY: ${SECRET_KEY}
     depends_on:
       - db
       - redis
@@ -74,8 +99,24 @@ services:
     links:
       - redis:redis
       - db:db
-    env_file:
-      - ./apiserver/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: plane.settings.production
+      DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
+      REDIS_URL: redis://redis:6379/
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      WEB_URL: localhost/
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      DISABLE_COLLECTSTATIC: 1
+      DOCKERIZED: 1
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GPT_ENGINE: ${GPT_ENGINE}
+      SECRET_KEY: ${SECRET_KEY}
 volumes:
   pgdata:
   redisdata:

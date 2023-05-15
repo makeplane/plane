@@ -63,21 +63,23 @@ const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, ha
                       />
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-brand-base"
+                      >
                         Remove {data?.email}?
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-brand-secondary">
-                          Are you sure you want to remove member- {" "}
-                          <span className="font-bold">{data?.email}</span>
-                          ? They will no longer have access to this project. This action
-                          cannot be undone.
+                          Are you sure you want to remove member-{" "}
+                          <span className="font-bold">{data?.email}</span>? They will no longer have
+                          access to this project. This action cannot be undone.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end gap-2 bg-gray-50 p-4 sm:px-6">
+                <div className="flex justify-end gap-2 bg-brand-surface-1 p-4 sm:px-6">
                   <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                   <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Removing..." : "Remove"}

@@ -19,12 +19,12 @@ import { Loader, EmptyState, PrimaryButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
+// images
+import emptyProject from "public/empty-state/empty-project.svg";
 // types
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
-// image
-import emptyProject from "public/empty-state/empty-project.svg";
 
 const ProjectsPage: NextPage = () => {
   // router
@@ -83,7 +83,7 @@ const ProjectsPage: NextPage = () => {
         data={projects?.find((item) => item.id === deleteProject) ?? null}
       />
       {projects ? (
-        <>
+        <div className="p-8">
           {projects.length === 0 ? (
             <EmptyState
               type="project"
@@ -103,7 +103,7 @@ const ProjectsPage: NextPage = () => {
               ))}
             </div>
           )}
-        </>
+        </div>
       ) : (
         <Loader className="grid grid-cols-3 gap-4">
           <Loader.Item height="100px" />
