@@ -67,9 +67,9 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
     (query === "" ? issues : issues?.filter((issue) => issue.name.includes(query))) ?? [];
 
   return (
-    <div className="flex flex-wrap items-start py-2">
-      <div className="space-y-1 sm:basis-1/2">
-        <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
+    <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
+      <div className="flex flex-wrap items-start py-2">
+        <div className="space-y-1 sm:basis-1/2">
           <Dialog as="div" className="relative z-20" onClose={handleClose}>
             <Transition.Child
               as={React.Fragment}
@@ -178,8 +178,8 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
               </Transition.Child>
             </div>
           </Dialog>
-        </Transition.Root>
+        </div>
       </div>
-    </div>
+    </Transition.Root>
   );
 };

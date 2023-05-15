@@ -4,14 +4,14 @@ export interface IInboxIssue {
   created_at: Date;
   updated_at: Date;
   status: number;
-  snoozed_till: null;
+  snoozed_till: Date | null;
   created_by: string;
   updated_by: string;
   project: string;
   workspace: string;
   inbox: string;
   issue: string;
-  duplicate_to: null;
+  duplicate_to: string | null;
 }
 
 export interface IInboxIssue {
