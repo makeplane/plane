@@ -104,7 +104,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 @receiver(post_save, sender=User)
-def send_welcome_email(sender, instance, created, **kwargs):
+def send_welcome_slack(sender, instance, created, **kwargs):
     try:
         if created and not instance.is_bot:
             # Send message on slack as well
