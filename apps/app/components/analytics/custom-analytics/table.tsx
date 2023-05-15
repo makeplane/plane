@@ -10,7 +10,6 @@ import { generateBarColor, renderMonthAndYear } from "helpers/analytics.helper";
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, DATE_KEYS } from "constants/analytics";
-import { MONTHS_LIST } from "constants/calendar";
 
 type Props = {
   analytics: IAnalyticsResponse;
@@ -19,7 +18,7 @@ type Props = {
     xAxisKeys: string[];
   };
   params: IAnalyticsParams;
-  yAxisKey: "effort" | "count";
+  yAxisKey: "count" | "estimate";
 };
 
 export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, params, yAxisKey }) => (
@@ -27,7 +26,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
     <div className="overflow-x-auto">
       <div className="inline-block min-w-full align-middle">
         <table className="min-w-full divide-y divide-brand-base whitespace-nowrap border-y border-brand-base">
-          <thead className="bg-brand-base">
+          <thead className="bg-brand-surface-2">
             <tr className="divide-x divide-brand-base text-sm text-brand-base">
               <th scope="col" className="py-3 px-2.5 text-left font-medium">
                 {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === params.x_axis)?.label}

@@ -27,6 +27,9 @@ export interface IProject {
   network: number;
   project_lead: IUser | string | null;
   slug: string;
+  total_cycles: number;
+  total_members: number;
+  total_modules: number;
   updated_at: Date;
   updated_by: string;
   workspace: IWorkspace | string;

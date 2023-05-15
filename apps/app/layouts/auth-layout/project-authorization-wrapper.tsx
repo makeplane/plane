@@ -13,7 +13,6 @@ import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
-import { AnalyticsWorkspaceModal } from "components/analytics";
 import { CommandPalette } from "components/command-palette";
 // ui
 import { PrimaryButton, Spinner } from "components/ui";
@@ -53,12 +52,9 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   right,
 }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { issueView } = useIssuesView();
 
   const { loading, error, memberRole: memberType } = useProjectMyMembership();
 
@@ -68,12 +64,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
     <Container meta={meta}>
       <CommandPalette />
       <div className="relative flex h-screen w-full overflow-hidden">
-        <AppSidebar
-          toggleSidebar={toggleSidebar}
-          setToggleSidebar={setToggleSidebar}
-          isAnalyticsModalOpen={analyticsModal}
-          setAnalyticsModal={setAnalyticsModal}
-        />
+        <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
 
         {loading ? (
           <div className="grid h-full w-full place-items-center p-4">
@@ -121,12 +112,6 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                 : "bg-brand-base"
             }`}
           >
-            {analyticsModal && (
-              <AnalyticsWorkspaceModal
-                isOpen={analyticsModal}
-                onClose={() => setAnalyticsModal(false)}
-              />
-            )}
             {!noHeader && (
               <AppHeader
                 breadcrumbs={breadcrumbs}
