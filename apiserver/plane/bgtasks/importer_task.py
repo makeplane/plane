@@ -27,7 +27,7 @@ from plane.db.models import (
     User,
 )
 from .workspace_invitation_task import workspace_invitation
-from plane.bgtasks.user_welcome_task import send_welcome_email
+from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
 @shared_task
@@ -58,7 +58,7 @@ def service_importer(service, importer_id):
             )
 
             [
-                send_welcome_email.delay(
+                send_welcome_slack.delay(
                     str(user.id),
                     True,
                     f"{user.email} was imported to Plane from {service}",
