@@ -34,6 +34,7 @@ class InboxViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
+            .select_related("workspace", "project")
         )
 
     def perform_create(self, serializer):
