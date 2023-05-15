@@ -7,7 +7,7 @@ const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 // types
-import type { IInboxIssue, IInbox } from "types";
+import type { IInboxIssue, IInbox, TInboxStatus } from "types";
 
 class InboxServices extends APIService {
   constructor() {
@@ -54,6 +54,34 @@ class InboxServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}`
     )
       .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async markInboxStatus(
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    inboxIssueId: string,
+    data: TInboxStatus
+  ): Promise<IInboxIssue> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
+      data
+    )
+      .then((response) => {
+        const action =
+          data.status === -1
+            ? "INBOX_ISSUE_REJECTED"
+            : data.status === 0
+            ? "INBOX_ISSUE_SNOOZED"
+            : data.status === 1
+            ? "INBOX_ISSUE_ACCEPTED"
+            : "INBOX_ISSUE_DUPLICATED";
+        if (trackEvent) trackEventServices.trackInboxEvent(response?.data, action);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

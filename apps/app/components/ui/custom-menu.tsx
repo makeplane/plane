@@ -55,7 +55,7 @@ const CustomMenu = ({
             {ellipsis || verticalEllipsis ? (
               <Menu.Button
                 type="button"
-                className="relative grid place-items-center rounded p-1 hover:bg-brand-surface-2 focus:outline-none"
+                className="relative grid place-items-center rounded p-1 text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-base focus:outline-none"
               >
                 <EllipsisHorizontalIcon
                   className={`h-4 w-4 ${verticalEllipsis ? "rotate-90" : ""}`}

@@ -35,3 +35,8 @@ export const orderArrayBy = (
 };
 
 export const checkDuplicates = (array: any[]) => new Set(array).size !== array.length;
+
+export const findStringWithMostCharacters = (strings: string[]) =>
+  strings.reduce((longestString, currentString) =>
+    currentString.length > longestString.length ? currentString : longestString
+  );

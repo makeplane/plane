@@ -32,6 +32,7 @@ export const TextArea: React.FC<Props> = ({
   disabled,
   error,
   validations,
+  noPadding = false,
   onChange,
   ...rest
 }) => {
@@ -65,7 +66,9 @@ export const TextArea: React.FC<Props> = ({
           onChange && onChange(e);
           setTextareaValue(e.target.value);
         }}
-        className={`no-scrollbar w-full bg-transparent px-3 py-2 outline-none ${
+        className={`no-scrollbar w-full bg-transparent ${
+          noPadding ? "" : "px-3 py-2"
+        } outline-none ${
           mode === "primary"
             ? "rounded-md border border-brand-base"
             : mode === "transparent"

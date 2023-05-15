@@ -26,6 +26,7 @@ from plane.db.models import Issue, AnalyticView, Workspace, State, Label
 from plane.api.serializers import AnalyticViewSerializer
 from plane.utils.analytics_plot import build_graph_plot
 from plane.bgtasks.analytic_plot_export import analytic_export_task
+from plane.utils.issue_filters import issue_filters
 
 
 class AnalyticsEndpoint(BaseAPIView):
@@ -44,19 +45,10 @@ class AnalyticsEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            project_ids = request.GET.getlist("project")
-            cycle_ids = request.GET.getlist("cycle")
-            module_ids = request.GET.getlist("module")
-
             segment = request.GET.get("segment", False)
+            filters = issue_filters(request.GET, "GET")
 
-            queryset = Issue.objects.filter(workspace__slug=slug)
-            if project_ids:
-                queryset = queryset.filter(project_id__in=project_ids)
-            if cycle_ids:
-                queryset = queryset.filter(issue_cycle__cycle_id__in=cycle_ids)
-            if module_ids:
-                queryset = queryset.filter(issue_module__module_id__in=module_ids)
+            queryset = Issue.objects.filter(workspace__slug=slug, **filters)
 
             total_issues = queryset.count()
             distribution = build_graph_plot(
@@ -75,18 +67,18 @@ class AnalyticsEndpoint(BaseAPIView):
 
                 colors = (
                     State.objects.filter(
-                        workspace__slug=slug, project_id__in=project_ids
+                        workspace__slug=slug, project_id__in=filters.get("project__in")
                     ).values(key, "color")
-                    if project_ids
+                    if filters.get("project__in", False)
                     else State.objects.filter(workspace__slug=slug).values(key, "color")
                 )
 
             if x_axis in ["labels__name"] or segment in ["labels__name"]:
                 colors = (
                     Label.objects.filter(
-                        workspace__slug=slug, project_id__in=project_ids
+                        workspace__slug=slug, project_id__in=filters.get("project__in")
                     ).values("name", "color")
-                    if project_ids
+                    if filters.get("project__in", False)
                     else Label.objects.filter(workspace__slug=slug).values(
                         "name", "color"
                     )
@@ -213,18 +205,9 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
-            queryset = Issue.objects.filter(workspace__slug=slug)
+            filters = issue_filters(request.GET, "GET")
 
-            project_ids = request.GET.getlist("project")
-            cycle_ids = request.GET.getlist("cycle")
-            module_ids = request.GET.getlist("module")
-
-            if project_ids:
-                queryset = queryset.filter(project_id__in=project_ids)
-            if cycle_ids:
-                queryset = queryset.filter(issue_cycle__cycle_id__in=cycle_ids)
-            if module_ids:
-                queryset = queryset.filter(issue_module__module_id__in=module_ids)
+            queryset = Issue.objects.filter(workspace__slug=slug, **filters)
 
             total_issues = queryset.count()
 

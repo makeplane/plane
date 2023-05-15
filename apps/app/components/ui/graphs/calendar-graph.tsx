@@ -14,7 +14,7 @@ export const CalendarGraph: React.FC<TGraph & Omit<CalendarSvgProps, "height" | 
 }) => (
   <div style={{ height, width }}>
     <ResponsiveCalendar
-      margin={margin ?? DEFAULT_MARGIN}
+      margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
       colors={
         rest.colors ?? [
           "rgba(var(--color-accent), 0.2)",
@@ -27,7 +27,7 @@ export const CalendarGraph: React.FC<TGraph & Omit<CalendarSvgProps, "height" | 
       dayBorderColor={rest.dayBorderColor ?? "transparent"}
       daySpacing={rest.daySpacing ?? 5}
       monthBorderColor={rest.monthBorderColor ?? "rgb(var(--color-bg-base))"}
-      theme={theme ?? CHARTS_THEME}
+      theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
       {...rest}
     />
   </div>

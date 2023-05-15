@@ -13,7 +13,6 @@ type Props = {
 export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height" | "width">> = ({
   indexBy,
   keys,
-  padding = 0.3,
   height = "400px",
   width = "100%",
   margin,
@@ -24,11 +23,17 @@ export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height"
     <ResponsiveBar
       indexBy={indexBy}
       keys={keys}
-      margin={margin ?? DEFAULT_MARGIN}
-      padding={padding}
+      margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
+      padding={rest.padding ?? rest.data.length > 7 ? 0.8 : 0.9}
+      axisBottom={{
+        tickSize: 0,
+        tickPadding: 10,
+        tickRotation: rest.data.length > 7 ? -45 : 0,
+      }}
       labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
-      theme={theme ?? CHARTS_THEME}
+      theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
       animate={true}
+      enableLabel={rest.enableLabel ?? false}
       {...rest}
     />
   </div>
