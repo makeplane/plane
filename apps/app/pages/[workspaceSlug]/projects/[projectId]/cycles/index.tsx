@@ -111,7 +111,6 @@ const ProjectCycles: NextPage = () => {
           Add Cycle
         </PrimaryButton>
       }
-      noPadding={cycleView === "list"}
     >
       <CreateUpdateCycleModal
         isOpen={createUpdateCycleModal}
@@ -120,16 +119,22 @@ const ProjectCycles: NextPage = () => {
       />
       <div className="space-y-8 p-8">
         <div className="flex flex-col gap-5">
-          <h3 className={`text-2xl font-semibold text-brand-base ${cycleView === "list" ? "pt-8 px-8" : ""}`}>Cycles</h3>
-            <CyclesView
-              cycleView={cycleView}
-              setCycleView={setCycleView}
-              setSelectedCycle={setSelectedCycle}
-              setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-              cyclesCompleteList={cyclesCompleteList}
-              currentAndUpcomingCycles={currentAndUpcomingCycles}
-              draftCycles={draftCycles}
-            />
+          <h3
+            className={`text-2xl font-semibold text-brand-base ${
+              cycleView === "list" ? "pt-8 px-8" : ""
+            }`}
+          >
+            Cycles
+          </h3>
+          <CyclesView
+            cycleView={cycleView}
+            setCycleView={setCycleView}
+            setSelectedCycle={setSelectedCycle}
+            setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+            cyclesCompleteList={cyclesCompleteList}
+            currentAndUpcomingCycles={currentAndUpcomingCycles}
+            draftCycles={draftCycles}
+          />
         </div>
       </div>
     </ProjectAuthorizationWrapper>
