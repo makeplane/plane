@@ -76,9 +76,9 @@ class AnalyticsEndpoint(BaseAPIView):
                     )
                 )
 
-            assignee_avatars = {}
-            if x_axis in ["assignees__email"]:
-                assignee_avatars = (
+            assignee_details = {}
+            if x_axis in ["assignees__email"] or segment in ["assignees__email"]:
+                assignee_details = (
                     Issue.objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
                     .order_by("assignees__id")
                     .distinct("assignees__id")
@@ -90,7 +90,7 @@ class AnalyticsEndpoint(BaseAPIView):
                 {
                     "total": total_issues,
                     "distribution": distribution,
-                    "extras": {"colors": colors, "assignee_avatars": assignee_avatars},
+                    "extras": {"colors": colors, "assignee_details": assignee_details},
                 },
                 status=status.HTTP_200_OK,
             )
