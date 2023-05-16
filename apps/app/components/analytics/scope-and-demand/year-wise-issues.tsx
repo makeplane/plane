@@ -47,9 +47,7 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
           enableArea
         />
       ) : (
-        <div className="text-brand-secondary text-center text-sm py-8">
-          No issues closed this year.
-        </div>
+        <div className="text-brand-secondary text-center text-sm py-8">No matching data found.</div>
       )}
     </div>
   );

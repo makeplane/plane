@@ -106,6 +106,9 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       );
   };
 
+  const selectedProjects =
+    params.project && params.project.length > 0 ? params.project : projects.map((p) => p.id);
+
   return (
     <div
       className={`p-5 pb-0 flex flex-col space-y-2 ${
@@ -123,11 +126,11 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       <div className="h-full overflow-hidden">
         {fullScreen ? (
           <>
-            {!isProjectLevel && params.project && params.project.length > 0 && (
+            {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
               <div className="hidden h-full overflow-hidden md:flex md:flex-col">
                 <h4 className="font-medium">Selected Projects</h4>
                 <div className="space-y-6 mt-4 h-full overflow-y-auto">
-                  {params.project.map((projectId) => {
+                  {selectedProjects.map((projectId) => {
                     const project: IProject = projects.find((p) => p.id === projectId);
 
                     return (
