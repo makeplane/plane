@@ -21,7 +21,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
           colors={() => `#f97316`}
           customYAxisTickValues={defaultAnalytics.pending_issue_user.map((d) => d.count)}
           tooltip={(datum) => (
-            <div className="rounded-md border border-brand-base bg-brand-base p-2 text-xs">
+            <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
               <span className="font-medium text-brand-secondary">
                 Issue count- {datum.indexValue ?? "No assignee"}:{" "}
               </span>
@@ -51,13 +51,17 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
                   <g transform={`translate(${datum.x},${datum.y})`}>
                     <circle cy={18} r={8} fill="#374151" />
                     <text x={0} y={21} textAnchor="middle" fontSize={9} fill="#ffffff">
-                      {(`${datum.value}` ?? "No assignee").toUpperCase().charAt(0)}
+                      {datum.value ? `${datum.value}`.toUpperCase()[0] : "?"}
                     </text>
                   </g>
                 );
             },
           }}
           margin={{ top: 20 }}
+          theme={{
+            background: "rgb(var(--color-bg-base))",
+            axis: {},
+          }}
         />
       </div>
     </div>

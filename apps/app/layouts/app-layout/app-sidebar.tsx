@@ -11,16 +11,9 @@ import { ProjectSidebarList } from "components/project";
 export interface SidebarProps {
   toggleSidebar: boolean;
   setToggleSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-  isAnalyticsModalOpen: boolean;
-  setAnalyticsModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({
-  toggleSidebar,
-  setToggleSidebar,
-  isAnalyticsModalOpen,
-  setAnalyticsModal,
-}) => {
+const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) => {
   // theme
   const { collapsed: sidebarCollapse } = useTheme();
 
@@ -34,10 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     >
       <div className="flex h-full flex-1 flex-col">
         <WorkspaceSidebarDropdown />
-        <WorkspaceSidebarMenu
-          isAnalyticsModalOpen={isAnalyticsModalOpen}
-          setAnalyticsModal={setAnalyticsModal}
-        />
+        <WorkspaceSidebarMenu />
         <ProjectSidebarList />
         <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />
       </div>

@@ -1,50 +1,81 @@
 import { useRouter } from "next/router";
 
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
-// react-hook-form
-import { Control, Controller, UseFormSetValue } from "react-hook-form";
 // services
 import analyticsService from "services/analytics.service";
+import projectService from "services/project.service";
+import cyclesService from "services/cycles.service";
+import modulesService from "services/modules.service";
 // hooks
 import useProjects from "hooks/use-projects";
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, CustomSelect, PrimaryButton } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
-import { ArrowPathIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon, ArrowPathIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { ContrastIcon, LayerDiagonalIcon } from "components/icons";
+// helpers
+import { renderShortDate } from "helpers/date-time.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData } from "types";
+import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IProject } from "types";
 // fetch-keys
-import { ANALYTICS } from "constants/fetch-keys";
+import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
 // constants
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
+import { NETWORK_CHOICES } from "constants/project";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;
   params: IAnalyticsParams;
-  control: Control<IAnalyticsParams, any>;
-  setValue: UseFormSetValue<IAnalyticsParams>;
-  setSaveAnalyticsModal: React.Dispatch<React.SetStateAction<boolean>>;
   fullScreen: boolean;
-  isProjectLevel?: boolean;
+  isProjectLevel: boolean;
 };
 
 export const AnalyticsSidebar: React.FC<Props> = ({
   analytics,
   params,
-  control,
-  setValue,
-  setSaveAnalyticsModal,
   fullScreen,
   isProjectLevel = false,
 }) => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const { projects } = useProjects();
 
   const { setToastAlert } = useToast();
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId && !(cycleId || moduleId)
+      ? PROJECT_DETAILS(projectId.toString())
+      : null,
+    workspaceSlug && projectId && !(cycleId || moduleId)
+      ? () => projectService.getProject(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  const { data: cycleDetails } = useSWR(
+    workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId.toString()) : null,
+    workspaceSlug && projectId && cycleId
+      ? () =>
+          cyclesService.getCycleDetails(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            cycleId.toString()
+          )
+      : null
+  );
+
+  const { data: moduleDetails } = useSWR(
+    workspaceSlug && projectId && moduleId ? MODULE_DETAILS(moduleId.toString()) : null,
+    workspaceSlug && projectId && moduleId
+      ? () =>
+          modulesService.getModuleDetails(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            moduleId.toString()
+          )
+      : null
+  );
 
   const exportAnalytics = () => {
     if (!workspaceSlug) return;
@@ -55,7 +86,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
     };
 
     if (params.segment) data.segment = params.segment;
-    if (params.project) data.project = [params.project];
+    if (params.project) data.project = params.project;
 
     analyticsService
       .exportAnalytics(workspaceSlug.toString(), data)
@@ -77,155 +108,180 @@ export const AnalyticsSidebar: React.FC<Props> = ({
 
   return (
     <div
-      className={`gap-4 p-5 ${
-        fullScreen ? "border-l border-brand-base bg-brand-sidebar h-full" : ""
+      className={`p-5 pb-0 flex flex-col space-y-2 md:space-y-4 overflow-hidden ${
+        fullScreen
+          ? "pb-5 border-l border-brand-base md:h-full md:pb-5 md:border-l md:border-brand-base"
+          : ""
       }`}
     >
-      <div className={`sticky top-5 ${fullScreen ? "space-y-4" : "space-y-2"}`}>
-        <div className="flex items-center justify-between gap-2 flex-shrink-0">
-          <h5 className="text-lg font-medium">
-            {analytics?.total ?? 0}{" "}
-            <span className="text-xs font-normal text-brand-secondary">issues</span>
-          </h5>
-          <CustomMenu ellipsis>
-            <CustomMenu.MenuItem
-              onClick={() => {
-                if (!workspaceSlug) return;
-
-                mutate(ANALYTICS(workspaceSlug.toString(), params));
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <ArrowPathIcon className="h-3 w-3" />
-                Refresh
-              </div>
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem onClick={exportAnalytics}>
-              <div className="flex items-center gap-2">
-                <ArrowUpTrayIcon className="h-3 w-3" />
-                Export analytics as CSV
-              </div>
-            </CustomMenu.MenuItem>
-          </CustomMenu>
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1 bg-brand-surface-2 rounded-md px-3 py-1 text-brand-secondary text-xs">
+          <LayerDiagonalIcon height={14} width={14} />
+          {analytics ? analytics.total : "..."} Issues
         </div>
-        <div className={`${fullScreen ? "space-y-4" : "grid items-center gap-4 grid-cols-3"}`}>
-          {isProjectLevel === false && (
-            <div>
-              <h6 className="text-xs text-brand-secondary">Project</h6>
-              <Controller
-                name="project"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    label={projects.find((p) => p.id === value)?.name ?? "All projects"}
-                    onChange={onChange}
-                    width="w-full"
-                    maxHeight="lg"
-                  >
-                    <CustomSelect.Option value={null}>All projects</CustomSelect.Option>
-                    {projects.map((project) => (
-                      <CustomSelect.Option key={project.id} value={project.id}>
-                        {project.name}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                )}
-              />
-            </div>
-          )}
-          <div>
-            <h6 className="text-xs text-brand-secondary">Measure (y-axis)</h6>
-            <Controller
-              name="y_axis"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  label={
-                    <span>
-                      {ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === value)?.label ?? "None"}
-                    </span>
-                  }
-                  onChange={onChange}
-                  width="w-full"
-                >
-                  {ANALYTICS_Y_AXIS_VALUES.map((item) => (
-                    <CustomSelect.Option key={item.value} value={item.value}>
-                      {item.label}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
-              )}
-            />
-          </div>
-          <div>
-            <h6 className="text-xs text-brand-secondary">Dimension (x-axis)</h6>
-            <Controller
-              name="x_axis"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  label={
-                    <span>{ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label}</span>
-                  }
-                  onChange={(val: string) => {
-                    if (params.segment === val) setValue("segment", null);
-
-                    onChange(val);
-                  }}
-                  width="w-full"
-                  maxHeight="lg"
-                >
-                  {ANALYTICS_X_AXIS_VALUES.map((item) => (
-                    <CustomSelect.Option key={item.value} value={item.value}>
-                      {item.label}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
-              )}
-            />
-          </div>
-          <div>
-            <h6 className="text-xs text-brand-secondary">Segment</h6>
-            <Controller
-              name="segment"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  label={
-                    <span>
-                      {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label ?? (
-                        <span className="text-brand-secondary">No value</span>
-                      )}
-                    </span>
-                  }
-                  onChange={onChange}
-                  width="w-full"
-                  maxHeight="lg"
-                >
-                  <CustomSelect.Option value={null}>No value</CustomSelect.Option>
-                  {ANALYTICS_X_AXIS_VALUES.map((item) => {
-                    if (params.x_axis === item.value) return null;
+      </div>
+      <div className="h-full overflow-hidden">
+        {fullScreen ? (
+          <>
+            {!isProjectLevel && params.project && params.project.length > 0 && (
+              <div className="hidden h-full overflow-hidden md:flex md:flex-col">
+                <h4 className="font-medium">Selected Projects</h4>
+                <div className="space-y-6 mt-4 h-full overflow-y-auto">
+                  {params.project.map((projectId) => {
+                    const project: IProject = projects.find((p) => p.id === projectId);
 
                     return (
-                      <CustomSelect.Option key={item.value} value={item.value}>
-                        {item.label}
-                      </CustomSelect.Option>
+                      <div key={project.id}>
+                        <h5 className="text-sm flex items-center gap-1">
+                          {project.icon ? (
+                            <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
+                              {String.fromCodePoint(parseInt(project.icon))}
+                            </span>
+                          ) : (
+                            <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                              {project?.name.charAt(0)}
+                            </span>
+                          )}
+                          <span className="break-all">{project.name}</span>
+                        </h5>
+                        <div className="mt-4 space-y-3 pl-2">
+                          <div className="flex items-center justify-between gap-2 text-xs">
+                            <div className="flex items-center gap-2">
+                              <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+                              <h6>Total members</h6>
+                            </div>
+                            <span className="text-brand-secondary">{project.total_members}</span>
+                          </div>
+                          <div className="flex items-center justify-between gap-2 text-xs">
+                            <div className="flex items-center gap-2">
+                              <ContrastIcon height={16} width={16} />
+                              <h6>Total cycles</h6>
+                            </div>
+                            <span className="text-brand-secondary">{project.total_cycles}</span>
+                          </div>
+                          <div className="flex items-center justify-between gap-2 text-xs">
+                            <div className="flex items-center gap-2">
+                              <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+                              <h6>Total modules</h6>
+                            </div>
+                            <span className="text-brand-secondary">{project.total_modules}</span>
+                          </div>
+                        </div>
+                      </div>
                     );
                   })}
-                </CustomSelect>
-              )}
-            />
+                </div>
+              </div>
+            )}
+            {projectId ? (
+              cycleId && cycleDetails ? (
+                <div className="hidden md:block h-full overflow-y-auto">
+                  <h4 className="font-medium break-all">{cycleDetails.name}</h4>
+                  <div className="space-y-4 mt-4">
+                    <div className="flex items-center gap-2 text-xs">
+                      <h6 className="text-brand-secondary">Lead</h6>
+                      <span>
+                        {cycleDetails.owned_by?.first_name} {cycleDetails.owned_by?.last_name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <h6 className="text-brand-secondary">Start Date</h6>
+                      <span>
+                        {cycleDetails.start_date && cycleDetails.start_date !== ""
+                          ? renderShortDate(cycleDetails.start_date)
+                          : "No start date"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <h6 className="text-brand-secondary">Target Date</h6>
+                      <span>
+                        {cycleDetails.end_date && cycleDetails.end_date !== ""
+                          ? renderShortDate(cycleDetails.end_date)
+                          : "No end date"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : moduleId && moduleDetails ? (
+                <div className="hidden md:block h-full overflow-y-auto">
+                  <h4 className="font-medium break-all">{moduleDetails.name}</h4>
+                  <div className="space-y-4 mt-4">
+                    <div className="flex items-center gap-2 text-xs">
+                      <h6 className="text-brand-secondary">Lead</h6>
+                      <span>
+                        {moduleDetails.lead_detail?.first_name}{" "}
+                        {moduleDetails.lead_detail?.last_name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <h6 className="text-brand-secondary">Start Date</h6>
+                      <span>
+                        {moduleDetails.start_date && moduleDetails.start_date !== ""
+                          ? renderShortDate(moduleDetails.start_date)
+                          : "No start date"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <h6 className="text-brand-secondary">Target Date</h6>
+                      <span>
+                        {moduleDetails.target_date && moduleDetails.target_date !== ""
+                          ? renderShortDate(moduleDetails.target_date)
+                          : "No end date"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="hidden md:flex md:flex-col h-full overflow-y-auto">
+                  <div className="flex items-center gap-1">
+                    {projectDetails?.icon ? (
+                      <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
+                        {String.fromCodePoint(parseInt(projectDetails.icon))}
+                      </span>
+                    ) : (
+                      <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                        {projectDetails?.name.charAt(0)}
+                      </span>
+                    )}
+                    <h4 className="font-medium break-all">{projectDetails?.name}</h4>
+                  </div>
+                  <div className="space-y-4 mt-4">
+                    <div className="flex items-center gap-2 text-xs">
+                      <h6 className="text-brand-secondary">Network</h6>
+                      <span>
+                        {
+                          NETWORK_CHOICES[
+                            `${projectDetails?.network}` as keyof typeof NETWORK_CHOICES
+                          ]
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
+            ) : null}
+          </>
+        ) : null}
+      </div>
+      <div className="flex items-center gap-2 flex-wrap justify-self-end">
+        <SecondaryButton
+          onClick={() => {
+            if (!workspaceSlug) return;
+
+            mutate(ANALYTICS(workspaceSlug.toString(), params));
+          }}
+        >
+          <div className="flex items-center gap-2 -my-1">
+            <ArrowPathIcon className="h-3.5 w-3.5" />
+            Refresh
           </div>
-        </div>
-        {/* <div className="flex items-center justify-end gap-2">
-          <PrimaryButton className="py-1" onClick={() => setSaveAnalyticsModal(true)}>
-            Save analytics
-          </PrimaryButton>
-        </div> */}
+        </SecondaryButton>
+        <PrimaryButton onClick={exportAnalytics}>
+          <div className="flex items-center gap-2 -my-1">
+            <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+            Export as CSV
+          </div>
+        </PrimaryButton>
       </div>
     </div>
   );

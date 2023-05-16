@@ -50,7 +50,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
         );
       })}
     </div>
-    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-brand-base bg-brand-base p-2 text-xs">
+    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
       <p className="flex items-center gap-1 text-brand-secondary">
         <PlayIcon className="h-4 w-4 -rotate-90" aria-hidden="true" />
         <span>Estimate Demand:</span>

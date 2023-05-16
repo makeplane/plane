@@ -11,7 +11,7 @@ export interface IAnalyticsData {
     dimension: string | null;
     segment?: string;
     count?: number;
-    effort?: number | null;
+    estimate?: number | null;
   }[];
 }
 
@@ -34,13 +34,13 @@ export type TXAxisValues =
   | "created_at"
   | "completed_at";
 
-export type TYAxisValues = "issue_count" | "effort";
+export type TYAxisValues = "issue_count" | "estimate";
 
 export interface IAnalyticsParams {
   x_axis: TXAxisValues;
   y_axis: TYAxisValues;
   segment?: TXAxisValues | null;
-  project?: string | null;
+  project?: string[] | null;
   cycle?: string | null;
   module?: string | null;
 }
@@ -59,7 +59,8 @@ export interface IExportAnalyticsFormData {
 
 export interface IDefaultAnalyticsUser {
   assignees__avatar: string | null;
-  assignees__email: string;
+  assignees__first_name: string;
+  assignees__last_name: string;
   count: number;
 }
 
@@ -68,7 +69,8 @@ export interface IDefaultAnalyticsResponse {
   most_issue_closed_user: IDefaultAnalyticsUser[];
   most_issue_created_user: {
     created_by__avatar: string | null;
-    created_by__email: string;
+    created_by__first_name: string;
+    created_by__last_name: string;
     count: number;
   }[];
   open_estimate_sum: number;

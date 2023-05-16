@@ -18,7 +18,7 @@ type Props = {
     xAxisKeys: string[];
   };
   params: IAnalyticsParams;
-  yAxisKey: "effort" | "count";
+  yAxisKey: "count" | "estimate";
   fullScreen: boolean;
 };
 
@@ -70,6 +70,7 @@ export const AnalyticsGraph: React.FC<Props> = ({
       height={fullScreen ? "400px" : "300px"}
       margin={{ right: 20, bottom: longestXAxisLabel.length * 5 + 20 }}
       theme={{
+        background: "rgb(var(--color-bg-base))",
         axis: {},
       }}
     />
