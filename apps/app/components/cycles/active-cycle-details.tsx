@@ -396,6 +396,12 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                   {cycle.completed_issues} issues
                 </div>
               </div>
+
+              <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
+                <a className="bg-brand-accent text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-brand-accent/90">
+                  View Cycle
+                </a>
+              </Link>
             </div>
           </a>
         </div>
