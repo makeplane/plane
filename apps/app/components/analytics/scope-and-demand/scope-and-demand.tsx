@@ -56,6 +56,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
               <AnalyticsLeaderboard
                 users={defaultAnalytics.most_issue_created_user.map((user) => ({
                   avatar: user.created_by__avatar,
+                  email: user.created_by__email,
                   firstName: user.created_by__first_name,
                   lastName: user.created_by__last_name,
                   count: user.count,
@@ -65,6 +66,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
               <AnalyticsLeaderboard
                 users={defaultAnalytics.most_issue_closed_user.map((user) => ({
                   avatar: user.assignees__avatar,
+                  email: user.assignees__email,
                   firstName: user.assignees__first_name,
                   lastName: user.assignees__last_name,
                   count: user.count,

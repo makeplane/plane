@@ -1,7 +1,7 @@
 // ui
 import { CustomSelect } from "components/ui";
 // types
-import { IAnalyticsParams, TYAxisValues } from "types";
+import { TYAxisValues } from "types";
 // constants
 import { ANALYTICS_Y_AXIS_VALUES } from "constants/analytics";
 

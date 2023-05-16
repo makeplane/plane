@@ -3,6 +3,10 @@ export interface IAnalyticsResponse {
   distribution: IAnalyticsData;
   extras: {
     colors: IAnalyticsExtra[];
+    assignee_avatars?: {
+      assignees__avatar: string | null;
+      assignees__email: string;
+    }[];
   };
 }
 
@@ -59,6 +63,7 @@ export interface IExportAnalyticsFormData {
 
 export interface IDefaultAnalyticsUser {
   assignees__avatar: string | null;
+  assignees__email: string | null;
   assignees__first_name: string;
   assignees__last_name: string;
   count: number;
@@ -69,6 +74,7 @@ export interface IDefaultAnalyticsResponse {
   most_issue_closed_user: IDefaultAnalyticsUser[];
   most_issue_created_user: {
     created_by__avatar: string | null;
+    created_by__email: string | null;
     created_by__first_name: string;
     created_by__last_name: string;
     count: number;

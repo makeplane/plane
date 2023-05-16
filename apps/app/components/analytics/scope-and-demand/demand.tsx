@@ -37,7 +37,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
               </div>
               <p className="text-brand-secondary">{percentage}%</p>
             </div>
-            <div className="bar relative h-1 w-full rounded bg-brand-base">
+            <div className="bar relative h-1 w-full rounded bg-brand-surface-2">
               <div
                 className="absolute top-0 left-0 h-1 rounded duration-300"
                 style={{

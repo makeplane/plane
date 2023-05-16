@@ -30,7 +30,6 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
           : "All projects"
       }
       optionsClassName="min-w-full"
-      position="right"
       noChevron
       multiple
     />
