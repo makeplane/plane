@@ -8,6 +8,9 @@ from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, Conc
 
 
 def build_graph_plot(queryset, x_axis, y_axis, segment=None):
+
+    temp_axis = x_axis
+
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
         year = ExtractYear(x_axis)
         month = ExtractMonth(x_axis)
@@ -61,7 +64,13 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     result_values = list(queryset)
     grouped_data = {}
-    for date, items in groupby(result_values, key=lambda x: x[str("dimension")]):
-        grouped_data[str(date)] = list(items)
+    for key, items in groupby(result_values, key=lambda x: x[str("dimension")]):
+        grouped_data[str(key)] = list(items)
 
-    return grouped_data
+    sorted_data = grouped_data
+    if temp_axis == "priority":
+        order = ["low", "medium", "high", "urgent", "None"]
+        sorted_data = {key: grouped_data[key] for key in order if key in grouped_data}
+    else:
+        sorted_data = dict(sorted(grouped_data.items(), key=lambda x: (x[0] is "None", x[0])))
+    return sorted_data
