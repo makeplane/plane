@@ -255,7 +255,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
 
   return (
     <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-brand-base border border-brand-base">
-      <div className="grid grid-cols-3 divide-x border-brand-base">
+      <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-x xl:grid-cols-3">
         <div className="flex flex-col text-xs">
           <a className="w-full">
             <div className="flex h-full flex-col gap-5 rounded-b-[10px] p-4">
@@ -405,50 +405,52 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
             </div>
           </a>
         </div>
-        <div className="flex h-full flex-col border-brand-base">
-          <div className="flex h-full w-full flex-col text-brand-secondary p-4">
-            <div className="flex w-full items-center gap-2 py-1">
-              <span>Progress</span>
-              <LinearProgressIndicator data={progressIndicatorData} />
-            </div>
-            <div className="flex flex-col mt-2 gap-1 items-center">
-              {Object.keys(groupedIssues).map((group, index) => (
-                <SingleProgressStats
-                  key={index}
-                  title={
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="block h-3 w-3 rounded-full "
-                        style={{
-                          backgroundColor: stateGroups[index].color,
-                        }}
-                      />
-                      <span className="text-xs capitalize">{group}</span>
-                    </div>
-                  }
-                  completed={groupedIssues[group]}
-                  total={cycle.total_issues}
-                />
-              ))}
+        <div className="grid col-span-2 grid-cols-1 divide-y border-brand-base lg:divide-x lg:grid-cols-2">
+          <div className="flex h-full flex-col border-brand-base">
+            <div className="flex h-full w-full flex-col text-brand-secondary p-4">
+              <div className="flex w-full items-center gap-2 py-1">
+                <span>Progress</span>
+                <LinearProgressIndicator data={progressIndicatorData} />
+              </div>
+              <div className="flex flex-col mt-2 gap-1 items-center">
+                {Object.keys(groupedIssues).map((group, index) => (
+                  <SingleProgressStats
+                    key={index}
+                    title={
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="block h-3 w-3 rounded-full "
+                          style={{
+                            backgroundColor: stateGroups[index].color,
+                          }}
+                        />
+                        <span className="text-xs capitalize">{group}</span>
+                      </div>
+                    }
+                    completed={groupedIssues[group]}
+                    total={cycle.total_issues}
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="border-brand-base p-4">
-          <SidebarProgressStats
-            issues={issues ?? []}
-            groupedIssues={{
-              backlog: cycle.backlog_issues,
-              unstarted: cycle.unstarted_issues,
-              started: cycle.started_issues,
-              completed: cycle.completed_issues,
-              cancelled: cycle.cancelled_issues,
-            }}
-            roundedTab
-            noBackground
-          />
+          <div className="border-brand-base p-4">
+            <SidebarProgressStats
+              issues={issues ?? []}
+              groupedIssues={{
+                backlog: cycle.backlog_issues,
+                unstarted: cycle.unstarted_issues,
+                started: cycle.started_issues,
+                completed: cycle.completed_issues,
+                cancelled: cycle.cancelled_issues,
+              }}
+              roundedTab
+              noBackground
+            />
+          </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 divide-x border-brand-base">
+      <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-x lg:grid-cols-2">
         <div className="flex flex-col justify-between p-4">
           <div>
             <div className="text-brand-primary mb-2">High Priority Issues</div>

@@ -98,7 +98,7 @@ export const CyclesView: React.FC<Props> = ({
       >
         {" "}
         <div className="flex justify-between">
-          <Tab.List as="div" className="flex items-center justify-start gap-4 text-base">
+          <Tab.List as="div" className="flex flex-wrap items-center justify-start gap-4 text-base">
             {["All", "Active", "Upcoming", "Completed", "Drafts"].map((tab, index) => (
               <Tab
                 key={index}
