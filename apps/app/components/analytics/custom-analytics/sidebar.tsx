@@ -204,7 +204,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                 </div>
               ) : moduleId && moduleDetails ? (
                 <div className="hidden md:block h-full overflow-y-auto">
-                  <h4 className="font-medium break-all">{moduleDetails.name}</h4>
+                  <h4 className="font-medium break-all">Analytics for {moduleDetails.name}</h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-brand-secondary">Lead</h6>

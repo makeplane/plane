@@ -8,8 +8,8 @@
 <circle cx="103.434" cy="68.4443" r="4.51262" fill="#8CC1FF"/>
 <circle cx="95.3115" cy="68.4444" r="4.96388" fill="white"/>
 <circle cx="95.3117" cy="68.4443" r="4.51262" fill="#2C435F"/>
-<rect x="59.238" y="60.1787" width="23.984" height="16.3369" rx="2.60695" fill="white" stroke="#DEE2E6" stroke-width="0.347594"/>
-<circle cx="70.8824" cy="68.3478" r="4.86631" stroke="#FCBE1D" stroke-width="0.695187" stroke-linecap="round" stroke-dasharray="0 13.9 0 6.95"/>
+<rect x="59.238" y="60.1787" width="23.984" height="16.3369" rx="2.60695" fill="white" stroke="#DEE2E6" strokeWidth="0.347594"/>
+<circle cx="70.8824" cy="68.3478" r="4.86631" stroke="#FCBE1D" strokeWidth="0.695187" stroke-linecap="round" stroke-dasharray="0 13.9 0 6.95"/>
 <path d="M73.2007 65.3557C72.5321 64.8376 71.7093 64.5583 70.8634 64.5625C70.0176 64.5668 69.1975 64.8542 68.5341 65.379L70.8823 68.3474L73.2007 65.3557Z" fill="#FCBE1D"/>
 <path d="M68.5576 71.3396C69.2262 71.8578 70.049 72.137 70.8949 72.1328C71.7407 72.1285 72.5608 71.8411 73.2242 71.3163L70.876 68.3479L68.5576 71.3396Z" fill="#FCBE1D"/>
 <rect x="36.8181" y="60.0049" width="16.6845" height="16.6845" rx="2.78075" fill="#FFEDD5"/>
@@ -27,8 +27,8 @@
 <circle cx="81.434" cy="92.4443" r="4.51262" fill="#8CC1FF"/>
 <circle cx="73.3115" cy="92.4444" r="4.96388" fill="white"/>
 <circle cx="73.3117" cy="92.4443" r="4.51262" fill="#2C435F"/>
-<rect x="37.238" y="84.1787" width="23.984" height="16.3369" rx="2.60695" fill="white" stroke="#DEE2E6" stroke-width="0.347594"/>
-<circle cx="48.8824" cy="92.3478" r="4.86631" stroke="#FCBE1D" stroke-width="0.695187" stroke-linecap="round" stroke-dasharray="0 13.9 0 6.95"/>
+<rect x="37.238" y="84.1787" width="23.984" height="16.3369" rx="2.60695" fill="white" stroke="#DEE2E6" strokeWidth="0.347594"/>
+<circle cx="48.8824" cy="92.3478" r="4.86631" stroke="#FCBE1D" strokeWidth="0.695187" stroke-linecap="round" stroke-dasharray="0 13.9 0 6.95"/>
 <path d="M51.2007 89.3557C50.5321 88.8376 49.7093 88.5583 48.8634 88.5625C48.0176 88.5668 47.1975 88.8542 46.5341 89.379L48.8823 92.3474L51.2007 89.3557Z" fill="#FCBE1D"/>
 <path d="M46.5576 95.3396C47.2262 95.8578 48.049 96.137 48.8949 96.1328C49.7407 96.1285 50.5608 95.8411 51.2242 95.3163L48.876 92.3479L46.5576 95.3396Z" fill="#FCBE1D"/>
 <rect x="14.8181" y="84.0049" width="16.6845" height="16.6845" rx="2.78075" fill="#FFEDD5"/>

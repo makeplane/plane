@@ -76,11 +76,17 @@ class AnalyticsEndpoint(BaseAPIView):
                     )
                 )
 
+            assignee_avatars = {}
+            if x_axis in ["assignees__email"]:
+                assignee_avatars = Issue.objects.filter(
+                    workspace__slug=slug, **filters
+                ).values("assignees__avatar")
+
             return Response(
                 {
                     "total": total_issues,
                     "distribution": distribution,
-                    "extras": {"colors": colors},
+                    "extras": {"colors": colors, "assignee_avatars": assignee_avatars},
                 },
                 status=status.HTTP_200_OK,
             )
@@ -231,21 +237,21 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             )
             most_issue_created_user = (
                 queryset.exclude(created_by=None)
-                .values("created_by__email", "created_by__avatar")
+                .values("created_by__first_name", "created_by__last_name", "created_by__avatar")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             most_issue_closed_user = (
                 queryset.filter(completed_at__isnull=False, assignees__isnull=False)
-                .values("assignees__email", "assignees__avatar")
+                .values("assignees__first_name", "assignees__last_name", "assignees__avatar")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             pending_issue_user = (
                 queryset.filter(completed_at__isnull=True)
-                .values("assignees__email", "assignees__avatar")
+                .values("assignees__first_name", "assignees__last_name", "assignees__avatar")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )
