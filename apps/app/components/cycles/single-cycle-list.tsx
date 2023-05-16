@@ -304,7 +304,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     }`}
                   />
                   <div>
-                    <Tooltip tooltipContent={cycle.name} position="top-left">
+                    <Tooltip tooltipContent={cycle.name} className="break-all" position="top-left">
                       <h3 className="break-all text-base font-semibold">
                         {truncateText(cycle.name, 70)}
                       </h3>
