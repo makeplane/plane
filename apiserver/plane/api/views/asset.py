@@ -80,7 +80,7 @@ class UserAssetsEndpoint(BaseAPIView):
     def post(self, request):
         # try:
             serializer = FileAssetSerializer(data=request.data)
-            print(settings.AWS_S3_ENDPOINT_URL)
+            print(settings.AWS_S3_ENDPOINT_URL, settings.AWS_S3_BUCKET_NAME)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
