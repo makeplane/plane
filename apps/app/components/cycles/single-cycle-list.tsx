@@ -358,17 +358,21 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       cycleStatus
                     )}
                   </span>
-                  <span className="flex items-center justify-start gap-2 text-brand-secondary">
-                    <div className="flex items-start gap-1 ">
-                      <CalendarDaysIcon className="h-4 w-4" />
-                      <span>{renderShortDateWithYearFormat(startDate)}</span>
+
+                  {cycleStatus !== "draft" && (
+                    <div className="flex items-center justify-start gap-2 text-brand-secondary">
+                      <div className="flex items-start gap-1 ">
+                        <CalendarDaysIcon className="h-4 w-4" />
+                        <span>{renderShortDateWithYearFormat(startDate)}</span>
+                      </div>
+                      <ArrowRightIcon className="h-4 w-4" />
+                      <div className="flex items-start gap-1 ">
+                        <TargetIcon className="h-4 w-4" />
+                        <span>{renderShortDateWithYearFormat(endDate)}</span>
+                      </div>
                     </div>
-                    <ArrowRightIcon className="h-4 w-4" />
-                    <div className="flex items-start gap-1 ">
-                      <TargetIcon className="h-4 w-4" />
-                      <span>{renderShortDateWithYearFormat(endDate)}</span>
-                    </div>
-                  </span>
+                  )}
+
                   <div className="flex items-center gap-2.5 text-brand-secondary">
                     {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                       <Image

@@ -350,18 +350,22 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                   )}
                 </span>
               </div>
-
-              <div className="flex items-center justify-start gap-5 text-brand-secondary">
-                <div className="flex items-start gap-1">
-                  <CalendarDaysIcon className="h-4 w-4" />
-                  <span>{renderShortDateWithYearFormat(startDate)}</span>
-                </div>
-                <ArrowRightIcon className="h-4 w-4" />
-                <div className="flex items-start gap-1">
-                  <TargetIcon className="h-4 w-4" />
-                  <span>{renderShortDateWithYearFormat(endDate)}</span>
-                </div>
+              <div className="flex h-4 items-center justify-start gap-5 text-brand-secondary">
+                {cycleStatus !== "draft" && (
+                  <>
+                    <div className="flex items-start gap-1">
+                      <CalendarDaysIcon className="h-4 w-4" />
+                      <span>{renderShortDateWithYearFormat(startDate)}</span>
+                    </div>
+                    <ArrowRightIcon className="h-4 w-4" />
+                    <div className="flex items-start gap-1">
+                      <TargetIcon className="h-4 w-4" />
+                      <span>{renderShortDateWithYearFormat(endDate)}</span>
+                    </div>
+                  </>
+                )}
               </div>
+
               <div className="flex justify-between items-end">
                 <div className="flex flex-col gap-2 text-xs text-brand-secondary">
                   <div className="flex items-center gap-2">
