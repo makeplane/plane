@@ -37,7 +37,7 @@ class FileAssetEndpoint(BaseAPIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -78,19 +78,18 @@ class UserAssetsEndpoint(BaseAPIView):
             )
 
     def post(self, request):
-        # try:
+        try:
             serializer = FileAssetSerializer(data=request.data)
-            print(settings.AWS_S3_ENDPOINT_URL, settings.AWS_S3_BUCKET_NAME)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # except Exception as e:
-        #     print(e)
-        #     return Response(
-        #         {"error": "Something went wrong please try again later"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def delete(self, request, asset_key):
         try:
