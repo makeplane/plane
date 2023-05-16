@@ -94,7 +94,10 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ issues }) => {
         </Tab>
       </Tab.List>
       <Tab.Panels className="flex w-full">
-        <Tab.Panel as="div" className="flex flex-col w-full mt-2 gap-1 items-center">
+        <Tab.Panel
+          as="div"
+          className="flex flex-col w-full mt-2 gap-1 items-center text-brand-secondary"
+        >
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i?.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
@@ -142,7 +145,10 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ issues }) => {
             ""
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex flex-col w-full mt-2 gap-1 items-center">
+        <Tab.Panel
+          as="div"
+          className="flex flex-col w-full mt-2 gap-1 items-center text-brand-secondary"
+        >
           {issueLabels?.map((label, index) => {
             const totalArray = issues?.filter((i) => i?.labels?.includes(label.id));
             const completeArray = totalArray?.filter((i) => i?.state_detail.group === "completed");
