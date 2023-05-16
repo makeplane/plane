@@ -33,8 +33,8 @@ const getAllDaysInMonthInMonthView = (month: number, year: number) => {
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
       active:
         currentDate.getFullYear() === year &&
-          currentDate.getMonth() === month &&
-          currentDate.getDate() === _day + 1
+        currentDate.getMonth() === month &&
+        currentDate.getDate() === _day + 1
           ? true
           : false,
     });
@@ -43,7 +43,7 @@ const getAllDaysInMonthInMonthView = (month: number, year: number) => {
   return day;
 };
 
-export const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number) => {
+const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number) => {
   const currentMonth: number = month;
   const currentYear: number = year;
 
@@ -149,7 +149,18 @@ export const generateMonthChart = (monthPayload: ChartDataType, side: null | "le
   return { state: renderState, payload: renderPayload, scrollWidth: scrollWidth };
 };
 
-export const setMonthChartItemPosition = (chartData: ChartDataType, itemData: any) => {
+export const getNumberOfDaysBetweenTwoDatesInMonth = (startDate: Date, endDate: Date) => {
+  let daysDifference: number = 0;
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+
+  const timeDifference: number = startDate.getTime() - endDate.getTime();
+  daysDifference = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
+
+  return daysDifference;
+};
+
+export const setMonthChartItemPositionInMonth = (chartData: ChartDataType, itemData: any) => {
   let scrollPosition: number = 0;
   const { startDate } = chartData.data;
   const { start_date: itemStartDate } = itemData;
@@ -164,7 +175,7 @@ export const setMonthChartItemPosition = (chartData: ChartDataType, itemData: an
   return scrollPosition;
 };
 
-export const setMonthChartItemWidth = (chartData: ChartDataType, itemData: any) => {
+export const setMonthChartItemWidthInMonth = (chartData: ChartDataType, itemData: any) => {
   let scrollWidth: number = 0;
   const { start_date: itemStartDate, target_date: itemTargetDate } = itemData;
 
@@ -176,15 +187,4 @@ export const setMonthChartItemWidth = (chartData: ChartDataType, itemData: any) 
   scrollWidth = (daysDifference + 1) * chartData.data.width;
 
   return scrollWidth;
-};
-
-export const getNumberOfDaysBetweenTwoDates = (startDate: Date, endDate: Date) => {
-  let daysDifference: number = 0;
-  startDate.setHours(0, 0, 0, 0);
-  endDate.setHours(0, 0, 0, 0);
-
-  const timeDifference: number = startDate.getTime() - endDate.getTime();
-  daysDifference = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
-
-  return daysDifference;
 };

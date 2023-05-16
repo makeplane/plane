@@ -35,14 +35,8 @@ export const QuarterChartView: FC<any> = () => {
                       >
                         <div>{_item.title}</div>
                       </div>
-                      <div
-                        className={`relative h-full w-full flex-1 flex justify-center ${
-                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "")
-                            ? `bg-gray-100`
-                            : ``
-                        }`}
-                      >
-                        {_item?.active && (
+                      <div className={`relative h-full w-full flex-1 flex justify-center`}>
+                        {_item?.today && (
                           <div className="absolute top-0 bottom-0 border border-red-500"> </div>
                         )}
                       </div>

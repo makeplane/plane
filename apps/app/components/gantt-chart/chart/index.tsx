@@ -10,16 +10,16 @@ import { QuarterChartView } from "./quarter";
 import { YearChartView } from "./year";
 // views
 import {
-  setMonthChartItemPosition,
-  setMonthChartItemWidth,
   // generateHourChart,
   // generateDayChart,
-  // generateWeekChart,
-  // generateBiWeekChart,
+  generateWeekChart,
+  generateBiWeekChart,
   generateMonthChart,
-  // generateQuarterChart,
+  generateQuarterChart,
   generateYearChart,
-  getNumberOfDaysBetweenTwoDates,
+  getNumberOfDaysBetweenTwoDatesInMonth,
+  getNumberOfDaysBetweenTwoDatesInQuarter,
+  getNumberOfDaysBetweenTwoDatesInYear,
 } from "../views";
 // types
 import { ChartDataType } from "../types";
@@ -32,14 +32,6 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
   const { blockSidebarToggle, currentView, currentViewData, renderView, dispatch, allViews } =
     useChart();
 
-  console.log("--------------------------------------");
-  console.log("blockSidebarToggle", blockSidebarToggle);
-  console.log("currentView", currentView);
-  console.log("currentViewData", currentViewData);
-  console.log("renderView", renderView);
-  console.log("allViews", allViews);
-  console.log("--------------------------------------");
-
   const [currentScrollPosition, setCurrentScrollPosition] = useState<number>(0);
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
 
@@ -47,7 +39,10 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
 
   const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: string) => {
     const selectedCurrentView = view;
-    const selectedCurrentViewData: ChartDataType | undefined = currentViewDataWithView(view);
+    const selectedCurrentViewData: ChartDataType | undefined =
+      selectedCurrentView && selectedCurrentView === currentViewData?.key
+        ? currentViewData
+        : currentViewDataWithView(view);
 
     if (selectedCurrentViewData === undefined) return;
 
@@ -55,11 +50,11 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
 
     // if (view === "hours") currentRender = generateHourChart(selectedCurrentViewData, side);
     // if (view === "day") currentRender = generateDayChart(selectedCurrentViewData, side);
-    // if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
-    // if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
+    if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
+    if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
     if (selectedCurrentView === "month")
       currentRender = generateMonthChart(selectedCurrentViewData, side);
-    // if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
+    if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
     if (selectedCurrentView === "year")
       currentRender = generateYearChart(selectedCurrentViewData, side);
 
@@ -101,7 +96,7 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
             currentRender.state,
             currentRender.state.data.currentDate
           );
-        }, 5);
+        }, 50);
       }
     }
   };
@@ -123,10 +118,22 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
     const clientVisibleWidth: number = scrollContainer.clientWidth;
     let scrollWidth: number = 0;
-    const daysDifference: number = getNumberOfDaysBetweenTwoDates(
-      currentState.data.startDate,
-      date
-    );
+    let daysDifference: number = 0;
+
+    if (currentView === "hours")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    if (currentView === "day")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    if (currentView === "week")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    if (currentView === "bi_week")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    if (currentView === "month")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    if (currentView === "quarter")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInQuarter(currentState.data.startDate, date);
+    if (currentView === "year")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
 
     scrollWidth =
       daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);
@@ -214,15 +221,15 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
           id="scroll-container"
         >
           {/* blocks components */}
-          <GanttChartBlocks itemsContainerWidth={itemsContainerWidth} />
+          {/* <GanttChartBlocks itemsContainerWidth={itemsContainerWidth} /> */}
 
           {/* chart */}
-          {/* {currentView && currentView === "hours" && <HourChartView />}
+          {currentView && currentView === "hours" && <HourChartView />}
           {currentView && currentView === "day" && <DayChartView />}
           {currentView && currentView === "week" && <WeekChartView />}
-          {currentView && currentView === "bi_week" && <BiWeekChartView />} */}
+          {currentView && currentView === "bi_week" && <BiWeekChartView />}
           {currentView && currentView === "month" && <MonthChartView />}
-          {/* {currentView && currentView === "quarter" && <QuarterChartView />} */}
+          {currentView && currentView === "quarter" && <QuarterChartView />}
           {currentView && currentView === "year" && <YearChartView />}
         </div>
       </div>

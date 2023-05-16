@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 // context
 import { useChart } from "../hooks";
 // helper views
-import { setMonthChartItemPosition, setMonthChartItemWidth } from "../views";
+import { setMonthChartItemPositionInMonth, setMonthChartItemWidthInMonth } from "../views";
 // data helpers
 import { datePreview, blockData, currentViewDataWithView } from "../data";
 import { ChartDataType } from "../types";
@@ -18,7 +18,7 @@ export const GanttChartBlocks: FC<any> = ({ itemsContainerWidth }) => {
       // if (currentView === "day") width = generateDayChart(currentViewData, side);
       // if (currentView === "week") width = generateWeekChart(currentViewData, side);
       // if (currentView === "bi_week") width = generateBiWeekChart(currentViewData, side);
-      if (currentView === "month") width = setMonthChartItemPosition(currentViewData, block);
+      if (currentView === "month") width = setMonthChartItemPositionInMonth(currentViewData, block);
       // if (currentView === "quarter") width = generateQuarterChart(currentViewData, side);
       // if (currentView === "year") width = generateYearChart(currentViewData, side);
     }
@@ -34,7 +34,8 @@ export const GanttChartBlocks: FC<any> = ({ itemsContainerWidth }) => {
       // if (currentView === "day") position = generateDayChart(currentViewData, side);
       // if (currentView === "week") position = generateWeekChart(currentViewData, side);
       // if (currentView === "bi_week") position = generateBiWeekChart(currentViewData, side);
-      if (currentView === "month") position = setMonthChartItemPosition(currentViewData, block);
+      if (currentView === "month")
+        position = setMonthChartItemPositionInMonth(currentViewData, block);
       // if (currentView === "quarter") position = generateQuarterChart(currentViewData, side);
       // if (currentView === "year") position = generateYearChart(currentViewData, side);
     }

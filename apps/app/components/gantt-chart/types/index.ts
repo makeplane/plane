@@ -7,11 +7,11 @@ export type allViewsType = {
 
 export type ChartActionContextType = {
   type:
-  | "BLOCK_SIDEBAR_TOGGLE"
-  | "CURRENT_VIEW"
-  | "CURRENT_VIEW_DATA"
-  | "PARTIAL_UPDATE"
-  | "RENDER_VIEW";
+    | "BLOCK_SIDEBAR_TOGGLE"
+    | "CURRENT_VIEW"
+    | "CURRENT_VIEW_DATA"
+    | "PARTIAL_UPDATE"
+    | "RENDER_VIEW";
   payload: any;
 };
 

@@ -2,65 +2,24 @@
 import { ChartDataType } from "../types";
 // data
 import { weeks, months } from "../data";
+// helpers
+import {
+  generateDate,
+  getWeekNumberByDate,
+  getNumberOfDaysInMonth,
+  getDatesBetweenTwoDates,
+} from "./helpers";
 
-export const getWeekNumberByDate = (date: Date) => {
-  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-  const daysOffset = firstDayOfYear.getDay();
-
-  const firstWeekStart = firstDayOfYear.getTime() - daysOffset * 24 * 60 * 60 * 1000;
-  const weekStart = new Date(firstWeekStart);
-
-  const weekNumber =
-    Math.floor((date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
-
-  return weekNumber;
-};
-
-export const getNumberOfDaysInMonth = (month: number, year: number) => {
-  const date = new Date(year, month, 1);
-
-  date.setMonth(date.getMonth() + 1);
-  date.setDate(date.getDate() - 1);
-
-  return date.getDate();
-};
-
-export const generateDate = (day: number, month: number, year: number) =>
-  new Date(year, month, day);
-
-export const getDatesBetweenTwoDates = (startDate: Date, endDate: Date) => {
-  const months = [];
-
-  const startYear = startDate.getFullYear();
-  const startMonth = startDate.getMonth();
-
-  const endYear = endDate.getFullYear();
-  const endMonth = endDate.getMonth();
-
-  const currentDate = new Date(startYear, startMonth);
-
-  while (currentDate <= endDate) {
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    months.push(new Date(currentYear, currentMonth));
-    currentDate.setMonth(currentDate.getMonth() + 1);
-  }
-  if (endYear === currentDate.getFullYear() && endMonth === currentDate.getMonth())
-    months.push(endDate);
-
-  return months;
-};
-
-export type GetAllDaysInMonthType = {
+type GetAllDaysInMonthInMonthViewType = {
   date: any;
   day: any;
   dayData: any;
   weekNumber: number;
   title: string;
-  today: boolean;
+  active: boolean;
 };
-export const getAllDaysInMonth = (month: number, year: number) => {
-  const day: GetAllDaysInMonthType[] = [];
+const getAllDaysInMonthInMonthView = (month: number, year: number) => {
+  const day: GetAllDaysInMonthInMonthViewType[] = [];
   const numberOfDaysInMonth = getNumberOfDaysInMonth(month, year);
   const currentDate = new Date();
 
@@ -72,14 +31,19 @@ export const getAllDaysInMonth = (month: number, year: number) => {
       dayData: weeks[date.getDay()],
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
-      today: currentDate.getFullYear() === year && currentDate.getMonth() === month && currentDate.getDate() === (_day + 1) ? true : false,
+      active:
+        currentDate.getFullYear() === year &&
+        currentDate.getMonth() === month &&
+        currentDate.getDate() === _day + 1
+          ? true
+          : false,
     });
   });
 
   return day;
 };
 
-export const generateMonthDataByMonth = (month: number, year: number) => {
+const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number) => {
   const currentMonth: number = month;
   const currentYear: number = year;
 
@@ -87,17 +51,14 @@ export const generateMonthDataByMonth = (month: number, year: number) => {
     year: currentYear,
     month: currentMonth,
     monthData: months[currentMonth],
-    children: getAllDaysInMonth(currentMonth, currentYear),
+    children: getAllDaysInMonthInMonthView(currentMonth, currentYear),
     title: `${months[currentMonth].title} ${currentYear}`,
   };
 
   return monthPayload;
 };
 
-export const generateMonthDataByYear = (
-  monthPayload: ChartDataType,
-  side: null | "left" | "right"
-) => {
+export const generateBiWeekChart = (monthPayload: ChartDataType, side: null | "left" | "right") => {
   let renderState = monthPayload;
   const renderPayload: any = [];
 
@@ -177,10 +138,24 @@ export const generateMonthDataByYear = (
       const date = filteredDates[parseInt(currentDate)];
       const currentYear = date.getFullYear();
       const currentMonth = date.getMonth();
-      renderPayload.push(generateMonthDataByMonth(currentMonth, currentYear));
+      renderPayload.push(generateMonthDataByMonthAndYearInMonthView(currentMonth, currentYear));
     }
 
-  const scrollWidth = ((renderPayload.map((monthData: any) => monthData.children.length)).reduce((partialSum: number, a: number) => partialSum + a, 0)) * monthPayload.data.width;
+  const scrollWidth =
+    renderPayload
+      .map((monthData: any) => monthData.children.length)
+      .reduce((partialSum: number, a: number) => partialSum + a, 0) * monthPayload.data.width;
 
   return { state: renderState, payload: renderPayload, scrollWidth: scrollWidth };
+};
+
+export const getNumberOfDaysBetweenTwoDatesInBiWeek = (startDate: Date, endDate: Date) => {
+  let daysDifference: number = 0;
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+
+  const timeDifference: number = startDate.getTime() - endDate.getTime();
+  daysDifference = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
+
+  return daysDifference;
 };
