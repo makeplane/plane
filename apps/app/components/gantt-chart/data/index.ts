@@ -57,28 +57,28 @@ export const datePreview = (date: Date, timeInclude: boolean = false) => {
 
 // context data
 export const allViewsWithData: ChartDataType[] = [
-  {
-    key: "hours",
-    title: "Hours",
-    data: {
-      startDate: new Date(),
-      currentDate: new Date(),
-      endDate: new Date(),
-      approxFilterRange: 4,
-      width: 40,
-    },
-  },
-  {
-    key: "days",
-    title: "Days",
-    data: {
-      startDate: new Date(),
-      currentDate: new Date(),
-      endDate: new Date(),
-      approxFilterRange: 4,
-      width: 40,
-    },
-  },
+  // {
+  //   key: "hours",
+  //   title: "Hours",
+  //   data: {
+  //     startDate: new Date(),
+  //     currentDate: new Date(),
+  //     endDate: new Date(),
+  //     approxFilterRange: 4,
+  //     width: 40,
+  //   },
+  // },
+  // {
+  //   key: "days",
+  //   title: "Days",
+  //   data: {
+  //     startDate: new Date(),
+  //     currentDate: new Date(),
+  //     endDate: new Date(),
+  //     approxFilterRange: 4,
+  //     width: 40,
+  //   },
+  // },
   {
     key: "week",
     title: "Week",
@@ -87,7 +87,7 @@ export const allViewsWithData: ChartDataType[] = [
       currentDate: new Date(),
       endDate: new Date(),
       approxFilterRange: 4,
-      width: 160, // it will preview week dates with weekends highlighted with 1 week limitations ex: title (Wed 1, Thu 2, Fri 3)
+      width: 180, // it will preview week dates with weekends highlighted with 1 week limitations ex: title (Wed 1, Thu 2, Fri 3)
     },
   },
   {

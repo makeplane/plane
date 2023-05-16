@@ -31,7 +31,7 @@ export const WeekChartView: FC<any> = () => {
                     >
                       <div
                         className={`flex-shrink-0 border-b py-1 text-center text-sm capitalize font-medium ${
-                          _item?.today ? `text-red-500 border-red-500` : `border-gray-200`
+                          _item?.active ? `text-red-500 border-red-500` : `border-gray-200`
                         }`}
                       >
                         <div>{_item.title}</div>
