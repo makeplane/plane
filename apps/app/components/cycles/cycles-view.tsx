@@ -57,7 +57,6 @@ export const CyclesView: React.FC<Props> = ({
         return 3;
       case "Drafts":
         return 4;
-
       default:
         return 0;
     }
@@ -85,7 +84,6 @@ export const CyclesView: React.FC<Props> = ({
               return setCycleTab("All");
             case 1:
               return setCycleTab("Active");
-
             case 2:
               return setCycleTab("Upcoming");
             case 3:
@@ -101,61 +99,20 @@ export const CyclesView: React.FC<Props> = ({
         {" "}
         <div className="flex justify-between">
           <Tab.List as="div" className="flex items-center justify-start gap-4 text-base">
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white font-medium"
-                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
-                }`
-              }
-            >
-              All
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white font-medium"
-                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
-                }`
-              }
-            >
-              Active
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white font-medium"
-                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
-                }`
-              }
-            >
-              Upcoming
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white font-medium"
-                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
-                }`
-              }
-            >
-              Completed
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `rounded-3xl border px-6 py-1 outline-none ${
-                  selected
-                    ? "border-brand-accent bg-brand-accent text-white font-medium"
-                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
-                }`
-              }
-            >
-              Drafts
-            </Tab>
+            {["All", "Active", "Upcoming", "Completed", "Drafts"].map((tab, index) => (
+              <Tab
+                key={index}
+                className={({ selected }) =>
+                  `rounded-3xl border px-6 py-1 outline-none ${
+                    selected
+                      ? "border-brand-accent bg-brand-accent text-white font-medium"
+                      : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
+                  }`
+                }
+              >
+                {tab}
+              </Tab>
+            ))}
           </Tab.List>
           {cycleTab !== "Active" && (
             <div className="flex items-center gap-x-1">

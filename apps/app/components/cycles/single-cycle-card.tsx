@@ -279,7 +279,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                   />
                   <Tooltip tooltipContent={cycle.name} position="top-left">
                     <h3 className="break-all text-lg font-semibold">
-                      {truncateText(cycle.name, 20)}
+                      {truncateText(cycle.name, 15)}
                     </h3>
                   </Tooltip>
                 </span>
@@ -319,7 +319,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-4 w-4" />
+                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
                             </span>
                           </Tooltip>
                         )}{" "}

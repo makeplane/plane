@@ -317,7 +317,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-4 w-4" />
+                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
                             </span>
                           </Tooltip>
                         )}{" "}

@@ -287,7 +287,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
-              <div className="flex items-start justify-between gap-1">
+              <div className="flex items-center justify-between gap-1">
                 <span className="flex items-start gap-2">
                   <ContrastIcon
                     className="mt-1 h-5 w-5"
@@ -338,7 +338,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
-                      <span className="flex gap-1">
+                      <span className="flex items-center gap-1">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
                             tooltipContent={`${
@@ -348,7 +348,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-4 w-4" />
+                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
                             </span>
                           </Tooltip>
                         )}{" "}
