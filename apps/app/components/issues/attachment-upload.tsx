@@ -74,7 +74,7 @@ export const IssueAttachmentUpload = () => {
     onDrop,
     maxSize: maxFileSize,
     multiple: false,
-    disabled: isLoading
+    disabled: isLoading,
   });
 
   const fileError =
@@ -85,8 +85,8 @@ export const IssueAttachmentUpload = () => {
   return (
     <div
       {...getRootProps()}
-      className={`flex items-center justify-center h-[60px] cursor-pointer border-2 border-dashed border-theme text-blue-500 bg-blue-500/5 text-xs rounded-md px-4 ${
-        isDragActive ? "bg-theme/10" : ""
+      className={`flex items-center justify-center h-[60px] cursor-pointer border-2 border-dashed text-brand-accent bg-brand-accent/5 text-xs rounded-md px-4 ${
+        isDragActive ? "bg-brand-accent/10 border-brand-accent" : "border-brand-base"
       } ${isDragReject ? "bg-red-100" : ""}`}
     >
       <input {...getInputProps()} />
