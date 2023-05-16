@@ -11,14 +11,15 @@ import cyclesService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
-import { Disclosure, Transition } from "@headlessui/react";
-import { AssigneesList, Avatar } from "components/ui/avatar";
-import { SidebarProgressStats, SingleProgressStats } from "components/core";
+import { LinearProgressIndicator, Tooltip } from "components/ui";
+import { AssigneesList } from "components/ui/avatar";
+import { SingleProgressStats } from "components/core";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
+import { ActiveCycleProgressStats } from "components/cycles";
+
 // icons
-import { CalendarDaysIcon, ExclamationCircleIcon } from "@heroicons/react/20/solid";
+import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import { getPriorityIcon } from "components/icons/priority-icon";
 import {
   TargetIcon,
@@ -29,22 +30,15 @@ import {
   AlarmClockIcon,
   LayerDiagonalIcon,
   CompletedStateIcon,
-  UserGroupIcon,
 } from "components/icons";
-import {
-  ChevronDownIcon,
-  LinkIcon,
-  PencilIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { StarIcon } from "@heroicons/react/24/outline";
 // helpers
 import {
   getDateRangeStatus,
   renderShortDateWithYearFormat,
   findHowManyDaysLeft,
 } from "helpers/date-time.helper";
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { truncateText } from "helpers/string.helper";
 // types
 import {
   CompletedCyclesResponse,
@@ -255,7 +249,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
 
   return (
     <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-brand-base border border-brand-base">
-      <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-x xl:grid-cols-3">
+      <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-x lg:grid-cols-3">
         <div className="flex flex-col text-xs">
           <a className="w-full">
             <div className="flex h-full flex-col gap-5 rounded-b-[10px] p-4">
@@ -405,7 +399,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
             </div>
           </a>
         </div>
-        <div className="grid col-span-2 grid-cols-1 divide-y border-brand-base lg:divide-x lg:grid-cols-2">
+        <div className="grid col-span-2 grid-cols-1 divide-y border-brand-base md:divide-x md:grid-cols-2">
           <div className="flex h-full flex-col border-brand-base">
             <div className="flex h-full w-full flex-col text-brand-secondary p-4">
               <div className="flex w-full items-center gap-2 py-1">
@@ -435,18 +429,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
             </div>
           </div>
           <div className="border-brand-base p-4">
-            <SidebarProgressStats
-              issues={issues ?? []}
-              groupedIssues={{
-                backlog: cycle.backlog_issues,
-                unstarted: cycle.unstarted_issues,
-                started: cycle.started_issues,
-                completed: cycle.completed_issues,
-                cancelled: cycle.cancelled_issues,
-              }}
-              roundedTab
-              noBackground
-            />
+            <ActiveCycleProgressStats issues={issues ?? []} />
           </div>
         </div>
       </div>
