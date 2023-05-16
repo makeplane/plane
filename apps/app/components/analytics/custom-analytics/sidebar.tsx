@@ -108,9 +108,9 @@ export const AnalyticsSidebar: React.FC<Props> = ({
 
   return (
     <div
-      className={`p-5 pb-0 flex flex-col space-y-2 md:space-y-4 overflow-hidden ${
+      className={`p-5 pb-0 flex flex-col space-y-2 ${
         fullScreen
-          ? "pb-5 border-l border-brand-base md:h-full md:pb-5 md:border-l md:border-brand-base"
+          ? "pb-5 border-l border-brand-base md:h-full md:pb-5 md:border-l md:border-brand-base md:space-y-4 overflow-hidden"
           : ""
       }`}
     >
@@ -176,7 +176,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
             {projectId ? (
               cycleId && cycleDetails ? (
                 <div className="hidden md:block h-full overflow-y-auto">
-                  <h4 className="font-medium break-all">{cycleDetails.name}</h4>
+                  <h4 className="font-medium break-all">Analytics for {cycleDetails.name}</h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-brand-secondary">Lead</h6>
@@ -204,7 +204,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                 </div>
               ) : moduleId && moduleDetails ? (
                 <div className="hidden md:block h-full overflow-y-auto">
-                  <h4 className="font-medium break-all">{moduleDetails.name}</h4>
+                  <h4 className="font-medium break-all">Analytics for {moduleDetails.name}</h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-brand-secondary">Lead</h6>
