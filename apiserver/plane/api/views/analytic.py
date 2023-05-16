@@ -82,7 +82,7 @@ class AnalyticsEndpoint(BaseAPIView):
                     Issue.objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
                     .order_by("assignees__id")
                     .distinct("assignees__id")
-                    .values("assignees__avatar", "assignees__email")
+                    .values("assignees__avatar", "assignees__email", "assignees__first_name", "assignees__last_name")
                 )
 
 
