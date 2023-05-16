@@ -3,9 +3,11 @@ export interface IAnalyticsResponse {
   distribution: IAnalyticsData;
   extras: {
     colors: IAnalyticsExtra[];
-    assignee_avatars?: {
+    assignee_details: {
       assignees__avatar: string | null;
       assignees__email: string;
+      assignees__first_name: string;
+      assignees__last_name: string;
     }[];
   };
 }

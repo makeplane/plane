@@ -23,9 +23,9 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
   isProjectLevel,
 }) => (
   <div
-    className={`grid items-center gap-4 p-5 pb-0.5 ${
+    className={`grid items-center gap-4 px-5 py-2.5 ${
       isProjectLevel ? "grid-cols-3" : "grid-cols-2"
-    } ${fullScreen ? "lg:grid-cols-4" : ""}`}
+    } ${fullScreen ? "lg:grid-cols-4 md:py-5" : ""}`}
   >
     {!isProjectLevel && (
       <div>

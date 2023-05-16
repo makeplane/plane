@@ -79,7 +79,7 @@ export const AnalyticsGraph: React.FC<Props> = ({
         renderTick:
           params.x_axis === "assignees__email"
             ? (datum) => {
-                const avatar = analytics.extras.assignee_avatars?.find(
+                const avatar = analytics.extras.assignee_details?.find(
                   (a) => a.assignees__email === datum.value
                 )?.assignees__avatar;
 
