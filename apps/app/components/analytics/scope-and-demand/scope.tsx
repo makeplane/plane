@@ -20,14 +20,24 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
           height="250px"
           colors={() => `#f97316`}
           customYAxisTickValues={defaultAnalytics.pending_issue_user.map((d) => d.count)}
-          tooltip={(datum) => (
-            <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
-              <span className="font-medium text-brand-secondary">
-                Issue count- {datum.indexValue ?? "No assignee"}:{" "}
-              </span>
-              {datum.value}
-            </div>
-          )}
+          tooltip={(datum) => {
+            const assignee = defaultAnalytics.pending_issue_user.find(
+              (a) => a.assignees__email === `${datum.indexValue}`
+            );
+
+            return (
+              <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+                <span className="font-medium text-brand-secondary">
+                  Issue count-{" "}
+                  {assignee
+                    ? assignee.assignees__first_name + " " + assignee.assignees__last_name
+                    : "No assignee"}
+                  :{" "}
+                </span>
+                {datum.value}
+              </div>
+            );
+          }}
           axisBottom={{
             renderTick: (datum) => {
               const avatar =
