@@ -237,21 +237,21 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             )
             most_issue_created_user = (
                 queryset.exclude(created_by=None)
-                .values("created_by__first_name", "created_by__last_name", "created_by__avatar")
+                .values("created_by__first_name", "created_by__last_name", "created_by__avatar", "created_by__email")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             most_issue_closed_user = (
                 queryset.filter(completed_at__isnull=False, assignees__isnull=False)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar")
+                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__email")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             pending_issue_user = (
                 queryset.filter(completed_at__isnull=True)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar")
+                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__email")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )
