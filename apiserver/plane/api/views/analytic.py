@@ -78,9 +78,13 @@ class AnalyticsEndpoint(BaseAPIView):
 
             assignee_avatars = {}
             if x_axis in ["assignees__email"]:
-                assignee_avatars = Issue.objects.filter(
-                    workspace__slug=slug, **filters
-                ).values("assignees__avatar")
+                assignee_avatars = (
+                    Issue.objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
+                    .order_by("assignees__id")
+                    .distinct("assignees__id")
+                    .values("assignees__avatar", "assignees__email")
+                )
+
 
             return Response(
                 {
