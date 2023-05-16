@@ -169,10 +169,10 @@ export const ESTIMATE_DETAILS = (estimateId: string) =>
 
 // analytics
 export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
-  `ANALYTICS${workspaceSlug.toUpperCase()}_${params.x_axis}_${params.y_axis}_${params.segment}_${
-    params.project
-  }`;
+  `ANALYTICS${workspaceSlug.toUpperCase()}_${params.x_axis}_${params.y_axis}_${
+    params.segment
+  }_${params.project?.toString()}`;
 export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnalyticsParams>) =>
-  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project}_${params?.cycle}_${
-    params?.module
-  }`;
+  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${
+    params?.cycle
+  }_${params?.module}`;

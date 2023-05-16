@@ -1,5 +1,7 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
+// helpers
+import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
@@ -17,7 +19,7 @@ export const convertResponseToBarGraphData = (
   const data: BarDatum[] = [];
 
   let xAxisKeys: string[] = [];
-  const yAxisKey = params.y_axis === "issue_count" ? "count" : "effort";
+  const yAxisKey = params.y_axis === "issue_count" ? "count" : "estimate";
 
   Object.keys(response).forEach((key) => {
     const segments: { [key: string]: number } = {};
@@ -31,7 +33,11 @@ export const convertResponseToBarGraphData = (
       });
 
       data.push({
-        name: DATE_KEYS.includes(params.x_axis) ? renderMonthAndYear(key) : key,
+        name: DATE_KEYS.includes(params.x_axis)
+          ? renderMonthAndYear(key)
+          : params.x_axis === "priority" || params.x_axis === "state__group"
+          ? capitalizeFirstLetter(key)
+          : key,
         ...segments,
       });
     } else {
@@ -42,6 +48,8 @@ export const convertResponseToBarGraphData = (
       data.push({
         name: DATE_KEYS.includes(params.x_axis)
           ? renderMonthAndYear(item.dimension)
+          : params.x_axis === "priority" || params.x_axis === "state__group"
+          ? capitalizeFirstLetter(item.dimension ?? "None")
           : item.dimension ?? "None",
         [yAxisKey]: item[yAxisKey] ?? 0,
       });
@@ -64,17 +72,17 @@ export const generateBarColor = (
   if (params[type] === "state__name" || params[type] === "labels__name")
     color = analytics?.extras?.colors.find((c) => c.name === value)?.color;
 
-  if (params[type] === "state__group") color = STATE_GROUP_COLORS[value];
+  if (params[type] === "state__group") color = STATE_GROUP_COLORS[value.toLowerCase()];
 
   if (params[type] === "priority")
     color =
-      value === "urgent"
+      value === "Urgent"
         ? "#ef4444"
-        : value === "high"
+        : value === "High"
         ? "#f97316"
-        : value === "medium"
+        : value === "Medium"
         ? "#eab308"
-        : value === "low"
+        : value === "Low"
         ? "#22c55e"
         : "#ced4da";
 
