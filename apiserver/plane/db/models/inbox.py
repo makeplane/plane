@@ -30,8 +30,8 @@ class InboxIssue(ProjectBaseModel):
         "db.Issue", related_name="issue_inbox", on_delete=models.CASCADE
     )
     status = models.IntegerField(
-        choices=((-1, "Rejected"), (0, "Snoozed"), (1, "Accepted"), (2, "Duplicate")),
-        default=0,
+        choices=((-2, "Pending"), (-1, "Rejected"), (0, "Snoozed"), (1, "Accepted"), (2, "Duplicate")),
+        default=-2,
     )
     snoozed_till = models.DateTimeField(null=True)
     duplicate_to = models.ForeignKey(

@@ -1,3 +1,6 @@
+# Third party frameworks
+from rest_framework import serializers
+
 # Module imports
 from .base import BaseSerializer
 from .issue import IssueFlatSerializer
@@ -7,7 +10,7 @@ from plane.db.models import Inbox, InboxIssue
 
 class InboxSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
-
+    pending_issue_count = serializers.IntegerField(read_only=True)
     class Meta:
         model = Inbox
         fields = "__all__"

@@ -63,7 +63,7 @@ const ProjectIssues: NextPage = () => {
     defaultValues,
   });
 
-  const { data: inboxIssues } = useSWR(
+  const { data: inboxIssues, mutate: inboxIssuesMutate } = useSWR(
     workspaceSlug && projectId && inboxId ? INBOX_ISSUES(inboxId.toString()) : null,
     workspaceSlug && projectId && inboxId
       ? () =>
@@ -185,6 +185,11 @@ const ProjectIssues: NextPage = () => {
                 )
                 .then(() => {
                   mutate(ISSUE_DETAILS(issueId as string), undefined);
+                  inboxIssuesMutate((prevData) =>
+                    prevData?.map((item) =>
+                      item.issue === issueId ? { ...item, status: 1 } : item
+                    )
+                  );
                 });
             }}
             onDecline={() => {
@@ -201,6 +206,11 @@ const ProjectIssues: NextPage = () => {
                 .then(() => {
                   reset(defaultValues);
                   mutate(ISSUE_DETAILS(issueId as string), undefined);
+                  inboxIssuesMutate((prevData) =>
+                    prevData?.map((item) =>
+                      item.issue === issueId ? { ...item, status: -1 } : item
+                    )
+                  );
                 });
             }}
             onMarkAsDuplicate={() => {
@@ -221,6 +231,13 @@ const ProjectIssues: NextPage = () => {
                 .then(() => {
                   reset(defaultValues);
                   mutate(ISSUE_DETAILS(issueId as string), undefined);
+                  inboxIssuesMutate((prevData) =>
+                    prevData?.map((item) =>
+                      item.issue === issueId
+                        ? { ...item, status: 0, snoozed_till: new Date(date) }
+                        : item
+                    )
+                  );
                 });
             }}
           />
@@ -243,6 +260,7 @@ const ProjectIssues: NextPage = () => {
                 reset={reset}
                 watch={watch}
                 control={control}
+                status={inboxIssues?.find((inboxIssue) => inboxIssue.issue === issueId)?.status}
                 onAccept={() => {
                   inboxServices
                     .markInboxStatus(
@@ -257,6 +275,12 @@ const ProjectIssues: NextPage = () => {
                     .then(() => {
                       reset(defaultValues);
                       mutate(ISSUE_DETAILS(issueId as string), undefined);
+                      inboxIssuesMutate((prevData) =>
+                        (prevData ?? [])?.map((item) => ({
+                          ...item,
+                          status: item.issue === issueId ? 1 : item.status,
+                        }))
+                      );
                     });
                 }}
               />
@@ -283,6 +307,13 @@ const ProjectIssues: NextPage = () => {
                 reset(defaultValues);
                 setSelectDuplicateIssue(false);
                 mutate(ISSUE_DETAILS(issueId as string), undefined);
+                inboxIssuesMutate((prevData) =>
+                  (prevData ?? [])?.map((item) => ({
+                    ...item,
+                    status: item.issue === issueId ? 2 : item.status,
+                    duplicate_to: dupIssueId,
+                  }))
+                );
               })
               .catch(() => {
                 setSelectDuplicateIssue(false);

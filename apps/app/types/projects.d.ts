@@ -16,6 +16,7 @@ export interface IProject {
   issue_views_view: boolean;
   module_view: boolean;
   page_view: boolean;
+  inbox_view: boolean;
   default_assignee: IUser | string | null;
   description: string;
   estimate: string | null;

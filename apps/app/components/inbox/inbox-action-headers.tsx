@@ -67,18 +67,6 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
           </div>
         </div>
         <div className="flex gap-x-3">
-          <SecondaryButton size="sm" className="flex gap-x-1 items-center" onClick={onAccept}>
-            <CheckCircleIcon className="h-4 w-4 text-brand-secondary" />
-            <span>Accept</span>
-          </SecondaryButton>
-          <SecondaryButton
-            size="sm"
-            className="flex gap-x-1 items-center"
-            onClick={onMarkAsDuplicate}
-          >
-            <StackedLayersHorizontalIcon className="h-4 w-4 text-brand-secondary" />
-            <span>Mark as duplicate</span>
-          </SecondaryButton>
           <Popover>
             <Popover.Button as="div">
               <SecondaryButton className="flex gap-x-1 items-center" size="sm">
@@ -111,8 +99,20 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
               )}
             </Popover.Panel>
           </Popover>
+          <SecondaryButton
+            size="sm"
+            className="flex gap-x-1 items-center"
+            onClick={onMarkAsDuplicate}
+          >
+            <StackedLayersHorizontalIcon className="h-4 w-4 text-brand-secondary" />
+            <span>Mark as duplicate</span>
+          </SecondaryButton>
+          <SecondaryButton size="sm" className="flex gap-x-1 items-center" onClick={onAccept}>
+            <CheckCircleIcon className="h-4 w-4 text-green-500" />
+            <span>Accept</span>
+          </SecondaryButton>
           <SecondaryButton size="sm" className="flex gap-x-1 items-center" onClick={onDecline}>
-            <XCircleIcon className="h-4 w-4 text-brand-secondary" />
+            <XCircleIcon className="h-4 w-4 text-red-500" />
             <span>Decline</span>
           </SecondaryButton>
         </div>

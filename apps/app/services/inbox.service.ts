@@ -105,56 +105,6 @@ class InboxServices extends APIService {
         throw error?.response?.data;
       });
   }
-
-  // async updateInbox(
-  //   workspaceSlug: string,
-  //   projectId: string,
-  //   inboxId: string,
-  //   data: IInboxForm
-  // ): Promise<any> {
-  //   return this.put(
-  //     `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}`,
-  //     data
-  //   )
-  //     .then((response) => {
-  //       if (trackEvent) trackEventServices.trackInboxEvent(response?.data, "INBOX_UPDATE");
-  //       return response?.data;
-  //     })
-  //     .catch((error) => {
-  //       throw error?.response?.data;
-  //     });
-  // }
-
-  // async patchInbox(
-  //   workspaceSlug: string,
-  //   projectId: string,
-  //   inboxId: string,
-  //   data: Partial<IInbox>
-  // ): Promise<any> {
-  //   return this.patch(
-  //     `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}`,
-  //     data
-  //   )
-
-  //     .then((response) => {
-  //       if (trackEvent) trackEventServices.trackInboxEvent(response?.data, "INBOX_UPDATE");
-  //       return response?.data;
-  //     })
-  //     .catch((error) => {
-  //       throw error?.response?.data;
-  //     });
-  // }
-
-  // async deleteInbox(workspaceSlug: string, projectId: string, inboxId: string): Promise<any> {
-  //   return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}`)
-  //     .then((response) => {
-  //       if (trackEvent) trackEventServices.trackInboxEvent(response?.data, "INBOX_DELETE");
-  //       return response?.data;
-  //     })
-  //     .catch((error) => {
-  //       throw error?.response?.data;
-  //     });
-  // }
 }
 
 const inboxServices = new InboxServices();

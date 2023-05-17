@@ -17,7 +17,7 @@ import { SettingsHeader } from "components/project";
 import { SecondaryButton, ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
+import { ContrastIcon, PeopleGroupIcon, ViewListIcon, InboxIcon } from "components/icons";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
 import { IFavoriteProject, IProject } from "types";
@@ -53,6 +53,13 @@ const featuresList = [
       "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
     icon: <DocumentTextIcon color="#fcbe1d" width={28} height={28} className="flex-shrink-0" />,
     property: "page_view",
+  },
+  {
+    title: "Inbox",
+    description:
+      "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
+    icon: <InboxIcon color="#fcbe1d" width={28} height={28} className="flex-shrink-0" />,
+    property: "inbox_view",
   },
 ];
 
