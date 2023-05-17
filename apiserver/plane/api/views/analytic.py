@@ -261,11 +261,13 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             )
 
             open_estimate_sum = (
-                Issue.objects.filter(
+                queryset.filter(
                     state__group__in=["backlog", "unstarted", "started"]
                 ).aggregate(open_estimate_sum=Sum("estimate_point"))
             )["open_estimate_sum"]
-            total_estimate_sum = Issue.objects.aggregate(
+            print(open_estimate_sum)
+            
+            total_estimate_sum = queryset.aggregate(
                 total_estimate_sum=Sum("estimate_point")
             )["total_estimate_sum"]
 
