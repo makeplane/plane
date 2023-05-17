@@ -42,6 +42,7 @@ import {
 import {
   CYCLE_COMPLETE_LIST,
   CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DETAILS,
   CYCLE_DRAFT_LIST,
 } from "constants/fetch-keys";
 import { type } from "os";
@@ -184,6 +185,15 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
         );
         break;
     }
+    mutate(
+      CYCLE_DETAILS(projectId as string),
+      (prevData: any) =>
+        (prevData ?? []).map((c: any) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? true : c.is_favorite,
+        })),
+      false
+    );
 
     cyclesService
       .addCycleToFavorites(workspaceSlug as string, projectId as string, {
@@ -244,6 +254,15 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
         );
         break;
     }
+    mutate(
+      CYCLE_DETAILS(projectId as string),
+      (prevData: any) =>
+        (prevData ?? []).map((c: any) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? false : c.is_favorite,
+        })),
+      false
+    );
 
     cyclesService
       .removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id)
