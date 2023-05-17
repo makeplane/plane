@@ -65,20 +65,22 @@ def analytic_export_task(email, data, slug):
                 ]
                 + segment_zero
             )
-
             rows = []
             for item in distribution:
                 generated_row = [
                     item,
                 ]
+
                 data = distribution.get(item)
-                for segment in segment_zero[1:]:
+                # Add y axis values
+                generated_row.append(sum(obj.get(key) for obj in data if obj.get(key, None) is not None))
+
+                for segment in segment_zero:
                     value = [x for x in data if x.get("segment") == segment]
                     if len(value):
                         generated_row.append(value[0].get(key))
                     else:
                         generated_row.append("0")
-
                 rows.append(tuple(generated_row))
 
             rows = [tuple(row_zero)] + rows
@@ -114,7 +116,7 @@ def analytic_export_task(email, data, slug):
                             item,
                             distribution.get(item)[0].get("count")
                             if y_axis == "issue_count"
-                            else distribution.get(item)[0].get("estimate"),
+                            else distribution.get(item)[0].get("estimate  "),
                         ]
                     )
                 )
