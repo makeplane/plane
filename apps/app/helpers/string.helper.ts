@@ -89,14 +89,15 @@ export const cosineSimilarity = (a: string, b: string) => {
 };
 
 export const generateRandomColor = (string: string): string => {
-  if (!string) return "#000000";
+  if (!string) return "var(rgb(--color-accent))";
 
   const hash = string.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
   const hue = hash % 360;
-  const saturation = 100;
+  const saturation = 70;
   const lightness = 60;
 
   const randomColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
   return randomColor;
 };
