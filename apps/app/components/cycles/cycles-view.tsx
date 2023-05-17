@@ -25,8 +25,6 @@ import {
 } from "types";
 
 type Props = {
-  cycleView: string;
-  setCycleView: React.Dispatch<React.SetStateAction<string>>;
   setSelectedCycle: React.Dispatch<React.SetStateAction<SelectCycleType>>;
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
   cyclesCompleteList: ICycle[] | undefined;
@@ -35,8 +33,6 @@ type Props = {
 };
 
 export const CyclesView: React.FC<Props> = ({
-  cycleView,
-  setCycleView,
   setSelectedCycle,
   setCreateUpdateCycleModal,
   cyclesCompleteList,
@@ -44,6 +40,7 @@ export const CyclesView: React.FC<Props> = ({
   draftCycles,
 }) => {
   const { storedValue: cycleTab, setValue: setCycleTab } = useLocalStorage("cycleTab", "All");
+  const { storedValue: cycleView, setValue: setCycleView } = useLocalStorage("cycleView", "list");
 
   const currentTabValue = (tab: string | null) => {
     switch (tab) {
@@ -177,7 +174,7 @@ export const CyclesView: React.FC<Props> = ({
           </Tab.Panel>
           <Tab.Panel as="div" className="mt-7 space-y-5">
             <CompletedCycles
-              cycleView={cycleView}
+              cycleView={cycleView ?? "list"}
               setCreateUpdateCycleModal={setCreateUpdateCycleModal}
               setSelectedCycle={setSelectedCycle}
             />
