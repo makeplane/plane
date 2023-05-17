@@ -29,6 +29,7 @@ type TConfirmCycleDeletionProps = {
 import {
   CYCLE_COMPLETE_LIST,
   CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DETAILS,
   CYCLE_DRAFT_LIST,
   CYCLE_LIST,
 } from "constants/fetch-keys";
@@ -114,6 +115,14 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
               false
             );
         }
+        mutate(
+          CYCLE_DETAILS(projectId as string),
+          (prevData: any) => {
+            if (!prevData) return;
+            return prevData.filter((cycle: any) => cycle.id !== data?.id);
+          },
+          false
+        );
         handleClose();
 
         setToastAlert({

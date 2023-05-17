@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // components
-import { DeleteCycleModal, SingleCycleCard } from "components/cycles";
+import { DeleteCycleModal, SingleCycleList } from "components/cycles";
 import { EmptyState, Loader } from "components/ui";
 // image
 import emptyCycle from "public/empty-state/empty-cycle.svg";
@@ -17,7 +17,7 @@ type TCycleStatsViewProps = {
   type: "current" | "upcoming" | "draft";
 };
 
-export const CyclesList: React.FC<TCycleStatsViewProps> = ({
+export const AllCyclesList: React.FC<TCycleStatsViewProps> = ({
   cycles,
   setCreateUpdateCycleModal,
   setSelectedCycle,
@@ -49,14 +49,18 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
       />
       {cycles ? (
         cycles.length > 0 ? (
-          <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+          <div>
             {cycles.map((cycle) => (
-              <SingleCycleCard
-                key={cycle.id}
-                cycle={cycle}
-                handleDeleteCycle={() => handleDeleteCycle(cycle)}
-                handleEditCycle={() => handleEditCycle(cycle)}
-              />
+              <div className="hover:bg-brand-surface-2">
+                <div className="flex flex-col border-brand-base">
+                  <SingleCycleList
+                    key={cycle.id}
+                    cycle={cycle}
+                    handleDeleteCycle={() => handleDeleteCycle(cycle)}
+                    handleEditCycle={() => handleEditCycle(cycle)}
+                  />
+                </div>
+              </div>
             ))}
           </div>
         ) : type === "current" ? (
