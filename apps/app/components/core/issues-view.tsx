@@ -22,6 +22,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
+import { IssueGanttChartView } from "components/issues/gantt-chart";
 // ui
 import { EmptySpace, EmptySpaceItem, EmptyState, PrimaryButton, Spinner } from "components/ui";
 // icons
@@ -531,7 +532,7 @@ export const IssuesView: React.FC<Props> = ({
                   isCompleted={isCompleted}
                   userAuth={memberRole}
                 />
-              ) : (
+              ) : issueView === "calendar" ? (
                 <CalendarView
                   handleEditIssue={handleEditIssue}
                   handleDeleteIssue={handleDeleteIssue}
@@ -539,6 +540,8 @@ export const IssuesView: React.FC<Props> = ({
                   isCompleted={isCompleted}
                   userAuth={memberRole}
                 />
+              ) : (
+                issueView === "gantt_chart" && <IssueGanttChartView />
               )}
             </>
           ) : type === "issue" ? (

@@ -7,6 +7,7 @@ export type allViewsType = {
 
 export type ChartActionContextType = {
   type:
+    | "FULL_SCREEN_TOGGLE"
     | "BLOCK_SIDEBAR_TOGGLE"
     | "CURRENT_VIEW"
     | "CURRENT_VIEW_DATA"
@@ -16,6 +17,7 @@ export type ChartActionContextType = {
 };
 
 export type ChartContextType = {
+  fullScreenToggle: boolean;
   blockSidebarToggle: boolean;
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";

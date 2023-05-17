@@ -1,8 +1,15 @@
 import { FC, useEffect, useState } from "react";
+// icons
+import {
+  Bars4Icon,
+  XMarkIcon,
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+} from "@heroicons/react/20/solid";
 // components
 import { GanttChartBlocks } from "../blocks";
-import { HourChartView } from "./hours";
-import { DayChartView } from "./day";
+// import { HourChartView } from "./hours";
+// import { DayChartView } from "./day";
 import { WeekChartView } from "./week";
 import { BiWeekChartView } from "./bi-week";
 import { MonthChartView } from "./month";
@@ -28,9 +35,21 @@ import { datePreview, currentViewDataWithView } from "../data";
 // context
 import { useChart } from "../hooks";
 
-export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
-  const { blockSidebarToggle, currentView, currentViewData, renderView, dispatch, allViews } =
-    useChart();
+export const ChartViewRoot: FC<{
+  title: string | null;
+  blocks: null | any[];
+  sidebarBlockRender: FC;
+  blockRender: FC;
+}> = ({ title, blocks = null, sidebarBlockRender, blockRender }) => {
+  const {
+    fullScreenToggle,
+    blockSidebarToggle,
+    currentView,
+    currentViewData,
+    renderView,
+    dispatch,
+    allViews,
+  } = useChart();
 
   const [currentScrollPosition, setCurrentScrollPosition] = useState<number>(0);
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
@@ -120,10 +139,10 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
     let scrollWidth: number = 0;
     let daysDifference: number = 0;
 
-    if (currentView === "hours")
-      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
-    if (currentView === "day")
-      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    // if (currentView === "hours")
+    //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    // if (currentView === "day")
+    //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     if (currentView === "week")
       daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     if (currentView === "bi_week")
@@ -170,33 +189,50 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
   }, [renderView]);
 
   return (
-    <div className="relative flex h-full flex-col rounded-sm border border-gray-300 select-none">
+    <div
+      className={`${
+        fullScreenToggle
+          ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-brand-base`
+          : `relative`
+      } flex h-full flex-col rounded-sm border border-brand-base select-none`}
+    >
       {/* chart title */}
-      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
-        <div className="text-lg font-medium">{title}</div>
+      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-brand-base">
+        {title && <div className="text-lg font-medium">{title}</div>}
+        {blocks === null ? (
+          <div className="text-sm font-medium ml-auto">Loading...</div>
+        ) : (
+          <div className="text-sm font-medium ml-auto">{blocks.length} blocks</div>
+        )}
       </div>
 
       {/* chart header */}
-      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap border-t border-gray-300 p-2">
+      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
         <div
-          className="border border-gray-300 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-gray-100"
+          className="transition-all border border-brand-base w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-brand-surface-2"
           onClick={() => dispatch({ type: "BLOCK_SIDEBAR_TOGGLE", payload: !blockSidebarToggle })}
         >
-          {!blockSidebarToggle ? "O" : "C"}
+          {!blockSidebarToggle ? (
+            <Bars4Icon className="h-4 w-4" />
+          ) : (
+            <XMarkIcon className="h-5 w-5" />
+          )}
         </div>
+
         <div className="mr-auto text-sm font-medium">
           {`${datePreview(currentViewData?.data?.startDate)} - ${datePreview(
             currentViewData?.data?.endDate
           )}`}
         </div>
+
         <div className="flex flex-wrap items-center gap-2">
           {allViews &&
             allViews.length > 0 &&
             allViews.map((_chatView: any, _idx: any) => (
               <div
                 key={_chatView?.key}
-                className={`cursor-pointer rounded-sm border border-gray-400 p-1 px-2 text-sm font-medium ${
-                  currentView === _chatView?.key ? `bg-gray-200` : `hover:bg-gray-200`
+                className={`cursor-pointer rounded-sm border border-brand-base p-1 px-2 text-sm font-medium ${
+                  currentView === _chatView?.key ? `bg-brand-surface-2` : `hover:bg-brand-surface-1`
                 }`}
                 onClick={() => handleChartView(_chatView?.key)}
               >
@@ -204,28 +240,45 @@ export const ChartViewRoot: FC<{ title: string }> = ({ title }: any) => {
               </div>
             ))}
         </div>
+
         <div className="flex items-center gap-1">
           <div
-            className={`cursor-pointer p-1 px-2 text-sm font-medium hover:bg-gray-200`}
+            className={`cursor-pointer rounded-sm border border-brand-base p-1 px-2 text-sm font-medium hover:bg-brand-surface-2`}
             onClick={handleToday}
           >
             Today
           </div>
         </div>
+
+        <div
+          className="transition-all border border-brand-base w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-brand-surface-2"
+          onClick={() => dispatch({ type: "FULL_SCREEN_TOGGLE", payload: !fullScreenToggle })}
+        >
+          {fullScreenToggle ? (
+            <ArrowsPointingInIcon className="h-4 w-4" />
+          ) : (
+            <ArrowsPointingOutIcon className="h-4 w-4" />
+          )}
+        </div>
       </div>
 
       {/* content */}
-      <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-gray-300">
+      <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-brand-base">
         <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
           id="scroll-container"
         >
           {/* blocks components */}
-          {/* <GanttChartBlocks itemsContainerWidth={itemsContainerWidth} /> */}
+          <GanttChartBlocks
+            itemsContainerWidth={itemsContainerWidth}
+            blocks={blocks}
+            sidebarBlockRender={sidebarBlockRender}
+            blockRender={blockRender}
+          />
 
           {/* chart */}
-          {currentView && currentView === "hours" && <HourChartView />}
-          {currentView && currentView === "day" && <DayChartView />}
+          {/* {currentView && currentView === "hours" && <HourChartView />} */}
+          {/* {currentView && currentView === "day" && <DayChartView />} */}
           {currentView && currentView === "week" && <WeekChartView />}
           {currentView && currentView === "bi_week" && <BiWeekChartView />}
           {currentView && currentView === "month" && <MonthChartView />}

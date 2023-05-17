@@ -11,6 +11,8 @@ const chartReducer = (
   action: ChartActionContextType
 ): ChartContextType => {
   switch (action.type) {
+    case "FULL_SCREEN_TOGGLE":
+      return { ...state, fullScreenToggle: action.payload };
     case "BLOCK_SIDEBAR_TOGGLE":
       return { ...state, blockSidebarToggle: action.payload };
     case "CURRENT_VIEW":
@@ -22,6 +24,9 @@ const chartReducer = (
     case "PARTIAL_UPDATE":
       return {
         ...state,
+        fullScreenToggle: action.payload.fullScreenToggle
+          ? action.payload.fullScreenToggle
+          : state.fullScreenToggle,
         blockSidebarToggle: action.payload.blockSidebarToggle
           ? action.payload.blockSidebarToggle
           : state.blockSidebarToggle,
@@ -35,10 +40,12 @@ const chartReducer = (
       return state;
   }
 };
+
 const initialView = "month";
 
 export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useState<ChartContextType>({
+    fullScreenToggle: false,
     blockSidebarToggle: false,
     currentView: initialView,
     currentViewData: currentViewDataWithView(initialView),

@@ -142,18 +142,3 @@ export const currentViewDataWithView = (view: string = "month") => {
   );
   return currentView;
 };
-
-export const blockData = Array.from(Array(100).keys()).map((key: number) => {
-  const start_date = new Date();
-  const target_date = new Date();
-
-  start_date.setDate(start_date.getDate() + key);
-  target_date.setDate(target_date.getDate() + key + 10);
-
-  return {
-    name: `issue - ${key + 1}`,
-    start_date: start_date,
-    target_date: target_date,
-    state: "backlog",
-  };
-});

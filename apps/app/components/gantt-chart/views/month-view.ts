@@ -17,6 +17,7 @@ type GetAllDaysInMonthInMonthViewType = {
   weekNumber: number;
   title: string;
   active: boolean;
+  today: boolean;
 };
 const getAllDaysInMonthInMonthView = (month: number, year: number) => {
   const day: GetAllDaysInMonthInMonthViewType[] = [];
@@ -31,7 +32,8 @@ const getAllDaysInMonthInMonthView = (month: number, year: number) => {
       dayData: weeks[date.getDay()],
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
-      active:
+      active: false,
+      today:
         currentDate.getFullYear() === year &&
         currentDate.getMonth() === month &&
         currentDate.getDate() === _day + 1
@@ -172,6 +174,12 @@ export const setMonthChartItemPositionInMonth = (chartData: ChartDataType, itemD
   const daysDifference: number = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
   scrollPosition = daysDifference * chartData.data.width;
 
+  var diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
+  diffMonths -= startDate.getMonth();
+  diffMonths += itemStartDate.getMonth();
+
+  scrollPosition = scrollPosition + diffMonths;
+
   return scrollPosition;
 };
 
@@ -184,7 +192,7 @@ export const setMonthChartItemWidthInMonth = (chartData: ChartDataType, itemData
 
   const timeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
   const daysDifference: number = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
-  scrollWidth = (daysDifference + 1) * chartData.data.width;
+  scrollWidth = (daysDifference + 1) * chartData.data.width + 1;
 
   return scrollWidth;
 };

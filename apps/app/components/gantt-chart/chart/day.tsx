@@ -8,19 +8,18 @@ export const DayChartView: FC<any> = () => {
 
   return (
     <>
-      {/* divide-x divide-gray-200 */}
-      <div className="absolute flex h-full flex-grow">
+      <div className="absolute flex h-full flex-grow divide-x divide-brand-base">
         {renderView &&
           renderView.length > 0 &&
           renderView.map((_itemRoot: any, _idxRoot: any) => (
             <div key={`title-${_idxRoot}`} className="relative flex flex-col">
-              <div className="relative border-b border-gray-200">
+              <div className="relative border-b border-brand-base">
                 <div className="sticky left-0 inline-flex whitespace-nowrap px-2 py-1 text-sm font-medium capitalize">
                   {_itemRoot?.title}
                 </div>
               </div>
 
-              <div className="flex h-full w-full divide-x divide-gray-200">
+              <div className="flex h-full w-full divide-x divide-brand-base">
                 {_itemRoot.children &&
                   _itemRoot.children.length > 0 &&
                   _itemRoot.children.map((_item: any, _idx: any) => (
@@ -31,7 +30,7 @@ export const DayChartView: FC<any> = () => {
                     >
                       <div
                         className={`flex-shrink-0 border-b py-1 text-center text-sm capitalize font-medium ${
-                          _item?.today ? `text-red-500 border-red-500` : `border-gray-200`
+                          _item?.today ? `text-red-500 border-red-500` : `border-brand-base`
                         }`}
                       >
                         <div>{_item.title}</div>
@@ -43,7 +42,7 @@ export const DayChartView: FC<any> = () => {
                             : ``
                         }`}
                       >
-                        {_item?.active && (
+                        {_item?.today && (
                           <div className="absolute top-0 bottom-0 border border-red-500"> </div>
                         )}
                       </div>
