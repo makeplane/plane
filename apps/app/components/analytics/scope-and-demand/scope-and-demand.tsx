@@ -18,16 +18,17 @@ import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
 
 type Props = {
   fullScreen?: boolean;
-  isProjectLevel?: boolean;
 };
 
-export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true, isProjectLevel = true }) => {
+export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
+  const isProjectLevel = projectId ? true : false;
+
   const params = isProjectLevel
     ? {
-        project: projectId ? projectId.toString() : null,
+        project: projectId ? [projectId.toString()] : null,
         cycle: cycleId ? cycleId.toString() : null,
         module: moduleId ? moduleId.toString() : null,
       }
@@ -56,6 +57,8 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true, isProjectLe
                 users={defaultAnalytics.most_issue_created_user.map((user) => ({
                   avatar: user.created_by__avatar,
                   email: user.created_by__email,
+                  firstName: user.created_by__first_name,
+                  lastName: user.created_by__last_name,
                   count: user.count,
                 }))}
                 title="Most issues created"
@@ -64,6 +67,8 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true, isProjectLe
                 users={defaultAnalytics.most_issue_closed_user.map((user) => ({
                   avatar: user.assignees__avatar,
                   email: user.assignees__email,
+                  firstName: user.assignees__first_name,
+                  lastName: user.assignees__last_name,
                   count: user.count,
                 }))}
                 title="Most issues closed"

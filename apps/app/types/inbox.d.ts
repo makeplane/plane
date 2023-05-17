@@ -1,13 +1,16 @@
+import type { IProjectLite } from "./projects";
+
 export interface IInboxIssue {
   id: string;
   issue_detail: IInboxIssue;
   created_at: Date;
   updated_at: Date;
-  status: number;
+  status: -2 | -1 | 0 | 1 | 2;
   snoozed_till: Date | null;
   created_by: string;
   updated_by: string;
   project: string;
+  project_detail: IProjectLite;
   workspace: string;
   inbox: string;
   issue: string;
@@ -25,7 +28,20 @@ export interface IInboxIssue {
   sort_order: number;
 }
 
-export interface IInbox extends any {}
+export interface IInbox {
+  id: string;
+  project_detail: IProjectLite;
+  pending_issue_count: number;
+  created_at: Date;
+  updated_at: Date;
+  name: string;
+  description: string;
+  is_default: boolean;
+  created_by: string;
+  updated_by: string;
+  project: string;
+  workspace: string;
+}
 
 interface StatusReject {
   status: -1;
@@ -45,4 +61,8 @@ interface StatusDuplicate {
   duplicate_to: string;
 }
 
-type TInboxStatus = StatusReject | StatusSnoozed | StatusAccepted | StatusDuplicate;
+interface StatePending {
+  readonly status: -2;
+}
+
+type TInboxStatus = StatusReject | StatusSnoozed | StatusAccepted | StatusDuplicate | StatePending;

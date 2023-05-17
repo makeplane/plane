@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -59,11 +59,6 @@ export const SingleBoard: React.FC<Props> = ({
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
-
-  useEffect(() => {
-    if (currentState?.group === "completed" || currentState?.group === "cancelled")
-      setIsCollapsed(false);
-  }, [currentState]);
 
   return (
     <div className={`flex-shrink-0 ${!isCollapsed ? "" : "flex h-full flex-col w-96"}`}>

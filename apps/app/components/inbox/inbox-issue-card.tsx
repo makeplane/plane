@@ -21,7 +21,9 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
       }`}
     >
       <div className="flex items-center gap-x-2">
-        <p className="flex-shrink-0 text-xs">PL-152</p>
+        <p className="flex-shrink-0 text-xs">
+          {issue.project_detail.identifier}-{issue.issue_detail.sequence_id}
+        </p>
         <p className="truncate font-medium">{issue.issue_detail.name}</p>
       </div>
       <div className="flex gap-2">

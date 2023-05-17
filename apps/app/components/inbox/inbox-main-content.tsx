@@ -38,10 +38,11 @@ type Props = {
   control: Control<IIssue, any>;
   watch: UseFormWatch<IIssue>;
   reset: UseFormReset<IIssue>;
+  status?: -2 | -1 | 0 | 1 | 2;
 };
 
 export const InboxMainContent: React.FC<Props> = (props) => {
-  const { onAccept, watch, control, reset } = props;
+  const { onAccept, watch, control, reset, status } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, inboxId } = router.query;
@@ -51,8 +52,10 @@ export const InboxMainContent: React.FC<Props> = (props) => {
     mutate: mutateIssueDetails,
     error: issueDetailError,
   } = useSWR<IIssue | undefined>(
-    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
-    workspaceSlug && projectId && issueId
+    workspaceSlug && projectId && issueId && status && status === 1
+      ? ISSUE_DETAILS(issueId as string)
+      : null,
+    workspaceSlug && projectId && issueId && status && status === 1
       ? () =>
           issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
@@ -117,14 +120,7 @@ export const InboxMainContent: React.FC<Props> = (props) => {
     [workspaceSlug, issueId, projectId, mutateIssueDetails, inboxId]
   );
 
-  if (!issueDetails && !issueDetailError)
-    return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <Spinner />
-      </div>
-    );
-
-  if (!issueDetails && issueDetailError)
+  if (status !== undefined && status !== 1)
     return (
       <div className="w-full h-full flex flex-col justify-center items-center">
         <div className="relative w-96 aspect-video">
@@ -139,6 +135,13 @@ export const InboxMainContent: React.FC<Props> = (props) => {
           </p>
           <PrimaryButton onClick={onAccept}>Accept Inbox Issue</PrimaryButton>
         </div>
+      </div>
+    );
+
+  if (!issueDetails && !issueDetailError)
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <Spinner />
       </div>
     );
 

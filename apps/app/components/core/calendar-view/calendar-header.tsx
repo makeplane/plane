@@ -61,8 +61,8 @@ export const CalendarHeader: React.FC<Props> = ({
         <Popover className="flex h-full items-center justify-start rounded-lg">
           {({ open }) => (
             <>
-              <Popover.Button className={`group flex h-full items-start gap-1 text-brand-base`}>
-                <div className="flex  items-center   justify-center gap-2 text-2xl font-semibold">
+              <Popover.Button>
+                <div className="flex items-center justify-center gap-2 text-2xl font-semibold text-brand-base">
                   <span>{formatDate(currentDate, "Month")}</span>{" "}
                   <span>{formatDate(currentDate, "yyyy")}</span>
                 </div>

@@ -14,7 +14,6 @@ import AppHeader from "layouts/app-layout/app-header";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
-import { AnalyticsWorkspaceModal } from "components/analytics";
 import { CommandPalette } from "components/command-palette";
 // icons
 import { PrimaryButton, Spinner } from "components/ui";
@@ -49,7 +48,6 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   right,
 }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -93,12 +91,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
       <Container meta={meta}>
         <CommandPalette />
         <div className="relative flex h-screen w-full overflow-hidden">
-          <AppSidebar
-            toggleSidebar={toggleSidebar}
-            setToggleSidebar={setToggleSidebar}
-            isAnalyticsModalOpen={analyticsModal}
-            setAnalyticsModal={setAnalyticsModal}
-          />
+          <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
           {settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
             <NotAuthorizedView
               actionButton={
@@ -122,12 +115,6 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   : "bg-brand-base"
               }`}
             >
-              {analyticsModal && (
-                <AnalyticsWorkspaceModal
-                  isOpen={analyticsModal}
-                  onClose={() => setAnalyticsModal(false)}
-                />
-              )}
               {!noHeader && (
                 <AppHeader
                   breadcrumbs={breadcrumbs}
