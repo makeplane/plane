@@ -3,9 +3,10 @@ import { Tooltip } from "./tooltip";
 
 type Props = {
   data: any;
+  noTooltip?: boolean
 };
 
-export const LinearProgressIndicator: React.FC<Props> = ({ data }) => {
+export const LinearProgressIndicator: React.FC<Props> = ({ data, noTooltip=false }) => {
   const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
   let progress = 0;
 
@@ -16,8 +17,8 @@ export const LinearProgressIndicator: React.FC<Props> = ({ data }) => {
       backgroundColor: item.color,
     };
     progress += item.value;
-
-    return (
+    if (noTooltip) return <div style={style} />
+    else return (
       <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}%`}>
         <div style={style} />
       </Tooltip>
@@ -26,7 +27,11 @@ export const LinearProgressIndicator: React.FC<Props> = ({ data }) => {
 
   return (
     <div className="flex h-1 w-full items-center justify-between gap-1">
-      {total === 0 ? " - 0%" : <div className="flex h-full w-full gap-1">{bars}</div>}
+      {total === 0 ? (
+        <div className="flex h-full w-full gap-1 bg-neutral-500">{bars}</div>
+      ) : (
+        <div className="flex h-full w-full gap-1">{bars}</div>
+      )}
     </div>
   );
 };
