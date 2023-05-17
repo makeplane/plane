@@ -23,7 +23,10 @@ class IssueManager(models.Manager):
             super()
             .get_queryset()
             .filter(
-                models.Q(issue_inbox__status=1) | models.Q(issue_inbox__isnull=True)
+                models.Q(issue_inbox__status=1)
+                | models.Q(issue_inbox__status=-1)
+                | models.Q(issue_inbox__status=2)
+                | models.Q(issue_inbox__isnull=True)
             )
         )
 
