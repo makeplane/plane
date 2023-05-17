@@ -5,10 +5,11 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// hooks
-import useToast from "hooks/use-toast";
 // services
 import workspaceService from "services/workspace.service";
+// hooks
+import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { SettingsHeader } from "components/workspace";
@@ -37,24 +38,27 @@ const MembersSettings: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
+  const { user } = useUser();
+
   const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug.toString()) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug.toString()) : null)
   );
 
-  const { data: workspaceMembers, mutate: mutateMembers } = useSWR<any[]>(
-    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
+  const { data: workspaceMembers, mutate: mutateMembers } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug.toString()) : null
   );
 
-  const { data: workspaceInvitations, mutate: mutateInvitations } = useSWR<any[]>(
+  const { data: workspaceInvitations, mutate: mutateInvitations } = useSWR(
     workspaceSlug ? WORKSPACE_INVITATIONS : null,
-    workspaceSlug ? () => workspaceService.workspaceInvitations(workspaceSlug as string) : null
+    workspaceSlug ? () => workspaceService.workspaceInvitations(workspaceSlug.toString()) : null
   );
 
   const members = [
     ...(workspaceMembers?.map((item) => ({
       id: item.id,
+      memberId: item.member?.id,
       avatar: item.member?.avatar,
       first_name: item.member?.first_name,
       last_name: item.member?.last_name,
@@ -65,15 +69,18 @@ const MembersSettings: NextPage = () => {
     })) || []),
     ...(workspaceInvitations?.map((item) => ({
       id: item.id,
-      avatar: item.avatar ?? "",
-      first_name: item.first_name ?? item.email,
-      last_name: item.last_name ?? "",
+      memberId: item.id,
+      avatar: "",
+      first_name: item.email,
+      last_name: "",
       email: item.email,
       role: item.role,
       status: item.accepted,
       member: false,
     })) || []),
   ];
+
+  const currentUser = workspaceMembers?.find((item) => item.member?.id === user?.id);
 
   return (
     <>
@@ -138,7 +145,7 @@ const MembersSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="px-24 py-8">
+        <div className="p-8 lg:px-24">
           <SettingsHeader />
           <section className="space-y-8">
             <div className="flex items-end justify-between gap-4">
@@ -197,39 +204,52 @@ const MembersSettings: NextPage = () => {
                             label={ROLE[member.role as keyof typeof ROLE]}
                             value={member.role}
                             onChange={(value: any) => {
+                              if (!workspaceSlug) return;
+
+                              mutateMembers(
+                                (prevData) =>
+                                  prevData?.map((m) =>
+                                    m.id === member.id ? { ...m, role: value } : m
+                                  ),
+                                false
+                              );
+
                               workspaceService
-                                .updateWorkspaceMember(activeWorkspace?.slug as string, member.id, {
+                                .updateWorkspaceMember(workspaceSlug?.toString(), member.id, {
                                   role: value,
-                                })
-                                .then(() => {
-                                  mutateMembers(
-                                    (prevData) =>
-                                      prevData?.map((m) =>
-                                        m.id === member.id ? { ...m, role: value } : m
-                                      ),
-                                    false
-                                  );
-                                  setToastAlert({
-                                    title: "Success",
-                                    type: "success",
-                                    message: "Member role updated successfully.",
-                                  });
                                 })
                                 .catch(() => {
                                   setToastAlert({
-                                    title: "Error",
                                     type: "error",
-                                    message: "An error occurred while updating member role.",
+                                    title: "Error!",
+                                    message:
+                                      "An error occurred while updating member role. Please try again.",
                                   });
                                 });
                             }}
                             position="right"
+                            disabled={
+                              member.memberId === currentUser?.member.id ||
+                              !member.status ||
+                              (currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < member.role)
+                            }
                           >
-                            {Object.keys(ROLE).map((key) => (
-                              <CustomSelect.Option key={key} value={key}>
-                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                              </CustomSelect.Option>
-                            ))}
+                            {Object.keys(ROLE).map((key) => {
+                              if (
+                                currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < parseInt(key)
+                              )
+                                return null;
+
+                              return (
+                                <CustomSelect.Option key={key} value={key}>
+                                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                                </CustomSelect.Option>
+                              );
+                            })}
                           </CustomSelect>
                           <CustomMenu ellipsis>
                             <CustomMenu.MenuItem

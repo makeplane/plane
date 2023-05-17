@@ -168,7 +168,7 @@ export const SingleList: React.FC<Props> = ({
                     <PlusIcon className="h-4 w-4" />
                   </div>
                 }
-                optionsPosition="right"
+                position="right"
                 noBorder
               >
                 <CustomMenu.MenuItem onClick={addIssueToState}>Create new</CustomMenu.MenuItem>
@@ -204,7 +204,8 @@ export const SingleList: React.FC<Props> = ({
                       makeIssueCopy={() => makeIssueCopy(issue)}
                       handleDeleteIssue={handleDeleteIssue}
                       removeIssue={() => {
-                        if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id, issue.id);
+                        if (removeIssue !== null && issue.bridge_id)
+                          removeIssue(issue.bridge_id, issue.id);
                       }}
                       isCompleted={isCompleted}
                       userAuth={userAuth}

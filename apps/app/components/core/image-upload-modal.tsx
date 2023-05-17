@@ -110,7 +110,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto">
@@ -124,7 +124,7 @@ export const ImageUploadModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
                     Upload Image
@@ -133,9 +133,9 @@ export const ImageUploadModal: React.FC<Props> = ({
                     <div className="flex items-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative block h-80 w-full rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                        className={`relative grid h-80 w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-brand-base hover:border-gray-400"
+                            ? "border-2 border-dashed border-brand-base hover:bg-brand-surface-1"
                             : ""
                         }`}
                       >
@@ -143,7 +143,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                           <>
                             <button
                               type="button"
-                              className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-brand-surface-1 px-2 py-0.5 text-xs font-medium text-gray-600"
+                              className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-brand-surface-1 px-2 py-0.5 text-xs font-medium text-brand-secondary"
                             >
                               Edit
                             </button>
@@ -152,17 +152,18 @@ export const ImageUploadModal: React.FC<Props> = ({
                               objectFit="cover"
                               src={image ? URL.createObjectURL(image) : value ? value : ""}
                               alt="image"
+                              className="rounded-lg"
                             />
                           </>
                         ) : (
-                          <>
-                            <UserCircleIcon className="mx-auto h-16 w-16 text-gray-400" />
-                            <span className="mt-2 block text-sm font-medium text-brand-base">
+                          <div>
+                            <UserCircleIcon className="mx-auto h-16 w-16 text-brand-secondary" />
+                            <span className="mt-2 block text-sm font-medium text-brand-secondary">
                               {isDragActive
                                 ? "Drop image here to upload"
                                 : "Drag & drop image here"}
                             </span>
-                          </>
+                          </div>
                         )}
 
                         <input {...getInputProps()} type="text" />

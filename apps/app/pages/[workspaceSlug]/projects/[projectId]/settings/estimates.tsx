@@ -13,6 +13,7 @@ import useProjectDetails from "hooks/use-project-details";
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
+import { SettingsHeader } from "components/project";
 //hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -27,7 +28,6 @@ import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-import { SettingsHeader } from "components/project";
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -118,7 +118,7 @@ const EstimatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="px-24 py-8">
+        <div className="p-8 lg:px-24">
           <SettingsHeader />
           <section className="flex items-center justify-between">
             <h3 className="text-2xl font-semibold">Estimates</h3>

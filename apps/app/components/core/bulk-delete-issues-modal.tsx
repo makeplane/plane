@@ -121,7 +121,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-brand-surface-2 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 rounded-xl border border-brand-base bg-brand-base shadow-2xl transition-all">
               <form>
                 <Combobox
                   onChange={(val: string) => {
@@ -149,7 +149,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
 
                   <Combobox.Options
                     static
-                    className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
+                    className="max-h-80 scroll-py-2 divide-y divide-brand-base overflow-y-auto"
                   >
                     {filteredIssues.length > 0 ? (
                       <li className="p-2">
@@ -158,15 +158,15 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                             Select issues to delete
                           </h2>
                         )}
-                        <ul className="text-sm text-gray-700">
+                        <ul className="text-sm text-brand-secondary">
                           {filteredIssues.map((issue) => (
                             <Combobox.Option
                               key={issue.id}
                               as="div"
                               value={issue.id}
-                              className={({ active }) =>
+                              className={({ active, selected }) =>
                                 `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                  active ? "bg-gray-900 bg-opacity-5 text-brand-base" : ""
+                                  active ? "bg-brand-surface-2 text-brand-base" : ""
                                 }`
                               }
                             >
@@ -182,7 +182,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                                     backgroundColor: issue.state_detail.color,
                                   }}
                                 />
-                                <span className="flex-shrink-0 text-xs text-brand-secondary">
+                                <span className="flex-shrink-0 text-xs">
                                   {issue.project_detail.identifier}-{issue.sequence_id}
                                 </span>
                                 <span>{issue.name}</span>

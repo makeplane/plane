@@ -11,7 +11,6 @@ import workspaceServices from "services/workspace.service";
 import Container from "layouts/container";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
-import SettingsNavbar from "layouts/settings-navbar";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
@@ -55,13 +54,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 
   const { data: workspaceMemberMe, error } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null,
-    {
-      onErrorRetry(err, key, config, revalidate, revalidateOpts) {
-        if (err.status === 401 || err.status === 403) return;
-        revalidateOpts.retryCount = 5;
-      },
-    }
+    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null
   );
 
   if (!workspaceMemberMe && !error)

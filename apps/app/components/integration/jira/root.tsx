@@ -13,7 +13,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 // icons
 import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
-import { CogIcon, CloudUploadIcon, UsersIcon, CheckIcon } from "components/icons";
+import { CogIcon, UsersIcon, CheckIcon } from "components/icons";
 
 // services
 import jiraImporterService from "services/integration/jira.service";
@@ -40,7 +40,7 @@ import { IJiraImporterForm } from "types";
 const integrationWorkflowData: Array<{
   title: string;
   key: TJiraIntegrationSteps;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  icon: any;
 }> = [
   {
     title: "Configure",

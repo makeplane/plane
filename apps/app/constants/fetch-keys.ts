@@ -1,13 +1,14 @@
-import { IJiraMetadata } from "types";
+import { IAnalyticsParams, IJiraMetadata } from "types";
 
 const paramsToKey = (params: any) => {
-  const { state, priority, assignees, created_by, labels } = params;
+  const { state, priority, assignees, created_by, labels, target_date } = params;
 
   let stateKey = state ? state.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
+  const targetDateKey = target_date ?? "";
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
@@ -19,7 +20,7 @@ const paramsToKey = (params: any) => {
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";
@@ -106,13 +107,19 @@ export const MODULE_ISSUES_WITH_PARAMS = (moduleId: string, params?: any) => {
 
   const paramsKey = paramsToKey(params);
 
-  return `MODULE_ISSUES_WITH_PARAMS_${moduleId}_${paramsKey.toUpperCase()}`;
+  return `MODULE_ISSUES_WITH_PARAMS_${moduleId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 export const MODULE_DETAILS = (moduleId: string) => `MODULE_DETAILS_${moduleId.toUpperCase()}`;
 
 export const VIEWS_LIST = (projectId: string) => `VIEWS_LIST_${projectId.toUpperCase()}`;
-export const VIEW_ISSUES = (viewId: string) => `VIEW_ISSUES_${viewId.toUpperCase()}`;
 export const VIEW_DETAILS = (viewId: string) => `VIEW_DETAILS_${viewId.toUpperCase()}`;
+export const VIEW_ISSUES = (viewId: string, params: any) => {
+  if (!params) return `VIEW_ISSUES_${viewId.toUpperCase()}`;
+
+  const paramsKey = paramsToKey(params);
+
+  return `VIEW_ISSUES_${viewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
+};
 
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
@@ -142,14 +149,6 @@ export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) 
 export const SLACK_CHANNEL_INFO = (workspaceSlug: string, projectId: string) =>
   `SLACK_CHANNEL_INFO_${workspaceSlug.toString().toUpperCase()}_${projectId.toUpperCase()}`;
 
-// Calendar
-export const PROJECT_CALENDAR_ISSUES = (projectId: string) =>
-  `CALENDAR_ISSUES_${projectId.toUpperCase()}`;
-export const CYCLE_CALENDAR_ISSUES = (projectId: string, cycleId: string) =>
-  `CALENDAR_ISSUES_${projectId.toUpperCase()}_${cycleId.toUpperCase()}`;
-export const MODULE_CALENDAR_ISSUES = (projectId: string, moduleId: string) =>
-  `CALENDAR_ISSUES_${projectId.toUpperCase()}_${moduleId.toUpperCase()}`;
-
 // Pages
 export const RECENT_PAGES_LIST = (projectId: string) =>
   `RECENT_PAGES_LIST_${projectId.toUpperCase()}`;
@@ -167,3 +166,13 @@ export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${page
 export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
 export const ESTIMATE_DETAILS = (estimateId: string) =>
   `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
+
+// analytics
+export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
+  `ANALYTICS${workspaceSlug.toUpperCase()}_${params.x_axis}_${params.y_axis}_${
+    params.segment
+  }_${params.project?.toString()}`;
+export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnalyticsParams>) =>
+  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${
+    params?.cycle
+  }_${params?.module}`;

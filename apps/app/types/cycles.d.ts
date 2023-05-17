@@ -6,6 +6,7 @@ import type {
   IWorkspace,
   IWorkspaceLite,
   IIssueFilterOptions,
+  IUserLite,
 } from "types";
 
 export interface ICycle {
@@ -29,6 +30,7 @@ export interface ICycle {
   unstarted_issues: number;
   updated_at: Date;
   updated_by: string;
+  assignees: IUserLite[];
   view_props: {
     filters: IIssueFilterOptions;
   };

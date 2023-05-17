@@ -38,7 +38,7 @@ const SingleInvitation: React.FC<Props> = ({
                   alt={invitation.workspace.name}
                 />
               ) : (
-                <span className="flex h-full w-full items-center justify-center rounded bg-gray-500 p-4 uppercase text-white">
+                <span className="flex h-full w-full items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
                   {invitation.workspace.name.charAt(0)}
                 </span>
               )}

@@ -5,7 +5,7 @@ from datetime import datetime
 # Django imports
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Q, Exists, OuterRef
+from django.db.models import Q, Exists, OuterRef, Func, F
 from django.core.validators import validate_email
 from django.conf import settings
 
@@ -46,6 +46,8 @@ from plane.db.models import (
     ProjectMemberInvite,
     User,
     ProjectIdentifier,
+    Cycle,
+    Module,
 )
 from plane.bgtasks.project_invitation_task import project_invitation
 
@@ -92,6 +94,26 @@ class ProjectViewSet(BaseViewSet):
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
                 .order_by("-is_favorite", "name")
+                .annotate(
+                    total_members=ProjectMember.objects.filter(
+                        project_id=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    total_modules=Module.objects.filter(project_id=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
             return Response(ProjectDetailSerializer(projects, many=True).data)
         except Exception as e:
@@ -161,6 +183,7 @@ class ProjectViewSet(BaseViewSet):
                             workspace=serializer.instance.workspace,
                             group=state["group"],
                             default=state.get("default", False),
+                            created_by=request.user,
                         )
                         for state in states
                     ]
@@ -344,6 +367,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                         workspace=invitation.project.workspace,
                         member=request.user,
                         role=invitation.role,
+                        created_by=request.user,
                     )
                     for invitation in project_invitations
                 ]
@@ -384,6 +408,41 @@ class ProjectMemberViewSet(BaseViewSet):
             .select_related("member")
             .select_related("workspace", "workspace__owner")
         )
+
+    def partial_update(self, request, slug, project_id, pk):
+        try:
+            project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+            if request.user.id == project_member.member_id:
+                return Response(
+                    {"error": "You cannot update your own role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if request.data.get("role", 10) > project_member.role:
+                return Response(
+                    {
+                        "error": "You cannot update a role that is higher than your own role"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = ProjectMemberSerializer(
+                project_member, data=request.data, partial=True
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ProjectMember.DoesNotExist:
+            return Response(
+                {"error": "Project Member does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class AddMemberToProjectEndpoint(BaseAPIView):
@@ -465,6 +524,7 @@ class AddTeamToProjectEndpoint(BaseAPIView):
                         project_id=project_id,
                         member_id=member,
                         workspace=workspace,
+                        created_by=request.user,
                     )
                 )
 
@@ -612,6 +672,7 @@ class ProjectJoinEndpoint(BaseAPIView):
                         if workspace_role >= 15
                         else (15 if workspace_role == 10 else workspace_role),
                         workspace=workspace,
+                        created_by=request.user,
                     )
                     for project_id in project_ids
                 ],

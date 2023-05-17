@@ -27,6 +27,9 @@ export interface IProject {
   network: number;
   project_lead: IUser | string | null;
   slug: string;
+  total_cycles: number;
+  total_members: number;
+  total_modules: number;
   updated_at: Date;
   updated_by: string;
   workspace: IWorkspace | string;
@@ -55,10 +58,12 @@ type ProjectViewTheme = {
   issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
+  calendarDateRange: string;
   filters: IIssueFilterOptions;
 };
 
 export interface IProjectMember {
+  id: string;
   member: IUserLite;
   project: IProject;
   workspace: IWorkspace;

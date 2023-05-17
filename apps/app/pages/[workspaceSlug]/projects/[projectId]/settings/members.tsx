@@ -11,11 +11,13 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
+import useUser from "hooks/use-user";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
+import { SettingsHeader } from "components/project";
 // ui
 import { CustomMenu, CustomSelect, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -27,7 +29,6 @@ import type { NextPage } from "next";
 import { PROJECT_INVITATIONS, PROJECT_MEMBERS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
-import { SettingsHeader } from "components/project";
 
 const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);
@@ -36,16 +37,16 @@ const MembersSettings: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUser();
+  const { projectDetails } = useProjectDetails();
 
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
-
-  const { projectDetails } = useProjectDetails();
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -62,8 +63,9 @@ const MembersSettings: NextPage = () => {
   );
 
   const members = [
-    ...(projectMembers?.map((item: any) => ({
+    ...(projectMembers?.map((item) => ({
       id: item.id,
+      memberId: item.member?.id,
       avatar: item.member?.avatar,
       first_name: item.member?.first_name,
       last_name: item.member?.last_name,
@@ -74,6 +76,7 @@ const MembersSettings: NextPage = () => {
     })) || []),
     ...(projectInvitations?.map((item: any) => ({
       id: item.id,
+      memberId: item.id,
       avatar: item.avatar ?? "",
       first_name: item.first_name ?? item.email,
       last_name: item.last_name ?? "",
@@ -83,6 +86,8 @@ const MembersSettings: NextPage = () => {
       member: false,
     })) || []),
   ];
+
+  const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
   return (
     <>
@@ -142,7 +147,7 @@ const MembersSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="px-24 py-8">
+        <div className="p-8 lg:px-24">
           <SettingsHeader />
           <section className="space-y-8">
             <div className="flex items-end justify-between gap-4">
@@ -203,6 +208,14 @@ const MembersSettings: NextPage = () => {
                             onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
                               if (!activeWorkspace || !projectDetails) return;
 
+                              mutateMembers(
+                                (prevData: any) =>
+                                  prevData.map((m: any) =>
+                                    m.id === member.id ? { ...m, role: value } : m
+                                  ),
+                                false
+                              );
+
                               projectService
                                 .updateProjectMember(
                                   activeWorkspace.slug,
@@ -212,31 +225,38 @@ const MembersSettings: NextPage = () => {
                                     role: value,
                                   }
                                 )
-                                .then((res) => {
+                                .catch(() => {
                                   setToastAlert({
-                                    type: "success",
-                                    message: "Member role updated successfully.",
-                                    title: "Success",
+                                    type: "error",
+                                    title: "Error!",
+                                    message:
+                                      "An error occurred while updating member role. Please try again.",
                                   });
-                                  mutateMembers(
-                                    (prevData: any) =>
-                                      prevData.map((m: any) =>
-                                        m.id === member.id ? { ...m, ...res, role: value } : m
-                                      ),
-                                    false
-                                  );
-                                })
-                                .catch((err) => {
-                                  console.log(err);
                                 });
                             }}
                             position="right"
+                            disabled={
+                              member.memberId === user?.id ||
+                              !member.member ||
+                              (currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < member.role)
+                            }
                           >
-                            {Object.keys(ROLE).map((key) => (
-                              <CustomSelect.Option key={key} value={key}>
-                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                              </CustomSelect.Option>
-                            ))}
+                            {Object.keys(ROLE).map((key) => {
+                              if (
+                                currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < parseInt(key)
+                              )
+                                return null;
+
+                              return (
+                                <CustomSelect.Option key={key} value={key}>
+                                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                                </CustomSelect.Option>
+                              );
+                            })}
                           </CustomSelect>
                           <CustomMenu ellipsis>
                             <CustomMenu.MenuItem

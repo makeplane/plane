@@ -56,8 +56,6 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueView } = useIssuesView();
-
   const { loading, error, memberRole: memberType } = useProjectMyMembership();
 
   const settingsLayout = router.pathname.includes("/settings");
@@ -123,9 +121,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               />
             )}
             <div className="h-full w-full overflow-hidden">
-              <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
-                {children}
-              </div>
+              <div className="h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
             </div>
           </main>
         )}
