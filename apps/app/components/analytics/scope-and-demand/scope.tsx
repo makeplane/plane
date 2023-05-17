@@ -29,7 +29,6 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
               return (
                 <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
                   <span className="font-medium text-brand-secondary">
-                    Issue count-{" "}
                     {assignee
                       ? assignee.assignees__first_name + " " + assignee.assignees__last_name
                       : "No assignee"}

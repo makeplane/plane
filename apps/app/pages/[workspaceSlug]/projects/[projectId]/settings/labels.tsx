@@ -12,6 +12,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import {
   CreateUpdateLabelInline,
+  DeleteLabelModal,
   LabelsListModal,
   SingleLabel,
   SingleLabelGroup,
@@ -40,6 +41,9 @@ const LabelsSettings: NextPage = () => {
   const [labelsListModal, setLabelsListModal] = useState(false);
   const [parentLabel, setParentLabel] = useState<IIssueLabels | undefined>(undefined);
 
+  // delete label
+  const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabels | null>(null);
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -52,7 +56,7 @@ const LabelsSettings: NextPage = () => {
       : null
   );
 
-  const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
+  const { data: issueLabels } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
@@ -75,21 +79,17 @@ const LabelsSettings: NextPage = () => {
     setLabelToUpdate(label);
   };
 
-  const handleLabelDelete = (labelId: string) => {
-    if (workspaceSlug && projectDetails) {
-      mutate((prevData) => prevData?.filter((p) => p.id !== labelId), false);
-      issuesService
-        .deleteIssueLabel(workspaceSlug as string, projectDetails.id, labelId)
-        .catch((e) => console.log(e));
-    }
-  };
-
   return (
     <>
       <LabelsListModal
         isOpen={labelsListModal}
         handleClose={() => setLabelsListModal(false)}
         parent={parentLabel}
+      />
+      <DeleteLabelModal
+        isOpen={!!selectDeleteLabel}
+        data={selectDeleteLabel ?? null}
+        onClose={() => setSelectDeleteLabel(null)}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -143,7 +143,7 @@ const LabelsSettings: NextPage = () => {
                                 behavior: "smooth",
                               });
                             }}
-                            handleLabelDelete={handleLabelDelete}
+                            handleLabelDelete={() => setSelectDeleteLabel(label)}
                           />
                         );
                     } else
@@ -159,7 +159,7 @@ const LabelsSettings: NextPage = () => {
                               behavior: "smooth",
                             });
                           }}
-                          handleLabelDelete={handleLabelDelete}
+                          handleLabelDelete={() => setSelectDeleteLabel(label)}
                         />
                       );
                   })
