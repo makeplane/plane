@@ -29,7 +29,7 @@ type Props = {
   labelChildren: IIssueLabels[];
   addLabelToGroup: (parentLabel: IIssueLabels) => void;
   editLabel: (label: IIssueLabels) => void;
-  handleLabelDelete: (labelId: string) => void;
+  handleLabelDelete: () => void;
 };
 
 export const SingleLabelGroup: React.FC<Props> = ({
@@ -94,7 +94,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                     <span>Edit label</span>
                   </span>
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
+                <CustomMenu.MenuItem onClick={handleLabelDelete}>
                   <span className="flex items-center justify-start gap-2">
                     <TrashIcon className="h-4 w-4" />
                     <span>Delete label</span>
@@ -150,7 +150,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                             <span>Edit label</span>
                           </span>
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={() => handleLabelDelete(child.id)}>
+                        <CustomMenu.MenuItem onClick={handleLabelDelete}>
                           <span className="flex items-center justify-start gap-2">
                             <TrashIcon className="h-4 w-4" />
                             <span>Delete label</span>

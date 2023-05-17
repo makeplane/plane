@@ -7,9 +7,9 @@ import useSWR from "swr";
 // services
 import cyclesService from "services/cycles.service";
 // components
-import { DeleteCycleModal, SingleCycleCard } from "components/cycles";
+import { DeleteCycleModal, SingleCycleCard, SingleCycleList } from "components/cycles";
 // icons
-import { CompletedCycleIcon, ExclamationIcon } from "components/icons";
+import { ExclamationIcon } from "components/icons";
 // types
 import { ICycle, SelectCycleType } from "types";
 // fetch-keys
@@ -19,11 +19,13 @@ import { EmptyState, Loader } from "components/ui";
 import emptyCycle from "public/empty-state/empty-cycle.svg";
 
 export interface CompletedCyclesListProps {
+  cycleView: string;
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedCycle: React.Dispatch<React.SetStateAction<SelectCycleType>>;
 }
 
-export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
+export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
+  cycleView,
   setCreateUpdateCycleModal,
   setSelectedCycle,
 }) => {
@@ -72,17 +74,35 @@ export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
               />
               <span>Completed cycles are not editable.</span>
             </div>
-            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-              {completedCycles.completed_cycles.map((cycle) => (
-                <SingleCycleCard
-                  key={cycle.id}
-                  cycle={cycle}
-                  handleDeleteCycle={() => handleDeleteCycle(cycle)}
-                  handleEditCycle={() => handleEditCycle(cycle)}
-                  isCompleted
-                />
-              ))}
-            </div>
+            {cycleView === "list" ? (
+              <div>
+                {completedCycles.completed_cycles.map((cycle) => (
+                  <div className="hover:bg-brand-surface-2">
+                    <div className="flex flex-col border-brand-base">
+                      <SingleCycleList
+                        key={cycle.id}
+                        cycle={cycle}
+                        handleDeleteCycle={() => handleDeleteCycle(cycle)}
+                        handleEditCycle={() => handleEditCycle(cycle)}
+                        isCompleted
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+                {completedCycles.completed_cycles.map((cycle) => (
+                  <SingleCycleCard
+                    key={cycle.id}
+                    cycle={cycle}
+                    handleDeleteCycle={() => handleDeleteCycle(cycle)}
+                    handleEditCycle={() => handleEditCycle(cycle)}
+                    isCompleted
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <EmptyState

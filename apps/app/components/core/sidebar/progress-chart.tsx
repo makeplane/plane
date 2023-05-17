@@ -12,9 +12,11 @@ type Props = {
   issues: IIssue[];
   start: string;
   end: string;
+  width?: number;
+  height?: number;
 };
 
-const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
+const ProgressChart: React.FC<Props> = ({ issues, start, end, width = 360, height = 160  }) => {
   const startDate = new Date(start);
   const endDate = new Date(end);
   const getChartData = () => {
@@ -51,8 +53,8 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
   return (
     <div className="absolute -left-4  flex h-full w-full  items-center justify-center text-xs">
       <AreaChart
-        width={360}
-        height={160}
+        width={width}
+        height={height}
         data={ChartData}
         margin={{
           top: 12,

@@ -10,6 +10,9 @@ import { useForm } from "react-hook-form";
 import { Tab } from "@headlessui/react";
 // services
 import analyticsService from "services/analytics.service";
+import projectService from "services/project.service";
+import cyclesService from "services/cycles.service";
+import modulesService from "services/modules.service";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // icons
@@ -21,7 +24,7 @@ import {
 // types
 import { IAnalyticsParams } from "types";
 // fetch-keys
-import { ANALYTICS } from "constants/fetch-keys";
+import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -59,6 +62,39 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
     workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
   );
 
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId && !(cycleId || moduleId)
+      ? PROJECT_DETAILS(projectId.toString())
+      : null,
+    workspaceSlug && projectId && !(cycleId || moduleId)
+      ? () => projectService.getProject(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  const { data: cycleDetails } = useSWR(
+    workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId.toString()) : null,
+    workspaceSlug && projectId && cycleId
+      ? () =>
+          cyclesService.getCycleDetails(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            cycleId.toString()
+          )
+      : null
+  );
+
+  const { data: moduleDetails } = useSWR(
+    workspaceSlug && projectId && moduleId ? MODULE_DETAILS(moduleId.toString()) : null,
+    workspaceSlug && projectId && moduleId
+      ? () =>
+          modulesService.getModuleDetails(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            moduleId.toString()
+          )
+      : null
+  );
+
   const handleClose = () => {
     onClose();
   };
@@ -74,12 +110,11 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
           fullScreen ? "rounded-lg border" : "border-l"
         }`}
       >
-        <div
-          className={`flex items-center justify-between gap-2 border-b border-b-brand-base bg-brand-base p-3 text-sm ${
-            fullScreen ? "" : "py-[1.275rem]"
-          }`}
-        >
-          <h3>Project Analytics</h3>
+        <div className="flex items-center justify-between gap-4 bg-brand-base px-5 py-4 text-sm">
+          <h3 className="break-all">
+            Analytics for{" "}
+            {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
+          </h3>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -102,7 +137,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
         </div>
         <Tab.Group as={Fragment}>
-          <Tab.List as="div" className="space-x-2 border-b border-brand-base px-5 py-3">
+          <Tab.List as="div" className="space-x-2 border-b border-brand-base p-5 pt-0">
             {tabsList.map((tab) => (
               <Tab
                 key={tab}
@@ -116,6 +151,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
               </Tab>
             ))}
           </Tab.List>
+          {/* <h4 className="p-5 pb-0">Analytics for</h4> */}
           <Tab.Panels as={Fragment}>
             <Tab.Panel as={Fragment}>
               <ScopeAndDemand fullScreen={fullScreen} />

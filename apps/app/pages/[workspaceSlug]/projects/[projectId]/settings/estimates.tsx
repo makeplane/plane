@@ -118,7 +118,7 @@ const EstimatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8 lg:px-24">
+        <div className="p-8">
           <SettingsHeader />
           <section className="flex items-center justify-between">
             <h3 className="text-2xl font-semibold">Estimates</h3>
@@ -142,7 +142,7 @@ const EstimatesSettings: NextPage = () => {
           </section>
           {estimatesList ? (
             estimatesList.length > 0 ? (
-              <section className="mt-4 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
+              <section className="mt-5 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
                 {estimatesList.map((estimate) => (
                   <SingleEstimate
                     key={estimate.id}

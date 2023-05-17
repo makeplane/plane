@@ -18,7 +18,7 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
   selected = false,
 }) => (
   <div
-    className={`flex w-full items-center justify-between rounded p-2 text-xs ${
+    className={`flex w-full items-center gap-4 justify-between rounded-sm p-1 text-xs ${
       onClick ? "cursor-pointer hover:bg-brand-surface-1" : ""
     } ${selected ? "bg-brand-surface-1" : ""}`}
     onClick={onClick}
