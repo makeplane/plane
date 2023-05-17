@@ -142,6 +142,42 @@ const ProjectIssues: NextPage = () => {
     });
   }, [inboxIssues, workspaceSlug, projectId, inboxId]);
 
+  if (inboxIssues && inboxIssues.length === 0)
+    return (
+      <IssueViewContextProvider>
+        <ProjectAuthorizationWrapper
+          breadcrumbs={
+            <Breadcrumbs>
+              <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+              <BreadcrumbItem
+                title={`${truncateText(projectDetails?.name ?? "Project", 12)} Issues`}
+              />
+            </Breadcrumbs>
+          }
+          right={
+            <div className="flex items-center gap-2">
+              <PrimaryButton
+                className="flex items-center gap-2"
+                onClick={() => {
+                  const e = new KeyboardEvent("keydown", { key: "c" });
+                  document.dispatchEvent(e);
+                }}
+              >
+                <PlusIcon className="h-4 w-4" />
+                Add Issue
+              </PrimaryButton>
+            </div>
+          }
+        >
+          <div className="flex justify-center items-center h-full">
+            <h2 className="text-gray-400 font-medium text-lg text-center">
+              No inbox issues found in this inbox.
+            </h2>
+          </div>
+        </ProjectAuthorizationWrapper>
+      </IssueViewContextProvider>
+    );
+
   return (
     <IssueViewContextProvider>
       <ProjectAuthorizationWrapper
