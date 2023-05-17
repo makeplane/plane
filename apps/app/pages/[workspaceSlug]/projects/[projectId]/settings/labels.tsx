@@ -102,7 +102,7 @@ const LabelsSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8 lg:px-24">
+        <div className="p-8">
           <SettingsHeader />
           <section className="grid grid-cols-12 gap-10">
             <div className="col-span-12 sm:col-span-5">
