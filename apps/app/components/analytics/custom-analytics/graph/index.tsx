@@ -83,8 +83,6 @@ export const AnalyticsGraph: React.FC<Props> = ({
                   (a) => a.assignees__email === datum.value
                 )?.assignees__avatar;
 
-                console.log(avatar);
-
                 if (avatar && avatar !== "")
                   return (
                     <g transform={`translate(${datum.x},${datum.y})`}>
