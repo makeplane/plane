@@ -28,7 +28,7 @@ row_mapping = {
     "created_at": "Created At",
     "issue_count": "Issue Count",
     "priority": "Priority",
-    "effort": "Effort",
+    "estimate": "Estimate",
 }
 
 
@@ -46,7 +46,7 @@ def analytic_export_task(email, data, slug):
             queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
         )
 
-        key = "count" if y_axis == "issue_count" else "effort"
+        key = "count" if y_axis == "issue_count" else "estimate"
 
         if segment:
             segment_zero = []
@@ -114,7 +114,7 @@ def analytic_export_task(email, data, slug):
                             item,
                             distribution.get(item)[0].get("count")
                             if y_axis == "issue_count"
-                            else distribution.get(item)[0].get("effort"),
+                            else distribution.get(item)[0].get("estimate"),
                         ]
                     )
                 )

@@ -80,6 +80,8 @@ const MembersSettings: NextPage = () => {
     })) || []),
   ];
 
+  const currentUser = workspaceMembers?.find((item) => item.member?.id === user?.id);
+
   return (
     <>
       <ConfirmWorkspaceMemberRemove
@@ -204,40 +206,50 @@ const MembersSettings: NextPage = () => {
                             onChange={(value: any) => {
                               if (!workspaceSlug) return;
 
+                              mutateMembers(
+                                (prevData) =>
+                                  prevData?.map((m) =>
+                                    m.id === member.id ? { ...m, role: value } : m
+                                  ),
+                                false
+                              );
+
                               workspaceService
                                 .updateWorkspaceMember(workspaceSlug?.toString(), member.id, {
                                   role: value,
                                 })
-                                .then(() => {
-                                  mutateMembers(
-                                    (prevData) =>
-                                      prevData?.map((m) =>
-                                        m.id === member.id ? { ...m, role: value } : m
-                                      ),
-                                    false
-                                  );
-                                  setToastAlert({
-                                    title: "Success",
-                                    type: "success",
-                                    message: "Member role updated successfully.",
-                                  });
-                                })
                                 .catch(() => {
                                   setToastAlert({
-                                    title: "Error",
                                     type: "error",
-                                    message: "An error occurred while updating member role.",
+                                    title: "Error!",
+                                    message:
+                                      "An error occurred while updating member role. Please try again.",
                                   });
                                 });
                             }}
                             position="right"
-                            disabled={member.memberId === user?.id}
+                            disabled={
+                              member.memberId === currentUser?.member.id ||
+                              !member.status ||
+                              (currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < member.role)
+                            }
                           >
-                            {Object.keys(ROLE).map((key) => (
-                              <CustomSelect.Option key={key} value={key}>
-                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                              </CustomSelect.Option>
-                            ))}
+                            {Object.keys(ROLE).map((key) => {
+                              if (
+                                currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < parseInt(key)
+                              )
+                                return null;
+
+                              return (
+                                <CustomSelect.Option key={key} value={key}>
+                                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                                </CustomSelect.Option>
+                              );
+                            })}
                           </CustomSelect>
                           <CustomMenu ellipsis>
                             <CustomMenu.MenuItem

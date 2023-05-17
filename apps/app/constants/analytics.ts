@@ -58,8 +58,8 @@ export const ANALYTICS_Y_AXIS_VALUES: { value: TYAxisValues; label: string }[] =
     label: "Issue Count",
   },
   {
-    value: "effort",
-    label: "Effort",
+    value: "estimate",
+    label: "Estimate",
   },
 ];
 

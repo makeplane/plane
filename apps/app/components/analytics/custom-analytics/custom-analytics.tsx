@@ -1,144 +1,130 @@
-import { useState } from "react";
-
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import { mutate } from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
-// services
-import analyticsService from "services/analytics.service";
+import { Control, UseFormSetValue } from "react-hook-form";
+// hooks
+import useProjects from "hooks/use-projects";
 // components
 import {
   AnalyticsGraph,
+  AnalyticsSelectBar,
   AnalyticsSidebar,
   AnalyticsTable,
-  CreateUpdateAnalyticsModal,
 } from "components/analytics";
 // ui
 import { Loader, PrimaryButton } from "components/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams } from "types";
+import { IAnalyticsParams, IAnalyticsResponse } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 
-const defaultValues: IAnalyticsParams = {
-  x_axis: "priority",
-  y_axis: "issue_count",
-  segment: null,
-  project: null,
-};
-
 type Props = {
-  isProjectLevel?: boolean;
-  fullScreen?: boolean;
+  analytics: IAnalyticsResponse | undefined;
+  analyticsError: any;
+  params: IAnalyticsParams;
+  control: Control<IAnalyticsParams, any>;
+  setValue: UseFormSetValue<IAnalyticsParams>;
+  fullScreen: boolean;
 };
 
-export const CustomAnalytics: React.FC<Props> = ({ isProjectLevel = false, fullScreen = true }) => {
-  const [saveAnalyticsModal, setSaveAnalyticsModal] = useState(false);
-
+export const CustomAnalytics: React.FC<Props> = ({
+  analytics,
+  analyticsError,
+  params,
+  control,
+  setValue,
+  fullScreen,
+}) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
-  const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
+  const isProjectLevel = projectId ? true : false;
 
-  const params: IAnalyticsParams = {
-    x_axis: watch("x_axis"),
-    y_axis: watch("y_axis"),
-    segment: watch("segment"),
-    project: isProjectLevel ? projectId?.toString() : watch("project"),
-    cycle: isProjectLevel && cycleId ? cycleId.toString() : null,
-    module: isProjectLevel && moduleId ? moduleId.toString() : null,
-  };
-
-  const {
-    data: analytics,
-    error: analyticsError,
-    mutate: mutateAnalytics,
-  } = useSWR(
-    workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
-    workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
-  );
-
-  const yAxisKey = params.y_axis === "issue_count" ? "count" : "effort";
+  const yAxisKey = params.y_axis === "issue_count" ? "count" : "estimate";
   const barGraphData = convertResponseToBarGraphData(analytics?.distribution, params);
 
+  const { projects } = useProjects();
+
   return (
-    <>
-      <CreateUpdateAnalyticsModal
-        isOpen={saveAnalyticsModal}
-        handleClose={() => setSaveAnalyticsModal(false)}
-        params={params}
-      />
-      <div
-        className={`overflow-y-auto ${
-          fullScreen ? "grid grid-cols-4 h-full" : "flex flex-col-reverse"
-        }`}
-      >
-        <div className="col-span-3">
-          {!analyticsError ? (
-            analytics ? (
-              analytics.total > 0 ? (
-                <>
-                  <AnalyticsGraph
-                    analytics={analytics}
-                    barGraphData={barGraphData}
-                    params={params}
-                    yAxisKey={yAxisKey}
-                    fullScreen={fullScreen}
-                  />
-                  <AnalyticsTable
-                    analytics={analytics}
-                    barGraphData={barGraphData}
-                    params={params}
-                    yAxisKey={yAxisKey}
-                  />
-                </>
-              ) : (
-                <div className="grid h-full place-items-center p-5">
-                  <div className="space-y-4 text-brand-secondary">
-                    <p className="text-sm">
-                      No matching issues found. Try changing the parameters.
-                    </p>
-                  </div>
-                </div>
-              )
+    <div
+      className={`overflow-hidden flex flex-col-reverse ${
+        fullScreen ? "md:grid md:grid-cols-4 md:h-full" : ""
+      }`}
+    >
+      <div className="col-span-3 flex flex-col h-full overflow-hidden">
+        <AnalyticsSelectBar
+          control={control}
+          setValue={setValue}
+          projects={projects}
+          params={params}
+          fullScreen={fullScreen}
+          isProjectLevel={isProjectLevel}
+        />
+        {!analyticsError ? (
+          analytics ? (
+            analytics.total > 0 ? (
+              <div className="h-full overflow-y-auto">
+                <AnalyticsGraph
+                  analytics={analytics}
+                  barGraphData={barGraphData}
+                  params={params}
+                  yAxisKey={yAxisKey}
+                  fullScreen={fullScreen}
+                />
+                <AnalyticsTable
+                  analytics={analytics}
+                  barGraphData={barGraphData}
+                  params={params}
+                  yAxisKey={yAxisKey}
+                />
+              </div>
             ) : (
-              <Loader className="space-y-6 p-5">
-                <Loader.Item height="300px" />
-                <Loader className="space-y-4">
-                  <Loader.Item height="30px" />
-                  <Loader.Item height="30px" />
-                  <Loader.Item height="30px" />
-                  <Loader.Item height="30px" />
-                </Loader>
-              </Loader>
-            )
-          ) : (
-            <div className="grid h-full place-items-center p-5">
-              <div className="space-y-4 text-brand-secondary">
-                <p className="text-sm">There was some error in fetching the data.</p>
-                <div className="flex items-center justify-center gap-2">
-                  <PrimaryButton onClick={() => mutateAnalytics()}>Refresh</PrimaryButton>
+              <div className="grid h-full place-items-center p-5">
+                <div className="space-y-4 text-brand-secondary">
+                  <p className="text-sm">No matching issues found. Try changing the parameters.</p>
                 </div>
               </div>
+            )
+          ) : (
+            <Loader className="space-y-6 p-5">
+              <Loader.Item height="300px" />
+              <Loader className="space-y-4">
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+              </Loader>
+            </Loader>
+          )
+        ) : (
+          <div className="grid h-full place-items-center p-5">
+            <div className="space-y-4 text-brand-secondary">
+              <p className="text-sm">There was some error in fetching the data.</p>
+              <div className="flex items-center justify-center gap-2">
+                <PrimaryButton
+                  onClick={() => {
+                    if (!workspaceSlug) return;
+
+                    mutate(ANALYTICS(workspaceSlug.toString(), params));
+                  }}
+                >
+                  Refresh
+                </PrimaryButton>
+              </div>
             </div>
-          )}
-        </div>
-        <div className={fullScreen ? "h-full" : ""}>
-          <AnalyticsSidebar
-            analytics={analytics}
-            params={params}
-            control={control}
-            setValue={setValue}
-            setSaveAnalyticsModal={setSaveAnalyticsModal}
-            fullScreen={fullScreen}
-            isProjectLevel={isProjectLevel}
-          />
-        </div>
+          </div>
+        )}
       </div>
-    </>
+      <AnalyticsSidebar
+        analytics={analytics}
+        params={params}
+        fullScreen={fullScreen}
+        isProjectLevel={isProjectLevel}
+      />
+    </div>
   );
 };

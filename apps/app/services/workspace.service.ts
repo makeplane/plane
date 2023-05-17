@@ -147,7 +147,7 @@ class WorkspaceService extends APIService {
     memberId: string,
     data: Partial<IWorkspaceMember>
   ): Promise<IWorkspaceMember> {
-    return this.put(`/api/workspaces/${workspaceSlug}/members/${memberId}/`, data)
+    return this.patch(`/api/workspaces/${workspaceSlug}/members/${memberId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

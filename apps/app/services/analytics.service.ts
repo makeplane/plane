@@ -18,7 +18,10 @@ class AnalyticsServices extends APIService {
 
   async getAnalytics(workspaceSlug: string, params: IAnalyticsParams): Promise<IAnalyticsResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/analytics/`, {
-      params,
+      params: {
+        ...params,
+        project: params?.project ? params.project.toString() : null,
+      },
     })
       .then((response) => response?.data)
       .catch((error) => {
@@ -31,7 +34,10 @@ class AnalyticsServices extends APIService {
     params?: Partial<IAnalyticsParams>
   ): Promise<IDefaultAnalyticsResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/default-analytics/`, {
-      params,
+      params: {
+        ...params,
+        project: params?.project ? params.project.toString() : null,
+      },
     })
       .then((response) => response?.data)
       .catch((error) => {

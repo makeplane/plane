@@ -40,6 +40,9 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
         colors={(datum) => datum.color}
         curve="monotoneX"
         margin={{ top: 20 }}
+        theme={{
+          background: "rgb(var(--color-bg-base))",
+        }}
         enableArea
       />
     </div>

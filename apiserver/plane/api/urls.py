@@ -319,7 +319,6 @@ urlpatterns = [
         "workspaces/<str:slug>/members/<uuid:pk>/",
         WorkSpaceMemberViewSet.as_view(
             {
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
                 "get": "retrieve",
@@ -429,7 +428,6 @@ urlpatterns = [
         ProjectMemberViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
             }

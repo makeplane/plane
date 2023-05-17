@@ -87,6 +87,8 @@ const MembersSettings: NextPage = () => {
     })) || []),
   ];
 
+  const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
+
   return (
     <>
       <ConfirmProjectMemberRemove
@@ -206,6 +208,14 @@ const MembersSettings: NextPage = () => {
                             onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
                               if (!activeWorkspace || !projectDetails) return;
 
+                              mutateMembers(
+                                (prevData: any) =>
+                                  prevData.map((m: any) =>
+                                    m.id === member.id ? { ...m, role: value } : m
+                                  ),
+                                false
+                              );
+
                               projectService
                                 .updateProjectMember(
                                   activeWorkspace.slug,
@@ -215,32 +225,38 @@ const MembersSettings: NextPage = () => {
                                     role: value,
                                   }
                                 )
-                                .then((res) => {
+                                .catch(() => {
                                   setToastAlert({
-                                    type: "success",
-                                    message: "Member role updated successfully.",
-                                    title: "Success",
+                                    type: "error",
+                                    title: "Error!",
+                                    message:
+                                      "An error occurred while updating member role. Please try again.",
                                   });
-                                  mutateMembers(
-                                    (prevData: any) =>
-                                      prevData.map((m: any) =>
-                                        m.id === member.id ? { ...m, ...res, role: value } : m
-                                      ),
-                                    false
-                                  );
-                                })
-                                .catch((err) => {
-                                  console.log(err);
                                 });
                             }}
                             position="right"
-                            disabled={member.memberId === user?.id}
+                            disabled={
+                              member.memberId === user?.id ||
+                              !member.member ||
+                              (currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < member.role)
+                            }
                           >
-                            {Object.keys(ROLE).map((key) => (
-                              <CustomSelect.Option key={key} value={key}>
-                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                              </CustomSelect.Option>
-                            ))}
+                            {Object.keys(ROLE).map((key) => {
+                              if (
+                                currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < parseInt(key)
+                              )
+                                return null;
+
+                              return (
+                                <CustomSelect.Option key={key} value={key}>
+                                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                                </CustomSelect.Option>
+                              );
+                            })}
                           </CustomSelect>
                           <CustomMenu ellipsis>
                             <CustomMenu.MenuItem
