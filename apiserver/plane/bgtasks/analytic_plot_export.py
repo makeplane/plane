@@ -73,7 +73,7 @@ def analytic_export_task(email, data, slug):
 
                 data = distribution.get(item)
                 # Add y axis values
-                generated_row.append(sum(obj.get(y_axis) for obj in data if obj.get(y_axis) is not None))
+                generated_row.append(sum(obj.get(key) for obj in data if obj.get(key, None) is not None))
 
                 for segment in segment_zero:
                     value = [x for x in data if x.get("segment") == segment]
