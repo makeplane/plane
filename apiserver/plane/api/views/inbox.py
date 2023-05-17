@@ -1,6 +1,6 @@
 # Django import
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Count
 
 # Third party imports
 from rest_framework import status
@@ -33,6 +33,11 @@ class InboxViewSet(BaseViewSet):
             .filter(
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
+            ).annotate(
+                pending_issue_count=Count(
+                    "issue_inbox",
+                    filter=Q(issue_inbox__status=-2),
+                )
             )
             .select_related("workspace", "project")
         )
