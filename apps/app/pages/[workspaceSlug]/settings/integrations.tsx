@@ -47,9 +47,9 @@ const WorkspaceIntegrations: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8 lg:px-24">
+      <div className="p-8">
         <SettingsHeader />
-        <section className="space-y-8">
+        <section className="space-y-5">
           <div className="flex flex-col items-start gap-3">
             <h3 className="text-2xl font-semibold">Integrations</h3>
             <div className="flex items-center gap-3 rounded-[10px] border border-brand-accent/75 bg-brand-accent/5 p-4 text-sm text-brand-base">

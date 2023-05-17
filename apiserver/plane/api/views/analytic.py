@@ -76,17 +76,21 @@ class AnalyticsEndpoint(BaseAPIView):
                     )
                 )
 
-            assignee_avatars = {}
-            if x_axis in ["assignees__email"]:
-                assignee_avatars = Issue.objects.filter(
-                    workspace__slug=slug, **filters
-                ).values("assignees__avatar")
+            assignee_details = {}
+            if x_axis in ["assignees__email"] or segment in ["assignees__email"]:
+                assignee_details = (
+                    Issue.objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
+                    .order_by("assignees__id")
+                    .distinct("assignees__id")
+                    .values("assignees__avatar", "assignees__email", "assignees__first_name", "assignees__last_name")
+                )
+
 
             return Response(
                 {
                     "total": total_issues,
                     "distribution": distribution,
-                    "extras": {"colors": colors, "assignee_avatars": assignee_avatars},
+                    "extras": {"colors": colors, "assignee_details": assignee_details},
                 },
                 status=status.HTTP_200_OK,
             )
@@ -237,31 +241,33 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             )
             most_issue_created_user = (
                 queryset.exclude(created_by=None)
-                .values("created_by__first_name", "created_by__last_name", "created_by__avatar")
+                .values("created_by__first_name", "created_by__last_name", "created_by__avatar", "created_by__email")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             most_issue_closed_user = (
                 queryset.filter(completed_at__isnull=False, assignees__isnull=False)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar")
+                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__email")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             pending_issue_user = (
                 queryset.filter(completed_at__isnull=True)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar")
+                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__email")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )
 
             open_estimate_sum = (
-                Issue.objects.filter(
+                queryset.filter(
                     state__group__in=["backlog", "unstarted", "started"]
                 ).aggregate(open_estimate_sum=Sum("estimate_point"))
             )["open_estimate_sum"]
-            total_estimate_sum = Issue.objects.aggregate(
+            print(open_estimate_sum)
+            
+            total_estimate_sum = queryset.aggregate(
                 total_estimate_sum=Sum("estimate_point")
             )["total_estimate_sum"]
 

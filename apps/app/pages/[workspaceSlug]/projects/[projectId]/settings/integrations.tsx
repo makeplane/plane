@@ -54,7 +54,7 @@ const ProjectIntegrations: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8 lg:px-24">
+      <div className="p-8">
         <SettingsHeader />
         {workspaceIntegrations ? (
           workspaceIntegrations.length > 0 ? (
