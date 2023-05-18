@@ -12,11 +12,15 @@ import projectService from "services/project.service";
 // components
 import { SettingsHeader, SingleIntegration } from "components/project";
 // ui
-import { EmptySpace, EmptySpaceItem, Loader } from "components/ui";
+import {
+  EmptySpace,
+  EmptySpaceItem,
+  IntegrationAndImportExportBanner,
+  Loader,
+} from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
-import { ExclamationIcon } from "components/icons";
 // types
 import { IProject } from "types";
 import type { NextPage } from "next";
@@ -59,21 +63,7 @@ const ProjectIntegrations: NextPage = () => {
         {workspaceIntegrations ? (
           workspaceIntegrations.length > 0 ? (
             <section className="space-y-8">
-              <div className="flex flex-col items-start gap-3">
-                <h3 className="text-2xl font-semibold">Integrations</h3>
-                <div className="flex items-center gap-3 rounded-[10px] border border-brand-accent/75 bg-brand-accent/5 p-4 text-sm text-brand-base">
-                  <ExclamationIcon
-                    height={24}
-                    width={24}
-                    className="fill-current text-brand-base"
-                  />
-                  <p className="leading-5">
-                    Integrations and importers are only available on the cloud version. We plan to
-                    open-source our SDKs in the near future so that the community can request or
-                    contribute integrations as needed.
-                  </p>
-                </div>
-              </div>
+              <IntegrationAndImportExportBanner bannerName="Integrations" />
               <div className="space-y-5">
                 {workspaceIntegrations.map((integration) => (
                   <SingleIntegration

@@ -29,7 +29,12 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
         <span className="h-4 w-4 ">
           <ProgressBar value={completed} maxValue={total} />
         </span>
-        <span className="w-8 text-right">{Math.floor((completed / total) * 100)}%</span>
+        <span className="w-8 text-right">
+          {isNaN(Math.floor((completed / total) * 100))
+            ? "0"
+            : Math.floor((completed / total) * 100)}
+          %
+        </span>
       </div>
       <span>of</span>
       <span>{total}</span>

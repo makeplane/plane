@@ -117,6 +117,15 @@
   color: white !important;
 }
 
-.react-datepicker__day--in-range {
+.react-datepicker__day--in-range-start,
+.react-datepicker__day--in-range-end {
+  background-color: rgba(var(--color-bg-accent)) !important;
+  color: white !important;
+}
+
+.react-datepicker__day--in-range:not(.react-datepicker__day--in-range-start):not(
+    .react-datepicker__day--in-range-end
+  ) {
+  background-color: rgba(var(--color-accent)) !important;
   color: white !important;
 }

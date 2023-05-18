@@ -30,7 +30,6 @@ import {
 const ProjectCycles: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
-  const [cycleView, setCycleView] = useState<string>("list");
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -121,8 +120,6 @@ const ProjectCycles: NextPage = () => {
         <div className="flex flex-col gap-5">
           <h3 className="text-2xl font-semibold text-brand-base">Cycles</h3>
           <CyclesView
-            cycleView={cycleView}
-            setCycleView={setCycleView}
             setSelectedCycle={setSelectedCycle}
             setCreateUpdateCycleModal={setCreateUpdateCycleModal}
             cyclesCompleteList={cyclesCompleteList}
