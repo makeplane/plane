@@ -274,20 +274,22 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
             <div className="flex h-60 flex-col gap-5 justify-between rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
                 <span className="flex items-center gap-1">
-                  <ContrastIcon
-                    className="h-5 w-5"
-                    color={`${
-                      cycleStatus === "current"
-                        ? "#09A953"
-                        : cycleStatus === "upcoming"
-                        ? "#F7AE59"
-                        : cycleStatus === "completed"
-                        ? "#3F76FF"
-                        : cycleStatus === "draft"
-                        ? "#858E96"
-                        : ""
-                    }`}
-                  />
+                  <span className="h-5 w-5">
+                    <ContrastIcon
+                      className="h-5 w-5"
+                      color={`${
+                        cycleStatus === "current"
+                          ? "#09A953"
+                          : cycleStatus === "upcoming"
+                          ? "#F7AE59"
+                          : cycleStatus === "completed"
+                          ? "#3F76FF"
+                          : cycleStatus === "draft"
+                          ? "#858E96"
+                          : ""
+                      }`}
+                    />
+                  </span>
                   <Tooltip tooltipContent={cycle.name} position="top-left">
                     <h3 className="break-all text-lg font-semibold">
                       {truncateText(cycle.name, 70)}
@@ -310,17 +312,17 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                     }`}
                   >
                     {cycleStatus === "current" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         <PersonRunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         <AlarmClockIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
                             tooltipContent={`${
