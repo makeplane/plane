@@ -46,11 +46,6 @@ export const Tooltip: React.FC<Props> = ({
           theme === "light" ? "text-brand-muted-1 bg-brand-surface-2" : "bg-black text-white"
         }`}
       >
-        <div
-          className={`absolute inset-0 left-1/2 -top-1 h-3 w-3 rotate-45 bg-brand-surface-2 ${
-            theme === "light" ? "text-brand-muted-1 bg-brand-surface-2" : "bg-black text-white"
-          }`}
-        />
         {tooltipHeading && <h5 className="font-medium">{tooltipHeading}</h5>}
         {tooltipContent}
       </div>
