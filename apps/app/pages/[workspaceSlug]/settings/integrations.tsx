@@ -13,10 +13,8 @@ import { SettingsHeader } from "components/workspace";
 // components
 import { SingleIntegrationCard } from "components/integration";
 // ui
-import { Loader } from "components/ui";
+import { IntegrationAndImportExportBanner, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { ExclamationIcon } from "components/icons";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -50,17 +48,7 @@ const WorkspaceIntegrations: NextPage = () => {
       <div className="p-8">
         <SettingsHeader />
         <section className="space-y-5">
-          <div className="flex flex-col items-start gap-3">
-            <h3 className="text-2xl font-semibold">Integrations</h3>
-            <div className="flex items-center gap-3 rounded-[10px] border border-brand-accent/75 bg-brand-accent/5 p-4 text-sm text-brand-base">
-              <ExclamationIcon height={24} width={24} className="fill-current text-brand-base" />
-              <p className="leading-5">
-                Integrations and importers are only available on the cloud version. We plan to
-                open-source our SDKs in the near future so that the community can request or
-                contribute integrations as needed.
-              </p>
-            </div>
-          </div>
+          <IntegrationAndImportExportBanner bannerName="Integrations" />
           <div className="space-y-5">
             {appIntegrations ? (
               appIntegrations.map((integration) => (

@@ -9,6 +9,7 @@ import IntegrationGuide from "components/integration/guide";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import type { NextPage } from "next";
+import { IntegrationAndImportExportBanner } from "components/ui";
 
 const ImportExport: NextPage = () => {
   const router = useRouter();
@@ -23,8 +24,9 @@ const ImportExport: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8">
+      <div className="p-8 space-y-4">
         <SettingsHeader />
+        <IntegrationAndImportExportBanner bannerName="Import/ Export" />
         <IntegrationGuide />
       </div>
     </WorkspaceAuthorizationLayout>
