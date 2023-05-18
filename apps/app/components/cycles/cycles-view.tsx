@@ -13,9 +13,10 @@ import {
   CompletedCycles,
 } from "components/cycles";
 // ui
-import { Loader } from "components/ui";
+import { EmptyState, Loader } from "components/ui";
 // icons
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import emptyCycle from "public/empty-state/empty-cycle.svg";
 // types
 import {
   SelectCycleType,
@@ -150,8 +151,15 @@ export const CyclesView: React.FC<Props> = ({
             )}
           </Tab.Panel>
           <Tab.Panel as="div" className="mt-7 space-y-5">
-            {currentAndUpcomingCycles?.current_cycle?.[0] && (
+            {currentAndUpcomingCycles?.current_cycle?.[0] ? (
               <ActiveCycleDetails cycle={currentAndUpcomingCycles?.current_cycle?.[0]} />
+            ) : (
+              <EmptyState
+                type="cycle"
+                title="Create New Cycle"
+                description="Sprint more effectively with Cycles by confining your project to a fixed amount of time. Create new cycle now."
+                imgURL={emptyCycle}
+              />
             )}
           </Tab.Panel>
           <Tab.Panel as="div" className="mt-7 space-y-5">
