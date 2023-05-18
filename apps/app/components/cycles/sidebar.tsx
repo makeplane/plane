@@ -410,7 +410,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
+                            <div className="relative">
                               <ProgressChart
                                 issues={issues ?? []}
                                 start={cycle?.start_date ?? ""}
