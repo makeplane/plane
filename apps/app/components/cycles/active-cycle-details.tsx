@@ -251,8 +251,8 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
     <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-brand-base border border-brand-base">
       <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-y-0 lg:divide-x lg:grid-cols-3">
         <div className="flex flex-col text-xs">
-          <a className="w-full">
-            <div className="flex h-full flex-col gap-5 rounded-b-[10px] p-4">
+          <a className="h-full w-full">
+            <div className="flex h-60 flex-col gap-5 justify-between rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
                 <span className="flex items-center gap-1">
                   <ContrastIcon
@@ -400,7 +400,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
           </a>
         </div>
         <div className="grid col-span-2 grid-cols-1 divide-y border-brand-base md:divide-y-0 md:divide-x md:grid-cols-2">
-          <div className="flex h-full flex-col border-brand-base">
+          <div className="flex h-60 flex-col border-brand-base">
             <div className="flex h-full w-full flex-col text-brand-secondary p-4">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
@@ -428,7 +428,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               </div>
             </div>
           </div>
-          <div className="border-brand-base p-4">
+          <div className="border-brand-base h-60 overflow-y-auto p-4">
             <ActiveCycleProgressStats issues={issues ?? []} />
           </div>
         </div>
