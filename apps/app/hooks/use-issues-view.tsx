@@ -129,9 +129,12 @@ const useIssuesView = () => {
       ? backlogStatesList.map((state) => state.id)
       : statesList.map((state) => state.id);
 
+  const filteredStateIds =
+    filters && filters?.state ? stateIds.filter((s) => filters.state?.includes(s)) : stateIds;
+
   const emptyStatesObject: { [key: string]: [] } = {};
-  for (let i = 0; i < stateIds.length; i++) {
-    emptyStatesObject[stateIds[i]] = [];
+  for (let i = 0; i < filteredStateIds.length; i++) {
+    emptyStatesObject[filteredStateIds[i]] = [];
   }
 
   const groupedByIssues:
