@@ -90,10 +90,19 @@ export const SingleSidebarProject: React.FC<Props> = ({
               }`}
             >
               <div className="flex items-center gap-x-2">
-                {project.icon ? (
+                {project.emoji ? (
                   <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                    {String.fromCodePoint(parseInt(project.icon))}
+                    {String.fromCodePoint(parseInt(project.emoji))}
                   </span>
+                ) : project.icon_prop ? (
+                  <div className="h-7 w-7 grid place-items-center">
+                    <span
+                      style={{ color: project.icon_prop.color }}
+                      className="material-symbols-rounded text-lg"
+                    >
+                      {project.icon_prop.name}
+                    </span>
+                  </div>
                 ) : (
                   <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                     {project?.name.charAt(0)}
