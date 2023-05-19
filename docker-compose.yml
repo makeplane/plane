@@ -125,8 +125,8 @@ services:
     ports:
       - 9000:9000
     environment:
-      - MINIO_ACCESS_KEY=access-key
-      - MINIO_SECRET_KEY=secret-key
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
     command: server /export --console-address ":9090"
 
   createbuckets:
@@ -137,12 +137,14 @@ services:
       /bin/sh -c "
       apk add nc &&
       while ! nc -z minio 9000; do echo 'Wait minio to startup...' && sleep 0.1; done; sleep 5 &&
-      /usr/bin/mc config host add plane-minio http://minio:9000 access-key secret-key;
+      /usr/bin/mc config host add plane-minio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
       /usr/bin/mc mb plane-minio/uploads;
       /usr/bin/mc policy download myminio/uploads;
       exit 0;
       "
-
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
 volumes:
   pgdata:
   redisdata:
