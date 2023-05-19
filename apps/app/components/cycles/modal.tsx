@@ -160,13 +160,9 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           title: "Error!",
           message: "Unable to create cycle in past date. Please enter a valid date.",
         });
+        handleClose();
         return;
       }
-
-      const isDateValid = await dateChecker({
-        start_date: payload.start_date,
-        end_date: payload.end_date,
-      });
 
       if (data?.start_date && data?.end_date) {
         const isDateValidForExistingCycle = await dateChecker({
@@ -185,9 +181,15 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
             message:
               "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
           });
+          handleClose();
           return;
         }
       }
+
+      const isDateValid = await dateChecker({
+        start_date: payload.start_date,
+        end_date: payload.end_date,
+      });
 
       if (isDateValid) {
         if (data) {
@@ -202,6 +204,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           message:
             "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
         });
+        handleClose();
       }
     } else {
       if (data) {

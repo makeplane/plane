@@ -13,7 +13,12 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
   const options = projects?.map((project) => ({
     value: project.id,
     query: project.name + project.identifier,
-    content: <>{project.name}</>,
+    content: (
+      <div className="flex items-center gap-2">
+        <span className="text-brand-secondary text-[0.65rem]">{project.identifier}</span>
+        {project.name}
+      </div>
+    ),
   }));
 
   return (
@@ -30,7 +35,6 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
           : "All projects"
       }
       optionsClassName="min-w-full"
-      noChevron
       multiple
     />
   );

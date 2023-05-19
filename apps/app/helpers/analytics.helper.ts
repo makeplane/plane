@@ -1,7 +1,7 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // helpers
-import { capitalizeFirstLetter } from "helpers/string.helper";
+import { capitalizeFirstLetter, generateRandomColor } from "helpers/string.helper";
 // types
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
@@ -65,7 +65,8 @@ export const generateBarColor = (
   params: IAnalyticsParams,
   type: "x_axis" | "segment"
 ): string => {
-  let color: string | undefined = "rgb(var(--color-accent))";
+  let color: string | undefined = generateRandomColor(value);
+  console.log(value);
 
   if (!analytics) return color;
 
@@ -74,19 +75,22 @@ export const generateBarColor = (
 
   if (params[type] === "state__group") color = STATE_GROUP_COLORS[value.toLowerCase()];
 
-  if (params[type] === "priority")
+  if (params[type] === "priority") {
+    const priority = value.toLowerCase();
+
     color =
-      value === "Urgent"
+      priority === "urgent"
         ? "#ef4444"
-        : value === "High"
+        : priority === "high"
         ? "#f97316"
-        : value === "Medium"
+        : priority === "medium"
         ? "#eab308"
-        : value === "Low"
+        : priority === "low"
         ? "#22c55e"
         : "#ced4da";
+  }
 
-  return color ?? "rgb(var(--color-accent))";
+  return color ?? generateRandomColor(value);
 };
 
 export const renderMonthAndYear = (date: string | number | null): string => {
