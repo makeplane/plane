@@ -107,13 +107,11 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
           >
             {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
               <div className="-my-0.5 flex items-center justify-center gap-2">
-                <AssigneesList userIds={issue.assignees} length={3} showLength={false} />
-                <span className="text-brand-secondary">{issue.assignees.length} Assignees</span>
+                <AssigneesList userIds={issue.assignees} length={5} showLength={true} />
               </div>
             ) : (
               <div className="flex items-center justify-center gap-2">
                 <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
-                <span className="text-brand-secondary">Assignee</span>
               </div>
             )}
           </div>

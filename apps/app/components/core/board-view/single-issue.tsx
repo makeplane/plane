@@ -37,6 +37,7 @@ import {
   ArrowTopRightOnSquareIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
+import { LayerDiagonalIcon } from "components/icons";
 // helpers
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -337,11 +338,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.sub_issue_count && (
-              <div className="flex flex-shrink-0 items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
-                {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-              </div>
-            )}
             {properties.labels && issue.label_details.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {issue.label_details.map((label) => (
@@ -376,6 +372,16 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
                 selfPositioned
               />
+            )}
+            {properties.sub_issue_count && (
+              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+                <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
+                  <div className="flex items-center gap-1 text-brand-secondary">
+                    <LayerDiagonalIcon className="h-3.5 w-3.5" />
+                    {issue.sub_issues_count}
+                  </div>
+                </Tooltip>
+              </div>
             )}
             {properties.link && (
               <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">

@@ -204,7 +204,21 @@ def update_integration_verified():
         Integration.objects.bulk_update(
             updated_integrations, ["verified"], batch_size=10
         )
-        print("Sucess")
+        print("Success")
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+
+def update_start_date():
+    try:
+        issues = Issue.objects.filter(state__group__in=["started", "completed"])
+        updated_issues = []
+        for issue in issues:
+            issue.start_date = issue.created_at.date()
+            updated_issues.append(issue)
+        Issue.objects.bulk_update(updated_issues, ["start_date"], batch_size=500)
+        print("Success")
     except Exception as e:
         print(e)
         print("Failed")

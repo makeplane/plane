@@ -116,14 +116,18 @@ export const CyclesView: React.FC<Props> = ({
             <div className="flex items-center gap-x-1">
               <button
                 type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2`}
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 ${
+                  cycleView === "list" ? "bg-brand-surface-2" : ""
+                } hover:bg-brand-surface-2`}
                 onClick={() => setCycleView("list")}
               >
                 <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
               </button>
               <button
                 type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2`}
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 ${
+                  cycleView === "board" ? "bg-brand-surface-2" : ""
+                } hover:bg-brand-surface-2`}
                 onClick={() => setCycleView("board")}
               >
                 <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />

@@ -85,8 +85,13 @@ class Issue(ProjectBaseModel):
                 ).first()
                 # if there is no default state assign any random state
                 if default_state is None:
-                    self.state = State.objects.filter(project=self.project).first()
+                    random_state = State.objects.filter(project=self.project).first()
+                    self.state = random_state
+                    if random_state.group == "started":
+                        self.start_date = timezone.now().date()
                 else:
+                    if default_state.group == "started":
+                        self.start_date = timezone.now().date()
                     self.state = default_state
             except ImportError:
                 pass
@@ -94,18 +99,15 @@ class Issue(ProjectBaseModel):
             try:
                 from plane.db.models import State, PageBlock
 
-                # Get the completed states of the project
-                completed_states = State.objects.filter(
-                    group="completed", project=self.project
-                ).values_list("pk", flat=True)
                 # Check if the current issue state and completed state id are same
-                if self.state.id in completed_states:
+                if self.state.group == "completed":
                     self.completed_at = timezone.now()
                     # check if there are any page blocks
                     PageBlock.objects.filter(issue_id=self.id).filter().update(
                         completed_at=timezone.now()
                     )
-
+                elif self.state.group == "started":
+                    self.start_date = timezone.now().date()
                 else:
                     PageBlock.objects.filter(issue_id=self.id).filter().update(
                         completed_at=None
@@ -116,7 +118,6 @@ class Issue(ProjectBaseModel):
                 pass
         if self._state.adding:
             # Get the maximum display_id value from the database
-
             last_id = IssueSequence.objects.filter(project=self.project).aggregate(
                 largest=models.Max("sequence")
             )["largest"]
@@ -131,6 +132,9 @@ class Issue(ProjectBaseModel):
             if largest_sort_order is not None:
                 self.sort_order = largest_sort_order + 10000
 
+            # If adding it to started state
+            if self.state.group == "started":
+                self.start_date = timezone.now().date()
         # Strip the html tags using html parser
         self.description_stripped = (
             None
