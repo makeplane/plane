@@ -162,37 +162,38 @@ export const getNumberOfDaysBetweenTwoDatesInMonth = (startDate: Date, endDate: 
   return daysDifference;
 };
 
-export const setMonthChartItemPositionInMonth = (chartData: ChartDataType, itemData: any) => {
+export const getMonthChartItemPositionWidthInMonth = (chartData: ChartDataType, itemData: any) => {
   let scrollPosition: number = 0;
+  let scrollWidth: number = 0;
+
   const { startDate } = chartData.data;
-  const { start_date: itemStartDate } = itemData;
+  const { start_date: itemStartDate, target_date: itemTargetDate } = itemData;
 
   startDate.setHours(0, 0, 0, 0);
   itemStartDate.setHours(0, 0, 0, 0);
+  itemTargetDate.setHours(0, 0, 0, 0);
 
-  const timeDifference: number = startDate.getTime() - itemStartDate.getTime();
-  const daysDifference: number = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
-  scrollPosition = daysDifference * chartData.data.width;
+  // position code starts
+  const positionTimeDifference: number = startDate.getTime() - itemStartDate.getTime();
+  const positionDaysDifference: number = Math.abs(
+    Math.floor(positionTimeDifference / (1000 * 60 * 60 * 24))
+  );
+  scrollPosition = positionDaysDifference * chartData.data.width;
 
   var diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
   diffMonths -= startDate.getMonth();
   diffMonths += itemStartDate.getMonth();
 
-  scrollPosition = scrollPosition + diffMonths;
+  scrollPosition = scrollPosition + diffMonths - 1;
+  // position code ends
 
-  return scrollPosition;
-};
+  // width code starts
+  const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
+  const widthDaysDifference: number = Math.abs(
+    Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24))
+  );
+  scrollWidth = (widthDaysDifference + 1) * chartData.data.width + 1;
+  // width code ends
 
-export const setMonthChartItemWidthInMonth = (chartData: ChartDataType, itemData: any) => {
-  let scrollWidth: number = 0;
-  const { start_date: itemStartDate, target_date: itemTargetDate } = itemData;
-
-  itemStartDate.setHours(0, 0, 0, 0);
-  itemTargetDate.setHours(0, 0, 0, 0);
-
-  const timeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
-  const daysDifference: number = Math.abs(Math.floor(timeDifference / (1000 * 60 * 60 * 24)));
-  scrollWidth = (daysDifference + 1) * chartData.data.width + 1;
-
-  return scrollWidth;
+  return { marginLeft: scrollPosition, width: scrollWidth };
 };

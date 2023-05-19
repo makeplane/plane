@@ -45,8 +45,8 @@ const initialView = "month";
 
 export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useState<ChartContextType>({
-    fullScreenToggle: false,
-    blockSidebarToggle: false,
+    fullScreenToggle: "not_active",
+    blockSidebarToggle: "not_active",
     currentView: initialView,
     currentViewData: currentViewDataWithView(initialView),
     renderView: [],

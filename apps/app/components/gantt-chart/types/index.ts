@@ -17,8 +17,8 @@ export type ChartActionContextType = {
 };
 
 export type ChartContextType = {
-  fullScreenToggle: boolean;
-  blockSidebarToggle: boolean;
+  fullScreenToggle: "active" | "not_active";
+  blockSidebarToggle: "active" | "not_active";
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
   currentViewData: any;

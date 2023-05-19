@@ -27,6 +27,7 @@ import {
   getNumberOfDaysBetweenTwoDatesInMonth,
   getNumberOfDaysBetweenTwoDatesInQuarter,
   getNumberOfDaysBetweenTwoDatesInYear,
+  getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
 import { ChartDataType } from "../types";
@@ -35,12 +36,21 @@ import { datePreview, currentViewDataWithView } from "../data";
 // context
 import { useChart } from "../hooks";
 
-export const ChartViewRoot: FC<{
-  title: string | null;
-  blocks: null | any[];
-  sidebarBlockRender: FC;
-  blockRender: FC;
-}> = ({ title, blocks = null, sidebarBlockRender, blockRender }) => {
+type ChartViewRootProps = {
+  title: null | string;
+  blocks: any;
+  blockUpdateHandler: (data: any) => void;
+  sidebarBlockRender: FC<any>;
+  blockRender: FC<any>;
+};
+
+export const ChartViewRoot: FC<ChartViewRootProps> = ({
+  title,
+  blocks = null,
+  blockUpdateHandler,
+  sidebarBlockRender,
+  blockRender,
+}) => {
   const {
     fullScreenToggle,
     blockSidebarToggle,
@@ -83,6 +93,8 @@ export const ChartViewRoot: FC<{
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
+            fullScreenToggle: fullScreenToggle,
+            blockSidebarToggle: blockSidebarToggle,
             currentView: selectedCurrentView,
             currentViewData: currentRender.state,
             renderView: [...currentRender.payload, ...renderView],
@@ -94,6 +106,8 @@ export const ChartViewRoot: FC<{
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
+            fullScreenToggle: fullScreenToggle,
+            blockSidebarToggle: blockSidebarToggle,
             currentView: view,
             currentViewData: currentRender.state,
             renderView: [...renderView, ...currentRender.payload],
@@ -104,6 +118,8 @@ export const ChartViewRoot: FC<{
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
+            fullScreenToggle: fullScreenToggle,
+            blockSidebarToggle: blockSidebarToggle,
             currentView: view,
             currentViewData: currentRender.state,
             renderView: [...currentRender.payload],
@@ -188,10 +204,18 @@ export const ChartViewRoot: FC<{
     };
   }, [renderView]);
 
+  const renderBlockStructure = (view: any, blocks: any) =>
+    blocks && blocks.length > 0
+      ? blocks.map((_block: any) => ({
+          ..._block,
+          position: getMonthChartItemPositionWidthInMonth(view, _block),
+        }))
+      : [];
+
   return (
     <div
       className={`${
-        fullScreenToggle
+        fullScreenToggle === "active"
           ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-brand-base`
           : `relative`
       } flex h-full flex-col rounded-sm border border-brand-base select-none`}
@@ -252,9 +276,14 @@ export const ChartViewRoot: FC<{
 
         <div
           className="transition-all border border-brand-base w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-brand-surface-2"
-          onClick={() => dispatch({ type: "FULL_SCREEN_TOGGLE", payload: !fullScreenToggle })}
+          onClick={() =>
+            dispatch({
+              type: "FULL_SCREEN_TOGGLE",
+              payload: fullScreenToggle === "active" ? "not_active" : "active",
+            })
+          }
         >
-          {fullScreenToggle ? (
+          {fullScreenToggle === "active" ? (
             <ArrowsPointingInIcon className="h-4 w-4" />
           ) : (
             <ArrowsPointingOutIcon className="h-4 w-4" />
@@ -269,12 +298,14 @@ export const ChartViewRoot: FC<{
           id="scroll-container"
         >
           {/* blocks components */}
-          <GanttChartBlocks
-            itemsContainerWidth={itemsContainerWidth}
-            blocks={blocks}
-            sidebarBlockRender={sidebarBlockRender}
-            blockRender={blockRender}
-          />
+          {currentView && currentViewData && (
+            <GanttChartBlocks
+              itemsContainerWidth={itemsContainerWidth}
+              blocks={renderBlockStructure(currentViewData, blocks)}
+              sidebarBlockRender={sidebarBlockRender}
+              blockRender={blockRender}
+            />
+          )}
 
           {/* chart */}
           {/* {currentView && currentView === "hours" && <HourChartView />} */}
