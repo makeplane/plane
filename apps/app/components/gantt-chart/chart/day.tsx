@@ -3,8 +3,7 @@ import { FC } from "react";
 import { useChart } from "../hooks";
 
 export const DayChartView: FC<any> = () => {
-  const { blockSidebarToggle, currentView, currentViewData, renderView, dispatch, allViews } =
-    useChart();
+  const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
   return (
     <>

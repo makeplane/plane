@@ -10,28 +10,21 @@ export const GanttChartBlocks: FC<{
   sidebarBlockRender: FC;
   blockRender: FC;
 }> = ({ itemsContainerWidth, blocks, sidebarBlockRender, blockRender }) => {
-  const [chartBlocks, setChartBlocks] = useState<any[] | null>(null);
-
   const handleChartBlockPosition = (block: any) => {
-    setChartBlocks((prevData: any) =>
-      prevData.map((_block: any) => (_block?.data?.id == block?.data?.id ? block : _block))
-    );
+    // setChartBlocks((prevData: any) =>
+    //   prevData.map((_block: any) => (_block?.data?.id == block?.data?.id ? block : _block))
+    // );
   };
-
-  useEffect(() => {
-    if (blocks && blocks.length > 0 && chartBlocks == null) setChartBlocks(() => [...blocks]);
-  }, [blocks, chartBlocks]);
 
   return (
     <div
       className="relative z-10 mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto bg-[#999] bg-opacity-5"
       style={{ width: `${itemsContainerWidth}px` }}
     >
-      {/* divide-y divide-red-500 */}
-      <div className="w-full divide-y divide-brand-surface-1">
-        {chartBlocks &&
-          chartBlocks.length > 0 &&
-          chartBlocks.map((block: any, _idx: number) => (
+      <div className="w-full divide-y divide-brand-base">
+        {blocks &&
+          blocks.length > 0 &&
+          blocks.map((block: any, _idx: number) => (
             <>
               {block.start_date && block.target_date && (
                 <ChartDraggable
@@ -74,15 +67,15 @@ export const GanttChartBlocks: FC<{
       </div>
 
       {/* sidebar */}
-      <div className="fixed top-0 bottom-0 w-[300px] flex-shrink-0 divide-y divide-brand-base border-r border-brand-base overflow-y-auto">
-        {chartBlocks &&
-          chartBlocks.length > 0 &&
-          chartBlocks.map((block: any, _idx: number) => (
+      {/* <div className="fixed top-0 bottom-0 w-[300px] flex-shrink-0 divide-y divide-brand-base border-r border-brand-base overflow-y-auto">
+        {blocks &&
+          blocks.length > 0 &&
+          blocks.map((block: any, _idx: number) => (
             <div className="relative h-[36.5px] bg-brand-base" key={`sidebar-blocks-${_idx}`}>
               {sidebarBlockRender(block?.data)}
             </div>
           ))}
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,20 +1,16 @@
 import React, { createContext, useState } from "react";
 // types
-import { ChartActionContextType, ChartContextType } from "../types";
+import { ChartContextData, ChartContextActionPayload, ChartContextReducer } from "../types";
 // data
 import { allViewsWithData, currentViewDataWithView } from "../data";
 
-export const ChartContext = createContext<ChartContextType | undefined>(undefined);
+export const ChartContext = createContext<ChartContextReducer | undefined>(undefined);
 
 const chartReducer = (
-  state: ChartContextType,
-  action: ChartActionContextType
-): ChartContextType => {
+  state: ChartContextData,
+  action: ChartContextActionPayload
+): ChartContextData => {
   switch (action.type) {
-    case "FULL_SCREEN_TOGGLE":
-      return { ...state, fullScreenToggle: action.payload };
-    case "BLOCK_SIDEBAR_TOGGLE":
-      return { ...state, blockSidebarToggle: action.payload };
     case "CURRENT_VIEW":
       return { ...state, currentView: action.payload };
     case "CURRENT_VIEW_DATA":
@@ -22,20 +18,7 @@ const chartReducer = (
     case "RENDER_VIEW":
       return { ...state, currentViewData: action.payload };
     case "PARTIAL_UPDATE":
-      return {
-        ...state,
-        fullScreenToggle: action.payload.fullScreenToggle
-          ? action.payload.fullScreenToggle
-          : state.fullScreenToggle,
-        blockSidebarToggle: action.payload.blockSidebarToggle
-          ? action.payload.blockSidebarToggle
-          : state.blockSidebarToggle,
-        currentView: action.payload.currentView ? action.payload.currentView : state.currentView,
-        currentViewData: action.payload.currentViewData
-          ? action.payload.currentViewData
-          : state.currentViewData,
-        renderView: action.payload.renderView ? action.payload.renderView : state.renderView,
-      };
+      return { ...state, ...action.payload };
     default:
       return state;
   }
@@ -44,19 +27,17 @@ const chartReducer = (
 const initialView = "month";
 
 export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useState<ChartContextType>({
-    fullScreenToggle: "not_active",
-    blockSidebarToggle: "not_active",
+  const [state, dispatch] = useState<ChartContextData>({
     currentView: initialView,
     currentViewData: currentViewDataWithView(initialView),
     renderView: [],
     allViews: allViewsWithData,
-    dispatch: () => {},
   });
 
-  const handleDispatch = (action: ChartActionContextType) => {
+  const handleDispatch = (action: ChartContextActionPayload): ChartContextData => {
     const newState = chartReducer(state, action);
-    dispatch(newState);
+    dispatch(() => newState);
+    return newState;
   };
 
   return (

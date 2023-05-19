@@ -10,11 +10,11 @@ import {
 import { GanttChartBlocks } from "../blocks";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
-import { WeekChartView } from "./week";
-import { BiWeekChartView } from "./bi-week";
+// import { WeekChartView } from "./week";
+// import { BiWeekChartView } from "./bi-week";
 import { MonthChartView } from "./month";
-import { QuarterChartView } from "./quarter";
-import { YearChartView } from "./year";
+// import { QuarterChartView } from "./quarter";
+// import { YearChartView } from "./year";
 // views
 import {
   // generateHourChart,
@@ -51,18 +51,29 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   sidebarBlockRender,
   blockRender,
 }) => {
-  const {
-    fullScreenToggle,
-    blockSidebarToggle,
-    currentView,
-    currentViewData,
-    renderView,
-    dispatch,
-    allViews,
-  } = useChart();
+  const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
-  const [currentScrollPosition, setCurrentScrollPosition] = useState<number>(0);
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
+  const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
+  const [blocksSidebarView, setBlocksSidebarView] = useState<boolean>(false);
+
+  // blocks state management starts
+  const [chartBlocks, setChartBlocks] = useState<any[] | null>(null);
+
+  const renderBlockStructure = (view: any, blocks: any) =>
+    blocks && blocks.length > 0
+      ? blocks.map((_block: any) => ({
+          ..._block,
+          position: getMonthChartItemPositionWidthInMonth(view, _block),
+        }))
+      : [];
+
+  useEffect(() => {
+    if (currentViewData && blocks && blocks.length > 0)
+      setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
+  }, [currentViewData, blocks]);
+
+  // blocks state management ends
 
   const handleChartView = (key: string) => updateCurrentViewRenderPayload(null, key);
 
@@ -79,13 +90,13 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
     // if (view === "hours") currentRender = generateHourChart(selectedCurrentViewData, side);
     // if (view === "day") currentRender = generateDayChart(selectedCurrentViewData, side);
-    if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
-    if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
+    // if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
+    // if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
     if (selectedCurrentView === "month")
       currentRender = generateMonthChart(selectedCurrentViewData, side);
-    if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
-    if (selectedCurrentView === "year")
-      currentRender = generateYearChart(selectedCurrentViewData, side);
+    // if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
+    // if (selectedCurrentView === "year")
+    //   currentRender = generateYearChart(selectedCurrentViewData, side);
 
     // updating the prevData, currentData and nextData
     if (currentRender.payload.length > 0) {
@@ -93,8 +104,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
-            fullScreenToggle: fullScreenToggle,
-            blockSidebarToggle: blockSidebarToggle,
             currentView: selectedCurrentView,
             currentViewData: currentRender.state,
             renderView: [...currentRender.payload, ...renderView],
@@ -106,8 +115,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
-            fullScreenToggle: fullScreenToggle,
-            blockSidebarToggle: blockSidebarToggle,
             currentView: view,
             currentViewData: currentRender.state,
             renderView: [...renderView, ...currentRender.payload],
@@ -118,8 +125,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         dispatch({
           type: "PARTIAL_UPDATE",
           payload: {
-            fullScreenToggle: fullScreenToggle,
-            blockSidebarToggle: blockSidebarToggle,
             currentView: view,
             currentViewData: currentRender.state,
             renderView: [...currentRender.payload],
@@ -159,16 +164,16 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     // if (currentView === "day")
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
-    if (currentView === "week")
-      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
-    if (currentView === "bi_week")
-      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    // if (currentView === "week")
+    //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    // if (currentView === "bi_week")
+    //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     if (currentView === "month")
       daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
-    if (currentView === "quarter")
-      daysDifference = getNumberOfDaysBetweenTwoDatesInQuarter(currentState.data.startDate, date);
-    if (currentView === "year")
-      daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
+    // if (currentView === "quarter")
+    //   daysDifference = getNumberOfDaysBetweenTwoDatesInQuarter(currentState.data.startDate, date);
+    // if (currentView === "year")
+    //   daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
 
     scrollWidth =
       daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);
@@ -187,7 +192,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     const approxRangeLeft: number =
       scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
     const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
-    setCurrentScrollPosition(currentScrollPosition);
 
     if (currentScrollPosition >= approxRangeRight)
       updateCurrentViewRenderPayload("right", currentView);
@@ -204,20 +208,10 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     };
   }, [renderView]);
 
-  const renderBlockStructure = (view: any, blocks: any) =>
-    blocks && blocks.length > 0
-      ? blocks.map((_block: any) => ({
-          ..._block,
-          position: getMonthChartItemPositionWidthInMonth(view, _block),
-        }))
-      : [];
-
   return (
     <div
       className={`${
-        fullScreenToggle === "active"
-          ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-brand-base`
-          : `relative`
+        fullScreenMode ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-brand-base` : `relative`
       } flex h-full flex-col rounded-sm border border-brand-base select-none`}
     >
       {/* chart title */}
@@ -232,16 +226,16 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
       {/* chart header */}
       <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
-        <div
+        {/* <div
           className="transition-all border border-brand-base w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-brand-surface-2"
-          onClick={() => dispatch({ type: "BLOCK_SIDEBAR_TOGGLE", payload: !blockSidebarToggle })}
+          onClick={() => setBlocksSidebarView(() => !blocksSidebarView)}
         >
-          {!blockSidebarToggle ? (
-            <Bars4Icon className="h-4 w-4" />
-          ) : (
+          {blocksSidebarView ? (
             <XMarkIcon className="h-5 w-5" />
+          ) : (
+            <Bars4Icon className="h-4 w-4" />
           )}
-        </div>
+        </div> */}
 
         <div className="mr-auto text-sm font-medium">
           {`${datePreview(currentViewData?.data?.startDate)} - ${datePreview(
@@ -276,14 +270,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
         <div
           className="transition-all border border-brand-base w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-brand-surface-2"
-          onClick={() =>
-            dispatch({
-              type: "FULL_SCREEN_TOGGLE",
-              payload: fullScreenToggle === "active" ? "not_active" : "active",
-            })
-          }
+          onClick={() => setFullScreenMode(() => !fullScreenMode)}
         >
-          {fullScreenToggle === "active" ? (
+          {fullScreenMode ? (
             <ArrowsPointingInIcon className="h-4 w-4" />
           ) : (
             <ArrowsPointingOutIcon className="h-4 w-4" />
@@ -301,7 +290,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           {currentView && currentViewData && (
             <GanttChartBlocks
               itemsContainerWidth={itemsContainerWidth}
-              blocks={renderBlockStructure(currentViewData, blocks)}
+              blocks={chartBlocks}
               sidebarBlockRender={sidebarBlockRender}
               blockRender={blockRender}
             />
@@ -310,11 +299,11 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           {/* chart */}
           {/* {currentView && currentView === "hours" && <HourChartView />} */}
           {/* {currentView && currentView === "day" && <DayChartView />} */}
-          {currentView && currentView === "week" && <WeekChartView />}
-          {currentView && currentView === "bi_week" && <BiWeekChartView />}
+          {/* {currentView && currentView === "week" && <WeekChartView />} */}
+          {/* {currentView && currentView === "bi_week" && <BiWeekChartView />} */}
           {currentView && currentView === "month" && <MonthChartView />}
-          {currentView && currentView === "quarter" && <QuarterChartView />}
-          {currentView && currentView === "year" && <YearChartView />}
+          {/* {currentView && currentView === "quarter" && <QuarterChartView />} */}
+          {/* {currentView && currentView === "year" && <YearChartView />} */}
         </div>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import { useContext } from "react";
 // types
-import { ChartContextType } from "../types";
+import { ChartContextReducer } from "../types";
 // context
 import { ChartContext } from "../contexts";
 
-export const useChart = (): ChartContextType => {
+export const useChart = (): ChartContextReducer => {
   const context = useContext(ChartContext);
 
   if (!context) {

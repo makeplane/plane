@@ -5,26 +5,21 @@ export type allViewsType = {
   data: Object | null;
 };
 
-export type ChartActionContextType = {
-  type:
-    | "FULL_SCREEN_TOGGLE"
-    | "BLOCK_SIDEBAR_TOGGLE"
-    | "CURRENT_VIEW"
-    | "CURRENT_VIEW_DATA"
-    | "PARTIAL_UPDATE"
-    | "RENDER_VIEW";
-  payload: any;
-};
-
-export type ChartContextType = {
-  fullScreenToggle: "active" | "not_active";
-  blockSidebarToggle: "active" | "not_active";
+export interface ChartContextData {
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
   currentViewData: any;
   renderView: any;
-  dispatch: (action: ChartActionContextType) => void;
+}
+
+export type ChartContextActionPayload = {
+  type: "CURRENT_VIEW" | "CURRENT_VIEW_DATA" | "PARTIAL_UPDATE" | "RENDER_VIEW";
+  payload: any;
 };
+
+export interface ChartContextReducer extends ChartContextData {
+  dispatch: (action: ChartContextActionPayload) => void;
+}
 
 // chart render types
 export interface WeekMonthDataType {
