@@ -21,7 +21,7 @@ row_mapping = {
     "state__name": "State",
     "state__group": "State Group",
     "labels__name": "Label",
-    "assignees__email": "Assignee Email",
+    "assignees__email": "Assignee Name",
     "start_date": "Start Date",
     "target_date": "Due Date",
     "completed_at": "Completed At",
