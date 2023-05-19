@@ -449,7 +449,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               </div>
             </div>
           </div>
-          <div className="border-brand-base h-60 overflow-y-auto p-4">
+          <div className="border-brand-base h-60 overflow-y-scroll">
             <ActiveCycleProgressStats issues={issues ?? []} />
           </div>
         </div>
