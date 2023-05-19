@@ -369,6 +369,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           else {
             setValue("description", {});
             setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
+            editorRef.current?.setEditorValue(watch("description_html") ?? "");
           }
         }}
         projectId={projectId?.toString() ?? ""}
