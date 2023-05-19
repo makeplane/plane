@@ -153,12 +153,19 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                     return (
                       <div key={project.id}>
                         <h5 className="text-sm flex items-center gap-1">
-                          {project.icon ? (
+                          {project.emoji ? (
                             <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                              {String.fromCodePoint(parseInt(project.icon))}
+                              {String.fromCodePoint(parseInt(project.emoji))}
+                            </span>
+                          ) : project.icon_prop ? (
+                            <span
+                              style={{ color: project.icon_prop.color }}
+                              className="material-symbols-rounded text-lg"
+                            >
+                              {project.icon_prop.name}
                             </span>
                           ) : (
-                            <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                            <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                               {project?.name.charAt(0)}
                             </span>
                           )}
@@ -254,9 +261,9 @@ export const AnalyticsSidebar: React.FC<Props> = ({
               ) : (
                 <div className="hidden md:flex md:flex-col h-full overflow-y-auto">
                   <div className="flex items-center gap-1">
-                    {projectDetails?.icon ? (
+                    {projectDetails?.emoji ? (
                       <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                        {String.fromCodePoint(parseInt(projectDetails.icon))}
+                        {String.fromCodePoint(parseInt(projectDetails.emoji))}
                       </span>
                     ) : (
                       <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
