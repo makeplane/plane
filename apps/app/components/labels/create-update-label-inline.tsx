@@ -14,6 +14,8 @@ import { Popover, Transition } from "@headlessui/react";
 import issuesService from "services/issues.service";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+// icons
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -28,7 +30,7 @@ type Props = {
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
-  color: "#ff0000",
+  color: "#858E96",
 };
 
 type Ref = HTMLDivElement;
@@ -113,7 +115,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
       }`}
       ref={ref}
     >
-      <div className="h-8 w-8 flex-shrink-0">
+      <div className="flex-shrink-0">
         <Popover className="relative z-10 flex h-full w-full items-center justify-center">
           {({ open }) => (
             <>
@@ -127,6 +129,12 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
                   style={{
                     backgroundColor: watch("color"),
                   }}
+                />
+                <ChevronDownIcon
+                  className={`ml-2 h-5 w-5 group-hover:text-brand-secondary ${
+                    open ? "text-gray-600" : "text-gray-400"
+                  }`}
+                  aria-hidden="true"
                 />
               </Popover.Button>
 
@@ -153,7 +161,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
           )}
         </Popover>
       </div>
-      <div className="flex w-full flex-col justify-center">
+      <div className="flex flex-1 flex-col justify-center">
         <Input
           type="text"
           id="labelName"

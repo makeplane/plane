@@ -45,9 +45,11 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
       content: (
         <div className="flex items-center gap-2">
           <Avatar user={member.member} />
-          {member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name
-            : member.member.email}
+          {`${
+            member.member.first_name && member.member.first_name !== ""
+              ? member.member.first_name
+              : member.member.email
+          } ${member.member.last_name ?? ""}`}
         </div>
       ),
     })) ?? [];
