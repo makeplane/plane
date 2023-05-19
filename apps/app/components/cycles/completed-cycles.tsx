@@ -74,7 +74,7 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
               />
               <span>Completed cycles are not editable.</span>
             </div>
-            {cycleView === "list" ? (
+            {cycleView === "list" && (
               <div>
                 {completedCycles.completed_cycles.map((cycle) => (
                   <div className="hover:bg-brand-surface-2">
@@ -90,7 +90,8 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
                   </div>
                 ))}
               </div>
-            ) : (
+            )}
+            {cycleView === "board" && (
               <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
                 {completedCycles.completed_cycles.map((cycle) => (
                   <SingleCycleCard
@@ -102,6 +103,14 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
                   />
                 ))}
               </div>
+            )}
+            {cycleView === "gantt" && (
+              <EmptyState
+                type="cycle"
+                title="Create New Cycle"
+                description="Sprint more effectively with Cycles by confining your project to a fixed amount of time. Create new cycle now."
+                imgURL={emptyCycle}
+              />
             )}
           </div>
         ) : (
