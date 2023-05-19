@@ -137,7 +137,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                   autoComplete="off"
                   name="slug"
                   register={register}
-                  className="block w-full rounded-md bg-transparent py-2 px-0 text-sm"
+                  className="block w-full rounded-md bg-transparent py-2 !px-0 text-sm"
                   validations={{
                     required: "Workspace URL is required",
                   }}

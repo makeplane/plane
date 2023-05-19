@@ -151,7 +151,7 @@ const GeneralSettings: NextPage = () => {
           router.push(`/${workspaceSlug}/projects`);
         }}
       />
-      <form onSubmit={handleSubmit(onSubmit)} className="p-8 lg:px-24">
+      <form onSubmit={handleSubmit(onSubmit)} className="p-8">
         <SettingsHeader />
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">

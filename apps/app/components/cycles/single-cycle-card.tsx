@@ -51,6 +51,7 @@ import {
 import {
   CYCLE_COMPLETE_LIST,
   CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DETAILS,
   CYCLE_DRAFT_LIST,
 } from "constants/fetch-keys";
 
@@ -150,6 +151,15 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
         );
         break;
     }
+    mutate(
+      CYCLE_DETAILS(projectId as string),
+      (prevData: any) =>
+        (prevData ?? []).map((c: any) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? true : c.is_favorite,
+        })),
+      false
+    );
 
     cyclesService
       .addCycleToFavorites(workspaceSlug as string, projectId as string, {
@@ -210,6 +220,15 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
         );
         break;
     }
+    mutate(
+      CYCLE_DETAILS(projectId as string),
+      (prevData: any) =>
+        (prevData ?? []).map((c: any) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? false : c.is_favorite,
+        })),
+      false
+    );
 
     cyclesService
       .removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id)
@@ -263,20 +282,22 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
                 <span className="flex items-center gap-1">
-                  <ContrastIcon
-                    className="h-5 w-5"
-                    color={`${
-                      cycleStatus === "current"
-                        ? "#09A953"
-                        : cycleStatus === "upcoming"
-                        ? "#F7AE59"
-                        : cycleStatus === "completed"
-                        ? "#3F76FF"
-                        : cycleStatus === "draft"
-                        ? "#858E96"
-                        : ""
-                    }`}
-                  />
+                  <span className="h-5 w-5">
+                    <ContrastIcon
+                      className="h-5 w-5"
+                      color={`${
+                        cycleStatus === "current"
+                          ? "#09A953"
+                          : cycleStatus === "upcoming"
+                          ? "#F7AE59"
+                          : cycleStatus === "completed"
+                          ? "#3F76FF"
+                          : cycleStatus === "draft"
+                          ? "#858E96"
+                          : ""
+                      }`}
+                    />
+                  </span>
                   <Tooltip tooltipContent={cycle.name} className="break-all" position="top-left">
                     <h3 className="break-all text-lg font-semibold">
                       {truncateText(cycle.name, 15)}
@@ -299,17 +320,17 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     }`}
                   >
                     {cycleStatus === "current" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         <PersonRunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         <AlarmClockIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
                             tooltipContent={`${

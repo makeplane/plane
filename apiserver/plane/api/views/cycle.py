@@ -3,7 +3,17 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch, Sum
+from django.db.models import (
+    OuterRef,
+    Func,
+    F,
+    Q,
+    Exists,
+    OuterRef,
+    Count,
+    Prefetch,
+    Sum,
+)
 from django.core import serializers
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -433,7 +443,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
         try:
             start_date = request.data.get("start_date", False)
             end_date = request.data.get("end_date", False)
-
+            cycle_id = request.data.get("cycle_id")
             if not start_date or not end_date:
                 return Response(
                     {"error": "Start date and end date both are required"},
@@ -441,12 +451,14 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 )
 
             cycles = Cycle.objects.filter(
-                Q(start_date__lte=start_date, end_date__gte=start_date)
-                | Q(start_date__lte=end_date, end_date__gte=end_date)
-                | Q(start_date__gte=start_date, end_date__lte=end_date),
-                workspace__slug=slug,
-                project_id=project_id,
-            )
+                Q(workspace__slug=slug)
+                & Q(project_id=project_id)
+                & (
+                    Q(start_date__lte=start_date, end_date__gte=start_date)
+                    | Q(start_date__lte=end_date, end_date__gte=end_date)
+                    | Q(start_date__gte=start_date, end_date__lte=end_date)
+                )
+            ).exclude(pk=cycle_id)
 
             if cycles.exists():
                 return Response(
