@@ -442,6 +442,33 @@ const SinglePage: NextPage = () => {
                             <Popover.Panel className="absolute top-full right-0 z-20 mt-1 max-w-xs px-2 sm:px-0">
                               <TwitterPicker
                                 color={pageDetails.color}
+                                styles={{
+                                  default: {
+                                    card: {
+                                      backgroundColor: `rgba(var(--color-bg-surface-2))`,
+                                    },
+                                    triangle: {
+                                      position: "absolute",
+                                      borderColor:
+                                        "transparent transparent rgba(var(--color-bg-surface-2)) transparent",
+                                    },
+                                    input: {
+                                      border: "none",
+                                      height: "1.85rem",
+                                      fontSize: "0.875rem",
+                                      paddingLeft: "0.25rem",
+                                      color: `rgba(var(--color-text-secondary))`,
+                                      boxShadow: "none",
+                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
+                                      borderLeft: `1px solid rgba(var(--color-bg-surface-2))`,
+                                    },
+                                    hash: {
+                                      color: `rgba(var(--color-text-secondary))`,
+                                      boxShadow: "none",
+                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
+                                    },
+                                  },
+                                }}
                                 onChange={(val) => partialUpdatePage({ color: val.hex })}
                               />
                             </Popover.Panel>
