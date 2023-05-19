@@ -329,7 +329,7 @@ const SinglePage: NextPage = () => {
                 </div>
 
                 <div className="flex w-full flex-wrap gap-1">
-                  {pageDetails.labels.length > 0 ? (
+                  {pageDetails.labels.length > 0 && (
                     <>
                       {pageDetails.labels.map((labelId) => {
                         const label = labels?.find((label) => label.id === labelId);
@@ -362,54 +362,38 @@ const SinglePage: NextPage = () => {
                           </div>
                         );
                       })}
-                      <CustomSearchSelect
-                        customButton={
-                          <button
-                            type="button"
-                            className="flex items-center gap-1 rounded-sm bg-brand-surface-2 p-1.5 text-xs"
-                          >
-                            <PlusIcon className="h-3.5 w-3.5" />
-                          </button>
-                        }
-                        value={pageDetails.labels}
-                        onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
-                        options={options}
-                        multiple
-                        noChevron
-                      />
                     </>
-                  ) : (
-                    <CustomSearchSelect
-                      customButton={
-                        <button
-                          type="button"
-                          className="flex items-center gap-1 rounded-sm bg-brand-surface-2 px-3 py-1.5 text-xs"
-                        >
-                          <PlusIcon className="h-3 w-3" />
-                          Add label
-                        </button>
-                      }
-                      value={pageDetails.labels}
-                      onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
-                      footerOption={
-                        <button
-                          type="button"
-                          className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
-                          onClick={() => {
-                            setLabelModal(true);
-                          }}
-                        >
-                          <span className="flex items-center justify-start gap-1 text-brand-secondary">
-                            <PlusIcon className="h-4 w-4" aria-hidden="true" />
-                            <span>Create New Label</span>
-                          </span>
-                        </button>
-                      }
-                      options={options}
-                      multiple
-                      noChevron
-                    />
                   )}
+                  <CustomSearchSelect
+                    customButton={
+                      <button
+                        type="button"
+                        className="flex items-center gap-1 rounded-sm bg-brand-surface-2 p-1.5 text-xs"
+                      >
+                        <PlusIcon className="h-3.5 w-3.5" />
+                        {pageDetails.labels.length <= 0 && <span>Add Label</span>}
+                      </button>
+                    }
+                    value={pageDetails.labels}
+                    footerOption={
+                      <button
+                        type="button"
+                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
+                        onClick={() => {
+                          setLabelModal(true);
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-1 text-brand-secondary">
+                          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                          <span>Create New Label</span>
+                        </span>
+                      </button>
+                    }
+                    onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                    options={options}
+                    multiple
+                    noChevron
+                  />
                 </div>
               </div>
               <div className="flex items-center">
