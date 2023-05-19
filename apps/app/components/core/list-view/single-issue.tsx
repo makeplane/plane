@@ -31,6 +31,7 @@ import {
   ArrowTopRightOnSquareIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
+import { LayerDiagonalIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { handleIssuesMutation } from "constants/issue";
@@ -205,7 +206,7 @@ export const SingleListIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-base bg-brand-base last:border-b-0"
+        className="flex flex-wrap items-center justify-between px-4 py-2.5 gap-2 border-b border-brand-base bg-brand-base last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
@@ -213,7 +214,7 @@ export const SingleListIssue: React.FC<Props> = ({
         }}
       >
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
-          <div className="flex-grow cursor-pointer px-4 pt-2.5 md:py-2.5">
+          <div className="flex-grow cursor-pointer">
             <a className="group relative flex items-center gap-2">
               {properties.key && (
                 <Tooltip
@@ -234,7 +235,7 @@ export const SingleListIssue: React.FC<Props> = ({
           </div>
         </Link>
 
-        <div className="flex w-full flex-shrink flex-wrap items-center gap-2 px-4 pb-2.5 text-xs sm:w-auto md:px-0 md:py-2.5 md:pr-4">
+        <div className="flex w-full flex-shrink flex-wrap items-center gap-2 text-xs sm:w-auto">
           {properties.priority && (
             <ViewPrioritySelect
               issue={issue}
@@ -257,11 +258,6 @@ export const SingleListIssue: React.FC<Props> = ({
               partialUpdateIssue={partialUpdateIssue}
               isNotAllowed={isNotAllowed}
             />
-          )}
-          {properties.sub_issue_count && (
-            <div className="flex items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
-              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-            </div>
           )}
           {properties.labels && issue.label_details.length > 0 ? (
             <div className="flex flex-wrap gap-1">
@@ -298,6 +294,16 @@ export const SingleListIssue: React.FC<Props> = ({
               position="right"
               isNotAllowed={isNotAllowed}
             />
+          )}
+          {properties.sub_issue_count && (
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+              <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
+                <div className="flex items-center gap-1 text-brand-secondary">
+                  <LayerDiagonalIcon className="h-3.5 w-3.5" />
+                  {issue.sub_issues_count}
+                </div>
+              </Tooltip>
+            </div>
           )}
           {properties.link && (
             <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
