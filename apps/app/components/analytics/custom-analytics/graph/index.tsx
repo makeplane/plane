@@ -80,7 +80,7 @@ export const AnalyticsGraph: React.FC<Props> = ({
           params.x_axis === "assignees__email"
             ? (datum) => {
                 const avatar = analytics.extras.assignee_details?.find(
-                  (a) => a.assignees__email === datum.value
+                  (a) => a?.assignees__email === datum?.value
                 )?.assignees__avatar;
 
                 if (avatar && avatar !== "")
