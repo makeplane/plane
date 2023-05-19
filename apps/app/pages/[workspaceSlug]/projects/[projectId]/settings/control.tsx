@@ -56,27 +56,14 @@ const ControlSettings: NextPage = () => {
     formState: { isSubmitting },
   } = useForm<IProject>({ defaultValues });
 
-  useEffect(() => {
-    if (projectDetails)
-      reset({
-        ...projectDetails,
-        default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
-        project_lead: projectDetails.project_lead?.id ?? projectDetails.project_lead,
-        workspace: (projectDetails.workspace as IWorkspace).id,
-      });
-  }, [projectDetails, reset]);
-
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug || !projectId) return;
+
     const payload: Partial<IProject> = {
-      name: formData.name,
-      network: formData.network,
-      identifier: formData.identifier,
-      description: formData.description,
       default_assignee: formData.default_assignee,
       project_lead: formData.project_lead,
-      icon: formData.icon,
     };
+
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
@@ -93,6 +80,16 @@ const ControlSettings: NextPage = () => {
         console.log(err);
       });
   };
+
+  useEffect(() => {
+    if (projectDetails)
+      reset({
+        ...projectDetails,
+        default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
+        project_lead: projectDetails.project_lead?.id ?? projectDetails.project_lead,
+        workspace: (projectDetails.workspace as IWorkspace).id,
+      });
+  }, [projectDetails, reset]);
 
   return (
     <ProjectAuthorizationWrapper

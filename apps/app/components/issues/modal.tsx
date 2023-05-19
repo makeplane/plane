@@ -138,12 +138,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const createIssue = async (payload: Partial<IIssue>) => {
     await issuesService
       .createIssues(workspaceSlug as string, activeProject ?? "", payload)
-      .then((res) => {
+      .then(async (res) => {
         mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-        if (issueView === "calendar") mutate(calendarFetchKey);
+        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
 
-        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
+        if (issueView === "calendar") mutate(calendarFetchKey);
 
         if (!createMore) handleClose();
 

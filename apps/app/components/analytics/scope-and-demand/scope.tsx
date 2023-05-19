@@ -41,7 +41,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
             axisBottom={{
               renderTick: (datum) => {
                 const avatar =
-                  defaultAnalytics.pending_issue_user[datum.tickIndex].assignees__avatar ?? "";
+                  defaultAnalytics.pending_issue_user[datum.tickIndex]?.assignees__avatar ?? "";
 
                 if (avatar && avatar !== "")
                   return (

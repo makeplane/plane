@@ -40,7 +40,7 @@ const defaultValues: Partial<IProject> = {
   identifier: "",
   description: "",
   network: 2,
-  icon: getRandomEmoji(),
+  emoji_and_icon: getRandomEmoji(),
   cover_image:
     "https://images.unsplash.com/photo-1575116464504-9e7652fddcb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODUyNTV8MHwxfHNlYXJjaHwxOHx8cGxhbmV8ZW58MHx8fHwxNjgxNDY4NTY5&ixlib=rb-4.0.3&q=80&w=1080",
 };
@@ -113,8 +113,14 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
 
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
+
+    const { emoji_and_icon, ...payload } = formData;
+
+    if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;
+    else payload.emoji = formData.emoji_and_icon;
+
     await projectServices
-      .createProject(workspaceSlug as string, formData)
+      .createProject(workspaceSlug as string, payload)
       .then((res) => {
         mutate<IProject[]>(
           PROJECTS_LIST(workspaceSlug as string),
@@ -164,7 +170,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -213,12 +219,31 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                   <div className="mt-5 space-y-4 px-4 py-3">
                     <div className="flex items-center gap-x-2">
                       <div>
-                        <EmojiIconPicker
-                          label={String.fromCodePoint(parseInt(watch("icon")))}
-                          onChange={(emoji) => {
-                            setValue("icon", emoji);
-                          }}
-                          value={watch("icon")}
+                        <Controller
+                          name="emoji_and_icon"
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <EmojiIconPicker
+                              label={
+                                value ? (
+                                  typeof value === "object" ? (
+                                    <span
+                                      style={{ color: value.color }}
+                                      className="material-symbols-rounded text-lg"
+                                    >
+                                      {value.name}
+                                    </span>
+                                  ) : (
+                                    String.fromCodePoint(parseInt(value))
+                                  )
+                                ) : (
+                                  "Icon"
+                                )
+                              }
+                              onChange={onChange}
+                              value={value}
+                            />
+                          )}
                         />
                       </div>
 
