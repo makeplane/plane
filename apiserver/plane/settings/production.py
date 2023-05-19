@@ -13,7 +13,7 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from .common import *  # noqa
 
 # Database
-DEBUG = True
+DEBUG = False
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -82,11 +82,18 @@ if bool(os.environ.get("SENTRY_DSN", False)):
     )
 
 if DOCKERIZED:
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # The AWS access key to use.
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
+    # The AWS secret access key to use.
     AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
-    AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
-    AWS_S3_ENDPOINT_URL = "http://minio:9000"
+    # The name of the bucket to store files in.
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
+    # The full URL to the S3 endpoint. Leave blank to use the default region URL.
+    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "http://minio:9000")
+    # Default permissionsx
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_QUERYSTRING_AUTH = False
 
 else:
     # The AWS region to connect to.
@@ -102,7 +109,7 @@ else:
     # AWS_SESSION_TOKEN = ""
 
     # The name of the bucket to store files in.
-    AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
+    AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
 
     # How to construct S3 URLs ("auto", "path", "virtual").
     AWS_S3_ADDRESSING_STYLE = "auto"

@@ -127,7 +127,7 @@ services:
     environment:
       - MINIO_ACCESS_KEY=access-key
       - MINIO_SECRET_KEY=secret-key
-    command: server /export
+    command: server /export --console-address ":9090"
 
   createbuckets:
     image: minio/mc
@@ -137,8 +137,8 @@ services:
       /bin/sh -c "
       apk add nc &&
       while ! nc -z minio 9000; do echo 'Wait minio to startup...' && sleep 0.1; done; sleep 5 &&
-      /usr/bin/mc config host add myminio http://minio:9000 access-key secret-key;
-      /usr/bin/mc mb myminio/uploads;
+      /usr/bin/mc config host add plane-minio http://minio:9000 access-key secret-key;
+      /usr/bin/mc mb plane-minio/uploads;
       /usr/bin/mc policy download myminio/uploads;
       exit 0;
       "
