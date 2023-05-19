@@ -365,10 +365,15 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         content={watch("description_html")}
         htmlContent={watch("description_html")}
         onResponse={(response) => {
-          if (data && handleAiAssistance) handleAiAssistance(response);
-          else {
+          if (data && handleAiAssistance) {
+            handleAiAssistance(response);
+            editorRef.current?.setEditorValue(
+              `${watch("description_html")}<p>${response}</p>` ?? ""
+            );
+          } else {
             setValue("description", {});
             setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
+
             editorRef.current?.setEditorValue(watch("description_html") ?? "");
           }
         }}
