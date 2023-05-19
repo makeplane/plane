@@ -160,6 +160,7 @@ export const IssueForm: FC<IssueFormProps> = ({
       },
       description_html: "<p></p>",
     });
+    editorRef?.current?.clearEditor();
   };
 
   const handleAiAssistance = async (response: string) => {
