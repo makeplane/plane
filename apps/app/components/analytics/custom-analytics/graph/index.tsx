@@ -66,7 +66,7 @@ export const AnalyticsGraph: React.FC<Props> = ({
         )
       }
       customYAxisTickValues={generateYAxisTickValues()}
-      tooltip={(datum) => <CustomTooltip datum={datum} params={params} />}
+      tooltip={(datum) => <CustomTooltip datum={datum} analytics={analytics} params={params} />}
       height={fullScreen ? "400px" : "300px"}
       margin={{
         right: 20,
