@@ -5,6 +5,7 @@ export * from "./all-cycles-board";
 export * from "./all-cycles-list";
 export * from "./delete-cycle-modal";
 export * from "./form";
+export * from "./gantt-chart";
 export * from "./modal";
 export * from "./select";
 export * from "./sidebar";

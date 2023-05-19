@@ -6,17 +6,18 @@ import { useRouter } from "next/router";
 // components
 import { GanttChartRoot } from "components/gantt-chart";
 // hooks
-import useGanttChartIssues from "hooks/gantt-chart/issue-view";
+import useGanttChartCycleIssues from "hooks/gantt-chart/cycle-issues-view";
 
 type Props = {};
 
-export const IssueGanttChartView: FC<Props> = ({}) => {
+export const CycleIssuesGanttChartView: FC<Props> = ({}) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { ganttIssues, mutateGanttIssues } = useGanttChartIssues(
+  const { ganttIssues, mutateGanttIssues } = useGanttChartCycleIssues(
     workspaceSlug as string,
-    projectId as string
+    projectId as string,
+    cycleId as string
   );
 
   // rendering issues on gantt sidebar

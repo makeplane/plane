@@ -6,17 +6,18 @@ import { useRouter } from "next/router";
 // components
 import { GanttChartRoot } from "components/gantt-chart";
 // hooks
-import useGanttChartIssues from "hooks/gantt-chart/issue-view";
+import useGanttChartModuleIssues from "hooks/gantt-chart/module-issues-view";
 
 type Props = {};
 
-export const IssueGanttChartView: FC<Props> = ({}) => {
+export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { ganttIssues, mutateGanttIssues } = useGanttChartIssues(
+  const { ganttIssues, mutateGanttIssues } = useGanttChartModuleIssues(
     workspaceSlug as string,
-    projectId as string
+    projectId as string,
+    moduleId as string
   );
 
   // rendering issues on gantt sidebar
