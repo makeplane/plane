@@ -15,7 +15,7 @@ import {
 // ui
 import { EmptyState, Loader } from "components/ui";
 // icons
-import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { ChartBarIcon, ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import emptyCycle from "public/empty-state/empty-cycle.svg";
 // types
 import {
@@ -132,6 +132,15 @@ export const CyclesView: React.FC<Props> = ({
               >
                 <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
               </button>
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 ${
+                  cycleView === "gantt" ? "bg-brand-surface-2" : ""
+                } hover:bg-brand-surface-2`}
+                onClick={() => setCycleView("gantt")}
+              >
+                <ChartBarIcon className="h-4 w-4 text-brand-secondary" />
+              </button>
             </div>
           )}
         </div>
@@ -151,6 +160,14 @@ export const CyclesView: React.FC<Props> = ({
                 setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                 setSelectedCycle={setSelectedCycle}
                 type="current"
+              />
+            )}
+            {cycleView === "gantt" && (
+              <EmptyState
+                type="cycle"
+                title="Create New Cycle"
+                description="Sprint more effectively with Cycles by confining your project to a fixed amount of time. Create new cycle now."
+                imgURL={emptyCycle}
               />
             )}
           </Tab.Panel>
@@ -183,6 +200,14 @@ export const CyclesView: React.FC<Props> = ({
                 type="upcoming"
               />
             )}
+            {cycleView === "gantt" && (
+              <EmptyState
+                type="cycle"
+                title="Create New Cycle"
+                description="Sprint more effectively with Cycles by confining your project to a fixed amount of time. Create new cycle now."
+                imgURL={emptyCycle}
+              />
+            )}
           </Tab.Panel>
           <Tab.Panel as="div" className="mt-7 space-y-5">
             <CompletedCycles
@@ -206,6 +231,14 @@ export const CyclesView: React.FC<Props> = ({
                 setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                 setSelectedCycle={setSelectedCycle}
                 type="draft"
+              />
+            )}
+            {cycleView === "gantt" && (
+              <EmptyState
+                type="cycle"
+                title="Create New Cycle"
+                description="Sprint more effectively with Cycles by confining your project to a fixed amount of time. Create new cycle now."
+                imgURL={emptyCycle}
               />
             )}
           </Tab.Panel>
