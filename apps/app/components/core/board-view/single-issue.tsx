@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -17,6 +17,7 @@ import issuesService from "services/issues.service";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import {
   ViewAssigneeSelect,
@@ -36,6 +37,7 @@ import {
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
   PaperClipIcon,
+  EllipsisHorizontalIcon,
 } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // helpers
@@ -90,6 +92,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const { orderBy, params } = useIssuesView();
 
@@ -207,12 +212,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });
+      setIsMenuActive(false);
     });
   };
 
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
+
+  useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
@@ -266,9 +274,23 @@ export const SingleBoardIssue: React.FC<Props> = ({
       >
         <div className="group/card relative select-none p-3.5">
           {!isNotAllowed && (
-            <div className="z-1 absolute top-1.5 right-1.5 opacity-0 group-hover/card:opacity-100">
+            <div
+              ref={actionSectionRef}
+              className={`z-1 absolute top-1.5 right-1.5 hidden group-hover/card:!flex ${
+                isMenuActive ? "!flex" : ""
+              }`}
+            >
               {type && !isNotAllowed && (
-                <CustomMenu width="auto" ellipsis>
+                <CustomMenu
+                  customButton={
+                    <button
+                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded p-1 text-left text-xs duration-300 hover:bg-brand-surface-2"
+                      onClick={() => setIsMenuActive(!isMenuActive)}
+                    >
+                      <EllipsisHorizontalIcon className="h-4 w-4" />
+                    </button>
+                  }
+                >
                   <CustomMenu.MenuItem onClick={editIssue}>
                     <div className="flex items-center justify-start gap-2">
                       <PencilIcon className="h-4 w-4" />
