@@ -38,6 +38,7 @@ import { useChart } from "../hooks";
 
 type ChartViewRootProps = {
   title: null | string;
+  loaderTitle: string;
   blocks: any;
   blockUpdateHandler: (data: any) => void;
   sidebarBlockRender: FC<any>;
@@ -47,6 +48,7 @@ type ChartViewRootProps = {
 export const ChartViewRoot: FC<ChartViewRootProps> = ({
   title,
   blocks = null,
+  loaderTitle,
   blockUpdateHandler,
   sidebarBlockRender,
   blockRender,
@@ -216,11 +218,20 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     >
       {/* chart title */}
       <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-brand-base">
-        {title && <div className="text-lg font-medium">{title}</div>}
+        {title && (
+          <div className="text-lg font-medium flex gap-2 items-center">
+            <div>{title}</div>
+            <div className="text-xs rounded-full px-2 py-1 font-bold border border-brand-accent/75 bg-brand-accent/5 text-brand-base">
+              Gantt View Beta
+            </div>
+          </div>
+        )}
         {blocks === null ? (
           <div className="text-sm font-medium ml-auto">Loading...</div>
         ) : (
-          <div className="text-sm font-medium ml-auto">{blocks.length} blocks</div>
+          <div className="text-sm font-medium ml-auto">
+            {blocks.length} {loaderTitle}
+          </div>
         )}
       </div>
 

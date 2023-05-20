@@ -70,7 +70,8 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
   return (
     <div className="w-full h-full overflow-y-auto">
       <GanttChartRoot
-        title={null}
+        title="Modules"
+        loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
         blockUpdateHandler={handleUpdateDates}
         sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}

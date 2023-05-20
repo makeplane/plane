@@ -63,7 +63,8 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
   return (
     <div className="w-full h-full overflow-y-auto">
       <GanttChartRoot
-        title={null}
+        title={"Cycles"}
+        loaderTitle="Cycles"
         blocks={cycles ? blockFormat(cycles) : null}
         blockUpdateHandler={handleUpdateDates}
         sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}

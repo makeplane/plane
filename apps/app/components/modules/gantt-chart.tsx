@@ -72,7 +72,8 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
   return (
     <div className="w-full h-full p-3">
       <GanttChartRoot
-        title="Issues"
+        title="Modules"
+        loaderTitle="Modules"
         blocks={ganttIssues ? blockFormat(ganttIssues) : null}
         blockUpdateHandler={handleUpdateDates}
         sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
