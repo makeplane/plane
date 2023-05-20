@@ -27,12 +27,12 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
 
   // rendering issues on gantt card
   const GanttBlockView = ({ data }: { data: IModule }) => (
-    <div className="relative flex w-full h-full overflow-hidden">
+    <div className="relative flex items-center w-full h-full overflow-hidden shadow-sm">
       <div
-        className="flex-shrink-0 w-[4px] h-auto"
+        className="flex-shrink-0 w-[4px] h-full"
         style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color }}
       />
-      <div className="inline-block text-brand-base text-sm whitespace-nowrap py-[4px] px-1.5">
+      <div className="w-full text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden">
         {data?.name}
       </div>
     </div>
