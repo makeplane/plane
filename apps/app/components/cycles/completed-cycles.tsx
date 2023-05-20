@@ -104,14 +104,6 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
                 ))}
               </div>
             )}
-            {cycleView === "gantt" && (
-              <EmptyState
-                type="cycle"
-                title="Create New Cycle"
-                description="Sprint more effectively with Cycles by confining your project to a fixed amount of time. Create new cycle now."
-                imgURL={emptyCycle}
-              />
-            )}
           </div>
         ) : (
           <EmptyState
