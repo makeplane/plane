@@ -9,11 +9,13 @@ import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 type CustomSearchSelectProps = {
   value: any;
   onChange: any;
-  options: {
-    value: any;
-    query: string;
-    content: JSX.Element;
-  }[];
+  options:
+    | {
+        value: any;
+        query: string;
+        content: JSX.Element;
+      }[]
+    | undefined;
   label?: string | JSX.Element;
   textAlignment?: "left" | "center" | "right";
   height?: "sm" | "md" | "rg" | "lg";

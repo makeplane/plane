@@ -33,26 +33,25 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
       : null
   );
 
-  const options =
-    members?.map((member) => ({
-      value: member.member.id,
-      query:
-        (member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name
-          : member.member.email) +
-          " " +
-          member.member.last_name ?? "",
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar user={member.member} />
-          {`${
-            member.member.first_name && member.member.first_name !== ""
-              ? member.member.first_name
-              : member.member.email
-          } ${member.member.last_name ?? ""}`}
-        </div>
-      ),
-    })) ?? [];
+  const options = members?.map((member) => ({
+    value: member.member.id,
+    query:
+      (member.member.first_name && member.member.first_name !== ""
+        ? member.member.first_name
+        : member.member.email) +
+        " " +
+        member.member.last_name ?? "",
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={member.member} />
+        {`${
+          member.member.first_name && member.member.first_name !== ""
+            ? member.member.first_name
+            : member.member.email
+        } ${member.member.last_name ?? ""}`}
+      </div>
+    ),
+  }));
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 

@@ -152,7 +152,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
 
                     return (
                       <div key={project.id}>
-                        <h5 className="text-sm flex items-center gap-1">
+                        <div className="text-sm flex items-center gap-1">
                           {project.emoji ? (
                             <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
                               {String.fromCodePoint(parseInt(project.emoji))}
@@ -171,8 +171,13 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                               {project?.name.charAt(0)}
                             </span>
                           )}
-                          <span className="break-all">{project.name}</span>
-                        </h5>
+                          <h5 className="break-all">
+                            {project.name}
+                            <span className="text-brand-secondary text-xs ml-1">
+                              ({project.identifier})
+                            </span>
+                          </h5>
+                        </div>
                         <div className="mt-4 space-y-3 pl-2">
                           <div className="flex items-center justify-between gap-2 text-xs">
                             <div className="flex items-center gap-2">
