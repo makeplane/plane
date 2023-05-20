@@ -89,9 +89,9 @@ export const CyclesView: React.FC<Props> = ({
           <button
             type="button"
             className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-              cyclesView === "grid" ? "bg-brand-surface-2" : ""
+              cyclesView === "board" ? "bg-brand-surface-2" : ""
             }`}
-            onClick={() => setCyclesView("grid")}
+            onClick={() => setCyclesView("board")}
           >
             <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
           </button>
@@ -100,7 +100,10 @@ export const CyclesView: React.FC<Props> = ({
             className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
               cyclesView === "gantt_chart" ? "bg-brand-surface-2" : ""
             }`}
-            onClick={() => setCyclesView("gantt_chart")}
+            onClick={() => {
+              setCyclesView("gantt_chart");
+              setCycleTab("All");
+            }}
           >
             <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
               waterfall_chart
@@ -111,6 +114,7 @@ export const CyclesView: React.FC<Props> = ({
       <Tab.Group
         as={React.Fragment}
         defaultIndex={currentTabValue(cycleTab)}
+        selectedIndex={currentTabValue(cycleTab)}
         onChange={(i) => {
           switch (i) {
             case 0:
@@ -123,7 +127,6 @@ export const CyclesView: React.FC<Props> = ({
               return setCycleTab("Completed");
             case 4:
               return setCycleTab("Drafts");
-
             default:
               return setCycleTab("All");
           }
@@ -132,7 +135,10 @@ export const CyclesView: React.FC<Props> = ({
         <div className="flex justify-between">
           <Tab.List as="div" className="flex flex-wrap items-center justify-start gap-4 text-base">
             {["All", "Active", "Upcoming", "Completed", "Drafts"].map((tab, index) => {
-              if (cyclesView === "gantt_chart" && (tab === "Active" || tab === "Drafts"))
+              if (
+                cyclesView === "gantt_chart" &&
+                (tab === "Active" || tab === "Drafts" || tab === "Completed")
+              )
                 return null;
 
               return (
@@ -162,7 +168,7 @@ export const CyclesView: React.FC<Props> = ({
                 type="current"
               />
             )}
-            {cyclesView === "grid" && (
+            {cyclesView === "board" && (
               <AllCyclesBoard
                 cycles={cyclesCompleteList}
                 setCreateUpdateCycleModal={setCreateUpdateCycleModal}
