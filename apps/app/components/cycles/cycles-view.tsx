@@ -97,12 +97,14 @@ export const CyclesView: React.FC<Props> = ({
           </button>
           <button
             type="button"
-            className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+            className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
               cyclesView === "gantt_chart" ? "bg-brand-surface-2" : ""
             }`}
             onClick={() => setCyclesView("gantt_chart")}
           >
-            <ChartBarIcon className="h-4 w-4 text-brand-secondary" />
+            <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
+              waterfall_chart
+            </span>
           </button>
         </div>
       </div>
