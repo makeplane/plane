@@ -10,12 +10,16 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 // components
-import { CreateUpdateModuleModal, SingleModuleCard } from "components/modules";
+import {
+  CreateUpdateModuleModal,
+  ModulesListGanttChartView,
+  SingleModuleCard,
+} from "components/modules";
 // ui
 import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { ChartBarIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 // images
 import emptyModule from "public/empty-state/empty-module.svg";
 // types
@@ -27,6 +31,8 @@ import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 const ProjectModules: NextPage = () => {
   const [selectedModule, setSelectedModule] = useState<SelectModuleType>();
   const [createUpdateModule, setCreateUpdateModule] = useState(false);
+
+  const [modulesView, setModulesView] = useState<"grid" | "gantt_chart">("grid");
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -89,19 +95,44 @@ const ProjectModules: NextPage = () => {
       />
       {modules ? (
         modules.length > 0 ? (
-          <div className="space-y-5 p-8">
-            <div className="flex flex-col gap-5">
+          <div className="space-y-5 p-8 flex flex-col h-full overflow-hidden">
+            <div className="flex gap-4 justify-between">
               <h3 className="text-2xl font-semibold text-brand-base">Modules</h3>
-              <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
-                {modules.map((module) => (
-                  <SingleModuleCard
-                    key={module.id}
-                    module={module}
-                    handleEditModule={() => handleEditModule(module)}
-                  />
-                ))}
+              <div className="flex items-center gap-x-1">
+                <button
+                  type="button"
+                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                    modulesView === "grid" ? "bg-brand-surface-2" : ""
+                  }`}
+                  onClick={() => setModulesView("grid")}
+                >
+                  <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
+                </button>
+                <button
+                  type="button"
+                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                    modulesView === "gantt_chart" ? "bg-brand-surface-2" : ""
+                  }`}
+                  onClick={() => setModulesView("gantt_chart")}
+                >
+                  <ChartBarIcon className="h-4 w-4 text-brand-secondary" />
+                </button>
               </div>
             </div>
+            {modulesView === "grid" && (
+              <div className="h-full overflow-y-auto">
+                <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
+                  {modules.map((module) => (
+                    <SingleModuleCard
+                      key={module.id}
+                      module={module}
+                      handleEditModule={() => handleEditModule(module)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            {modulesView === "gantt_chart" && <ModulesListGanttChartView modules={modules} />}
           </div>
         ) : (
           <EmptyState

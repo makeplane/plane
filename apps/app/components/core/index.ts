@@ -1,5 +1,6 @@
 export * from "./board-view";
 export * from "./calendar-view";
+export * from "./gantt-chart-view";
 export * from "./list-view";
 export * from "./sidebar";
 export * from "./bulk-delete-issues-modal";

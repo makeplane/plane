@@ -217,3 +217,11 @@ body {
 }
 
 /* end react datepicker styling */
+
+/* lineclamp */
+.lineclamp {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
