@@ -184,7 +184,7 @@ export const getMonthChartItemPositionWidthInMonth = (chartData: ChartDataType, 
   diffMonths -= startDate.getMonth();
   diffMonths += itemStartDate.getMonth();
 
-  scrollPosition = scrollPosition + diffMonths - 1;
+  scrollPosition = scrollPosition + diffMonths;
   // position code ends
 
   // width code starts

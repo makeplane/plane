@@ -21,14 +21,14 @@ export const GanttChartBlocks: FC<{
       className="relative z-10 mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto bg-[#999] bg-opacity-5"
       style={{ width: `${itemsContainerWidth}px` }}
     >
-      <div className="w-full divide-y divide-brand-base">
+      <div className="w-full">
         {blocks &&
           blocks.length > 0 &&
           blocks.map((block: any, _idx: number) => (
             <>
               {block.start_date && block.target_date && (
                 <ChartDraggable
-                  className="relative flex h-[36.5px] items-center"
+                  className="relative flex h-[40px] items-center"
                   key={`blocks-${_idx}`}
                   block={block}
                   handleBlock={handleChartBlockPosition}
@@ -44,14 +44,12 @@ export const GanttChartBlocks: FC<{
                     </div>
 
                     <div
-                      className="rounded-sm shadow-sm bg-brand-base overflow-hidden relative flex items-center"
+                      className="rounded-sm shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
                       style={{
                         width: `${block?.position?.width}px`,
                       }}
                     >
-                      <div className="w-full h-full relative overflow-hidden">
-                        {blockRender({ ...block?.data })}
-                      </div>
+                      {blockRender({ ...block?.data })}
                     </div>
 
                     <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
@@ -71,7 +69,7 @@ export const GanttChartBlocks: FC<{
         {blocks &&
           blocks.length > 0 &&
           blocks.map((block: any, _idx: number) => (
-            <div className="relative h-[36.5px] bg-brand-base" key={`sidebar-blocks-${_idx}`}>
+            <div className="relative h-[40px] bg-brand-base" key={`sidebar-blocks-${_idx}`}>
               {sidebarBlockRender(block?.data)}
             </div>
           ))}
