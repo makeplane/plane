@@ -28,24 +28,23 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
       ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
-  const options =
-    members?.map((member) => ({
-      value: member.member.id,
-      query:
-        (member.member.first_name && member.member.first_name !== ""
+  const options = members?.map((member) => ({
+    value: member.member.id,
+    query:
+      (member.member.first_name && member.member.first_name !== ""
+        ? member.member.first_name
+        : member.member.email) +
+        " " +
+        member.member.last_name ?? "",
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={member.member} />
+        {member.member.first_name && member.member.first_name !== ""
           ? member.member.first_name
-          : member.member.email) +
-          " " +
-          member.member.last_name ?? "",
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar user={member.member} />
-          {member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name
-            : member.member.email}
-        </div>
-      ),
-    })) ?? [];
+          : member.member.email}
+      </div>
+    ),
+  }));
 
   return (
     <CustomSearchSelect
