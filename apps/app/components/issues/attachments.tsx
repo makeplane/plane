@@ -82,7 +82,7 @@ export const IssueAttachments = () => {
                         } uploaded on ${renderLongDateFormat(file.updated_at)}`}
                       >
                         <span>
-                          <ExclamationIcon className="h-3 w-3" />
+                          <ExclamationIcon className="h-3 w-3 fill-current text-brand-base" />
                         </span>
                       </Tooltip>
                     </div>

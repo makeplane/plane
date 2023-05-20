@@ -185,11 +185,18 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               <a>
                 <div className="flex items-center gap-1">
                   <h3 className="text-1.5xl font-medium text-brand-base">{project.name}</h3>
-                  {project.icon && (
+                  {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {String.fromCodePoint(parseInt(project.icon))}
+                      {String.fromCodePoint(parseInt(project.emoji))}
                     </span>
-                  )}
+                  ) : project.icon_prop ? (
+                    <span
+                      style={{ color: project.icon_prop.color }}
+                      className="material-symbols-rounded text-lg"
+                    >
+                      {project.icon_prop.name}
+                    </span>
+                  ) : null}
                 </div>
                 <p className="mt-3.5 mb-7 break-all">
                   {truncateText(project.description ?? "", 100)}

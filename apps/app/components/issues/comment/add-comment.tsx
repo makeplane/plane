@@ -26,6 +26,14 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
     </Loader>
   ),
 });
+import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+
+const WrappedRemirrorRichTextEditor = React.forwardRef<
+  IRemirrorRichTextEditor,
+  IRemirrorRichTextEditor
+>((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+
+WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 const defaultValues: Partial<IIssueComment> = {
   comment_json: "",
@@ -40,6 +48,8 @@ export const AddComment: React.FC = () => {
     formState: { isSubmitting },
     reset,
   } = useForm<IIssueComment>({ defaultValues });
+
+  const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -61,6 +71,7 @@ export const AddComment: React.FC = () => {
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         reset(defaultValues);
+        editorRef.current?.clearEditor();
       })
       .catch(() =>
         setToastAlert({
@@ -79,11 +90,12 @@ export const AddComment: React.FC = () => {
             name="comment_json"
             control={control}
             render={({ field: { value } }) => (
-              <RemirrorRichTextEditor
+              <WrappedRemirrorRichTextEditor
                 value={value}
                 onJSONChange={(jsonValue) => setValue("comment_json", jsonValue)}
                 onHTMLChange={(htmlValue) => setValue("comment_html", htmlValue)}
                 placeholder="Enter your comment..."
+                ref={editorRef}
               />
             )}
           />

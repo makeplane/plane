@@ -90,10 +90,19 @@ export const SingleSidebarProject: React.FC<Props> = ({
               }`}
             >
               <div className="flex items-center gap-x-2">
-                {project.icon ? (
+                {project.emoji ? (
                   <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                    {String.fromCodePoint(parseInt(project.icon))}
+                    {String.fromCodePoint(parseInt(project.emoji))}
                   </span>
+                ) : project.icon_prop ? (
+                  <div className="h-7 w-7 grid place-items-center">
+                    <span
+                      style={{ color: project.icon_prop.color }}
+                      className="material-symbols-rounded text-lg"
+                    >
+                      {project.icon_prop.name}
+                    </span>
+                  </div>
                 ) : (
                   <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                     {project?.name.charAt(0)}
@@ -172,8 +181,8 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     <a
                       className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
                         router.asPath.includes(item.href)
-                          ? "bg-brand-base text-brand-secondary"
-                          : "text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-secondary focus:bg-brand-base focus:text-brand-secondary"
+                          ? "bg-brand-surface-2 text-brand-base"
+                          : "text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-secondary focus:bg-brand-surface-2 focus:text-brand-secondary"
                       } ${sidebarCollapse ? "justify-center" : ""}`}
                     >
                       <div className="grid place-items-center">

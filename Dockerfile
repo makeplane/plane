@@ -3,6 +3,7 @@ RUN apk add --no-cache libc6-compat
 RUN apk update
 # Set working directory
 WORKDIR /app
+ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
 
 RUN yarn global add turbo
 COPY . .
@@ -16,7 +17,7 @@ FROM node:18-alpine AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
 WORKDIR /app
-
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
@@ -26,9 +27,16 @@ RUN yarn install
 # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+COPY replace-env-vars.sh /usr/local/bin/
+USER root
+RUN chmod +x /usr/local/bin/replace-env-vars.sh
 
 RUN yarn turbo run build --filter=app
 
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
+RUN /usr/local/bin/replace-env-vars.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_API_BASE_URL}
 
 FROM python:3.11.1-alpine3.17 AS backend
 
@@ -107,6 +115,16 @@ COPY nginx/nginx-single-docker-image.conf /etc/nginx/http.d/default.conf
 #######################################################################
 
 COPY nginx/supervisor.conf /code/supervisor.conf
+
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
+USER root
+COPY replace-env-vars.sh /usr/local/bin/
+COPY start.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/replace-env-vars.sh
+RUN chmod +x /usr/local/bin/start.sh
 
 
 CMD ["supervisord","-c","/code/supervisor.conf"]

@@ -17,6 +17,7 @@ import {
   SingleState,
   StateGroup,
 } from "components/states";
+import { SettingsHeader } from "components/project";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -66,79 +67,82 @@ const StatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="grid grid-cols-12 gap-10">
-          <div className="col-span-12 sm:col-span-5">
-            <h3 className="text-2xl font-semibold text-brand-base">States</h3>
-            <p className="text-brand-secondary">Manage the states of this project.</p>
-          </div>
-          <div className="col-span-12 space-y-8 sm:col-span-7">
-            {states && projectDetails ? (
-              Object.keys(orderedStateGroups).map((key) => {
-                if (orderedStateGroups[key].length !== 0)
-                  return (
-                    <div key={key}>
-                      <div className="mb-2 flex w-full justify-between">
-                        <h4 className="font-medium capitalize">{key}</h4>
-                        <button
-                          type="button"
-                          className="flex items-center gap-2 text-brand-accent outline-none"
-                          onClick={() => setActiveGroup(key as keyof StateGroup)}
-                        >
-                          <PlusIcon className="h-4 w-4" />
-                          Add
-                        </button>
-                      </div>
-                      <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
-                        {key === activeGroup && (
-                          <CreateUpdateStateInline
-                            onClose={() => {
-                              setActiveGroup(null);
-                              setSelectedState(null);
-                            }}
-                            data={null}
-                            selectedGroup={key as keyof StateGroup}
-                          />
-                        )}
-                        {orderedStateGroups[key].map((state, index) =>
-                          state.id !== selectedState ? (
-                            <SingleState
-                              key={state.id}
-                              index={index}
-                              state={state}
-                              statesList={statesList}
-                              handleEditState={() => setSelectedState(state.id)}
-                              handleDeleteState={() => setSelectDeleteState(state.id)}
+        <div className="p-8">
+          <SettingsHeader />
+          <div className="grid grid-cols-12 gap-10">
+            <div className="col-span-12 sm:col-span-5">
+              <h3 className="text-2xl font-semibold text-brand-base">States</h3>
+              <p className="text-brand-secondary">Manage the states of this project.</p>
+            </div>
+            <div className="col-span-12 space-y-8 sm:col-span-7">
+              {states && projectDetails ? (
+                Object.keys(orderedStateGroups).map((key) => {
+                  if (orderedStateGroups[key].length !== 0)
+                    return (
+                      <div key={key}>
+                        <div className="mb-2 flex w-full justify-between">
+                          <h4 className="font-medium capitalize">{key}</h4>
+                          <button
+                            type="button"
+                            className="flex items-center gap-2 text-brand-accent outline-none"
+                            onClick={() => setActiveGroup(key as keyof StateGroup)}
+                          >
+                            <PlusIcon className="h-4 w-4" />
+                            Add
+                          </button>
+                        </div>
+                        <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
+                          {key === activeGroup && (
+                            <CreateUpdateStateInline
+                              onClose={() => {
+                                setActiveGroup(null);
+                                setSelectedState(null);
+                              }}
+                              data={null}
+                              selectedGroup={key as keyof StateGroup}
                             />
-                          ) : (
-                            <div
-                              className="border-b border-brand-base last:border-b-0"
-                              key={state.id}
-                            >
-                              <CreateUpdateStateInline
-                                onClose={() => {
-                                  setActiveGroup(null);
-                                  setSelectedState(null);
-                                }}
-                                data={
-                                  statesList?.find((state) => state.id === selectedState) ?? null
-                                }
-                                selectedGroup={key as keyof StateGroup}
+                          )}
+                          {orderedStateGroups[key].map((state, index) =>
+                            state.id !== selectedState ? (
+                              <SingleState
+                                key={state.id}
+                                index={index}
+                                state={state}
+                                statesList={statesList}
+                                handleEditState={() => setSelectedState(state.id)}
+                                handleDeleteState={() => setSelectDeleteState(state.id)}
                               />
-                            </div>
-                          )
-                        )}
+                            ) : (
+                              <div
+                                className="border-b border-brand-base last:border-b-0"
+                                key={state.id}
+                              >
+                                <CreateUpdateStateInline
+                                  onClose={() => {
+                                    setActiveGroup(null);
+                                    setSelectedState(null);
+                                  }}
+                                  data={
+                                    statesList?.find((state) => state.id === selectedState) ?? null
+                                  }
+                                  selectedGroup={key as keyof StateGroup}
+                                />
+                              </div>
+                            )
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-              })
-            ) : (
-              <Loader className="space-y-5 md:w-2/3">
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-              </Loader>
-            )}
+                    );
+                })
+              ) : (
+                <Loader className="space-y-5 md:w-2/3">
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                  <Loader.Item height="40px" />
+                </Loader>
+              )}
+            </div>
           </div>
         </div>
       </ProjectAuthorizationWrapper>

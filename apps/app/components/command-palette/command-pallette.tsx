@@ -821,7 +821,7 @@ export const CommandPalette: React.FC = () => {
                         >
                           <div className="flex items-center gap-2 text-brand-secondary">
                             <SettingIcon className="h-4 w-4 text-brand-secondary" />
-                            Billings and Plans
+                            Billing and Plans
                           </div>
                         </Command.Item>
                         <Command.Item
@@ -839,7 +839,7 @@ export const CommandPalette: React.FC = () => {
                         >
                           <div className="flex items-center gap-2 text-brand-secondary">
                             <SettingIcon className="h-4 w-4 text-brand-secondary" />
-                            Import/Export
+                            Import/ Export
                           </div>
                         </Command.Item>
                       </>

@@ -23,9 +23,9 @@ export interface IWorkspaceLite {
 }
 
 export interface IWorkspaceMemberInvitation {
+  accepted: boolean;
   readonly id: string;
   email: string;
-  accepted: boolean;
   token: string;
   message: string;
   responded_at: Date;

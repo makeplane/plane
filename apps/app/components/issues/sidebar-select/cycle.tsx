@@ -78,13 +78,13 @@ export const SidebarCycleSelect: React.FC<Props> = ({
               </span>
             </Tooltip>
           }
-          value={issueCycle?.cycle_detail.id}
+          value={issueCycle ? issueCycle.cycle_detail.id : null}
           onChange={(value: any) => {
             !value
               ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
               : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
           }}
-          width="w-full"
+          width="auto"
           position="right"
           maxHeight="rg"
           disabled={isNotAllowed}
@@ -95,7 +95,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
                 {incompleteCycles.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     <Tooltip position="left-bottom" tooltipContent={option.name}>
-                      <span className="w-full truncate ">{truncateText(option.name, 15)}</span>
+                      <span className="w-full truncate">{truncateText(option.name, 25)}</span>
                     </Tooltip>
                   </CustomSelect.Option>
                 ))}

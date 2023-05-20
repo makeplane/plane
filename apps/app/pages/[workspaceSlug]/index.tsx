@@ -45,12 +45,9 @@ const WorkspacePage: NextPage = () => {
         isOpen={isProductUpdatesModalOpen}
         setIsOpen={setIsProductUpdatesModalOpen}
       />
-      <div className="h-full w-full">
+      <div className="p-8">
         <div className="flex flex-col gap-8">
-          <div
-            className="text-brand-muted-1 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg bg-brand-base px-8 py-6 md:flex-row md:items-center md:py-3"
-            // style={{ background: "linear-gradient(90deg, #8e2de2 0%, #4a00e0 100%)" }}
-          >
+          <div className="text-brand-muted-1 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg border border-brand-base bg-brand-base px-8 py-6 md:flex-row md:items-center md:py-3">
             <p className="font-semibold">
               Plane is open source, support us by starring us on GitHub.
             </p>

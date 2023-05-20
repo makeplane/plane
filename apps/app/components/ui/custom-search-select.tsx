@@ -1,20 +1,26 @@
 import React, { useState } from "react";
+
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // icons
-import { CheckIcon, ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+
 type CustomSearchSelectProps = {
   value: any;
   onChange: any;
-  options: {
-    value: any;
-    query: string;
-    content: JSX.Element;
-  }[];
+  options:
+    | {
+        value: any;
+        query: string;
+        content: JSX.Element;
+      }[]
+    | undefined;
   label?: string | JSX.Element;
   textAlignment?: "left" | "center" | "right";
   height?: "sm" | "md" | "rg" | "lg";
   position?: "right" | "left";
+  verticalPosition?: "top" | "bottom";
   noChevron?: boolean;
   customButton?: JSX.Element;
   optionsClassName?: string;
@@ -32,6 +38,7 @@ export const CustomSearchSelect = ({
   onChange,
   options,
   position = "left",
+  verticalPosition = "bottom",
   noChevron = false,
   customButton,
   optionsClassName = "",
@@ -99,7 +106,9 @@ export const CustomSearchSelect = ({
             <Combobox.Options
               className={`${optionsClassName} absolute min-w-[10rem] border border-brand-base p-2 ${
                 position === "right" ? "right-0" : "left-0"
-              } z-10 mt-1 origin-top-right rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none`}
+              } ${
+                verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"
+              } z-10 origin-top-right rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none`}
             >
               <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-brand-base bg-brand-surface-1 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-brand-secondary" />
