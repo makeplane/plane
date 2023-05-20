@@ -214,7 +214,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     <div
       className={`${
         fullScreenMode ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-brand-base` : `relative`
-      } flex h-full flex-col rounded-sm border border-brand-base select-none`}
+      } flex h-full flex-col rounded-sm border border-brand-base select-none bg-brand-base shadow`}
     >
       {/* chart title */}
       <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-brand-base">
