@@ -186,7 +186,7 @@ export const CyclesView: React.FC<Props> = ({
               )}
             </Tab.Panel>
           )}
-          <Tab.Panel as="div" className="mt-7 space-y-5">
+          <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
             {cyclesView === "list" && (
               <AllCyclesList
                 cycles={currentAndUpcomingCycles?.upcoming_cycle}

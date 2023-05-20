@@ -32,17 +32,15 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
 
   // rendering issues on gantt card
   const GanttBlockView = ({ data }: any) => (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${data.id}`}>
-      <a className="relative flex w-full h-full overflow-hidden">
-        <div
-          className="flex-shrink-0 w-[4px] h-auto"
-          style={{ backgroundColor: data?.state_detail?.color || "#858e96" }}
-        />
-        <div className="inline-block text-brand-base text-sm whitespace-nowrap py-[4px] px-1.5">
-          {data?.name}
-        </div>
-      </a>
-    </Link>
+    <div className="relative flex w-full h-full overflow-hidden">
+      <div
+        className="flex-shrink-0 w-[4px] h-auto"
+        style={{ backgroundColor: data?.state_detail?.color || "#858e96" }}
+      />
+      <div className="inline-block text-brand-base text-sm whitespace-nowrap py-[4px] px-1.5">
+        {data?.name}
+      </div>
+    </div>
   );
 
   // handle gantt issue start date and target date

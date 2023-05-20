@@ -1,8 +1,5 @@
 import { FC } from "react";
 
-import Link from "next/link";
-import { useRouter } from "next/router";
-
 // components
 import { GanttChartRoot } from "components/gantt-chart";
 // types
@@ -15,9 +12,6 @@ type Props = {
 };
 
 export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
   // rendering issues on gantt sidebar
   const GanttSidebarBlockView = ({ data }: any) => (
     <div className="relative flex w-full h-full items-center p-1 overflow-hidden gap-1">
@@ -33,17 +27,15 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
 
   // rendering issues on gantt card
   const GanttBlockView = ({ data }: { data: IModule }) => (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${data.id}`}>
-      <a className="relative flex w-full h-full overflow-hidden">
-        <div
-          className="flex-shrink-0 w-[4px] h-auto"
-          style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color }}
-        />
-        <div className="inline-block text-brand-base text-sm whitespace-nowrap py-[4px] px-1.5">
-          {data?.name}
-        </div>
-      </a>
-    </Link>
+    <div className="relative flex w-full h-full overflow-hidden">
+      <div
+        className="flex-shrink-0 w-[4px] h-auto"
+        style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color }}
+      />
+      <div className="inline-block text-brand-base text-sm whitespace-nowrap py-[4px] px-1.5">
+        {data?.name}
+      </div>
+    </div>
   );
 
   // handle gantt issue start date and target date

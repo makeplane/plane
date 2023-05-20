@@ -95,7 +95,7 @@ const ProjectModules: NextPage = () => {
       />
       {modules ? (
         modules.length > 0 ? (
-          <div className="space-y-5 p-8">
+          <div className="space-y-5 p-8 flex flex-col h-full overflow-hidden">
             <div className="flex gap-4 justify-between">
               <h3 className="text-2xl font-semibold text-brand-base">Modules</h3>
               <div className="flex items-center gap-x-1">
@@ -120,14 +120,16 @@ const ProjectModules: NextPage = () => {
               </div>
             </div>
             {modulesView === "grid" && (
-              <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
-                {modules.map((module) => (
-                  <SingleModuleCard
-                    key={module.id}
-                    module={module}
-                    handleEditModule={() => handleEditModule(module)}
-                  />
-                ))}
+              <div className="h-full overflow-y-auto">
+                <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
+                  {modules.map((module) => (
+                    <SingleModuleCard
+                      key={module.id}
+                      module={module}
+                      handleEditModule={() => handleEditModule(module)}
+                    />
+                  ))}
+                </div>
               </div>
             )}
             {modulesView === "gantt_chart" && <ModulesListGanttChartView modules={modules} />}
