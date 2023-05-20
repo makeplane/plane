@@ -156,19 +156,21 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                           </>
                         )}
                       </Popover>
-                      <Input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="Label title"
-                        autoComplete="off"
-                        error={errors.name}
-                        register={register}
-                        width="full"
-                        validations={{
-                          required: "Name is required",
-                        }}
-                      />
+                      <div className="flex w-full flex-col gap-0.5 justify-center">
+                        <Input
+                          type="text"
+                          id="name"
+                          name="name"
+                          placeholder="Label title"
+                          autoComplete="off"
+                          error={errors.name}
+                          register={register}
+                          width="full"
+                          validations={{
+                            required: "Label title is required",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
