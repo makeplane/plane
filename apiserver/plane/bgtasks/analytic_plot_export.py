@@ -21,7 +21,7 @@ row_mapping = {
     "state__name": "State",
     "state__group": "State Group",
     "labels__name": "Label",
-    "assignees__email": "Assignee Email",
+    "assignees__email": "Assignee Name",
     "start_date": "Start Date",
     "target_date": "Due Date",
     "completed_at": "Completed At",
@@ -47,6 +47,17 @@ def analytic_export_task(email, data, slug):
         )
 
         key = "count" if y_axis == "issue_count" else "estimate"
+
+        segmented = segment
+
+        assignee_details = {}
+        if x_axis in ["assignees__email"] or segment in ["assignees__email"]:
+            assignee_details = (
+                Issue.objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
+                .order_by("assignees__id")
+                .distinct("assignees__id")
+                .values("assignees__avatar", "assignees__email", "assignees__first_name", "assignees__last_name")
+            )
 
         if segment:
             segment_zero = []
@@ -81,7 +92,20 @@ def analytic_export_task(email, data, slug):
                         generated_row.append(value[0].get(key))
                     else:
                         generated_row.append("0")
+                # x-axis replacement for names
+                if x_axis in ["assignees__email"]:
+                    assignee = [user for user in assignee_details if str(user.get("assignees__email")) == str(item)]
+                    if len(assignee):
+                        generated_row[0] = str(assignee[0].get("assignees__first_name")) + " " + str(assignee[0].get("assignees__last_name"))
                 rows.append(tuple(generated_row))
+
+            # If segment is ["assignees__email"] then replace segment_zero rows with first and last names
+            if segmented in ["assignees__email"]:
+                for index, segm in enumerate(row_zero[2:]):
+                    # find the name of the user
+                    assignee = [user for user in assignee_details if str(user.get("assignees__email")) == str(segm)]
+                    if len(assignee):
+                        row_zero[index] = str(assignee[0].get("assignees__first_name")) + " " + str(assignee[0].get("assignees__last_name"))
 
             rows = [tuple(row_zero)] + rows
             csv_buffer = io.StringIO()
@@ -110,17 +134,19 @@ def analytic_export_task(email, data, slug):
             ]
             rows = []
             for item in distribution:
-                rows.append(
-                    tuple(
-                        [
+                row =  [
                             item,
                             distribution.get(item)[0].get("count")
                             if y_axis == "issue_count"
                             else distribution.get(item)[0].get("estimate  "),
                         ]
-                    )
-                )
+                # x-axis replacement to names
+                if x_axis in ["assignees__email"]:
+                    assignee = [user for user in assignee_details if str(user.get("assignees__email")) == str(item)]
+                    if len(assignee):
+                        row[0] = str(assignee[0].get("assignees__first_name")) + " " + str(assignee[0].get("assignees__last_name"))
 
+                rows.append(tuple(row))
             rows = [tuple(row_zero)] + rows
             csv_buffer = io.StringIO()
             writer = csv.writer(csv_buffer, delimiter=",", quoting=csv.QUOTE_ALL)
