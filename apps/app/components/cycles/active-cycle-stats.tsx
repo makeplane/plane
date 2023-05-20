@@ -73,7 +73,10 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ issues }) => {
         }
       }}
     >
-      <Tab.List as="div" className="flex flex-wrap items-center justify-start gap-4 text-sm">
+      <Tab.List
+        as="div"
+        className="flex sticky top-0 z-10 bg-brand-base w-full px-4 pt-4 pb-1 flex-wrap items-center justify-start gap-4 text-sm"
+      >
         <Tab
           className={({ selected }) =>
             `px-3 py-1 text-brand-base rounded-3xl border border-brand-base ${
@@ -93,10 +96,10 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ issues }) => {
           Labels
         </Tab>
       </Tab.List>
-      <Tab.Panels className="flex w-full">
+      <Tab.Panels className="flex w-full px-4 pb-4">
         <Tab.Panel
           as="div"
-          className="flex flex-col w-full mt-2 gap-1 items-center text-brand-secondary"
+          className="flex flex-col w-full mt-2 gap-1 overflow-y-scroll items-center text-brand-secondary"
         >
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i?.assignees?.includes(member.member.id));
@@ -147,7 +150,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ issues }) => {
         </Tab.Panel>
         <Tab.Panel
           as="div"
-          className="flex flex-col w-full mt-2 gap-1 items-center text-brand-secondary"
+          className="flex flex-col w-full mt-2 gap-1 overflow-y-scroll items-center text-brand-secondary"
         >
           {issueLabels?.map((label, index) => {
             const totalArray = issues?.filter((i) => i?.labels?.includes(label.id));
