@@ -152,18 +152,32 @@ export const AnalyticsSidebar: React.FC<Props> = ({
 
                     return (
                       <div key={project.id}>
-                        <h5 className="text-sm flex items-center gap-1">
-                          {project.icon ? (
+                        <div className="text-sm flex items-center gap-1">
+                          {project.emoji ? (
                             <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                              {String.fromCodePoint(parseInt(project.icon))}
+                              {String.fromCodePoint(parseInt(project.emoji))}
                             </span>
+                          ) : project.icon_prop ? (
+                            <div className="h-6 w-6 grid place-items-center flex-shrink-0">
+                              <span
+                                style={{ color: project.icon_prop.color }}
+                                className="material-symbols-rounded text-lg"
+                              >
+                                {project.icon_prop.name}
+                              </span>
+                            </div>
                           ) : (
-                            <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                            <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                               {project?.name.charAt(0)}
                             </span>
                           )}
-                          <span className="break-all">{project.name}</span>
-                        </h5>
+                          <h5 className="break-all">
+                            {project.name}
+                            <span className="text-brand-secondary text-xs ml-1">
+                              ({project.identifier})
+                            </span>
+                          </h5>
+                        </div>
                         <div className="mt-4 space-y-3 pl-2">
                           <div className="flex items-center justify-between gap-2 text-xs">
                             <div className="flex items-center gap-2">
@@ -254,12 +268,21 @@ export const AnalyticsSidebar: React.FC<Props> = ({
               ) : (
                 <div className="hidden md:flex md:flex-col h-full overflow-y-auto">
                   <div className="flex items-center gap-1">
-                    {projectDetails?.icon ? (
-                      <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                        {String.fromCodePoint(parseInt(projectDetails.icon))}
-                      </span>
+                    {projectDetails?.emoji ? (
+                      <div className="grid h-6 w-6 flex-shrink-0 place-items-center">
+                        {String.fromCodePoint(parseInt(projectDetails.emoji))}
+                      </div>
+                    ) : projectDetails?.icon_prop ? (
+                      <div className="h-6 w-6 grid place-items-center flex-shrink-0">
+                        <span
+                          style={{ color: projectDetails.icon_prop.color }}
+                          className="material-symbols-rounded text-lg"
+                        >
+                          {projectDetails.icon_prop.name}
+                        </span>
+                      </div>
                     ) : (
-                      <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                      <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                         {projectDetails?.name.charAt(0)}
                       </span>
                     )}

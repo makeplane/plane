@@ -30,7 +30,7 @@ type Props = {
 
 const defaultValues: Partial<IState> = {
   name: "",
-  color: "#000000",
+  color: "#858E96",
 };
 
 export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose }) => {
@@ -44,7 +44,6 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
     watch,
     control,
     reset,
-    setError,
   } = useForm<IIssueLabels>({
     defaultValues,
   });
@@ -109,13 +108,13 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                         {({ open, close }) => (
                           <>
                             <Popover.Button
-                              className={`group inline-flex items-center rounded-sm bg-brand-surface-2 text-base font-medium hover:text-brand-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                              className={`group inline-flex items-center rounded-sm py-2 text-base font-medium hover:text-brand-base focus:outline-none ${
                                 open ? "text-brand-base" : "text-brand-secondary"
                               }`}
                             >
                               {watch("color") && watch("color") !== "" && (
                                 <span
-                                  className="ml-2 h-4 w-4 rounded"
+                                  className="ml-2 h-5 w-5 rounded"
                                   style={{
                                     backgroundColor: watch("color") ?? "black",
                                   }}
@@ -157,19 +156,21 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                           </>
                         )}
                       </Popover>
-                      <Input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="Enter name"
-                        autoComplete="off"
-                        error={errors.name}
-                        register={register}
-                        width="full"
-                        validations={{
-                          required: "Name is required",
-                        }}
-                      />
+                      <div className="flex w-full flex-col gap-0.5 justify-center">
+                        <Input
+                          type="text"
+                          id="name"
+                          name="name"
+                          placeholder="Label title"
+                          autoComplete="off"
+                          error={errors.name}
+                          register={register}
+                          width="full"
+                          validations={{
+                            required: "Label title is required",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">

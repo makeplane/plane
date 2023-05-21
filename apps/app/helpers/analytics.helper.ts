@@ -66,7 +66,6 @@ export const generateBarColor = (
   type: "x_axis" | "segment"
 ): string => {
   let color: string | undefined = generateRandomColor(value);
-  console.log(value);
 
   if (!analytics) return color;
 

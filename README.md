@@ -135,7 +135,7 @@ To see how to Contribute, visit [here](https://github.com/makeplane/plane/blob/m
 
 The Plane community can be found on GitHub Discussions, where you can ask questions, voice ideas, and share your projects.
 
-To chat with other community members you can join the [Plane Discord](https://discord.com/invite/q9HKAdau).
+To chat with other community members you can join the [Plane Discord](https://discord.com/invite/A92xrEGCge).
 
 Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CONDUCT.md) applies to all Plane community channels.
 

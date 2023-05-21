@@ -18,10 +18,11 @@ import { useProjectMyMembership } from "contexts/project-member.context";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 // components
-import { AllLists, AllBoards, FilterList, CalendarView } from "components/core";
+import { AllLists, AllBoards, FilterList, CalendarView, GanttChartView } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
-import { TransferIssues, TransferIssuesModal } from "components/cycles";
+import { CycleIssuesGanttChartView, TransferIssues, TransferIssuesModal } from "components/cycles";
+import { IssueGanttChartView } from "components/issues/gantt-chart";
 // ui
 import { EmptySpace, EmptySpaceItem, EmptyState, PrimaryButton, Spinner } from "components/ui";
 // icons
@@ -47,6 +48,7 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATES_LIST,
 } from "constants/fetch-keys";
+import { ModuleIssuesGanttChartView } from "components/modules";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -528,7 +530,7 @@ export const IssuesView: React.FC<Props> = ({
                   isCompleted={isCompleted}
                   userAuth={memberRole}
                 />
-              ) : (
+              ) : issueView === "calendar" ? (
                 <CalendarView
                   handleEditIssue={handleEditIssue}
                   handleDeleteIssue={handleDeleteIssue}
@@ -536,6 +538,8 @@ export const IssuesView: React.FC<Props> = ({
                   isCompleted={isCompleted}
                   userAuth={memberRole}
                 />
+              ) : (
+                issueView === "gantt_chart" && <GanttChartView />
               )}
             </>
           ) : type === "issue" ? (

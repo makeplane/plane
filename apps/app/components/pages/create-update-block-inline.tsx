@@ -146,7 +146,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         })
         .then((res) => {
           mutate(PAGE_BLOCKS_LIST(pageId as string));
-          editorRef.current?.setEditorValue(res.description);
+          editorRef.current?.setEditorValue(res.description_html);
           if (data.issue && data.sync)
             issuesService
               .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
@@ -184,6 +184,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         else {
           setValue("description", {});
           setValue("description_html", `${watch("description_html") ?? ""}<p>${res.response}</p>`);
+          editorRef.current?.setEditorValue(watch("description_html") ?? "");
         }
       })
       .catch((err) => {
@@ -276,7 +277,10 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                 if (!data)
                   return (
                     <WrappedRemirrorRichTextEditor
-                      value={value}
+                      value={{
+                        type: "doc",
+                        content: [{ type: "paragraph" }],
+                      }}
                       onJSONChange={(jsonValue) => setValue("description", jsonValue)}
                       onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
                       placeholder="Write something..."
@@ -292,7 +296,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                   );
 
                 return (
-                  <RemirrorRichTextEditor
+                  <WrappedRemirrorRichTextEditor
                     value={
                       value && value !== "" && Object.keys(value).length > 0
                         ? value
@@ -306,6 +310,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                     customClassName="text-sm"
                     noBorder
                     borderOnFocus={false}
+                    ref={editorRef}
                   />
                 );
               }}
@@ -360,10 +365,16 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         content={watch("description_html")}
         htmlContent={watch("description_html")}
         onResponse={(response) => {
-          if (data && handleAiAssistance) handleAiAssistance(response);
-          else {
+          if (data && handleAiAssistance) {
+            handleAiAssistance(response);
+            editorRef.current?.setEditorValue(
+              `${watch("description_html")}<p>${response}</p>` ?? ""
+            );
+          } else {
             setValue("description", {});
             setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
+
+            editorRef.current?.setEditorValue(watch("description_html") ?? "");
           }
         }}
         projectId={projectId?.toString() ?? ""}

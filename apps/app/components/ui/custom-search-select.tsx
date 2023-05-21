@@ -9,11 +9,13 @@ import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 type CustomSearchSelectProps = {
   value: any;
   onChange: any;
-  options: {
-    value: any;
-    query: string;
-    content: JSX.Element;
-  }[];
+  options:
+    | {
+        value: any;
+        query: string;
+        content: JSX.Element;
+      }[]
+    | undefined;
   label?: string | JSX.Element;
   textAlignment?: "left" | "center" | "right";
   height?: "sm" | "md" | "rg" | "lg";
@@ -27,6 +29,7 @@ type CustomSearchSelectProps = {
   selfPositioned?: boolean;
   multiple?: boolean;
   footerOption?: JSX.Element;
+  dropdownWidth?: string;
 };
 export const CustomSearchSelect = ({
   label,
@@ -45,6 +48,7 @@ export const CustomSearchSelect = ({
   selfPositioned = false,
   multiple = false,
   footerOption,
+  dropdownWidth,
 }: CustomSearchSelectProps) => {
   const [query, setQuery] = useState("");
 
@@ -106,7 +110,9 @@ export const CustomSearchSelect = ({
                 position === "right" ? "right-0" : "left-0"
               } ${
                 verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"
-              } z-10 origin-top-right rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none`}
+              } z-10 origin-top-right rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none ${
+                dropdownWidth ? dropdownWidth : ``
+              } `}
             >
               <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-brand-base bg-brand-surface-1 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-brand-secondary" />

@@ -116,17 +116,14 @@ const ProjectCycles: NextPage = () => {
         handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycle}
       />
-      <div className="space-y-8 p-8">
-        <div className="flex flex-col gap-5">
-          <h3 className="text-2xl font-semibold text-brand-base">Cycles</h3>
-          <CyclesView
-            setSelectedCycle={setSelectedCycle}
-            setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-            cyclesCompleteList={cyclesCompleteList}
-            currentAndUpcomingCycles={currentAndUpcomingCycles}
-            draftCycles={draftCycles}
-          />
-        </div>
+      <div className="space-y-5 p-8 h-full flex flex-col overflow-hidden">
+        <CyclesView
+          setSelectedCycle={setSelectedCycle}
+          setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+          cyclesCompleteList={cyclesCompleteList}
+          currentAndUpcomingCycles={currentAndUpcomingCycles}
+          draftCycles={draftCycles}
+        />
       </div>
     </ProjectAuthorizationWrapper>
   );
