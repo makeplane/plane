@@ -39,7 +39,7 @@ export const GanttChartBlocks: FC<{
                   >
                     <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
                       <div className="absolute right-0 mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
-                        {block?.start_date ? datePreview(block?.start_date, true) : "-"}
+                        {block?.start_date ? datePreview(block?.start_date) : "-"}
                       </div>
                     </div>
 
@@ -54,7 +54,7 @@ export const GanttChartBlocks: FC<{
 
                     <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
                       <div className="absolute left-0 ml-[5px] mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
-                        {block?.target_date ? datePreview(block?.target_date, true) : "-"}
+                        {block?.target_date ? datePreview(block?.target_date) : "-"}
                       </div>
                     </div>
                   </div>
