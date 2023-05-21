@@ -37,6 +37,7 @@ import { datePreview, currentViewDataWithView } from "../data";
 import { useChart } from "../hooks";
 
 type ChartViewRootProps = {
+  border: boolean;
   title: null | string;
   loaderTitle: string;
   blocks: any;
@@ -46,6 +47,7 @@ type ChartViewRootProps = {
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = ({
+  border,
   title,
   blocks = null,
   loaderTitle,
@@ -214,10 +216,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     <div
       className={`${
         fullScreenMode ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-brand-base` : `relative`
-      } flex h-full flex-col rounded-sm border border-brand-base select-none bg-brand-base shadow`}
+      } ${
+        border ? `border border-brand-base` : ``
+      } flex h-full flex-col rounded-sm select-none bg-brand-base shadow`}
     >
       {/* chart title */}
-      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-brand-base">
+      {/* <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-brand-base">
         {title && (
           <div className="text-lg font-medium flex gap-2 items-center">
             <div>{title}</div>
@@ -233,7 +237,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             {blocks.length} {loaderTitle}
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* chart header */}
       <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
@@ -248,10 +252,23 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           )}
         </div> */}
 
-        <div className="mr-auto text-sm font-medium">
-          {`${datePreview(currentViewData?.data?.startDate)} - ${datePreview(
-            currentViewData?.data?.endDate
-          )}`}
+        {title && (
+          <div className="text-lg font-medium flex gap-2 items-center">
+            <div>{title}</div>
+            <div className="text-xs rounded-full px-2 py-1 font-bold border border-brand-accent/75 bg-brand-accent/5 text-brand-base">
+              Gantt View Beta
+            </div>
+          </div>
+        )}
+
+        <div className="ml-auto">
+          {blocks === null ? (
+            <div className="text-sm font-medium ml-auto">Loading...</div>
+          ) : (
+            <div className="text-sm font-medium ml-auto">
+              {blocks.length} {loaderTitle}
+            </div>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -260,7 +277,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             allViews.map((_chatView: any, _idx: any) => (
               <div
                 key={_chatView?.key}
-                className={`cursor-pointer rounded-sm border border-brand-base p-1 px-2 text-sm font-medium ${
+                className={`cursor-pointer rounded-sm border border-brand-base p-1 px-2 text-xs ${
                   currentView === _chatView?.key ? `bg-brand-surface-2` : `hover:bg-brand-surface-1`
                 }`}
                 onClick={() => handleChartView(_chatView?.key)}
@@ -272,7 +289,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
         <div className="flex items-center gap-1">
           <div
-            className={`cursor-pointer rounded-sm border border-brand-base p-1 px-2 text-sm font-medium hover:bg-brand-surface-2`}
+            className={`cursor-pointer rounded-sm border border-brand-base p-1 px-2 text-xs hover:bg-brand-surface-2`}
             onClick={handleToday}
           >
             Today

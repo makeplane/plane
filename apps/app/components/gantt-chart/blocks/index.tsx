@@ -18,7 +18,7 @@ export const GanttChartBlocks: FC<{
 
   return (
     <div
-      className="relative z-10 mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto bg-[#999] bg-opacity-5"
+      className="relative z-10 mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
     >
       <div className="w-full">
@@ -44,7 +44,7 @@ export const GanttChartBlocks: FC<{
                     </div>
 
                     <div
-                      className="rounded-sm shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
+                      className="rounded shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
                       style={{
                         width: `${block?.position?.width}px`,
                       }}

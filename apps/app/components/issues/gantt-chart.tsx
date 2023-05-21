@@ -32,7 +32,7 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
   // rendering issues on gantt card
   const GanttBlockView = ({ data }: any) => (
     <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${data?.id}`}>
-      <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm">
+      <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm font-normal">
         <div
           className="flex-shrink-0 w-[4px] h-full"
           style={{ backgroundColor: data?.state_detail?.color || "#858e96" }}
@@ -68,8 +68,9 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
       : [];
 
   return (
-    <div className="w-full h-full p-3">
+    <div className="w-full h-full">
       <GanttChartRoot
+        border={false}
         title="Issues"
         loaderTitle="Issues"
         blocks={ganttIssues ? blockFormat(ganttIssues) : null}
