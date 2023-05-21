@@ -5,7 +5,7 @@ import { ChartViewRoot } from "./chart";
 import { ChartContextProvider } from "./contexts";
 
 type GanttChartRootProps = {
-  border: boolean;
+  border?: boolean;
   title: null | string;
   loaderTitle: string;
   blocks: any;
