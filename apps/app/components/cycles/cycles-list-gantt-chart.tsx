@@ -1,5 +1,7 @@
 import { FC } from "react";
-
+// next imports
+import Link from "next/link";
+import { useRouter } from "next/router";
 // components
 import { GanttChartRoot } from "components/gantt-chart";
 // types
@@ -10,6 +12,9 @@ type Props = {
 };
 
 export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
   // rendering issues on gantt sidebar
   const GanttSidebarBlockView = ({ data }: any) => (
     <div className="relative flex w-full h-full items-center p-1 overflow-hidden gap-1">
@@ -23,12 +28,14 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
 
   // rendering issues on gantt card
   const GanttBlockView = ({ data }: { data: ICycle }) => (
-    <div className="relative flex items-center w-full h-full overflow-hidden shadow-sm">
-      <div className="flex-shrink-0 w-[4px] h-full" style={{ backgroundColor: "#858e96" }} />
-      <div className="w-full text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden">
-        {data?.name}
-      </div>
-    </div>
+    <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${data?.id}`}>
+      <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm">
+        <div className="flex-shrink-0 w-[4px] h-full" style={{ backgroundColor: "#858e96" }} />
+        <div className="w-full text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden">
+          {data?.name}
+        </div>
+      </a>
+    </Link>
   );
 
   // handle gantt issue start date and target date
