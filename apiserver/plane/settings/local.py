@@ -25,7 +25,9 @@ DATABASES = {
     }
 }
 
-DOCKERIZED = os.environ.get("DOCKERIZED", False)
+DOCKERIZED = int(os.environ.get(
+    "DOCKERIZED", 0
+))  == 1
 
 if DOCKERIZED:
     DATABASES["default"] = dj_database_url.config()

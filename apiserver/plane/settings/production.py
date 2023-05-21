@@ -29,10 +29,10 @@ DATABASES = {
 DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
-# Set the variable true if running in docker-compose environment
-DOCKERIZED = os.environ.get(
-    "DOCKERIZED", "0"
-)  == "1"
+# Set the variable true if running in docker environment
+DOCKERIZED = int(os.environ.get(
+    "DOCKERIZED", 0
+))  == 1
 
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
@@ -94,7 +94,7 @@ if DOCKERIZED:
     # Default permissions
     AWS_DEFAULT_ACL = "public-read"
     AWS_QUERYSTRING_AUTH = False
-
+    AWS_S3_FILE_OVERWRITE = False
 else:
     # The AWS region to connect to.
     AWS_REGION = os.environ.get("AWS_REGION", "")
