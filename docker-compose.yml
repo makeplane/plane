@@ -137,14 +137,11 @@ services:
       /bin/sh -c "
       apk add nc &&
       while ! nc -z minio 9000; do echo 'Wait minio to startup...' && sleep 0.1; done; sleep 5 &&
-      /usr/bin/mc config host add plane-minio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
-      /usr/bin/mc mb plane-minio/uploads;
-      /usr/bin/mc policy download myminio/uploads;
+      /usr/bin/mc config host add plane-minio http://minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
+      /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME;
+      /usr/bin/mc policy download myminio/$\AWS_S3_BUCKET_NAME;
       exit 0;
       "
-    environment:
-      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
-      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
 volumes:
   pgdata:
   redisdata:
