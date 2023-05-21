@@ -11,6 +11,8 @@ import trackEventServices, { MiscellaneousEventType } from "services/track-event
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { SettingsHeader } from "components/project";
 // ui
 import { SecondaryButton, ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -18,10 +20,10 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
-import { IProject } from "types";
+import { IFavoriteProject, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const featuresList = [
   {
@@ -83,16 +85,29 @@ const FeaturesSettings: NextPage = () => {
   );
 
   const handleSubmit = async (formData: Partial<IProject>) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    mutate<IProject>(
-      PROJECT_DETAILS(projectId as string),
-      (prevData) => ({ ...(prevData as IProject), ...formData }),
-      false
-    );
+    if (projectDetails.is_favorite)
+      mutate<IFavoriteProject[]>(
+        FAVORITE_PROJECTS_LIST(workspaceSlug.toString()),
+        (prevData) =>
+          prevData?.map((p) => {
+            if (p.project === projectId)
+              return {
+                ...p,
+                project_detail: {
+                  ...p.project_detail,
+                  ...formData,
+                },
+              };
+
+            return p;
+          }),
+        false
+      );
 
     mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string),
+      PROJECTS_LIST(workspaceSlug.toString()),
       (prevData) =>
         prevData?.map((p) => {
           if (p.id === projectId)
@@ -106,19 +121,34 @@ const FeaturesSettings: NextPage = () => {
       false
     );
 
+    mutate<IProject>(
+      PROJECT_DETAILS(projectId as string),
+      (prevData) => ({ ...(prevData as IProject), ...formData }),
+      false
+    );
+
+    setToastAlert({
+      type: "success",
+      title: "Success!",
+      message: "Project feature updated successfully.",
+    });
+
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, formData)
-      .then((res) => {
+      .then(() => {
+        mutate(
+          projectDetails.is_favorite
+            ? FAVORITE_PROJECTS_LIST(workspaceSlug.toString())
+            : PROJECTS_LIST(workspaceSlug.toString())
+        );
         mutate(PROJECT_DETAILS(projectId as string));
-        mutate(PROJECTS_LIST(workspaceSlug as string));
-        setToastAlert({
-          title: "Success!",
-          type: "success",
-          message: "Project features updated successfully.",
-        });
       })
       .catch((err) => {
-        console.error(err);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Project feature could not be updated. Please try again.",
+        });
       });
   };
 
@@ -134,54 +164,57 @@ const FeaturesSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <section className="space-y-8">
-        <h3 className="text-2xl font-semibold">Features</h3>
-        <div className="space-y-5">
-          {featuresList.map((feature) => (
-            <div
-              key={feature.property}
-              className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-brand-base bg-brand-base p-5"
-            >
-              <div className="flex items-start gap-3">
-                {feature.icon}
-                <div>
-                  <h4 className="text-lg font-semibold">{feature.title}</h4>
-                  <p className="text-sm text-brand-secondary">{feature.description}</p>
+      <div className="p-8">
+        <SettingsHeader />
+        <section className="space-y-5">
+          <h3 className="text-2xl font-semibold">Features</h3>
+          <div className="space-y-5">
+            {featuresList.map((feature) => (
+              <div
+                key={feature.property}
+                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-brand-base bg-brand-base p-5"
+              >
+                <div className="flex items-start gap-3">
+                  {feature.icon}
+                  <div>
+                    <h4 className="text-lg font-semibold">{feature.title}</h4>
+                    <p className="text-sm text-brand-secondary">{feature.description}</p>
+                  </div>
                 </div>
+                <ToggleSwitch
+                  value={projectDetails?.[feature.property as keyof IProject]}
+                  onChange={() => {
+                    trackEventServices.trackMiscellaneousEvent(
+                      {
+                        workspaceId: (projectDetails?.workspace as any)?.id,
+                        workspaceSlug,
+                        projectId,
+                        projectIdentifier: projectDetails?.identifier,
+                        projectName: projectDetails?.name,
+                      },
+                      !projectDetails?.[feature.property as keyof IProject]
+                        ? getEventType(feature.title, true)
+                        : getEventType(feature.title, false)
+                    );
+                    handleSubmit({
+                      [feature.property]: !projectDetails?.[feature.property as keyof IProject],
+                    });
+                  }}
+                  size="lg"
+                />
               </div>
-              <ToggleSwitch
-                value={projectDetails?.[feature.property as keyof IProject]}
-                onChange={() => {
-                  trackEventServices.trackMiscellaneousEvent(
-                    {
-                      workspaceId: (projectDetails?.workspace as any)?.id,
-                      workspaceSlug,
-                      projectId,
-                      projectIdentifier: projectDetails?.identifier,
-                      projectName: projectDetails?.name,
-                    },
-                    !projectDetails?.[feature.property as keyof IProject]
-                      ? getEventType(feature.title, true)
-                      : getEventType(feature.title, false)
-                  );
-                  handleSubmit({
-                    [feature.property]: !projectDetails?.[feature.property as keyof IProject],
-                  });
-                }}
-                size="lg"
-              />
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <a href="https://plane.so/" target="_blank" rel="noreferrer">
-            <SecondaryButton outline>Plane is open-source, view Roadmap</SecondaryButton>
-          </a>
-          <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
-            <SecondaryButton outline>Star us on GitHub</SecondaryButton>
-          </a>
-        </div>
-      </section>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <a href="https://plane.so/" target="_blank" rel="noreferrer">
+              <SecondaryButton outline>Plane is open-source, view Roadmap</SecondaryButton>
+            </a>
+            <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
+              <SecondaryButton outline>Star us on GitHub</SecondaryButton>
+            </a>
+          </div>
+        </section>
+      </div>
     </ProjectAuthorizationWrapper>
   );
 };

@@ -32,24 +32,23 @@ export const JiraImportUsers: FC = () => {
 
   const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString());
 
-  const options =
-    members?.map((member) => ({
-      value: member.member.email,
-      query:
-        (member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name
-          : member.member.email) +
-          " " +
-          member.member.last_name ?? "",
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar user={member.member} />
-          {member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name + " (" + member.member.email + ")"
-            : member.member.email}
-        </div>
-      ),
-    })) ?? [];
+  const options = members?.map((member) => ({
+    value: member.member.email,
+    query:
+      (member.member.first_name && member.member.first_name !== ""
+        ? member.member.first_name
+        : member.member.email) +
+        " " +
+        member.member.last_name ?? "",
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={member.member} />
+        {member.member.first_name && member.member.first_name !== ""
+          ? member.member.first_name + " (" + member.member.email + ")"
+          : member.member.email}
+      </div>
+    ),
+  }));
 
   return (
     <div className="h-full w-full space-y-10 divide-y-2 divide-brand-base overflow-y-auto">

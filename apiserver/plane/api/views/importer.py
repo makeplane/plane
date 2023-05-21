@@ -363,6 +363,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         start_date=issue_data.get("start_date", None),
                         target_date=issue_data.get("target_date", None),
                         priority=issue_data.get("priority", None),
+                        created_by=request.user,
                     )
                 )
 
@@ -400,7 +401,6 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                         created_by=request.user,
-                        updated_by=request.user,
                     )
                     for label_id in labels_list
                 ]
@@ -420,7 +420,6 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                         created_by=request.user,
-                        updated_by=request.user,
                     )
                     for assignee_id in assignees_list
                 ]
@@ -439,6 +438,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         workspace_id=project.workspace_id,
                         comment=f"{request.user.email} importer the issue from {service}",
                         verb="created",
+                        created_by=request.user,
                     )
                     for issue in issues
                 ],
@@ -457,7 +457,6 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                         created_by=request.user,
-                        updated_by=request.user,
                     )
                     for comment in comments_list
                 ]
@@ -474,7 +473,6 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                         created_by=request.user,
-                        updated_by=request.user,
                     )
                     for issue, issue_data in zip(issues, issues_data)
                 ]
@@ -512,7 +510,6 @@ class BulkImportModulesEndpoint(BaseAPIView):
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                         created_by=request.user,
-                        updated_by=request.user,
                     )
                     for module in modules_data
                 ],
@@ -536,7 +533,6 @@ class BulkImportModulesEndpoint(BaseAPIView):
                             project_id=project_id,
                             workspace_id=project.workspace_id,
                             created_by=request.user,
-                            updated_by=request.user,
                         )
                         for module, module_data in zip(modules, modules_data)
                     ],
@@ -554,7 +550,6 @@ class BulkImportModulesEndpoint(BaseAPIView):
                             project_id=project_id,
                             workspace_id=project.workspace_id,
                             created_by=request.user,
-                            updated_by=request.user,
                         )
                         for issue in module_issues_list
                     ]

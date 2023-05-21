@@ -120,11 +120,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   };
 
   const handleCycleChange = useCallback(
-    (cycleDetail: ICycle) => {
+    (cycleDetails: ICycle) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
       issuesService
-        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetails.id, {
           issues: [issueDetail.id],
         })
         .then((res) => {
@@ -361,6 +361,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           target_date: val,
                         })
                       }
+                      className="bg-brand-surface-1"
                       disabled={isNotAllowed}
                     />
                   )}
@@ -449,7 +450,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-brand-surface-2 py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-brand-surface-2 py-1 text-xs shadow-lg border border-brand-base focus:outline-none">
                               <div className="py-1">
                                 {issueLabels ? (
                                   issueLabels.length > 0 ? (
@@ -467,8 +468,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                                 `${
                                                   active || selected ? "bg-brand-surface-1" : ""
                                                 } ${
-                                                  selected ? "font-medium" : ""
-                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-brand-base`
+                                                  selected ? "" : "text-brand-secondary"
+                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                               }
                                               value={label.id}
                                             >
@@ -488,7 +489,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                         return (
                                           <div className="border-y border-brand-base bg-brand-surface-1">
                                             <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-brand-base">
-                                              <RectangleGroupIcon className="h-3 w-3" />{" "}
+                                              <RectangleGroupIcon className="h-3 w-3" />
                                               {label.name}
                                             </div>
                                             <div>
@@ -496,9 +497,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                                 <Listbox.Option
                                                   key={child.id}
                                                   className={({ active, selected }) =>
-                                                    `${active || selected ? "bg-indigo-50" : ""} ${
-                                                      selected ? "font-medium" : ""
-                                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-brand-base`
+                                                    `${active || selected ? "bg-brand-base" : ""} ${
+                                                      selected ? "" : "text-brand-secondary"
+                                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                                   }
                                                   value={child.id}
                                                 >

@@ -44,7 +44,8 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
 
   const { setToastAlert } = useToast();
 
-  const completionPercentage = (module.completed_issues / module.total_issues) * 100;
+  const completionPercentage =
+    ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
 
   const handleDeleteModule = () => {
     if (!module) return;
@@ -178,7 +179,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                 </CustomMenu>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 text-brand-secondary">
+            <div className="grid grid-cols-2 gap-2 text-brand-secondary">
               <div className="flex items-start gap-1">
                 <CalendarDaysIcon className="h-4 w-4" />
                 <span>Start:</span>

@@ -17,6 +17,7 @@ import {
   ListBulletIcon,
   Squares2X2Icon,
   CalendarDaysIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -82,6 +83,17 @@ export const IssuesFilterView: React.FC = () => {
         >
           <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
         </button>
+        <button
+          type="button"
+          className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
+            issueView === "gantt_chart" ? "bg-brand-surface-2" : ""
+          }`}
+          onClick={() => setIssueView("gantt_chart")}
+        >
+          <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
+            waterfall_chart
+          </span>
+        </button>
       </div>
       <SelectFilters
         filters={filters}
@@ -134,7 +146,7 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg border border-brand-base bg-brand-surface-1 p-3 shadow-lg">
+              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform rounded-lg border border-brand-base bg-brand-surface-1 p-3 shadow-lg">
                 <div className="relative divide-y-2 divide-brand-base">
                   <div className="space-y-4 pb-3 text-xs">
                     {issueView !== "calendar" && (
@@ -233,31 +245,30 @@ export const IssuesFilterView: React.FC = () => {
                       </>
                     )}
                   </div>
-                  {issueView !== "calendar" && (
-                    <div className="space-y-2 py-3">
-                      <h4 className="text-sm text-brand-secondary">Display Properties</h4>
-                      <div className="flex flex-wrap items-center gap-2">
-                        {Object.keys(properties).map((key) => {
-                          if (key === "estimate" && !isEstimateActive) return null;
 
-                          return (
-                            <button
-                              key={key}
-                              type="button"
-                              className={`rounded border px-2 py-1 text-xs capitalize ${
-                                properties[key as keyof Properties]
-                                  ? "border-brand-accent bg-brand-accent text-white"
-                                  : "border-brand-base"
-                              }`}
-                              onClick={() => setProperties(key as keyof Properties)}
-                            >
-                              {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                            </button>
-                          );
-                        })}
-                      </div>
+                  <div className="space-y-2 py-3">
+                    <h4 className="text-sm text-brand-secondary">Display Properties</h4>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {Object.keys(properties).map((key) => {
+                        if (key === "estimate" && !isEstimateActive) return null;
+
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            className={`rounded border px-2 py-1 text-xs capitalize ${
+                              properties[key as keyof Properties]
+                                ? "border-brand-accent bg-brand-accent text-white"
+                                : "border-brand-base"
+                            }`}
+                            onClick={() => setProperties(key as keyof Properties)}
+                          >
+                            {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                          </button>
+                        );
+                      })}
                     </div>
-                  )}
+                  </div>
                 </div>
               </Popover.Panel>
             </Transition>

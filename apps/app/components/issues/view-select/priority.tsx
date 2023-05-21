@@ -15,7 +15,7 @@ import trackEventServices from "services/track-event.service";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
   isNotAllowed: boolean;
@@ -35,7 +35,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
     <CustomSelect
       value={issue.priority}
       onChange={(data: string) => {
-        partialUpdateIssue({ priority: data });
+        partialUpdateIssue({ priority: data }, issue.id);
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,

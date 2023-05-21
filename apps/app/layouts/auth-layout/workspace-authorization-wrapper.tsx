@@ -11,7 +11,6 @@ import workspaceServices from "services/workspace.service";
 import Container from "layouts/container";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
-import SettingsNavbar from "layouts/settings-navbar";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
@@ -32,25 +31,21 @@ type Meta = {
 type Props = {
   meta?: Meta;
   children: React.ReactNode;
-  noPadding?: boolean;
   noHeader?: boolean;
   bg?: "primary" | "secondary";
   breadcrumbs?: JSX.Element;
   left?: JSX.Element;
   right?: JSX.Element;
-  profilePage?: boolean;
 };
 
 export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   meta,
   children,
-  noPadding = false,
   noHeader = false,
   bg = "primary",
   breadcrumbs,
   left,
   right,
-  profilePage = false,
 }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
 
@@ -59,13 +54,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 
   const { data: workspaceMemberMe, error } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null,
-    {
-      onErrorRetry(err, key, config, revalidate, revalidateOpts) {
-        if (err.status === 401 || err.status === 403) return;
-        revalidateOpts.retryCount = 5;
-      },
-    }
+    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null
   );
 
   if (!workspaceMemberMe && !error)
@@ -101,7 +90,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
     <UserAuthorizationLayout>
       <Container meta={meta}>
         <CommandPalette />
-        <div className="flex h-screen w-full overflow-x-hidden">
+        <div className="relative flex h-screen w-full overflow-hidden">
           <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
           {settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
             <NotAuthorizedView
@@ -117,7 +106,15 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
               type="workspace"
             />
           ) : (
-            <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
+            <main
+              className={`relative flex h-full w-full flex-col overflow-hidden ${
+                bg === "primary"
+                  ? "bg-brand-surface-1"
+                  : bg === "secondary"
+                  ? "bg-brand-sidebar"
+                  : "bg-brand-base"
+              }`}
+            >
               {!noHeader && (
                 <AppHeader
                   breadcrumbs={breadcrumbs}
@@ -126,33 +123,10 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   setToggleSidebar={setToggleSidebar}
                 />
               )}
-              <div
-                className={`flex w-full flex-grow flex-col ${
-                  noPadding ? "" : settingsLayout || profilePage ? "p-8 lg:px-28" : "p-8"
-                } ${
-                  bg === "primary"
-                    ? "bg-brand-surface-1"
-                    : bg === "secondary"
-                    ? "bg-brand-surface-1"
-                    : "bg-brand-base"
-                }`}
-              >
-                {(settingsLayout || profilePage) && (
-                  <div className="mb-12 space-y-6">
-                    <div>
-                      <h3 className="text-3xl font-semibold">
-                        {profilePage ? "Profile" : "Workspace"} Settings
-                      </h3>
-                      <p className="mt-1 text-brand-secondary">
-                        {profilePage
-                          ? "This information will be visible to only you."
-                          : "This information will be displayed to every member of the workspace."}
-                      </p>
-                    </div>
-                    <SettingsNavbar profilePage={profilePage} />
-                  </div>
-                )}
-                {children}
+              <div className="h-full w-full overflow-hidden">
+                <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
+                  {children}
+                </div>
               </div>
             </main>
           )}

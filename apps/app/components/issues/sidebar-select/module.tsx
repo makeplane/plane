@@ -82,13 +82,13 @@ export const SidebarModuleSelect: React.FC<Props> = ({
               </span>
             </Tooltip>
           }
-          value={issueModule?.module_detail?.id}
+          value={issueModule ? issueModule.module_detail?.id : null}
           onChange={(value: any) => {
             !value
               ? removeIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
               : handleModuleChange(modules?.find((m) => m.id === value) as IModule);
           }}
-          width="w-full"
+          width="auto"
           position="right"
           maxHeight="rg"
           disabled={isNotAllowed}
@@ -99,9 +99,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
                 {modules.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     <Tooltip position="left-bottom" tooltipContent={option.name}>
-                      <span className="w-full max-w-[125px] truncate">
-                        {truncateText(option.name, 15)}
-                      </span>
+                      <span className="w-full truncate">{truncateText(option.name, 25)}</span>
                     </Tooltip>
                   </CustomSelect.Option>
                 ))}

@@ -8,7 +8,6 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
-import DatePicker from "react-datepicker";
 // icons
 import {
   CalendarDaysIcon,
@@ -21,7 +20,7 @@ import {
   LinkIcon,
 } from "@heroicons/react/24/outline";
 // ui
-import { CustomMenu, Loader, ProgressBar } from "components/ui";
+import { CustomMenu, CustomRangeDatePicker, Loader, ProgressBar } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -34,7 +33,11 @@ import { DeleteCycleModal } from "components/cycles";
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
-import { isDateRangeValid, renderDateFormat, renderShortDate } from "helpers/date-time.helper";
+import {
+  isDateGreaterThanToday,
+  renderDateFormat,
+  renderShortDate,
+} from "helpers/date-time.helper";
 // types
 import { ICycle, IIssue } from "types";
 // fetch-keys
@@ -77,7 +80,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       : null
   );
 
-  const { reset, watch } = useForm({
+  const { setValue, reset, watch } = useForm({
     defaultValues,
   });
 
@@ -122,6 +125,166 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       });
   }, [cycle, reset]);
 
+  const dateChecker = async (payload: any) => {
+    try {
+      const res = await cyclesService.cycleDateCheck(
+        workspaceSlug as string,
+        projectId as string,
+        payload
+      );
+      return res.status;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const handleStartDateChange = async (date: string) => {
+    setValue("start_date", date);
+    if (
+      watch("start_date") &&
+      watch("end_date") &&
+      watch("start_date") !== "" &&
+      watch("end_date") &&
+      watch("start_date") !== ""
+    ) {
+      if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Unable to create cycle in past date. Please enter a valid date.",
+        });
+        return;
+      }
+
+      if (cycle?.start_date && cycle?.end_date) {
+        const isDateValidForExistingCycle = await dateChecker({
+          start_date: `${watch("start_date")}`,
+          end_date: `${watch("end_date")}`,
+          cycle_id: cycle.id,
+        });
+
+        if (isDateValidForExistingCycle) {
+          await submitChanges({
+            start_date: renderDateFormat(`${watch("start_date")}`),
+            end_date: renderDateFormat(`${watch("end_date")}`),
+          });
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Cycle updated successfully.",
+          });
+          return;
+        } else {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+          });
+          return;
+        }
+      }
+
+      const isDateValid = await dateChecker({
+        start_date: `${watch("start_date")}`,
+        end_date: `${watch("end_date")}`,
+      });
+
+      if (isDateValid) {
+        submitChanges({
+          start_date: renderDateFormat(`${watch("start_date")}`),
+          end_date: renderDateFormat(`${watch("end_date")}`),
+        });
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Cycle updated successfully.",
+        });
+      } else {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message:
+            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+        });
+      }
+    }
+  };
+
+  const handleEndDateChange = async (date: string) => {
+    setValue("end_date", date);
+
+    if (
+      watch("start_date") &&
+      watch("end_date") &&
+      watch("start_date") !== "" &&
+      watch("end_date") &&
+      watch("start_date") !== ""
+    ) {
+      if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Unable to create cycle in past date. Please enter a valid date.",
+        });
+        return;
+      }
+
+      if (cycle?.start_date && cycle?.end_date) {
+        const isDateValidForExistingCycle = await dateChecker({
+          start_date: `${watch("start_date")}`,
+          end_date: `${watch("end_date")}`,
+          cycle_id: cycle.id,
+        });
+
+        if (isDateValidForExistingCycle) {
+          await submitChanges({
+            start_date: renderDateFormat(`${watch("start_date")}`),
+            end_date: renderDateFormat(`${watch("end_date")}`),
+          });
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Cycle updated successfully.",
+          });
+          return;
+        } else {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+          });
+          return;
+        }
+      }
+
+      const isDateValid = await dateChecker({
+        start_date: `${watch("start_date")}`,
+        end_date: `${watch("end_date")}`,
+      });
+
+      if (isDateValid) {
+        submitChanges({
+          start_date: renderDateFormat(`${watch("start_date")}`),
+          end_date: renderDateFormat(`${watch("end_date")}`),
+        });
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Cycle updated successfully.",
+        });
+      } else {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message:
+            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+        });
+      }
+    }
+  };
+
   const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
   const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
 
@@ -133,9 +296,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     <>
       <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} />
       <div
-        className={`fixed top-0 ${
+        className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar py-5 duration-300`}
+        } h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar pt-5 pb-10 duration-300`}
       >
         {cycle ? (
           <>
@@ -158,7 +321,12 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
                           <span>
-                            {renderShortDate(new Date(`${cycle?.start_date}`), "Start date")}
+                            {renderShortDate(
+                              new Date(
+                                `${watch("start_date") ? watch("start_date") : cycle?.start_date}`
+                              ),
+                              "Start date"
+                            )}
                           </span>
                         </Popover.Button>
 
@@ -172,36 +340,17 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           leaveTo="opacity-0 translate-y-1"
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
-                            <DatePicker
-                              selected={
-                                watch("start_date")
-                                  ? new Date(`${watch("start_date")}`)
-                                  : new Date()
-                              }
-                              onChange={(date) => {
-                                if (date && watch("end_date")) {
-                                  if (
-                                    isDateRangeValid(renderDateFormat(date), `${watch("end_date")}`)
-                                  ) {
-                                    submitChanges({
-                                      start_date: renderDateFormat(date),
-                                    });
-                                  } else {
-                                    setToastAlert({
-                                      type: "error",
-                                      title: "Error!",
-                                      message:
-                                        "The date you have entered is invalid. Please check and enter a valid date.",
-                                    });
-                                  }
+                            <CustomRangeDatePicker
+                              value={watch("start_date") ? watch("start_date") : cycle?.start_date}
+                              onChange={(val) => {
+                                if (val) {
+                                  handleStartDateChange(val);
                                 }
                               }}
-                              selectsStart
-                              startDate={new Date(`${watch("start_date")}`)}
-                              endDate={new Date(`${watch("end_date")}`)}
+                              startDate={watch("start_date") ? `${watch("start_date")}` : null}
+                              endDate={watch("end_date") ? `${watch("end_date")}` : null}
                               maxDate={new Date(`${watch("end_date")}`)}
-                              shouldCloseOnSelect
-                              inline
+                              selectsStart
                             />
                           </Popover.Panel>
                         </Transition>
@@ -222,7 +371,14 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
 
-                          <span>{renderShortDate(new Date(`${cycle?.end_date}`), "End date")}</span>
+                          <span>
+                            {renderShortDate(
+                              new Date(
+                                `${watch("end_date") ? watch("end_date") : cycle?.end_date}`
+                              ),
+                              "End date"
+                            )}
+                          </span>
                         </Popover.Button>
 
                         <Transition
@@ -235,37 +391,17 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           leaveTo="opacity-0 translate-y-1"
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20 transform overflow-hidden">
-                            <DatePicker
-                              selected={
-                                watch("end_date") ? new Date(`${watch("end_date")}`) : new Date()
-                              }
-                              onChange={(date) => {
-                                if (watch("start_date") && date) {
-                                  if (
-                                    isDateRangeValid(
-                                      `${watch("start_date")}`,
-                                      renderDateFormat(date)
-                                    )
-                                  ) {
-                                    submitChanges({
-                                      end_date: renderDateFormat(date),
-                                    });
-                                  } else {
-                                    setToastAlert({
-                                      type: "error",
-                                      title: "Error!",
-                                      message:
-                                        "The date you have entered is invalid. Please check and enter a valid date.",
-                                    });
-                                  }
+                            <CustomRangeDatePicker
+                              value={watch("end_date") ? watch("end_date") : cycle?.end_date}
+                              onChange={(val) => {
+                                if (val) {
+                                  handleEndDateChange(val);
                                 }
                               }}
-                              selectsEnd
-                              startDate={new Date(`${watch("start_date")}`)}
-                              endDate={new Date(`${watch("end_date")}`)}
+                              startDate={watch("start_date") ? `${watch("start_date")}` : null}
+                              endDate={watch("end_date") ? `${watch("end_date")}` : null}
                               minDate={new Date(`${watch("start_date")}`)}
-                              shouldCloseOnSelect
-                              inline
+                              selectsEnd
                             />
                           </Popover.Panel>
                         </Transition>
@@ -370,7 +506,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} />
+                          <ExclamationIcon
+                            height={14}
+                            width={14}
+                            className="fill-current text-brand-secondary"
+                          />
                           <span className="text-xs italic text-brand-secondary">
                             {cycleStatus === "upcoming"
                               ? "Cycle is yet to start."
@@ -444,7 +584,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} />
+                          <ExclamationIcon
+                            height={14}
+                            width={14}
+                            className="fill-current text-brand-secondary"
+                          />
                           <span className="text-xs italic text-brand-secondary">
                             No issues found. Please add issue.
                           </span>

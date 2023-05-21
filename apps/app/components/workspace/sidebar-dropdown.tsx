@@ -133,7 +133,7 @@ export const WorkspaceSidebarDropdown = () => {
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items
-            className="fixed left-2 z-20 mt-1  flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
+            className="fixed left-2 z-20 mt-1 flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
           border border-brand-base bg-brand-surface-2 shadow-lg focus:outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">

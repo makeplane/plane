@@ -9,4 +9,5 @@ export interface Props extends React.ComponentPropsWithoutRef<"textarea"> {
   mode?: "primary" | "transparent" | "secondary" | "disabled";
   validations?: RegisterOptions;
   error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+  noPadding?: boolean;
 }

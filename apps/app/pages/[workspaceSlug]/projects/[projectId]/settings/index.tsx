@@ -12,7 +12,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
 import projectService from "services/project.service";
 // components
-import { DeleteProjectModal } from "components/project";
+import { DeleteProjectModal, SettingsHeader } from "components/project";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
@@ -74,8 +74,7 @@ const GeneralSettings: NextPage = () => {
     if (projectDetails)
       reset({
         ...projectDetails,
-        default_assignee: projectDetails.default_assignee?.id,
-        project_lead: projectDetails.project_lead?.id,
+        emoji_and_icon: projectDetails.emoji ?? projectDetails.icon_prop,
         workspace: (projectDetails.workspace as IWorkspace).id,
       });
   }, [projectDetails, reset]);
@@ -115,11 +114,16 @@ const GeneralSettings: NextPage = () => {
       network: formData.network,
       identifier: formData.identifier,
       description: formData.description,
-      default_assignee: formData.default_assignee,
-      project_lead: formData.project_lead,
-      icon: formData.icon,
       cover_image: formData.cover_image,
     };
+
+    if (typeof formData.emoji_and_icon === "object") {
+      payload.emoji = null;
+      payload.icon_prop = formData.emoji_and_icon;
+    } else {
+      payload.emoji = formData.emoji_and_icon;
+      payload.icon_prop = null;
+    }
 
     if (projectDetails.identifier !== formData.identifier)
       await projectService
@@ -151,7 +155,8 @@ const GeneralSettings: NextPage = () => {
           router.push(`/${workspaceSlug}/projects`);
         }}
       />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="p-8">
+        <SettingsHeader />
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
@@ -162,17 +167,34 @@ const GeneralSettings: NextPage = () => {
             </div>
             <div className="col-span-12 flex gap-2 sm:col-span-6">
               {projectDetails ? (
-                <Controller
-                  control={control}
-                  name="icon"
-                  render={({ field: { value, onChange } }) => (
-                    <EmojiIconPicker
-                      label={value ? String.fromCodePoint(parseInt(value)) : "Icon"}
-                      value={value}
-                      onChange={onChange}
-                    />
-                  )}
-                />
+                <div className="h-7 w-7 grid place-items-center">
+                  <Controller
+                    control={control}
+                    name="emoji_and_icon"
+                    render={({ field: { value, onChange } }) => (
+                      <EmojiIconPicker
+                        label={
+                          value ? (
+                            typeof value === "object" ? (
+                              <span
+                                style={{ color: value.color }}
+                                className="material-symbols-rounded text-lg"
+                              >
+                                {value.name}
+                              </span>
+                            ) : (
+                              String.fromCodePoint(parseInt(value))
+                            )
+                          ) : (
+                            "Icon"
+                          )
+                        }
+                        value={value}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                </div>
               ) : (
                 <Loader>
                   <Loader.Item height="46px" width="46px" />
@@ -222,13 +244,13 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Cover Photo</h4>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-brand-secondary">
                 Select your cover photo from the given library.
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border p-1">
+                <div className="h-32 w-full rounded border border-brand-base p-1">
                   <div className="relative h-full w-full rounded">
                     <Image
                       src={watch("cover_image")!}

@@ -26,7 +26,7 @@
     </a>
 </p>
 
-Meet Plane. An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind 🧘‍♀️.
+Meet [Plane](https://plane.so). An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind 🧘‍♀️.
 
 
 > Plane is still in its early days, not everything will be perfect yet, and hiccups may happen. Please let us know of any suggestions, ideas, or bugs that you encounter on our [Discord](https://discord.com/invite/A92xrEGCge) or GitHub issues, and we will use your feedback to improve on our upcoming releases.
@@ -58,11 +58,18 @@ cd plane
 
 > If running in a cloud env replace localhost with public facing IP address of the VM
 
+- Export Environment Variables
+
+```bash
+set -a
+source .env
+set +a
+```
 
 - Run Docker compose up
 
 ```bash
-docker-compose up
+docker-compose -f docker-compose-hub.yml up
 ```
 
 <strong>You can use the default email and password for your first login `captain@plane.so` and `password123`.</strong> 
@@ -128,7 +135,7 @@ To see how to Contribute, visit [here](https://github.com/makeplane/plane/blob/m
 
 The Plane community can be found on GitHub Discussions, where you can ask questions, voice ideas, and share your projects.
 
-To chat with other community members you can join the [Plane Discord](https://discord.com/invite/q9HKAdau).
+To chat with other community members you can join the [Plane Discord](https://discord.com/invite/A92xrEGCge).
 
 Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CONDUCT.md) applies to all Plane community channels.
 

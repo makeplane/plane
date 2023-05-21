@@ -10,9 +10,14 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import IntegrationService from "services/integration";
 import projectService from "services/project.service";
 // components
-import { SingleIntegration } from "components/project";
+import { SettingsHeader, SingleIntegration } from "components/project";
 // ui
-import { EmptySpace, EmptySpaceItem, Loader } from "components/ui";
+import {
+  EmptySpace,
+  EmptySpaceItem,
+  IntegrationAndImportExportBanner,
+  Loader,
+} from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
@@ -53,44 +58,47 @@ const ProjectIntegrations: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      {workspaceIntegrations ? (
-        workspaceIntegrations.length > 0 ? (
-          <section className="space-y-8">
-            <h3 className="text-2xl font-semibold">Integrations</h3>
-            <div className="space-y-5">
-              {workspaceIntegrations.map((integration) => (
-                <SingleIntegration
-                  key={integration.integration_detail.id}
-                  integration={integration}
+      <div className="p-8">
+        <SettingsHeader />
+        {workspaceIntegrations ? (
+          workspaceIntegrations.length > 0 ? (
+            <section className="space-y-8">
+              <IntegrationAndImportExportBanner bannerName="Integrations" />
+              <div className="space-y-5">
+                {workspaceIntegrations.map((integration) => (
+                  <SingleIntegration
+                    key={integration.integration_detail.id}
+                    integration={integration}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : (
+            <div className="grid h-full w-full place-items-center">
+              <EmptySpace
+                title="You haven't added any integration yet."
+                description="Add GitHub and other integrations to sync your project issues."
+                Icon={PuzzlePieceIcon}
+              >
+                <EmptySpaceItem
+                  title="Add new integration"
+                  Icon={PlusIcon}
+                  action={() => {
+                    router.push(`/${workspaceSlug}/settings/integrations`);
+                  }}
                 />
-              ))}
+              </EmptySpace>
             </div>
-          </section>
+          )
         ) : (
-          <div className="grid h-full w-full place-items-center">
-            <EmptySpace
-              title="You haven't added any integration yet."
-              description="Add GitHub and other integrations to sync your project issues."
-              Icon={PuzzlePieceIcon}
-            >
-              <EmptySpaceItem
-                title="Add new integration"
-                Icon={PlusIcon}
-                action={() => {
-                  router.push(`/${workspaceSlug}/settings/integrations`);
-                }}
-              />
-            </EmptySpace>
-          </div>
-        )
-      ) : (
-        <Loader className="space-y-5">
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-        </Loader>
-      )}
+          <Loader className="space-y-5">
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+          </Loader>
+        )}
+      </div>
     </ProjectAuthorizationWrapper>
   );
 };

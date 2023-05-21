@@ -148,6 +148,13 @@ from plane.api.views import (
     # Release Notes
     ReleaseNotesEndpoint,
     ## End Release Notes
+    # Analytics
+    AnalyticsEndpoint,
+    AnalyticViewViewset,
+    SavedAnalyticEndpoint,
+    ExportAnalyticsEndpoint,
+    DefaultAnalyticsEndpoint,
+    ## End Analytics
 )
 
 
@@ -308,7 +315,6 @@ urlpatterns = [
         "workspaces/<str:slug>/members/<uuid:pk>/",
         WorkSpaceMemberViewSet.as_view(
             {
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
                 "get": "retrieve",
@@ -418,7 +424,6 @@ urlpatterns = [
         ProjectMemberViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
@@ -1285,4 +1290,38 @@ urlpatterns = [
         name="release-notes",
     ),
     ## End Release Notes
+    # Analytics
+    path(
+        "workspaces/<str:slug>/analytics/",
+        AnalyticsEndpoint.as_view(),
+        name="plane-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/analytic-view/",
+        AnalyticViewViewset.as_view({"get": "list", "post": "create"}),
+        name="analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
+        AnalyticViewViewset.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/saved-analytic-view/<uuid:analytic_id>/",
+        SavedAnalyticEndpoint.as_view(),
+        name="saved-analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/export-analytics/",
+        ExportAnalyticsEndpoint.as_view(),
+        name="export-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/default-analytics/",
+        DefaultAnalyticsEndpoint.as_view(),
+        name="default-analytics",
+    ),
+    ## End Analytics
 ]

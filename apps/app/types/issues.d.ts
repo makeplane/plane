@@ -263,7 +263,7 @@ export interface IIssueFilterOptions {
   created_by: string[] | null;
 }
 
-export type TIssueViewOptions = "list" | "kanban" | "calendar";
+export type TIssueViewOptions = "list" | "kanban" | "calendar" | "gantt_chart";
 
 export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
 
@@ -273,7 +273,6 @@ export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;
   order_by: TIssueOrderByOptions;
   filters: IIssueFilterOptions;
-  target_date: string;
 }
 
 export interface IIssueAttachment {

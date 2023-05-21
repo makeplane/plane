@@ -183,9 +183,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
         data={module}
       />
       <div
-        className={`fixed top-0 ${
+        className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar py-5 duration-300`}
+        } h-full w-[24rem] overflow-y-auto border-l border-brand-base bg-brand-sidebar pt-5 pb-10 duration-300`}
       >
         {module ? (
           <>
@@ -416,7 +416,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} />
+                          <ExclamationIcon
+                            height={14}
+                            width={14}
+                            className="fill-current text-brand-secondary"
+                          />
                           <span className="text-xs italic text-brand-secondary">
                             Invalid date. Please enter valid date.
                           </span>
@@ -488,7 +492,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} />
+                          <ExclamationIcon
+                            height={14}
+                            width={14}
+                            className="fill-current text-brand-secondary"
+                          />
                           <span className="text-xs italic text-brand-secondary">
                             No issues found. Please add issue.
                           </span>

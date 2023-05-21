@@ -18,10 +18,6 @@ from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import (
     IssueView,
     Issue,
-    IssueBlocker,
-    IssueLink,
-    CycleIssue,
-    ModuleIssue,
     IssueViewFavorite,
 )
 from plane.utils.issue_filters import issue_filters

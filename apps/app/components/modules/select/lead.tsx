@@ -30,24 +30,23 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
       : null
   );
 
-  const options =
-    members?.map((member) => ({
-      value: member.member.id,
-      query:
-        (member.member.first_name && member.member.first_name !== ""
+  const options = members?.map((member) => ({
+    value: member.member.id,
+    query:
+      (member.member.first_name && member.member.first_name !== ""
+        ? member.member.first_name
+        : member.member.email) +
+        " " +
+        member.member.last_name ?? "",
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={member.member} />
+        {member.member.first_name && member.member.first_name !== ""
           ? member.member.first_name
-          : member.member.email) +
-          " " +
-          member.member.last_name ?? "",
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar user={member.member} />
-          {member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name
-            : member.member.email}
-        </div>
-      ),
-    })) ?? [];
+          : member.member.email}
+      </div>
+    ),
+  }));
 
   const selectedOption = members?.find((m) => m.member.id === value)?.member;
 
