@@ -122,6 +122,8 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       noChevron
       position={position}
       disabled={isNotAllowed}
+      selfPositioned={selfPositioned}
+      dropdownWidth="w-full min-w-[8rem]"
     />
   );
 };

@@ -18,7 +18,7 @@ export const GanttChartBlocks: FC<{
 
   return (
     <div
-      className="relative z-10 mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto bg-[#999] bg-opacity-5"
+      className="relative z-10 mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
     >
       <div className="w-full">
@@ -39,12 +39,12 @@ export const GanttChartBlocks: FC<{
                   >
                     <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
                       <div className="absolute right-0 mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
-                        {block?.start_date ? datePreview(block?.start_date, true) : "-"}
+                        {block?.start_date ? datePreview(block?.start_date) : "-"}
                       </div>
                     </div>
 
                     <div
-                      className="rounded-sm shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
+                      className="rounded shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
                       style={{
                         width: `${block?.position?.width}px`,
                       }}
@@ -54,7 +54,7 @@ export const GanttChartBlocks: FC<{
 
                     <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
                       <div className="absolute left-0 ml-[5px] mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
-                        {block?.target_date ? datePreview(block?.target_date, true) : "-"}
+                        {block?.target_date ? datePreview(block?.target_date) : "-"}
                       </div>
                     </div>
                   </div>
