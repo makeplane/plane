@@ -34,7 +34,10 @@ class FileAssetEndpoint(BaseAPIView):
                     )
 
                 serializer.save(workspace_id=request.user.last_workspace_id)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                response_data = serializer.data
+                if settings.DOCKERIZED and "minio:9000" in response_data["asset"]:
+                    response_data["asset"] = response_data["asset"].replace("minio:9000", settings.WEB_URL)
+                return Response(response_data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             capture_exception(e)
@@ -82,7 +85,10 @@ class UserAssetsEndpoint(BaseAPIView):
             serializer = FileAssetSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                response_data = serializer.data
+                if settings.DOCKERIZED and "minio:9000" in response_data["asset"]:
+                    response_data["asset"] = response_data["asset"].replace("minio:9000", settings.WEB_URL)
+                return Response(response_data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             capture_exception(e)
