@@ -83,10 +83,10 @@ export const WorkspaceSidebarDropdown = () => {
   return (
     <div className="relative">
       <Menu as="div" className="col-span-4 inline-block w-full p-3 text-left">
-        <div className="flex items-center justify-between gap-2.5">
-          <Menu.Button className="text-brand-muted-1 flex w-full items-center rounded-md py-2 text-sm font-semibold focus:outline-none">
+        <div className="flex items-center justify-between gap-2">
+          <Menu.Button className="text-brand-muted-1 flex w-full items-center rounded-sm text-sm font-semibold focus:outline-none">
             <div
-              className={`flex w-full items-center gap-x-2 rounded-md bg-brand-surface-2 px-2 py-1.5 ${
+              className={`flex w-full items-center gap-x-2 rounded-sm bg-brand-surface-2 p-1 ${
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
@@ -116,7 +116,7 @@ export const WorkspaceSidebarDropdown = () => {
             <Link href={`/${workspaceSlug}/me/profile`}>
               <a>
                 <div className="flex flex-grow justify-end">
-                  <Avatar user={user} height="32px" width="32px" fontSize="14px" />
+                  <Avatar user={user} height="28px" width="28px" fontSize="14px" />
                 </div>
               </a>
             </Link>

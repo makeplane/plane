@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
   return (
     <div
       className={`z-20 h-full flex-shrink-0 border-r border-brand-base ${
-        sidebarCollapse ? "" : "w-auto md:w-[17rem]"
+        sidebarCollapse ? "" : "w-auto md:w-60"
       } fixed inset-y-0 top-0 ${
         toggleSidebar ? "left-0" : "-left-full md:left-0"
       } flex h-full flex-col bg-brand-sidebar duration-300 md:relative`}
