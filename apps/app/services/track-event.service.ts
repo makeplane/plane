@@ -84,6 +84,9 @@ type ImporterEventType =
   | "GITHUB_IMPORTER_DELETE"
   | "JIRA_IMPORTER_CREATE"
   | "JIRA_IMPORTER_DELETE";
+
+type AnalyticsEventType = "SCOPE_AND_DEMAND_ANALYTICS" | "CUSTOM_ANALYTICS" | "EXPORT_ANALYTICS";
+
 class TrackEventServices extends APIService {
   constructor() {
     super("/");
@@ -612,6 +615,19 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+      },
+    });
+  }
+
+  async trackAnalyticsEvent(data: any, eventName: AnalyticsEventType): Promise<any> {
+    const payload = { ...data };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: payload,
       },
     });
   }
