@@ -44,14 +44,18 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
             {data?.name}
           </div>
         </Tooltip>
-        <Tooltip
-          tooltipContent={`No due-date set, rendered according to last updated date.`}
-          className={`z-[999999]`}
-        >
-          <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center">
-            <span className="material-symbols-rounded text-brand-secondary text-[18px]">info</span>
-          </div>
-        </Tooltip>
+        {data.infoToggle && (
+          <Tooltip
+            tooltipContent={`No due-date set, rendered according to last updated date.`}
+            className={`z-[999999]`}
+          >
+            <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center">
+              <span className="material-symbols-rounded text-brand-secondary text-[18px]">
+                info
+              </span>
+            </div>
+          </Tooltip>
+        )}
       </a>
     </Link>
   );
@@ -63,17 +67,25 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
       start_date: data?.start_date,
       target_date: data?.target_date,
     };
-
-    console.log("payload", payload);
   };
 
   const blockFormat = (blocks: any) =>
     blocks && blocks.length > 0
       ? blocks.map((_block: any) => {
-          if (_block?.start_date && _block.target_date) console.log("_block", _block);
+          let startDate = new Date(_block.created_at);
+          let targetDate = new Date(_block.updated_at);
+          let infoToggle = true;
+
+          if (_block?.start_date && _block.target_date) {
+            startDate = _block?.start_date;
+            targetDate = _block.target_date;
+            infoToggle = false;
+          }
+
           return {
-            start_date: new Date(_block.created_at),
-            target_date: new Date(_block.updated_at),
+            start_date: new Date(startDate),
+            target_date: new Date(targetDate),
+            infoToggle: infoToggle,
             data: _block,
           };
         })
