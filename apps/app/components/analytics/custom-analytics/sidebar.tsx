@@ -130,7 +130,16 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       eventPayload.moduleName = moduleDetails.name;
     }
 
-    trackEventServices.trackAnalyticsEvent(eventPayload, "EXPORT_ANALYTICS");
+    trackEventServices.trackAnalyticsEvent(
+      eventPayload,
+      cycleId
+        ? "CYCLE_ANALYTICS_EXPORT"
+        : moduleId
+        ? "MODULE_ANALYTICS_EXPORT"
+        : projectId
+        ? "PROJECT_ANALYTICS_EXPORT"
+        : "WORKSPACE_ANALYTICS_EXPORT"
+    );
   };
 
   const exportAnalytics = () => {

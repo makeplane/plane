@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { Tab } from "@headlessui/react";
 // services
 import analyticsService from "services/analytics.service";
+import trackEventServices from "services/track-event.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
@@ -48,6 +49,19 @@ const Analytics = () => {
     workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
   );
 
+  const trackAnalyticsEvent = (tab: string) => {
+    const eventPayload = {
+      workspaceSlug: workspaceSlug?.toString(),
+    };
+
+    const eventType =
+      tab === "Scope and Demand"
+        ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
+        : "WORKSPACE_CUSTOM_ANALYTICS";
+
+    trackEventServices.trackAnalyticsEvent(eventPayload, eventType);
+  };
+
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
@@ -79,6 +93,7 @@ const Analytics = () => {
                     selected ? "bg-brand-surface-2" : ""
                   }`
                 }
+                onClick={() => trackAnalyticsEvent(tab)}
               >
                 {tab}
               </Tab>
