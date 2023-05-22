@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // components
 import { GanttChartRoot } from "components/gantt-chart";
+// ui
+import { Tooltip } from "components/ui";
 // hooks
 import useGanttChartIssues from "hooks/gantt-chart/issue-view";
 
@@ -37,9 +39,19 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
           className="flex-shrink-0 w-[4px] h-full"
           style={{ backgroundColor: data?.state_detail?.color || "#858e96" }}
         />
-        <div className="w-full text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden">
-          {data?.name}
-        </div>
+        <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
+          <div className="text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
+            {data?.name}
+          </div>
+        </Tooltip>
+        <Tooltip
+          tooltipContent={`No due-date set, rendered according to last updated date.`}
+          className={`z-[999999]`}
+        >
+          <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center">
+            <span className="material-symbols-rounded text-brand-secondary text-[18px]">info</span>
+          </div>
+        </Tooltip>
       </a>
     </Link>
   );
