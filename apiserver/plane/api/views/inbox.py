@@ -76,7 +76,7 @@ class InboxIssueViewSet(BaseViewSet):
     model = InboxIssue
 
     def get_queryset(self):
-        return (
+        return self.filter_queryset(
             super()
             .get_queryset()
             .filter(
