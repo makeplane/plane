@@ -4,15 +4,13 @@ import Link from "next/link";
 
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
+// component
+import { Icon, Tooltip } from "components/ui";
 // hooks
 import useTheme from "hooks/use-theme";
 // icons
-import {
-  ArrowLongLeftIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-  RocketLaunchIcon,
-} from "@heroicons/react/24/outline";
-import { QuestionMarkCircleIcon, DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
+import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import { DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
 
 const helpOptions = [
   {
@@ -49,38 +47,52 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = (props)
 
   return (
     <div
-      className={`flex w-full items-center justify-between self-baseline border-t border-brand-base bg-brand-sidebar gap-3 p-3 ${
+      className={`flex w-full items-center justify-between self-baseline border-t border-brand-base bg-brand-sidebar gap-3 px-3.5 py-3 ${
         sidebarCollapse ? "flex-col" : ""
       }`}
     >
-      <button
-        type="button"
-        className={`flex items-center gap-x-1 p-1.5 rounded-sm text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-2 hover:text-brand-base ${
-          sidebarCollapse ? "w-full justify-center" : ""
-        }`}
-        onClick={() => {
-          const e = new KeyboardEvent("keydown", {
-            key: "h",
-          });
-          document.dispatchEvent(e);
-        }}
-        title="Shortcuts"
+      <Tooltip
+        tooltipContent="Shortcuts"
+        position="right"
+        className="ml-2"
+        disabled={!sidebarCollapse}
       >
-        <RocketLaunchIcon className="h-4 w-4 text-brand-secondary" />
-        {!sidebarCollapse && <span>Shortcuts</span>}
-      </button>
+        <button
+          type="button"
+          className={`flex items-center gap-x-1 p-1.5 rounded-sm text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-2 hover:text-brand-base ${
+            sidebarCollapse ? "w-full justify-center" : ""
+          }`}
+          onClick={() => {
+            const e = new KeyboardEvent("keydown", {
+              key: "h",
+            });
+            document.dispatchEvent(e);
+          }}
+          title="Shortcuts"
+        >
+          <Icon iconName="rocket_launch" className="text-base leading-4" />
+          {!sidebarCollapse && <span>Shortcuts</span>}
+        </button>
+      </Tooltip>
 
       <Popover className="relative flex h-full items-center rounded-sm justify-center hover:bg-brand-surface-2 hover:text-brand-base">
         {({ open }) => (
           <>
-            <Popover.Button
-              className={`flex h-full items-center py-1.5 px-2.5 gap-x-1 rounded-sm text-xs font-medium text-brand-secondary outline-none   ${
-                sidebarCollapse ? "w-full justify-center" : ""
-              }`}
+            <Tooltip
+              tooltipContent="Help"
+              position="right"
+              className="ml-2"
+              disabled={!sidebarCollapse}
             >
-              <QuestionMarkCircleIcon className="h-4 w-4 text-brand-secondary" />
-              {!sidebarCollapse && <span>Help</span>}
-            </Popover.Button>
+              <Popover.Button
+                className={`flex h-full items-center py-1.5 px-2.5 gap-x-1 rounded-sm text-xs font-medium text-brand-secondary outline-none hover:text-brand-base ${
+                  sidebarCollapse ? "w-full justify-center" : ""
+                }`}
+              >
+                <Icon iconName="help" className="text-base leading-4" />
+                {!sidebarCollapse && <span>Help</span>}
+              </Popover.Button>
+            </Tooltip>
 
             <Transition
               as={React.Fragment}
@@ -93,7 +105,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = (props)
             >
               <Popover.Panel>
                 <div
-                  className={`absolute bottom-4 left-2 space-y-2 rounded-sm bg-brand-surface-2 p-1 shadow-md`}
+                  className={`absolute bottom-3 left-0 space-y-2 rounded-sm bg-brand-surface-2 p-1 shadow-md`}
                 >
                   {helpOptions.map(({ name, Icon, href, onClick }) => {
                     if (href)
@@ -133,22 +145,28 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = (props)
         className="flex items-center gap-3 rounded-sm text-xs p-1.5 font-medium text-brand-secondary outline-none hover:bg-brand-surface-2 hover:text-brand-base md:hidden"
         onClick={() => setSidebarActive(false)}
       >
-        <ArrowLongLeftIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary group-hover:text-brand-base" />
+        <Icon iconName="keyboard_backspace" className="text-base leading-4" />
       </button>
 
-      <button
-        type="button"
-        className={`hidden items-center gap-3 p-1.5 rounded-sm text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-2 hover:text-brand-base md:flex ${
-          sidebarCollapse ? "w-full justify-center" : ""
-        }`}
-        onClick={() => toggleCollapsed()}
+      <Tooltip
+        tooltipContent="Open Sidebar"
+        position="right"
+        className="ml-2"
+        disabled={!sidebarCollapse}
       >
-        <ArrowLongLeftIcon
-          className={`h-4 w-4 flex-shrink-0 text-brand-secondary duration-300 group-hover:text-brand-base ${
-            sidebarCollapse ? "rotate-180" : ""
+        <button
+          type="button"
+          className={`hidden items-center gap-3 p-1.5 rounded-sm text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-2 hover:text-brand-base md:flex ${
+            sidebarCollapse ? "w-full justify-center" : ""
           }`}
-        />
-      </button>
+          onClick={() => toggleCollapsed()}
+        >
+          <Icon
+            iconName="keyboard_backspace"
+            className={`text-base leading-4 ${sidebarCollapse ? "rotate-180" : ""}`}
+          />
+        </button>
+      </Tooltip>
     </div>
   );
 };

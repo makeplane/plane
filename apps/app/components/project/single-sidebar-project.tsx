@@ -4,22 +4,9 @@ import { useRouter } from "next/router";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Icon, Tooltip } from "components/ui";
 // icons
-import {
-  ChevronDownIcon,
-  DocumentTextIcon,
-  LinkIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ContrastIcon,
-  LayerDiagonalIcon,
-  PeopleGroupIcon,
-  SettingIcon,
-  ViewListIcon,
-} from "components/icons";
+import { LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -38,32 +25,32 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Issues",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    icon: LayerDiagonalIcon,
+    icon: "stack",
   },
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    icon: ContrastIcon,
+    icon: "contrast",
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    icon: PeopleGroupIcon,
+    icon: "groups",
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
-    icon: ViewListIcon,
+    icon: "view_list",
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    icon: DocumentTextIcon,
+    icon: "description",
   },
   {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    icon: SettingIcon,
+    icon: "settings",
   },
 ];
 
@@ -83,44 +70,52 @@ export const SingleSidebarProject: React.FC<Props> = ({
       {({ open }) => (
         <>
           <div className="flex items-center gap-x-1">
-            <Disclosure.Button
-              as="div"
-              className={`flex w-full cursor-pointer select-none items-center rounded-md py-2 text-left text-sm font-medium ${
-                sidebarCollapse ? "justify-center" : "justify-between"
-              }`}
+            <Tooltip
+              tooltipContent={`${project?.name}`}
+              position="right"
+              className="ml-2"
+              disabled={!sidebarCollapse}
             >
-              <div className="flex items-center gap-x-2">
-                {project.emoji ? (
-                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                    {String.fromCodePoint(parseInt(project.emoji))}
-                  </span>
-                ) : project.icon_prop ? (
-                  <div className="h-7 w-7 grid place-items-center">
-                    <span
-                      style={{ color: project.icon_prop.color }}
-                      className="material-symbols-rounded text-lg"
-                    >
-                      {project.icon_prop.name}
+              <Disclosure.Button
+                as="div"
+                className={`flex w-full cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
+                  sidebarCollapse ? "justify-center" : "justify-between"
+                }`}
+              >
+                <div className="flex items-center gap-x-2">
+                  {project.emoji ? (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      {String.fromCodePoint(parseInt(project.emoji))}
                     </span>
-                  </div>
-                ) : (
-                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                    {project?.name.charAt(0)}
-                  </span>
-                )}
+                  ) : project.icon_prop ? (
+                    <div className="h-7 w-7 grid place-items-center">
+                      <span
+                        style={{ color: project.icon_prop.color }}
+                        className="material-symbols-rounded text-lg"
+                      >
+                        {project.icon_prop.name}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                      {project?.name.charAt(0)}
+                    </span>
+                  )}
 
+                  {!sidebarCollapse && (
+                    <p className="overflow-hidden text-ellipsis text-[0.875rem]">
+                      {truncateText(project?.name, 15)}
+                    </p>
+                  )}
+                </div>
                 {!sidebarCollapse && (
-                  <p className="overflow-hidden text-ellipsis text-[0.875rem]">
-                    {truncateText(project?.name, 20)}
-                  </p>
+                  <Icon
+                    iconName="expand_more"
+                    className={`${open ? "rotate-180" : ""} text-brand-secondary duration-300`}
+                  />
                 )}
-              </div>
-              {!sidebarCollapse && (
-                <span>
-                  <ChevronDownIcon className={`h-4 w-4 duration-300 ${open ? "rotate-180" : ""}`} />
-                </span>
-              )}
-            </Disclosure.Button>
+              </Disclosure.Button>
+            </Tooltip>
 
             {!sidebarCollapse && (
               <CustomMenu ellipsis>
@@ -178,23 +173,31 @@ export const SingleSidebarProject: React.FC<Props> = ({
 
                 return (
                   <Link key={item.name} href={item.href}>
-                    <a
-                      className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
-                        router.asPath.includes(item.href)
-                          ? "bg-brand-surface-2 text-brand-base"
-                          : "text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-secondary focus:bg-brand-surface-2 focus:text-brand-secondary"
-                      } ${sidebarCollapse ? "justify-center" : ""}`}
-                    >
-                      <div className="grid place-items-center">
-                        <item.icon
-                          className={`h-5 w-5 flex-shrink-0 text-brand-secondary ${
-                            !sidebarCollapse ? "mr-3" : ""
-                          }`}
-                          color="#858e96"
-                          aria-hidden="true"
-                        />
-                      </div>
-                      {!sidebarCollapse && item.name}
+                    <a className="w-full">
+                      <Tooltip
+                        tooltipContent={`${project?.name}: ${item.name}`}
+                        position="right"
+                        className="ml-2"
+                        disabled={!sidebarCollapse}
+                      >
+                        <div
+                          className={`group flex items-center rounded-sm px-2 py-1.5 gap-2 text-xs outline-none ${
+                            router.asPath.includes(item.href)
+                              ? "bg-brand-surface-2 text-brand-base font-medium"
+                              : "text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 focus:bg-brand-surface-2 focus:text-brand-base"
+                          } ${sidebarCollapse ? "justify-center" : ""}`}
+                        >
+                          <Icon
+                            iconName={item.icon}
+                            className={`${
+                              router.asPath.includes(item.href)
+                                ? "text-brand-base"
+                                : "text-brand-secondary group-hover:text-brand-base"
+                            } text-base`}
+                          />
+                          {!sidebarCollapse && item.name}
+                        </div>
+                      </Tooltip>
                     </a>
                   </Link>
                 );
