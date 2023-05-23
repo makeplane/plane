@@ -82,7 +82,7 @@ export const WorkspaceSidebarDropdown = () => {
 
   return (
     <div className="relative">
-      <Menu as="div" className="col-span-4 inline-block w-full p-3 text-left">
+      <Menu as="div" className="col-span-4 inline-block w-full p-3.5 pt-4 text-left">
         <div className="flex items-center justify-between gap-2">
           <Menu.Button className="text-brand-muted-1 flex w-full items-center rounded-sm text-sm font-semibold focus:outline-none">
             <div
