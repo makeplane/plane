@@ -162,14 +162,22 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                               input
                               width="w-full"
                             >
-                              {uninvitedPeople?.map((person) => (
-                                <CustomSelect.Option
-                                  key={person.member.id}
-                                  value={person.member.id}
-                                >
-                                  {person.member.email}
-                                </CustomSelect.Option>
-                              ))}
+                              {uninvitedPeople && uninvitedPeople.length > 0 ? (
+                                <>
+                                  {uninvitedPeople?.map((person) => (
+                                    <CustomSelect.Option
+                                      key={person.member.id}
+                                      value={person.member.id}
+                                    >
+                                      {person.member.email}
+                                    </CustomSelect.Option>
+                                  ))}
+                                </>
+                              ) : (
+                                <div className="text-center text-sm py-5">
+                                  Invite members to workspace before adding them to a project.
+                                </div>
+                              )}
                             </CustomSelect>
                           )}
                         />
