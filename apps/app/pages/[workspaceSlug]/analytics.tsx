@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
@@ -61,6 +61,15 @@ const Analytics = () => {
 
     trackEventServices.trackAnalyticsEvent(eventPayload, eventType);
   };
+
+  useEffect(() => {
+    if (!workspaceSlug) return;
+
+    trackEventServices.trackAnalyticsEvent(
+      { workspaceSlug: workspaceSlug?.toString() },
+      "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
+    );
+  }, [workspaceSlug]);
 
   return (
     <WorkspaceAuthorizationLayout
