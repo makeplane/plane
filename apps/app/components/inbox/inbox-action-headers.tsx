@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // icons
 import { InboxIcon, StackedLayersHorizontalIcon } from "components/icons";
@@ -17,11 +17,17 @@ import { Popover } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 
 // components
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { PrimaryButton, SecondaryButton, MultiLevelDropdown } from "components/ui";
+
+// types
+import type { IInboxIssue } from "types";
 
 type Props = {
   issueCount: number;
   currentIssueIndex: number;
+  filter: any;
+  setFilter: (value: any) => void;
+  inboxIssue?: IInboxIssue;
   onAccept: () => void;
   onDecline: () => void;
   onMarkAsDuplicate: () => void;
@@ -29,15 +35,73 @@ type Props = {
 };
 
 export const InboxActionHeader: React.FC<Props> = (props) => {
-  const { issueCount, currentIssueIndex, onAccept, onDecline, onMarkAsDuplicate, onSnooze } = props;
+  const {
+    issueCount,
+    currentIssueIndex,
+    onAccept,
+    onDecline,
+    onMarkAsDuplicate,
+    onSnooze,
+    filter,
+    setFilter,
+    inboxIssue,
+  } = props;
 
   const [date, setDate] = useState(new Date());
 
+  useEffect(() => {
+    if (!inboxIssue?.snoozed_till) return;
+    setDate(new Date(inboxIssue.snoozed_till));
+  }, [inboxIssue]);
+
   return (
     <div className="grid grid-cols-4 border-b border-brand-base divide-x">
-      <div className="col-span-1 flex items-center gap-2 py-4 px-4">
-        <InboxIcon className="h-5 w-5 text-brand-secondary" />
-        <h3 className="font-semibold">Inbox</h3>
+      <div className="col-span-1 flex justify-between p-4">
+        <div className="flex items-center gap-2">
+          <InboxIcon className="h-5 w-5 text-brand-secondary" />
+          <h3 className="font-semibold">Inbox</h3>
+        </div>
+        <div>
+          <MultiLevelDropdown
+            label="Filters"
+            onSelect={(value) => {
+              setFilter(value);
+            }}
+            direction="left"
+            options={[
+              {
+                id: "all",
+                label: "All",
+                value: "all",
+                selected: filter === "all",
+              },
+              {
+                id: "snooze",
+                label: "Snooze",
+                value: "snooze",
+                selected: filter === "snooze",
+              },
+              {
+                id: "mark_as_duplicate",
+                label: "Duplicate",
+                value: "duplicate",
+                selected: filter === "duplicate",
+              },
+              {
+                id: "accepted",
+                label: "Accepted",
+                value: "accepted",
+                selected: filter === "accepted",
+              },
+              {
+                id: "declined",
+                label: "Declined",
+                value: "declined",
+                selected: filter === "declined",
+              },
+            ]}
+          />
+        </div>
       </div>
 
       <div className="flex justify-between items-center px-8 col-span-3">

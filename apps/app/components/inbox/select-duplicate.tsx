@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -16,21 +15,20 @@ import issuesServices from "services/issues.service";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockerIcon, LayerDiagonalIcon } from "components/icons";
-// types
-import { IIssue, UserAuth } from "types";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { LayerDiagonalIcon } from "components/icons";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
+  value?: string | null;
   onClose: () => void;
   onSubmit: (issueId: string) => void;
 };
 
 export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
-  const { isOpen, onClose, onSubmit } = props;
+  const { isOpen, onClose, onSubmit, value } = props;
 
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string>("");
@@ -38,16 +36,26 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
     workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      ? () =>
+          issuesServices
+            .getIssues(workspaceSlug as string, projectId as string)
+            .then((res) => res.filter((issue) => issue.id !== issueId))
       : null
   );
+
+  useEffect(() => {
+    if (!value) {
+      setSelectedItem("");
+      return;
+    } else setSelectedItem(value);
+  }, [value]);
 
   const handleClose = () => {
     onClose();

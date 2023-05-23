@@ -68,7 +68,7 @@ const ProjectIssues: NextPage = () => {
             >
               Analytics
             </SecondaryButton>
-            {projectDetails?.inbox_view && (
+            {projectDetails && projectDetails.inbox_view && (
               <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxList?.[0]?.id}`}>
                 <a>
                   <SecondaryButton
@@ -76,7 +76,7 @@ const ProjectIssues: NextPage = () => {
                     outline
                   >
                     <span>Inbox</span>
-                    {inboxList?.[0]?.pending_issue_count !== 0 && (
+                    {inboxList && inboxList?.[0]?.pending_issue_count !== 0 && (
                       <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full text-brand-base bg-brand-surface-2 border">
                         {inboxList?.[0]?.pending_issue_count}
                       </span>

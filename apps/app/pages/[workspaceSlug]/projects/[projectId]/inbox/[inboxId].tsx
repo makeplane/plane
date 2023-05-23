@@ -24,7 +24,7 @@ import {
 // helper
 import { truncateText } from "helpers/string.helper";
 // ui
-import { PrimaryButton } from "components/ui";
+import { PrimaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -57,13 +57,18 @@ const ProjectIssues: NextPage = () => {
 
   const { workspaceSlug, projectId, inboxId, issueId } = router.query;
 
+  const [filters, setFilters] = useState("all");
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
 
-  const { data: inboxIssues, mutate: inboxIssuesMutate } = useSWR(
+  const {
+    data: inboxIssues,
+    mutate: inboxIssuesMutate,
+    error: inboxIssuesError,
+  } = useSWR(
     workspaceSlug && projectId && inboxId ? INBOX_ISSUES(inboxId.toString()) : null,
     workspaceSlug && projectId && inboxId
       ? () =>
@@ -84,9 +89,7 @@ const ProjectIssues: NextPage = () => {
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (!inboxIssues) return;
-
-      if (!issueId) return;
+      if (!inboxIssues || !issueId) return;
 
       const currentIssueIndex = inboxIssues.findIndex((issue) => issue.issue === issueId);
 
@@ -141,6 +144,40 @@ const ProjectIssues: NextPage = () => {
       },
     });
   }, [inboxIssues, workspaceSlug, projectId, inboxId]);
+
+  if (!inboxIssues && !inboxIssuesError)
+    return (
+      <IssueViewContextProvider>
+        <ProjectAuthorizationWrapper
+          breadcrumbs={
+            <Breadcrumbs>
+              <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+              <BreadcrumbItem
+                title={`${truncateText(projectDetails?.name ?? "Project", 12)} Issues`}
+              />
+            </Breadcrumbs>
+          }
+          right={
+            <div className="flex items-center gap-2">
+              <PrimaryButton
+                className="flex items-center gap-2"
+                onClick={() => {
+                  const e = new KeyboardEvent("keydown", { key: "c" });
+                  document.dispatchEvent(e);
+                }}
+              >
+                <PlusIcon className="h-4 w-4" />
+                Add Issue
+              </PrimaryButton>
+            </div>
+          }
+        >
+          <div className="flex justify-center items-center h-full">
+            <Spinner />
+          </div>
+        </ProjectAuthorizationWrapper>
+      </IssueViewContextProvider>
+    );
 
   if (inboxIssues && inboxIssues.length === 0)
     return (
@@ -206,6 +243,9 @@ const ProjectIssues: NextPage = () => {
       >
         <div className="flex flex-col h-full">
           <InboxActionHeader
+            filter={filters}
+            setFilter={setFilters}
+            inboxIssue={inboxIssues?.find((issue) => issue.issue === issueId)}
             currentIssueIndex={inboxIssues?.findIndex((issue) => issue.issue === issueId) ?? 0}
             issueCount={inboxIssues?.length ?? 0}
             onAccept={() => {
@@ -327,6 +367,7 @@ const ProjectIssues: NextPage = () => {
         <SelectDuplicateInboxIssueModal
           isOpen={selectDuplicateIssue}
           onClose={() => setSelectDuplicateIssue(false)}
+          value={inboxIssues?.find((inboxIssue) => inboxIssue.issue === issueId)?.duplicate_to}
           onSubmit={(dupIssueId: string) => {
             inboxServices
               .markInboxStatus(
