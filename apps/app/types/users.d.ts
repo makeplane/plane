@@ -45,6 +45,7 @@ export interface ICurrentUserResponse {
   assigned_issues: number;
   user: IUser;
   workspace_invites: number;
+  is_onboarded: boolean;
 }
 
 export interface IUserLite {

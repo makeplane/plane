@@ -35,16 +35,14 @@ Router.events.on("routeChangeComplete", NProgress.done);
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider themes={THEMES} defaultTheme="light">
-      <UserProvider>
-        <ToastContextProvider>
-          <ThemeContextProvider>
-            <CrispWithNoSSR />
-            <Component {...pageProps} />
-          </ThemeContextProvider>
-        </ToastContextProvider>
-      </UserProvider>
-    </ThemeProvider>
+    // <UserProvider>
+    <ToastContextProvider>
+      <ThemeContextProvider>
+        <CrispWithNoSSR />
+        <Component {...pageProps} />
+      </ThemeContextProvider>
+    </ToastContextProvider>
+    // </UserProvider>
   );
 }
 

@@ -1,7 +1,5 @@
 import { useEffect } from "react";
-
-import Router from "next/router";
-
+import { useRouter } from "next/router";
 // services
 import userService from "services/user.service";
 import workspaceService from "services/workspace.service";
@@ -9,57 +7,59 @@ import workspaceService from "services/workspace.service";
 import { Spinner } from "components/ui";
 // types
 import type { NextPage } from "next";
-
-const redirectUserTo = async () => {
-  const user = await userService
-    .currentUser()
-    .then((res) => res)
-    .catch(() => {
-      Router.push("/signin");
-      return;
-    });
-
-  if (!user) {
-    Router.push("/signin");
-    return;
-  } else if (!user.user.is_onboarded) {
-    Router.push("/onboarding");
-    return;
-  } else {
-    const userWorkspaces = await workspaceService.userWorkspaces();
-
-    const lastActiveWorkspace = userWorkspaces.find(
-      (workspace) => workspace.id === user.user.last_workspace_id
-    );
-
-    if (lastActiveWorkspace) {
-      Router.push(`/${lastActiveWorkspace.slug}`);
-      return;
-    } else if (userWorkspaces.length > 0) {
-      Router.push(`/${userWorkspaces[0].slug}`);
-      return;
-    } else {
-      const invitations = await workspaceService.userWorkspaceInvitations();
-      if (invitations.length > 0) {
-        Router.push(`/invitations`);
-        return;
-      } else {
-        Router.push(`/create-workspace`);
-        return;
-      }
-    }
-  }
-};
+import useUser from "hooks/use-user";
+import { IWorkspace } from "types";
+// layouts
+import DefaultLayout from "layouts/default-layout";
 
 const Home: NextPage = () => {
+  const router = useRouter();
+  const { user, isUserLoading, userError } = useUser();
+  console.log("isUserLoading", isUserLoading);
+
   useEffect(() => {
-    redirectUserTo();
-  }, []);
+    console.log("user", user);
+    if (!user && !isUserLoading) {
+      router.push("/signin");
+      return;
+    } else if (!isUserLoading && !user?.user?.is_onboarded) {
+      router.push("/onboarding");
+      return;
+    } else if (user && !isUserLoading) {
+      workspaceService.userWorkspaces().then(async (userWorkspaces) => {
+        const lastActiveWorkspace = userWorkspaces.find(
+          (workspace: IWorkspace) => workspace.id === user?.user?.last_workspace_id
+        );
+        if (lastActiveWorkspace) {
+          router.push(`/${lastActiveWorkspace.slug}`);
+          return;
+        } else if (userWorkspaces.length > 0) {
+          router.push(`/${userWorkspaces[0].slug}`);
+          return;
+        } else {
+          const invitations = await workspaceService.userWorkspaceInvitations();
+          if (invitations.length > 0) {
+            router.push(`/invitations`);
+            return;
+          } else {
+            router.push(`/create-workspace`);
+            return;
+          }
+        }
+      });
+    }
+  }, [user, isUserLoading]);
 
   return (
-    <div className="grid h-screen place-items-center">
-      <Spinner />
-    </div>
+    <DefaultLayout
+      meta={{
+        title: "Plane - Sign In",
+      }}
+    >
+      <div className="grid h-screen place-items-center">
+        <Spinner />
+      </div>
+    </DefaultLayout>
   );
 };
 
