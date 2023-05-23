@@ -461,6 +461,20 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             )
 
 
+    def destroy(self, request, slug, pk):
+        try:
+            workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, pk=pk)
+            # Delete the user also from all the projects
+            ProjectMember.objects.filter(workspace__slug=slug, member=workspace_member.member).delete()
+            workspace_member.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except WorkspaceMember.DoesNotExist:
+            return Response({"error": "Workspace Member does not exists"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class TeamMemberViewSet(BaseViewSet):
     serializer_class = TeamSerializer
     model = Team
