@@ -57,7 +57,7 @@ const ProjectIssues: NextPage = () => {
 
   const { workspaceSlug, projectId, inboxId, issueId } = router.query;
 
-  const [filters, setFilters] = useState("all");
+  const [filters, setFilters] = useState<string | null>(null);
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
 
   const { reset, control, watch } = useForm<IIssue>({
@@ -69,13 +69,14 @@ const ProjectIssues: NextPage = () => {
     mutate: inboxIssuesMutate,
     error: inboxIssuesError,
   } = useSWR(
-    workspaceSlug && projectId && inboxId ? INBOX_ISSUES(inboxId.toString()) : null,
+    workspaceSlug && projectId && inboxId ? INBOX_ISSUES(inboxId.toString(), filters) : null,
     workspaceSlug && projectId && inboxId
       ? () =>
           inboxServices.getInboxIssues(
             workspaceSlug as string,
             projectId as string,
-            inboxId as string
+            inboxId as string,
+            filters
           )
       : null
   );

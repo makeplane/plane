@@ -122,7 +122,8 @@ export const VIEW_ISSUES = (viewId: string, params: any) => {
 };
 
 export const INBOX_LIST = (projectId: string) => `VIEWS_LIST_${projectId.toUpperCase()}`;
-export const INBOX_ISSUES = (inboxId: string) => `VIEW_ISSUES_${inboxId.toUpperCase()}`;
+export const INBOX_ISSUES = (inboxId: string, params?: any) =>
+  `VIEW_ISSUES_${inboxId.toUpperCase()}_${JSON.stringify(params)}`;
 export const INBOX_DETAILS = (inboxId: string) => `VIEW_DETAILS_${inboxId.toUpperCase()}`;
 
 // Issues

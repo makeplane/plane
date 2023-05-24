@@ -65,39 +65,41 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
           <MultiLevelDropdown
             label="Filters"
             onSelect={(value) => {
-              setFilter(value);
+              setFilter({
+                status: value,
+              });
             }}
             direction="left"
             options={[
               {
                 id: "all",
                 label: "All",
-                value: "all",
-                selected: filter === "all",
+                value: null,
+                selected: filter === null,
               },
               {
                 id: "snooze",
                 label: "Snooze",
-                value: "snooze",
-                selected: filter === "snooze",
+                value: 0,
+                selected: filter === 0,
               },
               {
                 id: "mark_as_duplicate",
                 label: "Duplicate",
-                value: "duplicate",
-                selected: filter === "duplicate",
+                value: 2,
+                selected: filter === 2,
               },
               {
                 id: "accepted",
                 label: "Accepted",
-                value: "accepted",
-                selected: filter === "accepted",
+                value: 1,
+                selected: filter === 1,
               },
               {
                 id: "declined",
                 label: "Declined",
-                value: "declined",
-                selected: filter === "declined",
+                value: -1,
+                selected: filter === -1,
               },
             ]}
           />

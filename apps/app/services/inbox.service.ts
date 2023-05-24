@@ -33,10 +33,12 @@ class InboxServices extends APIService {
   async getInboxIssues(
     workspaceSlug: string,
     projectId: string,
-    inboxId: string
+    inboxId: string,
+    params?: any
   ): Promise<IInboxIssue[]> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues`,
+      { params }
     )
       .then((response) => response?.data)
       .catch((error) => {
