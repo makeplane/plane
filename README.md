@@ -15,7 +15,6 @@
 </a>
 <img alt="Discord" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
 </p>
-<br />
 
 <p>
     <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
