@@ -96,12 +96,8 @@ from plane.api.views import (
     CycleViewSet,
     CycleIssueViewSet,
     CycleDateCheckEndpoint,
-    CurrentUpcomingCyclesEndpoint,
-    CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
-    DraftCyclesEndpoint,
     TransferCycleIssueEndpoint,
-    InCompleteCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -665,21 +661,6 @@ urlpatterns = [
         name="project-cycle",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/current-upcoming-cycles/",
-        CurrentUpcomingCyclesEndpoint.as_view(),
-        name="project-cycle-upcoming",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/completed-cycles/",
-        CompletedCyclesEndpoint.as_view(),
-        name="project-cycle-completed",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/draft-cycles/",
-        DraftCyclesEndpoint.as_view(),
-        name="project-cycle-draft",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-cycles/",
         CycleFavoriteViewSet.as_view(
             {
@@ -701,11 +682,6 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
         TransferCycleIssueEndpoint.as_view(),
-        name="transfer-issues",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/incomplete-cycles/",
-        InCompleteCyclesEndpoint.as_view(),
         name="transfer-issues",
     ),
     ## End Cycles
