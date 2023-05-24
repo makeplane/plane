@@ -75,8 +75,10 @@ class InboxIssueViewSet(BaseViewSet):
     serializer_class = InboxIssueSerializer
     model = InboxIssue
 
+    filterset_fields = ["status",]
+
     def get_queryset(self):
-        return (
+        return self.filter_queryset(
             super()
             .get_queryset()
             .filter(
