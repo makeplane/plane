@@ -15,11 +15,18 @@
 </a>
 <img alt="Discord" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
 </p>
-<br />
+
 <p>
-    <a href="https://app.plane.so/" target="_blank">
+    <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
       <img
-        src="https://res.cloudinary.com/toolspacedev/image/upload/v1680599798/Plane/plane_1_1_tnb32j.png"
+        src="https://ik.imagekit.io/killbluedog/Plane_Screen.png?updatedAt=1684942001069"
+        alt="Plane Screens"
+        width="100%"
+      />
+    </a>
+    <a href="https://app.plane.so/#gh-dark-mode-only" target="_blank">
+      <img
+        src="https://ik.imagekit.io/killbluedog/Plane_Screens_Dark_Mode.png?updatedAt=1684942388044"
         alt="Plane Screens"
         width="100%"
       />
@@ -89,41 +96,62 @@ docker-compose -f docker-compose-hub.yml up
 ## 📸 Screenshots
 
 <p>
-    <a href="https://app.plane.so/" target="_blank">
+    <a href="https://plane.so" target="_blank">
       <img
-        src="https://res.cloudinary.com/toolspacedev/image/upload/v1680601719/Plane/plane_2_iqao52.png"
+        src="https://ik.imagekit.io/killbluedog/Plane_Views_Dark_Mode.png?updatedAt=1684943050275"
+        alt="Plane Views"
+        width="100%"
+      />
+    </a>
+  </p>
+<p>
+    <a href="https://plane.so" target="_blank">
+      <img
+        src="https://ik.imagekit.io/killbluedog/Plane_Issue_Detail_Dark_Mode.png?updatedAt=1684943050202"
         alt="Plane Issue Details"
         width="100%"
       />
     </a>
-</p>
-<p>
-    <a href="https://app.plane.so/" target="_blank">
+  </p>
+  <p>
+    <a href="https://plane.so" target="_blank">
       <img
-        src="https://res.cloudinary.com/toolspacedev/image/upload/v1680604273/Plane/plane_5_1_nwsl3a.png"
+        src="https://ik.imagekit.io/killbluedog/Plane_Cycles___Modules_Dark_Mode.png?updatedAt=1684943050281"
         alt="Plane Cycles and Modules"
         width="100%"
       />
     </a>
-</p>
-<p>
-    <a href="https://app.plane.so/" target="_blank">
+  </p>
+  <p>
+    <a href="https://plane.so" target="_blank">
       <img
-        src="https://res.cloudinary.com/toolspacedev/image/upload/v1680601713/Plane/plane_4_cqm0g8.png"
-        alt="Plane Quick Lists"
+        src="https://ik.imagekit.io/killbluedog/Plane_Analytics_Dark_Mode.png?updatedAt=1684944596824"
+        alt="Plane Analytics"
         width="100%"
       />
     </a>
-</p>
-<p>
-    <a href="https://app.plane.so/" target="_blank">
+  </p>
+   <p>
+    <a href="https://plane.so" target="_blank">
       <img
-        src="https://res.cloudinary.com/toolspacedev/image/upload/v1680601712/Plane/plane_3_1_cu4fsc.png"
-        alt="Plane Command K"
+        src="https://ik.imagekit.io/killbluedog/Plane_Pages_Dark_Mode.png?updatedAt=1684943050202"
+        alt="Plane Pages"
         width="100%"
       />
     </a>
+  </p>
 </p>
+   <p>
+    <a href="https://plane.so" target="_blank">
+      <img
+        src="https://ik.imagekit.io/killbluedog/Plane_Commad_K_Dark_Mode.png?updatedAt=1684943050312"
+        alt="Plane Command Menu"
+        width="100%"
+      />
+    </a>
+  </p>
+</p>
+
 
 ## 📚Documentation
 
