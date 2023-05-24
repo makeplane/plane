@@ -125,7 +125,7 @@ docker-compose -f docker-compose-hub.yml up
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Analytics_Dark_Mode.png?updatedAt=1684943331296"
+        src="https://ik.imagekit.io/killbluedog/Plane_Analytics_Dark_Mode.png?updatedAt=1684944596824"
         alt="Plane Analytics"
         width="100%"
       />
