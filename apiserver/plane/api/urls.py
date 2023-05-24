@@ -760,12 +760,12 @@ urlpatterns = [
         name="project-issue-labels",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/bulk-create-labels/",
         BulkCreateIssueLabelsEndpoint.as_view(),
         name="project-bulk-labels",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
