@@ -84,6 +84,21 @@ type ImporterEventType =
   | "GITHUB_IMPORTER_DELETE"
   | "JIRA_IMPORTER_CREATE"
   | "JIRA_IMPORTER_DELETE";
+
+type AnalyticsEventType =
+  | "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
+  | "WORKSPACE_CUSTOM_ANALYTICS"
+  | "WORKSPACE_ANALYTICS_EXPORT"
+  | "PROJECT_SCOPE_AND_DEMAND_ANALYTICS"
+  | "PROJECT_CUSTOM_ANALYTICS"
+  | "PROJECT_ANALYTICS_EXPORT"
+  | "CYCLE_SCOPE_AND_DEMAND_ANALYTICS"
+  | "CYCLE_CUSTOM_ANALYTICS"
+  | "CYCLE_ANALYTICS_EXPORT"
+  | "MODULE_SCOPE_AND_DEMAND_ANALYTICS"
+  | "MODULE_CUSTOM_ANALYTICS"
+  | "MODULE_ANALYTICS_EXPORT";
+
 class TrackEventServices extends APIService {
   constructor() {
     super("/");
@@ -612,6 +627,19 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+      },
+    });
+  }
+
+  async trackAnalyticsEvent(data: any, eventName: AnalyticsEventType): Promise<any> {
+    const payload = { ...data };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: payload,
       },
     });
   }
