@@ -49,6 +49,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Simplified static file serving.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+# Make true if running in a docker environment
+DOCKERIZED = int(os.environ.get(
+    "DOCKERIZED", 0
+))  == 1
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
