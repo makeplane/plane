@@ -49,12 +49,8 @@ from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,
     CycleDateCheckEndpoint,
-    CurrentUpcomingCyclesEndpoint,
-    CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
-    DraftCyclesEndpoint,
     TransferCycleIssueEndpoint,
-    InCompleteCyclesEndpoint,
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint
 from .issue import (

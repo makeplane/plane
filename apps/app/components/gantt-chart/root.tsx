@@ -5,6 +5,7 @@ import { ChartViewRoot } from "./chart";
 import { ChartContextProvider } from "./contexts";
 
 type GanttChartRootProps = {
+  border?: boolean;
   title: null | string;
   loaderTitle: string;
   blocks: any;
@@ -14,6 +15,7 @@ type GanttChartRootProps = {
 };
 
 export const GanttChartRoot: FC<GanttChartRootProps> = ({
+  border = true,
   title = null,
   blocks,
   loaderTitle = "blocks",
@@ -23,6 +25,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
 }) => (
   <ChartContextProvider>
     <ChartViewRoot
+      border={border}
       title={title}
       blocks={blocks}
       loaderTitle={loaderTitle}

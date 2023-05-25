@@ -29,9 +29,10 @@ DATABASES = {
 DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
-DOCKERIZED = os.environ.get(
-    "DOCKERIZED", False
-)  # Set the variable true if running in docker-compose environment
+# Set the variable true if running in docker environment
+DOCKERIZED = int(os.environ.get(
+    "DOCKERIZED", 0
+))  == 1
 
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
@@ -69,7 +70,7 @@ CORS_ALLOW_CREDENTIALS = True
 # Simplified static file serving.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-if os.environ.get("SENTRY_DSN", False):
+if bool(os.environ.get("SENTRY_DSN", False)):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN", ""),
         integrations=[DjangoIntegration(), RedisIntegration()],
@@ -80,12 +81,21 @@ if os.environ.get("SENTRY_DSN", False):
         environment="production",
     )
 
-if (
-    os.environ.get("AWS_REGION", False)
-    and os.environ.get("AWS_ACCESS_KEY_ID", False)
-    and os.environ.get("AWS_SECRET_ACCESS_KEY", False)
-    and os.environ.get("AWS_S3_BUCKET_NAME", False)
-):
+if DOCKERIZED:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # The AWS access key to use.
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
+    # The AWS secret access key to use.
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
+    # The name of the bucket to store files in.
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
+    # The full URL to the S3 endpoint. Leave blank to use the default region URL.
+    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "http://minio:9000")
+    # Default permissions
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+else:
     # The AWS region to connect to.
     AWS_REGION = os.environ.get("AWS_REGION", "")
 
@@ -99,7 +109,7 @@ if (
     # AWS_SESSION_TOKEN = ""
 
     # The name of the bucket to store files in.
-    AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "")
+    AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
 
     # How to construct S3 URLs ("auto", "path", "virtual").
     AWS_S3_ADDRESSING_STYLE = "auto"
@@ -166,14 +176,8 @@ if (
     # extra characters appended.
     AWS_S3_FILE_OVERWRITE = False
 
-    # AWS Settings End
-
     DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"
-
-else:
-    MEDIA_URL = "/uploads/"
-    MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
-
+# AWS Settings End
 
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
@@ -217,12 +221,6 @@ else:
             },
         }
     }
-
-RQ_QUEUES = {
-    "default": {
-        "USE_REDIS_CACHE": "default",
-    }
-}
 
 
 WEB_URL = os.environ.get("WEB_URL")

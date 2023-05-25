@@ -37,7 +37,7 @@ export const MonthChartView: FC<any> = () => {
                       <div
                         className={`relative h-full w-full flex-1 flex justify-center ${
                           ["sat", "sun"].includes(_item?.dayData?.shortTitle || "")
-                            ? `bg-brand-surface-2`
+                            ? `bg-brand-surface-1`
                             : ``
                         }`}
                       >
