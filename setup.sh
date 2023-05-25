@@ -5,6 +5,7 @@ cp ./.env.example ./.env
 export LC_ALL=C
 export LC_CTYPE=C
 
+
 # Generate the NEXT_PUBLIC_API_BASE_URL with given IP
 echo -e "\nNEXT_PUBLIC_API_BASE_URL=http://$1"  >> ./.env
 
