@@ -18,26 +18,23 @@ import { EmptyState, Loader } from "components/ui";
 import { ChartBarIcon, ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import emptyCycle from "public/empty-state/empty-cycle.svg";
 // types
-import {
-  SelectCycleType,
-  ICycle,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-} from "types";
+import { SelectCycleType, ICycle } from "types";
 
 type Props = {
   setSelectedCycle: React.Dispatch<React.SetStateAction<SelectCycleType>>;
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
   cyclesCompleteList: ICycle[] | undefined;
-  currentAndUpcomingCycles: CurrentAndUpcomingCyclesResponse | undefined;
-  draftCycles: DraftCyclesResponse | undefined;
+  currentCycle: ICycle[] | undefined;
+  upcomingCycles: ICycle[] | undefined;
+  draftCycles: ICycle[] | undefined;
 };
 
 export const CyclesView: React.FC<Props> = ({
   setSelectedCycle,
   setCreateUpdateCycleModal,
   cyclesCompleteList,
-  currentAndUpcomingCycles,
+  currentCycle,
+  upcomingCycles,
   draftCycles,
 }) => {
   const { storedValue: cycleTab, setValue: setCycleTab } = useLocalStorage("cycleTab", "All");
@@ -182,8 +179,8 @@ export const CyclesView: React.FC<Props> = ({
           </Tab.Panel>
           {cyclesView !== "gantt_chart" && (
             <Tab.Panel as="div" className="mt-7 space-y-5">
-              {currentAndUpcomingCycles?.current_cycle?.[0] ? (
-                <ActiveCycleDetails cycle={currentAndUpcomingCycles?.current_cycle?.[0]} />
+              {currentCycle?.[0] ? (
+                <ActiveCycleDetails cycle={currentCycle?.[0]} />
               ) : (
                 <EmptyState
                   type="cycle"
@@ -197,7 +194,7 @@ export const CyclesView: React.FC<Props> = ({
           <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
             {cyclesView === "list" && (
               <AllCyclesList
-                cycles={currentAndUpcomingCycles?.upcoming_cycle}
+                cycles={upcomingCycles}
                 setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                 setSelectedCycle={setSelectedCycle}
                 type="upcoming"
@@ -205,14 +202,14 @@ export const CyclesView: React.FC<Props> = ({
             )}
             {cyclesView === "board" && (
               <AllCyclesBoard
-                cycles={currentAndUpcomingCycles?.upcoming_cycle}
+                cycles={upcomingCycles}
                 setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                 setSelectedCycle={setSelectedCycle}
                 type="upcoming"
               />
             )}
             {cyclesView === "gantt_chart" && (
-              <CyclesListGanttChartView cycles={currentAndUpcomingCycles?.upcoming_cycle ?? []} />
+              <CyclesListGanttChartView cycles={upcomingCycles ?? []} />
             )}
           </Tab.Panel>
           <Tab.Panel as="div" className="mt-7 space-y-5">
@@ -226,7 +223,7 @@ export const CyclesView: React.FC<Props> = ({
             <Tab.Panel as="div" className="mt-7 space-y-5">
               {cyclesView === "list" && (
                 <AllCyclesList
-                  cycles={draftCycles?.draft_cycles}
+                  cycles={draftCycles}
                   setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                   setSelectedCycle={setSelectedCycle}
                   type="draft"
@@ -234,7 +231,7 @@ export const CyclesView: React.FC<Props> = ({
               )}
               {cyclesView === "board" && (
                 <AllCyclesBoard
-                  cycles={draftCycles?.draft_cycles}
+                  cycles={draftCycles}
                   setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                   setSelectedCycle={setSelectedCycle}
                   type="draft"

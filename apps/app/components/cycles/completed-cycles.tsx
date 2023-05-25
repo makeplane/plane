@@ -38,7 +38,10 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
   const { data: completedCycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_COMPLETE_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getCompletedCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
+            cycle_view: "completed",
+          })
       : null
   );
 
@@ -64,7 +67,7 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
         data={selectedCycleForDelete}
       />
       {completedCycles ? (
-        completedCycles.completed_cycles.length > 0 ? (
+        completedCycles.length > 0 ? (
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2 text-sm text-brand-secondary">
               <ExclamationIcon
@@ -76,7 +79,7 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
             </div>
             {cycleView === "list" && (
               <div>
-                {completedCycles.completed_cycles.map((cycle) => (
+                {completedCycles.map((cycle) => (
                   <div className="hover:bg-brand-surface-2">
                     <div className="flex flex-col border-brand-base">
                       <SingleCycleList
@@ -93,7 +96,7 @@ export const CompletedCycles: React.FC<CompletedCyclesListProps> = ({
             )}
             {cycleView === "board" && (
               <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-                {completedCycles.completed_cycles.map((cycle) => (
+                {completedCycles.map((cycle) => (
                   <SingleCycleCard
                     key={cycle.id}
                     cycle={cycle}

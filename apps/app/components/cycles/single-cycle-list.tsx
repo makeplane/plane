@@ -32,18 +32,14 @@ import {
 } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import {
-  CompletedCyclesResponse,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-  ICycle,
-} from "types";
+import { ICycle } from "types";
 // fetch-keys
 import {
   CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  CYCLE_DETAILS,
+  CYCLE_CURRENT_LIST,
   CYCLE_DRAFT_LIST,
+  CYCLE_LIST,
+  CYCLE_UPCOMING_LIST,
 } from "constants/fetch-keys";
 import { type } from "os";
 
@@ -142,51 +138,27 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId || !cycle) return;
 
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
+    const fetchKey =
+      cycleStatus === "current"
+        ? CYCLE_CURRENT_LIST(projectId as string)
+        : cycleStatus === "upcoming"
+        ? CYCLE_UPCOMING_LIST(projectId as string)
+        : cycleStatus === "completed"
+        ? CYCLE_COMPLETE_LIST(projectId as string)
+        : CYCLE_DRAFT_LIST(projectId as string);
+
+    mutate<ICycle[]>(
+      fetchKey,
+      (prevData) =>
+        (prevData ?? []).map((c) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? true : c.is_favorite,
+        })),
+      false
+    );
+
     mutate(
-      CYCLE_DETAILS(projectId as string),
+      CYCLE_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,
@@ -211,51 +183,27 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId || !cycle) return;
 
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
+    const fetchKey =
+      cycleStatus === "current"
+        ? CYCLE_CURRENT_LIST(projectId as string)
+        : cycleStatus === "upcoming"
+        ? CYCLE_UPCOMING_LIST(projectId as string)
+        : cycleStatus === "completed"
+        ? CYCLE_COMPLETE_LIST(projectId as string)
+        : CYCLE_DRAFT_LIST(projectId as string);
+
+    mutate<ICycle[]>(
+      fetchKey,
+      (prevData) =>
+        (prevData ?? []).map((c) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? false : c.is_favorite,
+        })),
+      false
+    );
+
     mutate(
-      CYCLE_DETAILS(projectId as string),
+      CYCLE_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,
