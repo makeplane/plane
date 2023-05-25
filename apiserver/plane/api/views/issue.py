@@ -789,8 +789,8 @@ class IssueAttachmentEndpoint(BaseAPIView):
             if serializer.is_valid():
                 serializer.save(project_id=project_id, issue_id=issue_id)
                 response_data = serializer.data
-                if settings.DOCKERIZED and "minio:9000" in response_data["asset"]:
-                    response_data["asset"] = response_data["asset"].replace("minio:9000", settings.WEB_URL)
+                if settings.DOCKERIZED and settings.AWS_S3_ENDPOINT_URL in response_data["asset"]:
+                    response_data["asset"] = response_data["asset"].replace(settings.AWS_S3_ENDPOINT_URL, settings.WEB_URL)
                 issue_activity.delay(
                     type="attachment.activity.created",
                     requested_data=None,

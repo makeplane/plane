@@ -33,7 +33,7 @@ services:
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                         AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-                        WEB_URL: localhost/
+                        WEB_URL: ${WEB_URL}
                         GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
                         DISABLE_COLLECTSTATIC: 1
                         DOCKERIZED: 1
@@ -62,7 +62,7 @@ services:
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                         AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-                        WEB_URL: localhost/
+                        WEB_URL: ${WEB_URL}
                         GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
                         DISABLE_COLLECTSTATIC: 1
                         DOCKERIZED: 1

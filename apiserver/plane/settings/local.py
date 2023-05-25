@@ -70,7 +70,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 if DOCKERIZED:
     REDIS_URL = os.environ.get("REDIS_URL")
 
-WEB_URL = os.environ.get("WEB_URL", "localhost:3000")
+WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)

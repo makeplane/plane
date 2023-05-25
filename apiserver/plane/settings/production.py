@@ -223,7 +223,7 @@ else:
     }
 
 
-WEB_URL = os.environ.get("WEB_URL")
+WEB_URL = os.environ.get("WEB_URL", "https://app.plane.so")
 
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 
