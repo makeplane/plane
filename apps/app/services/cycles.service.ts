@@ -40,14 +40,6 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getIncompleteCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/incomplete-cycles/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async getCycleDetails(
     workspaceSlug: string,
     projectId: string,
