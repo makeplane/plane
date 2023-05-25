@@ -50,6 +50,14 @@ from plane.db.models import (
     IssueActivity,
     Issue,
     WorkspaceTheme,
+    IssueAssignee,
+    ProjectFavorite,
+    CycleFavorite,
+    ModuleMember,
+    ModuleFavorite,
+    PageFavorite,
+    Page,
+    IssueViewFavorite,
 )
 from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
@@ -451,6 +459,43 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         except WorkspaceMember.DoesNotExist:
             return Response(
                 {"error": "Workspace Member does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, pk):
+        try:
+            workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, pk=pk)
+            # Delete the user also from all the projects
+            ProjectMember.objects.filter(
+                workspace__slug=slug, member=workspace_member.member
+            ).delete()
+            # Remove all favorites
+            ProjectFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
+            CycleFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
+            ModuleFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
+            PageFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
+            IssueViewFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
+            # Also remove issue from issue assigned
+            IssueAssignee.objects.filter(
+                workspace__slug=slug, assignee=workspace_member.member
+            ).delete()
+
+            # Remove if module member
+            ModuleMember.objects.filter(workspace__slug=slug, member=workspace_member.member).delete()
+            # Delete owned Pages
+            Page.objects.filter(workspace__slug=slug, owned_by=workspace_member.member).delete()
+
+            workspace_member.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace Member does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
