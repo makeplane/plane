@@ -104,13 +104,15 @@ class ProjectViewSet(BaseViewSet):
                     .values("count")
                 )
                 .annotate(
-                    total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
+                    total_cycles=Cycle.objects.filter(
+                        project_id=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
                 .annotate(
-                    total_modules=Module.objects.filter(project_id=OuterRef("id"))
+                    total_modules=Module.objects.filter(
+                        project_id=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
@@ -134,12 +136,12 @@ class ProjectViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
 
-                ## Add the user as Administrator to the project
+                # Add the user as Administrator to the project
                 ProjectMember.objects.create(
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
 
-                ## Default states
+                # Default states
                 states = [
                     {
                         "name": "Backlog",
@@ -320,7 +322,8 @@ class InviteProjectEndpoint(BaseAPIView):
             )
 
             return Response(
-                ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
+                ProjectMemberSerializer(
+                    project_member).data, status=status.HTTP_200_OK
             )
 
         except ValidationError:
@@ -374,7 +377,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                 ]
             )
 
-            ## Delete joined project invites
+            # Delete joined project invites
             project_invitations.delete()
 
             return Response(status=status.HTTP_200_OK)
@@ -412,14 +415,16 @@ class ProjectMemberViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         try:
-            project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+            project_member = ProjectMember.objects.get(
+                pk=pk, workspace__slug=slug, project_id=project_id)
             if request.user.id == project_member.member_id:
                 return Response(
                     {"error": "You cannot update your own role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            if request.data.get("role", 10) > project_member.role:
+            # Check while updating user roles
+            requested_project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, member=request.user)
+            if "role" in request.data and request.data.get("role", project_member.role) > requested_project_member.role:
                 return Response(
                     {
                         "error": "You cannot update a role that is higher than your own role"
@@ -471,7 +476,6 @@ class ProjectMemberViewSet(BaseViewSet):
         except Exception as e:
             capture_exception(e)
             return Response({"error": "Something went wrong please try again later"})
-
 
 class AddMemberToProjectEndpoint(BaseAPIView):
     permission_classes = [
@@ -665,7 +669,8 @@ class ProjectIdentifierEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            ProjectIdentifier.objects.filter(name=name, workspace__slug=slug).delete()
+            ProjectIdentifier.objects.filter(
+                name=name, workspace__slug=slug).delete()
 
             return Response(
                 status=status.HTTP_204_NO_CONTENT,
@@ -741,7 +746,8 @@ class ProjectUserViewsEndpoint(BaseAPIView):
             view_props = project_member.view_props
             default_props = project_member.default_props
 
-            project_member.view_props = request.data.get("view_props", view_props)
+            project_member.view_props = request.data.get(
+                "view_props", view_props)
             project_member.default_props = request.data.get(
                 "default_props", default_props
             )

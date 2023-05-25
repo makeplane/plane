@@ -440,7 +440,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if request.data.get("role", 10) > workspace_member.role:
+            # Get the requested user role
+            requested_workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
+            # Check if role is being updated
+            # One cannot update role higher than his own role
+            if "role" in request.data and request.data.get("role", workspace_member.role) > requested_workspace_member.role:
                 return Response(
                     {
                         "error": "You cannot update a role that is higher than your own role"
