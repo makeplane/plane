@@ -104,7 +104,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
 
                   {!sidebarCollapse && (
                     <p className="overflow-hidden text-ellipsis text-[0.875rem]">
-                      {truncateText(project?.name, 15)}
+                      {truncateText(project?.name, 14)}
                     </p>
                   )}
                 </div>
