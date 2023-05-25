@@ -142,6 +142,14 @@ class WorkspaceService extends APIService {
       });
   }
 
+  async updateWorkspaceView(workspaceSlug: string, data: any): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/workspace-views/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async updateWorkspaceMember(
     workspaceSlug: string,
     memberId: string,
