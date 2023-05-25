@@ -17,6 +17,7 @@ import {
 } from "components/issues/view-select";
 // icon
 import { LinkIcon, PaperClipIcon } from "@heroicons/react/24/outline";
+import { LayerDiagonalIcon } from "components/icons";
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { CustomMenu, Tooltip } from "components/ui";
@@ -39,14 +40,14 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
-    (formData: Partial<IIssue>) => {
+    (formData: Partial<IIssue>, issueId: string) => {
       if (!workspaceSlug) return;
 
       mutate<IIssue[]>(
         USER_ISSUE(workspaceSlug as string),
         (prevData) =>
           prevData?.map((p) => {
-            if (p.id === issue.id) return { ...p, ...formData };
+            if (p.id === issueId) return { ...p, ...formData };
 
             return p;
           }),
@@ -54,7 +55,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
       );
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
         .then((res) => {
           mutate(USER_ISSUE(workspaceSlug as string));
         })
@@ -62,7 +63,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, issue]
+    [workspaceSlug, projectId]
   );
 
   const handleCopyText = () => {
@@ -126,11 +127,6 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.sub_issue_count && (
-            <div className="flex items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
-              {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-            </div>
-          )}
           {properties.labels && issue.label_details.length > 0 ? (
             <div className="flex flex-wrap gap-1">
               {issue.label_details.map((label) => (
@@ -152,23 +148,35 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             ""
           )}
           {properties.assignee && (
-            <Tooltip
-              position="top-right"
-              tooltipHeading="Assignees"
-              tooltipContent={
-                issue.assignee_details.length > 0
-                  ? issue.assignee_details
-                      .map((assignee) =>
-                        assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
-                      )
-                      .join(", ")
-                  : "No Assignee"
-              }
-            >
-              <div className="flex items-center gap-1">
-                <AssigneesList userIds={issue.assignees ?? []} />
-              </div>
-            </Tooltip>
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm">
+              <Tooltip
+                position="top-right"
+                tooltipHeading="Assignees"
+                tooltipContent={
+                  issue.assignee_details.length > 0
+                    ? issue.assignee_details
+                        .map((assignee) =>
+                          assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
+                        )
+                        .join(", ")
+                    : "No Assignee"
+                }
+              >
+                <div className="flex h-4 items-center gap-1">
+                  <AssigneesList userIds={issue.assignees ?? []} />
+                </div>
+              </Tooltip>
+            </div>
+          )}
+          {properties.sub_issue_count && (
+            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+              <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
+                <div className="flex items-center gap-1 text-brand-secondary">
+                  <LayerDiagonalIcon className="h-3.5 w-3.5" />
+                  {issue.sub_issues_count}
+                </div>
+              </Tooltip>
+            </div>
           )}
           {properties.link && (
             <div className="flex cursor-default items-center rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm">

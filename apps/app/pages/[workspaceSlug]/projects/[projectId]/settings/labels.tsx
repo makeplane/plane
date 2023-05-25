@@ -12,10 +12,12 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import {
   CreateUpdateLabelInline,
+  DeleteLabelModal,
   LabelsListModal,
   SingleLabel,
   SingleLabelGroup,
 } from "components/labels";
+import { SettingsHeader } from "components/project";
 // ui
 import { Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -26,7 +28,6 @@ import { IIssueLabels } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import { SettingsHeader } from "components/project";
 
 const LabelsSettings: NextPage = () => {
   // create/edit label form
@@ -40,6 +41,9 @@ const LabelsSettings: NextPage = () => {
   const [labelsListModal, setLabelsListModal] = useState(false);
   const [parentLabel, setParentLabel] = useState<IIssueLabels | undefined>(undefined);
 
+  // delete label
+  const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabels | null>(null);
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -52,7 +56,7 @@ const LabelsSettings: NextPage = () => {
       : null
   );
 
-  const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
+  const { data: issueLabels } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
@@ -75,21 +79,17 @@ const LabelsSettings: NextPage = () => {
     setLabelToUpdate(label);
   };
 
-  const handleLabelDelete = (labelId: string) => {
-    if (workspaceSlug && projectDetails) {
-      mutate((prevData) => prevData?.filter((p) => p.id !== labelId), false);
-      issuesService
-        .deleteIssueLabel(workspaceSlug as string, projectDetails.id, labelId)
-        .catch((e) => console.log(e));
-    }
-  };
-
   return (
     <>
       <LabelsListModal
         isOpen={labelsListModal}
         handleClose={() => setLabelsListModal(false)}
         parent={parentLabel}
+      />
+      <DeleteLabelModal
+        isOpen={!!selectDeleteLabel}
+        data={selectDeleteLabel ?? null}
+        onClose={() => setSelectDeleteLabel(null)}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -102,7 +102,7 @@ const LabelsSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="px-24 py-8">
+        <div className="p-8">
           <SettingsHeader />
           <section className="grid grid-cols-12 gap-10">
             <div className="col-span-12 sm:col-span-5">
@@ -143,7 +143,7 @@ const LabelsSettings: NextPage = () => {
                                 behavior: "smooth",
                               });
                             }}
-                            handleLabelDelete={handleLabelDelete}
+                            handleLabelDelete={() => setSelectDeleteLabel(label)}
                           />
                         );
                     } else
@@ -159,7 +159,7 @@ const LabelsSettings: NextPage = () => {
                               behavior: "smooth",
                             });
                           }}
-                          handleLabelDelete={handleLabelDelete}
+                          handleLabelDelete={() => setSelectDeleteLabel(label)}
                         />
                       );
                   })

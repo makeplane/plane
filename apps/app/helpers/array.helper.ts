@@ -12,6 +12,8 @@ export const orderArrayBy = (
   key: string,
   ordering: "ascending" | "descending" = "ascending"
 ) => {
+  if (!array || !Array.isArray(array) || array.length === 0) return [];
+
   if (key[0] === "-") {
     ordering = "descending";
     key = key.slice(1);
@@ -33,3 +35,8 @@ export const orderArrayBy = (
 };
 
 export const checkDuplicates = (array: any[]) => new Set(array).size !== array.length;
+
+export const findStringWithMostCharacters = (strings: string[]) =>
+  strings.reduce((longestString, currentString) =>
+    currentString.length > longestString.length ? currentString : longestString
+  );

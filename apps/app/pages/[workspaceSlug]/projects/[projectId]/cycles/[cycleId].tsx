@@ -19,8 +19,10 @@ import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
@@ -37,6 +39,7 @@ import {
 const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   const [cycleSidebar, setCycleSidebar] = useState(true);
+  const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -144,10 +147,15 @@ const SingleCycle: React.FC = () => {
           </CustomMenu>
         }
         right={
-          <div
-            className={`flex items-center gap-2 ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}
-          >
+          <div className={`flex items-center gap-2 duration-300`}>
             <IssuesFilterView />
+            <SecondaryButton
+              onClick={() => setAnalyticsModal(true)}
+              className="!py-1.5 font-normal rounded-md text-brand-secondary"
+              outline
+            >
+              Analytics
+            </SecondaryButton>
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
@@ -160,7 +168,12 @@ const SingleCycle: React.FC = () => {
           </div>
         }
       >
-        <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
+        <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+        <div
+          className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} ${
+            analyticsModal ? "mr-[50%]" : ""
+          } duration-300`}
+        >
           <IssuesView
             type="cycle"
             openIssuesListModal={openIssuesListModal}

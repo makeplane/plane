@@ -17,6 +17,7 @@ import {
   ListBulletIcon,
   Squares2X2Icon,
   CalendarDaysIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -81,6 +82,17 @@ export const IssuesFilterView: React.FC = () => {
           onClick={() => setIssueView("calendar")}
         >
           <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
+        </button>
+        <button
+          type="button"
+          className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
+            issueView === "gantt_chart" ? "bg-brand-surface-2" : ""
+          }`}
+          onClick={() => setIssueView("gantt_chart")}
+        >
+          <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
+            waterfall_chart
+          </span>
         </button>
       </div>
       <SelectFilters
@@ -233,31 +245,30 @@ export const IssuesFilterView: React.FC = () => {
                       </>
                     )}
                   </div>
-                  {issueView !== "calendar" && (
-                    <div className="space-y-2 py-3">
-                      <h4 className="text-sm text-brand-secondary">Display Properties</h4>
-                      <div className="flex flex-wrap items-center gap-2">
-                        {Object.keys(properties).map((key) => {
-                          if (key === "estimate" && !isEstimateActive) return null;
 
-                          return (
-                            <button
-                              key={key}
-                              type="button"
-                              className={`rounded border px-2 py-1 text-xs capitalize ${
-                                properties[key as keyof Properties]
-                                  ? "border-brand-accent bg-brand-accent text-white"
-                                  : "border-brand-base"
-                              }`}
-                              onClick={() => setProperties(key as keyof Properties)}
-                            >
-                              {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                            </button>
-                          );
-                        })}
-                      </div>
+                  <div className="space-y-2 py-3">
+                    <h4 className="text-sm text-brand-secondary">Display Properties</h4>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {Object.keys(properties).map((key) => {
+                        if (key === "estimate" && !isEstimateActive) return null;
+
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            className={`rounded border px-2 py-1 text-xs capitalize ${
+                              properties[key as keyof Properties]
+                                ? "border-brand-accent bg-brand-accent text-white"
+                                : "border-brand-base"
+                            }`}
+                            onClick={() => setProperties(key as keyof Properties)}
+                          >
+                            {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                          </button>
+                        );
+                      })}
                     </div>
-                  )}
+                  </div>
                 </div>
               </Popover.Panel>
             </Transition>

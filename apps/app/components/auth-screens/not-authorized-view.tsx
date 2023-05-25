@@ -27,7 +27,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
         description: "You are not authorized to view this page",
       }}
     >
-      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 text-center">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-brand-surface-1 text-center">
         <div className="h-44 w-72">
           <Image
             src={type === "project" ? ProjectNotAuthorizedImg : WorkspaceNotAuthorizedImg}
@@ -36,7 +36,9 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
             alt="ProjectSettingImg"
           />
         </div>
-        <h1 className="text-xl font-medium">Oops! You are not authorized to view this page</h1>
+        <h1 className="text-xl font-medium text-brand-base">
+          Oops! You are not authorized to view this page
+        </h1>
 
         <div className="w-full max-w-md text-base text-brand-secondary">
           {user ? (

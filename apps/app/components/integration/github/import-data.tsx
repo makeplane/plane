@@ -23,12 +23,13 @@ type Props = {
 export const GithubImportData: FC<Props> = ({ handleStepChange, integration, control, watch }) => {
   const { projects } = useProjects();
 
-  const options =
-    projects.map((project) => ({
-      value: project.id,
-      query: project.name,
-      content: <p>{truncateText(project.name, 25)}</p>,
-    })) ?? [];
+  const options = projects
+    ? projects.map((project) => ({
+        value: project.id,
+        query: project.name,
+        content: <p>{truncateText(project.name, 25)}</p>,
+      }))
+    : undefined;
 
   return (
     <div className="mt-6">

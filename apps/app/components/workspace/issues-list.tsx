@@ -23,11 +23,12 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
   const getDateDifference = (date: Date) => {
     const today = new Date();
 
-    let diffDays = 0;
-    if (type === "overdue") {
-      const diffTime = Math.abs(today.valueOf() - date.valueOf());
-      diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    } else return date.getDate() - today.getDate();
+    let diffTime = 0;
+
+    if (type === "overdue") diffTime = Math.abs(today.valueOf() - date.valueOf());
+    else diffTime = Math.abs(date.valueOf() - today.valueOf());
+
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     return diffDays;
   };

@@ -6,6 +6,7 @@ import useSWR, { mutate } from "swr";
 
 // react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
@@ -17,14 +18,13 @@ import { useProjectMyMembership } from "contexts/project-member.context";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 // components
-import { AllLists, AllBoards, FilterList } from "components/core";
+import { AllLists, AllBoards, FilterList, CalendarView, GanttChartView } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
-import { TransferIssues, TransferIssuesModal } from "components/cycles";
+import { CycleIssuesGanttChartView, TransferIssues, TransferIssuesModal } from "components/cycles";
+import { IssueGanttChartView } from "components/issues/gantt-chart";
 // ui
 import { EmptySpace, EmptySpaceItem, EmptyState, PrimaryButton, Spinner } from "components/ui";
-import { CalendarView } from "./calendar-view";
 // icons
 import {
   ListBulletIcon,
@@ -48,7 +48,7 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATES_LIST,
 } from "constants/fetch-keys";
-// image
+import { ModuleIssuesGanttChartView } from "components/modules";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -446,27 +446,25 @@ export const IssuesView: React.FC<Props> = ({
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
             <FilterList filters={filters} setFilters={setFilters} />
-            {areFiltersApplied && (
-              <PrimaryButton
-                onClick={() => {
-                  if (viewId) {
-                    setFilters({}, true);
-                    setToastAlert({
-                      title: "View updated",
-                      message: "Your view has been updated",
-                      type: "success",
-                    });
-                  } else
-                    setCreateViewModal({
-                      query: filters,
-                    });
-                }}
-                className="flex items-center gap-2 text-sm"
-              >
-                {!viewId && <PlusIcon className="h-4 w-4" />}
-                {viewId ? "Update" : "Save"} view
-              </PrimaryButton>
-            )}
+            <PrimaryButton
+              onClick={() => {
+                if (viewId) {
+                  setFilters({}, true);
+                  setToastAlert({
+                    title: "View updated",
+                    message: "Your view has been updated",
+                    type: "success",
+                  });
+                } else
+                  setCreateViewModal({
+                    query: filters,
+                  });
+              }}
+              className="flex items-center gap-2 text-sm"
+            >
+              {!viewId && <PlusIcon className="h-4 w-4" />}
+              {viewId ? "Update" : "Save"} view
+            </PrimaryButton>
           </div>
           {<div className="mt-3 border-t border-brand-base" />}
         </>
@@ -478,14 +476,14 @@ export const IssuesView: React.FC<Props> = ({
             <div
               className={`${
                 trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-              } fixed top-9 right-9 z-30 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-red-500/20 p-3 text-xs font-medium italic text-red-500 ${
-                snapshot.isDraggingOver ? "bg-red-500/100 text-white" : ""
-              } duration-200`}
+              } fixed top-4 left-1/2 -translate-x-1/2 z-40 w-72 flex items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-brand-base px-3 py-5 text-xs font-medium italic text-red-500 ${
+                snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
+              } transition duration-300`}
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
               <TrashIcon className="h-4 w-4" />
-              Drop issue here to delete
+              Drop here to delete the issue.
             </div>
           )}
         </StrictModeDroppable>
@@ -532,8 +530,16 @@ export const IssuesView: React.FC<Props> = ({
                   isCompleted={isCompleted}
                   userAuth={memberRole}
                 />
+              ) : issueView === "calendar" ? (
+                <CalendarView
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
+                  addIssueToDate={addIssueToDate}
+                  isCompleted={isCompleted}
+                  userAuth={memberRole}
+                />
               ) : (
-                <CalendarView addIssueToDate={addIssueToDate} />
+                issueView === "gantt_chart" && <GanttChartView />
               )}
             </>
           ) : type === "issue" ? (

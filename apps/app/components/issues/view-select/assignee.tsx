@@ -18,7 +18,7 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
   tooltipPosition?: "left" | "right";
@@ -43,24 +43,25 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       : null
   );
 
-  const options =
-    members?.map((member) => ({
-      value: member.member.id,
-      query:
-        (member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name
-          : member.member.email) +
-          " " +
-          member.member.last_name ?? "",
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar user={member.member} />
-          {member.member.first_name && member.member.first_name !== ""
+  const options = members?.map((member) => ({
+    value: member.member.id,
+    query:
+      (member.member.first_name && member.member.first_name !== ""
+        ? member.member.first_name
+        : member.member.email) +
+        " " +
+        member.member.last_name ?? "",
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={member.member} />
+        {`${
+          member.member.first_name && member.member.first_name !== ""
             ? member.member.first_name
-            : member.member.email}
-        </div>
-      ),
-    })) ?? [];
+            : member.member.email
+        } ${member.member.last_name ?? ""}`}
+      </div>
+    ),
+  }));
 
   return (
     <CustomSearchSelect
@@ -71,7 +72,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
         else newData.push(data);
 
-        partialUpdateIssue({ assignees_list: data });
+        partialUpdateIssue({ assignees_list: data }, issue.id);
 
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
@@ -107,13 +108,11 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
           >
             {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
               <div className="-my-0.5 flex items-center justify-center gap-2">
-                <AssigneesList userIds={issue.assignees} length={3} showLength={false} />
-                <span className="text-brand-secondary">{issue.assignees.length} Assignees</span>
+                <AssigneesList userIds={issue.assignees} length={5} showLength={true} />
               </div>
             ) : (
               <div className="flex items-center justify-center gap-2">
                 <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
-                <span className="text-brand-secondary">Assignee</span>
               </div>
             )}
           </div>
@@ -123,6 +122,8 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       noChevron
       position={position}
       disabled={isNotAllowed}
+      selfPositioned={selfPositioned}
+      dropdownWidth="w-full min-w-[8rem]"
     />
   );
 };

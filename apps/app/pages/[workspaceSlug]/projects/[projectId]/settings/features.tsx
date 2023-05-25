@@ -11,6 +11,8 @@ import trackEventServices, { MiscellaneousEventType } from "services/track-event
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { SettingsHeader } from "components/project";
 // ui
 import { SecondaryButton, ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -18,11 +20,10 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
-import { IProject } from "types";
+import { IFavoriteProject, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-import { SettingsHeader } from "components/project";
+import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const featuresList = [
   {
@@ -84,16 +85,29 @@ const FeaturesSettings: NextPage = () => {
   );
 
   const handleSubmit = async (formData: Partial<IProject>) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    mutate<IProject>(
-      PROJECT_DETAILS(projectId as string),
-      (prevData) => ({ ...(prevData as IProject), ...formData }),
-      false
-    );
+    if (projectDetails.is_favorite)
+      mutate<IFavoriteProject[]>(
+        FAVORITE_PROJECTS_LIST(workspaceSlug.toString()),
+        (prevData) =>
+          prevData?.map((p) => {
+            if (p.project === projectId)
+              return {
+                ...p,
+                project_detail: {
+                  ...p.project_detail,
+                  ...formData,
+                },
+              };
+
+            return p;
+          }),
+        false
+      );
 
     mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string),
+      PROJECTS_LIST(workspaceSlug.toString()),
       (prevData) =>
         prevData?.map((p) => {
           if (p.id === projectId)
@@ -107,19 +121,34 @@ const FeaturesSettings: NextPage = () => {
       false
     );
 
+    mutate<IProject>(
+      PROJECT_DETAILS(projectId as string),
+      (prevData) => ({ ...(prevData as IProject), ...formData }),
+      false
+    );
+
+    setToastAlert({
+      type: "success",
+      title: "Success!",
+      message: "Project feature updated successfully.",
+    });
+
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, formData)
-      .then((res) => {
+      .then(() => {
+        mutate(
+          projectDetails.is_favorite
+            ? FAVORITE_PROJECTS_LIST(workspaceSlug.toString())
+            : PROJECTS_LIST(workspaceSlug.toString())
+        );
         mutate(PROJECT_DETAILS(projectId as string));
-        mutate(PROJECTS_LIST(workspaceSlug as string));
-        setToastAlert({
-          title: "Success!",
-          type: "success",
-          message: "Project features updated successfully.",
-        });
       })
       .catch((err) => {
-        console.error(err);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Project feature could not be updated. Please try again.",
+        });
       });
   };
 
@@ -135,9 +164,9 @@ const FeaturesSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="px-24 py-8">
+      <div className="p-8">
         <SettingsHeader />
-        <section className="space-y-8">
+        <section className="space-y-5">
           <h3 className="text-2xl font-semibold">Features</h3>
           <div className="space-y-5">
             {featuresList.map((feature) => (

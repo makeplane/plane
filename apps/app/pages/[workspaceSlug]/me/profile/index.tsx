@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
-import { ImageUploadModal, ThemeSwitch } from "components/core";
+import { ImageUploadModal } from "components/core";
 // ui
 import { CustomSelect, DangerButton, Input, SecondaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -278,17 +278,6 @@ const Profile: NextPage = () => {
                     </CustomSelect>
                   )}
                 />
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Theme</h4>
-                <p className="text-sm text-brand-secondary">
-                  Select or customize your interface color scheme.
-                </p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <ThemeSwitch />
               </div>
             </div>
             <div className="sm:text-right">

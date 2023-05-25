@@ -9,7 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db.models.functions import Coalesce
-
+from django.conf import settings
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -788,6 +788,9 @@ class IssueAttachmentEndpoint(BaseAPIView):
             serializer = IssueAttachmentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(project_id=project_id, issue_id=issue_id)
+                response_data = serializer.data
+                if settings.DOCKERIZED and "minio:9000" in response_data["asset"]:
+                    response_data["asset"] = response_data["asset"].replace("minio:9000", settings.WEB_URL)
                 issue_activity.delay(
                     type="attachment.activity.created",
                     requested_data=None,
@@ -799,7 +802,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                         cls=DjangoJSONEncoder,
                     ),
                 )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(response_data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             capture_exception(e)

@@ -12,14 +12,14 @@ import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
 // hooks
 import useUser from "hooks/use-user";
+import useIssuesView from "hooks/use-issues-view";
+import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 // components
 import { IssueForm } from "components/issues";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
 // types
 import type { IIssue } from "types";
-// fetch keys
+// fetch-keys
 import {
   PROJECT_ISSUES_DETAILS,
   PROJECT_ISSUES_LIST,
@@ -31,6 +31,7 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   CYCLE_DETAILS,
   MODULE_DETAILS,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
@@ -53,9 +54,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  const { params } = useIssuesView();
+  const { issueView, params } = useIssuesView();
+  const { params: calendarParams } = useCalendarIssuesView();
+  const { order_by, group_by, ...viewGanttParams } = params;
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
@@ -125,14 +128,34 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       });
   };
 
+  const calendarFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), calendarParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
+
+  const ganttFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
+
   const createIssue = async (payload: Partial<IIssue>) => {
+    if (!workspaceSlug) return;
+
     await issuesService
       .createIssues(workspaceSlug as string, activeProject ?? "", payload)
-      .then((res) => {
+      .then(async (res) => {
         mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
+        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
 
-        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
+        if (issueView === "calendar") mutate(calendarFetchKey);
+        if (issueView === "gantt_chart") mutate(ganttFetchKey);
 
         if (!createMore) handleClose();
 
@@ -162,14 +185,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
-          mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params),
-            (prevData) =>
-              (prevData ?? []).map((i) => {
-                if (i.id === res.id) return { ...i, ...res };
-                return i;
-              })
-          );
+          if (issueView === "calendar") mutate(calendarFetchKey);
+          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);

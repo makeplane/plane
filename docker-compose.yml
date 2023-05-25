@@ -6,6 +6,7 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
+    restart: always
     ports:
       - 80:80
     depends_on:
@@ -72,7 +73,8 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-      WEB_URL: localhost/
+      AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
+      WEB_URL: ${WEB_URL}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       DISABLE_COLLECTSTATIC: 1
       DOCKERIZED: 1
@@ -110,13 +112,34 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-      WEB_URL: localhost/
+      AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
+      WEB_URL: ${WEB_URL}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       DISABLE_COLLECTSTATIC: 1
       DOCKERIZED: 1
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       GPT_ENGINE: ${GPT_ENGINE}
       SECRET_KEY: ${SECRET_KEY}
+  minio:
+    image: minio/minio
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+    command: server /export --console-address ":9090"
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add plane-minio http://minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
+      /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME;
+      /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME;
+      exit 0;
+      "
 volumes:
   pgdata:
   redisdata:

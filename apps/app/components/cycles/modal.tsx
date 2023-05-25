@@ -20,6 +20,7 @@ import type { ICycle } from "types";
 import {
   CYCLE_COMPLETE_LIST,
   CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DETAILS,
   CYCLE_DRAFT_LIST,
   CYCLE_INCOMPLETE_LIST,
 } from "constants/fetch-keys";
@@ -58,6 +59,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
             mutate(CYCLE_DRAFT_LIST(projectId as string));
         }
         mutate(CYCLE_INCOMPLETE_LIST(projectId as string));
+        mutate(CYCLE_DETAILS(projectId as string));
         handleClose();
 
         setToastAlert({
@@ -92,6 +94,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           default:
             mutate(CYCLE_DRAFT_LIST(projectId as string));
         }
+        mutate(CYCLE_DETAILS(projectId as string));
         if (
           getDateRangeStatus(data?.start_date, data?.end_date) !=
           getDateRangeStatus(res.start_date, res.end_date)
@@ -157,13 +160,9 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           title: "Error!",
           message: "Unable to create cycle in past date. Please enter a valid date.",
         });
+        handleClose();
         return;
       }
-
-      const isDateValid = await dateChecker({
-        start_date: payload.start_date,
-        end_date: payload.end_date,
-      });
 
       if (data?.start_date && data?.end_date) {
         const isDateValidForExistingCycle = await dateChecker({
@@ -182,9 +181,15 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
             message:
               "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
           });
+          handleClose();
           return;
         }
       }
+
+      const isDateValid = await dateChecker({
+        start_date: payload.start_date,
+        end_date: payload.end_date,
+      });
 
       if (isDateValid) {
         if (data) {
@@ -199,6 +204,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           message:
             "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
         });
+        handleClose();
       }
     } else {
       if (data) {

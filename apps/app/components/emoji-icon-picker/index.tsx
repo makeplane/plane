@@ -25,13 +25,7 @@ const tabOptions = [
   },
 ];
 
-const EmojiIconPicker: React.FC<Props> = ({
-  label,
-  value,
-  onChange,
-  onIconColorChange,
-  onIconsClick,
-}) => {
+const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorChange }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -99,9 +93,9 @@ const EmojiIconPicker: React.FC<Props> = ({
                       <div className="grid grid-cols-8 gap-2">
                         {recentEmojis.map((emoji) => (
                           <button
+                            key={emoji}
                             type="button"
                             className="flex h-4 w-4 select-none items-center justify-between text-sm"
-                            key={emoji}
                             onClick={() => {
                               onChange(emoji);
                               setIsOpen(false);
@@ -147,6 +141,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                           "#000000",
                         ].map((curCol) => (
                           <span
+                            key={curCol}
                             className="h-4 w-4 cursor-pointer rounded-full"
                             style={{ backgroundColor: curCol }}
                             onClick={() => setActiveColor(curCol)}
@@ -180,13 +175,13 @@ const EmojiIconPicker: React.FC<Props> = ({
                     </div>
                     <hr className="mb-1 h-[1px] w-full border-brand-base" />
                     <div className="mt-1 ml-1 grid grid-cols-8 gap-x-2 gap-y-3">
-                      {icons.material_rounded.map((icon) => (
+                      {icons.material_rounded.map((icon, index) => (
                         <button
+                          key={`${icon.name}-${index}`}
                           type="button"
                           className="mb-1 flex h-4 w-4 select-none items-center text-lg"
-                          key={icon.name}
                           onClick={() => {
-                            if (onIconsClick) onIconsClick(icon.name);
+                            onChange({ name: icon.name, color: activeColor });
                             setIsOpen(false);
                           }}
                         >

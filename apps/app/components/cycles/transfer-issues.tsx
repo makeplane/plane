@@ -37,7 +37,7 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
     ? cycleDetails.backlog_issues + cycleDetails.unstarted_issues + cycleDetails.started_issues
     : 0;
   return (
-    <div className="-mt-2 mb-4 flex items-center justify-between">
+    <div className="-mt-2 mb-4 flex items-center justify-between px-8 pt-6">
       <div className="flex items-center gap-2 text-sm text-brand-secondary">
         <ExclamationIcon height={14} width={14} className="fill-current text-brand-secondary" />
         <span>Completed cycles are not editable.</span>

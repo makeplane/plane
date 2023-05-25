@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
 
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
@@ -12,6 +13,8 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { SettingsHeader } from "components/project";
 // ui
 import { CustomSelect, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -20,7 +23,6 @@ import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, PROJECT_MEMBERS } from "constants/fetch-keys";
-import { SettingsHeader } from "components/project";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -54,27 +56,14 @@ const ControlSettings: NextPage = () => {
     formState: { isSubmitting },
   } = useForm<IProject>({ defaultValues });
 
-  useEffect(() => {
-    if (projectDetails)
-      reset({
-        ...projectDetails,
-        default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
-        project_lead: projectDetails.project_lead?.id ?? projectDetails.project_lead,
-        workspace: (projectDetails.workspace as IWorkspace).id,
-      });
-  }, [projectDetails, reset]);
-
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug || !projectId) return;
+
     const payload: Partial<IProject> = {
-      name: formData.name,
-      network: formData.network,
-      identifier: formData.identifier,
-      description: formData.description,
       default_assignee: formData.default_assignee,
       project_lead: formData.project_lead,
-      icon: formData.icon,
     };
+
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
@@ -92,6 +81,16 @@ const ControlSettings: NextPage = () => {
       });
   };
 
+  useEffect(() => {
+    if (projectDetails)
+      reset({
+        ...projectDetails,
+        default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
+        project_lead: projectDetails.project_lead?.id ?? projectDetails.project_lead,
+        workspace: (projectDetails.workspace as IWorkspace).id,
+      });
+  }, [projectDetails, reset]);
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
@@ -104,7 +103,7 @@ const ControlSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="px-24 py-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="p-8">
         <SettingsHeader />
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
