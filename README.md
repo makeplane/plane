@@ -45,16 +45,12 @@ The easiest way to get started with Plane is by creating a [Plane Cloud](https:/
 
 ### Docker Compose Setup
 
-- Clone the Repository
+- Download the docker-compose.yml and setup.sh file
 
 ```bash
-git clone https://github.com/makeplane/plane
-```
-
-- Change Directory
-
-```bash
-cd plane
+curl https://raw.githubusercontent.com/makeplane/plane/develop/docker-compose-hub.yml --output docker-compose.yml
+curl https://raw.githubusercontent.com/makeplane/plane/develop/setup.sh --output setup.sh
+chmod +x setup.sh
 ```
 
 - Run setup.sh
@@ -76,7 +72,7 @@ set +a
 - Run Docker compose up
 
 ```bash
-docker-compose -f docker-compose-hub.yml up
+docker compose up -d
 ```
 
 <strong>You can use the default email and password for your first login `captain@plane.so` and `password123`.</strong> 
