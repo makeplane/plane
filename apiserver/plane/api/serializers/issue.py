@@ -1,3 +1,6 @@
+# Django imports
+from django.utils import timezone
+
 # Third Party imports
 from rest_framework import serializers
 
@@ -251,6 +254,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
+        instance.updated_at = timezone.now()
         return super().update(instance, validated_data)
 
 
