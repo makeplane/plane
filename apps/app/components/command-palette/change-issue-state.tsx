@@ -39,13 +39,15 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue }) =
     async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutate(
+      mutate<IIssue>(
         ISSUE_DETAILS(issueId as string),
-        // TODO:check-any (prevData: IIssue) => ({
-        async (prevData: any) => ({
-          ...prevData,
-          ...formData,
-        }),
+        async (prevData) => {
+          if (!prevData) return prevData;
+          return {
+            ...prevData,
+            ...formData,
+          };
+        },
         false
       );
 

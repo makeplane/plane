@@ -78,13 +78,15 @@ const IssueDetailsPage: NextPage = () => {
     async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutate(
+      mutate<IIssue>(
         ISSUE_DETAILS(issueId as string),
-        // TODO:check-any (prevData: IIssue) => ({
-        (prevData: any) => ({
-          ...prevData,
-          ...formData,
-        }),
+        (prevData) => {
+          if (!prevData) return prevData;
+          return {
+            ...prevData,
+            ...formData,
+          };
+        },
         false
       );
 

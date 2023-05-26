@@ -73,10 +73,12 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
       .inviteProject(workspaceSlug as string, projectId as string, formData)
       .then((response) => {
         setIsOpen(false);
-        mutate(
+        mutate<any[]>(
           PROJECT_INVITATIONS,
-          // TODO:check-any (prevData: any[]) => [{ ...formData, ...response }, ...(prevData ?? [])],
-          (prevData: any) => [{ ...formData, ...response }, ...(prevData ?? [])],
+          (prevData) => {
+            if (!prevData) return prevData;
+            return [{ ...formData, ...response }, ...(prevData ?? [])];
+          },
           false
         );
         setToastAlert({
