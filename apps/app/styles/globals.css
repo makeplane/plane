@@ -112,6 +112,7 @@ body {
 .horizontal-scroll-enable::-webkit-scrollbar {
   display: block;
   height: 7px;
+  width: 0;
 }
 
 .horizontal-scroll-enable::-webkit-scrollbar-track {
@@ -194,4 +195,14 @@ body {
 .progress-bar {
   fill: currentColor;
   color: rgba(var(--color-bg-sidebar));
+}
+
+/* end react datepicker styling */
+
+/* lineclamp */
+.lineclamp {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }

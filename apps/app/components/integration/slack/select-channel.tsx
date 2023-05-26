@@ -5,14 +5,13 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 // services
 import appinstallationsService from "services/app-installations.service";
-
 // ui
 import { Loader } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // types
-import { IWorkspaceIntegration } from "types";
+import { IWorkspaceIntegration, ISlackIntegration } from "types";
 // fetch-keys
 import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
 
@@ -21,7 +20,9 @@ type Props = {
 };
 
 export const SelectChannel: React.FC<Props> = ({ integration }) => {
-  const [deletingProjectSync, setDeletingProjectSync] = useState(false);
+  const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] =
+    useState<boolean>(false);
+  const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -43,33 +44,38 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
   );
 
   useEffect(() => {
-    if (projectIntegration?.length > 0) {
-      setDeletingProjectSync(true);
+    if (projectId && projectIntegration && projectIntegration.length > 0) {
+      const projectSlackIntegrationCheck: ISlackIntegration | undefined = projectIntegration.find(
+        (_slack: ISlackIntegration) => _slack.project === projectId
+      );
+      if (projectSlackIntegrationCheck) {
+        setSlackChannel(() => projectSlackIntegrationCheck);
+        setSlackChannelAvailabilityToggle(true);
+      }
     }
-    if (projectIntegration?.length === 0) {
-      setDeletingProjectSync(false);
-    }
-  }, [projectIntegration]);
+  }, [projectIntegration, projectId]);
 
   const handleDelete = async () => {
     if (projectIntegration.length === 0) return;
     mutate(SLACK_CHANNEL_INFO, (prevData: any) => {
       if (!prevData) return;
       return prevData.id !== integration.id;
-    }).then(() => setDeletingProjectSync(false));
+    }).then(() => {
+      setSlackChannelAvailabilityToggle(false);
+      setSlackChannel(null);
+    });
     appinstallationsService
       .removeSlackChannel(
         workspaceSlug as string,
         projectId as string,
         integration.id as string,
-        projectIntegration?.[0]?.id
+        slackChannel?.id
       )
       .catch((err) => console.log(err));
   };
 
   const handleAuth = async () => {
     await startAuth();
-    setDeletingProjectSync(true);
   };
 
   return (
@@ -78,20 +84,18 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
         <button
           type="button"
           className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-            projectIntegration.length > 0 && deletingProjectSync ? "bg-green-500" : "bg-gray-200"
+            slackChannelAvailabilityToggle ? "bg-green-500" : "bg-gray-200"
           }`}
           role="switch"
           aria-checked
           onClick={() => {
-            deletingProjectSync ? handleDelete() : handleAuth();
+            slackChannelAvailabilityToggle ? handleDelete() : handleAuth();
           }}
         >
           <span
             aria-hidden="true"
             className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-              projectIntegration.length > 0 && deletingProjectSync
-                ? "translate-x-5"
-                : "translate-x-0"
+              slackChannelAvailabilityToggle ? "translate-x-5" : "translate-x-0"
             }`}
           />
         </button>

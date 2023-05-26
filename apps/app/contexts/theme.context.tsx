@@ -4,10 +4,14 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // components
 import ToastAlert from "components/toast-alert";
+// hooks
+import useUser from "hooks/use-user";
 // services
 import projectService from "services/project.service";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
+// helper
+import { applyTheme } from "helpers/theme.helper";
 // constants
 
 export const themeContext = createContext<ContextType>({} as ContextType);
@@ -61,6 +65,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
 
 export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { user } = useUser();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -84,6 +89,15 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
       payload: myViewProps?.view_props as any,
     });
   }, [myViewProps]);
+
+  useEffect(() => {
+    const theme = localStorage.getItem("theme");
+    if (theme && theme === "custom") {
+      if (user && user.theme.palette) {
+        applyTheme(user.theme.palette, user.theme.darkPalette);
+      }
+    }
+  }, [user]);
 
   return (
     <themeContext.Provider

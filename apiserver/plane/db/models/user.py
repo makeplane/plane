@@ -104,29 +104,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 @receiver(post_save, sender=User)
-def send_welcome_email(sender, instance, created, **kwargs):
+def send_welcome_slack(sender, instance, created, **kwargs):
     try:
         if created and not instance.is_bot:
-            first_name = instance.first_name.capitalize()
-            to_email = instance.email
-            from_email_string = settings.EMAIL_FROM
-
-            subject = f"Welcome to Plane ✈️!"
-
-            context = {"first_name": first_name, "email": instance.email}
-
-            html_content = render_to_string(
-                "emails/auth/user_welcome_email.html", context
-            )
-
-            text_content = strip_tags(html_content)
-
-            msg = EmailMultiAlternatives(
-                subject, text_content, from_email_string, [to_email]
-            )
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
-
             # Send message on slack as well
             if settings.SLACK_BOT_TOKEN:
                 client = WebClient(token=settings.SLACK_BOT_TOKEN)

@@ -11,6 +11,7 @@ import {
   IWorkspaceMemberInvitation,
   ILastActiveWorkspaceDetails,
   IWorkspaceSearchResults,
+  IProductUpdateResponse,
 } from "types";
 
 const trackEvent =
@@ -146,7 +147,7 @@ class WorkspaceService extends APIService {
     memberId: string,
     data: Partial<IWorkspaceMember>
   ): Promise<IWorkspaceMember> {
-    return this.put(`/api/workspaces/${workspaceSlug}/members/${memberId}/`, data)
+    return this.patch(`/api/workspaces/${workspaceSlug}/members/${memberId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -202,6 +203,13 @@ class WorkspaceService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/search/?search=${query}`
     )
       .then((res) => res?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async getProductUpdates(): Promise<IProductUpdateResponse[]> {
+    return this.get("/api/release-notes/")
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

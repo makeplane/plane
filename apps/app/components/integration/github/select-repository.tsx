@@ -11,7 +11,7 @@ import { CustomSearchSelect } from "components/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegration } from "types";
+import { IWorkspaceIntegration, IGithubRepository } from "types";
 
 type Props = {
   integration: IWorkspaceIntegration;
@@ -54,7 +54,9 @@ export const SelectRepository: React.FC<Props> = ({
     isValidating,
   } = useSWRInfinite(getKey, fetchGithubRepos);
 
-  const userRepositories = (paginatedData ?? []).map((data) => data.repositories).flat();
+  let userRepositories = (paginatedData ?? []).map((data) => data.repositories).flat();
+  userRepositories = userRepositories.filter((data) => data?.id);
+
   const totalCount = paginatedData && paginatedData.length > 0 ? paginatedData[0].total_count : 0;
 
   const options =
@@ -79,7 +81,7 @@ export const SelectRepository: React.FC<Props> = ({
           {userRepositories && options.length < totalCount && (
             <button
               type="button"
-              className="w-full p-1 text-center text-[0.6rem] text-gray-500 hover:bg-hover-gray"
+              className="w-full p-1 text-center text-[0.6rem] text-brand-secondary hover:bg-brand-surface-2"
               onClick={() => setSize(size + 1)}
               disabled={isValidating}
             >

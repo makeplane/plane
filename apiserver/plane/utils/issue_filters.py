@@ -13,6 +13,17 @@ def filter_state(params, filter, method):
     return filter
 
 
+def filter_estimate_point(params, filter, method):
+    if method == "GET":
+        estimate_points = params.get("estimate_point").split(",")
+        if len(estimate_points) and "" not in estimate_points:
+            filter["estimate_point__in"] = estimate_points
+    else:
+        if params.get("estimate_point", None) and len(params.get("estimate_point")):
+            filter["estimate_point__in"] = params.get("estimate_point")
+    return filter
+
+
 def filter_priority(params, filter, method):
     if method == "GET":
         priorties = params.get("priority").split(",")
@@ -187,11 +198,45 @@ def filter_issue_state_type(params, filter, method):
     return filter
 
 
+def filter_project(params, filter, method):
+    if method == "GET":
+        projects = params.get("project").split(",")
+        if len(projects) and "" not in projects:
+            filter["project__in"] = projects
+    else:
+        if params.get("project", None) and len(params.get("project")):
+            filter["project__in"] = params.get("project")
+    return filter
+
+
+def filter_cycle(params, filter, method):
+    if method == "GET":
+        cycles = params.get("cycle").split(",")
+        if len(cycles) and "" not in cycles:
+            filter["issue_cycle__cycle_id__in"] = cycles
+    else:
+        if params.get("cycle", None) and len(params.get("cycle")):
+            filter["issue_cycle__cycle_id__in"] = params.get("cycle")
+    return filter
+
+
+def filter_module(params, filter, method):
+    if method == "GET":
+        modules = params.get("module").split(",")
+        if len(modules) and "" not in modules:
+            filter["issue_module__module_id__in"] = modules
+    else:
+        if params.get("module", None) and len(params.get("module")):
+            filter["issue_module__module_id__in"] = params.get("module")
+    return filter
+
+
 def issue_filters(query_params, method):
     filter = dict()
 
     ISSUE_FILTER = {
         "state": filter_state,
+        "estimate_point": filter_estimate_point,
         "priority": filter_priority,
         "parent": filter_parent,
         "labels": filter_labels,
@@ -204,6 +249,9 @@ def issue_filters(query_params, method):
         "target_date": filter_target_date,
         "completed_at": filter_completed_at,
         "type": filter_issue_state_type,
+        "project": filter_project,
+        "cycle": filter_cycle,
+        "module": filter_module,
     }
 
     for key, value in ISSUE_FILTER.items():

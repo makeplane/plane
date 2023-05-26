@@ -10,7 +10,7 @@ import projectServices from "services/project.service";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
-import User from "public/user.png";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -30,24 +30,23 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
       : null
   );
 
-  const options =
-    members?.map((member) => ({
-      value: member.member.id,
-      query:
-        (member.member.first_name && member.member.first_name !== ""
+  const options = members?.map((member) => ({
+    value: member.member.id,
+    query:
+      (member.member.first_name && member.member.first_name !== ""
+        ? member.member.first_name
+        : member.member.email) +
+        " " +
+        member.member.last_name ?? "",
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={member.member} />
+        {member.member.first_name && member.member.first_name !== ""
           ? member.member.first_name
-          : member.member.email) +
-          " " +
-          member.member.last_name ?? "",
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar user={member.member} />
-          {member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name
-            : member.member.email}
-        </div>
-      ),
-    })) ?? [];
+          : member.member.email}
+      </div>
+    ),
+  }));
 
   const selectedOption = members?.find((m) => m.member.id === value)?.member;
 
@@ -60,9 +59,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
           {selectedOption ? (
             <Avatar user={selectedOption} />
           ) : (
-            <div className="h-4 w-4 rounded-full bg-brand-surface-2">
-              <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
-            </div>
+            <UserCircleIcon className="h-4 w-4 text-brand-secondary" />
           )}
           {selectedOption ? (
             selectedOption?.first_name && selectedOption.first_name !== "" ? (

@@ -15,8 +15,10 @@ import issuesService from "services/issues.service";
 import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { GptAssistantModal } from "components/core";
 // ui
-import { Input, Loader, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Loader, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { IPageBlock } from "types";
 // fetch-keys
@@ -25,15 +27,15 @@ import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 type Props = {
   handleClose: () => void;
   data?: IPageBlock;
+  handleAiAssistance?: (response: string) => void;
   setIsSyncing?: React.Dispatch<React.SetStateAction<boolean>>;
   focus?: keyof IPageBlock;
-  setGptAssistantModal: () => void;
 };
 
 const defaultValues = {
   name: "",
-  description: { type: "doc", content: [] },
-  description_html: "<p></p>",
+  description: null,
+  description_html: null,
 };
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -44,15 +46,26 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
     </Loader>
   ),
 });
+import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+
+const WrappedRemirrorRichTextEditor = React.forwardRef<
+  IRemirrorRichTextEditor,
+  IRemirrorRichTextEditor
+>((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+
+WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 export const CreateUpdateBlockInline: React.FC<Props> = ({
   handleClose,
   data,
+  handleAiAssistance,
   setIsSyncing,
   focus,
-  setGptAssistantModal,
 }) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+  const [gptAssistantModal, setGptAssistantModal] = useState(false);
+
+  const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -94,6 +107,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
             (prevData) => [...(prevData as IPageBlock[]), res],
             false
           );
+          editorRef.current?.clearEditor();
         })
         .catch(() => {
           setToastAlert({
@@ -132,6 +146,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         })
         .then((res) => {
           mutate(PAGE_BLOCKS_LIST(pageId as string));
+          editorRef.current?.setEditorValue(res.description_html);
           if (data.issue && data.sync)
             issuesService
               .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
@@ -169,6 +184,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         else {
           setValue("description", {});
           setValue("description_html", `${watch("description_html") ?? ""}<p>${res.response}</p>`);
+          editorRef.current?.setEditorValue(watch("description_html") ?? "");
         }
       })
       .catch((err) => {
@@ -197,8 +213,14 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
     reset({
       ...defaultValues,
       name: data.name,
-      description: data.description,
-      description_html: data.description_html,
+      description:
+        !data.description || data.description === ""
+          ? {
+              type: "doc",
+              content: [{ type: "paragraph" }],
+            }
+          : data.description,
+      description_html: data.description_html ?? "<p></p>",
     });
   }, [reset, data, focus, setFocus]);
 
@@ -230,87 +252,133 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   }, [createPageBlock, updatePageBlock, data, handleSubmit]);
 
   return (
-    <form
-      className="divide-y divide-brand-base rounded-[10px] border border-brand-base shadow"
-      onSubmit={data ? handleSubmit(updatePageBlock) : handleSubmit(createPageBlock)}
-    >
-      <div className="pt-2">
-        <div className="flex justify-between">
-          <Input
-            id="name"
-            name="name"
-            placeholder="Title"
-            register={register}
-            className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-lg font-medium"
-            autoComplete="off"
-            maxLength={255}
-          />
-        </div>
-        <div className="page-block-section relative -mt-2 text-brand-secondary">
-          <Controller
-            name="description"
-            control={control}
-            render={({ field: { value } }) => (
-              <RemirrorRichTextEditor
-                value={
-                  !value || (typeof value === "object" && Object.keys(value).length === 0)
-                    ? watch("description_html")
-                    : value
-                }
-                onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                placeholder="Write something..."
-                customClassName="text-sm"
-                noBorder
-                borderOnFocus={false}
-              />
-            )}
-          />
-          <div className="m-2 mt-6 flex">
-            <button
-              type="button"
-              className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-1 ${
-                iAmFeelingLucky ? "cursor-wait bg-brand-surface-1" : ""
-              }`}
-              onClick={handleAutoGenerateDescription}
-              disabled={iAmFeelingLucky}
-            >
-              {iAmFeelingLucky ? (
-                "Generating response..."
-              ) : (
-                <>
-                  <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
-                </>
-              )}
-            </button>
-            {data && (
+    <div className="relative">
+      <form
+        className="divide-y divide-brand-base rounded border border-brand-base shadow"
+        onSubmit={data ? handleSubmit(updatePageBlock) : handleSubmit(createPageBlock)}
+      >
+        <div className="pt-2">
+          <div className="flex justify-between">
+            <TextArea
+              id="name"
+              name="name"
+              placeholder="Title"
+              register={register}
+              className="min-h-10 font medium block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base"
+              autoComplete="off"
+              maxLength={255}
+            />
+          </div>
+          <div className="page-block-section relative -mt-2 text-brand-secondary">
+            <Controller
+              name="description"
+              control={control}
+              render={({ field: { value } }) => {
+                if (!data)
+                  return (
+                    <WrappedRemirrorRichTextEditor
+                      value={{
+                        type: "doc",
+                        content: [{ type: "paragraph" }],
+                      }}
+                      onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                      onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                      placeholder="Write something..."
+                      customClassName="text-sm"
+                      noBorder
+                      borderOnFocus={false}
+                      ref={editorRef}
+                    />
+                  );
+                else if (!value || !watch("description_html"))
+                  return (
+                    <div className="h-32 w-full flex items-center justify-center text-brand-secondary text-sm" />
+                  );
+
+                return (
+                  <WrappedRemirrorRichTextEditor
+                    value={
+                      value && value !== "" && Object.keys(value).length > 0
+                        ? value
+                        : watch("description_html") && watch("description_html") !== ""
+                        ? watch("description_html")
+                        : { type: "doc", content: [{ type: "paragraph" }] }
+                    }
+                    onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                    onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                    placeholder="Write something..."
+                    customClassName="text-sm"
+                    noBorder
+                    borderOnFocus={false}
+                    ref={editorRef}
+                  />
+                );
+              }}
+            />
+            <div className="m-2 mt-6 flex">
               <button
                 type="button"
-                className="ml-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-1"
-                onClick={() => {
-                  onClose();
-                  setGptAssistantModal();
-                }}
+                className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-2 ${
+                  iAmFeelingLucky ? "cursor-wait bg-brand-surface-1" : ""
+                }`}
+                onClick={handleAutoGenerateDescription}
+                disabled={iAmFeelingLucky}
+              >
+                {iAmFeelingLucky ? (
+                  "Generating response..."
+                ) : (
+                  <>
+                    <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                className="ml-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-2"
+                onClick={() => setGptAssistantModal(true)}
               >
                 <SparklesIcon className="h-4 w-4" />
                 AI
               </button>
-            )}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex items-center justify-end gap-2 p-4">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? "Updating..."
-              : "Update block"
-            : isSubmitting
-            ? "Adding..."
-            : "Add block"}
-        </PrimaryButton>
-      </div>
-    </form>
+        <div className="flex items-center justify-end gap-2 p-4">
+          <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+          <PrimaryButton type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
+            {data
+              ? isSubmitting
+                ? "Updating..."
+                : "Update block"
+              : isSubmitting
+              ? "Adding..."
+              : "Add block"}
+          </PrimaryButton>
+        </div>
+      </form>
+      <GptAssistantModal
+        block={data ? data : undefined}
+        isOpen={gptAssistantModal}
+        handleClose={() => setGptAssistantModal(false)}
+        inset="top-8 left-0"
+        content={watch("description_html")}
+        htmlContent={watch("description_html")}
+        onResponse={(response) => {
+          if (data && handleAiAssistance) {
+            handleAiAssistance(response);
+            editorRef.current?.setEditorValue(
+              `${watch("description_html")}<p>${response}</p>` ?? ""
+            );
+          } else {
+            setValue("description", {});
+            setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
+
+            editorRef.current?.setEditorValue(watch("description_html") ?? "");
+          }
+        }}
+        projectId={projectId?.toString() ?? ""}
+      />
+    </div>
   );
 };

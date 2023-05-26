@@ -96,12 +96,8 @@ from plane.api.views import (
     CycleViewSet,
     CycleIssueViewSet,
     CycleDateCheckEndpoint,
-    CurrentUpcomingCyclesEndpoint,
-    CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
-    DraftCyclesEndpoint,
     TransferCycleIssueEndpoint,
-    InCompleteCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -115,10 +111,6 @@ from plane.api.views import (
     PageBlockViewSet,
     PageFavoriteViewSet,
     CreateIssueFromPageBlockEndpoint,
-    RecentPagesEndpoint,
-    FavoritePagesEndpoint,
-    MyPagesEndpoint,
-    CreatedbyOtherPagesEndpoint,
     ## End Pages
     # Api Tokens
     ApiTokenEndpoint,
@@ -148,6 +140,13 @@ from plane.api.views import (
     # Release Notes
     ReleaseNotesEndpoint,
     ## End Release Notes
+    # Analytics
+    AnalyticsEndpoint,
+    AnalyticViewViewset,
+    SavedAnalyticEndpoint,
+    ExportAnalyticsEndpoint,
+    DefaultAnalyticsEndpoint,
+    ## End Analytics
 )
 
 
@@ -308,7 +307,6 @@ urlpatterns = [
         "workspaces/<str:slug>/members/<uuid:pk>/",
         WorkSpaceMemberViewSet.as_view(
             {
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
                 "get": "retrieve",
@@ -418,7 +416,6 @@ urlpatterns = [
         ProjectMemberViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
@@ -660,21 +657,6 @@ urlpatterns = [
         name="project-cycle",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/current-upcoming-cycles/",
-        CurrentUpcomingCyclesEndpoint.as_view(),
-        name="project-cycle-upcoming",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/completed-cycles/",
-        CompletedCyclesEndpoint.as_view(),
-        name="project-cycle-completed",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/draft-cycles/",
-        DraftCyclesEndpoint.as_view(),
-        name="project-cycle-draft",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-cycles/",
         CycleFavoriteViewSet.as_view(
             {
@@ -696,11 +678,6 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
         TransferCycleIssueEndpoint.as_view(),
-        name="transfer-issues",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/incomplete-cycles/",
-        InCompleteCyclesEndpoint.as_view(),
         name="transfer-issues",
     ),
     ## End Cycles
@@ -1072,26 +1049,6 @@ urlpatterns = [
         CreateIssueFromPageBlockEndpoint.as_view(),
         name="page-block-issues",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/recent-pages/",
-        RecentPagesEndpoint.as_view(),
-        name="recent-pages",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/favorite-pages/",
-        FavoritePagesEndpoint.as_view(),
-        name="recent-pages",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/my-pages/",
-        MyPagesEndpoint.as_view(),
-        name="user-pages",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/created-by-other-pages/",
-        CreatedbyOtherPagesEndpoint.as_view(),
-        name="created-by-other-pages",
-    ),
     ## End Pages
     # API Tokens
     path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
@@ -1285,4 +1242,38 @@ urlpatterns = [
         name="release-notes",
     ),
     ## End Release Notes
+    # Analytics
+    path(
+        "workspaces/<str:slug>/analytics/",
+        AnalyticsEndpoint.as_view(),
+        name="plane-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/analytic-view/",
+        AnalyticViewViewset.as_view({"get": "list", "post": "create"}),
+        name="analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
+        AnalyticViewViewset.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/saved-analytic-view/<uuid:analytic_id>/",
+        SavedAnalyticEndpoint.as_view(),
+        name="saved-analytic-view",
+    ),
+    path(
+        "workspaces/<str:slug>/export-analytics/",
+        ExportAnalyticsEndpoint.as_view(),
+        name="export-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/default-analytics/",
+        DefaultAnalyticsEndpoint.as_view(),
+        name="default-analytics",
+    ),
+    ## End Analytics
 ]

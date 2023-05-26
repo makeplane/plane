@@ -9,24 +9,38 @@ import type {
 } from "./";
 
 export interface IProject {
-  cover_image: string | null;
   created_at: Date;
   created_by: string;
+  cover_image: string | null;
   cycle_view: boolean;
-  issue_views_view: boolean;
-  module_view: boolean;
-  page_view: boolean;
   default_assignee: IUser | string | null;
   description: string;
+  emoji: string | null;
+  emoji_and_icon:
+    | string
+    | {
+        name: string;
+        color: string;
+      }
+    | null;
   estimate: string | null;
-  icon: string;
+  icon_prop: {
+    name: string;
+    color: string;
+  } | null;
   id: string;
   identifier: string;
   is_favorite: boolean;
+  issue_views_view: boolean;
+  module_view: boolean;
   name: string;
   network: number;
+  page_view: boolean;
   project_lead: IUser | string | null;
   slug: string;
+  total_cycles: number;
+  total_members: number;
+  total_modules: number;
   updated_at: Date;
   updated_by: string;
   workspace: IWorkspace | string;
@@ -55,10 +69,12 @@ type ProjectViewTheme = {
   issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
+  calendarDateRange: string;
   filters: IIssueFilterOptions;
 };
 
 export interface IProjectMember {
+  id: string;
   member: IUserLite;
   project: IProject;
   workspace: IWorkspace;

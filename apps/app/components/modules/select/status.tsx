@@ -43,7 +43,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
               />
             )}
             {MODULE_STATUS.find((s) => s.value === value)?.label ?? (
-              <span className="text-brand-secondary">Status</span>
+              <span className={`${error ? "text-red-500" : "text-brand-secondary"}`}>Status</span>
             )}
           </div>
         }

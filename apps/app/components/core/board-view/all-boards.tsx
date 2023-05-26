@@ -17,7 +17,7 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
-  removeIssue: ((bridgeId: string) => void) | null;
+  removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
   userAuth: UserAuth;
 };
@@ -44,7 +44,7 @@ export const AllBoards: React.FC<Props> = ({
   return (
     <>
       {groupedByIssues ? (
-        <div className="horizontal-scroll-enable flex h-[calc(100vh-140px)] gap-x-4">
+        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8">
           {Object.keys(groupedByIssues).map((singleGroup, index) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;

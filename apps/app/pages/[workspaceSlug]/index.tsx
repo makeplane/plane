@@ -15,6 +15,7 @@ import {
   IssuesPieChart,
   IssuesStats,
 } from "components/workspace";
+import { ProductUpdatesModal } from "components/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -22,6 +23,7 @@ import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 
 const WorkspacePage: NextPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -39,19 +41,23 @@ const WorkspacePage: NextPage = () => {
 
   return (
     <WorkspaceAuthorizationLayout noHeader>
-      <div className="h-full w-full">
+      <ProductUpdatesModal
+        isOpen={isProductUpdatesModalOpen}
+        setIsOpen={setIsProductUpdatesModalOpen}
+      />
+      <div className="p-8">
         <div className="flex flex-col gap-8">
-          <div
-            className="text-brand-muted-1 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg bg-brand-base px-8 py-6 md:flex-row md:items-center md:py-3"
-            // style={{ background: "linear-gradient(90deg, #8e2de2 0%, #4a00e0 100%)" }}
-          >
+          <div className="text-brand-muted-1 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg border border-brand-base bg-brand-base px-8 py-6 md:flex-row md:items-center md:py-3">
             <p className="font-semibold">
               Plane is open source, support us by starring us on GitHub.
             </p>
             <div className="flex items-center gap-2">
-              {/* <a href="#" target="_blank" rel="noopener noreferrer">
-                View roadmap
-              </a> */}
+              <button
+                onClick={() => setIsProductUpdatesModalOpen(true)}
+                className="rounded-md border-2 border-brand-base px-3 py-1.5 text-sm font-medium duration-300"
+              >
+                {`What's New?`}
+              </button>
               <a
                 href="https://github.com/makeplane/plane"
                 target="_blank"
