@@ -80,7 +80,8 @@ const IssueDetailsPage: NextPage = () => {
 
       mutate(
         ISSUE_DETAILS(issueId as string),
-        (prevData: IIssue) => ({
+        // TODO:check-any (prevData: IIssue) => ({
+        (prevData: any) => ({
           ...prevData,
           ...formData,
         }),

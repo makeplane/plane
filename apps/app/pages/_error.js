@@ -44,7 +44,7 @@ const CustomErrorComponent = () => {
           message: "Failed to sign out. Please try again.",
         })
       )
-      .finally(() => router.push("/signin"));
+      .finally(() => router.push("/"));
   };
 
   return (

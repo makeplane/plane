@@ -31,7 +31,6 @@ export default function useUser({ redirectTo = "", redirectIfFound = false, opti
       // If redirectIfFound is also set, redirect if the user was found
       (redirectIfFound && user)
     ) {
-      console.log("this ");
       router.push(redirectTo);
       return;
       // const nextLocation = router.asPath.split("?next=")[1];
@@ -39,11 +38,11 @@ export default function useUser({ redirectTo = "", redirectIfFound = false, opti
       //   router.push(nextLocation as string);
       //   return;
       // } else {
-      //   router.push("/signin");
+      //   router.push("/");
       //   return;
       // }
     }
-  }, [user, redirectIfFound, redirectTo]);
+  }, [user, redirectIfFound, redirectTo, router]);
 
   return {
     user,

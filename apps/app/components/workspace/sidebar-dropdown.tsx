@@ -70,7 +70,7 @@ export const WorkspaceSidebarDropdown = () => {
     await authenticationService
       .signOut()
       .then(() => {
-        router.push("/signin");
+        router.push("/");
       })
       .catch(() =>
         setToastAlert({

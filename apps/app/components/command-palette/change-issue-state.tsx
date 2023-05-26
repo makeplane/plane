@@ -41,7 +41,8 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue }) =
 
       mutate(
         ISSUE_DETAILS(issueId as string),
-        (prevData: IIssue) => ({
+        // TODO:check-any (prevData: IIssue) => ({
+        async (prevData: any) => ({
           ...prevData,
           ...formData,
         }),

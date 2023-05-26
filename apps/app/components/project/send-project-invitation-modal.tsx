@@ -75,7 +75,8 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
         setIsOpen(false);
         mutate(
           PROJECT_INVITATIONS,
-          (prevData: any[]) => [{ ...formData, ...response }, ...(prevData ?? [])],
+          // TODO:check-any (prevData: any[]) => [{ ...formData, ...response }, ...(prevData ?? [])],
+          (prevData: any) => [{ ...formData, ...response }, ...(prevData ?? [])],
           false
         );
         setToastAlert({

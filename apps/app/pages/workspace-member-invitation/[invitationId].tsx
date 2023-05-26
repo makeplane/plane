@@ -49,7 +49,7 @@ const WorkspaceInvitation: NextPage = () => {
         if (email === user?.email) {
           router.push("/invitations");
         } else {
-          router.push("/signin");
+          router.push("/");
         }
       })
       .catch((err) => console.error(err));
@@ -108,7 +108,7 @@ const WorkspaceInvitation: NextPage = () => {
                 Icon={UserIcon}
                 title="Sign in to continue"
                 action={() => {
-                  router.push("/signin");
+                  router.push("/");
                 }}
               />
             ) : (

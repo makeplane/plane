@@ -9,8 +9,7 @@ axios.interceptors.response.use(
     if (unAuthorizedStatus.includes(status)) {
       Cookies.remove("refreshToken", { path: "/" });
       Cookies.remove("accessToken", { path: "/" });
-      console.log("window.location.href", window.location.pathname);
-      if (window.location.pathname != "/signin") window.location.href = "/signin";
+      if (window.location.pathname != "/") window.location.href = "/";
     }
     return Promise.reject(error);
   }

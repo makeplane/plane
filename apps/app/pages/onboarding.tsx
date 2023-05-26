@@ -9,6 +9,7 @@ import { mutate } from "swr";
 import userService from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
@@ -38,7 +39,10 @@ const Onboarding: NextPage = () => {
 
   const router = useRouter();
 
-  const { user } = useUser();
+  // const { user } = useUser();
+  const { user } = useUserAuth("onboarding");
+
+  console.log("user", user);
 
   return (
     <UserAuthorizationLayout>
