@@ -125,7 +125,57 @@ class PageViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+    def list(self, request, slug, project_id):
+        try:
+            queryset = self.get_queryset()
+            page_view = request.GET.get("page_view", False)
 
+            if not page_view:
+                return Response({"error": "Page View parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # All Pages
+            if page_view == "all":
+                return Response(PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
+
+            # Recent pages
+            if page_view == "recent":
+                current_time = date.today()
+                day_before = current_time - timedelta(days=1)
+                todays_pages = queryset.filter(updated_at__date=date.today())
+                yesterdays_pages = queryset.filter(updated_at__date=day_before)
+                earlier_this_week = queryset.filter(                    updated_at__date__range=(
+                        (timezone.now() - timedelta(days=7)),
+                        (timezone.now() - timedelta(days=2)),
+                    ))
+                return Response(
+                {
+                    "today": PageSerializer(todays_pages, many=True).data,
+                    "yesterday": PageSerializer(yesterdays_pages, many=True).data,
+                    "earlier_this_week": PageSerializer(earlier_this_week, many=True).data,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+            # Favorite Pages
+            if page_view == "favorite":
+                queryset = queryset.filter(is_favorite=True)
+                return Response(PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
+            
+            # My pages
+            if page_view == "created_by_me":
+                queryset = queryset.filter(owned_by=request.user)
+                return Response(PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
+
+            # Created by other Pages
+            if page_view == "created_by_other":
+                queryset = queryset.filter(~Q(owned_by=request.user),  access=0)
+                return Response(PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
+
+            return Response({"error": "No matching view found"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
 class PageBlockViewSet(BaseViewSet):
     serializer_class = PageBlockSerializer
@@ -263,252 +313,6 @@ class CreateIssueFromPageBlockEndpoint(BaseAPIView):
             return Response(
                 {"error": "Page Block does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class RecentPagesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        try:
-            subquery = PageFavorite.objects.filter(
-                user=request.user,
-                page_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            current_time = date.today()
-            day_before = current_time - timedelta(days=1)
-
-            todays_pages = (
-                Page.objects.filter(
-                    updated_at__date=date.today(),
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .filter(project__project_projectmember__member=request.user)
-                .annotate(is_favorite=Exists(subquery))
-                .filter(Q(owned_by=self.request.user) | Q(access=0))
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocks",
-                        queryset=PageBlock.objects.select_related(
-                            "page", "issue", "workspace", "project"
-                        ),
-                    )
-                )
-                .order_by("-is_favorite", "-updated_at")
-            )
-
-            yesterdays_pages = (
-                Page.objects.filter(
-                    updated_at__date=day_before,
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .filter(project__project_projectmember__member=request.user)
-                .annotate(is_favorite=Exists(subquery))
-                .filter(Q(owned_by=self.request.user) | Q(access=0))
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocks",
-                        queryset=PageBlock.objects.select_related(
-                            "page", "issue", "workspace", "project"
-                        ),
-                    )
-                )
-                .order_by("-is_favorite", "-updated_at")
-            )
-
-            earlier_this_week = (
-                Page.objects.filter(
-                    updated_at__date__range=(
-                        (timezone.now() - timedelta(days=7)),
-                        (timezone.now() - timedelta(days=2)),
-                    ),
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .annotate(is_favorite=Exists(subquery))
-                .filter(Q(owned_by=self.request.user) | Q(access=0))
-                .filter(project__project_projectmember__member=request.user)
-                .annotate(is_favorite=Exists(subquery))
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocks",
-                        queryset=PageBlock.objects.select_related(
-                            "page", "issue", "workspace", "project"
-                        ),
-                    )
-                )
-                .order_by("-is_favorite", "-updated_at")
-            )
-            todays_pages_serializer = PageSerializer(todays_pages, many=True)
-            yesterday_pages_serializer = PageSerializer(yesterdays_pages, many=True)
-            earlier_this_week_serializer = PageSerializer(earlier_this_week, many=True)
-            return Response(
-                {
-                    "today": todays_pages_serializer.data,
-                    "yesterday": yesterday_pages_serializer.data,
-                    "earlier_this_week": earlier_this_week_serializer.data,
-                },
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class FavoritePagesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        try:
-            subquery = PageFavorite.objects.filter(
-                user=request.user,
-                page_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            pages = (
-                Page.objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .annotate(is_favorite=Exists(subquery))
-                .filter(Q(owned_by=self.request.user) | Q(access=0))
-                .filter(project__project_projectmember__member=request.user)
-                .filter(is_favorite=True)
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocks",
-                        queryset=PageBlock.objects.select_related(
-                            "page", "issue", "workspace", "project"
-                        ),
-                    )
-                )
-                .order_by("name", "-is_favorite")
-            )
-
-            serializer = PageSerializer(pages, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class MyPagesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        try:
-            subquery = PageFavorite.objects.filter(
-                user=request.user,
-                page_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            pages = (
-                Page.objects.filter(
-                    workspace__slug=slug, project_id=project_id, owned_by=request.user
-                )
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .prefetch_related("labels")
-                .annotate(is_favorite=Exists(subquery))
-                .filter(Q(owned_by=self.request.user) | Q(access=0))
-                .filter(project__project_projectmember__member=request.user)
-                .prefetch_related(
-                    Prefetch(
-                        "blocks",
-                        queryset=PageBlock.objects.select_related(
-                            "page", "issue", "workspace", "project"
-                        ),
-                    )
-                )
-                .order_by("-is_favorite", "name")
-            )
-            serializer = PageSerializer(pages, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class CreatedbyOtherPagesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        try:
-            subquery = PageFavorite.objects.filter(
-                user=request.user,
-                page_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            pages = (
-                Page.objects.filter(
-                    ~Q(owned_by=request.user),
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    access=0,
-                )
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .prefetch_related("labels")
-                .annotate(is_favorite=Exists(subquery))
-                .prefetch_related(
-                    Prefetch(
-                        "blocks",
-                        queryset=PageBlock.objects.select_related(
-                            "page", "issue", "workspace", "project"
-                        ),
-                    )
-                )
-                .order_by("-is_favorite", "name")
-            )
-            serializer = PageSerializer(pages, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

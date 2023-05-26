@@ -13,7 +13,7 @@ from sentry_sdk import capture_exception
 def magic_link(email, key, token, current_site):
     try:
         realtivelink = f"/magic-sign-in/?password={token}&key={key}"
-        abs_url = "http://" + current_site + realtivelink
+        abs_url = current_site + realtivelink
 
         from_email_string = settings.EMAIL_FROM
 

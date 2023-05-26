@@ -16,6 +16,7 @@ const nextConfig = {
       "planefs.s3.amazonaws.com",
       "images.unsplash.com",
       "avatars.githubusercontent.com",
+      "localhost",
       ...extraImageDomains,
     ],
   },
