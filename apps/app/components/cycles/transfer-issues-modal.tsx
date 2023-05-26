@@ -59,7 +59,10 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_INCOMPLETE_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getIncompleteCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
+            cycle_view: "incomplete",
+          })
       : null
   );
 

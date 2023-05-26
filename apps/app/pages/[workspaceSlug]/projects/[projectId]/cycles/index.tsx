@@ -21,10 +21,11 @@ import { SelectCycleType } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import {
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
   CYCLE_DRAFT_LIST,
   PROJECT_DETAILS,
-  CYCLE_DETAILS,
+  CYCLE_UPCOMING_LIST,
+  CYCLE_CURRENT_LIST,
+  CYCLE_LIST,
 } from "constants/fetch-keys";
 
 const ProjectCycles: NextPage = () => {
@@ -44,21 +45,40 @@ const ProjectCycles: NextPage = () => {
   const { data: draftCycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_DRAFT_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cycleService.getDraftCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
+            cycle_view: "draft",
+          })
       : null
   );
 
-  const { data: currentAndUpcomingCycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string) : null,
+  const { data: currentCycle } = useSWR(
+    workspaceSlug && projectId ? CYCLE_CURRENT_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cycleService.getCurrentAndUpcomingCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
+            cycle_view: "current",
+          })
+      : null
+  );
+
+  const { data: upcomingCycles } = useSWR(
+    workspaceSlug && projectId ? CYCLE_UPCOMING_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () =>
+          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
+            cycle_view: "upcoming",
+          })
       : null
   );
 
   const { data: cyclesCompleteList } = useSWR(
-    workspaceSlug && projectId ? CYCLE_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cycleService.getCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
+            cycle_view: "all",
+          })
       : null
   );
 
@@ -121,7 +141,8 @@ const ProjectCycles: NextPage = () => {
           setSelectedCycle={setSelectedCycle}
           setCreateUpdateCycleModal={setCreateUpdateCycleModal}
           cyclesCompleteList={cyclesCompleteList}
-          currentAndUpcomingCycles={currentAndUpcomingCycles}
+          currentCycle={currentCycle}
+          upcomingCycles={upcomingCycles}
           draftCycles={draftCycles}
         />
       </div>

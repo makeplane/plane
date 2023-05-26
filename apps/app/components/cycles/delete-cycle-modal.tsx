@@ -14,12 +14,7 @@ import { DangerButton, SecondaryButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type {
-  CompletedCyclesResponse,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-  ICycle,
-} from "types";
+import type { ICycle } from "types";
 type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,10 +23,10 @@ type TConfirmCycleDeletionProps = {
 // fetch-keys
 import {
   CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  CYCLE_DETAILS,
+  CYCLE_CURRENT_LIST,
   CYCLE_DRAFT_LIST,
   CYCLE_LIST,
+  CYCLE_UPCOMING_LIST,
 } from "constants/fetch-keys";
 import { getDateRangeStatus } from "helpers/date-time.helper";
 
@@ -60,63 +55,28 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
     await cycleService
       .deleteCycle(workspaceSlug as string, data.project, data.id)
       .then(() => {
-        switch (getDateRangeStatus(data.start_date, data.end_date)) {
-          case "completed":
-            mutate<CompletedCyclesResponse>(
-              CYCLE_COMPLETE_LIST(projectId as string),
-              (prevData) => {
-                if (!prevData) return;
+        const cycleType = getDateRangeStatus(data.start_date, data.end_date);
+        const fetchKey =
+          cycleType === "current"
+            ? CYCLE_CURRENT_LIST(projectId as string)
+            : cycleType === "upcoming"
+            ? CYCLE_UPCOMING_LIST(projectId as string)
+            : cycleType === "completed"
+            ? CYCLE_COMPLETE_LIST(projectId as string)
+            : CYCLE_DRAFT_LIST(projectId as string);
 
-                return {
-                  completed_cycles: prevData.completed_cycles?.filter(
-                    (cycle) => cycle.id !== data?.id
-                  ),
-                };
-              },
-              false
-            );
-            break;
-          case "current":
-            mutate<CurrentAndUpcomingCyclesResponse>(
-              CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-              (prevData) => {
-                if (!prevData) return;
-                return {
-                  current_cycle: prevData.current_cycle?.filter((c) => c.id !== data?.id),
-                  upcoming_cycle: prevData.upcoming_cycle,
-                };
-              },
-              false
-            );
-            break;
-          case "upcoming":
-            mutate<CurrentAndUpcomingCyclesResponse>(
-              CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-              (prevData) => {
-                if (!prevData) return;
+        mutate<ICycle[]>(
+          fetchKey,
+          (prevData) => {
+            if (!prevData) return;
 
-                return {
-                  current_cycle: prevData.current_cycle,
-                  upcoming_cycle: prevData.upcoming_cycle?.filter((c) => c.id !== data?.id),
-                };
-              },
-              false
-            );
-            break;
-          default:
-            mutate<DraftCyclesResponse>(
-              CYCLE_DRAFT_LIST(projectId as string),
-              (prevData) => {
-                if (!prevData) return;
-                return {
-                  draft_cycles: prevData.draft_cycles?.filter((cycle) => cycle.id !== data?.id),
-                };
-              },
-              false
-            );
-        }
+            return prevData.filter((cycle) => cycle.id !== data?.id);
+          },
+          false
+        );
+
         mutate(
-          CYCLE_DETAILS(projectId as string),
+          CYCLE_LIST(projectId as string),
           (prevData: any) => {
             if (!prevData) return;
             return prevData.filter((cycle: any) => cycle.id !== data?.id);
