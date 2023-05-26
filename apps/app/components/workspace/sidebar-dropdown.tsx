@@ -117,7 +117,7 @@ export const WorkspaceSidebarDropdown = () => {
             <Link href={`/${workspaceSlug}/me/profile`}>
               <a>
                 <div className="flex flex-grow justify-end">
-                  <Avatar user={user} height="32px" width="32px" fontSize="14px" />
+                  <Avatar user={user?.user} height="32px" width="32px" fontSize="14px" />
                 </div>
               </a>
             </Link>

@@ -16,7 +16,7 @@ type Props = {
 export const OnboardingCard: React.FC<Props> = ({ data, gradient = false }) => (
   <div
     className={`flex flex-col items-center justify-center gap-7 rounded-[10px] px-14 pt-10 text-center ${
-      gradient ? "bg-gradient-to-b from-[#2C8DFF]/50 via-brand-base to-transparent" : ""
+      gradient ? "bg-gradient-to-b from-[#C1DDFF] via-brand-base to-transparent" : ""
     }`}
   >
     <div className="h-44 w-full">

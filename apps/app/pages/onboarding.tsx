@@ -8,7 +8,6 @@ import { mutate } from "swr";
 // services
 import userService from "services/user.service";
 // hooks
-import useUser from "hooks/use-user";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import DefaultLayout from "layouts/default-layout";
@@ -39,7 +38,6 @@ const Onboarding: NextPage = () => {
 
   const router = useRouter();
 
-  // const { user } = useUser();
   const { user } = useUserAuth("onboarding");
 
   console.log("user", user);
@@ -47,14 +45,14 @@ const Onboarding: NextPage = () => {
   return (
     <UserAuthorizationLayout>
       <DefaultLayout>
-        <div className="grid h-full place-items-center p-5">
+        <div className="relative grid h-full place-items-center p-5">
           {step <= 3 ? (
-            <div className="w-full">
-              <div className="mb-8 flex items-center justify-center text-center">
+            <div className="h-full flex flex-col justify-center w-full py-4">
+              <div className="mb-7 flex items-center justify-center text-center">
                 <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
               </div>
               {step === 1 ? (
-                <UserDetails user={user} setStep={setStep} setUserRole={setUserRole} />
+                <UserDetails user={user?.user} setStep={setStep} setUserRole={setUserRole} />
               ) : step === 2 ? (
                 <Workspace setStep={setStep} setWorkspace={setWorkspace} />
               ) : (
@@ -63,7 +61,7 @@ const Onboarding: NextPage = () => {
             </div>
           ) : (
             <div className="flex w-full max-w-2xl flex-col gap-12">
-              <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-brand-base pb-10 text-center shadow-md">
+              <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-brand-base pb-7 text-center shadow-md">
                 {step === 4 ? (
                   <OnboardingCard data={ONBOARDING_CARDS.welcome} />
                 ) : step === 5 ? (
@@ -114,6 +112,10 @@ const Onboarding: NextPage = () => {
               </div>
             </div>
           )}
+          <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
+            <span className="text-xs text-brand-secondary">Logged in:</span>
+            <span className="text-sm text-brand-base">{user?.user?.email}</span>
+          </div>
         </div>
       </DefaultLayout>
     </UserAuthorizationLayout>

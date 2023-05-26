@@ -109,3 +109,12 @@ export const generateRandomColor = (string: string): string => {
 
   return randomColor;
 };
+
+export const getFirstCharacters = (str: string) => {
+  const words = str.trim().split(" ");
+  if (words.length === 1) {
+    return words[0].charAt(0);
+  } else {
+    return words[0].charAt(0) + words[1].charAt(0);
+  }
+};
