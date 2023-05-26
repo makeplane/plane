@@ -124,7 +124,7 @@ services:
             context: ./nginx
             dockerfile: Dockerfile
           ports:
-            - 80:80
+            - ${NGINX_PORT}:80
           depends_on:
             - plane-web
             - plane-api
