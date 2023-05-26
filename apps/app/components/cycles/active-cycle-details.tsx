@@ -40,20 +40,14 @@ import {
 } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import {
-  CompletedCyclesResponse,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-  ICycle,
-  IIssue,
-} from "types";
+import { ICycle, IIssue } from "types";
 // fetch-keys
 import {
   CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  CYCLE_DETAILS,
+  CYCLE_CURRENT_LIST,
   CYCLE_DRAFT_LIST,
   CYCLE_ISSUES,
+  CYCLE_LIST,
 } from "constants/fetch-keys";
 
 type TSingleStatProps = {
@@ -111,51 +105,18 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId || !cycle) return;
 
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
+    mutate<ICycle[]>(
+      CYCLE_CURRENT_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((c) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? true : c.is_favorite,
+        })),
+      false
+    );
+
     mutate(
-      CYCLE_DETAILS(projectId as string),
+      CYCLE_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,
@@ -180,51 +141,18 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId || !cycle) return;
 
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
+    mutate<ICycle[]>(
+      CYCLE_CURRENT_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((c) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? false : c.is_favorite,
+        })),
+      false
+    );
+
     mutate(
-      CYCLE_DETAILS(projectId as string),
+      CYCLE_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,

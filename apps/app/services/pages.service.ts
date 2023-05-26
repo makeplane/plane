@@ -83,42 +83,26 @@ class PageServices extends APIService {
       });
   }
 
+  async getPagesWithParams(
+    workspaceSlug: string,
+    projectId: string,
+    queries: any
+  ): Promise<IPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, {
+      params: queries,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getRecentPages(workspaceSlug: string, projectId: string): Promise<RecentPagesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/recent-pages/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getAllPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getFavoritePages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/favorite-pages/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getMyPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/my-pages/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getOtherPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/created-by-other-pages/`
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, {
+      params: {
+        page_view: "recent",
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
