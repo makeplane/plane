@@ -7,7 +7,7 @@ export LC_CTYPE=C
 
 
 # Generate the NEXT_PUBLIC_API_BASE_URL with given IP
-echo -e "\nNEXT_PUBLIC_API_BASE_URL=http://$1"  >> ./.env
+echo -e "\nNEXT_PUBLIC_API_BASE_URL=$1"  >> ./.env
 
 # Generate the SECRET_KEY that will be used by django
 echo -e "SECRET_KEY=\"$(tr -dc 'a-z0-9!@#$%^&*(-_=+)' < /dev/urandom | head -c50)\""  >> ./.env

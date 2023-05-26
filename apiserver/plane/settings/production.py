@@ -90,7 +90,7 @@ if DOCKERIZED:
     # The name of the bucket to store files in.
     AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
     # The full URL to the S3 endpoint. Leave blank to use the default region URL.
-    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "http://minio:9000")
+    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "http://plane-minio:9000")
     # Default permissions
     AWS_DEFAULT_ACL = "public-read"
     AWS_QUERYSTRING_AUTH = False
@@ -223,7 +223,7 @@ else:
     }
 
 
-WEB_URL = os.environ.get("WEB_URL")
+WEB_URL = os.environ.get("WEB_URL", "https://app.plane.so")
 
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 

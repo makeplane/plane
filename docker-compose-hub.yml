@@ -3,7 +3,7 @@ version: "3.8"
 services:
         plane-web:
                 container_name: planefrontend
-                image: makeplane/plane-frontend:0.6
+                image: makeplane/plane-frontend:latest
                 restart: always
                 command: /usr/local/bin/start.sh
                 environment:
@@ -19,12 +19,12 @@ services:
 
         plane-api:
                 container_name: planebackend
-                image: makeplane/plane-backend:0.6
+                image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/takeoff
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
-                        DATABASE_URL: postgres://plane:xyzzyspoon@plane-db:5432/plane
+                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@plane-db:5432/plane
                         REDIS_URL: redis://plane-redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
@@ -33,7 +33,7 @@ services:
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                         AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-                        WEB_URL: localhost/
+                        WEB_URL: ${WEB_URL}
                         GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
                         DISABLE_COLLECTSTATIC: 1
                         DOCKERIZED: 1
@@ -48,12 +48,12 @@ services:
 
         plane-worker:
                 container_name: planerqworker
-                image: makeplane/plane-worker:0.6
+                image: makeplane/plane-worker:latest
                 restart: always
                 command: ./bin/worker
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
-                        DATABASE_URL: postgres://plane:xyzzyspoon@plane-db:5432/plane
+                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@plane-db:5432/plane
                         REDIS_URL: redis://plane-redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
@@ -62,7 +62,7 @@ services:
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                         AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-                        WEB_URL: localhost/
+                        WEB_URL: ${WEB_URL}
                         GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
                         DISABLE_COLLECTSTATIC: 1
                         DOCKERIZED: 1
@@ -80,9 +80,9 @@ services:
                 restart: always
                 command: postgres -c 'max_connections=1000'
                 environment:
-                        POSTGRES_USER: plane
+                        POSTGRES_USER: ${PGUSER}
                         POSTGRES_DB: plane
-                        POSTGRES_PASSWORD: xyzzyspoon
+                        POSTGRES_PASSWORD: ${PGPASSWORD}
                 volumes:
                         - pgdata:/var/lib/postgresql/data
 
@@ -94,25 +94,30 @@ services:
                         - redisdata:/data
 
         plane-minio:
-            container_name: plane-minio
-            image: minio/minio
-            environment:
-              MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
-              MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
-            command: server /export --console-address ":9090"
+                container_name: plane-minio
+                image: minio/minio
+                volumes:
+                        - uploads:/export
+                environment:
+                  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+                  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+                command: server /export --console-address ":9090"
+                ports:
+                      - 9000:9000
 
         createbuckets:
-            image: minio/mc
-            depends_on:
-              - minio
-            entrypoint: >
-              /bin/sh -c "
-              /usr/bin/mc config host add plane-minio http://minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
-              /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME;
-              /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME;
-              exit 0;
-              "
+                image: minio/mc
+                depends_on:
+                  - plane-minio
+                entrypoint: >
+                  /bin/sh -c "
+                  /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
+                  /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME;
+                  /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME;
+                  exit 0;
+                  "
 
+# Comment this if you already have a reverse proxy running
         nginx:
           container_name: nginx
           build:
@@ -128,3 +133,4 @@ services:
 volumes:
         pgdata:
         redisdata:
+        uploads:
