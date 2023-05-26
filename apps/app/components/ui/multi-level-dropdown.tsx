@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 
 // components
-import { DueDateFilterModal } from "components/core/due-date-filter-modal";
+import { DueDateFilterModal } from "components/core/filters/due-date-filter-modal";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // icons

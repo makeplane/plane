@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 
 import { useRouter } from "next/router";
 
@@ -17,7 +17,6 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { DueDateFilterSelect } from "./due-date-filter-select";
-// fetch keys
 
 type Props = {
   isOpen: boolean;
@@ -40,41 +39,39 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
     defaultValues,
   });
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = (formData: any) => {
     const { range, date1, date2 } = formData;
+
     if (range === "range") {
       setFilters(
         {
           ...(filters ?? {}),
-          target_date: [`${renderDateFormat(date1)};after`, `${renderDateFormat(date2)};before`],
+          target_date: [`${renderDateFormat(date2)};before`, `${renderDateFormat(date1)};after`],
         },
         !Boolean(viewId)
       );
     } else {
       const filteredArray = filters?.target_date?.filter((item) => {
-        if (item?.includes(range)) {
-          return false;
-        }
+        if (item?.includes(range)) return false;
+
         return true;
       });
+
       const filterOne = filteredArray && filteredArray?.length > 0 ? filteredArray[0] : null;
-      if (filterOne !== null) {
+      if (filterOne !== null)
         setFilters(
           {
-            ...(filters ?? {}),
             target_date: [filterOne, `${renderDateFormat(date1)};${range}`],
           },
           !Boolean(viewId)
         );
-      } else {
+      else
         setFilters(
           {
-            ...(filters ?? {}),
             target_date: [`${renderDateFormat(date1)};${range}`],
           },
           !Boolean(viewId)
         );
-      }
     }
     handleClose();
   };
@@ -121,7 +118,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
                       onClick={handleClose}
                     />
                   </div>
-                  <div className="flex w-full justify-between">
+                  <div className="flex w-full justify-between gap-4">
                     <DatePicker
                       selected={watch("date1")}
                       onChange={(val) => {

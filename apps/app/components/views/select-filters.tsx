@@ -184,14 +184,12 @@ export const SelectFilters: React.FC<Props> = ({
           children: [
             ...(DUE_DATES?.map((option) => ({
               id: option.name,
-              label: (
-                option.name
-              ),
+              label: option.name,
               value: {
                 key: "target_date",
                 value: option.value,
               },
-              selected: filters?.target_date?.includes(option.name ?? "none"),
+              selected: false,
             })) ?? []),
           ],
         },

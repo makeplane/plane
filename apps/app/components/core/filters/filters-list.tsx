@@ -17,6 +17,7 @@ import stateService from "services/state.service";
 // types
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 import { IIssueFilterOptions } from "types";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
 export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
   const router = useRouter();
@@ -60,7 +61,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
               className="flex items-center gap-x-2 rounded-full border border-brand-base bg-brand-surface-2 px-2 py-1"
             >
               <span className="capitalize text-brand-secondary">
-                {key==="target_date" ? "Due Date" : replaceUnderscoreIfSnakeCase(key)}:
+                {key === "target_date" ? "Due Date" : replaceUnderscoreIfSnakeCase(key)}:
               </span>
               {filters[key as keyof IIssueFilterOptions] === null ||
               (filters[key as keyof IIssueFilterOptions]?.length ?? 0) <= 0 ? (
@@ -303,13 +304,18 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                     <div className="flex flex-wrap items-center gap-1">
                       {filters.target_date?.map((date: string) => {
                         if (filters.target_date.length <= 0) return null;
+
+                        const splitDate = date.split(";");
+
                         return (
                           <div
-                            className="inline-flex items-center gap-x-1 rounded-full border border-brand-base px-2 py-0.5"
                             key={date}
+                            className="inline-flex items-center gap-x-1 rounded-full border border-brand-base bg-brand-base px-1 py-0.5"
                           >
                             <div className="h-1.5 w-1.5 rounded-full" />
-                            <span>{date}</span>
+                            <span>
+                              {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
+                            </span>
                             <span
                               className="cursor-pointer"
                               onClick={() =>

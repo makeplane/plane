@@ -100,26 +100,36 @@ export const IssuesFilterView: React.FC = () => {
         onSelect={(option) => {
           const key = option.key as keyof typeof filters;
 
-          const valueExists = filters[key]?.includes(option.value);
+          if (key === "target_date") {
+            const beforeDate = option.value?.find((val: string[]) => val.includes("before"));
+            const afterDate = option.value?.find((val: string[]) => val.includes("after"));
 
-          if (valueExists) {
-            setFilters(
-              {
-                ...(filters ?? {}),
-                [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                  (val) => val !== option.value
-                ),
-              },
-              !Boolean(viewId)
-            );
+            const dates = [];
+            if (beforeDate) dates.push(beforeDate);
+            if (afterDate) dates.push(afterDate);
+
+            setFilters({
+              target_date: dates,
+            });
           } else {
-            setFilters(
-              {
-                ...(filters ?? {}),
-                [option.key]: [...((filters[key] ?? []) as any[]), option.value],
-              },
-              !Boolean(viewId)
-            );
+            const valueExists = filters[key]?.includes(option.value);
+
+            if (valueExists)
+              setFilters(
+                {
+                  [option.key]: ((filters[key] ?? []) as any[])?.filter(
+                    (val) => val !== option.value
+                  ),
+                },
+                !Boolean(viewId)
+              );
+            else
+              setFilters(
+                {
+                  [option.key]: [...((filters[key] ?? []) as any[]), option.value],
+                },
+                !Boolean(viewId)
+              );
           }
         }}
         direction="left"
