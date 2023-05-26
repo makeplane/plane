@@ -20,8 +20,7 @@ services:
                         NEXT_PUBLIC_ENABLE_SENTRY: "0"
                         NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
                         NEXT_PUBLIC_TRACK_EVENTS: "0"
-                ports:
-                        - 3000:3000
+
         plane-api:
                 container_name: planebackend
                 build:
@@ -51,8 +50,6 @@ services:
                 depends_on:
                         - plane-db
                         - plane-redis
-                ports:
-                        - 8000:8000
 
         plane-worker:
                 container_name: planebgworker
@@ -119,8 +116,7 @@ services:
                 environment:
                         MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
                         MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
-                ports:
-                        - 9000:9000
+
         createbuckets:
                 image: minio/mc
                 entrypoint: >
