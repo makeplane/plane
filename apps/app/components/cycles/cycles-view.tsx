@@ -178,7 +178,7 @@ export const CyclesView: React.FC<Props> = ({
             )}
           </Tab.Panel>
           {cyclesView !== "gantt_chart" && (
-            <Tab.Panel as="div" className="mt-7 space-y-5">
+            <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
               {currentCycle?.[0] ? (
                 <ActiveCycleDetails cycle={currentCycle?.[0]} />
               ) : (
@@ -212,7 +212,7 @@ export const CyclesView: React.FC<Props> = ({
               <CyclesListGanttChartView cycles={upcomingCycles ?? []} />
             )}
           </Tab.Panel>
-          <Tab.Panel as="div" className="mt-7 space-y-5">
+          <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
             <CompletedCycles
               cycleView={cyclesView ?? "list"}
               setCreateUpdateCycleModal={setCreateUpdateCycleModal}
@@ -220,7 +220,7 @@ export const CyclesView: React.FC<Props> = ({
             />
           </Tab.Panel>
           {cyclesView !== "gantt_chart" && (
-            <Tab.Panel as="div" className="mt-7 space-y-5">
+            <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
               {cyclesView === "list" && (
                 <AllCyclesList
                   cycles={draftCycles}

@@ -250,7 +250,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
 
   return (
     <div>
-      <div className="flex flex-col border-b border-brand-base text-xs  hover:bg-brand-surface-2">
+      <div className="flex flex-col text-xs hover:bg-brand-surface-2">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">

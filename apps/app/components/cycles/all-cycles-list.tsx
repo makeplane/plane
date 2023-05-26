@@ -49,7 +49,7 @@ export const AllCyclesList: React.FC<TCycleStatsViewProps> = ({
       />
       {cycles ? (
         cycles.length > 0 ? (
-          <div>
+          <div className="divide-y divide-brand-base">
             {cycles.map((cycle) => (
               <div className="hover:bg-brand-surface-2">
                 <div className="flex flex-col border-brand-base">
