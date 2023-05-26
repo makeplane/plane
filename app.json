@@ -37,6 +37,14 @@
       "description": "Email host to send emails from",
       "value": ""
     },
+    "EMAIL_FROM": {
+      "description": "Email Sender",
+      "value": ""
+    },
+    "EMAIL_PORT": {
+      "description": "The default Email PORT to use",
+      "value": "587"
+    },
     "AWS_REGION": {
       "description": "AWS Region to use for S3",
       "value": "false"
@@ -49,28 +57,20 @@
       "description": "AWS Secret Access Key to use for S3",
       "value": ""
     },
-    "SENTRY_DSN": {
-      "description": "",
-      "value": ""
-    },
     "AWS_S3_BUCKET_NAME": {
       "description": "AWS Bucket Name to use for S3",
       "value": ""
     },
+    "SENTRY_DSN": {
+      "description": "",
+      "value": ""
+    },
     "WEB_URL": {
-      "description": "Web URL for Plane",
+      "description": "Web URL for Plane this will be used for redirections in the emails",
       "value": ""
     },
     "GITHUB_CLIENT_SECRET": {
       "description": "Github Client Secret",
-      "value": ""
-    },
-    "NEXT_PUBLIC_GITHUB_ID": {
-      "description": "Next Public Github ID",
-      "value": ""
-    },
-    "NEXT_PUBLIC_GOOGLE_CLIENTID": {
-      "description": "Next Public Google Client ID",
       "value": ""
     },
     "NEXT_PUBLIC_API_BASE_URL": {

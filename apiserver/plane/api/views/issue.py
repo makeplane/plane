@@ -4,12 +4,24 @@ import random
 from itertools import chain
 
 # Django imports
-from django.db.models import Prefetch, OuterRef, Func, F, Q, Count
+from django.db.models import (
+    Prefetch,
+    OuterRef,
+    Func,
+    F,
+    Q,
+    Count,
+    Case,
+    Value,
+    CharField,
+    When,
+)
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db.models.functions import Coalesce
 from django.conf import settings
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -144,9 +156,13 @@ class IssueViewSet(BaseViewSet):
             filters = issue_filters(request.query_params, "GET")
             show_sub_issues = request.GET.get("show_sub_issues", "true")
 
+            # Custom ordering for priority
+            priority_order = ["urgent", "high", "medium", "low", None]
+
+            order_by_param = request.GET.get("order_by", "-created_at")
+
             issue_queryset = (
                 self.get_queryset()
-                .order_by(request.GET.get("order_by", "created_at"))
                 .filter(**filters)
                 .annotate(cycle_id=F("issue_cycle__id"))
                 .annotate(module_id=F("issue_module__id"))
@@ -165,6 +181,19 @@ class IssueViewSet(BaseViewSet):
                     .values("count")
                 )
             )
+
+            if order_by_param == "priority":
+                issue_queryset = issue_queryset.annotate(
+                    priority_order=Case(
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
+                        output_field=CharField(),
+                    )
+                ).order_by("priority_order")
+            else:
+                issue_queryset = issue_queryset.order_by(order_by_param)
 
             issue_queryset = (
                 issue_queryset
@@ -789,8 +818,13 @@ class IssueAttachmentEndpoint(BaseAPIView):
             if serializer.is_valid():
                 serializer.save(project_id=project_id, issue_id=issue_id)
                 response_data = serializer.data
-                if settings.DOCKERIZED and settings.AWS_S3_ENDPOINT_URL in response_data["asset"]:
-                    response_data["asset"] = response_data["asset"].replace(settings.AWS_S3_ENDPOINT_URL, settings.WEB_URL)
+                if (
+                    settings.DOCKERIZED
+                    and settings.AWS_S3_ENDPOINT_URL in response_data["asset"]
+                ):
+                    response_data["asset"] = response_data["asset"].replace(
+                        settings.AWS_S3_ENDPOINT_URL, settings.WEB_URL
+                    )
                 issue_activity.delay(
                     type="attachment.activity.created",
                     requested_data=None,

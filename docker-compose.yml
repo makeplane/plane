@@ -30,7 +30,7 @@ services:
                 command: ./bin/takeoff
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
-                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@plane-db:5432/plane
+                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
@@ -60,7 +60,7 @@ services:
                 command: ./bin/worker
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
-                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@plane-db:5432/plane
+                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
@@ -91,11 +91,9 @@ services:
                         - pgdata:/var/lib/postgresql/data
                 environment:
                         POSTGRES_USER: ${PGUSER}
-                        POSTGRES_DB: plane
+                        POSTGRES_DB: ${PGDATABASE}
                         POSTGRES_PASSWORD: ${PGPASSWORD}
                         PGDATA: /var/lib/postgresql/data
-                ports:
-                        - 5432:5432
 
         plane-redis:
                 container_name: redis
@@ -103,8 +101,6 @@ services:
                 restart: always
                 volumes:
                         - redisdata:/data
-                ports:
-                        - 6379:6379
 
         plane-minio:
                 container_name: plane-minio
