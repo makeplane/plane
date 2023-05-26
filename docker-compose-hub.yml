@@ -24,7 +24,7 @@ services:
                 command: ./bin/takeoff
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
-                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@plane-db:5432/plane
+                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://plane-redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
@@ -53,7 +53,7 @@ services:
                 command: ./bin/worker
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
-                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@plane-db:5432/plane
+                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://plane-redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
@@ -81,7 +81,7 @@ services:
                 command: postgres -c 'max_connections=1000'
                 environment:
                         POSTGRES_USER: ${PGUSER}
-                        POSTGRES_DB: plane
+                        POSTGRES_DB: ${PGDATABASE}
                         POSTGRES_PASSWORD: ${PGPASSWORD}
                 volumes:
                         - pgdata:/var/lib/postgresql/data
