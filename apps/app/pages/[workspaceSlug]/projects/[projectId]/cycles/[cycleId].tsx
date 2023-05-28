@@ -30,7 +30,7 @@ import { getDateRangeStatus } from "helpers/date-time.helper";
 // fetch-keys
 import {
   CYCLE_ISSUES,
-  CYCLE_LIST,
+  CYCLES_LIST,
   PROJECT_DETAILS,
   CYCLE_DETAILS,
   PROJECT_ISSUES_LIST,
@@ -54,7 +54,7 @@ const SingleCycle: React.FC = () => {
   );
 
   const { data: cycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
           cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, {

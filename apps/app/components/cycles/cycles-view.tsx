@@ -26,11 +26,11 @@ import { getDateRangeStatus } from "helpers/date-time.helper";
 import { ICycle } from "types";
 // fetch-keys
 import {
-  CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_LIST,
-  CYCLE_DRAFT_LIST,
-  CYCLE_LIST,
-  CYCLE_UPCOMING_LIST,
+  COMPLETED_CYCLES_LIST,
+  CURRENT_CYCLE_LIST,
+  CYCLES_LIST,
+  DRAFT_CYCLES_LIST,
+  UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -67,12 +67,12 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
 
     const fetchKey =
       cycleStatus === "current"
-        ? CYCLE_CURRENT_LIST(projectId as string)
+        ? CURRENT_CYCLE_LIST(projectId as string)
         : cycleStatus === "upcoming"
-        ? CYCLE_UPCOMING_LIST(projectId as string)
+        ? UPCOMING_CYCLES_LIST(projectId as string)
         : cycleStatus === "completed"
-        ? CYCLE_COMPLETE_LIST(projectId as string)
-        : CYCLE_DRAFT_LIST(projectId as string);
+        ? COMPLETED_CYCLES_LIST(projectId as string)
+        : DRAFT_CYCLES_LIST(projectId as string);
 
     mutate<ICycle[]>(
       fetchKey,
@@ -85,7 +85,7 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
     );
 
     mutate(
-      CYCLE_LIST(projectId as string),
+      CYCLES_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,
@@ -114,12 +114,12 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
 
     const fetchKey =
       cycleStatus === "current"
-        ? CYCLE_CURRENT_LIST(projectId as string)
+        ? CURRENT_CYCLE_LIST(projectId as string)
         : cycleStatus === "upcoming"
-        ? CYCLE_UPCOMING_LIST(projectId as string)
+        ? UPCOMING_CYCLES_LIST(projectId as string)
         : cycleStatus === "completed"
-        ? CYCLE_COMPLETE_LIST(projectId as string)
-        : CYCLE_DRAFT_LIST(projectId as string);
+        ? COMPLETED_CYCLES_LIST(projectId as string)
+        : DRAFT_CYCLES_LIST(projectId as string);
 
     mutate<ICycle[]>(
       fetchKey,
@@ -132,7 +132,7 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
     );
 
     mutate(
-      CYCLE_LIST(projectId as string),
+      CYCLES_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,

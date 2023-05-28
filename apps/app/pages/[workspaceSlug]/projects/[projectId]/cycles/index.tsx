@@ -23,17 +23,15 @@ import {
   UpcomingCyclesList,
 } from "components/cycles";
 // ui
-import { EmptyState, PrimaryButton } from "components/ui";
+import { PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ListBulletIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
-// images
-import emptyCycle from "public/empty-state/empty-cycle.svg";
 // types
 import { SelectCycleType } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, CYCLE_CURRENT_LIST } from "constants/fetch-keys";
+import { CURRENT_CYCLE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
 
@@ -72,7 +70,7 @@ const ProjectCycles: NextPage = () => {
   );
 
   const { data: currentCycle } = useSWR(
-    workspaceSlug && projectId ? CYCLE_CURRENT_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
           cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
@@ -207,12 +205,11 @@ const ProjectCycles: NextPage = () => {
                 {currentCycle?.[0] ? (
                   <ActiveCycleDetails cycle={currentCycle?.[0]} />
                 ) : (
-                  <EmptyState
-                    type="cycle"
-                    title="Create New Cycle"
-                    description="Sprint more effectively with Cycles by confining your project to a fixed amount of time. Create new cycle now."
-                    imgURL={emptyCycle}
-                  />
+                  <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
+                    <h3 className="text-base font-medium text-brand-base ">
+                      No active cycle is present.
+                    </h3>
+                  </div>
                 )}
               </Tab.Panel>
             )}

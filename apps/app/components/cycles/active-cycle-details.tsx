@@ -42,7 +42,7 @@ import { truncateText } from "helpers/string.helper";
 // types
 import { ICycle, IIssue } from "types";
 // fetch-keys
-import { CYCLE_CURRENT_LIST, CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
+import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -100,7 +100,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
     if (!workspaceSlug || !projectId || !cycle) return;
 
     mutate<ICycle[]>(
-      CYCLE_CURRENT_LIST(projectId as string),
+      CURRENT_CYCLE_LIST(projectId as string),
       (prevData) =>
         (prevData ?? []).map((c) => ({
           ...c,
@@ -110,7 +110,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
     );
 
     mutate(
-      CYCLE_LIST(projectId as string),
+      CYCLES_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,
@@ -136,7 +136,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
     if (!workspaceSlug || !projectId || !cycle) return;
 
     mutate<ICycle[]>(
-      CYCLE_CURRENT_LIST(projectId as string),
+      CURRENT_CYCLE_LIST(projectId as string),
       (prevData) =>
         (prevData ?? []).map((c) => ({
           ...c,
@@ -146,7 +146,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
     );
 
     mutate(
-      CYCLE_LIST(projectId as string),
+      CYCLES_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,

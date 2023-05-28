@@ -7,7 +7,7 @@ import cyclesService from "services/cycles.service";
 // components
 import { CyclesView } from "components/cycles";
 // fetch-keys
-import { CYCLE_DRAFT_LIST } from "constants/fetch-keys";
+import { DRAFT_CYCLES_LIST } from "constants/fetch-keys";
 
 type Props = {
   viewType: string | null;
@@ -18,7 +18,7 @@ export const DraftCyclesList: React.FC<Props> = ({ viewType }) => {
   const { workspaceSlug, projectId } = router.query;
 
   const { data: draftCyclesList } = useSWR(
-    workspaceSlug && projectId ? CYCLE_DRAFT_LIST(projectId.toString()) : null,
+    workspaceSlug && projectId ? DRAFT_CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () =>
           cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), {
