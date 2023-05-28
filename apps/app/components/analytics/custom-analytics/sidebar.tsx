@@ -7,6 +7,7 @@ import analyticsService from "services/analytics.service";
 import projectService from "services/project.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
+import trackEventServices from "services/track-event.service";
 // hooks
 import useProjects from "hooks/use-projects";
 import useToast from "hooks/use-toast";
@@ -23,7 +24,13 @@ import { ContrastIcon, LayerDiagonalIcon } from "components/icons";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IProject } from "types";
+import {
+  IAnalyticsParams,
+  IAnalyticsResponse,
+  IExportAnalyticsFormData,
+  IProject,
+  IWorkspace,
+} from "types";
 // fetch-keys
 import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
 // constants
@@ -82,6 +89,59 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       : null
   );
 
+  const trackExportAnalytics = () => {
+    const eventPayload: any = {
+      workspaceSlug: workspaceSlug?.toString(),
+      params: {
+        x_axis: params.x_axis,
+        y_axis: params.y_axis,
+        group: params.segment,
+        project: params.project,
+      },
+    };
+
+    if (projectDetails) {
+      const workspaceDetails = projectDetails.workspace as IWorkspace;
+
+      eventPayload.workspaceId = workspaceDetails.id;
+      eventPayload.workspaceName = workspaceDetails.name;
+      eventPayload.projectId = projectDetails.id;
+      eventPayload.projectIdentifier = projectDetails.identifier;
+      eventPayload.projectName = projectDetails.name;
+    }
+
+    if (cycleDetails || moduleDetails) {
+      const details = cycleDetails || moduleDetails;
+
+      eventPayload.workspaceId = details?.workspace_detail?.id;
+      eventPayload.workspaceName = details?.workspace_detail?.name;
+      eventPayload.projectId = details?.project_detail.id;
+      eventPayload.projectIdentifier = details?.project_detail.identifier;
+      eventPayload.projectName = details?.project_detail.name;
+    }
+
+    if (cycleDetails) {
+      eventPayload.cycleId = cycleDetails.id;
+      eventPayload.cycleName = cycleDetails.name;
+    }
+
+    if (moduleDetails) {
+      eventPayload.moduleId = moduleDetails.id;
+      eventPayload.moduleName = moduleDetails.name;
+    }
+
+    trackEventServices.trackAnalyticsEvent(
+      eventPayload,
+      cycleId
+        ? "CYCLE_ANALYTICS_EXPORT"
+        : moduleId
+        ? "MODULE_ANALYTICS_EXPORT"
+        : projectId
+        ? "PROJECT_ANALYTICS_EXPORT"
+        : "WORKSPACE_ANALYTICS_EXPORT"
+    );
+  };
+
   const exportAnalytics = () => {
     if (!workspaceSlug) return;
 
@@ -95,13 +155,15 @@ export const AnalyticsSidebar: React.FC<Props> = ({
 
     analyticsService
       .exportAnalytics(workspaceSlug.toString(), data)
-      .then((res) =>
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: res.message,
-        })
-      )
+        });
+
+        trackExportAnalytics();
+      })
       .catch(() =>
         setToastAlert({
           type: "error",

@@ -19,10 +19,11 @@ import type { ICycle } from "types";
 // fetch keys
 import {
   CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  CYCLE_DETAILS,
+  CYCLE_CURRENT_LIST,
   CYCLE_DRAFT_LIST,
   CYCLE_INCOMPLETE_LIST,
+  CYCLE_LIST,
+  CYCLE_UPCOMING_LIST,
 } from "constants/fetch-keys";
 
 type CycleModalProps = {
@@ -50,16 +51,16 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
             mutate(CYCLE_COMPLETE_LIST(projectId as string));
             break;
           case "current":
-            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            mutate(CYCLE_CURRENT_LIST(projectId as string));
             break;
           case "upcoming":
-            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            mutate(CYCLE_UPCOMING_LIST(projectId as string));
             break;
           default:
             mutate(CYCLE_DRAFT_LIST(projectId as string));
         }
         mutate(CYCLE_INCOMPLETE_LIST(projectId as string));
-        mutate(CYCLE_DETAILS(projectId as string));
+        mutate(CYCLE_LIST(projectId as string));
         handleClose();
 
         setToastAlert({
@@ -86,15 +87,15 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
             mutate(CYCLE_COMPLETE_LIST(projectId as string));
             break;
           case "current":
-            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            mutate(CYCLE_CURRENT_LIST(projectId as string));
             break;
           case "upcoming":
-            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            mutate(CYCLE_UPCOMING_LIST(projectId as string));
             break;
           default:
             mutate(CYCLE_DRAFT_LIST(projectId as string));
         }
-        mutate(CYCLE_DETAILS(projectId as string));
+        mutate(CYCLE_LIST(projectId as string));
         if (
           getDateRangeStatus(data?.start_date, data?.end_date) !=
           getDateRangeStatus(res.start_date, res.end_date)
@@ -104,10 +105,10 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
               mutate(CYCLE_COMPLETE_LIST(projectId as string));
               break;
             case "current":
-              mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+              mutate(CYCLE_CURRENT_LIST(projectId as string));
               break;
             case "upcoming":
-              mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+              mutate(CYCLE_UPCOMING_LIST(projectId as string));
               break;
             default:
               mutate(CYCLE_DRAFT_LIST(projectId as string));

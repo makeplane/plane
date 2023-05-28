@@ -3,15 +3,7 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
 // types
-import type {
-  CycleIssueResponse,
-  CompletedCyclesResponse,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-  ICycle,
-  IIssue,
-  IIssueViewOptions,
-} from "types";
+import type { ICycle, IIssue, IIssueViewOptions } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -34,16 +26,14 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getIncompleteCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/incomplete-cycles/`)
+  async getCyclesWithParams(
+    workspaceSlug: string,
+    projectId: string,
+    queries: any
+  ): Promise<ICycle[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -152,40 +142,6 @@ class ProjectCycleServices extends APIService {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/date-check/`,
       data
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getCurrentAndUpcomingCycles(
-    workspaceSlug: string,
-    projectId: string
-  ): Promise<CurrentAndUpcomingCyclesResponse> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/current-upcoming-cycles/`
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getDraftCycles(workspaceSlug: string, projectId: string): Promise<DraftCyclesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/draft-cycles/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getCompletedCycles(
-    workspaceSlug: string,
-    projectId: string
-  ): Promise<CompletedCyclesResponse> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/completed-cycles/`
     )
       .then((response) => response?.data)
       .catch((error) => {
