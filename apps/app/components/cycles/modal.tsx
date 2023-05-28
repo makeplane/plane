@@ -29,7 +29,7 @@ import {
 type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: ICycle;
+  data?: ICycle | null;
 };
 
 export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({

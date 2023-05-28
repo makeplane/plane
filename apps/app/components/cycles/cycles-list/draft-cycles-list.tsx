@@ -1,0 +1,31 @@
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
+// services
+import cyclesService from "services/cycles.service";
+// components
+import { CyclesView } from "components/cycles";
+// fetch-keys
+import { CYCLE_DRAFT_LIST } from "constants/fetch-keys";
+
+type Props = {
+  viewType: string | null;
+};
+
+export const DraftCyclesList: React.FC<Props> = ({ viewType }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: draftCyclesList } = useSWR(
+    workspaceSlug && projectId ? CYCLE_DRAFT_LIST(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () =>
+          cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), {
+            cycle_view: "draft",
+          })
+      : null
+  );
+
+  return <CyclesView cycles={draftCyclesList} viewType={viewType} />;
+};

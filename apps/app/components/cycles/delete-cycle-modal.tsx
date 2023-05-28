@@ -18,7 +18,7 @@ import type { ICycle } from "types";
 type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: ICycle;
+  data?: ICycle | null;
 };
 // fetch-keys
 import {

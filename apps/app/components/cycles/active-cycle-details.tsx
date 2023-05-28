@@ -42,13 +42,7 @@ import { truncateText } from "helpers/string.helper";
 // types
 import { ICycle, IIssue } from "types";
 // fetch-keys
-import {
-  CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_LIST,
-  CYCLE_DRAFT_LIST,
-  CYCLE_ISSUES,
-  CYCLE_LIST,
-} from "constants/fetch-keys";
+import { CYCLE_CURRENT_LIST, CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
 
 type TSingleStatProps = {
   cycle: ICycle;
