@@ -29,6 +29,8 @@ services:
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
                         EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+                        EMAIL_PORT: ${EMAIL_PORT}
+                        EMAIL_FROM: ${EMAIL_FROM}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -58,6 +60,8 @@ services:
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
                         EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+                        EMAIL_PORT: ${EMAIL_PORT}
+                        EMAIL_FROM: ${EMAIL_FROM}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
