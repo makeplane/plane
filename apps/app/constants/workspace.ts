@@ -43,7 +43,7 @@ export const ONBOARDING_CARDS = {
     step: "2/5",
     title: "Plan with Issues",
     description:
-      "Issues are the building block of Plane. Most concepts in Plane are associated with issues or their properties.",
+      "Issues are the building blocks of Plane. Most concepts in Plane are associated with issues or their properties.",
   },
   cycle: {
     imgURL: Cycle,
