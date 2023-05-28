@@ -12,6 +12,7 @@ import { Avatar, MultiLevelDropdown } from "components/ui";
 import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
+import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { IIssueFilterOptions, IQuery } from "types";
 // fetch-keys
@@ -189,7 +190,7 @@ export const SelectFilters: React.FC<Props> = ({
                 key: "target_date",
                 value: option.value,
               },
-              selected: false,
+              selected: checkIfArraysHaveSameElements(filters?.target_date, option.value),
             })) ?? []),
           ],
         },

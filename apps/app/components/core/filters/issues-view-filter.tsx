@@ -2,11 +2,12 @@ import React from "react";
 
 import { useRouter } from "next/router";
 
+// headless ui
+import { Popover, Transition } from "@headlessui/react";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 import useIssuesView from "hooks/use-issues-view";
-// headless ui
-import { Popover, Transition } from "@headlessui/react";
+import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { SelectFilters } from "components/views";
 // ui
@@ -17,15 +18,14 @@ import {
   ListBulletIcon,
   Squares2X2Icon,
   CalendarDaysIcon,
-  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { Properties } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
-import useEstimateOption from "hooks/use-estimate-option";
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
@@ -101,15 +101,13 @@ export const IssuesFilterView: React.FC = () => {
           const key = option.key as keyof typeof filters;
 
           if (key === "target_date") {
-            const beforeDate = option.value?.find((val: string[]) => val.includes("before"));
-            const afterDate = option.value?.find((val: string[]) => val.includes("after"));
-
-            const dates = [];
-            if (beforeDate) dates.push(beforeDate);
-            if (afterDate) dates.push(afterDate);
+            const valueExists = checkIfArraysHaveSameElements(
+              filters.target_date ?? [],
+              option.value
+            );
 
             setFilters({
-              target_date: dates,
+              target_date: valueExists ? null : option.value,
             });
           } else {
             const valueExists = filters[key]?.includes(option.value);

@@ -36,9 +36,6 @@ export const DUE_DATES = [
   },
   {
     name: "Custom",
-    value: [
-      `${renderDateFormat(new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000))};after`,
-      `${renderDateFormat(new Date())};before`,
-    ],
+    value: null,
   },
 ];

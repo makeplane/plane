@@ -313,7 +313,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                             className="inline-flex items-center gap-x-1 rounded-full border border-brand-base bg-brand-base px-1 py-0.5"
                           >
                             <div className="h-1.5 w-1.5 rounded-full" />
-                            <span>
+                            <span className="capitalize">
                               {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
                             </span>
                             <span
