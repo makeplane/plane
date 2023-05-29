@@ -19,9 +19,11 @@ export const MyPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
     workspaceSlug && projectId ? MY_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, {
-            page_view: "created_by_me",
-          })
+          pagesService.getPagesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            "created_by_me"
+          )
       : null
   );
 

@@ -73,9 +73,7 @@ const ProjectCycles: NextPage = () => {
     workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
-            cycle_view: "current",
-          })
+          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
       : null
   );
 
