@@ -35,7 +35,7 @@ class FileAssetEndpoint(BaseAPIView):
 
                 serializer.save(workspace_id=request.user.last_workspace_id)
                 response_data = serializer.data
-                if settings.DOCKERIZED and settings.AWS_S3_ENDPOINT_URL in response_data["asset"]:
+                if settings.DOCKERIZED and settings.USE_MINIO:
                     response_data["asset"] = response_data["asset"].replace(settings.AWS_S3_ENDPOINT_URL, settings.WEB_URL)
                 return Response(response_data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -86,7 +86,7 @@ class UserAssetsEndpoint(BaseAPIView):
             if serializer.is_valid():
                 serializer.save()
                 response_data = serializer.data
-                if settings.DOCKERIZED and settings.AWS_S3_ENDPOINT_URL in response_data["asset"]:
+                if settings.DOCKERIZED and settings.USE_MINIO:
                     response_data["asset"] = response_data["asset"].replace(settings.AWS_S3_ENDPOINT_URL, settings.WEB_URL)
                 return Response(response_data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

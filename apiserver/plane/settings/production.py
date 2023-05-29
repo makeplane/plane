@@ -34,6 +34,10 @@ DOCKERIZED = int(os.environ.get(
     "DOCKERIZED", 0
 ))  == 1
 
+USE_MINIO = int(os.environ.get("USE_MINIO"), 0) == 1
+
+FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
 
@@ -81,7 +85,7 @@ if bool(os.environ.get("SENTRY_DSN", False)):
         environment="production",
     )
 
-if DOCKERIZED:
+if DOCKERIZED and USE_MINIO:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     # The AWS access key to use.
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
@@ -90,7 +94,7 @@ if DOCKERIZED:
     # The name of the bucket to store files in.
     AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
     # The full URL to the S3 endpoint. Leave blank to use the default region URL.
-    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "http://plane-minio:9000")
+    AWS_S3_ENDPOINT_URL = "http://plane-minio:9000"
     # Default permissions
     AWS_DEFAULT_ACL = "public-read"
     AWS_QUERYSTRING_AUTH = False
