@@ -29,10 +29,12 @@ class ProjectCycleServices extends APIService {
   async getCyclesWithParams(
     workspaceSlug: string,
     projectId: string,
-    queries: any
+    cycleType: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
   ): Promise<ICycle[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, {
-      params: queries,
+      params: {
+        cycle_view: cycleType,
+      },
     })
       .then((response) => response?.data)
       .catch((error) => {

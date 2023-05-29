@@ -86,10 +86,12 @@ class PageServices extends APIService {
   async getPagesWithParams(
     workspaceSlug: string,
     projectId: string,
-    queries: any
+    pageType: "all" | "favorite" | "created_by_me" | "created_by_other"
   ): Promise<IPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, {
-      params: queries,
+      params: {
+        page_view: pageType,
+      },
     })
       .then((response) => response?.data)
       .catch((error) => {
