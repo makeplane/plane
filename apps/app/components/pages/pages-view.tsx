@@ -200,61 +200,63 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         data={selectedPageToDelete}
       />
       {pages ? (
-        pages.length > 0 ? (
-          viewType === "list" ? (
-            <ul role="list" className="divide-y divide-brand-base">
-              {pages.map((page) => (
-                <SinglePageListItem
-                  key={page.id}
-                  page={page}
-                  people={people}
-                  handleEditPage={() => handleEditPage(page)}
-                  handleDeletePage={() => handleDeletePage(page)}
-                  handleAddToFavorites={() => handleAddToFavorites(page)}
-                  handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
-                  partialUpdatePage={partialUpdatePage}
-                />
-              ))}
-            </ul>
-          ) : viewType === "detailed" ? (
-            <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base">
-              {pages.map((page) => (
-                <SinglePageDetailedItem
-                  key={page.id}
-                  page={page}
-                  people={people}
-                  handleEditPage={() => handleEditPage(page)}
-                  handleDeletePage={() => handleDeletePage(page)}
-                  handleAddToFavorites={() => handleAddToFavorites(page)}
-                  handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
-                  partialUpdatePage={partialUpdatePage}
-                />
-              ))}
-            </div>
+        <div className="space-y-4 h-full overflow-y-auto">
+          {pages.length > 0 ? (
+            viewType === "list" ? (
+              <ul role="list" className="divide-y divide-brand-base">
+                {pages.map((page) => (
+                  <SinglePageListItem
+                    key={page.id}
+                    page={page}
+                    people={people}
+                    handleEditPage={() => handleEditPage(page)}
+                    handleDeletePage={() => handleDeletePage(page)}
+                    handleAddToFavorites={() => handleAddToFavorites(page)}
+                    handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
+                    partialUpdatePage={partialUpdatePage}
+                  />
+                ))}
+              </ul>
+            ) : viewType === "detailed" ? (
+              <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base">
+                {pages.map((page) => (
+                  <SinglePageDetailedItem
+                    key={page.id}
+                    page={page}
+                    people={people}
+                    handleEditPage={() => handleEditPage(page)}
+                    handleDeletePage={() => handleDeletePage(page)}
+                    handleAddToFavorites={() => handleAddToFavorites(page)}
+                    handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
+                    partialUpdatePage={partialUpdatePage}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-[10px] border border-brand-base">
+                {pages.map((page) => (
+                  <SinglePageDetailedItem
+                    key={page.id}
+                    page={page}
+                    people={people}
+                    handleEditPage={() => handleEditPage(page)}
+                    handleDeletePage={() => handleDeletePage(page)}
+                    handleAddToFavorites={() => handleAddToFavorites(page)}
+                    handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
+                    partialUpdatePage={partialUpdatePage}
+                  />
+                ))}
+              </div>
+            )
           ) : (
-            <div className="rounded-[10px] border border-brand-base">
-              {pages.map((page) => (
-                <SinglePageDetailedItem
-                  key={page.id}
-                  page={page}
-                  people={people}
-                  handleEditPage={() => handleEditPage(page)}
-                  handleDeletePage={() => handleDeletePage(page)}
-                  handleAddToFavorites={() => handleAddToFavorites(page)}
-                  handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
-                  partialUpdatePage={partialUpdatePage}
-                />
-              ))}
-            </div>
-          )
-        ) : (
-          <EmptyState
-            type="page"
-            title="Create New Page"
-            description="Create and document issues effortlessly in one place with Plane Notes, AI-powered for ease."
-            imgURL={emptyPage}
-          />
-        )
+            <EmptyState
+              type="page"
+              title="Create New Page"
+              description="Create and document issues effortlessly in one place with Plane Notes, AI-powered for ease."
+              imgURL={emptyPage}
+            />
+          )}
+        </div>
       ) : viewType === "list" ? (
         <Loader className="space-y-4">
           <Loader.Item height="40px" />
