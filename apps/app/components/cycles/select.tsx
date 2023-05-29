@@ -38,7 +38,10 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_LIST(projectId) : null,
     workspaceSlug && projectId
-      ? () => cycleServices.getCycles(workspaceSlug as string, projectId)
+      ? () =>
+          cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, {
+            cycle_view: "all",
+          })
       : null
   );
 

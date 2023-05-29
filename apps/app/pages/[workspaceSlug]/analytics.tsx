@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { Tab } from "@headlessui/react";
 // services
 import analyticsService from "services/analytics.service";
+import trackEventServices from "services/track-event.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
@@ -48,6 +49,28 @@ const Analytics = () => {
     workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
   );
 
+  const trackAnalyticsEvent = (tab: string) => {
+    const eventPayload = {
+      workspaceSlug: workspaceSlug?.toString(),
+    };
+
+    const eventType =
+      tab === "Scope and Demand"
+        ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
+        : "WORKSPACE_CUSTOM_ANALYTICS";
+
+    trackEventServices.trackAnalyticsEvent(eventPayload, eventType);
+  };
+
+  useEffect(() => {
+    if (!workspaceSlug) return;
+
+    trackEventServices.trackAnalyticsEvent(
+      { workspaceSlug: workspaceSlug?.toString() },
+      "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
+    );
+  }, [workspaceSlug]);
+
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
@@ -79,6 +102,7 @@ const Analytics = () => {
                     selected ? "bg-brand-surface-2" : ""
                   }`
                 }
+                onClick={() => trackAnalyticsEvent(tab)}
               >
                 {tab}
               </Tab>

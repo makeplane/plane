@@ -66,6 +66,7 @@ const MembersSettings: NextPage = () => {
       role: item.role,
       status: true,
       member: true,
+      accountCreated: true,
     })) || []),
     ...(workspaceInvitations?.map((item) => ({
       id: item.id,
@@ -77,6 +78,7 @@ const MembersSettings: NextPage = () => {
       role: item.role,
       status: item.accepted,
       member: false,
+      accountCreated: item?.accepted ? false : true,
     })) || []),
   ];
 
@@ -198,6 +200,11 @@ const MembersSettings: NextPage = () => {
                           {!member?.status && (
                             <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
                               <p>Pending</p>
+                            </div>
+                          )}
+                          {member?.status && !member?.accountCreated && (
+                            <div className="mr-2 flex items-center justify-center rounded-full bg-blue-500/20 px-2 py-1 text-center text-xs text-blue-500">
+                              <p>Account not created</p>
                             </div>
                           )}
                           <CustomSelect

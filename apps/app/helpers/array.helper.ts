@@ -8,10 +8,12 @@ export const groupBy = (array: any[], key: string) => {
 };
 
 export const orderArrayBy = (
-  array: any[],
+  orgArray: any[],
   key: string,
   ordering: "ascending" | "descending" = "ascending"
 ) => {
+  const array = [...orgArray];
+
   if (!array || !Array.isArray(array) || array.length === 0) return [];
 
   if (key[0] === "-") {

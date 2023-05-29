@@ -14,7 +14,7 @@ import useIssues from "hooks/use-issues";
 import { Spinner, EmptySpace, EmptySpaceItem, PrimaryButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // hooks
-import useIssuesProperties from "hooks/use-issue-properties";
+import useMyIssuesProperties from "hooks/use-my-issues-filter";
 // types
 import { IIssue, Properties } from "types";
 // components
@@ -31,10 +31,7 @@ const MyIssuesPage: NextPage = () => {
   // fetching user issues
   const { myIssues } = useIssues(workspaceSlug as string);
 
-  const [properties, setProperties] = useIssuesProperties(
-    workspaceSlug ? (workspaceSlug as string) : undefined,
-    undefined
-  );
+  const [properties, setProperties] = useMyIssuesProperties(workspaceSlug as string);
 
   return (
     <WorkspaceAuthorizationLayout
