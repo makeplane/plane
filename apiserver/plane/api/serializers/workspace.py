@@ -44,6 +44,7 @@ class WorkSpaceMemberSerializer(BaseSerializer):
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
+    total_members = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = WorkspaceMemberInvite

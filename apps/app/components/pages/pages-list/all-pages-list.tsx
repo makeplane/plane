@@ -25,9 +25,5 @@ export const AllPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
       : null
   );
 
-  return (
-    <div className="mt-4 space-y-4">
-      <PagesView pages={pages} viewType={viewType} />
-    </div>
-  );
+  return <PagesView pages={pages} viewType={viewType} />;
 };

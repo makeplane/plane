@@ -18,15 +18,15 @@ import type { ICycle } from "types";
 type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: ICycle;
+  data?: ICycle | null;
 };
 // fetch-keys
 import {
-  CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_LIST,
-  CYCLE_DRAFT_LIST,
-  CYCLE_LIST,
-  CYCLE_UPCOMING_LIST,
+  COMPLETED_CYCLES_LIST,
+  CURRENT_CYCLE_LIST,
+  CYCLES_LIST,
+  DRAFT_CYCLES_LIST,
+  UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 import { getDateRangeStatus } from "helpers/date-time.helper";
 
@@ -58,12 +58,12 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
         const cycleType = getDateRangeStatus(data.start_date, data.end_date);
         const fetchKey =
           cycleType === "current"
-            ? CYCLE_CURRENT_LIST(projectId as string)
+            ? CURRENT_CYCLE_LIST(projectId as string)
             : cycleType === "upcoming"
-            ? CYCLE_UPCOMING_LIST(projectId as string)
+            ? UPCOMING_CYCLES_LIST(projectId as string)
             : cycleType === "completed"
-            ? CYCLE_COMPLETE_LIST(projectId as string)
-            : CYCLE_DRAFT_LIST(projectId as string);
+            ? COMPLETED_CYCLES_LIST(projectId as string)
+            : DRAFT_CYCLES_LIST(projectId as string);
 
         mutate<ICycle[]>(
           fetchKey,
@@ -76,7 +76,7 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
         );
 
         mutate(
-          CYCLE_LIST(projectId as string),
+          CYCLES_LIST(projectId as string),
           (prevData: any) => {
             if (!prevData) return;
             return prevData.filter((cycle: any) => cycle.id !== data?.id);
