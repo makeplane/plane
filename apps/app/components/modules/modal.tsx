@@ -28,7 +28,7 @@ type Props = {
 const defaultValues: Partial<IModule> = {
   name: "",
   description: "",
-  status: null,
+  status: "backlog",
   lead: null,
   members_list: [],
 };
