@@ -29,6 +29,10 @@ DOCKERIZED = int(os.environ.get(
     "DOCKERIZED", 0
 ))  == 1
 
+USE_MINIO = int(os.environ.get("USE_MINIO"), 0) == 1
+
+FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT",  5242880))
+
 if DOCKERIZED:
     DATABASES["default"] = dj_database_url.config()
 
@@ -85,6 +89,5 @@ LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
 CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
-
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)

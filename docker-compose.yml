@@ -42,6 +42,7 @@ services:
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                         AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
                         AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
                         WEB_URL: ${WEB_URL}
                         GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
                         DISABLE_COLLECTSTATIC: 1
@@ -49,6 +50,9 @@ services:
                         OPENAI_API_KEY: ${OPENAI_API_KEY}
                         GPT_ENGINE: ${GPT_ENGINE}
                         SECRET_KEY: ${SECRET_KEY}
+                        DEFAULT_EMAIL: ${DEFAULT_EMAIL}
+                        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+                        USE_MINIO: 1
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -74,6 +78,7 @@ services:
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                         AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
                         AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
                         WEB_URL: ${WEB_URL}
                         GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
                         DISABLE_COLLECTSTATIC: 1
@@ -81,6 +86,9 @@ services:
                         OPENAI_API_KEY: ${OPENAI_API_KEY}
                         GPT_ENGINE: ${GPT_ENGINE}
                         SECRET_KEY: ${SECRET_KEY}
+                        DEFAULT_EMAIL: ${DEFAULT_EMAIL}
+                        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+                        USE_MINIO: 1
                 depends_on:
                         - plane-api
                         - plane-db
@@ -136,7 +144,7 @@ services:
                   dockerfile: Dockerfile
                 restart: always
                 ports:
-                  - ${NGINX_PORT}:80
+                        - ${NGINX_PORT}:80
                 depends_on:
                   - plane-web
                   - plane-api

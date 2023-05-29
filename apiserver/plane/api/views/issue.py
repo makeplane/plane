@@ -820,7 +820,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 response_data = serializer.data
                 if (
                     settings.DOCKERIZED
-                    and settings.AWS_S3_ENDPOINT_URL in response_data["asset"]
+                    and settings.USE_MINIO
                 ):
                     response_data["asset"] = response_data["asset"].replace(
                         settings.AWS_S3_ENDPOINT_URL, settings.WEB_URL
