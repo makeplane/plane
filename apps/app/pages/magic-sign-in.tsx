@@ -48,11 +48,7 @@ const MagicSignIn: NextPage = () => {
   }, [password, key, mutateUser, router]);
 
   return (
-    <DefaultLayout
-      meta={{
-        title: "Magic Sign In",
-      }}
-    >
+    <DefaultLayout>
       <div className="flex h-screen w-full items-center justify-center overflow-auto bg-gray-50">
         {isSigningIn ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">

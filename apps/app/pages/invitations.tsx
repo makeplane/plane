@@ -80,13 +80,7 @@ const OnBoard: NextPage = () => {
 
   return (
     <UserAuthorizationLayout>
-      <DefaultLayout
-        meta={{
-          title: "Plane - Welcome to Plane",
-          description:
-            "Please fasten your seatbelts because we are about to take your productivity to the next level.",
-        }}
-      >
+      <DefaultLayout>
         <div className="flex min-h-full flex-col items-center justify-center p-4 sm:p-0">
           {user && (
             <div className="mb-10 w-96 rounded-lg bg-brand-accent/20 p-2 text-brand-accent">

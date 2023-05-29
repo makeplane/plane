@@ -29,9 +29,6 @@ const ProfilePreferences = () => {
 
   return (
     <WorkspaceAuthorizationLayout
-      meta={{
-        title: "Plane - My Profile",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="My Profile Preferences" />

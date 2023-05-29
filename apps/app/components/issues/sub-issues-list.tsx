@@ -165,15 +165,10 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
     });
   };
 
-  const completedSubIssues =
-    subIssuesResponse && subIssuesResponse.state_distribution
-      ? (subIssuesResponse?.state_distribution.completed
-          ? subIssuesResponse?.state_distribution.completed
-          : 0) +
-        (subIssuesResponse?.state_distribution.cancelled
-          ? subIssuesResponse?.state_distribution.cancelled
-          : 0)
-      : 0;
+  const completedSubIssues = subIssuesResponse
+    ? subIssuesResponse?.state_distribution.completed +
+      subIssuesResponse?.state_distribution.cancelled
+    : 0;
 
   const totalSubIssues =
     subIssuesResponse && subIssuesResponse.sub_issues ? subIssuesResponse?.sub_issues.length : 0;
@@ -278,7 +273,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                     >
-                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-brand-surface-1">
+                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-brand-base">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
                             className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"

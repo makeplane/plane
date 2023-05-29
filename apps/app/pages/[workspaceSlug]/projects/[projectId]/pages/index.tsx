@@ -100,9 +100,6 @@ const ProjectPages: NextPage = () => {
         handleClose={() => setCreateUpdatePageModal(false)}
       />
       <ProjectAuthorizationWrapper
-        meta={{
-          title: "Plane - Pages",
-        }}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />

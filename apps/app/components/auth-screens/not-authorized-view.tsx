@@ -21,12 +21,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
   const { asPath: currentPath } = useRouter();
 
   return (
-    <DefaultLayout
-      meta={{
-        title: "Plane - Not Authorized",
-        description: "You are not authorized to view this page",
-      }}
-    >
+    <DefaultLayout>
       <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-brand-surface-1 text-center">
         <div className="h-44 w-72">
           <Image
