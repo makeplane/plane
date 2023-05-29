@@ -10,8 +10,8 @@ import "styles/command-pallette.css";
 import "styles/nprogress.css";
 import "styles/react-datepicker.css";
 
-// router
 import Router from "next/router";
+import Head from "next/head";
 
 // nprogress
 import NProgress from "nprogress";
@@ -24,6 +24,15 @@ import { ThemeContextProvider } from "contexts/theme.context";
 import type { AppProps } from "next/app";
 // constants
 import { THEMES } from "constants/themes";
+// constants
+import {
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_URL,
+  TWITTER_USER_NAME,
+  SITE_KEYWORDS,
+  SITE_TITLE,
+} from "constants/seo-variables";
 
 const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
 
@@ -39,7 +48,22 @@ function MyApp({ Component, pageProps }: AppProps) {
       <UserProvider>
         <ToastContextProvider>
           <ThemeContextProvider>
-            <CrispWithNoSSR />
+            <CrispWithNoSSR />{" "}
+            <Head>
+              <title>{SITE_TITLE}</title>
+              <meta property="og:site_name" content={SITE_NAME} />
+              <meta property="og:title" content={SITE_TITLE} />
+              <meta property="og:url" content={SITE_URL} />
+              <meta name="description" content={SITE_DESCRIPTION} />
+              <meta property="og:description" content={SITE_DESCRIPTION} />
+              <meta name="keywords" content={SITE_KEYWORDS} />
+              <meta name="twitter:site" content={`@${TWITTER_USER_NAME}`} />
+              <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+              <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+              <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+              <link rel="manifest" href="/site.webmanifest.json" />
+              <link rel="shortcut icon" href="/favicon/favicon.ico" />
+            </Head>
             <Component {...pageProps} />
           </ThemeContextProvider>
         </ToastContextProvider>

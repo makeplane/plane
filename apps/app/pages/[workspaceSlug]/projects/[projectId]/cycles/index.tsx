@@ -89,9 +89,6 @@ const ProjectCycles: NextPage = () => {
 
   return (
     <ProjectAuthorizationWrapper
-      meta={{
-        title: "Plane - Cycles",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />

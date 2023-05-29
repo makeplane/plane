@@ -90,11 +90,7 @@ const SignInPage: NextPage = () => {
   );
 
   return (
-    <DefaultLayout
-      meta={{
-        title: "Plane - Sign In",
-      }}
-    >
+    <DefaultLayout>
       {isLoading ? (
         <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3">
           <h2 className="text-xl text-brand-base">Signing in. Please wait...</h2>
