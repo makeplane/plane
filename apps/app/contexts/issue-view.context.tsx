@@ -190,6 +190,19 @@ export const reducer: ReducerFunctionType = (state, action) => {
 };
 
 const saveDataToServer = async (workspaceSlug: string, projectID: string, state: any) => {
+  mutate<IProjectMember>(
+    workspaceSlug && projectID ? USER_PROJECT_VIEW(projectID as string) : null,
+    (prevData) => {
+      if (!prevData) return prevData;
+
+      return {
+        ...prevData,
+        view_props: state,
+      };
+    },
+    false
+  );
+
   await projectService.setProjectView(workspaceSlug, projectID, {
     view_props: state,
   });
