@@ -81,14 +81,7 @@ const OnBoard: NextPage = () => {
 
   return (
     <UserAuthorizationLayout>
-      <DefaultLayout
-        meta={{
-          // TODO: move this meta data to constants
-          title: "Plane - Welcome to Plane",
-          description:
-            "Please fasten your seatbelts because we are about to take your productivity to the next level.",
-        }}
-      >
+      <DefaultLayout>
         <div className="relative grid h-full place-items-center p-5">
           <div className="h-full flex flex-col items-center justify-center w-full py-4">
             <div className="mb-7 flex items-center justify-center text-center">

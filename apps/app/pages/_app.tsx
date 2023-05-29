@@ -10,8 +10,8 @@ import "styles/command-pallette.css";
 import "styles/nprogress.css";
 import "styles/react-datepicker.css";
 
-// router
 import Router from "next/router";
+import Head from "next/head";
 
 // nprogress
 import NProgress from "nprogress";
@@ -24,6 +24,15 @@ import { ThemeContextProvider } from "contexts/theme.context";
 import type { AppProps } from "next/app";
 // constants
 import { THEMES } from "constants/themes";
+// constants
+import {
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_URL,
+  TWITTER_USER_NAME,
+  SITE_KEYWORDS,
+  SITE_TITLE,
+} from "constants/seo-variables";
 
 const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
 

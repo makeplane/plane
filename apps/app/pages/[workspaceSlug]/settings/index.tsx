@@ -146,9 +146,6 @@ const WorkspaceSettings: NextPage = () => {
 
   return (
     <WorkspaceAuthorizationLayout
-      meta={{
-        title: "Plane - Workspace Settings",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />

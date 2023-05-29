@@ -14,7 +14,7 @@ import cycleServices from "services/cycles.service";
 // components
 import { CreateUpdateCycleModal } from "components/cycles";
 // fetch-keys
-import { CYCLE_LIST } from "constants/fetch-keys";
+import { CYCLES_LIST } from "constants/fetch-keys";
 
 export type IssueCycleSelectProps = {
   projectId: string;
@@ -36,9 +36,12 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
   const { workspaceSlug } = router.query;
 
   const { data: cycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_LIST(projectId) : null,
+    workspaceSlug && projectId ? CYCLES_LIST(projectId) : null,
     workspaceSlug && projectId
-      ? () => cycleServices.getCycles(workspaceSlug as string, projectId)
+      ? () =>
+          cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, {
+            cycle_view: "all",
+          })
       : null
   );
 

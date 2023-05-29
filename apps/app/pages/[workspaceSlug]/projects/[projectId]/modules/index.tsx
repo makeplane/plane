@@ -66,9 +66,6 @@ const ProjectModules: NextPage = () => {
 
   return (
     <ProjectAuthorizationWrapper
-      meta={{
-        title: "Plane - Modules",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />

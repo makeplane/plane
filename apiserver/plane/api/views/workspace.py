@@ -375,6 +375,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
             .get_queryset()
             .filter(email=self.request.user.email)
             .select_related("workspace", "workspace__owner")
+            .annotate(total_members=Count("workspace__workspace_member"))
         )
 
     def create(self, request):

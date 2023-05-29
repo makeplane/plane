@@ -53,6 +53,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DOCKERIZED = int(os.environ.get(
     "DOCKERIZED", 0
 ))  == 1
+FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+USE_MINIO = int(os.environ.get("USE_MINIO"), 0) == 1
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
@@ -169,7 +171,6 @@ CSRF_COOKIE_SECURE = True
 
 
 REDIS_URL = os.environ.get("REDIS_URL")
-DOCKERIZED = os.environ.get("DOCKERIZED", False)
 
 CACHES = {
     "default": {

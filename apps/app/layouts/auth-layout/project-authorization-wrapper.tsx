@@ -5,10 +5,7 @@ import { useRouter } from "next/router";
 
 // contexts
 import { useProjectMyMembership, ProjectMemberProvider } from "contexts/project-member.context";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
 // layouts
-import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 // components
@@ -19,15 +16,7 @@ import { PrimaryButton, Spinner } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 
-type Meta = {
-  title?: string | null;
-  description?: string | null;
-  image?: string | null;
-  url?: string | null;
-};
-
 type Props = {
-  meta?: Meta;
   children: React.ReactNode;
   noHeader?: boolean;
   bg?: "primary" | "secondary";
@@ -43,7 +32,6 @@ export const ProjectAuthorizationWrapper: React.FC<Props> = (props) => (
 );
 
 const ProjectAuthorizationWrapped: React.FC<Props> = ({
-  meta,
   children,
   noHeader = false,
   bg = "primary",
@@ -61,7 +49,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   const settingsLayout = router.pathname.includes("/settings");
 
   return (
-    <Container meta={meta}>
+    <>
       <CommandPalette />
       <div className="relative flex h-screen w-full overflow-hidden">
         <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
@@ -126,6 +114,6 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
           </main>
         )}
       </div>
-    </Container>
+    </>
   );
 };
