@@ -56,10 +56,7 @@ const SingleCycle: React.FC = () => {
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, {
-            cycle_view: "all",
-          })
+      ? () => cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, "all")
       : null
   );
 

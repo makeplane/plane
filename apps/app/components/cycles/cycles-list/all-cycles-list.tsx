@@ -21,9 +21,7 @@ export const AllCyclesList: React.FC<Props> = ({ viewType }) => {
     workspaceSlug && projectId ? CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () =>
-          cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), {
-            cycle_view: "all",
-          })
+          cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), "all")
       : null
   );
 

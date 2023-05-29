@@ -19,9 +19,7 @@ export const FavoritePagesList: React.FC<TPagesListProps> = ({ viewType }) => {
     workspaceSlug && projectId ? FAVORITE_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, {
-            page_view: "favorite",
-          })
+          pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, "favorite")
       : null
   );
 

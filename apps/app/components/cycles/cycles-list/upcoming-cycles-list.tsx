@@ -21,9 +21,11 @@ export const UpcomingCyclesList: React.FC<Props> = ({ viewType }) => {
     workspaceSlug && projectId ? UPCOMING_CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () =>
-          cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), {
-            cycle_view: "upcoming",
-          })
+          cyclesService.getCyclesWithParams(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            "upcoming"
+          )
       : null
   );
 
