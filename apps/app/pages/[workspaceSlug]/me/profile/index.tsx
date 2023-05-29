@@ -170,7 +170,7 @@ const Profile: NextPage = () => {
                       <div className="relative h-12 w-12 overflow-hidden">
                         <Image
                           src={watch("avatar")}
-                          alt={myProfile.first_name}
+                          alt={myProfile.user.first_name}
                           layout="fill"
                           objectFit="cover"
                           className="rounded-md"
@@ -188,9 +188,9 @@ const Profile: NextPage = () => {
                     >
                       Upload
                     </SecondaryButton>
-                    {myProfile.avatar && myProfile.avatar !== "" && (
+                    {myProfile.user.avatar && myProfile.user.avatar !== "" && (
                       <DangerButton
-                        onClick={() => handleDelete(myProfile.avatar, true)}
+                        onClick={() => handleDelete(myProfile.user.avatar, true)}
                         loading={isRemoving}
                       >
                         {isRemoving ? "Removing..." : "Remove"}

@@ -1,12 +1,13 @@
 import { useState } from "react";
 
 import Image from "next/image";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
 // services
 import userService from "services/user.service";
+import workspaceService from "services/workspace.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -82,7 +83,7 @@ const Onboarding: NextPage = () => {
                       if (step === 8) {
                         userService
                           .updateUserOnBoard({ userRole })
-                          .then(() => {
+                          .then(async () => {
                             mutate<ICurrentUserResponse>(
                               CURRENT_USER,
                               (prevData) => {
@@ -98,7 +99,28 @@ const Onboarding: NextPage = () => {
                               },
                               false
                             );
-                            router.push("/");
+                            const userWorkspaces = await workspaceService.userWorkspaces();
+
+                            const lastActiveWorkspace = userWorkspaces.find(
+                              (workspace) => workspace.id === user?.user.last_workspace_id
+                            );
+
+                            if (lastActiveWorkspace) {
+                              Router.push(`/${lastActiveWorkspace.slug}`);
+                              return;
+                            } else if (userWorkspaces.length > 0) {
+                              Router.push(`/${userWorkspaces[0].slug}`);
+                              return;
+                            } else {
+                              const invitations = await workspaceService.userWorkspaceInvitations();
+                              if (invitations.length > 0) {
+                                Router.push(`/invitations`);
+                                return;
+                              } else {
+                                Router.push(`/create-workspace`);
+                                return;
+                              }
+                            }
                           })
                           .catch((err) => {
                             console.log(err);

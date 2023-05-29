@@ -26,7 +26,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     const handleWorkSpaceRedirection = async () => {
       workspaceService.userWorkspaces().then(async (userWorkspaces) => {
         const lastActiveWorkspace = userWorkspaces.find(
-          (workspace: IWorkspace) => workspace.id === user?.last_workspace_id
+          (workspace: IWorkspace) => workspace.id === user?.user.last_workspace_id
         );
         if (lastActiveWorkspace) {
           router.push(`/${lastActiveWorkspace.slug}`);
@@ -50,7 +50,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     const handleUserRouteAuthentication = async () => {
       console.log("user", user);
 
-      if (user && user.is_active) {
+      if (user && user.user.is_active) {
         if (routeAuth === "sign-in") {
           if (user.is_onboarded) handleWorkSpaceRedirection();
           else {
