@@ -10,6 +10,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
+import inboxServices from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
@@ -32,6 +33,7 @@ import {
   CYCLE_DETAILS,
   MODULE_DETAILS,
   VIEW_ISSUES,
+  INBOX_ISSUES,
 } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
@@ -54,7 +56,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, inboxId } = router.query;
 
   const { issueView, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
@@ -145,39 +147,65 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
 
   const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug) return;
+    if (inboxId) {
+      await inboxServices
+        .createInboxIssue(workspaceSlug as string, projectId as string, inboxId as string, {
+          issue: payload,
+        })
+        .then((res) => {
+          mutate(INBOX_ISSUES(inboxId as string));
+          if (!createMore) handleClose();
 
-    await issuesService
-      .createIssues(workspaceSlug as string, activeProject ?? "", payload)
-      .then(async (res) => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue created successfully.",
+          });
 
-        if (issueView === "calendar") mutate(calendarFetchKey);
-        if (issueView === "gantt_chart") mutate(ganttFetchKey);
+          mutate<IIssue[]>(calendarFetchKey);
 
-        if (!createMore) handleClose();
+          if (!createMore) handleClose();
 
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue created successfully.",
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be created. Please try again.",
+          });
         });
+    } else {
+      if (!workspaceSlug) return;
+      await issuesService
+        .createIssues(workspaceSlug as string, activeProject ?? "", payload)
+        .then((res) => {
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
+          if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
+          if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be created. Please try again.",
+          if (!createMore) handleClose();
+
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue created successfully.",
+          });
+
+          if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
+
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be created. Please try again.",
+          });
         });
-      });
+    }
   };
-
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
       .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)

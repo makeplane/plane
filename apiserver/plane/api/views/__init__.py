@@ -133,6 +133,7 @@ from .estimate import (
 
 from .release import ReleaseNotesEndpoint
 
+from .inbox import InboxViewSet, InboxIssueViewSet
 from .analytic import (
     AnalyticsEndpoint,
     AnalyticViewViewset,

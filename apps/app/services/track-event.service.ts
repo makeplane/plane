@@ -79,6 +79,16 @@ type GptEventType = "ASK_GPT" | "USE_GPT_RESPONSE_IN_ISSUE" | "USE_GPT_RESPONSE_
 
 type IssueEstimateEventType = "ESTIMATE_CREATE" | "ESTIMATE_UPDATE" | "ESTIMATE_DELETE";
 
+type InboxEventType =
+  | "INBOX_CREATE"
+  | "INBOX_UPDATE"
+  | "INBOX_DELETE"
+  | "INBOX_ISSUE_CREATE"
+  | "INBOX_ISSUE_DUPLICATED"
+  | "INBOX_ISSUE_ACCEPTED"
+  | "INBOX_ISSUE_SNOOZED"
+  | "INBOX_ISSUE_REJECTED";
+
 type ImporterEventType =
   | "GITHUB_IMPORTER_CREATE"
   | "GITHUB_IMPORTER_DELETE"
@@ -633,6 +643,26 @@ class TrackEventServices extends APIService {
 
   async trackAnalyticsEvent(data: any, eventName: AnalyticsEventType): Promise<any> {
     const payload = { ...data };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: payload,
+      },
+    });
+  }
+
+  // TODO: add types to the data
+  async trackInboxEvent(data: any, eventName: InboxEventType): Promise<any> {
+    let payload: any;
+    if (eventName !== "INBOX_DELETE")
+      payload = {
+        ...data,
+        // change payload according to requirement
+      };
+    else payload = data;
 
     return this.request({
       url: "/api/track-event",

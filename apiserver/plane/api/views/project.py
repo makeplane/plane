@@ -49,7 +49,6 @@ from plane.db.models import (
     ModuleMember
 )
 
-
 from plane.bgtasks.project_invitation_task import project_invitation
 
 
@@ -240,6 +239,9 @@ class ProjectViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
+                if serializer.data["inbox_view"]:
+                    Inbox.objects.get_or_create(
+                        name=f"{project.name} Inbox", project=project, is_default=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
