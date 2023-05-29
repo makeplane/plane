@@ -74,11 +74,7 @@ const HomePage: NextPage = () => {
   };
 
   return (
-    <DefaultLayout
-      meta={{
-        title: "Plane - Sign In",
-      }}
-    >
+    <DefaultLayout>
       {isLoading ? (
         <div className="grid h-screen place-items-center">
           <Spinner />
