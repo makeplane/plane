@@ -4,6 +4,7 @@ from uuid import uuid4
 # Django import
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 # Module import
 from . import BaseModel
@@ -16,8 +17,7 @@ def get_upload_path(instance, filename):
 
 
 def file_size(value):
-    limit = 5 * 1024 * 1024
-    if value.size > limit:
+    if value.size > settings.FILE_SIZE_LIMIT:
         raise ValidationError("File too large. Size should not exceed 5 MB.")
 
 

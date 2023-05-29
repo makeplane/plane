@@ -88,6 +88,25 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
     setErrorResendingCode(false);
   }, [emailOld]);
 
+  useEffect(() => {
+    const submitForm = (e: KeyboardEvent) => {
+      if (!codeSent && e.key === "Enter") {
+        e.preventDefault();
+        handleSubmit(onSubmit)().then(() => {
+          setResendCodeTimer(30);
+        });
+      }
+    };
+
+    if (!codeSent) {
+      window.addEventListener("keydown", submitForm);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", submitForm);
+    };
+  }, [handleSubmit, codeSent]);
+
   return (
     <>
       <form className="space-y-5 py-5 px-5">

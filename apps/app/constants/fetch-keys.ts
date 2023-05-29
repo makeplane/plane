@@ -83,8 +83,11 @@ export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
   return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAILS_${cycleId.toUpperCase()}`;
-export const CYCLE_CURRENT_AND_UPCOMING_LIST = (projectId: string) =>
-  `CYCLE_CURRENT_AND_UPCOMING_LIST_${projectId.toUpperCase()}`;
+
+export const CYCLE_CURRENT_LIST = (projectId: string) =>
+  `CYCLE_CURRENT_LIST${projectId.toUpperCase()}`;
+export const CYCLE_UPCOMING_LIST = (projectId: string) =>
+  `CYCLE_UPCOMING_LIST${projectId.toUpperCase()}`;
 export const CYCLE_DRAFT_LIST = (projectId: string) =>
   `CYCLE_DRAFT_LIST_${projectId.toUpperCase()}`;
 export const CYCLE_COMPLETE_LIST = (projectId: string) =>
