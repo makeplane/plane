@@ -120,12 +120,17 @@ export const CommandPalette: React.FC = () => {
     async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutate(
+      mutate<IIssue>(
         ISSUE_DETAILS(issueId as string),
-        (prevData: IIssue) => ({
-          ...prevData,
-          ...formData,
-        }),
+
+        (prevData) => {
+          if (!prevData) return prevData;
+
+          return {
+            ...prevData,
+            ...formData,
+          };
+        },
         false
       );
 

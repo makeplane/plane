@@ -66,8 +66,12 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   const handleSignin = async (formData: EmailCodeFormValues) => {
     await authenticationService
       .magicSignIn(formData)
-      .then((response) => {
-        onSuccess(response);
+      .then(() => {
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Successfully logged in!",
+        });
       })
       .catch((error) => {
         setToastAlert({

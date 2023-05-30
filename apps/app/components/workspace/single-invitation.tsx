@@ -1,4 +1,5 @@
 // next
+import { getFirstCharacters, truncateText } from "helpers/string.helper";
 import Image from "next/image";
 // react
 import { useState } from "react";
@@ -22,9 +23,7 @@ const SingleInvitation: React.FC<Props> = ({
     <>
       <li>
         <label
-          className={`group relative flex cursor-pointer items-start space-x-3 border-2 border-transparent px-4 py-4 ${
-            isChecked ? "rounded-lg border-theme" : ""
-          }`}
+          className={`group relative flex cursor-pointer items-start space-x-3 border-2 border-transparent py-4`}
           htmlFor={invitation.id}
         >
           <div className="flex-shrink-0">
@@ -38,35 +37,36 @@ const SingleInvitation: React.FC<Props> = ({
                   alt={invitation.workspace.name}
                 />
               ) : (
-                <span className="flex h-full w-full items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                  {invitation.workspace.name.charAt(0)}
+                <span className="flex h-full w-full items-center justify-center rounded-xl bg-gray-700 p-4 uppercase text-white">
+                  {getFirstCharacters(invitation.workspace.name)}
                 </span>
               )}
             </span>
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-medium text-brand-base">{invitation.workspace.name}</div>
+            <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
             <p className="text-sm text-brand-secondary">
               Invited by {invitation.workspace.owner.first_name}
             </p>
           </div>
           <div className="flex-shrink-0 self-center">
-            <input
-              id={invitation.id}
-              aria-describedby="workspaces"
-              name={invitation.id}
-              checked={invitationsRespond.includes(invitation.id)}
-              value={invitation.workspace.name}
-              onChange={(e) => {
+            <button
+              className={`${
+                invitationsRespond.includes(invitation.id)
+                  ? "bg-brand-surface-2 text-brand-secondary"
+                  : "bg-brand-accent text-white"
+              } text-sm px-4 py-2 border border-brand-base rounded-3xl`}
+              onClick={(e) => {
                 handleInvitation(
                   invitation,
                   invitationsRespond.includes(invitation.id) ? "withdraw" : "accepted"
                 );
-                setIsChecked(e.target.checked);
               }}
-              type="checkbox"
-              className="h-4 w-4 rounded border-brand-base text-brand-accent focus:ring-indigo-500"
-            />
+            >
+              {invitationsRespond.includes(invitation.id)
+                ? "Invitation Accepted"
+                : "Accept Invitation"}
+            </button>
           </div>
         </label>
       </li>

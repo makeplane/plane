@@ -15,6 +15,7 @@ import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
 // components
 import SingleInvitation from "components/workspace/single-invitation";
+import { OnboardingLogo } from "components/onboarding";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, SecondaryButton, PrimaryButton } from "components/ui";
 // icons
@@ -81,86 +82,93 @@ const OnBoard: NextPage = () => {
   return (
     <UserAuthorizationLayout>
       <DefaultLayout>
-        <div className="flex min-h-full flex-col items-center justify-center p-4 sm:p-0">
-          {user && (
-            <div className="mb-10 w-96 rounded-lg bg-brand-accent/20 p-2 text-brand-accent">
-              <p className="text-center text-sm">logged in as {user.email}</p>
+        <div className="relative grid h-full place-items-center p-5">
+          <div className="h-full flex flex-col items-center justify-center w-full py-4">
+            <div className="mb-7 flex items-center justify-center text-center">
+              <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
             </div>
-          )}
 
-          <div className="w-full rounded-lg p-8 md:w-2/3 lg:w-1/3">
-            {invitations && workspaces ? (
-              invitations.length > 0 ? (
-                <div>
-                  <h2 className="text-lg font-medium">Workspace Invitations</h2>
-                  <p className="mt-1 text-sm text-brand-secondary">
-                    Select invites that you want to accept.
-                  </p>
-                  <ul
-                    role="list"
-                    className="mt-6 divide-y divide-brand-base border-t border-b border-brand-base"
-                  >
-                    {invitations.map((invitation) => (
-                      <SingleInvitation
-                        key={invitation.id}
-                        invitation={invitation}
-                        invitationsRespond={invitationsRespond}
-                        handleInvitation={handleInvitation}
-                      />
-                    ))}
-                  </ul>
-                  <div className="mt-6 flex items-center gap-2">
-                    <Link href="/">
-                      <a className="w-full">
-                        <SecondaryButton className="w-full">Go Home</SecondaryButton>
-                      </a>
-                    </Link>
-                    <PrimaryButton className="w-full" onClick={submitInvitations}>
-                      Accept and Continue
-                    </PrimaryButton>
+            <div className="flex h-[436px] w-full max-w-xl rounded-[10px] p-7 bg-brand-base shadow-md">
+              {invitations && workspaces ? (
+                invitations.length > 0 ? (
+                  <div className="flex w-full flex-col gap-3 justify-between">
+                    <div className="flex flex-col gap-2 justify-center ">
+                      <h3 className="text-base font-semibold text-brand-base">
+                        Workspace Invitations
+                      </h3>
+                      <p className="text-sm text-brand-secondary">
+                        Create or join the workspace to get started with Plane.
+                      </p>
+                    </div>
+
+                    <ul role="list" className="h-[255px] w-full overflow-y-auto">
+                      {invitations.map((invitation) => (
+                        <SingleInvitation
+                          key={invitation.id}
+                          invitation={invitation}
+                          invitationsRespond={invitationsRespond}
+                          handleInvitation={handleInvitation}
+                        />
+                      ))}
+                    </ul>
+
+                    <div className="flex items-center gap-3">
+                      <Link href="/">
+                        <a className="w-full">
+                          <SecondaryButton className="w-full">Go Home</SecondaryButton>
+                        </a>
+                      </Link>
+                      <PrimaryButton className="w-full" onClick={submitInvitations}>
+                        Accept and Continue
+                      </PrimaryButton>
+                    </div>
                   </div>
-                </div>
-              ) : workspaces && workspaces.length > 0 ? (
-                <div className="flex flex-col gap-y-3">
-                  <h2 className="mb-4 text-xl font-medium">Your workspaces</h2>
-                  {workspaces.map((workspace) => (
-                    <Link key={workspace.id} href={workspace.slug}>
-                      <a>
-                        <div className="mb-2 flex items-center justify-between rounded border border-brand-base px-4 py-2">
-                          <div className="flex items-center gap-x-2 text-sm">
-                            <CubeIcon className="h-5 w-5 text-brand-secondary" />
-                            {workspace.name}
+                ) : workspaces && workspaces.length > 0 ? (
+                  <div className="flex flex-col gap-y-3">
+                    <h2 className="mb-4 text-xl font-medium">Your workspaces</h2>
+                    {workspaces.map((workspace) => (
+                      <Link key={workspace.id} href={workspace.slug}>
+                        <a>
+                          <div className="mb-2 flex items-center justify-between rounded border border-brand-base px-4 py-2">
+                            <div className="flex items-center gap-x-2 text-sm">
+                              <CubeIcon className="h-5 w-5 text-brand-secondary" />
+                              {workspace.name}
+                            </div>
+                            <div className="flex items-center gap-x-2 text-xs text-brand-secondary">
+                              {workspace.owner.first_name}
+                            </div>
                           </div>
-                          <div className="flex items-center gap-x-2 text-xs text-brand-secondary">
-                            {workspace.owner.first_name}
-                          </div>
-                        </div>
-                      </a>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                invitations.length === 0 &&
-                workspaces.length === 0 && (
-                  <EmptySpace
-                    title="You don't have any workspaces yet"
-                    description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
-                  >
-                    <EmptySpaceItem
-                      Icon={PlusIcon}
-                      title={"Create your Workspace"}
-                      action={() => {
-                        router.push("/create-workspace");
-                      }}
-                    />
-                  </EmptySpace>
+                        </a>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  invitations.length === 0 &&
+                  workspaces.length === 0 && (
+                    <EmptySpace
+                      title="You don't have any workspaces yet"
+                      description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+                    >
+                      <EmptySpaceItem
+                        Icon={PlusIcon}
+                        title={"Create your Workspace"}
+                        action={() => {
+                          router.push("/create-workspace");
+                        }}
+                      />
+                    </EmptySpace>
+                  )
                 )
-              )
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <Spinner />
-              </div>
-            )}
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <Spinner />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
+            <span className="text-xs text-brand-secondary">Logged in:</span>
+            <span className="text-sm text-brand-base">{user?.email}</span>
           </div>
         </div>
       </DefaultLayout>

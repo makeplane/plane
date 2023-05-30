@@ -41,10 +41,11 @@ export interface ICustomTheme {
   textSecondary: string;
 }
 
-export interface ICurrentUserResponse {
+export interface ICurrentUserResponse extends IUser {
   assigned_issues: number;
-  user: IUser;
+  // user: IUser;
   workspace_invites: number;
+  is_onboarded: boolean;
 }
 
 export interface IUserLite {

@@ -57,12 +57,15 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }
     async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutate(
+      mutate<IIssue>(
         ISSUE_DETAILS(issueId as string),
-        (prevData: IIssue) => ({
-          ...prevData,
-          ...formData,
-        }),
+        async (prevData) => {
+          if (!prevData) return prevData;
+          return {
+            ...prevData,
+            ...formData,
+          };
+        },
         false
       );
 
@@ -80,7 +83,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }
   );
 
   const handleIssueAssignees = (assignee: string) => {
-    const updatedAssignees = issue.assignees ?? [];
+    const updatedAssignees = issue.assignees_list ?? [];
 
     if (updatedAssignees.includes(assignee)) {
       updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);

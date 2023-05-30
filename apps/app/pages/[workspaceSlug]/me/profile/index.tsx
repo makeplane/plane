@@ -8,7 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import fileService from "services/file.service";
 import userService from "services/user.service";
 // hooks
-import useUser from "hooks/use-user";
+import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
@@ -50,7 +50,7 @@ const Profile: NextPage = () => {
   } = useForm<IUser>({ defaultValues });
 
   const { setToastAlert } = useToast();
-  const { user: myProfile, mutateUser } = useUser();
+  const { user: myProfile, mutateUser } = useUserAuth();
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });

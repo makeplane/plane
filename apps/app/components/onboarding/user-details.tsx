@@ -66,10 +66,17 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
 
   return (
     <form className="flex w-full items-center justify-center" onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex w-full max-w-xl flex-col gap-12">
+      <div className="flex w-full max-w-xl flex-col gap-7">
         <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
-          <div className="flex flex-col justify-between gap-3 px-10 py-7 sm:flex-row">
-            <div className="flex flex-col items-start justify-center gap-2.5">
+          <div className="flex flex-col gap-2 justify-center px-7 pt-7 pb-3.5">
+            <h3 className="text-base font-semibold text-brand-base">User Details</h3>
+            <p className="text-sm text-brand-secondary">
+              Enter your details as a first step to open your Plane account.
+            </p>
+          </div>
+
+          <div className="flex flex-col justify-between gap-4 px-7 py-3.5 sm:flex-row">
+            <div className="flex flex-col items-start justify-center gap-2.5 w-full sm:w-1/2">
               <span>First name</span>
               <Input
                 name="first_name"
@@ -81,7 +88,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
                 error={errors.first_name}
               />
             </div>
-            <div className="flex flex-col items-start justify-center gap-2.5">
+            <div className="flex flex-col items-start justify-center gap-2.5 w-full sm:w-1/2">
               <span>Last name</span>
               <Input
                 name="last_name"
@@ -94,7 +101,8 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
               />
             </div>
           </div>
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-brand-base px-10 py-7">
+
+          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-brand-base px-7 pt-3.5 pb-7">
             <span>What is your role?</span>
             <div className="w-full">
               <Controller
@@ -123,6 +131,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
             </div>
           </div>
         </div>
+
         <div className="flex w-full items-center justify-center ">
           <PrimaryButton
             type="submit"
