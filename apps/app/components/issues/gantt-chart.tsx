@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 // next imports
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,16 +9,18 @@ import { Tooltip } from "components/ui";
 // hooks
 import useGanttChartIssues from "hooks/gantt-chart/issue-view";
 
+// types
+import type { IIssue } from "types";
+
 type Props = {};
 
 export const IssueGanttChartView: FC<Props> = ({}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { ganttIssues, mutateGanttIssues } = useGanttChartIssues(
-    workspaceSlug as string,
-    projectId as string
-  );
+  const { ganttIssues } = useGanttChartIssues(workspaceSlug as string, projectId as string);
+
+  const [blocks, setBlocks] = useState<any>([]);
 
   // rendering issues on gantt sidebar
   const GanttSidebarBlockView = ({ data }: any) => (
@@ -67,29 +69,57 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
       start_date: data?.start_date,
       target_date: data?.target_date,
     };
+
+    setBlocks((prevData: any) => {
+      if (!Array.isArray(prevData)) return {};
+      const newData = [...(prevData ?? [])];
+      const index = newData.findIndex((item) => item.id === data?.id);
+
+      newData[index] = { ...newData[index], ...payload, ...data };
+
+      return newData;
+    });
   };
 
-  const blockFormat = (blocks: any) =>
-    blocks && blocks.length > 0
-      ? blocks.map((_block: any) => {
-          let startDate = new Date(_block.created_at);
-          let targetDate = new Date(_block.updated_at);
-          let infoToggle = true;
+  const blockFormat = (blocks: IIssue[] | undefined) => {
+    if (!blocks || blocks.length === 0) return [];
 
-          if (_block?.start_date && _block.target_date) {
-            startDate = _block?.start_date;
-            targetDate = _block.target_date;
-            infoToggle = false;
-          }
+    // FIXME: group by will be handled by backend
+    const uniqueStates = [
+      ...(new Set(blocks.map((block) => block.state_detail?.id)) as any),
+    ].sort();
 
-          return {
-            start_date: new Date(startDate),
-            target_date: new Date(targetDate),
-            infoToggle: infoToggle,
-            data: _block,
-          };
-        })
-      : [];
+    return blocks
+      .map((block: IIssue) => {
+        let startDate = new Date(block.created_at);
+        let targetDate = new Date(block.updated_at);
+        let infoToggle = true;
+
+        if (block?.start_date && block.target_date) {
+          startDate = new Date(block?.start_date);
+          targetDate = new Date(block.target_date);
+          infoToggle = false;
+        }
+
+        return {
+          start_date: new Date(startDate),
+          target_date: new Date(targetDate),
+          infoToggle: infoToggle,
+          renderOnlyOnSideBar: startDate === null || targetDate === null,
+          data: block,
+        };
+      })
+      .sort((a, b) => {
+        const stateA = uniqueStates.indexOf(a.data.state_detail?.id);
+        const stateB = uniqueStates.indexOf(b.data.state_detail?.id);
+
+        return stateA - stateB;
+      });
+  };
+
+  useEffect(() => {
+    if (ganttIssues) setBlocks(blockFormat(ganttIssues as any[]));
+  }, [ganttIssues]);
 
   return (
     <div className="w-full h-full">
@@ -97,7 +127,7 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
         border={false}
         title="Issues"
         loaderTitle="Issues"
-        blocks={ganttIssues ? blockFormat(ganttIssues) : null}
+        blocks={blocks}
         blockUpdateHandler={handleUpdateDates}
         sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
         blockRender={(data: any) => <GanttBlockView data={data} />}
