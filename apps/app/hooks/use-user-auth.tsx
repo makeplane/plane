@@ -52,19 +52,19 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
 
       if (user && user.user.is_active) {
         if (routeAuth === "sign-in") {
-          if (user.is_onboarded) handleWorkSpaceRedirection();
+          if (user.user.is_onboarded) handleWorkSpaceRedirection();
           else {
             router.push("/onboarding");
             return;
           }
         } else if (routeAuth === "onboarding") {
-          if (user.is_onboarded) handleWorkSpaceRedirection();
+          if (user.user.is_onboarded) handleWorkSpaceRedirection();
           else {
             setIsRouteAccess(() => false);
             return;
           }
         } else {
-          if (!user.is_onboarded) {
+          if (!user.user.is_onboarded) {
             router.push("/onboarding");
             return;
           } else {
