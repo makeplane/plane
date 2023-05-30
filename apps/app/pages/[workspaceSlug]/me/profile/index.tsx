@@ -53,7 +53,7 @@ const Profile: NextPage = () => {
   const { user: myProfile, mutateUser } = useUserAuth();
 
   useEffect(() => {
-    reset({ ...defaultValues, ...myProfile?.user });
+    reset({ ...defaultValues, ...myProfile });
   }, [myProfile, reset]);
 
   const onSubmit = async (formData: IUser) => {
@@ -170,7 +170,7 @@ const Profile: NextPage = () => {
                       <div className="relative h-12 w-12 overflow-hidden">
                         <Image
                           src={watch("avatar")}
-                          alt={myProfile.user.first_name}
+                          alt={myProfile.first_name}
                           layout="fill"
                           objectFit="cover"
                           className="rounded-md"
@@ -188,9 +188,9 @@ const Profile: NextPage = () => {
                     >
                       Upload
                     </SecondaryButton>
-                    {myProfile.user.avatar && myProfile.user.avatar !== "" && (
+                    {myProfile.avatar && myProfile.avatar !== "" && (
                       <DangerButton
-                        onClick={() => handleDelete(myProfile.user.avatar, true)}
+                        onClick={() => handleDelete(myProfile.avatar, true)}
                         loading={isRemoving}
                       >
                         {isRemoving ? "Removing..." : "Remove"}

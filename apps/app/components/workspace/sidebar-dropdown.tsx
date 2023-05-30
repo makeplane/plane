@@ -118,7 +118,7 @@ export const WorkspaceSidebarDropdown = () => {
             <Link href={`/${workspaceSlug}/me/profile`}>
               <a>
                 <div className="flex flex-grow justify-end">
-                  <Avatar user={user?.user} height="32px" width="32px" fontSize="14px" />
+                  <Avatar user={user} height="32px" width="32px" fontSize="14px" />
                 </div>
               </a>
             </Link>
@@ -139,7 +139,7 @@ export const WorkspaceSidebarDropdown = () => {
           border border-brand-base bg-brand-surface-2 shadow-lg focus:outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
-              <div className="text-sm text-gray-500">{user?.user?.email}</div>
+              <div className="text-sm text-gray-500">{user?.email}</div>
               <span className="text-sm font-semibold text-gray-500">Workspace</span>
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-3.5">

@@ -168,7 +168,7 @@ const OnBoard: NextPage = () => {
           </div>
           <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
             <span className="text-xs text-brand-secondary">Logged in:</span>
-            <span className="text-sm text-brand-base">{user?.user?.email}</span>
+            <span className="text-sm text-brand-base">{user?.email}</span>
           </div>
         </div>
       </DefaultLayout>

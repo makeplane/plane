@@ -93,8 +93,8 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   useEffect(() => {
     const theme = localStorage.getItem("theme");
     if (theme && theme === "custom") {
-      if (user && user.user.theme.palette) {
-        applyTheme(user.user.theme.palette, user.user.theme.darkPalette);
+      if (user && user.theme.palette) {
+        applyTheme(user.theme.palette, user.theme.darkPalette);
       }
     }
   }, [user]);

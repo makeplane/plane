@@ -22,7 +22,7 @@ const ProfilePreferences = () => {
 
   useEffect(() => {
     if (theme === "custom") {
-      if (myProfile?.user.theme.palette) setPreLoadedData(myProfile.user.theme);
+      if (myProfile?.theme.palette) setPreLoadedData(myProfile.theme);
       if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
     }
   }, [myProfile, theme]);
@@ -56,7 +56,7 @@ const ProfilePreferences = () => {
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <ThemeSwitch
-                  user={myProfile?.user}
+                  user={myProfile}
                   setPreLoadedData={setPreLoadedData}
                   customThemeSelectorOptions={customThemeSelectorOptions}
                   setCustomThemeSelectorOptions={setCustomThemeSelectorOptions}

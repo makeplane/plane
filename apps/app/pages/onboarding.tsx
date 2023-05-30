@@ -53,7 +53,7 @@ const Onboarding: NextPage = () => {
                 <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
               </div>
               {step === 1 ? (
-                <UserDetails user={user?.user} setStep={setStep} setUserRole={setUserRole} />
+                <UserDetails user={user} setStep={setStep} setUserRole={setUserRole} />
               ) : step === 2 ? (
                 <Workspace setStep={setStep} setWorkspace={setWorkspace} />
               ) : (
@@ -102,7 +102,7 @@ const Onboarding: NextPage = () => {
                             const userWorkspaces = await workspaceService.userWorkspaces();
 
                             const lastActiveWorkspace = userWorkspaces.find(
-                              (workspace) => workspace.id === user?.user.last_workspace_id
+                              (workspace) => workspace.id === user?.last_workspace_id
                             );
 
                             if (lastActiveWorkspace) {
@@ -136,7 +136,7 @@ const Onboarding: NextPage = () => {
           )}
           <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
             <span className="text-xs text-brand-secondary">Logged in:</span>
-            <span className="text-sm text-brand-base">{user?.user?.email}</span>
+            <span className="text-sm text-brand-base">{user?.email}</span>
           </div>
         </div>
       </DefaultLayout>
