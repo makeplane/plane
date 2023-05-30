@@ -70,6 +70,7 @@ export const WorkspaceSidebarDropdown = () => {
     await authenticationService
       .signOut()
       .then(() => {
+        mutateUser(undefined);
         router.push("/");
       })
       .catch(() =>
