@@ -85,6 +85,7 @@ class ProjectDetailSerializer(BaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
     total_modules = serializers.IntegerField(read_only=True)
+    is_member = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Project
