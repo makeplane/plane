@@ -45,11 +45,12 @@ The easiest way to get started with Plane is by creating a [Plane Cloud](https:/
 
 ### Docker Compose Setup
 
-- Download the docker-compose.yml and setup.sh file
+- Download the docker-compose.yml, setup.sh and .env.example file
 
 ```bash
 curl https://raw.githubusercontent.com/makeplane/plane/develop/docker-compose-hub.yml --output docker-compose.yml
 curl https://raw.githubusercontent.com/makeplane/plane/develop/setup.sh --output setup.sh
+curl https://raw.githubusercontent.com/makeplane/plane/develop/.env.example --output .env.example
 chmod +x setup.sh
 ```
 
