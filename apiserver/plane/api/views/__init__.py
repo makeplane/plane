@@ -13,7 +13,7 @@ from .project import (
     ProjectMemberUserEndpoint,
     ProjectFavoritesViewSet,
 )
-from .people import (
+from .user import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
     UserActivityEndpoint,

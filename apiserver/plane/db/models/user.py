@@ -1,6 +1,7 @@
 # Python imports
-from enum import unique
 import uuid
+import string
+import random
 
 # Django imports
 from django.db import models
@@ -17,6 +18,12 @@ from django.conf import settings
 from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+
+def generate_display_name():
+    letters = string.ascii_letters
+    random_letters = ''.join(random.choice(letters) for _ in range(6))
+    return random_letters
+
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -73,6 +80,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=300, null=True, blank=True)
     is_bot = models.BooleanField(default=False)
     theme = models.JSONField(default=dict)
+    display_name = models.CharField(max_length=255, default=generate_display_name)
 
     USERNAME_FIELD = "email"
 

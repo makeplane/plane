@@ -301,7 +301,7 @@ class CreateIssueFromPageBlockEndpoint(BaseAPIView):
                 issue=issue,
                 actor=request.user,
                 project_id=project_id,
-                comment=f"{request.user.email} created the issue from {page_block.name} block",
+                comment=f"created the issue from {page_block.name} block",
                 verb="created",
             )
 

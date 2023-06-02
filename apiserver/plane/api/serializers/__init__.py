@@ -1,10 +1,5 @@
 from .base import BaseSerializer
-from .people import (
-    ChangePasswordSerializer,
-    ResetPasswordSerializer,
-    TokenSerializer,
-)
-from .user import UserSerializer, UserLiteSerializer
+from .user import UserSerializer, UserLiteSerializer, ChangePasswordSerializer, ResetPasswordSerializer
 from .workspace import (
     WorkSpaceSerializer,
     WorkSpaceMemberSerializer,
