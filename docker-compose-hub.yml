@@ -45,7 +45,7 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -80,7 +80,7 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-api
                         - plane-db
@@ -130,11 +130,9 @@ services:
                   "
 
 # Comment this if you already have a reverse proxy running
-        nginx:
-          container_name: nginx
-          build:
-            context: ./nginx
-            dockerfile: Dockerfile
+        plane-proxy:
+          container_name: planeproxy
+          image: makeplane/plane-proxy:latest
           ports:
             - ${NGINX_PORT}:80
           depends_on:
