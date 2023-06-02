@@ -10,7 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu, ToggleSwitch } from "components/ui";
+import { CustomMenu, Icon, ToggleSwitch } from "components/ui";
 // icons
 import {
   ChevronDownIcon,
@@ -82,6 +82,15 @@ export const IssuesFilterView: React.FC = () => {
           onClick={() => setIssueView("calendar")}
         >
           <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
+        </button>
+        <button
+          type="button"
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+            issueView === "spreadsheet" ? "bg-brand-surface-2" : ""
+          }`}
+          onClick={() => setIssueView("spreadsheet")}
+        >
+          <Icon iconName="table_chart" className="text-brand-secondary" />
         </button>
         <button
           type="button"

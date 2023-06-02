@@ -18,7 +18,14 @@ import { useProjectMyMembership } from "contexts/project-member.context";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 // components
-import { AllLists, AllBoards, FilterList, CalendarView, GanttChartView } from "components/core";
+import {
+  AllLists,
+  AllBoards,
+  FilterList,
+  CalendarView,
+  GanttChartView,
+  SpreadsheetView,
+} from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 import { CycleIssuesGanttChartView, TransferIssues, TransferIssuesModal } from "components/cycles";
@@ -538,6 +545,8 @@ export const IssuesView: React.FC<Props> = ({
                   isCompleted={isCompleted}
                   userAuth={memberRole}
                 />
+              ) : issueView === "spreadsheet" ? (
+                <SpreadsheetView userAuth={memberRole} />
               ) : (
                 issueView === "gantt_chart" && <GanttChartView />
               )}
