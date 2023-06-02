@@ -44,7 +44,7 @@ def track_name(
                 field="name",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated the start date to {requested_data.get('name')}",
+                comment=f"updated the name to {requested_data.get('name')}",
             )
         )
 
@@ -71,7 +71,7 @@ def track_parent(
                     field="parent",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the parent issue to None",
+                    comment=f"updated the parent issue to None",
                     old_identifier=old_parent.id,
                     new_identifier=None,
                 )
@@ -91,7 +91,7 @@ def track_parent(
                     field="parent",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the parent issue to {new_parent.name}",
+                    comment=f"updated the parent issue to {new_parent.name}",
                     old_identifier=old_parent.id if old_parent is not None else None,
                     new_identifier=new_parent.id,
                 )
@@ -119,7 +119,7 @@ def track_priority(
                     field="priority",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the priority to None",
+                    comment=f"updated the priority to None",
                 )
             )
         else:
@@ -133,7 +133,7 @@ def track_priority(
                     field="priority",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the priority to {requested_data.get('priority')}",
+                    comment=f"updated the priority to {requested_data.get('priority')}",
                 )
             )
 
@@ -161,7 +161,7 @@ def track_state(
                 field="state",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated the state to {new_state.name}",
+                comment=f"updated the state to {new_state.name}",
                 old_identifier=old_state.id,
                 new_identifier=new_state.id,
             )
@@ -190,7 +190,7 @@ def track_description(
                 field="description",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated the description to {requested_data.get('description_html')}",
+                comment=f"updated the description to {requested_data.get('description_html')}",
             )
         )
 
@@ -216,7 +216,7 @@ def track_target_date(
                     field="target_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the target date to None",
+                    comment=f"updated the target date to None",
                 )
             )
         else:
@@ -230,7 +230,7 @@ def track_target_date(
                     field="target_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the target date to {requested_data.get('target_date')}",
+                    comment=f"updated the target date to {requested_data.get('target_date')}",
                 )
             )
 
@@ -256,7 +256,7 @@ def track_start_date(
                     field="start_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the start date to None",
+                    comment=f"updated the start date to None",
                 )
             )
         else:
@@ -270,7 +270,7 @@ def track_start_date(
                     field="start_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the start date to {requested_data.get('start_date')}",
+                    comment=f"updated the start date to {requested_data.get('start_date')}",
                 )
             )
 
@@ -299,7 +299,7 @@ def track_labels(
                         field="labels",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added label {label.name}",
+                        comment=f"added label {label.name}",
                         new_identifier=label.id,
                         old_identifier=None,
                     )
@@ -320,7 +320,7 @@ def track_labels(
                         field="labels",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed label {label.name}",
+                        comment=f"removed label {label.name}",
                         old_identifier=label.id,
                         new_identifier=None,
                     )
@@ -349,12 +349,12 @@ def track_assignees(
                         actor=actor,
                         verb="updated",
                         old_value="",
-                        new_value=assignee.email,
+                        new_value=assignee.display_name,
                         field="assignees",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added assignee {assignee.email}",
-                        new_identifier=actor.id,
+                        comment=f"added assignee {assignee.display_name}",
+                        new_identifier=assignee,
                     )
                 )
 
@@ -370,13 +370,13 @@ def track_assignees(
                         issue_id=issue_id,
                         actor=actor,
                         verb="updated",
-                        old_value=assignee.email,
+                        old_value=assignee.display_name,
                         new_value="",
-                        field="assignee",
+                        field="assignees",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed assignee {assignee.email}",
-                        old_identifier=actor.id,
+                        comment=f"removed assignee {assignee.display_name}",
+                        old_identifier=assignee,
                     )
                 )
 
@@ -415,7 +415,7 @@ def track_blocks(
                         field="blocks",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added blocking issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"added blocking issue {project.identifier}-{issue.sequence_id}",
                         new_identifier=issue.id,
                     )
                 )
@@ -437,7 +437,7 @@ def track_blocks(
                         field="blocks",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed blocking issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"removed blocking issue {project.identifier}-{issue.sequence_id}",
                         old_identifier=issue.id,
                     )
                 )
@@ -477,7 +477,7 @@ def track_blockings(
                         field="blocking",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added blocked by issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"added blocked by issue {project.identifier}-{issue.sequence_id}",
                         new_identifier=issue.id,
                     )
                 )
@@ -499,7 +499,7 @@ def track_blockings(
                         field="blocking",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed blocked by issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"removed blocked by issue {project.identifier}-{issue.sequence_id}",
                         old_identifier=issue.id,
                     )
                 )
@@ -513,7 +513,7 @@ def create_issue_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created the issue",
+            comment=f"created the issue",
             verb="created",
             actor=actor,
         )
@@ -535,7 +535,7 @@ def track_estimate_points(
                     field="estimate_point",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the estimate point to None",
+                    comment=f"updated the estimate point to None",
                 )
             )
         else:
@@ -549,7 +549,7 @@ def track_estimate_points(
                     field="estimate_point",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the estimate point to {requested_data.get('estimate_point')}",
+                    comment=f"updated the estimate point to {requested_data.get('estimate_point')}",
                 )
             )
 
@@ -597,7 +597,7 @@ def delete_issue_activity(
         IssueActivity(
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} deleted the issue",
+            comment=f"deleted the issue",
             verb="deleted",
             actor=actor,
             field="issue",
@@ -618,7 +618,7 @@ def create_comment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created a comment",
+            comment=f"created a comment",
             verb="created",
             actor=actor,
             field="comment",
@@ -643,7 +643,7 @@ def update_comment_activity(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated a comment",
+                comment=f"updated a comment",
                 verb="updated",
                 actor=actor,
                 field="comment",
@@ -664,7 +664,7 @@ def delete_comment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} deleted the comment",
+            comment=f"deleted the comment",
             verb="deleted",
             actor=actor,
             field="comment",
@@ -702,7 +702,7 @@ def create_cycle_issue_activity(
                 field="cycles",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated cycle from {old_cycle.name} to {new_cycle.name}",
+                comment=f"updated cycle from {old_cycle.name} to {new_cycle.name}",
                 old_identifier=old_cycle.id,
                 new_identifier=new_cycle.id,
             )
@@ -723,7 +723,7 @@ def create_cycle_issue_activity(
                 field="cycles",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} added cycle {cycle.name}",
+                comment=f"added cycle {cycle.name}",
                 new_identifier=cycle.id,
             )
         )
@@ -752,7 +752,7 @@ def delete_cycle_issue_activity(
                 field="cycles",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} removed this issue from {cycle.name if cycle is not None else None}",
+                comment=f"removed this issue from {cycle.name if cycle is not None else None}",
                 old_identifier=cycle.id if cycle is not None else None,
             )
         )
@@ -788,7 +788,7 @@ def create_module_issue_activity(
                 field="modules",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated module from {old_module.name} to {new_module.name}",
+                comment=f"updated module from {old_module.name} to {new_module.name}",
                 old_identifier=old_module.id,
                 new_identifier=new_module.id,
             )
@@ -808,7 +808,7 @@ def create_module_issue_activity(
                 field="modules",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} added module {module.name}",
+                comment=f"added module {module.name}",
                 new_identifier=module.id,
             )
         )
@@ -837,7 +837,7 @@ def delete_module_issue_activity(
                 field="modules",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} removed this issue from {module.name if module is not None else None}",
+                comment=f"removed this issue from {module.name if module is not None else None}",
                 old_identifier=module.id if module is not None else None,
             )
         )
@@ -856,7 +856,7 @@ def create_link_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created a link",
+            comment=f"created a link",
             verb="created",
             actor=actor,
             field="link",
@@ -880,7 +880,7 @@ def update_link_activity(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated a link",
+                comment=f"updated a link",
                 verb="updated",
                 actor=actor,
                 field="link",
@@ -900,7 +900,7 @@ def delete_link_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} deleted the link",
+            comment=f"deleted the link",
             verb="deleted",
             actor=actor,
             field="link",
@@ -921,7 +921,7 @@ def create_attachment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created an attachment",
+            comment=f"created an attachment",
             verb="created",
             actor=actor,
             field="attachment",
@@ -939,7 +939,7 @@ def delete_attachment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} deleted the attachment",
+            comment=f"deleted the attachment",
             verb="deleted",
             actor=actor,
             field="attachment",
