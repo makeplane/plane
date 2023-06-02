@@ -120,7 +120,7 @@ class TrackEventServices extends APIService {
     else payload = data;
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -147,7 +147,7 @@ class TrackEventServices extends APIService {
     else payload = data;
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -160,7 +160,7 @@ class TrackEventServices extends APIService {
 
   async trackUserOnboardingCompleteEvent(data: any): Promise<any> {
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName: "USER_ONBOARDING_COMPLETE",
@@ -186,7 +186,7 @@ class TrackEventServices extends APIService {
     else payload = data;
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -200,7 +200,7 @@ class TrackEventServices extends APIService {
   async trackIssueMarkedAsDoneEvent(data: any): Promise<any> {
     if (!trackEvent) return;
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName: "ISSUES_MARKED_AS_DONE",
@@ -222,7 +222,7 @@ class TrackEventServices extends APIService {
   ): Promise<any> {
     if (!trackEvent) return;
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName: propertyName,
@@ -250,7 +250,7 @@ class TrackEventServices extends APIService {
       };
     else payload = data;
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -270,7 +270,7 @@ class TrackEventServices extends APIService {
       | "ISSUE_MOVED_TO_MODULE_IN_BULK"
   ): Promise<any> {
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -283,7 +283,7 @@ class TrackEventServices extends APIService {
 
   async trackIssueBulkDeleteEvent(data: any): Promise<any> {
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName: "ISSUE_BULK_DELETE",
@@ -296,7 +296,7 @@ class TrackEventServices extends APIService {
 
   async trackIssueLabelEvent(data: any, eventName: IssueLabelEventType): Promise<any> {
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -322,7 +322,7 @@ class TrackEventServices extends APIService {
     else payload = data;
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -348,7 +348,7 @@ class TrackEventServices extends APIService {
     else payload = data;
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -374,7 +374,7 @@ class TrackEventServices extends APIService {
     else payload = data;
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -400,7 +400,7 @@ class TrackEventServices extends APIService {
     else payload = data;
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -440,7 +440,7 @@ class TrackEventServices extends APIService {
     } else payload = data;
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -462,7 +462,7 @@ class TrackEventServices extends APIService {
       count: data?.count,
     };
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -502,7 +502,7 @@ class TrackEventServices extends APIService {
     }
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -526,7 +526,7 @@ class TrackEventServices extends APIService {
       };
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -539,7 +539,7 @@ class TrackEventServices extends APIService {
 
   async trackMiscellaneousEvent(data: any, eventName: MiscellaneousEventType): Promise<any> {
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -552,7 +552,7 @@ class TrackEventServices extends APIService {
 
   async trackAppIntegrationEvent(data: any, eventName: IntegrationEventType): Promise<any> {
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -565,7 +565,7 @@ class TrackEventServices extends APIService {
 
   async trackGitHubSyncEvent(data: any, eventName: GitHubSyncEventType): Promise<any> {
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -594,7 +594,7 @@ class TrackEventServices extends APIService {
       };
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -620,7 +620,7 @@ class TrackEventServices extends APIService {
       };
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,
@@ -635,7 +635,7 @@ class TrackEventServices extends APIService {
     const payload = { ...data };
 
     return this.request({
-      url: "/api/track-event",
+      url: "/api/next/track-event",
       method: "POST",
       data: {
         eventName,

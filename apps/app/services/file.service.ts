@@ -65,7 +65,7 @@ class FileServices extends APIService {
   }
 
   async getUnsplashImages(page: number = 1, query?: string): Promise<UnSplashImage[]> {
-    const url = "/api/unsplash";
+    const url = "/api/next/unsplash";
 
     return this.request({
       method: "get",

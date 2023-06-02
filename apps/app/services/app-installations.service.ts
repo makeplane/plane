@@ -51,7 +51,7 @@ class AppInstallationsService extends APIService {
   async getSlackAuthDetails(code: string): Promise<any> {
     const response = await axios({
       method: "post",
-      url: "/api/slack-redirect",
+      url: "/api/next/slack-redirect",
       data: {
         code,
       },
