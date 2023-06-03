@@ -227,7 +227,11 @@ class IssueSearchEndpoint(BaseAPIView):
                     )
                 )
             if blocker_blocked_by == "true" and issue_id:
-                issues = issues.filter(blocker_issues=issue_id, blocked_issues=issue_id)
+                issues = issues.filter(
+                    ~Q(pk=issue_id),
+                    ~Q(blocker_issues=issue_id),
+                    ~Q(blocked_issues=issue_id),
+                )
 
             return Response(
                 issues.values(
