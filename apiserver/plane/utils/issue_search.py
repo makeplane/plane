@@ -8,7 +8,7 @@ from django.db.models import Q
 from plane.db.models import Issue
 
 
-def search_issues(query):
+def search_issues(query, queryset):
     fields = ["name", "sequence_id"]
     q = Q()
     for field in fields:
@@ -18,6 +18,6 @@ def search_issues(query):
                 q |= Q(**{"sequence_id": sequence_id})
         else:
             q |= Q(**{f"{field}__icontains": query})
-    return Issue.objects.filter(
+    return queryset.filter(
         q,
     ).distinct()
