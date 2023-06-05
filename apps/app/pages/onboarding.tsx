@@ -41,8 +41,6 @@ const Onboarding: NextPage = () => {
 
   const { user } = useUserAuth("onboarding");
 
-  console.log("user", user);
-
   return (
     <UserAuthorizationLayout>
       <DefaultLayout>

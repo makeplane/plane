@@ -10,7 +10,7 @@ axios.interceptors.response.use(
       Cookies.remove("refreshToken", { path: "/" });
       Cookies.remove("accessToken", { path: "/" });
       if (window.location.pathname != "/")
-        window.location.href = "/?next_url=window.location.pathname";
+        window.location.href = `/?next_url=${window.location.pathname}`;
     }
     return Promise.reject(error);
   }
