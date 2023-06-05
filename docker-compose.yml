@@ -31,7 +31,7 @@ services:
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
-                        REDIS_URL: redis://redis:6379/
+                        REDIS_URL: redis://plane-redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
                         EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
@@ -52,7 +52,7 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -67,7 +67,7 @@ services:
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
-                        REDIS_URL: redis://redis:6379/
+                        REDIS_URL: redis://plane-redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
                         EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
@@ -88,7 +88,7 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-api
                         - plane-db
@@ -108,7 +108,7 @@ services:
                         PGDATA: /var/lib/postgresql/data
 
         plane-redis:
-                container_name: redis
+                container_name: plane-redis
                 image: redis:6.2.7-alpine
                 restart: always
                 volumes:
@@ -137,8 +137,8 @@ services:
                 depends_on:
                         - plane-minio
 
-        nginx:
-                container_name: nginx
+        plane-proxy:
+                container_name: planeproxy
                 build:
                   context: ./nginx
                   dockerfile: Dockerfile

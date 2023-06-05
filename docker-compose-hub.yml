@@ -14,8 +14,6 @@ services:
                         NEXT_PUBLIC_SENTRY_DSN: 0
                         NEXT_PUBLIC_ENABLE_OAUTH: 0
                         NEXT_PUBLIC_ENABLE_SENTRY: 0
-                ports:
-                        - 3000:3000
 
         plane-api:
                 container_name: planebackend
@@ -45,12 +43,10 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-db
                         - plane-redis
-                ports:
-                        - 8000:8000
 
         plane-worker:
                 container_name: planerqworker
@@ -80,7 +76,7 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-api
                         - plane-db
@@ -114,8 +110,6 @@ services:
                   MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
                   MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
                 command: server /export --console-address ":9090"
-                ports:
-                      - 9000:9000
 
         createbuckets:
                 image: minio/mc
@@ -130,11 +124,9 @@ services:
                   "
 
 # Comment this if you already have a reverse proxy running
-        nginx:
-          container_name: nginx
-          build:
-            context: ./nginx
-            dockerfile: Dockerfile
+        plane-proxy:
+          container_name: planeproxy
+          image: makeplane/plane-proxy:latest
           ports:
             - ${NGINX_PORT}:80
           depends_on:
