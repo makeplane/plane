@@ -73,6 +73,21 @@ const HomePage: NextPage = () => {
     }
   };
 
+  const handleEmailPasswordSignIn = async (response: any) => {
+    try {
+      if (response) {
+        mutateUser();
+      }
+    } catch (error) {
+      console.log(error);
+      setToastAlert({
+        title: "Error signing in!",
+        type: "error",
+        message: "Something went wrong. Please try again later or contact the support team.",
+      });
+    }
+  };
+
   return (
     <DefaultLayout>
       {isLoading ? (
@@ -101,7 +116,7 @@ const HomePage: NextPage = () => {
                   </>
                 ) : (
                   <>
-                    <EmailPasswordForm />
+                    <EmailPasswordForm handleSignIn={handleEmailPasswordSignIn} />
                   </>
                 )}
               </div>

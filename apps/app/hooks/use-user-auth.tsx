@@ -13,6 +13,8 @@ import type { IWorkspace, ICurrentUserResponse } from "types";
 
 const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
   const router = useRouter();
+  const { next_url } = router.query as { next_url: string };
+
   const [isRouteAccess, setIsRouteAccess] = useState(true);
 
   const {
@@ -48,8 +50,6 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     };
 
     const handleUserRouteAuthentication = async () => {
-      console.log("user", user);
-
       if (user && user.is_active) {
         if (routeAuth === "sign-in") {
           if (user.is_onboarded) handleWorkSpaceRedirection();
@@ -82,8 +82,10 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
 
     if (!isLoading) {
       setIsRouteAccess(() => true);
-      if (user) handleUserRouteAuthentication();
-      else {
+      if (user) {
+        if (next_url) router.push(next_url);
+        else handleUserRouteAuthentication();
+      } else {
         if (routeAuth === "sign-in") {
           setIsRouteAccess(() => false);
           return;
@@ -93,7 +95,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
         }
       }
     }
-  }, [user, isLoading, routeAuth, router]);
+  }, [user, isLoading, routeAuth, router, next_url]);
 
   return {
     isLoading: isRouteAccess,

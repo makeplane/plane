@@ -17,7 +17,7 @@ type EmailPasswordFormValues = {
   medium?: string;
 };
 
-export const EmailPasswordForm = ({ onSuccess }: any) => {
+export const EmailPasswordForm = ({ handleSignIn }: any) => {
   const { setToastAlert } = useToast();
   const {
     register,
@@ -38,7 +38,7 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
     authenticationService
       .emailLogin(formData)
       .then((response) => {
-        onSuccess(response);
+        if (handleSignIn) handleSignIn(response);
       })
       .catch((error) => {
         console.log(error);
