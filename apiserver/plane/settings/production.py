@@ -30,9 +30,7 @@ DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
 # Set the variable true if running in docker environment
-DOCKERIZED = int(os.environ.get(
-    "DOCKERIZED", 0
-))  == 1
+DOCKERIZED = int(os.environ.get("DOCKERIZED", 0)) == 1
 
 USE_MINIO = int(os.environ.get("USE_MINIO"), 0) == 1
 
@@ -86,7 +84,8 @@ if bool(os.environ.get("SENTRY_DSN", False)):
     )
 
 if DOCKERIZED and USE_MINIO:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    INSTALLED_APPS += ("storages",)
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
     # The AWS access key to use.
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
     # The AWS secret access key to use.
@@ -99,6 +98,11 @@ if DOCKERIZED and USE_MINIO:
     AWS_DEFAULT_ACL = "public-read"
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
+
+    # Custom Domain settings
+    parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
+    AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
+    AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 else:
     # The AWS region to connect to.
     AWS_REGION = os.environ.get("AWS_REGION", "")
