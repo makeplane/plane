@@ -32,7 +32,7 @@ SITE_ID = 1
 # Set the variable true if running in docker environment
 DOCKERIZED = int(os.environ.get("DOCKERIZED", 0)) == 1
 
-USE_MINIO = int(os.environ.get("USE_MINIO"), 0) == 1
+USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
