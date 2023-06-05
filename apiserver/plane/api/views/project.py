@@ -424,7 +424,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 )
             # Check while updating user roles
             requested_project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, member=request.user)
-            if "role" in request.data and request.data.get("role", project_member.role) > requested_project_member.role:
+            if "role" in request.data and int(request.data.get("role", project_member.role)) > requested_project_member.role:
                 return Response(
                     {
                         "error": "You cannot update a role that is higher than your own role"
