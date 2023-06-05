@@ -1,6 +1,5 @@
 FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat
-RUN apk update
 # Set working directory
 WORKDIR /app
 ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
@@ -14,7 +13,6 @@ RUN turbo prune --scope=app --docker
 FROM node:18-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
-RUN apk update
 WORKDIR /app
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 # First install the dependencies (as they change less often)
@@ -48,7 +46,7 @@ ENV DOCKERIZED 1
 
 WORKDIR /code
 
-RUN apk --update --no-cache add \
+RUN apk --no-cache add \
     "libpq~=15" \
     "libxslt~=1.1" \
     "nodejs-current~=19" \
@@ -60,8 +58,8 @@ RUN apk --update --no-cache add \
 
 COPY apiserver/requirements.txt ./
 COPY apiserver/requirements ./requirements
-RUN apk add libffi-dev
-RUN apk --update --no-cache --virtual .build-deps add \
+RUN apk add --no-cache libffi-dev
+RUN apk add --no-cache --virtual .build-deps \
     "bash~=5.2" \
     "g++~=12.2" \
     "gcc~=12.2" \
@@ -82,7 +80,7 @@ COPY apiserver/plane plane/
 COPY apiserver/templates templates/
 
 COPY apiserver/gunicorn.config.py ./
-RUN apk --update --no-cache add "bash~=5.2"
+RUN apk --no-cache add "bash~=5.2"
 COPY apiserver/bin ./bin/
 
 RUN chmod +x ./bin/takeoff ./bin/worker
