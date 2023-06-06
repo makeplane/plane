@@ -1,7 +1,6 @@
 import React from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // headless ui
@@ -246,7 +245,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     <div className="w-16">Creator:</div>
                     <div className="flex items-center gap-2.5 text-brand-secondary">
                       {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                        <Image
+                        <img
                           src={cycle.owned_by.avatar}
                           height={16}
                           width={16}

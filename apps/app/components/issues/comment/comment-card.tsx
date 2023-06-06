@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Image from "next/image";
 import dynamic from "next/dynamic";
 
 // react-hook-form
@@ -68,12 +67,12 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
     <div className="relative flex items-start space-x-3">
       <div className="relative px-1">
         {comment.actor_detail.avatar && comment.actor_detail.avatar !== "" ? (
-          <Image
+          <img
             src={comment.actor_detail.avatar}
             alt={comment.actor_detail.first_name}
             height={30}
             width={30}
-            className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
+            className="grid h-7 w-7 place-items-center rounded-full border-2 border-brand-base"
           />
         ) : (
           <div

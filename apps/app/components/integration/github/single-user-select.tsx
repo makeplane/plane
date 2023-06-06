@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -66,11 +65,9 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-brand-surface-2 px-2 py-3">
       <div className="flex items-center gap-2">
         <div className="relative h-8 w-8 flex-shrink-0 rounded">
-          <Image
+          <img
             src={collaborator.avatar_url}
-            layout="fill"
-            objectFit="cover"
-            className="rounded"
+            className="absolute top-0 left-0 h-full w-full object-cover rounded"
             alt={`${collaborator.login} GitHub user`}
           />
         </div>

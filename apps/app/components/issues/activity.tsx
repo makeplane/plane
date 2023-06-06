@@ -1,6 +1,7 @@
 import React from "react";
+
 import { useRouter } from "next/router";
-import Image from "next/image";
+
 import useSWR from "swr";
 
 // icons
@@ -346,7 +347,7 @@ export const IssueActivitySection: React.FC<Props> = ({ user }) => {
                                   ?.icon
                               ) : activityItem.actor_detail.avatar &&
                                 activityItem.actor_detail.avatar !== "" ? (
-                                <Image
+                                <img
                                   src={activityItem.actor_detail.avatar}
                                   alt={activityItem.actor_detail.first_name}
                                   height={24}

@@ -177,12 +177,10 @@ const MembersSettings: NextPage = () => {
                         <div className="flex items-center gap-x-8 gap-y-2">
                           <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
                             {member.avatar && member.avatar !== "" ? (
-                              <Image
+                              <img
                                 src={member.avatar}
+                                className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                                 alt={member.first_name}
-                                layout="fill"
-                                objectFit="cover"
-                                className="rounded-lg"
                               />
                             ) : member.first_name !== "" ? (
                               member.first_name.charAt(0)
