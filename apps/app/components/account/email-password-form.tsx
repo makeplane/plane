@@ -1,11 +1,10 @@
-import React from "react";
-
-import Link from "next/link";
+import React, { useState } from "react";
 
 // react hook form
 import { useForm } from "react-hook-form";
 // services
 import authenticationService from "services/authentication.service";
+import userService from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -18,11 +17,15 @@ type EmailPasswordFormValues = {
 };
 
 export const EmailPasswordForm = ({ handleSignIn }: any) => {
+  const [isSendingMail, setIsSendingMail] = useState(false);
+
   const { setToastAlert } = useToast();
+
   const {
     register,
     handleSubmit,
     setError,
+    watch,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
     defaultValues: {
@@ -33,6 +36,44 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
     mode: "onChange",
     reValidateMode: "onChange",
   });
+
+  const forgotPassword = async () => {
+    const email = watch("email");
+
+    if (!email || email === "") {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Please enter your registered email address to reset your password.",
+      });
+
+      return;
+    }
+
+    setIsSendingMail(true);
+
+    const payload = {
+      email,
+    };
+
+    await userService
+      .forgotPassword(payload)
+      .then(() =>
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Password reset link has been sent to your email address.",
+        })
+      )
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        })
+      )
+      .finally(() => setIsSendingMail(false));
+  };
 
   const onSubmit = (formData: EmailPasswordFormValues) => {
     authenticationService
@@ -58,6 +99,7 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
         });
       });
   };
+
   return (
     <>
       <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
@@ -93,11 +135,16 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
         </div>
         <div className="mt-2 flex items-center justify-between">
           <div className="ml-auto text-sm">
-            <Link href={"/forgot-password"}>
-              <a className="font-medium text-brand-accent hover:text-brand-accent">
-                Forgot your password?
-              </a>
-            </Link>
+            <button
+              type="button"
+              onClick={forgotPassword}
+              className={`font-medium text-brand-accent hover:text-brand-accent ${
+                isSendingMail ? "cursor-wait" : ""
+              }`}
+              disabled={isSendingMail}
+            >
+              {isSendingMail ? "Sending reset link..." : "Forgot your password?"}
+            </button>
           </div>
         </div>
         <div className="mt-5">
