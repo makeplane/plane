@@ -13,6 +13,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsHeader } from "components/project";
 // ui

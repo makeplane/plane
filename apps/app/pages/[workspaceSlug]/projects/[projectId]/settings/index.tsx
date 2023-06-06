@@ -157,6 +157,7 @@ const GeneralSettings: NextPage = () => {
         onSuccess={() => {
           router.push(`/${workspaceSlug}/projects`);
         }}
+        user={user}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="p-8">
         <SettingsHeader />

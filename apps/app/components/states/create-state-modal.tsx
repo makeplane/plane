@@ -19,7 +19,7 @@ import { CustomSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "c
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import type { IState, IStateResponse } from "types";
+import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants

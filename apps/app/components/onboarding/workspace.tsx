@@ -9,7 +9,7 @@ import { Tab } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
 // types
-import { IWorkspaceMemberInvitation } from "types";
+import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
@@ -21,9 +21,10 @@ import { getFirstCharacters, truncateText } from "helpers/string.helper";
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
+export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [defaultValues, setDefaultValues] = useState({
@@ -240,6 +241,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
               }}
               defaultValues={defaultValues}
               setDefaultValues={setDefaultValues}
+              user={user}
             />
           </Tab.Panel>
         </Tab.Panels>

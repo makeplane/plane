@@ -37,7 +37,7 @@ import { LinkIcon } from "@heroicons/react/20/solid";
 import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, IModule, ModuleLink } from "types";
+import { ICurrentUserResponse, IIssue, IModule, ModuleLink } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant

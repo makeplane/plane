@@ -23,7 +23,7 @@ type Props = {
   isOpen: boolean;
   data: IWorkspace | null;
   onClose: () => void;
-  user: ICurrentUserResponse;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, user }) => {
