@@ -361,7 +361,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner")
+            .select_related("workspace", "workspace__owner", "created_by")
         )
 
 
@@ -374,7 +374,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
             super()
             .get_queryset()
             .filter(email=self.request.user.email)
-            .select_related("workspace", "workspace__owner")
+            .select_related("workspace", "workspace__owner", "created_by")
             .annotate(total_members=Count("workspace__workspace_member"))
         )
 
