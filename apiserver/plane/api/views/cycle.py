@@ -41,6 +41,7 @@ from plane.db.models import (
     CycleFavorite,
     IssueLink,
     IssueAttachment,
+    Label,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -146,6 +147,12 @@ class CycleViewSet(BaseViewSet):
                 Prefetch(
                     "issue_cycle__issue__assignees",
                     queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_cycle__issue__labels",
+                    queryset=Label.objects.only("name", "color", "id").distinct(),
                 )
             )
             .order_by("-is_favorite", "name")
