@@ -124,7 +124,7 @@ const OnBoard: NextPage = () => {
                     </div>
                   </div>
                 ) : workspaces && workspaces.length > 0 ? (
-                  <div className="flex flex-col gap-y-3">
+                  <div className="flex flex-col w-full overflow-auto gap-y-3">
                     <h2 className="mb-4 text-xl font-medium">Your workspaces</h2>
                     {workspaces.map((workspace) => (
                       <Link key={workspace.id} href={workspace.slug}>

@@ -98,7 +98,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
       >
         <Tab.List as="div" className="flex flex-col gap-3 px-7 pt-7 pb-3.5">
           <div className="flex flex-col gap-2 justify-center">
-            <h3 className="text-base font-semibold text-brand-base">Workspaces</h3>
+            <h3 className="text-base font-semibold text-brand-base">Workspace</h3>
             <p className="text-sm text-brand-secondary">
               Create or join the workspace to get started with Plane.
             </p>
@@ -161,7 +161,10 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                             {truncateText(invitation.workspace.name, 30)}
                           </div>
                           <p className="text-sm text-brand-secondary">
-                            Invited by {invitation.workspace.owner.first_name}
+                            Invited by{" "}
+                            {invitation.created_by_detail
+                              ? invitation.created_by_detail.first_name
+                              : invitation.workspace.owner.first_name}
                           </p>
                         </div>
                         <div className="flex-shrink-0 self-center">

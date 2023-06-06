@@ -46,7 +46,10 @@ const SingleInvitation: React.FC<Props> = ({
           <div className="min-w-0 flex-1">
             <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
             <p className="text-sm text-brand-secondary">
-              Invited by {invitation.workspace.owner.first_name}
+              Invited by{" "}
+              {invitation.created_by_detail
+                ? invitation.created_by_detail.first_name
+                : invitation.workspace.owner.first_name}
             </p>
           </div>
           <div className="flex-shrink-0 self-center">
