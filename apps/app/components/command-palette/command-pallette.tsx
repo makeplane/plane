@@ -372,6 +372,7 @@ export const CommandPalette: React.FC = () => {
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}
         setIsOpen={setIsBulkDeleteIssuesModalOpen}
+        user={user}
       />
       <Transition.Root
         show={isPaletteOpen}

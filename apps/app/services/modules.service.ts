@@ -3,7 +3,7 @@ import APIService from "services/api.service";
 import trackEventServices from "./track-event.service";
 
 // types
-import type { IIssueViewOptions, IModule, IIssue } from "types";
+import type { IIssueViewOptions, IModule, IIssue, ICurrentUserResponse } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -136,7 +136,8 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: { issues: string[] }
+    data: { issues: string[] },
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
@@ -154,7 +155,8 @@ class ProjectIssuesServices extends APIService {
               issueId: response?.data?.[0]?.issue_detail?.id,
               moduleId,
             },
-            response?.data?.length > 1 ? "ISSUE_MOVED_TO_MODULE_IN_BULK" : "ISSUE_MOVED_TO_MODULE"
+            response?.data?.length > 1 ? "ISSUE_MOVED_TO_MODULE_IN_BULK" : "ISSUE_MOVED_TO_MODULE",
+            user
           );
         return response?.data;
       })

@@ -102,9 +102,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await issuesService
-      .addIssueToCycle(workspaceSlug as string, activeProject ?? "", cycleId, {
-        issues: [issueId],
-      })
+      .addIssueToCycle(
+        workspaceSlug as string,
+        activeProject ?? "",
+        cycleId,
+        {
+          issues: [issueId],
+        },
+        user
+      )
       .then(() => {
         if (cycleId) {
           mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
@@ -117,9 +123,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await modulesService
-      .addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
-        issues: [issueId],
-      })
+      .addIssuesToModule(
+        workspaceSlug as string,
+        activeProject ?? "",
+        moduleId as string,
+        {
+          issues: [issueId],
+        },
+        user
+      )
       .then(() => {
         if (moduleId) {
           mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
@@ -261,6 +273,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                   projectId={activeProject ?? ""}
                   setActiveProject={setActiveProject}
                   status={data ? true : false}
+                  user={user}
                 />
               </Dialog.Panel>
             </Transition.Child>

@@ -292,7 +292,8 @@ class TrackEventServices extends APIService {
       | "ISSUE_MOVED_TO_CYCLE"
       | "ISSUE_MOVED_TO_MODULE"
       | "ISSUE_MOVED_TO_CYCLE_IN_BULK"
-      | "ISSUE_MOVED_TO_MODULE_IN_BULK"
+      | "ISSUE_MOVED_TO_MODULE_IN_BULK",
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.request({
       url: "/api/track-event",
@@ -302,11 +303,12 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }
 
-  async trackIssueBulkDeleteEvent(data: any): Promise<any> {
+  async trackIssueBulkDeleteEvent(data: any, user: ICurrentUserResponse | undefined): Promise<any> {
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -315,11 +317,16 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }
 
-  async trackIssueLabelEvent(data: any, eventName: IssueLabelEventType): Promise<any> {
+  async trackIssueLabelEvent(
+    data: any,
+    eventName: IssueLabelEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -328,6 +335,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }

@@ -105,7 +105,8 @@ class ProjectIssuesServices extends APIService {
     cycleId: string,
     data: {
       issues: string[];
-    }
+    },
+    user: ICurrentUserResponse | undefined
   ) {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
@@ -123,7 +124,8 @@ class ProjectIssuesServices extends APIService {
               issueId: response?.data?.[0]?.issue_detail?.id,
               cycleId,
             },
-            response.data.length > 1 ? "ISSUE_MOVED_TO_CYCLE_IN_BULK" : "ISSUE_MOVED_TO_CYCLE"
+            response.data.length > 1 ? "ISSUE_MOVED_TO_CYCLE_IN_BULK" : "ISSUE_MOVED_TO_CYCLE",
+            user
           );
         return response?.data;
       })
@@ -256,7 +258,8 @@ class ProjectIssuesServices extends APIService {
   async createIssueLabel(
     workspaceSlug: string,
     projectId: string,
-    data: any
+    data: any,
+    user: ICurrentUserResponse | undefined
   ): Promise<IIssueLabels> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`, data)
       .then((response: { data: IIssueLabels; [key: string]: any }) => {
@@ -272,7 +275,8 @@ class ProjectIssuesServices extends APIService {
               labelId: response?.data?.id,
               color: response?.data?.color,
             },
-            "ISSUE_LABEL_CREATE"
+            "ISSUE_LABEL_CREATE",
+            user
           );
         return response?.data;
       })
@@ -285,7 +289,8 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     labelId: string,
-    data: any
+    data: any,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`,
@@ -304,7 +309,8 @@ class ProjectIssuesServices extends APIService {
               labelId: response?.data?.id,
               color: response?.data?.color,
             },
-            "ISSUE_LABEL_UPDATE"
+            "ISSUE_LABEL_UPDATE",
+            user
           );
         return response?.data;
       })
@@ -313,7 +319,12 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async deleteIssueLabel(workspaceSlug: string, projectId: string, labelId: string): Promise<any> {
+  async deleteIssueLabel(
+    workspaceSlug: string,
+    projectId: string,
+    labelId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`
     )
@@ -324,7 +335,8 @@ class ProjectIssuesServices extends APIService {
               workspaceSlug,
               projectId,
             },
-            "ISSUE_LABEL_DELETE"
+            "ISSUE_LABEL_DELETE",
+            user
           );
         return response?.data;
       })
@@ -389,13 +401,18 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async bulkDeleteIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async bulkDeleteIssues(
+    workspaceSlug: string,
+    projectId: string,
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueBulkDeleteEvent(data);
+        if (trackEvent) trackEventServices.trackIssueBulkDeleteEvent(data, user);
         return response?.data;
       })
       .catch((error) => {

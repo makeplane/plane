@@ -113,7 +113,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const handleNewLabel = (formData: any) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
     issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         reset(defaultValues);
         issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
@@ -127,9 +127,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
       issuesService
-        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetails.id, {
-          issues: [issueDetail.id],
-        })
+        .addIssueToCycle(
+          workspaceSlug as string,
+          projectId as string,
+          cycleDetails.id,
+          {
+            issues: [issueDetail.id],
+          },
+          user
+        )
         .then((res) => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
@@ -142,9 +148,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
       modulesService
-        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleDetail.id, {
-          issues: [issueDetail.id],
-        })
+        .addIssuesToModule(
+          workspaceSlug as string,
+          projectId as string,
+          moduleDetail.id,
+          {
+            issues: [issueDetail.id],
+          },
+          user
+        )
         .then((res) => {
           mutate(ISSUE_DETAILS(issueId as string));
         });

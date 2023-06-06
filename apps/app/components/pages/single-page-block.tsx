@@ -288,6 +288,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index,
                 data={block}
                 setIsSyncing={setIsSyncing}
                 focus="name"
+                user={user}
               />
             </div>
           ) : (

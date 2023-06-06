@@ -91,6 +91,7 @@ export interface IssueFormProps {
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleClose: () => void;
   status: boolean;
+  user: ICurrentUserResponse | undefined;
 }
 
 export const IssueForm: FC<IssueFormProps> = ({
@@ -103,6 +104,7 @@ export const IssueForm: FC<IssueFormProps> = ({
   setCreateMore,
   handleClose,
   status,
+  user,
 }) => {
   // states
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
@@ -233,6 +235,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
+            user={user}
           />
         </>
       )}

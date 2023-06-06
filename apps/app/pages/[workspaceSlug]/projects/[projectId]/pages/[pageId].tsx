@@ -543,6 +543,7 @@ const SinglePage: NextPage = () => {
                       <CreateUpdateBlockInline
                         handleClose={() => setCreateBlockForm(false)}
                         focus="name"
+                        user={user}
                       />
                     </div>
                   )}
@@ -551,6 +552,7 @@ const SinglePage: NextPage = () => {
                       isOpen={labelModal}
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
+                      user={user}
                     />
                   )}
                 </>
