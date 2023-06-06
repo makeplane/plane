@@ -16,7 +16,7 @@ from plane.db.models import User
 def forgot_password(first_name, email, uidb64, token, current_site):
 
     try:
-        realtivelink = f"/email-verify/?uidb64={uidb64}&token={token}/"
+        realtivelink = f"/reset-password/?uidb64={uidb64}&token={token}"
         abs_url = current_site + realtivelink
 
         from_email_string = settings.EMAIL_FROM

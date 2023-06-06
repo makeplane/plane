@@ -170,7 +170,7 @@ urlpatterns = [
     ),
     # Password Manipulation
     path(
-        "password-reset/<uidb64>/<token>/",
+        "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
         name="password-reset",
     ),

@@ -8,6 +8,9 @@ server {
     listen       80;
     root   /www/data/;
     access_log /var/log/nginx/access.log;
+
+    client_max_body_size ${FILE_SIZE_LIMIT};
+
     location / {
         proxy_pass http://planefrontend:3000/;       
     }
@@ -16,7 +19,7 @@ server {
         proxy_pass http://planebackend:8000/api/;
     }
 
-   location /uploads/ {
+   location /${BUCKET_NAME}/ {
         proxy_pass http://plane-minio:9000/uploads/;
     }
 }
