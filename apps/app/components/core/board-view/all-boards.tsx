@@ -5,7 +5,7 @@ import { SingleBoard } from "components/core/board-view/single-board";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IState, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, IState, UserAuth } from "types";
 import { getStateGroupIcon } from "components/icons";
 
 type Props = {
@@ -19,6 +19,7 @@ type Props = {
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -33,6 +34,7 @@ export const AllBoards: React.FC<Props> = ({
   handleTrashBox,
   removeIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   const {
@@ -65,6 +67,7 @@ export const AllBoards: React.FC<Props> = ({
                 handleTrashBox={handleTrashBox}
                 removeIssue={removeIssue}
                 isCompleted={isCompleted}
+                user={user}
                 userAuth={userAuth}
               />
             );

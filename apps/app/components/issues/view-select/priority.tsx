@@ -7,7 +7,7 @@ import { CustomSelect, Tooltip } from "components/ui";
 // icons
 import { getPriorityIcon } from "components/icons/priority-icon";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
 // services
@@ -18,6 +18,7 @@ type Props = {
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -26,6 +27,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
   partialUpdateIssue,
   position = "left",
   selfPositioned = false,
+  user,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -45,7 +47,8 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PROPERTY_UPDATE_PRIORITY"
+          "ISSUE_PROPERTY_UPDATE_PRIORITY",
+          user
         );
       }}
       maxHeight="md"

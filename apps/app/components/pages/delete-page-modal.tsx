@@ -15,7 +15,7 @@ import { DangerButton, SecondaryButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { IPage } from "types";
+import type { ICurrentUserResponse, IPage } from "types";
 // fetch-keys
 import {
   ALL_PAGES_LIST,
@@ -28,12 +28,14 @@ type TConfirmPageDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IPage | null;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
   isOpen,
   setIsOpen,
   data,
+  user,
 }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -52,7 +54,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
     if (!data || !workspaceSlug || !projectId) return;
 
     await pagesService
-      .deletePage(workspaceSlug as string, data.project, data.id)
+      .deletePage(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(

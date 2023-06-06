@@ -12,7 +12,7 @@ import { AssigneesList, Avatar, CustomSearchSelect, Tooltip } from "components/u
 // icons
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -22,6 +22,7 @@ type Props = {
   position?: "left" | "right";
   selfPositioned?: boolean;
   tooltipPosition?: "left" | "right";
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -31,6 +32,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
   position = "left",
   selfPositioned = false,
   tooltipPosition = "right",
+  user,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -83,7 +85,8 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PROPERTY_UPDATE_ASSIGNEE"
+          "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
+          user
         );
       }}
       options={options}

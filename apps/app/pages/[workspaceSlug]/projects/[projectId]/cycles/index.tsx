@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
@@ -62,6 +63,8 @@ const ProjectCycles: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
@@ -110,6 +113,7 @@ const ProjectCycles: NextPage = () => {
         isOpen={createUpdateCycleModal}
         handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycle}
+        user={user}
       />
       <div className="space-y-5 p-8 h-full flex flex-col overflow-hidden">
         <div className="flex gap-4 justify-between">

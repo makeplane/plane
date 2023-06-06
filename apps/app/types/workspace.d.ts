@@ -30,6 +30,7 @@ export interface IWorkspaceMemberInvitation {
   message: string;
   responded_at: Date;
   role: 5 | 10 | 15 | 20;
+  created_by_detail: IUser;
   workspace: IWorkspace;
 }
 

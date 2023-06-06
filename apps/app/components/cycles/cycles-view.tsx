@@ -8,6 +8,7 @@ import { mutate } from "swr";
 import cyclesService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import {
   CreateUpdateCycleModal,
@@ -48,6 +49,7 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
   const { setToastAlert } = useToast();
 
   const handleEditCycle = (cycle: ICycle) => {
@@ -158,11 +160,13 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
         isOpen={createUpdateCycleModal}
         handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycleToUpdate}
+        user={user}
       />
       <DeleteCycleModal
         isOpen={deleteCycleModal}
         setIsOpen={setDeleteCycleModal}
         data={selectedCycleToDelete}
+        user={user}
       />
       {cycles ? (
         cycles.length > 0 ? (

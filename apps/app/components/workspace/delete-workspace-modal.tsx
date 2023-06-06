@@ -15,7 +15,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { DangerButton, Input, SecondaryButton } from "components/ui";
 // types
-import type { IWorkspace } from "types";
+import type { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 
@@ -23,9 +23,10 @@ type Props = {
   isOpen: boolean;
   data: IWorkspace | null;
   onClose: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose }) => {
+export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const [confirmWorkspaceName, setConfirmWorkspaceName] = useState("");
@@ -57,7 +58,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
     setIsDeleteLoading(true);
     if (!data || !canDelete) return;
     await workspaceService
-      .deleteWorkspace(data.slug)
+      .deleteWorkspace(data.slug, user)
       .then(() => {
         handleClose();
         router.push("/");

@@ -50,16 +50,19 @@ class UserService extends APIService {
       });
   }
 
-  async updateUserOnBoard({ userRole }: any): Promise<any> {
+  async updateUserOnBoard({ userRole }: any, user: ICurrentUserResponse | undefined): Promise<any> {
     return this.patch("/api/users/me/onboard/", {
       is_onboarded: true,
     })
       .then((response) => {
         if (trackEvent)
-          trackEventServices.trackUserOnboardingCompleteEvent({
-            ...response.data,
-            user_role: userRole ?? "None",
-          });
+          trackEventServices.trackUserOnboardingCompleteEvent(
+            {
+              ...response.data,
+              user_role: userRole ?? "None",
+            },
+            user
+          );
         return response?.data;
       })
       .catch((error) => {

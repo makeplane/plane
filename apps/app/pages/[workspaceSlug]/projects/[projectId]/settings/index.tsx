@@ -17,6 +17,7 @@ import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // ui
 import {
   Input,
@@ -44,6 +45,8 @@ const defaultValues: Partial<IProject> = {
 
 const GeneralSettings: NextPage = () => {
   const [selectProject, setSelectedProject] = useState<string | null>(null);
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -83,7 +86,7 @@ const GeneralSettings: NextPage = () => {
     if (!workspaceSlug || !projectDetails) return;
 
     await projectService
-      .updateProject(workspaceSlug as string, projectDetails.id, payload)
+      .updateProject(workspaceSlug as string, projectDetails.id, payload, user)
       .then((res) => {
         mutate<IProject>(
           PROJECT_DETAILS(projectDetails.id),
@@ -154,6 +157,7 @@ const GeneralSettings: NextPage = () => {
         onSuccess={() => {
           router.push(`/${workspaceSlug}/projects`);
         }}
+        user={user}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="p-8">
         <SettingsHeader />

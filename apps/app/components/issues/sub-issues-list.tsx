@@ -21,15 +21,16 @@ import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outli
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, ISubIssueResponse } from "types";
+import { ICurrentUserResponse, IIssue, ISubIssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   parentIssue: IIssue;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -134,7 +135,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
     );
 
     issuesService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null })
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null }, user)
       .then((res) => {
         mutate(SUB_ISSUES(parentIssue.id ?? ""));
 

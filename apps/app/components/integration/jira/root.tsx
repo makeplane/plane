@@ -35,7 +35,7 @@ import {
 
 import JiraLogo from "public/services/jira.png";
 
-import { IJiraImporterForm } from "types";
+import { ICurrentUserResponse, IJiraImporterForm } from "types";
 
 const integrationWorkflowData: Array<{
   title: string;
@@ -64,7 +64,11 @@ const integrationWorkflowData: Array<{
   },
 ];
 
-export const JiraImporterRoot = () => {
+type Props = {
+  user: ICurrentUserResponse | undefined;
+};
+
+export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
     state: "import-configure",
   });
@@ -85,7 +89,7 @@ export const JiraImporterRoot = () => {
     if (!workspaceSlug) return;
 
     await jiraImporterService
-      .createJiraImporter(workspaceSlug.toString(), data)
+      .createJiraImporter(workspaceSlug.toString(), data, user)
       .then(() => {
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug.toString()));
         router.push(`/${workspaceSlug}/settings/import-export`);

@@ -53,9 +53,9 @@ const Onboarding: NextPage = () => {
               {step === 1 ? (
                 <UserDetails user={user} setStep={setStep} setUserRole={setUserRole} />
               ) : step === 2 ? (
-                <Workspace setStep={setStep} setWorkspace={setWorkspace} />
+                <Workspace setStep={setStep} setWorkspace={setWorkspace} user={user} />
               ) : (
-                <InviteMembers setStep={setStep} workspace={workspace} />
+                <InviteMembers setStep={setStep} workspace={workspace} user={user} />
               )}
             </div>
           ) : (
@@ -80,7 +80,7 @@ const Onboarding: NextPage = () => {
                     onClick={() => {
                       if (step === 8) {
                         userService
-                          .updateUserOnBoard({ userRole })
+                          .updateUserOnBoard({ userRole }, user)
                           .then(async () => {
                             mutate<ICurrentUserResponse>(
                               CURRENT_USER,

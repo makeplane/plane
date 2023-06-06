@@ -39,7 +39,7 @@ import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
 import { cosineSimilarity } from "helpers/string.helper";
 // types
-import type { IIssue } from "types";
+import type { ICurrentUserResponse, IIssue } from "types";
 // rich-text-editor
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
@@ -91,6 +91,7 @@ export interface IssueFormProps {
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleClose: () => void;
   status: boolean;
+  user: ICurrentUserResponse | undefined;
 }
 
 export const IssueForm: FC<IssueFormProps> = ({
@@ -103,6 +104,7 @@ export const IssueForm: FC<IssueFormProps> = ({
   setCreateMore,
   handleClose,
   status,
+  user,
 }) => {
   // states
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
@@ -177,10 +179,15 @@ export const IssueForm: FC<IssueFormProps> = ({
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug as string, projectId as string, {
-        prompt: issueName,
-        task: "Generate a proper description for this issue in context of a project management software.",
-      })
+      .createGptTask(
+        workspaceSlug as string,
+        projectId as string,
+        {
+          prompt: issueName,
+          task: "Generate a proper description for this issue in context of a project management software.",
+        },
+        user
+      )
       .then((res) => {
         if (res.response === "")
           setToastAlert({
@@ -227,12 +234,18 @@ export const IssueForm: FC<IssueFormProps> = ({
             isOpen={stateModal}
             handleClose={() => setStateModal(false)}
             projectId={projectId}
+            user={user}
           />
-          <CreateUpdateCycleModal isOpen={cycleModal} handleClose={() => setCycleModal(false)} />
+          <CreateUpdateCycleModal
+            isOpen={cycleModal}
+            handleClose={() => setCycleModal(false)}
+            user={user}
+          />
           <CreateLabelModal
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
+            user={user}
           />
         </>
       )}

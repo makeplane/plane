@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+import useUserAuth from "hooks/use-user-auth";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // icons
@@ -35,6 +36,8 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { user } = useUserAuth();
+
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId) : null,
     workspaceSlug && projectId
@@ -54,7 +57,11 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
 
   return (
     <>
-      <CreateUpdateCycleModal isOpen={isCycleModalActive} handleClose={closeCycleModal} />
+      <CreateUpdateCycleModal
+        isOpen={isCycleModalActive}
+        handleClose={closeCycleModal}
+        user={user}
+      />
       <Listbox as="div" className="relative" value={value} onChange={onChange} multiple={multiple}>
         {({ open }) => (
           <>

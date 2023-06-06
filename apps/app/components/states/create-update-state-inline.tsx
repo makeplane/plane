@@ -17,7 +17,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
-import type { IState, IStateResponse } from "types";
+import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
@@ -27,6 +27,7 @@ type Props = {
   data: IState | null;
   onClose: () => void;
   selectedGroup: StateGroup | null;
+  user: ICurrentUserResponse | undefined;
 };
 
 export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled" | null;
@@ -37,7 +38,12 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, selectedGroup }) => {
+export const CreateUpdateStateInline: React.FC<Props> = ({
+  data,
+  onClose,
+  selectedGroup,
+  user,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -83,7 +89,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
 
     if (!data) {
       await stateService
-        .createState(workspaceSlug.toString(), projectId.toString(), { ...payload })
+        .createState(workspaceSlug.toString(), projectId.toString(), { ...payload }, user)
         .then((res) => {
           mutate<IStateResponse>(
             STATES_LIST(projectId.toString()),
@@ -121,9 +127,15 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
         });
     } else {
       await stateService
-        .updateState(workspaceSlug.toString(), projectId.toString(), data.id, {
-          ...payload,
-        })
+        .updateState(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          data.id,
+          {
+            ...payload,
+          },
+          user
+        )
         .then(() => {
           mutate(STATES_LIST(projectId.toString()));
           handleClose();

@@ -6,6 +6,8 @@ import useSWR from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
@@ -35,6 +37,8 @@ const Analytics = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { user } = useUserAuth();
+
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
 
   const params: IAnalyticsParams = {
@@ -59,7 +63,7 @@ const Analytics = () => {
         ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
         : "WORKSPACE_CUSTOM_ANALYTICS";
 
-    trackEventServices.trackAnalyticsEvent(eventPayload, eventType);
+    trackEventServices.trackAnalyticsEvent(eventPayload, eventType, user);
   };
 
   useEffect(() => {
@@ -67,7 +71,8 @@ const Analytics = () => {
 
     trackEventServices.trackAnalyticsEvent(
       { workspaceSlug: workspaceSlug?.toString() },
-      "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
+      "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
+      user
     );
   }, [workspaceSlug]);
 
@@ -119,6 +124,7 @@ const Analytics = () => {
                 params={params}
                 control={control}
                 setValue={setValue}
+                user={user}
                 fullScreen
               />
             </Tab.Panel>

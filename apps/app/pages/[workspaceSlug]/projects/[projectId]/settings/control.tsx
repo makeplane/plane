@@ -13,6 +13,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsHeader } from "components/project";
 // ui
@@ -34,6 +35,8 @@ const ControlSettings: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -65,7 +68,7 @@ const ControlSettings: NextPage = () => {
     };
 
     await projectService
-      .updateProject(workspaceSlug as string, projectId as string, payload)
+      .updateProject(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(PROJECT_DETAILS(projectId as string));
         mutate(PROJECTS_LIST(workspaceSlug as string));

@@ -16,7 +16,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { TextArea } from "components/ui";
 // types
-import { IPageBlock } from "types";
+import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -24,7 +24,11 @@ const defaultValues = {
   name: "",
 };
 
-export const CreateBlock = () => {
+type Props = {
+  user: ICurrentUserResponse | undefined;
+};
+
+export const CreateBlock: React.FC<Props> = ({ user }) => {
   const [blockTitle, setBlockTitle] = useState("");
 
   const router = useRouter();
@@ -49,9 +53,15 @@ export const CreateBlock = () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
     await pagesService
-      .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
-        name: watch("name"),
-      })
+      .createPageBlock(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string,
+        {
+          name: watch("name"),
+        },
+        user
+      )
       .then((res) => {
         mutate<IPageBlock[]>(
           PAGE_BLOCKS_LIST(pageId as string),

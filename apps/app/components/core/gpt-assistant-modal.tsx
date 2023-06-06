@@ -10,6 +10,7 @@ import aiService from "services/ai.service";
 import trackEventServices from "services/track-event.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 
@@ -60,6 +61,8 @@ export const GptAssistantModal: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { user } = useUserAuth();
+
   const editorRef = useRef<any>(null);
 
   const { setToastAlert } = useToast();
@@ -97,10 +100,15 @@ export const GptAssistantModal: React.FC<Props> = ({
     }
 
     await aiService
-      .createGptTask(workspaceSlug as string, projectId as string, {
-        prompt: content && content !== "" ? content : htmlContent ?? "",
-        task: formData.task,
-      })
+      .createGptTask(
+        workspaceSlug as string,
+        projectId as string,
+        {
+          prompt: content && content !== "" ? content : htmlContent ?? "",
+          task: formData.task,
+        },
+        user
+      )
       .then((res) => {
         setResponse(res.response_html);
         setFocus("task");
@@ -190,10 +198,15 @@ export const GptAssistantModal: React.FC<Props> = ({
               if (block)
                 trackEventServices.trackUseGPTResponseEvent(
                   block,
-                  "USE_GPT_RESPONSE_IN_PAGE_BLOCK"
+                  "USE_GPT_RESPONSE_IN_PAGE_BLOCK",
+                  user
                 );
               else if (issue)
-                trackEventServices.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE");
+                trackEventServices.trackUseGPTResponseEvent(
+                  issue,
+                  "USE_GPT_RESPONSE_IN_ISSUE",
+                  user
+                );
             }}
           >
             Use this response

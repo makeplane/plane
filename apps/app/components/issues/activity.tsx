@@ -27,7 +27,7 @@ import { Loader } from "components/ui";
 import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssueComment, IIssueLabels } from "types";
+import { ICurrentUserResponse, IIssueComment, IIssueLabels } from "types";
 import { PROJECT_ISSUES_ACTIVITY, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 import useEstimateOption from "hooks/use-estimate-option";
 
@@ -110,7 +110,11 @@ const activityDetails: {
   },
 };
 
-export const IssueActivitySection: React.FC = () => {
+type Props = {
+  user: ICurrentUserResponse | undefined;
+};
+
+export const IssueActivitySection: React.FC<Props> = ({ user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -143,7 +147,8 @@ export const IssueActivitySection: React.FC = () => {
         projectId as string,
         issueId as string,
         comment.id,
-        comment
+        comment,
+        user
       )
       .then((res) => {
         mutateIssueActivities();
@@ -160,7 +165,8 @@ export const IssueActivitySection: React.FC = () => {
         workspaceSlug as string,
         projectId as string,
         issueId as string,
-        commentId
+        commentId,
+        user
       )
       .then(() => mutateIssueActivities());
   };

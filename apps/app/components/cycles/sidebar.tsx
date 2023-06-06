@@ -39,7 +39,7 @@ import {
   renderShortDate,
 } from "helpers/date-time.helper";
 // types
-import { ICycle, IIssue } from "types";
+import { ICurrentUserResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS, CYCLE_ISSUES } from "constants/fetch-keys";
 
@@ -48,6 +48,7 @@ type Props = {
   isOpen: boolean;
   cycleStatus: string;
   isCompleted: boolean;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const CycleDetailsSidebar: React.FC<Props> = ({
@@ -55,6 +56,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   isOpen,
   cycleStatus,
   isCompleted,
+  user,
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
@@ -94,7 +96,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     );
 
     cyclesService
-      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
+      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data, user)
       .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
       .catch((e) => console.log(e));
   };
@@ -294,7 +296,12 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
   return (
     <>
-      <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} />
+      <DeleteCycleModal
+        isOpen={cycleDeleteModal}
+        setIsOpen={setCycleDeleteModal}
+        data={cycle}
+        user={user}
+      />
       <div
         className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
