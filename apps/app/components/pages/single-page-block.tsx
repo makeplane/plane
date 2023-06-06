@@ -88,11 +88,18 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index,
     );
 
     await pagesService
-      .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, {
-        name: formData.name,
-        description: formData.description,
-        description_html: formData.description_html,
-      })
+      .patchPageBlock(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string,
+        block.id,
+        {
+          name: formData.name,
+          description: formData.description,
+          description_html: formData.description_html,
+        },
+        user
+      )
       .then((res) => {
         mutate(PAGE_BLOCKS_LIST(pageId as string));
         if (block.issue && block.sync)
@@ -120,7 +127,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index,
         workspaceSlug as string,
         projectId as string,
         pageId as string,
-        block.id
+        block.id,
+        user
       )
       .then((res: IIssue) => {
         mutate<IPageBlock[]>(
@@ -159,7 +167,13 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index,
     );
 
     await pagesService
-      .deletePageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id)
+      .deletePageBlock(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string,
+        block.id,
+        user
+      )
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -250,7 +264,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index,
       block.id,
       {
         sync: !block.sync,
-      }
+      },
+      user
     );
   };
 

@@ -27,6 +27,7 @@ import { TPageViewProps } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
+import useUserAuth from "hooks/use-user-auth";
 
 const AllPagesList = dynamic<TPagesListProps>(
   () => import("components/pages").then((a) => a.AllPagesList),
@@ -66,6 +67,8 @@ const ProjectPages: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
 
   const { data: projectDetails } = useSWR(
@@ -98,6 +101,7 @@ const ProjectPages: NextPage = () => {
       <CreateUpdatePageModal
         isOpen={createUpdatePageModal}
         handleClose={() => setCreateUpdatePageModal(false)}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={

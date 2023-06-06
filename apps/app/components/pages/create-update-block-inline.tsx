@@ -98,11 +98,17 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
       if (!workspaceSlug || !projectId || !pageId) return;
 
       await pagesService
-        .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
-          name: formData.name,
-          description: formData.description ?? "",
-          description_html: formData.description_html ?? "<p></p>",
-        })
+        .createPageBlock(
+          workspaceSlug as string,
+          projectId as string,
+          pageId as string,
+          {
+            name: formData.name,
+            description: formData.description ?? "",
+            description_html: formData.description_html ?? "<p></p>",
+          },
+          user
+        )
         .then((res) => {
           mutate<IPageBlock[]>(
             PAGE_BLOCKS_LIST(pageId as string),
@@ -141,11 +147,18 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
       );
 
       await pagesService
-        .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, data.id, {
-          name: formData.name,
-          description: formData.description,
-          description_html: formData.description_html,
-        })
+        .patchPageBlock(
+          workspaceSlug as string,
+          projectId as string,
+          pageId as string,
+          data.id,
+          {
+            name: formData.name,
+            description: formData.description,
+            description_html: formData.description_html,
+          },
+          user
+        )
         .then((res) => {
           mutate(PAGE_BLOCKS_LIST(pageId as string));
           editorRef.current?.setEditorValue(res.description_html);

@@ -433,7 +433,11 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackPageEvent(data: Partial<IPage> | any, eventName: PagesEventType): Promise<any> {
+  async trackPageEvent(
+    data: Partial<IPage> | any,
+    eventName: PagesEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (eventName !== "PAGE_DELETE")
       payload = {
@@ -455,13 +459,15 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
 
   async trackPageBlockEvent(
     data: Partial<IPageBlock> | IIssue,
-    eventName: PageBlocksEventType
+    eventName: PageBlocksEventType,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     let payload: any;
     if (eventName !== "PAGE_BLOCK_DELETE" && eventName !== "PAGE_BLOCK_CONVERTED_TO_ISSUE")
@@ -495,6 +501,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }

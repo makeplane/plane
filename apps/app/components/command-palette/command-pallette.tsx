@@ -355,6 +355,7 @@ export const CommandPalette: React.FC = () => {
           <CreateUpdatePageModal
             isOpen={isCreateUpdatePageModalOpen}
             handleClose={() => setIsCreateUpdatePageModalOpen(false)}
+            user={user}
           />
         </>
       )}
