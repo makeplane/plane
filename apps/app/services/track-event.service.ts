@@ -6,6 +6,7 @@ const trackEvent =
 
 // types
 import type {
+  ICurrentUserResponse,
   ICycle,
   IEstimate,
   IGptResponse,
@@ -104,7 +105,11 @@ class TrackEventServices extends APIService {
     super("/");
   }
 
-  async trackWorkspaceEvent(data: IWorkspace | any, eventName: WorkspaceEventType): Promise<any> {
+  async trackWorkspaceEvent(
+    data: IWorkspace | any,
+    eventName: WorkspaceEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (
       eventName !== "DELETE_WORKSPACE" &&
@@ -127,13 +132,15 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
 
   async trackProjectEvent(
     data: Partial<IProject> | any,
-    eventName: ProjectEventType
+    eventName: ProjectEventType,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     let payload: any;
     if (eventName !== "DELETE_PROJECT" && eventName !== "PROJECT_MEMBER_INVITE")
@@ -154,6 +161,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }

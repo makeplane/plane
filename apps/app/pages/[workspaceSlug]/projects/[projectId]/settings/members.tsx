@@ -135,6 +135,7 @@ const MembersSettings: NextPage = () => {
         isOpen={inviteModal}
         setIsOpen={setInviteModal}
         members={members}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={

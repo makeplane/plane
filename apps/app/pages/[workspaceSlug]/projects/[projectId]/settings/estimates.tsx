@@ -16,6 +16,7 @@ import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates"
 import { SettingsHeader } from "components/project";
 //hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // ui
 import { EmptyState, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -36,6 +37,8 @@ const EstimatesSettings: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -87,7 +90,7 @@ const EstimatesSettings: NextPage = () => {
     );
 
     projectService
-      .updateProject(workspaceSlug as string, projectId as string, { estimate: null })
+      .updateProject(workspaceSlug as string, projectId as string, { estimate: null }, user)
       .catch(() =>
         setToastAlert({
           type: "error",

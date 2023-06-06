@@ -2,16 +2,17 @@
 import { useForm } from "react-hook-form";
 import useToast from "hooks/use-toast";
 import workspaceService from "services/workspace.service";
-import { IUser } from "types";
+import { ICurrentUserResponse, IUser } from "types";
 // ui components
 import { MultiInput, PrimaryButton, SecondaryButton } from "components/ui";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   workspace: any;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
+export const InviteMembers: React.FC<Props> = ({ setStep, workspace, user }) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -23,7 +24,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
 
   const onSubmit = async (formData: IUser) => {
     await workspaceService
-      .inviteWorkspace(workspace.slug, formData)
+      .inviteWorkspace(workspace.slug, formData, user)
       .then(() => {
         setToastAlert({
           type: "success",

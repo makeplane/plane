@@ -35,6 +35,8 @@ const ControlSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
@@ -65,7 +67,7 @@ const ControlSettings: NextPage = () => {
     };
 
     await projectService
-      .updateProject(workspaceSlug as string, projectId as string, payload)
+      .updateProject(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(PROJECT_DETAILS(projectId as string));
         mutate(PROJECTS_LIST(workspaceSlug as string));

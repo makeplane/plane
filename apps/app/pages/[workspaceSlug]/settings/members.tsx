@@ -135,6 +135,7 @@ const MembersSettings: NextPage = () => {
         setIsOpen={setInviteModal}
         workspace_slug={workspaceSlug as string}
         members={members}
+        user={user}
       />
       <WorkspaceAuthorizationLayout
         breadcrumbs={

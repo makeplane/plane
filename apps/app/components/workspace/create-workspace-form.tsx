@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
-import { IWorkspace } from "types";
+import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
@@ -25,6 +25,7 @@ type Props = {
     company_size: number | null;
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
+  user: ICurrentUserResponse | undefined;
 };
 
 const restrictedUrls = [
@@ -44,6 +45,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   onSubmit,
   defaultValues,
   setDefaultValues,
+  user,
 }) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
@@ -66,7 +68,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
         if (res.status === true && !restrictedUrls.includes(formData.slug)) {
           setSlugError(false);
           await workspaceService
-            .createWorkspace(formData)
+            .createWorkspace(formData, user)
             .then((res) => {
               setToastAlert({
                 type: "success",

@@ -55,7 +55,7 @@ const Onboarding: NextPage = () => {
               ) : step === 2 ? (
                 <Workspace setStep={setStep} setWorkspace={setWorkspace} />
               ) : (
-                <InviteMembers setStep={setStep} workspace={workspace} />
+                <InviteMembers setStep={setStep} workspace={workspace} user={user} />
               )}
             </div>
           ) : (

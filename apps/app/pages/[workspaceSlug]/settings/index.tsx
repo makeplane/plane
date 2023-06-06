@@ -12,6 +12,7 @@ import workspaceService from "services/workspace.service";
 import fileService from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import SettingsNavbar from "layouts/settings-navbar";
@@ -49,6 +50,8 @@ const WorkspaceSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { user } = useUserAuth();
+
   const { setToastAlert } = useToast();
 
   const { data: activeWorkspace } = useSWR(
@@ -82,7 +85,7 @@ const WorkspaceSettings: NextPage = () => {
     };
 
     await workspaceService
-      .updateWorkspace(activeWorkspace.slug, payload)
+      .updateWorkspace(activeWorkspace.slug, payload, user)
       .then((res) => {
         mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
           prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
@@ -114,7 +117,7 @@ const WorkspaceSettings: NextPage = () => {
 
     fileService.deleteFile(asset).then(() => {
       workspaceService
-        .updateWorkspace(activeWorkspace.slug, { logo: "" })
+        .updateWorkspace(activeWorkspace.slug, { logo: "" }, user)
         .then((res) => {
           setToastAlert({
             type: "success",
@@ -169,6 +172,7 @@ const WorkspaceSettings: NextPage = () => {
           setIsOpen(false);
         }}
         data={activeWorkspace ?? null}
+        user={user}
       />
       <div className="p-8">
         <SettingsHeader />
