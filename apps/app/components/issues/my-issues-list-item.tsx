@@ -7,6 +7,7 @@ import { mutate } from "swr";
 
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import issuesService from "services/issues.service";
 // components
@@ -37,6 +38,9 @@ type Props = {
 export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { user } = useUserAuth();
+
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
@@ -55,7 +59,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
       );
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData, user)
         .then((res) => {
           mutate(USER_ISSUE(workspaceSlug as string));
         })

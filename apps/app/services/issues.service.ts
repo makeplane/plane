@@ -2,7 +2,14 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 // type
-import type { IIssue, IIssueActivity, IIssueComment, IIssueLabels, IIssueViewOptions } from "types";
+import type {
+  ICurrentUserResponse,
+  IIssue,
+  IIssueActivity,
+  IIssueComment,
+  IIssueLabels,
+  IIssueViewOptions,
+} from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -14,10 +21,15 @@ class ProjectIssuesServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async createIssues(
+    workspaceSlug: string,
+    projectId: string,
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_CREATE");
+        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -321,14 +333,15 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: any
+    data: any,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.put(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE");
+        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -340,14 +353,15 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssue>
+    data: Partial<IIssue>,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE");
+        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -355,10 +369,15 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
+  async deleteIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issuesId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent({ issuesId }, "ISSUE_DELETE");
+        if (trackEvent) trackEventServices.trackIssueEvent({ issuesId }, "ISSUE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {

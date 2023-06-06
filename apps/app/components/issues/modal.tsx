@@ -148,7 +148,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug) return;
 
     await issuesService
-      .createIssues(workspaceSlug as string, activeProject ?? "", payload)
+      .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
       .then(async (res) => {
         mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
@@ -180,7 +180,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
-      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
+      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);

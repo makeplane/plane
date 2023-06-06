@@ -529,6 +529,7 @@ const SinglePage: NextPage = () => {
                                 block={block}
                                 projectDetails={projectDetails}
                                 index={index}
+                                user={user}
                               />
                             ))}
                             {provided.placeholder}

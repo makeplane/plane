@@ -19,7 +19,14 @@ import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IIssueLabels, IState, TIssueGroupByOptions, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  IIssueLabels,
+  IState,
+  TIssueGroupByOptions,
+  UserAuth,
+} from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -39,6 +46,7 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -56,6 +64,7 @@ export const SingleList: React.FC<Props> = ({
   openIssuesListModal,
   removeIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   const router = useRouter();
@@ -208,6 +217,7 @@ export const SingleList: React.FC<Props> = ({
                           removeIssue(issue.bridge_id, issue.id);
                       }}
                       isCompleted={isCompleted}
+                      user={user}
                       userAuth={userAuth}
                     />
                   ))

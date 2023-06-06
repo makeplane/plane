@@ -35,7 +35,7 @@ import {
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, IPageBlock, IProject } from "types";
+import { ICurrentUserResponse, IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -43,9 +43,10 @@ type Props = {
   block: IPageBlock;
   projectDetails: IProject | undefined;
   index: number;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index }) => {
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index, user }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -96,11 +97,17 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
         mutate(PAGE_BLOCKS_LIST(pageId as string));
         if (block.issue && block.sync)
           issuesService
-            .patchIssue(workspaceSlug as string, projectId as string, block.issue, {
-              name: res.name,
-              description: res.description,
-              description_html: res.description_html,
-            })
+            .patchIssue(
+              workspaceSlug as string,
+              projectId as string,
+              block.issue,
+              {
+                name: res.name,
+                description: res.description,
+                description_html: res.description_html,
+              },
+              user
+            )
             .finally(() => setIsSyncing(false));
       });
   };

@@ -3,7 +3,7 @@ import useIssuesView from "hooks/use-issues-view";
 // components
 import { SingleList } from "components/core/list-view/single-list";
 // types
-import { IIssue, IState, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, IState, UserAuth } from "types";
 
 // types
 type Props = {
@@ -16,6 +16,7 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -29,6 +30,7 @@ export const AllLists: React.FC<Props> = ({
   handleDeleteIssue,
   removeIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   const { groupedByIssues, groupByProperty: selectedGroup, showEmptyGroups } = useIssuesView();
@@ -58,6 +60,7 @@ export const AllLists: React.FC<Props> = ({
                 openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
                 removeIssue={removeIssue}
                 isCompleted={isCompleted}
+                user={user}
                 userAuth={userAuth}
               />
             );

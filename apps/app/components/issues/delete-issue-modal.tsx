@@ -17,7 +17,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { IIssue } from "types";
+import type { ICurrentUserResponse, IIssue } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -30,9 +30,10 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IIssue | null;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -57,7 +58,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
     if (!workspaceSlug || !projectId || !data) return;
 
     await issueServices
-      .deleteIssue(workspaceSlug as string, projectId as string, data.id)
+      .deleteIssue(workspaceSlug as string, projectId as string, data.id, user)
       .then(() => {
         if (issueView === "calendar") {
           const calendarFetchKey = cycleId

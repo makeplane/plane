@@ -28,7 +28,7 @@ import { LayerDiagonalIcon } from "components/icons";
 // helper
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // type
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -44,6 +44,7 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -54,6 +55,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  user,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -95,7 +97,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
       );
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData, user)
         .then(() => {
           mutate(fetchKey);
         })

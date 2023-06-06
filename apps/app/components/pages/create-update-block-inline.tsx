@@ -20,7 +20,7 @@ import { GptAssistantModal } from "components/core";
 // ui
 import { Loader, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
-import { IPageBlock } from "types";
+import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -30,6 +30,7 @@ type Props = {
   handleAiAssistance?: (response: string) => void;
   setIsSyncing?: React.Dispatch<React.SetStateAction<boolean>>;
   focus?: keyof IPageBlock;
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues = {
@@ -61,6 +62,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   handleAiAssistance,
   setIsSyncing,
   focus,
+  user,
 }) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
@@ -149,11 +151,17 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           editorRef.current?.setEditorValue(res.description_html);
           if (data.issue && data.sync)
             issuesService
-              .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
-                name: res.name,
-                description: res.description,
-                description_html: res.description_html,
-              })
+              .patchIssue(
+                workspaceSlug as string,
+                projectId as string,
+                data.issue,
+                {
+                  name: res.name,
+                  description: res.description,
+                  description_html: res.description_html,
+                },
+                user
+              )
               .finally(() => {
                 if (setIsSyncing) setIsSyncing(false);
               });

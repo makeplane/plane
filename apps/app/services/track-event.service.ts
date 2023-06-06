@@ -183,7 +183,11 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackIssueEvent(data: IIssue | any, eventName: IssueEventType): Promise<any> {
+  async trackIssueEvent(
+    data: IIssue | any,
+    eventName: IssueEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (eventName !== "ISSUE_DELETE")
       payload = {
@@ -205,6 +209,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
