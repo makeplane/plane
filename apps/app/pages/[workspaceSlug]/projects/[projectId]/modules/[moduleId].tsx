@@ -195,6 +195,7 @@ const SingleModule: React.FC = () => {
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
+          user={user}
         />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

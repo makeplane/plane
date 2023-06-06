@@ -15,7 +15,7 @@ import { CycleForm } from "components/cycles";
 // helper
 import { getDateRangeStatus, isDateGreaterThanToday } from "helpers/date-time.helper";
 // types
-import type { ICycle } from "types";
+import type { ICurrentUserResponse, ICycle } from "types";
 // fetch keys
 import {
   COMPLETED_CYCLES_LIST,
@@ -30,12 +30,14 @@ type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   data?: ICycle | null;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
   isOpen,
   handleClose,
   data,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -46,7 +48,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await cycleService
-      .createCycle(workspaceSlug.toString(), projectId.toString(), payload)
+      .createCycle(workspaceSlug.toString(), projectId.toString(), payload, user)
       .then((res) => {
         switch (getDateRangeStatus(res.start_date, res.end_date)) {
           case "completed":
@@ -84,7 +86,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await cycleService
-      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload)
+      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload, user)
       .then((res) => {
         switch (getDateRangeStatus(data?.start_date, data?.end_date)) {
           case "completed":

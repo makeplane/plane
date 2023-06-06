@@ -8,17 +8,22 @@ const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 // types
-import type { IState, IStateResponse } from "types";
+import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 
 class ProjectStateServices extends APIService {
   constructor() {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createState(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async createState(
+    workspaceSlug: string,
+    projectId: string,
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_CREATE");
+        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -55,14 +60,15 @@ class ProjectStateServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     stateId: string,
-    data: IState
+    data: IState,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.put(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE");
+        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -74,14 +80,15 @@ class ProjectStateServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     stateId: string,
-    data: Partial<IState>
+    data: Partial<IState>,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE");
+        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -89,10 +96,15 @@ class ProjectStateServices extends APIService {
       });
   }
 
-  async deleteState(workspaceSlug: string, projectId: string, stateId: string): Promise<any> {
+  async deleteState(
+    workspaceSlug: string,
+    projectId: string,
+    stateId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_DELETE");
+        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {

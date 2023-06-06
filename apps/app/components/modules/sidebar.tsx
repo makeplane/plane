@@ -56,9 +56,16 @@ type Props = {
   module?: IModule;
   isOpen: boolean;
   moduleIssues?: IIssue[];
+  user: ICurrentUserResponse | undefined;
 };
 
-export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, moduleIssues }) => {
+export const ModuleDetailsSidebar: React.FC<Props> = ({
+  issues,
+  module,
+  isOpen,
+  moduleIssues,
+  user,
+}) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
 
@@ -86,7 +93,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
     );
 
     modulesService
-      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data)
+      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data, user)
       .then(() => mutate(MODULE_DETAILS(moduleId as string)))
       .catch((e) => console.log(e));
   };
@@ -181,6 +188,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
         isOpen={moduleDeleteModal}
         setIsOpen={setModuleDeleteModal}
         data={module}
+        user={user}
       />
       <div
         className={`fixed top-[66px] ${

@@ -23,10 +23,15 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async createModule(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async createModule(
+    workspaceSlug: string,
+    projectId: string,
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_CREATE");
+        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -38,14 +43,15 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: any
+    data: any,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.put(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE");
+        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -69,14 +75,15 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: any
+    data: any,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE");
+        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -84,12 +91,17 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async deleteModule(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
+  async deleteModule(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE");
+        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {

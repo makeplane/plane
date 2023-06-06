@@ -21,7 +21,7 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy, orderArrayBy } from "helpers/array.helper";
 import { orderStateGroups } from "helpers/state.helper";
 // types
-import { IState } from "types";
+import { ICurrentUserResponse, IState } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -31,6 +31,7 @@ type Props = {
   statesList: IState[];
   handleEditState: () => void;
   handleDeleteState: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const SingleState: React.FC<Props> = ({
@@ -39,6 +40,7 @@ export const SingleState: React.FC<Props> = ({
   statesList,
   handleEditState,
   handleDeleteState,
+  user,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -67,14 +69,26 @@ export const SingleState: React.FC<Props> = ({
 
     if (currentDefaultState)
       stateService
-        .patchState(workspaceSlug as string, projectId as string, currentDefaultState?.id ?? "", {
-          default: false,
-        })
+        .patchState(
+          workspaceSlug as string,
+          projectId as string,
+          currentDefaultState?.id ?? "",
+          {
+            default: false,
+          },
+          user
+        )
         .then(() => {
           stateService
-            .patchState(workspaceSlug as string, projectId as string, state.id, {
-              default: true,
-            })
+            .patchState(
+              workspaceSlug as string,
+              projectId as string,
+              state.id,
+              {
+                default: true,
+              },
+              user
+            )
             .then(() => {
               mutate(STATES_LIST(projectId as string));
               setIsSubmitting(false);
@@ -85,9 +99,15 @@ export const SingleState: React.FC<Props> = ({
         });
     else
       stateService
-        .patchState(workspaceSlug as string, projectId as string, state.id, {
-          default: true,
-        })
+        .patchState(
+          workspaceSlug as string,
+          projectId as string,
+          state.id,
+          {
+            default: true,
+          },
+          user
+        )
         .then(() => {
           mutate(STATES_LIST(projectId as string));
           setIsSubmitting(false);
@@ -121,9 +141,15 @@ export const SingleState: React.FC<Props> = ({
     );
 
     stateService
-      .patchState(workspaceSlug as string, projectId as string, state.id, {
-        sequence: newSequence,
-      })
+      .patchState(
+        workspaceSlug as string,
+        projectId as string,
+        state.id,
+        {
+          sequence: newSequence,
+        },
+        user
+      )
       .then((res) => {
         console.log(res);
         mutate(STATES_LIST(projectId as string));

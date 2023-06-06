@@ -229,6 +229,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             isOpen={stateModal}
             handleClose={() => setStateModal(false)}
             projectId={projectId}
+            user={user}
           />
           <CreateUpdateCycleModal isOpen={cycleModal} handleClose={() => setCycleModal(false)} />
           <CreateLabelModal

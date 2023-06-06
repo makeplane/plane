@@ -30,6 +30,7 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues: Partial<IState> = {
@@ -39,7 +40,7 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose }) => {
+export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -69,7 +70,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
     };
 
     await stateService
-      .createState(workspaceSlug as string, projectId, payload)
+      .createState(workspaceSlug as string, projectId, payload, user)
       .then((res) => {
         mutate<IStateResponse>(
           STATES_LIST(projectId.toString()),

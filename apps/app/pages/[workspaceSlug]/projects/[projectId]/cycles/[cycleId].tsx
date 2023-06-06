@@ -188,6 +188,7 @@ const SingleCycle: React.FC = () => {
           cycle={cycleDetails}
           isOpen={cycleSidebar}
           isCompleted={cycleStatus === "completed" ?? false}
+          user={user}
         />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

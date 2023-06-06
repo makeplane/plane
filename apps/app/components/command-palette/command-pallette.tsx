@@ -341,10 +341,12 @@ export const CommandPalette: React.FC = () => {
           <CreateUpdateCycleModal
             isOpen={isCreateCycleModalOpen}
             handleClose={() => setIsCreateCycleModalOpen(false)}
+            user={user}
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
+            user={user}
           />
           <CreateUpdateViewModal
             handleClose={() => setIsCreateViewModalOpen(false)}

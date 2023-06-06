@@ -340,7 +340,11 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackStateEvent(data: IState | any, eventName: StateEventType): Promise<any> {
+  async trackStateEvent(
+    data: IState | any,
+    eventName: StateEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (eventName !== "STATE_DELETE")
       payload = {
@@ -362,11 +366,16 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
 
-  async trackCycleEvent(data: ICycle | any, eventName: CycleEventType): Promise<any> {
+  async trackCycleEvent(
+    data: ICycle | any,
+    eventName: CycleEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (eventName !== "CYCLE_DELETE")
       payload = {
@@ -388,11 +397,16 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
 
-  async trackModuleEvent(data: IModule | any, eventName: ModuleEventType): Promise<any> {
+  async trackModuleEvent(
+    data: IModule | any,
+    eventName: ModuleEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (eventName !== "MODULE_DELETE")
       payload = {
@@ -414,6 +428,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
