@@ -296,7 +296,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
   return (
     <>
-      user={user}
       <DeleteCycleModal
         isOpen={cycleDeleteModal}
         setIsOpen={setCycleDeleteModal}
