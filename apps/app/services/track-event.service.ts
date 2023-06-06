@@ -578,7 +578,11 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackViewEvent(data: IView, eventName: ViewEventType): Promise<any> {
+  async trackViewEvent(
+    data: IView,
+    eventName: ViewEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (eventName === "VIEW_DELETE") payload = data;
     else
@@ -598,6 +602,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }

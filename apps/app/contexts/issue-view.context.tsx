@@ -250,11 +250,18 @@ const saveViewFilters = async (
   workspaceSlug: string,
   projectId: string,
   viewId: string,
-  state: any
+  state: any,
+  user: ICurrentUserResponse | undefined
 ) => {
-  await viewsService.patchView(workspaceSlug, projectId, viewId, {
-    ...state,
-  });
+  await viewsService.patchView(
+    workspaceSlug,
+    projectId,
+    viewId,
+    {
+      ...state,
+    },
+    user
+  );
 };
 
 const setNewDefault = async (workspaceSlug: string, projectId: string, state: any) => {
@@ -578,12 +585,18 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           };
         }, false);
         if (saveToServer)
-          saveViewFilters(workspaceSlug as string, projectId as string, viewId as string, {
-            query_data: {
-              ...state.filters,
-              ...property,
+          saveViewFilters(
+            workspaceSlug as string,
+            projectId as string,
+            viewId as string,
+            {
+              query_data: {
+                ...state.filters,
+                ...property,
+              },
             },
-          });
+            user
+          );
       } else {
         mutateMyViewProps((prevData) => {
           if (!prevData) return prevData;
