@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 // services
 import authenticationService from "services/authentication.service";
-import userService from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { EmailResetPasswordForm } from "components/account";
 // ui
 import { Input, SecondaryButton } from "components/ui";
 // types
@@ -17,7 +18,7 @@ type EmailPasswordFormValues = {
 };
 
 export const EmailPasswordForm = ({ handleSignIn }: any) => {
-  const [isSendingMail, setIsSendingMail] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   const { setToastAlert } = useToast();
 
@@ -25,7 +26,6 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
     register,
     handleSubmit,
     setError,
-    watch,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
     defaultValues: {
@@ -36,44 +36,6 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
     mode: "onChange",
     reValidateMode: "onChange",
   });
-
-  const forgotPassword = async () => {
-    const email = watch("email");
-
-    if (!email || email === "") {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Please enter your registered email address to reset your password.",
-      });
-
-      return;
-    }
-
-    setIsSendingMail(true);
-
-    const payload = {
-      email,
-    };
-
-    await userService
-      .forgotPassword(payload)
-      .then(() =>
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Password reset link has been sent to your email address.",
-        })
-      )
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsSendingMail(false));
-  };
 
   const onSubmit = (formData: EmailPasswordFormValues) => {
     authenticationService
@@ -102,62 +64,63 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
 
   return (
     <>
-      <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <Input
-            id="email"
-            type="email"
-            name="email"
-            register={register}
-            validations={{
-              required: "Email ID is required",
-              validate: (value) =>
-                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-                  value
-                ) || "Email ID is not valid",
-            }}
-            error={errors.email}
-            placeholder="Enter your Email ID"
-          />
-        </div>
-        <div className="mt-5">
-          <Input
-            id="password"
-            type="password"
-            name="password"
-            register={register}
-            validations={{
-              required: "Password is required",
-            }}
-            error={errors.password}
-            placeholder="Enter your password"
-          />
-        </div>
-        <div className="mt-2 flex items-center justify-between">
-          <div className="ml-auto text-sm">
-            <button
-              type="button"
-              onClick={forgotPassword}
-              className={`font-medium text-brand-accent hover:text-brand-accent ${
-                isSendingMail ? "cursor-wait" : ""
-              }`}
-              disabled={isSendingMail}
-            >
-              {isSendingMail ? "Sending reset link..." : "Forgot your password?"}
-            </button>
+      {isResettingPassword ? (
+        <EmailResetPasswordForm setIsResettingPassword={setIsResettingPassword} />
+      ) : (
+        <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <Input
+              id="email"
+              type="email"
+              name="email"
+              register={register}
+              validations={{
+                required: "Email ID is required",
+                validate: (value) =>
+                  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+                    value
+                  ) || "Email ID is not valid",
+              }}
+              error={errors.email}
+              placeholder="Enter your Email ID"
+            />
           </div>
-        </div>
-        <div className="mt-5">
-          <SecondaryButton
-            type="submit"
-            className="w-full text-center"
-            disabled={!isValid && isDirty}
-            loading={isSubmitting}
-          >
-            {isSubmitting ? "Signing in..." : "Sign In"}
-          </SecondaryButton>
-        </div>
-      </form>
+          <div className="mt-5">
+            <Input
+              id="password"
+              type="password"
+              name="password"
+              register={register}
+              validations={{
+                required: "Password is required",
+              }}
+              error={errors.password}
+              placeholder="Enter your password"
+            />
+          </div>
+          <div className="mt-2 flex items-center justify-between">
+            <div className="ml-auto text-sm">
+              <button
+                type="button"
+                onClick={() => setIsResettingPassword(true)}
+                className="font-medium text-brand-accent hover:text-brand-accent"
+              >
+                Forgot your password?
+              </button>
+            </div>
+          </div>
+          <div className="mt-5">
+            <SecondaryButton
+              type="submit"
+              className="w-full text-center"
+              disabled={!isValid && isDirty}
+              loading={isSubmitting}
+            >
+              {isSubmitting ? "Signing in..." : "Sign In"}
+            </SecondaryButton>
+          </div>
+        </form>
+      )}
     </>
   );
 };
