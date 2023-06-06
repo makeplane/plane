@@ -166,7 +166,10 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackUserOnboardingCompleteEvent(data: any): Promise<any> {
+  async trackUserOnboardingCompleteEvent(
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -175,6 +178,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }

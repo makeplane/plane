@@ -80,7 +80,7 @@ const Onboarding: NextPage = () => {
                     onClick={() => {
                       if (step === 8) {
                         userService
-                          .updateUserOnBoard({ userRole })
+                          .updateUserOnBoard({ userRole }, user)
                           .then(async () => {
                             mutate<ICurrentUserResponse>(
                               CURRENT_USER,
