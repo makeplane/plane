@@ -241,14 +241,17 @@ export const IssuesView: React.FC<Props> = ({
               sourceStateBeforeDrag?.group !== "completed" &&
               response?.state_detail?.group === "completed"
             )
-              trackEventServices.trackIssueMarkedAsDoneEvent({
-                workspaceSlug,
-                workspaceId: draggedItem.workspace,
-                projectName: draggedItem.project_detail.name,
-                projectIdentifier: draggedItem.project_detail.identifier,
-                projectId,
-                issueId: draggedItem.id,
-              });
+              trackEventServices.trackIssueMarkedAsDoneEvent(
+                {
+                  workspaceSlug,
+                  workspaceId: draggedItem.workspace,
+                  projectName: draggedItem.project_detail.name,
+                  projectIdentifier: draggedItem.project_detail.identifier,
+                  projectId,
+                  issueId: draggedItem.id,
+                },
+                user
+              );
 
             if (cycleId) {
               mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));

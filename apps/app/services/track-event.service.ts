@@ -214,7 +214,10 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackIssueMarkedAsDoneEvent(data: any): Promise<any> {
+  async trackIssueMarkedAsDoneEvent(
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     if (!trackEvent) return;
     return this.request({
       url: "/api/track-event",
@@ -224,6 +227,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }
@@ -235,7 +239,8 @@ class TrackEventServices extends APIService {
       | "ISSUE_PROPERTY_UPDATE_STATE"
       | "ISSUE_PROPERTY_UPDATE_ASSIGNEE"
       | "ISSUE_PROPERTY_UPDATE_DUE_DATE"
-      | "ISSUE_PROPERTY_UPDATE_ESTIMATE"
+      | "ISSUE_PROPERTY_UPDATE_ESTIMATE",
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     if (!trackEvent) return;
     return this.request({
@@ -246,13 +251,15 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }
 
   async trackIssueCommentEvent(
     data: Partial<IIssueComment> | any,
-    eventName: IssueCommentEventType
+    eventName: IssueCommentEventType,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     let payload: any;
     if (eventName !== "ISSUE_COMMENT_DELETE")
@@ -274,6 +281,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }

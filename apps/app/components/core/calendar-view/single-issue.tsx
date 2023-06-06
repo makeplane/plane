@@ -185,6 +185,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -194,6 +195,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
                 isNotAllowed={isNotAllowed}
+                user={user}
               />
             )}
 
@@ -201,6 +203,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -229,6 +232,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -237,6 +241,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}

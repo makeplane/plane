@@ -179,7 +179,8 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: any
+    data: any,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`,
@@ -187,7 +188,7 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => {
         if (trackEvent)
-          trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE");
+          trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -200,7 +201,8 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     issueId: string,
     commentId: string,
-    data: IIssueComment
+    data: IIssueComment,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
@@ -208,7 +210,7 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => {
         if (trackEvent)
-          trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE");
+          trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -220,7 +222,8 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    commentId: string
+    commentId: string,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`
@@ -232,7 +235,8 @@ class ProjectIssuesServices extends APIService {
               issueId,
               commentId,
             },
-            "ISSUE_COMMENT_DELETE"
+            "ISSUE_COMMENT_DELETE",
+            user
           );
         return response?.data;
       })

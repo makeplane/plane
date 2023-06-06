@@ -114,6 +114,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             <ViewPrioritySelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -121,6 +122,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             <ViewStateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -128,6 +130,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             <ViewDueDateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}

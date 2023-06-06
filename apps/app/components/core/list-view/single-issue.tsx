@@ -243,6 +243,7 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -251,6 +252,7 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -258,6 +260,7 @@ export const SingleListIssue: React.FC<Props> = ({
             <ViewDueDateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -286,6 +289,7 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -294,6 +298,7 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
