@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
-import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
 
@@ -138,12 +137,10 @@ const ControlSettings: NextPage = () => {
                           <div className="flex items-center gap-2">
                             {person.member.avatar && person.member.avatar !== "" ? (
                               <div className="relative h-4 w-4">
-                                <Image
+                                <img
                                   src={person.member.avatar}
-                                  alt="avatar"
-                                  className="rounded-full"
-                                  layout="fill"
-                                  objectFit="cover"
+                                  className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                                  alt="User Avatar"
                                 />
                               </div>
                             ) : (
@@ -201,12 +198,10 @@ const ControlSettings: NextPage = () => {
                           <div className="flex items-center gap-2">
                             {person.member.avatar && person.member.avatar !== "" ? (
                               <div className="relative h-4 w-4">
-                                <Image
+                                <img
                                   src={person.member.avatar}
-                                  alt="avatar"
-                                  className="rounded-full"
-                                  layout="fill"
-                                  objectFit="cover"
+                                  className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                                  alt="User Avatar"
                                 />
                               </div>
                             ) : (

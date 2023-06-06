@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 type Props = {
   users: {
     avatar: string | null;
@@ -23,12 +21,10 @@ export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
           >
             <div className="flex items-center gap-2">
               {user && user.avatar && user.avatar !== "" ? (
-                <div className="rounded-full h-4 w-4 flex-shrink-0">
-                  <Image
+                <div className="relative rounded-full h-4 w-4 flex-shrink-0">
+                  <img
                     src={user.avatar}
-                    height="100%"
-                    width="100%"
-                    className="rounded-full"
+                    className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
                     alt={user.email ?? "None"}
                   />
                 </div>

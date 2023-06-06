@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -256,12 +255,10 @@ const GeneralSettings: NextPage = () => {
               {watch("cover_image") ? (
                 <div className="h-32 w-full rounded border border-brand-base p-1">
                   <div className="relative h-full w-full rounded">
-                    <Image
+                    <img
                       src={watch("cover_image")!}
+                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
                       alt={projectDetails?.name ?? "Cover image"}
-                      objectFit="cover"
-                      layout="fill"
-                      className="rounded"
                     />
                     <div className="absolute bottom-0 flex w-full justify-end">
                       <ImagePickerPopover

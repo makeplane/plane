@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
 
@@ -454,7 +453,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
                     <div className="flex items-center gap-2.5">
                       {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                        <Image
+                        <img
                           src={cycle.owned_by.avatar}
                           height={12}
                           width={12}
