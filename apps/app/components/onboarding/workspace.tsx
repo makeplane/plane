@@ -82,7 +82,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
     <div className="grid w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex h-[417px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md"
+        className="flex h-[442px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md"
         defaultIndex={currentTabValue(currentTab)}
         onChange={(i) => {
           switch (i) {
@@ -130,7 +130,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
         <Tab.Panels as="div" className="h-full">
           <Tab.Panel className="h-full">
             <div className="flex h-full w-full flex-col">
-              <div className="h-[255px] overflow-y-auto px-7">
+              <div className="h-[280px] overflow-y-auto px-7">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
                     <div key={invitation.id}>
