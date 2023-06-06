@@ -36,6 +36,7 @@ const restrictedUrls = [
   "invitations",
   "magic-sign-in",
   "onboarding",
+  "reset-password",
   "signin",
   "workspace-member-invitation",
   "404",

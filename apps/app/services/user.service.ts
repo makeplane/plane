@@ -92,6 +92,29 @@ class UserService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async forgotPassword(data: { email: string }): Promise<any> {
+    return this.post(`/api/forgot-password/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async resetPassword(
+    uidb64: string,
+    token: string,
+    data: {
+      new_password: string;
+      confirm_password: string;
+    }
+  ): Promise<any> {
+    return this.post(`/api/reset-password/${uidb64}/${token}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export default new UserService();
