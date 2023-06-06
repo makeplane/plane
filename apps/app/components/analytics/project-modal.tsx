@@ -26,6 +26,7 @@ import {
 import { IAnalyticsParams, IWorkspace } from "types";
 // fetch-keys
 import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
+import useUserAuth from "hooks/use-user-auth";
 
 type Props = {
   isOpen: boolean;
@@ -46,6 +47,8 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
 
@@ -136,7 +139,8 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
     trackEventServices.trackAnalyticsEvent(
       eventPayload,
-      cycleId ? `CYCLE_${eventType}` : moduleId ? `MODULE_${eventType}` : `PROJECT_${eventType}`
+      cycleId ? `CYCLE_${eventType}` : moduleId ? `MODULE_${eventType}` : `PROJECT_${eventType}`,
+      user
     );
   };
 
@@ -210,6 +214,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 control={control}
                 setValue={setValue}
                 fullScreen={fullScreen}
+                user={user}
               />
             </Tab.Panel>
           </Tab.Panels>

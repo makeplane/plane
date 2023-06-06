@@ -190,10 +190,15 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug as string, projectId as string, {
-        prompt: watch("name"),
-        task: "Generate a proper description for this issue in context of a project management software.",
-      })
+      .createGptTask(
+        workspaceSlug as string,
+        projectId as string,
+        {
+          prompt: watch("name"),
+          task: "Generate a proper description for this issue in context of a project management software.",
+        },
+        user
+      )
       .then((res) => {
         if (res.response === "")
           setToastAlert({

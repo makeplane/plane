@@ -506,7 +506,11 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackAskGptEvent(data: IGptResponse, eventName: GptEventType): Promise<any> {
+  async trackAskGptEvent(
+    data: IGptResponse,
+    eventName: GptEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     const payload = {
       workspaceId: data?.workspace_detail?.id,
       workspaceName: data?.workspace_detail?.name,
@@ -524,11 +528,16 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
 
-  async trackUseGPTResponseEvent(data: IIssue | IPageBlock, eventName: GptEventType): Promise<any> {
+  async trackUseGPTResponseEvent(
+    data: IIssue | IPageBlock,
+    eventName: GptEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     if (!trackEvent) return;
 
     let payload: any;
@@ -564,6 +573,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
@@ -592,7 +602,11 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackMiscellaneousEvent(data: any, eventName: MiscellaneousEventType): Promise<any> {
+  async trackMiscellaneousEvent(
+    data: any,
+    eventName: MiscellaneousEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -601,11 +615,16 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }
 
-  async trackAppIntegrationEvent(data: any, eventName: IntegrationEventType): Promise<any> {
+  async trackAppIntegrationEvent(
+    data: any,
+    eventName: IntegrationEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -614,11 +633,16 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }
 
-  async trackGitHubSyncEvent(data: any, eventName: GitHubSyncEventType): Promise<any> {
+  async trackGitHubSyncEvent(
+    data: any,
+    eventName: GitHubSyncEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -627,13 +651,15 @@ class TrackEventServices extends APIService {
         extra: {
           ...data,
         },
+        user: user,
       },
     });
   }
 
   async trackIssueEstimateEvent(
     data: { estimate: IEstimate },
-    eventName: IssueEstimateEventType
+    eventName: IssueEstimateEventType,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     let payload: any;
     if (eventName === "ESTIMATE_DELETE") payload = data;
@@ -656,11 +682,16 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
 
-  async trackImporterEvent(data: any, eventName: ImporterEventType): Promise<any> {
+  async trackImporterEvent(
+    data: any,
+    eventName: ImporterEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (eventName === "GITHUB_IMPORTER_DELETE" || eventName === "JIRA_IMPORTER_DELETE")
       payload = data;
@@ -682,11 +713,16 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }
 
-  async trackAnalyticsEvent(data: any, eventName: AnalyticsEventType): Promise<any> {
+  async trackAnalyticsEvent(
+    data: any,
+    eventName: AnalyticsEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     const payload = { ...data };
 
     return this.request({
@@ -695,6 +731,7 @@ class TrackEventServices extends APIService {
       data: {
         eventName,
         extra: payload,
+        user: user,
       },
     });
   }

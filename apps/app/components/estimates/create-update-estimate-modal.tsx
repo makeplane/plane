@@ -17,7 +17,7 @@ import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { IEstimate, IEstimateFormData } from "types";
+import { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
 // fetch-keys
 import { ESTIMATES_LIST, ESTIMATE_DETAILS } from "constants/fetch-keys";
 
@@ -25,6 +25,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IEstimate;
+  user: ICurrentUserResponse | undefined;
 };
 
 type FormValues = {
@@ -49,7 +50,7 @@ const defaultValues: Partial<FormValues> = {
   value6: "",
 };
 
-export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen }) => {
+export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, user }) => {
   const {
     register,
     formState: { isSubmitting },
@@ -73,7 +74,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     if (!workspaceSlug || !projectId) return;
 
     await estimatesService
-      .createEstimate(workspaceSlug as string, projectId as string, payload)
+      .createEstimate(workspaceSlug as string, projectId as string, payload, user)
       .then(() => {
         mutate(ESTIMATES_LIST(projectId as string));
         onClose();
@@ -118,7 +119,13 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     );
 
     await estimatesService
-      .patchEstimate(workspaceSlug as string, projectId as string, data?.id as string, payload)
+      .patchEstimate(
+        workspaceSlug as string,
+        projectId as string,
+        data?.id as string,
+        payload,
+        user
+      )
       .then(() => {
         mutate(ESTIMATES_LIST(projectId.toString()));
         mutate(ESTIMATE_DETAILS(data.id));

@@ -66,7 +66,7 @@ const EstimatesSettings: NextPage = () => {
     );
 
     estimatesService
-      .deleteEstimate(workspaceSlug as string, projectId as string, estimateId)
+      .deleteEstimate(workspaceSlug as string, projectId as string, estimateId, user)
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -109,6 +109,7 @@ const EstimatesSettings: NextPage = () => {
           setEstimateFormOpen(false);
           setEstimateToUpdate(undefined);
         }}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -152,6 +153,7 @@ const EstimatesSettings: NextPage = () => {
                     estimate={estimate}
                     editEstimate={(estimate) => editEstimate(estimate)}
                     handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
+                    user={user}
                   />
                 ))}
               </section>

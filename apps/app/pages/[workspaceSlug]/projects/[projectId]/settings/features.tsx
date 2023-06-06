@@ -197,7 +197,8 @@ const FeaturesSettings: NextPage = () => {
                       },
                       !projectDetails?.[feature.property as keyof IProject]
                         ? getEventType(feature.title, true)
-                        : getEventType(feature.title, false)
+                        : getEventType(feature.title, false),
+                      user
                     );
                     handleSubmit({
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],
