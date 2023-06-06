@@ -109,8 +109,8 @@ services:
                 volumes:
                         - uploads:/export
                 environment:
-                  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
-                  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+                        MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+                        MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
                 command: server /export --console-address ":9090"
 
         createbuckets:
@@ -127,13 +127,16 @@ services:
 
 # Comment this if you already have a reverse proxy running
         plane-proxy:
-          container_name: planeproxy
-          image: makeplane/plane-proxy:latest
-          ports:
-            - ${NGINX_PORT}:80
-          depends_on:
-            - plane-web
-            - plane-api
+                container_name: planeproxy
+                image: makeplane/plane-proxy:latest
+                ports:
+                - ${NGINX_PORT}:80
+                environment:
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+                        BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+                depends_on:
+                - plane-web
+                - plane-api
 
 
 volumes:

@@ -4,10 +4,10 @@ services:
         plane-web:
                 container_name: planefrontend
                 build:
-                  context: .
-                  dockerfile: ./apps/app/Dockerfile.web
-                  args:
-                    NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+                        context: .
+                        dockerfile: ./apps/app/Dockerfile.web
+                        args:
+                                NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
                 restart: always
                 command: [ "/usr/local/bin/start.sh" ]
                 environment:
@@ -24,8 +24,8 @@ services:
         plane-api:
                 container_name: planebackend
                 build:
-                  context: ./apiserver
-                  dockerfile: Dockerfile.api
+                        context: ./apiserver
+                        dockerfile: Dockerfile.api
                 restart: always
                 command: ./bin/takeoff
                 environment:
@@ -61,8 +61,8 @@ services:
         plane-worker:
                 container_name: planebgworker
                 build:
-                  context: ./apiserver
-                  dockerfile: Dockerfile.api
+                        context: ./apiserver
+                        dockerfile: Dockerfile.api
                 restart: always
                 command: ./bin/worker
                 environment:
@@ -88,8 +88,8 @@ services:
                         OPENAI_API_KEY: ${OPENAI_API_KEY}
                         GPT_ENGINE: ${GPT_ENGINE}
                         SECRET_KEY: ${SECRET_KEY}
-                        DEFAULT_EMAIL: ${DEFAULT_EMAIL}
-                        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+                        DEFAULT_EMAIL: ${DEFAULT_EMAIL:-captain@plane.so}
+                        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD:-password123}
                         USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-api
@@ -130,27 +130,24 @@ services:
         createbuckets:
                 image: minio/mc
                 entrypoint: >
-                        /bin/sh -c "
-                        /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
-                        /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME;
-                        /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME;
-                        exit 0;
-                        "
+                        /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
                 depends_on:
                         - plane-minio
 
         plane-proxy:
                 container_name: planeproxy
                 build:
-                  context: ./nginx
-                  dockerfile: Dockerfile
+                        context: ./nginx
+                        dockerfile: Dockerfile
                 restart: always
                 ports:
                         - ${NGINX_PORT}:80
+                environment:
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+                        BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
                 depends_on:
-                  - plane-web
-                  - plane-api
-
+                        - plane-web
+                        - plane-api
 
 volumes:
         pgdata:
