@@ -76,8 +76,8 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
           </div>
 
           <div className="flex flex-col justify-between gap-4 px-7 py-3.5 sm:flex-row">
-            <div className="flex flex-col items-start justify-center gap-2.5 w-full sm:w-1/2">
-              <span>First name</span>
+            <div className="flex flex-col items-start justify-center gap-1 w-full sm:w-1/2">
+              <span className="mb-1.5">First name</span>
               <Input
                 name="first_name"
                 autoComplete="off"
@@ -88,8 +88,8 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
                 error={errors.first_name}
               />
             </div>
-            <div className="flex flex-col items-start justify-center gap-2.5 w-full sm:w-1/2">
-              <span>Last name</span>
+            <div className="flex flex-col items-start justify-center gap-1 w-full sm:w-1/2">
+              <span className="mb-1.5">Last name</span>
               <Input
                 name="last_name"
                 autoComplete="off"
@@ -128,6 +128,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
                   </CustomSelect>
                 )}
               />
+              {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
             </div>
           </div>
         </div>
