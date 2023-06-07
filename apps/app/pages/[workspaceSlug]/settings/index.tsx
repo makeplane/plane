@@ -191,8 +191,8 @@ const WorkspaceSettings: NextPage = () => {
                       <div className="relative mx-auto flex h-12 w-12">
                         <img
                           src={watch("logo")!}
-                          alt="Workspace Logo"
                           className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
+                          alt="Workspace Logo"
                         />
                       </div>
                     ) : (
