@@ -319,8 +319,8 @@ const ProjectIssues: NextPage = () => {
             }}
           />
 
-          <div className="grid grid-cols-4 flex-1 overflow-auto divide-x">
-            <div className="divide-y col-span-1 overflow-auto h-full pb-10">
+          <div className="grid grid-cols-4 flex-1 overflow-auto divide-x divide-brand-base">
+            <div className="divide-y divide-brand-base col-span-1 overflow-auto h-full pb-10">
               {inboxIssues?.map((issue) => (
                 <Link
                   key={issue.id}

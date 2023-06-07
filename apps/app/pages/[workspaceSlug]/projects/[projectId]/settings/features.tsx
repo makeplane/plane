@@ -74,8 +74,10 @@ const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType 
       return toggle ? "TOGGLE_VIEW_ON" : "TOGGLE_VIEW_OFF";
     case "Pages":
       return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
+    case "Inbox":
+      return toggle ? "TOGGLE_INBOX_ON" : "TOGGLE_INBOX_OFF";
     default:
-      return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
+      throw new Error("Invalid feature");
   }
 };
 
@@ -202,9 +204,10 @@ const FeaturesSettings: NextPage = () => {
                         projectIdentifier: projectDetails?.identifier,
                         projectName: projectDetails?.name,
                       },
-                      !projectDetails?.[feature.property as keyof IProject]
-                        ? getEventType(feature.title, true)
-                        : getEventType(feature.title, false),
+                      getEventType(
+                        feature.title,
+                        !projectDetails?.[feature.property as keyof IProject]
+                      ),
                       user
                     );
                     handleSubmit({

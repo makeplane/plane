@@ -16,7 +16,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
   return (
     <div
       id={issue.id}
-      className={`relative h-20 cursor-pointer select-none space-y-3 py-2 px-4 border-b hover:bg-brand-accent hover:bg-opacity-10 ${
+      className={`relative h-20 cursor-pointer select-none space-y-3 py-2 px-4 border-b border-brand-base hover:bg-brand-accent hover:bg-opacity-10 ${
         active ? "bg-brand-accent bg-opacity-5" : " "
       }`}
     >

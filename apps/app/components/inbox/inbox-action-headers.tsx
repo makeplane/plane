@@ -55,7 +55,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
   }, [inboxIssue]);
 
   return (
-    <div className="grid grid-cols-4 border-b border-brand-base divide-x">
+    <div className="grid grid-cols-4 border-b border-brand-base divide-x divide-brand-base">
       <div className="col-span-1 flex justify-between p-4">
         <div className="flex items-center gap-2">
           <InboxIcon className="h-5 w-5 text-brand-secondary" />
@@ -110,7 +110,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
         <div className="flex gap-x-3">
           <button
             type="button"
-            className="rounded border bg-brand-surface-1 p-1.5 hover:bg-brand-surface-2"
+            className="rounded border border-brand-base bg-brand-surface-1 p-1.5 hover:bg-brand-surface-2"
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "ArrowUp" });
               document.dispatchEvent(e);
@@ -120,7 +120,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
           </button>
           <button
             type="button"
-            className="rounded border bg-brand-surface-1 p-1.5 hover:bg-brand-surface-2"
+            className="rounded border border-brand-base bg-brand-surface-1 p-1.5 hover:bg-brand-surface-2"
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "ArrowDown" });
               document.dispatchEvent(e);

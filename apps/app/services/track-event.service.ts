@@ -52,17 +52,15 @@ type IssueCommentEventType =
   | "ISSUE_COMMENT_UPDATE"
   | "ISSUE_COMMENT_DELETE";
 
-export type MiscellaneousEventType =
-  | "TOGGLE_CYCLE_ON"
-  | "TOGGLE_CYCLE_OFF"
-  | "TOGGLE_MODULE_ON"
-  | "TOGGLE_MODULE_OFF"
-  | "TOGGLE_VIEW_ON"
-  | "TOGGLE_VIEW_OFF"
-  | "TOGGLE_PAGES_ON"
-  | "TOGGLE_PAGES_OFF"
-  | "TOGGLE_STATE_ON"
-  | "TOGGLE_STATE_OFF";
+type Toggle =
+  | "TOGGLE_CYCLE"
+  | "TOGGLE_MODULE"
+  | "TOGGLE_VIEW"
+  | "TOGGLE_PAGES"
+  | "TOGGLE_STATE"
+  | "TOGGLE_INBOX";
+
+export type MiscellaneousEventType = `${Toggle}_ON` | `${Toggle}_OFF`;
 
 type IntegrationEventType = "ADD_WORKSPACE_INTEGRATION" | "REMOVE_WORKSPACE_INTEGRATION";
 
@@ -756,8 +754,13 @@ class TrackEventServices extends APIService {
     let payload: any;
     if (eventName !== "INBOX_DELETE")
       payload = {
-        ...data,
-        // change payload according to requirement
+        issue: data?.issue?.id,
+        inbox: data?.id,
+        workspaceId: data?.issue?.workspace_detail?.id,
+        workspaceName: data?.issue?.workspace_detail?.name,
+        workspaceSlug: data?.issue?.workspace_detail?.slug,
+        projectId: data?.issue?.project_detail?.id,
+        projectName: data?.issue?.project_detail?.name,
       };
     else payload = data;
 

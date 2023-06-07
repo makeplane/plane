@@ -162,12 +162,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
     if (inboxId) {
       await inboxServices
-        .createInboxIssue(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          inboxId.toString(),
-          payload
-        )
+        .createInboxIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), {
+          issue: payload,
+        })
         .then((res) => {
           setToastAlert({
             type: "success",
@@ -187,8 +184,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             title: "Error!",
             message: "Issue could not be created. Please try again.",
           });
-          // TODO:
-          // [ ] - mutate inbox issues list
+          mutate(INBOX_ISSUES(inboxId.toString()));
         });
     } else {
       if (!workspaceSlug) return;

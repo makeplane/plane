@@ -66,8 +66,10 @@ export const InboxMainContent: React.FC<Props> = (props) => {
   );
 
   const { data: siblingIssues } = useSWR(
-    workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
-    workspaceSlug && projectId && issueDetails?.parent
+    workspaceSlug && projectId && issueDetails?.parent && status === 1
+      ? SUB_ISSUES(issueDetails.parent)
+      : null,
+    workspaceSlug && projectId && issueDetails?.parent && status === 1
       ? () =>
           issuesService.subIssues(
             workspaceSlug as string,
