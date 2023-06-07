@@ -484,7 +484,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             # Check the user role who is deleting the user
             workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, pk=pk)
 
-            # requesting user
+            # check requesting user role
             requesting_workspace_member = WorkspaceMember.objects.get(
                 workspace__slug=slug, member=request.user
             )

@@ -461,7 +461,7 @@ class ProjectMemberViewSet(BaseViewSet):
             project_member = ProjectMember.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
-            # requesting user
+            # check requesting user role
             requesting_project_member = ProjectMember.objects.get(
                 workspace__slug=slug, member=request.user, project_id=project_id
             )
