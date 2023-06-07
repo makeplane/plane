@@ -39,7 +39,7 @@ const Onboarding: NextPage = () => {
 
   const router = useRouter();
 
-  const { user } = useUserAuth("onboarding");
+  const { user, mutateUser } = useUserAuth("onboarding");
 
   return (
     <UserAuthorizationLayout>
@@ -99,15 +99,23 @@ const Onboarding: NextPage = () => {
                             );
                             const userWorkspaces = await workspaceService.userWorkspaces();
 
-                            const lastActiveWorkspace = userWorkspaces.find(
-                              (workspace) => workspace.id === user?.last_workspace_id
-                            );
+                            const lastActiveWorkspace =
+                              userWorkspaces.find(
+                                (workspace) => workspace.id === user?.last_workspace_id
+                              ) ?? userWorkspaces[0];
 
                             if (lastActiveWorkspace) {
+                              userService
+                                .updateUser({
+                                  last_workspace_id: lastActiveWorkspace.id,
+                                })
+                                .then((res) => {
+                                  mutateUser();
+                                })
+                                .catch((err) => {
+                                  console.log(err);
+                                });
                               Router.push(`/${lastActiveWorkspace.slug}`);
-                              return;
-                            } else if (userWorkspaces.length > 0) {
-                              Router.push(`/${userWorkspaces[0].slug}`);
                               return;
                             } else {
                               const invitations = await workspaceService.userWorkspaceInvitations();
