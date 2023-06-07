@@ -462,7 +462,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
             # requesting user
-            requesting_project_member = ProjectMember.objects.filter(
+            requesting_project_member = ProjectMember.objects.get(
                 workspace__slug=slug, member=request.user, project_id=project_id
             )
             if requesting_project_member.role < project_member.role:

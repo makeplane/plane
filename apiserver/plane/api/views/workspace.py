@@ -485,7 +485,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, pk=pk)
 
             # requesting user
-            requesting_workspace_member = WorkspaceMember.objects.filter(
+            requesting_workspace_member = WorkspaceMember.objects.get(
                 workspace__slug=slug, member=request.user
             )
             if requesting_workspace_member.role < workspace_member.role:
