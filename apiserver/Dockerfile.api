@@ -7,7 +7,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /code
 
-RUN apk --update --no-cache add \
+RUN apk --no-cache add \
     "libpq~=15" \
     "libxslt~=1.1" \
     "nodejs-current~=19" \
@@ -15,8 +15,8 @@ RUN apk --update --no-cache add \
 
 COPY requirements.txt ./
 COPY requirements ./requirements
-RUN apk add libffi-dev
-RUN apk --update --no-cache --virtual .build-deps add \
+RUN apk add --no-cache libffi-dev
+RUN apk add --no-cache --virtual .build-deps \
     "bash~=5.2" \
     "g++~=12.2" \
     "gcc~=12.2" \
@@ -46,7 +46,7 @@ COPY templates templates/
 
 COPY gunicorn.config.py ./
 USER root
-RUN apk --update --no-cache add "bash~=5.2"
+RUN apk --no-cache add "bash~=5.2"
 COPY ./bin ./bin/
 
 RUN chmod +x ./bin/takeoff ./bin/worker

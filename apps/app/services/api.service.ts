@@ -2,15 +2,25 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const unAuthorizedStatus = [401];
+const nonValidatedRoutes = ["/", "/reset-password", "/workspace-member-invitation"];
+
+const validateRouteCheck = (route: string): boolean => {
+  let validationToggle = false;
+  const routeCheck = nonValidatedRoutes.find((_route: string) => _route === route);
+  if (routeCheck) validationToggle = true;
+  return validationToggle;
+};
+
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
     const { status }: any = error.response;
-    if (unAuthorizedStatus.includes(status)) {
-      Cookies.remove("refreshToken", { path: "/" });
-      Cookies.remove("accessToken", { path: "/" });
-      console.log("window.location.href", window.location.pathname);
-      if (window.location.pathname != "/signin") window.location.href = "/signin";
+    if (!validateRouteCheck(window.location.pathname)) {
+      if (unAuthorizedStatus.includes(status)) {
+        Cookies.remove("refreshToken", { path: "/" });
+        Cookies.remove("accessToken", { path: "/" });
+        window.location.href = `/?next_url=${window.location.pathname}`;
+      }
     }
     return Promise.reject(error);
   }

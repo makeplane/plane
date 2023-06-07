@@ -1,26 +1,18 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
+import { useState, useEffect, useCallback } from "react";
+import useSWR, { mutate } from "swr";
 // services
-import stateService from "services/state.service";
-import userService from "services/user.service";
+import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
-// helpers
-import { groupBy } from "helpers/array.helper";
-import { getStatesList } from "helpers/state.helper";
 // types
-import { Properties, NestedKeyOf, IIssue } from "types";
-// fetch-keys
-import { STATES_LIST } from "constants/fetch-keys";
-// constants
-import { PRIORITIES } from "constants/project";
+import { IWorkspaceMember, Properties } from "types";
+import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
 const initialValues: Properties = {
   assignee: true,
   due_date: false,
   key: true,
-  labels: true,
+  labels: false,
   priority: false,
   state: true,
   sub_issue_count: false,
@@ -29,99 +21,80 @@ const initialValues: Properties = {
   estimate: false,
 };
 
-// TODO: Refactor this logic
-const useMyIssuesProperties = (issues?: IIssue[]) => {
+const useMyIssuesProperties = (workspaceSlug?: string) => {
   const [properties, setProperties] = useState<Properties>(initialValues);
-  const [groupByProperty, setGroupByProperty] = useState<NestedKeyOf<IIssue> | null>(null);
-
-  // FIXME: where this hook is used we may not have project id in the url
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
 
   const { user } = useUser();
 
-  const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
-  const states = getStatesList(stateGroups ?? {});
-
-  useEffect(() => {
-    if (!user) return;
-    setProperties({ ...initialValues, ...user.my_issues_prop?.properties });
-    setGroupByProperty(user.my_issues_prop?.groupBy ?? null);
-  }, [user]);
-
-  const groupedByIssues: {
-    [key: string]: IIssue[];
-  } = {
-    ...(groupByProperty === "state_detail.name"
-      ? Object.fromEntries(
-          states
-            ?.sort((a, b) => a.sequence - b.sequence)
-            ?.map((state) => [
-              state.name,
-              issues?.filter((issue) => issue.state === state.name) ?? [],
-            ]) ?? []
-        )
-      : groupByProperty === "priority"
-      ? Object.fromEntries(
-          PRIORITIES.map((priority) => [
-            priority,
-            issues?.filter((issue) => issue.priority === priority) ?? [],
-          ])
-        )
-      : {}),
-    ...groupBy(issues ?? [], groupByProperty ?? ""),
-  };
-
-  const setMyIssueProperty = (key: keyof Properties) => {
-    if (!user) return;
-    userService.updateUser({ my_issues_prop: { properties, groupBy: groupByProperty } });
-    setProperties((prevData) => ({
-      ...prevData,
-      [key]: !prevData[key],
-    }));
-    localStorage.setItem(
-      "my_issues_prop",
-      JSON.stringify({
-        properties: {
-          ...properties,
-          [key]: !properties[key],
-        },
-        groupBy: groupByProperty,
-      })
-    );
-  };
-
-  const setMyIssueGroupByProperty = (groupByProperty: NestedKeyOf<IIssue> | null) => {
-    if (!user) return;
-    userService.updateUser({ my_issues_prop: { properties, groupBy: groupByProperty } });
-    setGroupByProperty(groupByProperty);
-    localStorage.setItem(
-      "my_issues_prop",
-      JSON.stringify({ properties, groupBy: groupByProperty })
-    );
-  };
-
-  useEffect(() => {
-    const viewProps = localStorage.getItem("my_issues_prop");
-    if (viewProps) {
-      const { properties, groupBy } = JSON.parse(viewProps);
-      setProperties(properties);
-      setGroupByProperty(groupBy);
+  const { data: myWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.workspaceMemberMe(workspaceSlug as string) : null,
+    {
+      shouldRetryOnError: false,
     }
-  }, []);
+  );
 
-  return {
-    filteredIssues: groupedByIssues,
-    groupByProperty,
-    properties,
-    setMyIssueProperty,
-    setMyIssueGroupByProperty,
-  } as const;
+  useEffect(() => {
+    if (!myWorkspace || !workspaceSlug || !user) return;
+
+    setProperties({ ...initialValues, ...myWorkspace.view_props });
+
+    if (!myWorkspace.view_props) {
+      workspaceService.updateWorkspaceView(workspaceSlug, {
+        view_props: { ...initialValues },
+      });
+    }
+  }, [myWorkspace, workspaceSlug, user]);
+
+  const updateIssueProperties = useCallback(
+    (key: keyof Properties) => {
+      if (!workspaceSlug || !user) return;
+
+      setProperties((prev) => ({ ...prev, [key]: !prev[key] }));
+
+      if (myWorkspace) {
+        mutate<IWorkspaceMember>(
+          WORKSPACE_MEMBERS_ME(workspaceSlug.toString()),
+          (prevData) => {
+            if (!prevData) return;
+            return {
+              ...prevData,
+              view_props: { ...prevData?.view_props, [key]: !prevData.view_props?.[key] },
+            };
+          },
+          false
+        );
+        if (myWorkspace.view_props) {
+          workspaceService.updateWorkspaceView(workspaceSlug, {
+            view_props: {
+              ...myWorkspace.view_props,
+              [key]: !myWorkspace.view_props[key],
+            },
+          });
+        } else {
+          workspaceService.updateWorkspaceView(workspaceSlug, {
+            view_props: { ...initialValues },
+          });
+        }
+      }
+    },
+    [workspaceSlug, myWorkspace, user]
+  );
+
+  const newProperties: Properties = {
+    assignee: properties.assignee,
+    due_date: properties.due_date,
+    key: properties.key,
+    labels: properties.labels,
+    priority: properties.priority,
+    state: properties.state,
+    sub_issue_count: properties.sub_issue_count,
+    attachment_count: properties.attachment_count,
+    link: properties.link,
+    estimate: properties.estimate,
+  };
+
+  return [newProperties, updateIssueProperties] as const;
 };
 
 export default useMyIssuesProperties;

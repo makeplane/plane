@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import Image from "next/image";
-
 import useSWR from "swr";
 
 // headless ui
@@ -9,20 +7,22 @@ import { Tab } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
 // types
-import { IWorkspaceMemberInvitation } from "types";
+import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { CreateWorkspaceForm } from "components/workspace";
 // ui
 import { PrimaryButton } from "components/ui";
+import { getFirstCharacters, truncateText } from "helpers/string.helper";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
+export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [defaultValues, setDefaultValues] = useState({
@@ -30,6 +30,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     slug: "",
     company_size: null,
   });
+  const [currentTab, setCurrentTab] = useState("create");
 
   const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
@@ -64,53 +65,72 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
       });
   };
 
+  const currentTabValue = (tab: string | null) => {
+    switch (tab) {
+      case "join":
+        return 0;
+      case "create":
+        return 1;
+      default:
+        return 1;
+    }
+  };
+
+  console.log("invitations:", invitations);
+
   return (
-    <div className="grid min-h-[490px] w-full place-items-center">
+    <div className="grid w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex h-full w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md"
+        className="flex h-[442px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md"
+        defaultIndex={currentTabValue(currentTab)}
+        onChange={(i) => {
+          switch (i) {
+            case 0:
+              return setCurrentTab("join");
+            case 1:
+              return setCurrentTab("create");
+            default:
+              return setCurrentTab("create");
+          }
+        }}
       >
-        <Tab.List
-          as="div"
-          className="text-gray-8 flex items-center justify-start gap-3 px-4 pt-4 text-sm"
-        >
-          <Tab
-            className={({ selected }) =>
-              `rounded-3xl border px-4 py-2 outline-none ${
-                selected
-                  ? "border-brand-accent bg-brand-accent text-white"
-                  : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
-              }`
-            }
-          >
-            New Workspace
-          </Tab>
-          <Tab
-            className={({ selected }) =>
-              `rounded-3xl border px-5 py-2 outline-none ${
-                selected
-                  ? "border-brand-accent bg-brand-accent text-white"
-                  : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
-              }`
-            }
-          >
-            Invited Workspace
-          </Tab>
+        <Tab.List as="div" className="flex flex-col gap-3 px-7 pt-7 pb-3.5">
+          <div className="flex flex-col gap-2 justify-center">
+            <h3 className="text-base font-semibold text-brand-base">Workspace</h3>
+            <p className="text-sm text-brand-secondary">
+              Create or join the workspace to get started with Plane.
+            </p>
+          </div>
+          <div className="text-gray-8 flex items-center justify-start gap-3  text-sm">
+            <Tab
+              className={({ selected }) =>
+                `rounded-3xl border px-4 py-2 outline-none ${
+                  selected
+                    ? "border-brand-accent bg-brand-accent text-white font-medium"
+                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
+                }`
+              }
+            >
+              Invited Workspace
+            </Tab>
+            <Tab
+              className={({ selected }) =>
+                `rounded-3xl border px-4 py-2 outline-none ${
+                  selected
+                    ? "border-brand-accent bg-brand-accent text-white font-medium"
+                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
+                }`
+              }
+            >
+              New Workspace
+            </Tab>
+          </div>
         </Tab.List>
         <Tab.Panels as="div" className="h-full">
-          <Tab.Panel>
-            <CreateWorkspaceForm
-              onSubmit={(res) => {
-                setWorkspace(res);
-                setStep(3);
-              }}
-              defaultValues={defaultValues}
-              setDefaultValues={setDefaultValues}
-            />
-          </Tab.Panel>
           <Tab.Panel className="h-full">
-            <div className="flex h-full w-full flex-col justify-between">
-              <div className="divide-y px-4 py-7">
+            <div className="flex h-full w-full flex-col">
+              <div className="h-[280px] overflow-y-auto px-7">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
                     <div key={invitation.id}>
@@ -121,7 +141,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                         <div className="flex-shrink-0">
                           <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg">
                             {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
-                              <Image
+                              <img
                                 src={invitation.workspace.logo}
                                 height="100%"
                                 width="100%"
@@ -129,34 +149,65 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                                 alt={invitation.workspace.name}
                               />
                             ) : (
-                              <span className="flex h-full w-full items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                                {invitation.workspace.name.charAt(0)}
+                              <span className="flex h-full w-full items-center justify-center rounded-xl bg-gray-700 p-4 uppercase text-white">
+                                {getFirstCharacters(invitation.workspace.name)}
                               </span>
                             )}
                           </span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium">{invitation.workspace.name}</div>
+                          <div className="text-sm font-medium">
+                            {truncateText(invitation.workspace.name, 30)}
+                          </div>
                           <p className="text-sm text-brand-secondary">
-                            Invited by {invitation.workspace.owner.first_name}
+                            Invited by{" "}
+                            {invitation.created_by_detail
+                              ? invitation.created_by_detail.first_name
+                              : invitation.workspace.owner.first_name}
                           </p>
                         </div>
                         <div className="flex-shrink-0 self-center">
-                          <input
-                            id={invitation.id}
-                            aria-describedby="workspaces"
-                            name={invitation.id}
-                            checked={invitationsRespond.includes(invitation.id)}
-                            value={invitation.workspace.name}
-                            onChange={(e) => {
+                          <button
+                            className={`${
+                              invitationsRespond.includes(invitation.id)
+                                ? "bg-brand-surface-2 text-brand-secondary"
+                                : "bg-brand-accent text-white"
+                            } text-sm px-4 py-2 border border-brand-base rounded-3xl`}
+                            onClick={(e) => {
                               handleInvitation(
                                 invitation,
                                 invitationsRespond.includes(invitation.id) ? "withdraw" : "accepted"
                               );
                             }}
-                            type="checkbox"
-                            className="h-4 w-4 rounded border-brand-base text-brand-accent focus:ring-brand-accent"
-                          />
+                          >
+                            {invitationsRespond.includes(invitation.id)
+                              ? "Invitation Accepted"
+                              : "Accept Invitation"}
+                          </button>
+                          {/* <input
+                            id={invitation.id}
+                            aria-describedby="workspaces"
+                            name={invitation.id}
+                            value={
+                              invitationsRespond.includes(invitation.id)
+                                ? "Invitation Accepted"
+                                : "Accept Invitation"
+                            }
+                            onClick={(e) => {
+                              handleInvitation(
+                                invitation,
+                                invitationsRespond.includes(invitation.id) ? "withdraw" : "accepted"
+                              );
+                            }}
+                            type="button"
+                            className={`${
+                              invitationsRespond.includes(invitation.id)
+                                ? "bg-brand-surface-2 text-brand-secondary"
+                                : "bg-brand-accent text-white"
+                            } text-sm px-4 py-2 border border-brand-base rounded-3xl`}
+
+                            // className="h-4 w-4 rounded border-brand-base text-brand-accent focus:ring-brand-accent"
+                          /> */}
                         </div>
                       </label>
                     </div>
@@ -167,7 +218,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   </div>
                 )}
               </div>
-              <div className="flex w-full items-center justify-center rounded-b-[10px] py-7">
+              <div className="flex w-full items-center justify-center rounded-b-[10px] pt-10">
                 <PrimaryButton
                   type="submit"
                   className="w-1/2 text-center"
@@ -179,6 +230,17 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                 </PrimaryButton>
               </div>
             </div>
+          </Tab.Panel>
+          <Tab.Panel className="h-full">
+            <CreateWorkspaceForm
+              onSubmit={(res) => {
+                setWorkspace(res);
+                setStep(3);
+              }}
+              defaultValues={defaultValues}
+              setDefaultValues={setDefaultValues}
+              user={user}
+            />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { DangerButton, SecondaryButton } from "components/ui";
 // types
-import type { IIssueLabels } from "types";
+import type { ICurrentUserResponse, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -23,9 +23,10 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IIssueLabels | null;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data }) => {
+export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -50,7 +51,7 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
     );
 
     await issuesService
-      .deleteIssueLabel(workspaceSlug.toString(), projectId.toString(), data.id)
+      .deleteIssueLabel(workspaceSlug.toString(), projectId.toString(), data.id, user)
       .then(() => handleClose())
       .catch(() => {
         setIsDeleteLoading(false);

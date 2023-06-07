@@ -1,23 +1,19 @@
 import React from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { mutate } from "swr";
-
-// services
-import cyclesService from "services/cycles.service";
+// headless ui
+import { Disclosure, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { SingleProgressStats } from "components/core";
 // ui
 import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
-import { Disclosure, Transition } from "@headlessui/react";
-import { AssigneesList, Avatar } from "components/ui/avatar";
-import { SingleProgressStats } from "components/core";
-
+import { AssigneesList } from "components/ui/avatar";
 // icons
-import { CalendarDaysIcon, ExclamationCircleIcon } from "@heroicons/react/20/solid";
+import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {
   TargetIcon,
   ContrastIcon,
@@ -41,24 +37,14 @@ import {
 } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import {
-  CompletedCyclesResponse,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-  ICycle,
-} from "types";
-// fetch-keys
-import {
-  CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  CYCLE_DETAILS,
-  CYCLE_DRAFT_LIST,
-} from "constants/fetch-keys";
+import { ICycle } from "types";
 
 type TSingleStatProps = {
   cycle: ICycle;
   handleEditCycle: () => void;
   handleDeleteCycle: () => void;
+  handleAddToFavorites: () => void;
+  handleRemoveFromFavorites: () => void;
   isCompleted?: boolean;
 };
 
@@ -94,6 +80,8 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   cycle,
   handleEditCycle,
   handleDeleteCycle,
+  handleAddToFavorites,
+  handleRemoveFromFavorites,
   isCompleted = false,
 }) => {
   const router = useRouter();
@@ -104,142 +92,6 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
-
-  const handleAddToFavorites = () => {
-    if (!workspaceSlug || !projectId || !cycle) return;
-
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
-    mutate(
-      CYCLE_DETAILS(projectId as string),
-      (prevData: any) =>
-        (prevData ?? []).map((c: any) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? true : c.is_favorite,
-        })),
-      false
-    );
-
-    cyclesService
-      .addCycleToFavorites(workspaceSlug as string, projectId as string, {
-        cycle: cycle.id,
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
-      });
-  };
-
-  const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !projectId || !cycle) return;
-
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
-    mutate(
-      CYCLE_DETAILS(projectId as string),
-      (prevData: any) =>
-        (prevData ?? []).map((c: any) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? false : c.is_favorite,
-        })),
-      false
-    );
-
-    cyclesService
-      .removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the cycle from favorites. Please try again.",
-        });
-      });
-  };
 
   const handleCopyText = () => {
     const originURL =
@@ -393,7 +245,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     <div className="w-16">Creator:</div>
                     <div className="flex items-center gap-2.5 text-brand-secondary">
                       {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                        <Image
+                        <img
                           src={cycle.owned_by.avatar}
                           height={16}
                           width={16}

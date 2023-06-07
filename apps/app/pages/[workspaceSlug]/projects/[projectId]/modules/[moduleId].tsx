@@ -17,6 +17,7 @@ import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
@@ -48,6 +49,8 @@ const SingleModule: React.FC = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -95,7 +98,13 @@ const SingleModule: React.FC = () => {
     if (!workspaceSlug || !projectId) return;
 
     await modulesService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, data)
+      .addIssuesToModule(
+        workspaceSlug as string,
+        projectId as string,
+        moduleId as string,
+        data,
+        user
+      )
       .then(() => mutate(MODULE_ISSUES(moduleId as string)))
       .catch(() =>
         setToastAlert({
@@ -172,52 +181,21 @@ const SingleModule: React.FC = () => {
         }
       >
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
-        {moduleIssues ? (
-          moduleIssues.length > 0 ? (
-            <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              <IssuesView type="module" openIssuesListModal={openIssuesListModal} />
-            </div>
-          ) : (
-            <div
-              className={`flex h-full flex-col items-center justify-center px-4 ${
-                moduleSidebar ? "mr-[24rem]" : ""
-              } duration-300`}
-            >
-              <EmptySpace
-                title="You don't have any issue yet."
-                description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
-                Icon={RectangleStackIcon}
-              >
-                <EmptySpaceItem
-                  title="Create a new issue"
-                  description="Click to create a new issue inside the module."
-                  Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "c",
-                    });
-                    document.dispatchEvent(e);
-                  }}
-                />
-                <EmptySpaceItem
-                  title="Add an existing issue"
-                  description="Open list"
-                  Icon={ListBulletIcon}
-                  action={openIssuesListModal}
-                />
-              </EmptySpace>
-            </div>
-          )
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
+
+        <div
+          className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} ${
+            analyticsModal ? "mr-[50%]" : ""
+          } duration-300`}
+        >
+          <IssuesView type="module" openIssuesListModal={openIssuesListModal} />
+        </div>
+
         <ModuleDetailsSidebar
           issues={moduleIssues ?? []}
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
+          user={user}
         />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

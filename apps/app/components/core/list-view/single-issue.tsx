@@ -36,7 +36,7 @@ import { LayerDiagonalIcon } from "components/icons";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { handleIssuesMutation } from "constants/issue";
 // types
-import { IIssue, Properties, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -57,6 +57,7 @@ type Props = {
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -71,6 +72,7 @@ export const SingleListIssue: React.FC<Props> = ({
   groupTitle,
   handleDeleteIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   // context menu
@@ -141,7 +143,7 @@ export const SingleListIssue: React.FC<Props> = ({
       );
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData, user)
         .then(() => {
           if (cycleId) {
             mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
@@ -241,6 +243,7 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -249,6 +252,7 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -256,6 +260,7 @@ export const SingleListIssue: React.FC<Props> = ({
             <ViewDueDateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -284,6 +289,7 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}
@@ -292,6 +298,7 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
               isNotAllowed={isNotAllowed}
             />
           )}

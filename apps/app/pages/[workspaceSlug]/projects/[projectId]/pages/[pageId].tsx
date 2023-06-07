@@ -116,7 +116,7 @@ const SinglePage: NextPage = () => {
     if (!formData.name || formData.name.length === 0 || formData.name === "") return;
 
     await pagesService
-      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData)
+      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
       .then(() => {
         mutate<IPage>(
           PAGE_DETAILS(pageId as string),
@@ -143,7 +143,7 @@ const SinglePage: NextPage = () => {
     );
 
     await pagesService
-      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData)
+      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
       .then(() => {
         mutate(PAGE_DETAILS(pageId as string));
       });
@@ -237,7 +237,8 @@ const SinglePage: NextPage = () => {
       result.draggableId,
       {
         sort_order: newSortOrder,
-      }
+      },
+      user
     );
   };
 
@@ -290,9 +291,6 @@ const SinglePage: NextPage = () => {
 
   return (
     <ProjectAuthorizationWrapper
-      meta={{
-        title: "Plane - Pages",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -532,6 +530,7 @@ const SinglePage: NextPage = () => {
                                 block={block}
                                 projectDetails={projectDetails}
                                 index={index}
+                                user={user}
                               />
                             ))}
                             {provided.placeholder}
@@ -545,6 +544,7 @@ const SinglePage: NextPage = () => {
                       <CreateUpdateBlockInline
                         handleClose={() => setCreateBlockForm(false)}
                         focus="name"
+                        user={user}
                       />
                     </div>
                   )}
@@ -553,6 +553,7 @@ const SinglePage: NextPage = () => {
                       isOpen={labelModal}
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
+                      user={user}
                     />
                   )}
                 </>
@@ -565,7 +566,7 @@ const SinglePage: NextPage = () => {
             </div>
           </div>
           <div>
-            <CreateBlock />
+            <CreateBlock user={user} />
           </div>
         </div>
       ) : (

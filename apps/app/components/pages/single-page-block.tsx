@@ -35,7 +35,7 @@ import {
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, IPageBlock, IProject } from "types";
+import { ICurrentUserResponse, IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -43,9 +43,10 @@ type Props = {
   block: IPageBlock;
   projectDetails: IProject | undefined;
   index: number;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index }) => {
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index, user }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -87,20 +88,33 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
     );
 
     await pagesService
-      .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, {
-        name: formData.name,
-        description: formData.description,
-        description_html: formData.description_html,
-      })
+      .patchPageBlock(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string,
+        block.id,
+        {
+          name: formData.name,
+          description: formData.description,
+          description_html: formData.description_html,
+        },
+        user
+      )
       .then((res) => {
         mutate(PAGE_BLOCKS_LIST(pageId as string));
         if (block.issue && block.sync)
           issuesService
-            .patchIssue(workspaceSlug as string, projectId as string, block.issue, {
-              name: res.name,
-              description: res.description,
-              description_html: res.description_html,
-            })
+            .patchIssue(
+              workspaceSlug as string,
+              projectId as string,
+              block.issue,
+              {
+                name: res.name,
+                description: res.description,
+                description_html: res.description_html,
+              },
+              user
+            )
             .finally(() => setIsSyncing(false));
       });
   };
@@ -113,7 +127,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
         workspaceSlug as string,
         projectId as string,
         pageId as string,
-        block.id
+        block.id,
+        user
       )
       .then((res: IIssue) => {
         mutate<IPageBlock[]>(
@@ -152,7 +167,13 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
     );
 
     await pagesService
-      .deletePageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id)
+      .deletePageBlock(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string,
+        block.id,
+        user
+      )
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -168,10 +189,15 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug as string, projectId as string, {
-        prompt: block.name,
-        task: "Generate a proper description for this issue in context of a project management software.",
-      })
+      .createGptTask(
+        workspaceSlug as string,
+        projectId as string,
+        {
+          prompt: block.name,
+          task: "Generate a proper description for this issue in context of a project management software.",
+        },
+        user
+      )
       .then((res) => {
         if (res.response === "")
           setToastAlert({
@@ -243,7 +269,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
       block.id,
       {
         sync: !block.sync,
-      }
+      },
+      user
     );
   };
 
@@ -281,6 +308,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 data={block}
                 setIsSyncing={setIsSyncing}
                 focus="name"
+                user={user}
               />
             </div>
           ) : (

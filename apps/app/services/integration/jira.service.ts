@@ -2,7 +2,7 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
 // types
-import { IJiraMetadata, IJiraResponse, IJiraImporterForm } from "types";
+import { IJiraMetadata, IJiraResponse, IJiraImporterForm, ICurrentUserResponse } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -24,11 +24,15 @@ class JiraImportedService extends APIService {
       });
   }
 
-  async createJiraImporter(workspaceSlug: string, data: IJiraImporterForm): Promise<IJiraResponse> {
+  async createJiraImporter(
+    workspaceSlug: string,
+    data: IJiraImporterForm,
+    user: ICurrentUserResponse | undefined
+  ): Promise<IJiraResponse> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/importers/jira/`, data)
       .then((response) => {
         if (trackEvent)
-          trackEventServices.trackImporterEvent(response?.data, "JIRA_IMPORTER_CREATE");
+          trackEventServices.trackImporterEvent(response?.data, "JIRA_IMPORTER_CREATE", user);
         return response?.data;
       })
       .catch((error) => {

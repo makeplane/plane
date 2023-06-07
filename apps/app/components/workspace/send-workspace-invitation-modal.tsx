@@ -10,7 +10,7 @@ import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IWorkspaceMemberInvitation } from "types";
+import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
 // fetch keys
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
@@ -21,6 +21,7 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workspace_slug: string;
   members: any[];
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues: Partial<IWorkspaceMemberInvitation> = {
@@ -33,6 +34,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
   setIsOpen,
   workspace_slug,
   members,
+  user,
 }) => {
   const { setToastAlert } = useToast();
 
@@ -54,7 +56,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
 
   const onSubmit = async (formData: IWorkspaceMemberInvitation) => {
     await workspaceService
-      .inviteWorkspace(workspace_slug, { emails: [formData] })
+      .inviteWorkspace(workspace_slug, { emails: [formData] }, user)
       .then((res) => {
         setIsOpen(false);
         handleClose();
@@ -101,7 +103,10 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <div>
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-brand-base"
+                      >
                         Members
                       </Dialog.Title>
                       <p className="text-sm text-brand-secondary">

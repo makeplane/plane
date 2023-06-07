@@ -49,7 +49,10 @@ export const GanttChartBlocks: FC<{
                         width: `${block?.position?.width}px`,
                       }}
                     >
-                      {blockRender({ ...block?.data })}
+                      {blockRender({
+                        ...block?.data,
+                        infoToggle: block?.infoToggle ? true : false,
+                      })}
                     </div>
 
                     <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">

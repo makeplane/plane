@@ -12,7 +12,7 @@ type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
   handleClose: () => void;
   status: boolean;
-  data?: ICycle;
+  data?: ICycle | null;
 };
 
 const defaultValues: Partial<ICycle> = {
@@ -28,7 +28,6 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
-    watch,
     reset,
   } = useForm<ICycle>({
     defaultValues,

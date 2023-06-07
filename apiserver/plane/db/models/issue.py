@@ -210,8 +210,8 @@ def get_upload_path(instance, filename):
 
 
 def file_size(value):
-    limit = 5 * 1024 * 1024
-    if value.size > limit:
+    # File limit check is only for cloud hosted
+    if value.size > settings.FILE_SIZE_LIMIT:
         raise ValidationError("File too large. Size should not exceed 5 MB.")
 
 

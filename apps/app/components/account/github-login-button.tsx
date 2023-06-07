@@ -29,7 +29,7 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
   useEffect(() => {
     const origin =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    setLoginCallBackURL(`${origin}/signin` as any);
+    setLoginCallBackURL(`${origin}/` as any);
   }, []);
 
   return (

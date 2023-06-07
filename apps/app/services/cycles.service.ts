@@ -3,15 +3,7 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
 // types
-import type {
-  CycleIssueResponse,
-  CompletedCyclesResponse,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-  ICycle,
-  IIssue,
-  IIssueViewOptions,
-} from "types";
+import type { ICurrentUserResponse, ICycle, IIssue, IIssueViewOptions } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -23,10 +15,15 @@ class ProjectCycleServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async createCycle(
+    workspaceSlug: string,
+    projectId: string,
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_CREATE");
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -34,16 +31,16 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getIncompleteCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/incomplete-cycles/`)
+  async getCyclesWithParams(
+    workspaceSlug: string,
+    projectId: string,
+    cycleType: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
+  ): Promise<ICycle[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, {
+      params: {
+        cycle_view: cycleType,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -80,7 +77,7 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    queries?: Partial<IIssueViewOptions>
+    queries?: any
   ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
@@ -96,14 +93,15 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    data: any
+    data: any,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.put(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE");
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -115,14 +113,15 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    data: Partial<ICycle>
+    data: Partial<ICycle>,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE");
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -130,10 +129,15 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
+  async deleteCycle(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_DELETE");
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -152,40 +156,6 @@ class ProjectCycleServices extends APIService {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/date-check/`,
       data
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getCurrentAndUpcomingCycles(
-    workspaceSlug: string,
-    projectId: string
-  ): Promise<CurrentAndUpcomingCyclesResponse> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/current-upcoming-cycles/`
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getDraftCycles(workspaceSlug: string, projectId: string): Promise<DraftCyclesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/draft-cycles/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getCompletedCycles(
-    workspaceSlug: string,
-    projectId: string
-  ): Promise<CompletedCyclesResponse> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/completed-cycles/`
     )
       .then((response) => response?.data)
       .catch((error) => {

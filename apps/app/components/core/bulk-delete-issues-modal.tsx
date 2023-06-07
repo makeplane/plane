@@ -18,7 +18,7 @@ import { DangerButton, SecondaryButton } from "components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
@@ -29,9 +29,10 @@ type FormInput = {
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user }) => {
   const [query, setQuery] = useState("");
 
   const router = useRouter();
@@ -91,9 +92,14 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
 
     if (workspaceSlug && projectId) {
       await issuesServices
-        .bulkDeleteIssues(workspaceSlug as string, projectId as string, {
-          issue_ids: data.delete_issue_ids,
-        })
+        .bulkDeleteIssues(
+          workspaceSlug as string,
+          projectId as string,
+          {
+            issue_ids: data.delete_issue_ids,
+          },
+          user
+        )
         .then((res) => {
           setToastAlert({
             title: "Success",

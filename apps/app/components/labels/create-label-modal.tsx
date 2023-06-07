@@ -17,7 +17,7 @@ import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import type { IIssueLabels, IState } from "types";
+import type { ICurrentUserResponse, IIssueLabels, IState } from "types";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -26,6 +26,7 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues: Partial<IState> = {
@@ -33,7 +34,7 @@ const defaultValues: Partial<IState> = {
   color: "#858E96",
 };
 
-export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose }) => {
+export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -57,7 +58,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
     if (!workspaceSlug) return;
 
     await issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         mutate<IIssueLabels[]>(
           PROJECT_ISSUE_LABELS(projectId),

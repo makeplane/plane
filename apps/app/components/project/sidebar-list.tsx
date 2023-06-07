@@ -9,6 +9,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // hooks
 import useToast from "hooks/use-toast";
 import useTheme from "hooks/use-theme";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
 // components
@@ -29,6 +30,9 @@ export const ProjectSidebarList: FC = () => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { user } = useUserAuth();
+
   // states
   const [isCreateProjectModal, setCreateProjectModal] = useState(false);
   // theme
@@ -136,11 +140,16 @@ export const ProjectSidebarList: FC = () => {
 
   return (
     <>
-      <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
+      <CreateProjectModal
+        isOpen={isCreateProjectModal}
+        setIsOpen={setCreateProjectModal}
+        user={user}
+      />
       <DeleteProjectModal
         isOpen={deleteProjectModal}
         onClose={() => setDeleteProjectModal(false)}
         data={projectToDelete}
+        user={user}
       />
       <div className="mt-2.5 h-full overflow-y-auto border-t border-brand-base bg-brand-sidebar pt-2.5">
         {favoriteProjects && favoriteProjects.length > 0 && (

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -17,6 +16,7 @@ import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // ui
 import {
   Input,
@@ -44,6 +44,8 @@ const defaultValues: Partial<IProject> = {
 
 const GeneralSettings: NextPage = () => {
   const [selectProject, setSelectedProject] = useState<string | null>(null);
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -83,7 +85,7 @@ const GeneralSettings: NextPage = () => {
     if (!workspaceSlug || !projectDetails) return;
 
     await projectService
-      .updateProject(workspaceSlug as string, projectDetails.id, payload)
+      .updateProject(workspaceSlug as string, projectDetails.id, payload, user)
       .then((res) => {
         mutate<IProject>(
           PROJECT_DETAILS(projectDetails.id),
@@ -154,6 +156,7 @@ const GeneralSettings: NextPage = () => {
         onSuccess={() => {
           router.push(`/${workspaceSlug}/projects`);
         }}
+        user={user}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="p-8">
         <SettingsHeader />
@@ -252,12 +255,10 @@ const GeneralSettings: NextPage = () => {
               {watch("cover_image") ? (
                 <div className="h-32 w-full rounded border border-brand-base p-1">
                   <div className="relative h-full w-full rounded">
-                    <Image
+                    <img
                       src={watch("cover_image")!}
+                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
                       alt={projectDetails?.name ?? "Cover image"}
-                      objectFit="cover"
-                      layout="fill"
-                      className="rounded"
                     />
                     <div className="absolute bottom-0 flex w-full justify-end">
                       <ImagePickerPopover

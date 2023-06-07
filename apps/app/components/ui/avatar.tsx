@@ -44,11 +44,9 @@ export const Avatar: React.FC<AvatarProps> = ({
           width: width,
         }}
       >
-        <Image
+        <img
           src={user.avatar}
-          height="100%"
-          width="100%"
-          className="rounded-full"
+          className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
           alt={user.first_name}
         />
       </div>

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 // icons
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { Icon } from "components/ui";
 
 type BreadcrumbsProps = {
   children: any;
@@ -16,10 +17,13 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
       <div className="flex items-center">
         <button
           type="button"
-          className="grid h-8 w-8 flex-shrink-0 cursor-pointer place-items-center rounded border border-brand-base text-center text-sm hover:bg-brand-surface-1"
+          className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-brand-base text-center text-sm hover:bg-brand-surface-1"
           onClick={() => router.back()}
         >
-          <ArrowLeftIcon className="h-3 w-3" />
+          <Icon
+            iconName="keyboard_backspace"
+            className="text-base leading-4 text-brand-secondary group-hover:text-brand-base"
+          />
         </button>
         {children}
       </div>
