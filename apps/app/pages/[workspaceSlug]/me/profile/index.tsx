@@ -67,7 +67,7 @@ const Profile: NextPage = () => {
       .then((res) => {
         mutateUser((prevData) => {
           if (!prevData) return prevData;
-          return { ...prevData, user: { ...payload, ...res } };
+          return { ...prevData, ...res };
         }, false);
         setIsEditing(false);
         setToastAlert({
@@ -97,7 +97,7 @@ const Profile: NextPage = () => {
       if (updateUser)
         userService
           .updateUser({ avatar: "" })
-          .then((res) => {
+          .then(() => {
             setToastAlert({
               type: "success",
               title: "Success!",
@@ -105,7 +105,7 @@ const Profile: NextPage = () => {
             });
             mutateUser((prevData) => {
               if (!prevData) return prevData;
-              return { ...prevData, user: res };
+              return { ...prevData, avatar: "" };
             }, false);
           })
           .catch(() => {
