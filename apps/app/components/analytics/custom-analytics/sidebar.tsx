@@ -7,6 +7,7 @@ import analyticsService from "services/analytics.service";
 import projectService from "services/project.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
+import trackEventServices from "services/track-event.service";
 // hooks
 import useProjects from "hooks/use-projects";
 import useToast from "hooks/use-toast";
@@ -23,7 +24,14 @@ import { ContrastIcon, LayerDiagonalIcon } from "components/icons";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, IExportAnalyticsFormData, IProject } from "types";
+import {
+  IAnalyticsParams,
+  IAnalyticsResponse,
+  ICurrentUserResponse,
+  IExportAnalyticsFormData,
+  IProject,
+  IWorkspace,
+} from "types";
 // fetch-keys
 import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
 // constants
@@ -34,6 +42,7 @@ type Props = {
   params: IAnalyticsParams;
   fullScreen: boolean;
   isProjectLevel: boolean;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const AnalyticsSidebar: React.FC<Props> = ({
@@ -41,6 +50,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
   params,
   fullScreen,
   isProjectLevel = false,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -82,6 +92,60 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       : null
   );
 
+  const trackExportAnalytics = () => {
+    const eventPayload: any = {
+      workspaceSlug: workspaceSlug?.toString(),
+      params: {
+        x_axis: params.x_axis,
+        y_axis: params.y_axis,
+        group: params.segment,
+        project: params.project,
+      },
+    };
+
+    if (projectDetails) {
+      const workspaceDetails = projectDetails.workspace as IWorkspace;
+
+      eventPayload.workspaceId = workspaceDetails.id;
+      eventPayload.workspaceName = workspaceDetails.name;
+      eventPayload.projectId = projectDetails.id;
+      eventPayload.projectIdentifier = projectDetails.identifier;
+      eventPayload.projectName = projectDetails.name;
+    }
+
+    if (cycleDetails || moduleDetails) {
+      const details = cycleDetails || moduleDetails;
+
+      eventPayload.workspaceId = details?.workspace_detail?.id;
+      eventPayload.workspaceName = details?.workspace_detail?.name;
+      eventPayload.projectId = details?.project_detail.id;
+      eventPayload.projectIdentifier = details?.project_detail.identifier;
+      eventPayload.projectName = details?.project_detail.name;
+    }
+
+    if (cycleDetails) {
+      eventPayload.cycleId = cycleDetails.id;
+      eventPayload.cycleName = cycleDetails.name;
+    }
+
+    if (moduleDetails) {
+      eventPayload.moduleId = moduleDetails.id;
+      eventPayload.moduleName = moduleDetails.name;
+    }
+
+    trackEventServices.trackAnalyticsEvent(
+      eventPayload,
+      cycleId
+        ? "CYCLE_ANALYTICS_EXPORT"
+        : moduleId
+        ? "MODULE_ANALYTICS_EXPORT"
+        : projectId
+        ? "PROJECT_ANALYTICS_EXPORT"
+        : "WORKSPACE_ANALYTICS_EXPORT",
+      user
+    );
+  };
+
   const exportAnalytics = () => {
     if (!workspaceSlug) return;
 
@@ -95,13 +159,15 @@ export const AnalyticsSidebar: React.FC<Props> = ({
 
     analyticsService
       .exportAnalytics(workspaceSlug.toString(), data)
-      .then((res) =>
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: res.message,
-        })
-      )
+        });
+
+        trackExportAnalytics();
+      })
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -152,18 +218,32 @@ export const AnalyticsSidebar: React.FC<Props> = ({
 
                     return (
                       <div key={project.id}>
-                        <h5 className="text-sm flex items-center gap-1">
-                          {project.icon ? (
+                        <div className="text-sm flex items-center gap-1">
+                          {project.emoji ? (
                             <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                              {String.fromCodePoint(parseInt(project.icon))}
+                              {String.fromCodePoint(parseInt(project.emoji))}
                             </span>
+                          ) : project.icon_prop ? (
+                            <div className="h-6 w-6 grid place-items-center flex-shrink-0">
+                              <span
+                                style={{ color: project.icon_prop.color }}
+                                className="material-symbols-rounded text-lg"
+                              >
+                                {project.icon_prop.name}
+                              </span>
+                            </div>
                           ) : (
-                            <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                            <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                               {project?.name.charAt(0)}
                             </span>
                           )}
-                          <span className="break-all">{project.name}</span>
-                        </h5>
+                          <h5 className="break-all">
+                            {project.name}
+                            <span className="text-brand-secondary text-xs ml-1">
+                              ({project.identifier})
+                            </span>
+                          </h5>
+                        </div>
                         <div className="mt-4 space-y-3 pl-2">
                           <div className="flex items-center justify-between gap-2 text-xs">
                             <div className="flex items-center gap-2">
@@ -254,12 +334,21 @@ export const AnalyticsSidebar: React.FC<Props> = ({
               ) : (
                 <div className="hidden md:flex md:flex-col h-full overflow-y-auto">
                   <div className="flex items-center gap-1">
-                    {projectDetails?.icon ? (
-                      <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                        {String.fromCodePoint(parseInt(projectDetails.icon))}
-                      </span>
+                    {projectDetails?.emoji ? (
+                      <div className="grid h-6 w-6 flex-shrink-0 place-items-center">
+                        {String.fromCodePoint(parseInt(projectDetails.emoji))}
+                      </div>
+                    ) : projectDetails?.icon_prop ? (
+                      <div className="h-6 w-6 grid place-items-center flex-shrink-0">
+                        <span
+                          style={{ color: projectDetails.icon_prop.color }}
+                          className="material-symbols-rounded text-lg"
+                        >
+                          {projectDetails.icon_prop.name}
+                        </span>
+                      </div>
                     ) : (
-                      <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                      <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                         {projectDetails?.name.charAt(0)}
                       </span>
                     )}

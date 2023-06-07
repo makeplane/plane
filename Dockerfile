@@ -13,7 +13,6 @@ RUN turbo prune --scope=app --docker
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
 
-
 RUN apk add --no-cache libc6-compat
 RUN apk update
 WORKDIR /app
@@ -44,6 +43,8 @@ FROM python:3.11.1-alpine3.17 AS backend
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
+ENV DJANGO_SETTINGS_MODULE plane.settings.production
+ENV DOCKERIZED 1
 
 WORKDIR /code
 
@@ -88,11 +89,6 @@ RUN chmod +x ./bin/takeoff ./bin/worker
 RUN chmod -R 777 /code
 
 # Expose container port and run entry point script
-EXPOSE 8000
-EXPOSE 3000
-EXPOSE 80
-
-
 
 WORKDIR /app
 
@@ -126,9 +122,6 @@ COPY start.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/replace-env-vars.sh
 RUN chmod +x /usr/local/bin/start.sh
 
+EXPOSE 80
 
 CMD ["supervisord","-c","/code/supervisor.conf"]
-
-
-
-

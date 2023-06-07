@@ -66,8 +66,12 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   const handleSignin = async (formData: EmailCodeFormValues) => {
     await authenticationService
       .magicSignIn(formData)
-      .then((response) => {
-        onSuccess(response);
+      .then(() => {
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Successfully logged in!",
+        });
       })
       .catch((error) => {
         setToastAlert({
@@ -87,6 +91,25 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   useEffect(() => {
     setErrorResendingCode(false);
   }, [emailOld]);
+
+  useEffect(() => {
+    const submitForm = (e: KeyboardEvent) => {
+      if (!codeSent && e.key === "Enter") {
+        e.preventDefault();
+        handleSubmit(onSubmit)().then(() => {
+          setResendCodeTimer(30);
+        });
+      }
+    };
+
+    if (!codeSent) {
+      window.addEventListener("keydown", submitForm);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", submitForm);
+    };
+  }, [handleSubmit, codeSent]);
 
   return (
     <>

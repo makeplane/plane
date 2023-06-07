@@ -24,10 +24,11 @@ import {
 } from "components/issues";
 // icons
 import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { LayerDiagonalIcon } from "components/icons";
 // helper
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // type
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -43,6 +44,7 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -53,6 +55,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  user,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -94,7 +97,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
       );
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData, user)
         .then(() => {
           mutate(fetchKey);
         })
@@ -182,6 +185,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -191,6 +195,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
                 isNotAllowed={isNotAllowed}
+                user={user}
               />
             )}
 
@@ -198,13 +203,9 @@ export const SingleCalendarIssue: React.FC<Props> = ({
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
-            )}
-            {properties.sub_issue_count && (
-              <div className="flex items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
-                {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-              </div>
             )}
             {properties.labels && issue.label_details.length > 0 ? (
               <div className="flex flex-wrap gap-1">
@@ -231,6 +232,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -239,10 +241,20 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}
-
+            {properties.sub_issue_count && (
+              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+                <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
+                  <div className="flex items-center gap-1 text-brand-secondary">
+                    <LayerDiagonalIcon className="h-3.5 w-3.5" />
+                    {issue.sub_issues_count}
+                  </div>
+                </Tooltip>
+              </div>
+            )}
             {properties.link && (
               <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>

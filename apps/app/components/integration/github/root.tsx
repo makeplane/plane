@@ -27,7 +27,7 @@ import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 // images
 import GithubLogo from "public/services/github.png";
 // types
-import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
+import { ICurrentUserResponse, IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
 // fetch-keys
 import {
   APP_INTEGRATIONS,
@@ -89,7 +89,11 @@ const integrationWorkflowData = [
   },
 ];
 
-export const GithubImporterRoot = () => {
+type Props = {
+  user: ICurrentUserResponse | undefined;
+};
+
+export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });
@@ -157,7 +161,7 @@ export const GithubImporterRoot = () => {
       project_id: formData.project,
     };
 
-    await GithubIntegrationService.createGithubServiceImport(workspaceSlug as string, payload)
+    await GithubIntegrationService.createGithubServiceImport(workspaceSlug as string, payload, user)
       .then(() => {
         router.push(`/${workspaceSlug}/settings/import-export`);
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));

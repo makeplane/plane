@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -44,34 +43,31 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug.toString()) : null
   );
 
-  const options =
-    members?.map((member) => ({
-      value: member.member.email,
-      query:
-        (member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name
-          : member.member.email) +
-          " " +
-          member.member.last_name ?? "",
-      content: (
-        <div className="flex items-center gap-2">
-          <Avatar user={member.member} />
-          {member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name + "(" + member.member.email + ")"
-            : member.member.email}
-        </div>
-      ),
-    })) ?? [];
+  const options = members?.map((member) => ({
+    value: member.member.email,
+    query:
+      (member.member.first_name && member.member.first_name !== ""
+        ? member.member.first_name
+        : member.member.email) +
+        " " +
+        member.member.last_name ?? "",
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={member.member} />
+        {member.member.first_name && member.member.first_name !== ""
+          ? member.member.first_name + "(" + member.member.email + ")"
+          : member.member.email}
+      </div>
+    ),
+  }));
 
   return (
     <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-brand-surface-2 px-2 py-3">
       <div className="flex items-center gap-2">
         <div className="relative h-8 w-8 flex-shrink-0 rounded">
-          <Image
+          <img
             src={collaborator.avatar_url}
-            layout="fill"
-            objectFit="cover"
-            className="rounded"
+            className="absolute top-0 left-0 h-full w-full object-cover rounded"
             alt={`${collaborator.login} GitHub user`}
           />
         </div>

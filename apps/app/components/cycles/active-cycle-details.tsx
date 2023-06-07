@@ -1,7 +1,6 @@
 import React from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -40,20 +39,9 @@ import {
 } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import {
-  CompletedCyclesResponse,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-  ICycle,
-  IIssue,
-} from "types";
+import { ICycle, IIssue } from "types";
 // fetch-keys
-import {
-  CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  CYCLE_DRAFT_LIST,
-  CYCLE_ISSUES,
-} from "constants/fetch-keys";
+import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -110,49 +98,25 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId || !cycle) return;
 
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
+    mutate<ICycle[]>(
+      CURRENT_CYCLE_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((c) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? true : c.is_favorite,
+        })),
+      false
+    );
+
+    mutate(
+      CYCLES_LIST(projectId as string),
+      (prevData: any) =>
+        (prevData ?? []).map((c: any) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? true : c.is_favorite,
+        })),
+      false
+    );
 
     cyclesService
       .addCycleToFavorites(workspaceSlug as string, projectId as string, {
@@ -170,49 +134,25 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId || !cycle) return;
 
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
+    mutate<ICycle[]>(
+      CURRENT_CYCLE_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((c) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? false : c.is_favorite,
+        })),
+      false
+    );
+
+    mutate(
+      CYCLES_LIST(projectId as string),
+      (prevData: any) =>
+        (prevData ?? []).map((c: any) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? false : c.is_favorite,
+        })),
+      false
+    );
 
     cyclesService
       .removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id)
@@ -251,24 +191,26 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
     <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-brand-base border border-brand-base">
       <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-y-0 lg:divide-x lg:grid-cols-3">
         <div className="flex flex-col text-xs">
-          <a className="w-full">
-            <div className="flex h-full flex-col gap-5 rounded-b-[10px] p-4">
+          <a className="h-full w-full">
+            <div className="flex h-60 flex-col gap-5 justify-between rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
                 <span className="flex items-center gap-1">
-                  <ContrastIcon
-                    className="h-5 w-5"
-                    color={`${
-                      cycleStatus === "current"
-                        ? "#09A953"
-                        : cycleStatus === "upcoming"
-                        ? "#F7AE59"
-                        : cycleStatus === "completed"
-                        ? "#3F76FF"
-                        : cycleStatus === "draft"
-                        ? "#858E96"
-                        : ""
-                    }`}
-                  />
+                  <span className="h-5 w-5">
+                    <ContrastIcon
+                      className="h-5 w-5"
+                      color={`${
+                        cycleStatus === "current"
+                          ? "#09A953"
+                          : cycleStatus === "upcoming"
+                          ? "#F7AE59"
+                          : cycleStatus === "completed"
+                          ? "#3F76FF"
+                          : cycleStatus === "draft"
+                          ? "#858E96"
+                          : ""
+                      }`}
+                    />
+                  </span>
                   <Tooltip tooltipContent={cycle.name} position="top-left">
                     <h3 className="break-all text-lg font-semibold">
                       {truncateText(cycle.name, 70)}
@@ -291,17 +233,17 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
                     }`}
                   >
                     {cycleStatus === "current" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         <PersonRunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         <AlarmClockIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
                             tooltipContent={`${
@@ -358,7 +300,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2.5 text-brand-secondary">
                   {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                    <Image
+                    <img
                       src={cycle.owned_by.avatar}
                       height={16}
                       width={16}
@@ -400,7 +342,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
           </a>
         </div>
         <div className="grid col-span-2 grid-cols-1 divide-y border-brand-base md:divide-y-0 md:divide-x md:grid-cols-2">
-          <div className="flex h-full flex-col border-brand-base">
+          <div className="flex h-60 flex-col border-brand-base">
             <div className="flex h-full w-full flex-col text-brand-secondary p-4">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
@@ -428,7 +370,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               </div>
             </div>
           </div>
-          <div className="border-brand-base p-4">
+          <div className="border-brand-base h-60 overflow-y-scroll">
             <ActiveCycleProgressStats issues={issues ?? []} />
           </div>
         </div>

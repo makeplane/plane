@@ -17,7 +17,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssue, IState, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, IState, UserAuth } from "types";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -31,6 +31,7 @@ type Props = {
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -46,6 +47,7 @@ export const SingleBoard: React.FC<Props> = ({
   handleTrashBox,
   removeIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   // collapse/expand
@@ -99,7 +101,7 @@ export const SingleBoard: React.FC<Props> = ({
                   </div>
                 </>
               )}
-              <div className="overflow-y-auto pt-3">
+              <div className="pt-3 overflow-hidden overflow-y-scroll">
                 {groupedByIssues?.[groupTitle].map((issue, index) => (
                   <Draggable
                     key={issue.id}
@@ -129,6 +131,7 @@ export const SingleBoard: React.FC<Props> = ({
                             removeIssue(issue.bridge_id, issue.id);
                         }}
                         isCompleted={isCompleted}
+                        user={user}
                         userAuth={userAuth}
                       />
                     )}

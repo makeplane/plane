@@ -66,7 +66,7 @@ export const AnalyticsGraph: React.FC<Props> = ({
         )
       }
       customYAxisTickValues={generateYAxisTickValues()}
-      tooltip={(datum) => <CustomTooltip datum={datum} params={params} />}
+      tooltip={(datum) => <CustomTooltip datum={datum} analytics={analytics} params={params} />}
       height={fullScreen ? "400px" : "300px"}
       margin={{
         right: 20,
@@ -80,10 +80,8 @@ export const AnalyticsGraph: React.FC<Props> = ({
           params.x_axis === "assignees__email"
             ? (datum) => {
                 const avatar = analytics.extras.assignee_details?.find(
-                  (a) => a.assignees__email === datum.value
+                  (a) => a?.assignees__email === datum?.value
                 )?.assignees__avatar;
-
-                console.log(avatar);
 
                 if (avatar && avatar !== "")
                   return (

@@ -5,6 +5,7 @@ import trackEventServices from "services/track-event.service";
 // types
 import type {
   GithubRepositoriesResponse,
+  ICurrentUserResponse,
   IFavoriteProject,
   IProject,
   IProjectMember,
@@ -22,10 +23,14 @@ class ProjectServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createProject(workspaceSlug: string, data: Partial<IProject>): Promise<IProject> {
+  async createProject(
+    workspaceSlug: string,
+    data: Partial<IProject>,
+    user: ICurrentUserResponse | undefined
+  ): Promise<IProject> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackProjectEvent(response.data, "CREATE_PROJECT");
+        if (trackEvent) trackEventServices.trackProjectEvent(response.data, "CREATE_PROJECT", user);
         return response?.data;
       })
       .catch((error) => {
@@ -64,11 +69,12 @@ class ProjectServices extends APIService {
   async updateProject(
     workspaceSlug: string,
     projectId: string,
-    data: Partial<IProject>
+    data: Partial<IProject>,
+    user: ICurrentUserResponse | undefined
   ): Promise<IProject> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackProjectEvent(response.data, "UPDATE_PROJECT");
+        if (trackEvent) trackEventServices.trackProjectEvent(response.data, "UPDATE_PROJECT", user);
         return response?.data;
       })
       .catch((error) => {
@@ -76,10 +82,14 @@ class ProjectServices extends APIService {
       });
   }
 
-  async deleteProject(workspaceSlug: string, projectId: string): Promise<any> {
+  async deleteProject(
+    workspaceSlug: string,
+    projectId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackProjectEvent({ projectId }, "DELETE_PROJECT");
+        if (trackEvent) trackEventServices.trackProjectEvent({ projectId }, "DELETE_PROJECT", user);
         return response?.data;
       })
       .catch((error) => {
@@ -87,7 +97,12 @@ class ProjectServices extends APIService {
       });
   }
 
-  async inviteProject(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+  async inviteProject(
+    workspaceSlug: string,
+    projectId: string,
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
       .then((response) => {
         if (trackEvent)
@@ -99,7 +114,8 @@ class ProjectServices extends APIService {
               projectName: response?.data?.project?.name,
               memberEmail: response?.data?.member?.email,
             },
-            "PROJECT_MEMBER_INVITE"
+            "PROJECT_MEMBER_INVITE",
+            user
           );
         return response?.data;
       })

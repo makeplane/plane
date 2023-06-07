@@ -37,19 +37,18 @@ from plane.db.models import (
     State,
     TeamMember,
     ProjectFavorite,
+    ProjectIdentifier,
+    Module,
+    Cycle,
+    CycleFavorite,
+    ModuleFavorite,
+    PageFavorite,
+    IssueViewFavorite,
+    Page,
+    IssueAssignee,
+    ModuleMember
 )
 
-from plane.db.models import (
-    Project,
-    ProjectMember,
-    Workspace,
-    ProjectMemberInvite,
-    User,
-    ProjectIdentifier,
-    Cycle,
-    Module,
-    Inbox,
-)
 from plane.bgtasks.project_invitation_task import project_invitation
 
 
@@ -425,8 +424,10 @@ class ProjectMemberViewSet(BaseViewSet):
                     {"error": "You cannot update your own role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            if request.data.get("role", 10) > project_member.role:
+            # Check while updating user roles
+            requested_project_member = ProjectMember.objects.get(
+                project_id=project_id, workspace__slug=slug, member=request.user)
+            if "role" in request.data and int(request.data.get("role", project_member.role)) > requested_project_member.role:
                 return Response(
                     {
                         "error": "You cannot update a role that is higher than your own role"
@@ -450,6 +451,41 @@ class ProjectMemberViewSet(BaseViewSet):
         except Exception as e:
             capture_exception(e)
             return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, slug, project_id, pk):
+        try:
+            project_member = ProjectMember.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            # Remove all favorites
+            ProjectFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member).delete()
+            CycleFavorite.objects.filter(
+                workspace__slug=slug,  project_id=project_id, user=project_member.member).delete()
+            ModuleFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member).delete()
+            PageFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member).delete()
+            IssueViewFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member).delete()
+            # Also remove issue from issue assigned
+            IssueAssignee.objects.filter(
+                workspace__slug=slug, project_id=project_id, assignee=project_member.member
+            ).delete()
+
+            # Remove if module member
+            ModuleMember.objects.filter(
+                workspace__slug=slug, project_id=project_id, member=project_member.member).delete()
+            # Delete owned Pages
+            Page.objects.filter(workspace__slug=slug, project_id=project_id,
+                                owned_by=project_member.member).delete()
+            project_member.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ProjectMember.DoesNotExist:
+            return Response({"error": "Project Member does not exist"}, status=status.HTTP_400)
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"})
 
 
 class AddMemberToProjectEndpoint(BaseAPIView):

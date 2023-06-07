@@ -19,9 +19,9 @@ const useProjects = () => {
     workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
 
-  const recentProjects = projects
+  const recentProjects = [...(projects ?? [])]
     ?.sort((a, b) => Date.parse(`${a.updated_at}`) - Date.parse(`${b.updated_at}`))
-    .filter((_item, index) => index < 3);
+    ?.slice(0, 3);
 
   return {
     projects: orderArrayBy(projects ?? [], "is_favorite", "descending") || [],

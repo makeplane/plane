@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -17,6 +16,7 @@ import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // ui
 import {
   Input,
@@ -44,6 +44,8 @@ const defaultValues: Partial<IProject> = {
 
 const GeneralSettings: NextPage = () => {
   const [selectProject, setSelectedProject] = useState<string | null>(null);
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -74,8 +76,7 @@ const GeneralSettings: NextPage = () => {
     if (projectDetails)
       reset({
         ...projectDetails,
-        default_assignee: projectDetails.default_assignee?.id,
-        project_lead: projectDetails.project_lead?.id,
+        emoji_and_icon: projectDetails.emoji ?? projectDetails.icon_prop,
         workspace: (projectDetails.workspace as IWorkspace).id,
       });
   }, [projectDetails, reset]);
@@ -84,7 +85,7 @@ const GeneralSettings: NextPage = () => {
     if (!workspaceSlug || !projectDetails) return;
 
     await projectService
-      .updateProject(workspaceSlug as string, projectDetails.id, payload)
+      .updateProject(workspaceSlug as string, projectDetails.id, payload, user)
       .then((res) => {
         mutate<IProject>(
           PROJECT_DETAILS(projectDetails.id),
@@ -115,11 +116,16 @@ const GeneralSettings: NextPage = () => {
       network: formData.network,
       identifier: formData.identifier,
       description: formData.description,
-      default_assignee: formData.default_assignee,
-      project_lead: formData.project_lead,
-      icon: formData.icon,
       cover_image: formData.cover_image,
     };
+
+    if (typeof formData.emoji_and_icon === "object") {
+      payload.emoji = null;
+      payload.icon_prop = formData.emoji_and_icon;
+    } else {
+      payload.emoji = formData.emoji_and_icon;
+      payload.icon_prop = null;
+    }
 
     if (projectDetails.identifier !== formData.identifier)
       await projectService
@@ -150,6 +156,7 @@ const GeneralSettings: NextPage = () => {
         onSuccess={() => {
           router.push(`/${workspaceSlug}/projects`);
         }}
+        user={user}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="p-8">
         <SettingsHeader />
@@ -163,17 +170,34 @@ const GeneralSettings: NextPage = () => {
             </div>
             <div className="col-span-12 flex gap-2 sm:col-span-6">
               {projectDetails ? (
-                <Controller
-                  control={control}
-                  name="icon"
-                  render={({ field: { value, onChange } }) => (
-                    <EmojiIconPicker
-                      label={value ? String.fromCodePoint(parseInt(value)) : "Icon"}
-                      value={value}
-                      onChange={onChange}
-                    />
-                  )}
-                />
+                <div className="h-7 w-7 grid place-items-center">
+                  <Controller
+                    control={control}
+                    name="emoji_and_icon"
+                    render={({ field: { value, onChange } }) => (
+                      <EmojiIconPicker
+                        label={
+                          value ? (
+                            typeof value === "object" ? (
+                              <span
+                                style={{ color: value.color }}
+                                className="material-symbols-rounded text-lg"
+                              >
+                                {value.name}
+                              </span>
+                            ) : (
+                              String.fromCodePoint(parseInt(value))
+                            )
+                          ) : (
+                            "Icon"
+                          )
+                        }
+                        value={value}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                </div>
               ) : (
                 <Loader>
                   <Loader.Item height="46px" width="46px" />
@@ -231,12 +255,10 @@ const GeneralSettings: NextPage = () => {
               {watch("cover_image") ? (
                 <div className="h-32 w-full rounded border border-brand-base p-1">
                   <div className="relative h-full w-full rounded">
-                    <Image
+                    <img
                       src={watch("cover_image")!}
+                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
                       alt={projectDetails?.name ?? "Cover image"}
-                      objectFit="cover"
-                      layout="fill"
-                      className="rounded"
                     />
                     <div className="absolute bottom-0 flex w-full justify-end">
                       <ImagePickerPopover

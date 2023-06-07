@@ -32,7 +32,7 @@ export const UserAuthorizationLayout: React.FC<Props> = ({ children }) => {
   if (error) {
     const redirectTo = router.asPath;
 
-    router.push(`/signin?next=${redirectTo}`);
+    router.push(`/?next=${redirectTo}`);
     return null;
   }
 

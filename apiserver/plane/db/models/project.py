@@ -63,7 +63,8 @@ class Project(BaseModel):
         null=True,
         blank=True,
     )
-    icon = models.CharField(max_length=255, null=True, blank=True)
+    emoji = models.CharField(max_length=255, null=True, blank=True)
+    icon_prop = models.JSONField(null=True)
     module_view = models.BooleanField(default=True)
     cycle_view = models.BooleanField(default=True)
     issue_views_view = models.BooleanField(default=True)

@@ -10,16 +10,16 @@ import { Dialog, Transition } from "@headlessui/react";
 import cyclesService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useIssuesView from "hooks/use-issues-view";
 //icons
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ContrastIcon, CyclesIcon, ExclamationIcon, TransferIcon } from "components/icons";
+import { ContrastIcon, ExclamationIcon, TransferIcon } from "components/icons";
 // fetch-key
-import { CYCLE_INCOMPLETE_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
+import { CYCLE_ISSUES_WITH_PARAMS, INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
 // types
 import { ICycle } from "types";
 //helper
 import { getDateRangeStatus } from "helpers/date-time.helper";
-import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
   isOpen: boolean;
@@ -57,9 +57,14 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   };
 
   const { data: incompleteCycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_INCOMPLETE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getIncompleteCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cyclesService.getCyclesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            "incomplete"
+          )
       : null
   );
 

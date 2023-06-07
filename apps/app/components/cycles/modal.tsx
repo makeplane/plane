@@ -15,26 +15,29 @@ import { CycleForm } from "components/cycles";
 // helper
 import { getDateRangeStatus, isDateGreaterThanToday } from "helpers/date-time.helper";
 // types
-import type { ICycle } from "types";
+import type { ICurrentUserResponse, ICycle } from "types";
 // fetch keys
 import {
-  CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  CYCLE_DETAILS,
-  CYCLE_DRAFT_LIST,
-  CYCLE_INCOMPLETE_LIST,
+  COMPLETED_CYCLES_LIST,
+  CURRENT_CYCLE_LIST,
+  CYCLES_LIST,
+  DRAFT_CYCLES_LIST,
+  INCOMPLETE_CYCLES_LIST,
+  UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 
 type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: ICycle;
+  data?: ICycle | null;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
   isOpen,
   handleClose,
   data,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -42,24 +45,26 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
   const { setToastAlert } = useToast();
 
   const createCycle = async (payload: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
+
     await cycleService
-      .createCycle(workspaceSlug as string, projectId as string, payload)
+      .createCycle(workspaceSlug.toString(), projectId.toString(), payload, user)
       .then((res) => {
         switch (getDateRangeStatus(res.start_date, res.end_date)) {
           case "completed":
-            mutate(CYCLE_COMPLETE_LIST(projectId as string));
+            mutate(COMPLETED_CYCLES_LIST(projectId.toString()));
             break;
           case "current":
-            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            mutate(CURRENT_CYCLE_LIST(projectId.toString()));
             break;
           case "upcoming":
-            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            mutate(UPCOMING_CYCLES_LIST(projectId.toString()));
             break;
           default:
-            mutate(CYCLE_DRAFT_LIST(projectId as string));
+            mutate(DRAFT_CYCLES_LIST(projectId.toString()));
         }
-        mutate(CYCLE_INCOMPLETE_LIST(projectId as string));
-        mutate(CYCLE_DETAILS(projectId as string));
+        mutate(INCOMPLETE_CYCLES_LIST(projectId.toString()));
+        mutate(CYCLES_LIST(projectId.toString()));
         handleClose();
 
         setToastAlert({
@@ -68,7 +73,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           message: "Cycle created successfully.",
         });
       })
-      .catch((err) => {
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -78,39 +83,41 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
   };
 
   const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
+
     await cycleService
-      .updateCycle(workspaceSlug as string, projectId as string, cycleId, payload)
+      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload, user)
       .then((res) => {
         switch (getDateRangeStatus(data?.start_date, data?.end_date)) {
           case "completed":
-            mutate(CYCLE_COMPLETE_LIST(projectId as string));
+            mutate(COMPLETED_CYCLES_LIST(projectId.toString()));
             break;
           case "current":
-            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            mutate(CURRENT_CYCLE_LIST(projectId.toString()));
             break;
           case "upcoming":
-            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            mutate(UPCOMING_CYCLES_LIST(projectId.toString()));
             break;
           default:
-            mutate(CYCLE_DRAFT_LIST(projectId as string));
+            mutate(DRAFT_CYCLES_LIST(projectId.toString()));
         }
-        mutate(CYCLE_DETAILS(projectId as string));
+        mutate(CYCLES_LIST(projectId.toString()));
         if (
           getDateRangeStatus(data?.start_date, data?.end_date) !=
           getDateRangeStatus(res.start_date, res.end_date)
         ) {
           switch (getDateRangeStatus(res.start_date, res.end_date)) {
             case "completed":
-              mutate(CYCLE_COMPLETE_LIST(projectId as string));
+              mutate(COMPLETED_CYCLES_LIST(projectId.toString()));
               break;
             case "current":
-              mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+              mutate(CURRENT_CYCLE_LIST(projectId.toString()));
               break;
             case "upcoming":
-              mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+              mutate(UPCOMING_CYCLES_LIST(projectId.toString()));
               break;
             default:
-              mutate(CYCLE_DRAFT_LIST(projectId as string));
+              mutate(DRAFT_CYCLES_LIST(projectId.toString()));
           }
         }
 
@@ -160,13 +167,9 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           title: "Error!",
           message: "Unable to create cycle in past date. Please enter a valid date.",
         });
+        handleClose();
         return;
       }
-
-      const isDateValid = await dateChecker({
-        start_date: payload.start_date,
-        end_date: payload.end_date,
-      });
 
       if (data?.start_date && data?.end_date) {
         const isDateValidForExistingCycle = await dateChecker({
@@ -185,9 +188,15 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
             message:
               "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
           });
+          handleClose();
           return;
         }
       }
+
+      const isDateValid = await dateChecker({
+        start_date: payload.start_date,
+        end_date: payload.end_date,
+      });
 
       if (isDateValid) {
         if (data) {
@@ -202,6 +211,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           message:
             "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
         });
+        handleClose();
       }
     } else {
       if (data) {

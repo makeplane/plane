@@ -12,6 +12,7 @@ import { TwitterPicker } from "react-color";
 import { Popover, Listbox, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import issuesService from "services/issues.service";
 import modulesService from "services/modules.service";
@@ -76,6 +77,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
@@ -110,7 +113,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const handleNewLabel = (formData: any) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
     issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         reset(defaultValues);
         issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
@@ -124,9 +127,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
       issuesService
-        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetails.id, {
-          issues: [issueDetail.id],
-        })
+        .addIssueToCycle(
+          workspaceSlug as string,
+          projectId as string,
+          cycleDetails.id,
+          {
+            issues: [issueDetail.id],
+          },
+          user
+        )
         .then((res) => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
@@ -139,9 +148,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
       modulesService
-        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleDetail.id, {
-          issues: [issueDetail.id],
-        })
+        .addIssuesToModule(
+          workspaceSlug as string,
+          projectId as string,
+          moduleDetail.id,
+          {
+            issues: [issueDetail.id],
+          },
+          user
+        )
         .then((res) => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
@@ -228,6 +243,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         handleClose={() => setDeleteIssueModal(false)}
         isOpen={deleteIssueModal}
         data={issueDetail ?? null}
+        user={user}
       />
       <div className="sticky top-5 w-full divide-y-2 divide-brand-base">
         <div className="flex items-center justify-between pb-3">

@@ -12,6 +12,8 @@ import { Control, UseFormReset, UseFormWatch } from "react-hook-form";
 import issuesService from "services/issues.service";
 // ui
 import { CustomMenu, PrimaryButton, Spinner } from "components/ui";
+// hooks
+import useUser from "hooks/use-user";
 // fetch-keys
 import {
   INBOX_ISSUES,
@@ -46,6 +48,8 @@ export const InboxMainContent: React.FC<Props> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, inboxId } = router.query;
+
+  const { user } = useUser();
 
   const {
     data: issueDetails,
@@ -97,8 +101,8 @@ export const InboxMainContent: React.FC<Props> = (props) => {
       if (!workspaceSlug || !projectId || !issueId || !inboxId) return;
 
       mutate(
-        ISSUE_DETAILS(issueId as string),
-        (prevData: IIssue) => ({
+        ISSUE_DETAILS(issueId.toString()),
+        (prevData) => ({
           ...prevData,
           ...formData,
         }),
@@ -107,17 +111,23 @@ export const InboxMainContent: React.FC<Props> = (props) => {
 
       const payload = { ...formData };
       await issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
+        .patchIssue(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issueId.toString(),
+          payload,
+          user
+        )
         .then((res) => {
           mutateIssueDetails();
           mutate(INBOX_ISSUES(inboxId.toString()));
-          mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+          mutate(PROJECT_ISSUES_ACTIVITY(issueId.toString()));
         })
         .catch((e) => {
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, mutateIssueDetails, inboxId]
+    [workspaceSlug, issueId, projectId, mutateIssueDetails, inboxId, user]
   );
 
   if (status !== undefined && status !== 1)
@@ -199,7 +209,7 @@ export const InboxMainContent: React.FC<Props> = (props) => {
             ) : null}
             <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
             <div className="mt-2 space-y-2">
-              <SubIssuesList parentIssue={issueDetails} />
+              <SubIssuesList user={user} parentIssue={issueDetails} />
             </div>
 
             <div className="flex flex-col gap-3 py-3">
@@ -211,8 +221,8 @@ export const InboxMainContent: React.FC<Props> = (props) => {
             </div>
             <div className="space-y-5 pt-3">
               <h3 className="text-lg text-brand-base">Comments/Activity</h3>
-              <IssueActivitySection />
-              <AddComment />
+              <IssueActivitySection user={user} />
+              <AddComment user={user} />
             </div>
           </div>
         </div>

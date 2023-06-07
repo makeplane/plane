@@ -18,13 +18,10 @@ export const FavoritePagesList: React.FC<TPagesListProps> = ({ viewType }) => {
   const { data: pages } = useSWR(
     workspaceSlug && projectId ? FAVORITE_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => pagesService.getFavoritePages(workspaceSlug as string, projectId as string)
+      ? () =>
+          pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, "favorite")
       : null
   );
 
-  return (
-    <div className="mt-4 space-y-4">
-      <PagesView pages={pages} viewType={viewType} />
-    </div>
-  );
+  return <PagesView pages={pages} viewType={viewType} />;
 };

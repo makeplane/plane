@@ -19,6 +19,7 @@ import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
@@ -30,7 +31,7 @@ import { getDateRangeStatus } from "helpers/date-time.helper";
 // fetch-keys
 import {
   CYCLE_ISSUES,
-  CYCLE_LIST,
+  CYCLES_LIST,
   PROJECT_DETAILS,
   CYCLE_DETAILS,
   PROJECT_ISSUES_LIST,
@@ -44,6 +45,8 @@ const SingleCycle: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { setToastAlert } = useToast();
 
   const { data: activeProject } = useSWR(
@@ -54,9 +57,9 @@ const SingleCycle: React.FC = () => {
   );
 
   const { data: cycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cycleServices.getCycles(workspaceSlug as string, projectId as string)
+      ? () => cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, "all")
       : null
   );
 
@@ -94,7 +97,7 @@ const SingleCycle: React.FC = () => {
     if (!workspaceSlug || !projectId) return;
 
     await issuesService
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, data, user)
       .then(() => {
         mutate(CYCLE_ISSUES(cycleId as string));
       })
@@ -185,6 +188,7 @@ const SingleCycle: React.FC = () => {
           cycle={cycleDetails}
           isOpen={cycleSidebar}
           isCompleted={cycleStatus === "completed" ?? false}
+          user={user}
         />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

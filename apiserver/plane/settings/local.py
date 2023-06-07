@@ -25,7 +25,13 @@ DATABASES = {
     }
 }
 
-DOCKERIZED = os.environ.get("DOCKERIZED", False)
+DOCKERIZED = int(os.environ.get(
+    "DOCKERIZED", 0
+))  == 1
+
+USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
+
+FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT",  5242880))
 
 if DOCKERIZED:
     DATABASES["default"] = dj_database_url.config()
@@ -68,7 +74,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 if DOCKERIZED:
     REDIS_URL = os.environ.get("REDIS_URL")
 
-WEB_URL = os.environ.get("WEB_URL", "localhost:3000")
+WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
@@ -83,6 +89,5 @@ LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
 CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
-
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
