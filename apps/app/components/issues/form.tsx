@@ -59,6 +59,8 @@ const WrappedRemirrorRichTextEditor = React.forwardRef<
 
 WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
+const defaultParagraph = "<p></p>";
+
 const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
@@ -132,11 +134,12 @@ export const IssueForm: FC<IssueFormProps> = ({
     setValue,
     setFocus,
   } = useForm<IIssue>({
-    defaultValues,
+    defaultValues: initialData ?? defaultValues,
     reValidateMode: "onChange",
   });
 
   const issueName = watch("name");
+  const watchDescriptionHTML = watch("description_html");
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -355,22 +358,32 @@ export const IssueForm: FC<IssueFormProps> = ({
                     AI
                   </button>
                 </div>
+
                 <Controller
                   name="description"
                   control={control}
-                  render={({ field: { value } }) => (
-                    <WrappedRemirrorRichTextEditor
-                      value={
-                        !value || (typeof value === "object" && Object.keys(value).length === 0)
-                          ? watch("description_html")
-                          : value
-                      }
-                      onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                      onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                      placeholder="Description"
-                      ref={editorRef}
-                    />
-                  )}
+                  render={({ field: { value } }) => {
+                    let defaultValue = "";
+
+                    /**
+                     * Checking if it is the initial paragraph that we defined initaly
+                     * If not then it must be the value that we passed with the @param initialData
+                     * in that case we will re-assign the value to the data that we passed on
+                     */
+
+                    if (watchDescriptionHTML !== defaultParagraph)
+                      defaultValue = watchDescriptionHTML;
+
+                    return (
+                      <WrappedRemirrorRichTextEditor
+                        value={defaultValue}
+                        onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                        onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                        placeholder="Description"
+                        ref={editorRef}
+                      />
+                    );
+                  }}
                 />
                 <GptAssistantModal
                   isOpen={gptAssistantModal}
