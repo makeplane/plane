@@ -126,7 +126,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       position={position}
       disabled={isNotAllowed}
       selfPositioned={selfPositioned}
-      dropdownWidth="w-full min-w-[8rem]"
+      dropdownWidth="w-full min-w-[12rem]"
     />
   );
 };
