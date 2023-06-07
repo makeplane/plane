@@ -174,13 +174,73 @@ class CycleViewSet(BaseViewSet):
                 return Response(
                     CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
                 )
-            
+
             # Current Cycle
             if cycle_view == "current":
                 queryset = queryset.filter(
                     start_date__lte=timezone.now(),
                     end_date__gte=timezone.now(),
                 )
+
+                data = CycleSerializer(queryset, many=True).data
+
+                if len(data):
+                    assignee_distribution = (
+                        Issue.objects.filter(
+                            issue_cycle__cycle_id=data[0]["id"],
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .annotate(first_name=F("assignees__first_name"))
+                        .annotate(last_name=F("assignees__last_name"))
+                        .annotate(assignee_id=F("assignees__id"))
+                        .values("first_name", "last_name", "assignee_id")
+                        .annotate(total_issues=Count("assignee_id"))
+                        .annotate(
+                            completed_issues=Count(
+                                "assignee_id",
+                                filter=Q(completed_at__isnull=False),
+                            )
+                        )
+                        .annotate(
+                            pending_issues=Count(
+                                "assignee_id",
+                                filter=Q(completed_at__isnull=True),
+                            )
+                        )
+                        .order_by("first_name", "last_name")
+                    )
+
+                    label_distribution = (
+                        Issue.objects.filter(
+                            issue_cycle__cycle_id=data[0]["id"],
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .annotate(label_name=F("labels__name"))
+                        .annotate(color=F("labels__color"))
+                        .annotate(label_id=F("labels__id"))
+                        .values("label_name", "color", "label_id")
+                        .annotate(total_issues=Count("label_id"))
+                        .annotate(
+                            completed_issues=Count(
+                                "label_id",
+                                filter=Q(completed_at__isnull=False),
+                            )
+                        )
+                        .annotate(
+                            pending_issues=Count(
+                                "label_id",
+                                filter=Q(completed_at__isnull=True),
+                            )
+                        )
+                        .order_by("label_name")
+                    )
+                    data["distribution"] = {
+                        "assignees": assignee_distribution,
+                        "labels": label_distribution,
+                    }
+
                 return Response(
                     CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
                 )
@@ -205,6 +265,7 @@ class CycleViewSet(BaseViewSet):
                     end_date=None,
                     start_date=None,
                 )
+
                 return Response(
                     CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
                 )
@@ -284,6 +345,78 @@ class CycleViewSet(BaseViewSet):
             )
         except Exception as e:
             capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def retrieve(self, request, slug, project_id, pk):
+        try:
+            queryset = self.get_queryset().get(pk=pk)
+
+            assignee_distribution = (
+                Issue.objects.filter(
+                    issue_cycle__cycle_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(first_name=F("assignees__first_name"))
+                .annotate(last_name=F("assignees__last_name"))
+                .annotate(assignee_id=F("assignees__id"))
+                .values("first_name", "last_name", "assignee_id")
+                .annotate(total_issues=Count("assignee_id"))
+                .annotate(
+                    completed_issues=Count(
+                        "assignee_id",
+                        filter=Q(completed_at__isnull=False),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "assignee_id",
+                        filter=Q(completed_at__isnull=True),
+                    )
+                )
+                .order_by("first_name", "last_name")
+            )
+
+            label_distribution = (
+                Issue.objects.filter(
+                    issue_cycle__cycle_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(label_name=F("labels__name"))
+                .annotate(color=F("labels__color"))
+                .annotate(label_id=F("labels__id"))
+                .values("label_name", "color", "label_id")
+                .annotate(total_issues=Count("label_id"))
+                .annotate(
+                    completed_issues=Count(
+                        "label_id",
+                        filter=Q(completed_at__isnull=False),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "label_id",
+                        filter=Q(completed_at__isnull=True),
+                    )
+                )
+                .order_by("label_name")
+            )
+
+            data = CycleSerializer(queryset).data
+            data["distribution"] = {
+                "assignees": assignee_distribution,
+                "labels": label_distribution,
+            }
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
