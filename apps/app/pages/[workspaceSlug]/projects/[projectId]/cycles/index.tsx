@@ -200,7 +200,7 @@ const ProjectCycles: NextPage = () => {
               <AllCyclesList viewType={cyclesView} />
             </Tab.Panel>
             {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="mt-7 space-y-5">
+              <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
                 {currentCycle?.[0] ? (
                   <ActiveCycleDetails cycle={currentCycle?.[0]} />
                 ) : (

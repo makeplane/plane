@@ -77,7 +77,7 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    queries?: Partial<IIssueViewOptions>
+    queries?: any
   ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
