@@ -21,6 +21,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   const [codeResent, setCodeResent] = useState(false);
   const [isCodeResending, setIsCodeResending] = useState(false);
   const [errorResendingCode, setErrorResendingCode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { setToastAlert } = useToast();
   const { timer: resendCodeTimer, setTimer: setResendCodeTimer } = useTimer();
@@ -64,26 +65,19 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   };
 
   const handleSignin = async (formData: EmailCodeFormValues) => {
-    await authenticationService
-      .magicSignIn(formData)
-      .then(() => {
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Successfully logged in!",
-        });
-      })
-      .catch((error) => {
-        setToastAlert({
-          title: "Oops!",
-          type: "error",
-          message: error?.response?.data?.error ?? "Enter the correct code to sign in",
-        });
-        setError("token" as keyof EmailCodeFormValues, {
-          type: "manual",
-          message: error.error,
-        });
+    setIsLoading(true);
+    await authenticationService.magicSignIn(formData).catch((error) => {
+      setIsLoading(false);
+      setToastAlert({
+        title: "Oops!",
+        type: "error",
+        message: error?.response?.data?.error ?? "Enter the correct code to sign in",
       });
+      setError("token" as keyof EmailCodeFormValues, {
+        type: "manual",
+        message: error.error,
+      });
+    });
   };
 
   const emailOld = getValues("email");
@@ -200,9 +194,9 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               size="md"
               onClick={handleSubmit(handleSignin)}
               disabled={!isValid && isDirty}
-              loading={isSubmitting}
+              loading={isLoading}
             >
-              {isSubmitting ? "Signing in..." : "Sign in"}
+              {isLoading ? "Signing in..." : "Sign in"}
             </PrimaryButton>
           ) : (
             <PrimaryButton
