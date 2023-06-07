@@ -160,8 +160,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const createIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId) return;
-
-    if (inboxId)
+    if (inboxId) {
       await inboxServices
         .createInboxIssue(
           workspaceSlug.toString(),
@@ -173,12 +172,26 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           setToastAlert({
             type: "success",
             title: "Success!",
-            message: "Inbox issue created successfully.",
+            message: "Issue created successfully.",
+          });
+
+          mutate<IIssue[]>(calendarFetchKey);
+
+          if (!createMore) handleClose();
+
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be created. Please try again.",
           });
           // TODO:
           // [ ] - mutate inbox issues list
         });
-    else
+    } else {
+      if (!workspaceSlug) return;
       await issuesService
         .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
         .then(async (res) => {
@@ -209,6 +222,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             message: "Issue could not be created. Please try again.",
           });
         });
+    }
   };
 
   const updateIssue = async (payload: Partial<IIssue>) => {
