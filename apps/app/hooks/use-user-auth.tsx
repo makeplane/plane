@@ -22,7 +22,9 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     isLoading,
     error,
     mutate,
-  } = useSWR<ICurrentUserResponse>(CURRENT_USER, () => userService.currentUser());
+  } = useSWR<ICurrentUserResponse>(CURRENT_USER, () => userService.currentUser(), {
+    refreshInterval: 0,
+  });
 
   useEffect(() => {
     const handleWorkSpaceRedirection = async () => {
@@ -80,18 +82,23 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
       }
     };
 
-    if (!isLoading) {
-      setIsRouteAccess(() => true);
-      if (user) {
-        if (next_url) router.push(next_url);
-        else handleUserRouteAuthentication();
-      } else {
-        if (routeAuth === "sign-in") {
-          setIsRouteAccess(() => false);
-          return;
+    if (routeAuth === null) {
+      setIsRouteAccess(() => false);
+      return;
+    } else {
+      if (!isLoading) {
+        setIsRouteAccess(() => true);
+        if (user) {
+          if (next_url) router.push(next_url);
+          else handleUserRouteAuthentication();
         } else {
-          router.push("/");
-          return;
+          if (routeAuth === "sign-in") {
+            setIsRouteAccess(() => false);
+            return;
+          } else {
+            router.push("/");
+            return;
+          }
         }
       }
     }
