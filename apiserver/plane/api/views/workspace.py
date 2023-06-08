@@ -442,10 +442,16 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 )
 
             # Get the requested user role
-            requested_workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
+            requested_workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
             # Check if role is being updated
             # One cannot update role higher than his own role
-            if "role" in request.data and int(request.data.get("role", workspace_member.role)) > requested_workspace_member.role:
+            if (
+                "role" in request.data
+                and int(request.data.get("role", workspace_member.role))
+                > requested_workspace_member.role
+            ):
                 return Response(
                     {
                         "error": "You cannot update a role that is higher than your own role"
@@ -475,26 +481,52 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
     def destroy(self, request, slug, pk):
         try:
+            # Check the user role who is deleting the user
             workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, pk=pk)
+
+            # check requesting user role
+            requesting_workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+            if requesting_workspace_member.role < workspace_member.role:
+                return Response(
+                    {"error": "You cannot remove a user having role higher than you"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Delete the user also from all the projects
             ProjectMember.objects.filter(
                 workspace__slug=slug, member=workspace_member.member
             ).delete()
             # Remove all favorites
-            ProjectFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
-            CycleFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
-            ModuleFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
-            PageFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
-            IssueViewFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
+            ProjectFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
+            CycleFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
+            ModuleFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
+            PageFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
+            IssueViewFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
             # Also remove issue from issue assigned
             IssueAssignee.objects.filter(
                 workspace__slug=slug, assignee=workspace_member.member
             ).delete()
 
             # Remove if module member
-            ModuleMember.objects.filter(workspace__slug=slug, member=workspace_member.member).delete()
+            ModuleMember.objects.filter(
+                workspace__slug=slug, member=workspace_member.member
+            ).delete()
             # Delete owned Pages
-            Page.objects.filter(workspace__slug=slug, owned_by=workspace_member.member).delete()
+            Page.objects.filter(
+                workspace__slug=slug, owned_by=workspace_member.member
+            ).delete()
 
             workspace_member.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

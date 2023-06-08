@@ -46,7 +46,8 @@ from plane.db.models import (
     IssueViewFavorite,
     Page,
     IssueAssignee,
-    ModuleMember
+    ModuleMember,
+    Inbox
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
@@ -418,7 +419,8 @@ class ProjectMemberViewSet(BaseViewSet):
     def partial_update(self, request, slug, project_id, pk):
         try:
             project_member = ProjectMember.objects.get(
-                pk=pk, workspace__slug=slug, project_id=project_id)
+                pk=pk, workspace__slug=slug, project_id=project_id
+            )
             if request.user.id == project_member.member_id:
                 return Response(
                     {"error": "You cannot update your own role"},
@@ -426,8 +428,13 @@ class ProjectMemberViewSet(BaseViewSet):
                 )
             # Check while updating user roles
             requested_project_member = ProjectMember.objects.get(
-                project_id=project_id, workspace__slug=slug, member=request.user)
-            if "role" in request.data and int(request.data.get("role", project_member.role)) > requested_project_member.role:
+                project_id=project_id, workspace__slug=slug, member=request.user
+            )
+            if (
+                "role" in request.data
+                and int(request.data.get("role", project_member.role))
+                > requested_project_member.role
+            ):
                 return Response(
                     {
                         "error": "You cannot update a role that is higher than your own role"
@@ -450,43 +457,70 @@ class ProjectMemberViewSet(BaseViewSet):
             )
         except Exception as e:
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, slug, project_id, pk):
         try:
             project_member = ProjectMember.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
+            # check requesting user role
+            requesting_project_member = ProjectMember.objects.get(
+                workspace__slug=slug, member=request.user, project_id=project_id
+            )
+            if requesting_project_member.role < project_member.role:
+                return Response(
+                    {"error": "You cannot remove a user having role higher than yourself"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Remove all favorites
             ProjectFavorite.objects.filter(
-                workspace__slug=slug, project_id=project_id, user=project_member.member).delete()
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
             CycleFavorite.objects.filter(
-                workspace__slug=slug,  project_id=project_id, user=project_member.member).delete()
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
             ModuleFavorite.objects.filter(
-                workspace__slug=slug, project_id=project_id, user=project_member.member).delete()
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
             PageFavorite.objects.filter(
-                workspace__slug=slug, project_id=project_id, user=project_member.member).delete()
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
             IssueViewFavorite.objects.filter(
-                workspace__slug=slug, project_id=project_id, user=project_member.member).delete()
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
             # Also remove issue from issue assigned
             IssueAssignee.objects.filter(
-                workspace__slug=slug, project_id=project_id, assignee=project_member.member
+                workspace__slug=slug,
+                project_id=project_id,
+                assignee=project_member.member,
             ).delete()
 
             # Remove if module member
             ModuleMember.objects.filter(
-                workspace__slug=slug, project_id=project_id, member=project_member.member).delete()
+                workspace__slug=slug,
+                project_id=project_id,
+                member=project_member.member,
+            ).delete()
             # Delete owned Pages
-            Page.objects.filter(workspace__slug=slug, project_id=project_id,
-                                owned_by=project_member.member).delete()
+            Page.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                owned_by=project_member.member,
+            ).delete()
             project_member.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except ProjectMember.DoesNotExist:
-            return Response({"error": "Project Member does not exist"}, status=status.HTTP_400)
+            return Response(
+                {"error": "Project Member does not exist"}, status=status.HTTP_400
+            )
         except Exception as e:
             capture_exception(e)
             return Response({"error": "Something went wrong please try again later"})
-
 
 class AddMemberToProjectEndpoint(BaseAPIView):
     permission_classes = [

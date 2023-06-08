@@ -23,7 +23,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         )
 
         realtivelink = (
-            f"/workspace-member-invitation/{workspace_member_invite.id}?email={email}"
+            f"/workspace-member-invitation/?invitation_id={workspace_member_invite.id}&email={email}"
         )
         abs_url = current_site + realtivelink
 
