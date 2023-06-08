@@ -65,50 +65,58 @@ class SignInEndpoint(BaseAPIView):
 
             # Sign up Process
             if user is None:
-                user = User.objects.create(email=email, username=uuid.uuid4().hex)
-                user.set_password(password)
+                if settings.ENABLE_SIGNUP:
+                    user = User.objects.create(email=email, username=uuid.uuid4().hex)
+                    user.set_password(password)
 
-                # settings last actives for the user
-                user.last_active = timezone.now()
-                user.last_login_time = timezone.now()
-                user.last_login_ip = request.META.get("REMOTE_ADDR")
-                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-                user.token_updated_at = timezone.now()
-                user.save()
+                    # settings last actives for the user
+                    user.last_active = timezone.now()
+                    user.last_login_time = timezone.now()
+                    user.last_login_ip = request.META.get("REMOTE_ADDR")
+                    user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+                    user.token_updated_at = timezone.now()
+                    user.save()
 
-                serialized_user = UserSerializer(user).data
+                    serialized_user = UserSerializer(user).data
 
-                access_token, refresh_token = get_tokens_for_user(user)
+                    access_token, refresh_token = get_tokens_for_user(user)
 
-                data = {
-                    "access_token": access_token,
-                    "refresh_token": refresh_token,
-                    "user": serialized_user,
-                }
+                    data = {
+                        "access_token": access_token,
+                        "refresh_token": refresh_token,
+                        "user": serialized_user,
+                    }
 
-                # Send Analytics
-                if settings.ANALYTICS_BASE_API:
-                    _ = requests.post(
-                        settings.ANALYTICS_BASE_API,
-                        headers={
-                            "Content-Type": "application/json",
-                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                        },
-                        json={
-                            "event_id": uuid.uuid4().hex,
-                            "event_data": {
-                                "medium": "email",
+                    # Send Analytics
+                    if settings.ANALYTICS_BASE_API:
+                        _ = requests.post(
+                            settings.ANALYTICS_BASE_API,
+                            headers={
+                                "Content-Type": "application/json",
+                                "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                             },
-                            "user": {"email": email, "id": str(user.id)},
-                            "device_ctx": {
-                                "ip": request.META.get("REMOTE_ADDR"),
-                                "user_agent": request.META.get("HTTP_USER_AGENT"),
+                            json={
+                                "event_id": uuid.uuid4().hex,
+                                "event_data": {
+                                    "medium": "email",
+                                },
+                                "user": {"email": email, "id": str(user.id)},
+                                "device_ctx": {
+                                    "ip": request.META.get("REMOTE_ADDR"),
+                                    "user_agent": request.META.get("HTTP_USER_AGENT"),
+                                },
+                                "event_type": "SIGN_UP",
                             },
-                            "event_type": "SIGN_UP",
+                        )
+
+                    return Response(data, status=status.HTTP_200_OK)
+                else:
+                    return Response(
+                        {
+                            "error": "Sorry, we could not find a user with the provided credentials. Please try again."
                         },
+                        status=status.HTTP_403_FORBIDDEN,
                     )
-
-                return Response(data, status=status.HTTP_200_OK)
             # Sign in Process
             else:
                 if not user.check_password(password):

@@ -54,6 +54,7 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
+                        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -91,6 +92,7 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL:-captain@plane.so}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD:-password123}
                         USE_MINIO: ${USE_MINIO}
+                        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
                 depends_on:
                         - plane-api
                         - plane-db
