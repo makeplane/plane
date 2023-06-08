@@ -9,6 +9,7 @@ class Inbox(ProjectBaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(verbose_name="Inbox Description", blank=True)
     is_default = models.BooleanField(default=False)
+    view_props = models.JSONField(default=dict)
 
     def __str__(self):
         """Return name of the Inbox"""
