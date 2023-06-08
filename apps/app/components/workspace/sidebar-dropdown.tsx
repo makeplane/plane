@@ -1,9 +1,10 @@
 import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
+
 import { useRouter } from "next/router";
-import Image from "next/image";
 import Link from "next/link";
-import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+
+// headless ui
+import { Menu, Transition } from "@headlessui/react";
 // hooks
 import useUser from "hooks/use-user";
 import useTheme from "hooks/use-theme";
@@ -14,7 +15,9 @@ import userService from "services/user.service";
 import authenticationService from "services/authentication.service";
 // components
 import { Avatar, Loader } from "components/ui";
-// helper
+// icons
+import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+// helpers
 import { truncateText } from "helpers/string.helper";
 // types
 import { IWorkspace } from "types";
@@ -94,12 +97,10 @@ export const WorkspaceSidebarDropdown = () => {
             >
               <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white dark:bg-brand-surface-2 dark:text-gray-800">
                 {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                  <Image
+                  <img
                     src={activeWorkspace.logo}
+                    className="absolute top-0 left-0 h-full w-full object-cover rounded"
                     alt="Workspace Logo"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded"
                   />
                 ) : (
                   activeWorkspace?.name?.charAt(0) ?? "..."
@@ -155,12 +156,10 @@ export const WorkspaceSidebarDropdown = () => {
                             <div className="flex items-center justify-start gap-2.5">
                               <span className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 text-xs uppercase text-white">
                                 {workspace?.logo && workspace.logo !== "" ? (
-                                  <Image
+                                  <img
                                     src={workspace.logo}
+                                    className="absolute top-0 left-0 h-full w-full object-cover rounded"
                                     alt="Workspace Logo"
-                                    layout="fill"
-                                    objectFit="cover"
-                                    className="rounded"
                                   />
                                 ) : (
                                   workspace?.name?.charAt(0) ?? "..."

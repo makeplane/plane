@@ -6,6 +6,8 @@ import useSWR from "swr";
 
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
@@ -36,6 +38,8 @@ const ProjectModules: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -89,6 +93,7 @@ const ProjectModules: NextPage = () => {
         isOpen={createUpdateModule}
         setIsOpen={setCreateUpdateModule}
         data={selectedModule}
+        user={user}
       />
       {modules ? (
         modules.length > 0 ? (
@@ -126,6 +131,7 @@ const ProjectModules: NextPage = () => {
                       key={module.id}
                       module={module}
                       handleEditModule={() => handleEditModule(module)}
+                      user={user}
                     />
                   ))}
                 </div>

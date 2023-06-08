@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // services
 import viewsService from "services/views.service";
 import projectService from "services/project.service";
@@ -33,6 +35,8 @@ const ProjectViews: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -86,11 +90,13 @@ const ProjectViews: NextPage = () => {
         isOpen={createUpdateViewModal}
         handleClose={() => setCreateUpdateViewModal(false)}
         data={selectedViewToUpdate}
+        user={user}
       />
       <DeleteViewModal
         isOpen={deleteViewModal}
         data={selectedViewToDelete}
         setIsOpen={setDeleteViewModal}
+        user={user}
       />
       {views ? (
         views.length > 0 ? (

@@ -6,6 +6,8 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // react-color
 import { TwitterPicker } from "react-color";
 // headless ui
@@ -42,6 +44,8 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const {
     handleSubmit,
     control,
@@ -58,7 +62,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
     await issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         mutate<IIssueLabels[]>(
           PROJECT_ISSUE_LABELS(projectId as string),
@@ -78,7 +82,8 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
         workspaceSlug as string,
         projectId as string,
         labelToUpdate?.id ?? "",
-        formData
+        formData,
+        user
       )
       .then(() => {
         reset(defaultValues);

@@ -14,8 +14,6 @@ services:
                         NEXT_PUBLIC_SENTRY_DSN: 0
                         NEXT_PUBLIC_ENABLE_OAUTH: 0
                         NEXT_PUBLIC_ENABLE_SENTRY: 0
-                ports:
-                        - 3000:3000
 
         plane-api:
                 container_name: planebackend
@@ -31,6 +29,7 @@ services:
                         EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
                         EMAIL_PORT: ${EMAIL_PORT}
                         EMAIL_FROM: ${EMAIL_FROM}
+                        EMAIL_USE_TLS: ${EMAIL_USE_TLS}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -45,12 +44,10 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-db
                         - plane-redis
-                ports:
-                        - 8000:8000
 
         plane-worker:
                 container_name: planerqworker
@@ -66,6 +63,7 @@ services:
                         EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
                         EMAIL_PORT: ${EMAIL_PORT}
                         EMAIL_FROM: ${EMAIL_FROM}
+                        EMAIL_USE_TLS: ${EMAIL_USE_TLS}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -80,7 +78,7 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
                 depends_on:
                         - plane-api
                         - plane-db
@@ -111,11 +109,9 @@ services:
                 volumes:
                         - uploads:/export
                 environment:
-                  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
-                  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+                        MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+                        MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
                 command: server /export --console-address ":9090"
-                ports:
-                      - 9000:9000
 
         createbuckets:
                 image: minio/mc
@@ -130,16 +126,17 @@ services:
                   "
 
 # Comment this if you already have a reverse proxy running
-        nginx:
-          container_name: nginx
-          build:
-            context: ./nginx
-            dockerfile: Dockerfile
-          ports:
-            - ${NGINX_PORT}:80
-          depends_on:
-            - plane-web
-            - plane-api
+        plane-proxy:
+                container_name: planeproxy
+                image: makeplane/plane-proxy:latest
+                ports:
+                - ${NGINX_PORT}:80
+                environment:
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+                        BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+                depends_on:
+                - plane-web
+                - plane-api
 
 
 volumes:

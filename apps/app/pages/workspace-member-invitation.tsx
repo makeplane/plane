@@ -30,21 +30,26 @@ import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 const WorkspaceInvitation: NextPage = () => {
   const router = useRouter();
 
-  const { invitationId, email } = router.query;
+  const { invitation_id, email } = router.query;
 
   const { user } = useUser();
 
-  const { data: invitationDetail, error } = useSWR(invitationId && WORKSPACE_INVITATION, () =>
-    invitationId ? workspaceService.getWorkspaceInvitation(invitationId as string) : null
+  const { data: invitationDetail, error } = useSWR(invitation_id && WORKSPACE_INVITATION, () =>
+    invitation_id ? workspaceService.getWorkspaceInvitation(invitation_id as string) : null
   );
 
   const handleAccept = () => {
     if (!invitationDetail) return;
     workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
-        accepted: true,
-        email: invitationDetail.email,
-      })
+      .joinWorkspace(
+        invitationDetail.workspace.slug,
+        invitationDetail.id,
+        {
+          accepted: true,
+          email: invitationDetail.email,
+        },
+        user
+      )
       .then(() => {
         if (email === user?.email) {
           router.push("/invitations");

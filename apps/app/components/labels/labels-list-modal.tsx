@@ -11,7 +11,7 @@ import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/out
 // services
 import issuesService from "services/issues.service";
 // types
-import { IIssueLabels } from "types";
+import { ICurrentUserResponse, IIssueLabels } from "types";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -19,9 +19,10 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   parent: IIssueLabels | undefined;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }) => {
+export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, user }) => {
   const [query, setQuery] = useState("");
 
   const router = useRouter();
@@ -58,9 +59,15 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
     );
 
     await issuesService
-      .patchIssueLabel(workspaceSlug as string, projectId as string, label.id, {
-        parent: parent?.id ?? "",
-      })
+      .patchIssueLabel(
+        workspaceSlug as string,
+        projectId as string,
+        label.id,
+        {
+          parent: parent?.id ?? "",
+        },
+        user
+      )
       .then(() => mutate());
   };
 

@@ -15,7 +15,7 @@ import { SecondaryButton, DangerButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { IModule } from "types";
+import type { ICurrentUserResponse, IModule } from "types";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
 
@@ -23,9 +23,10 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IModule;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -50,7 +51,7 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) 
     );
 
     await modulesService
-      .deleteModule(workspaceSlug as string, projectId as string, data.id)
+      .deleteModule(workspaceSlug as string, projectId as string, data.id, user)
       .then(() => {
         if (moduleId) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
         handleClose();

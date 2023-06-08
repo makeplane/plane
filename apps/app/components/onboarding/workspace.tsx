@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import Image from "next/image";
-
 import useSWR from "swr";
 
 // headless ui
@@ -9,7 +7,7 @@ import { Tab } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
 // types
-import { IWorkspaceMemberInvitation } from "types";
+import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
@@ -21,9 +19,10 @@ import { getFirstCharacters, truncateText } from "helpers/string.helper";
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
+export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [defaultValues, setDefaultValues] = useState({
@@ -83,7 +82,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     <div className="grid w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex h-[417px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md"
+        className="flex h-[442px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md"
         defaultIndex={currentTabValue(currentTab)}
         onChange={(i) => {
           switch (i) {
@@ -98,7 +97,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
       >
         <Tab.List as="div" className="flex flex-col gap-3 px-7 pt-7 pb-3.5">
           <div className="flex flex-col gap-2 justify-center">
-            <h3 className="text-base font-semibold text-brand-base">Workspaces</h3>
+            <h3 className="text-base font-semibold text-brand-base">Workspace</h3>
             <p className="text-sm text-brand-secondary">
               Create or join the workspace to get started with Plane.
             </p>
@@ -131,7 +130,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
         <Tab.Panels as="div" className="h-full">
           <Tab.Panel className="h-full">
             <div className="flex h-full w-full flex-col">
-              <div className="h-[255px] overflow-y-auto px-7">
+              <div className="h-[280px] overflow-y-auto px-7">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
                     <div key={invitation.id}>
@@ -142,7 +141,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                         <div className="flex-shrink-0">
                           <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg">
                             {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
-                              <Image
+                              <img
                                 src={invitation.workspace.logo}
                                 height="100%"
                                 width="100%"
@@ -161,7 +160,10 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                             {truncateText(invitation.workspace.name, 30)}
                           </div>
                           <p className="text-sm text-brand-secondary">
-                            Invited by {invitation.workspace.owner.first_name}
+                            Invited by{" "}
+                            {invitation.created_by_detail
+                              ? invitation.created_by_detail.first_name
+                              : invitation.workspace.owner.first_name}
                           </p>
                         </div>
                         <div className="flex-shrink-0 self-center">
@@ -237,6 +239,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
               }}
               defaultValues={defaultValues}
               setDefaultValues={setDefaultValues}
+              user={user}
             />
           </Tab.Panel>
         </Tab.Panels>

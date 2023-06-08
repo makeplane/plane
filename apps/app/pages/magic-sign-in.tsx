@@ -49,18 +49,18 @@ const MagicSignIn: NextPage = () => {
 
   return (
     <DefaultLayout>
-      <div className="flex h-screen w-full items-center justify-center overflow-auto bg-gray-50">
+      <div className="h-screen w-full overflow-auto bg-brand-surface-1">
         {isSigningIn ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
             <h2 className="text-4xl">Signing you in...</h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-brand-secondary">
               Please wait while we are preparing your take off.
             </p>
           </div>
         ) : errorSigningIn ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
             <h2 className="text-4xl">Error</h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-brand-secondary">
               {errorSigningIn}.
               <span
                 className="cursor-pointer underline"
@@ -90,7 +90,7 @@ const MagicSignIn: NextPage = () => {
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
             <h2 className="text-4xl">Success</h2>
-            <p className="text-sm text-gray-600">Redirecting you to the app...</p>
+            <p className="text-sm text-brand-secondary">Redirecting you to the app...</p>
           </div>
         )}
       </div>

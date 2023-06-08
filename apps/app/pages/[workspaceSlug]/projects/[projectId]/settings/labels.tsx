@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
 import issuesService from "services/issues.service";
@@ -47,6 +49,8 @@ const LabelsSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const scrollToRef = useRef<HTMLDivElement>(null);
 
   const { data: projectDetails } = useSWR(
@@ -85,11 +89,13 @@ const LabelsSettings: NextPage = () => {
         isOpen={labelsListModal}
         handleClose={() => setLabelsListModal(false)}
         parent={parentLabel}
+        user={user}
       />
       <DeleteLabelModal
         isOpen={!!selectDeleteLabel}
         data={selectDeleteLabel ?? null}
         onClose={() => setSelectDeleteLabel(null)}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -160,6 +166,7 @@ const LabelsSettings: NextPage = () => {
                             });
                           }}
                           handleLabelDelete={() => setSelectDeleteLabel(label)}
+                          user={user}
                         />
                       );
                   })

@@ -11,6 +11,7 @@ import trackEventServices, { MiscellaneousEventType } from "services/track-event
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsHeader } from "components/project";
 // ui
@@ -75,6 +76,8 @@ const FeaturesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { setToastAlert } = useToast();
 
   const { data: projectDetails } = useSWR(
@@ -134,7 +137,7 @@ const FeaturesSettings: NextPage = () => {
     });
 
     await projectService
-      .updateProject(workspaceSlug as string, projectId as string, formData)
+      .updateProject(workspaceSlug as string, projectId as string, formData, user)
       .then(() => {
         mutate(
           projectDetails.is_favorite
@@ -194,7 +197,8 @@ const FeaturesSettings: NextPage = () => {
                       },
                       !projectDetails?.[feature.property as keyof IProject]
                         ? getEventType(feature.title, true)
-                        : getEventType(feature.title, false)
+                        : getEventType(feature.title, false),
+                      user
                     );
                     handleSubmit({
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],

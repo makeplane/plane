@@ -16,15 +16,17 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IEstimate } from "types";
+import { ICurrentUserResponse, IEstimate } from "types";
 
 type Props = {
+  user: ICurrentUserResponse | undefined;
   estimate: IEstimate;
   editEstimate: (estimate: IEstimate) => void;
   handleEstimateDelete: (estimateId: string) => void;
 };
 
 export const SingleEstimate: React.FC<Props> = ({
+  user,
   estimate,
   editEstimate,
   handleEstimateDelete,
@@ -52,7 +54,7 @@ export const SingleEstimate: React.FC<Props> = ({
     }, false);
 
     await projectService
-      .updateProject(workspaceSlug as string, projectId as string, payload)
+      .updateProject(workspaceSlug as string, projectId as string, payload, user)
       .catch(() => {
         setToastAlert({
           type: "error",

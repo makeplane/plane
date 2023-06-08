@@ -17,6 +17,7 @@ import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import {
   AllLists,
@@ -95,6 +96,8 @@ export const IssuesView: React.FC<Props> = ({
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { memberRole } = useProjectMyMembership();
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -227,11 +230,17 @@ export const IssuesView: React.FC<Props> = ({
 
         // patch request
         issuesService
-          .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
-            priority: draggedItem.priority,
-            state: draggedItem.state,
-            sort_order: draggedItem.sort_order,
-          })
+          .patchIssue(
+            workspaceSlug as string,
+            projectId as string,
+            draggedItem.id,
+            {
+              priority: draggedItem.priority,
+              state: draggedItem.state,
+              sort_order: draggedItem.sort_order,
+            },
+            user
+          )
           .then((response) => {
             const sourceStateBeforeDrag = states.find((state) => state.name === source.droppableId);
 
@@ -239,14 +248,17 @@ export const IssuesView: React.FC<Props> = ({
               sourceStateBeforeDrag?.group !== "completed" &&
               response?.state_detail?.group === "completed"
             )
-              trackEventServices.trackIssueMarkedAsDoneEvent({
-                workspaceSlug,
-                workspaceId: draggedItem.workspace,
-                projectName: draggedItem.project_detail.name,
-                projectIdentifier: draggedItem.project_detail.identifier,
-                projectId,
-                issueId: draggedItem.id,
-              });
+              trackEventServices.trackIssueMarkedAsDoneEvent(
+                {
+                  workspaceSlug,
+                  workspaceId: draggedItem.workspace,
+                  projectName: draggedItem.project_detail.name,
+                  projectIdentifier: draggedItem.project_detail.identifier,
+                  projectId,
+                  issueId: draggedItem.id,
+                },
+                user
+              );
 
             if (cycleId) {
               mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
@@ -426,6 +438,7 @@ export const IssuesView: React.FC<Props> = ({
         isOpen={createViewModal !== null}
         handleClose={() => setCreateViewModal(null)}
         preLoadedData={createViewModal}
+        user={user}
       />
       <CreateUpdateIssueModal
         isOpen={createIssueModal && preloadedData?.actionType === "createIssue"}
@@ -444,6 +457,7 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setDeleteIssueModal(false)}
         isOpen={deleteIssueModal}
         data={issueToDelete}
+        user={user}
       />
       <TransferIssuesModal
         handleClose={() => setTransferIssuesModal(false)}
@@ -515,6 +529,7 @@ export const IssuesView: React.FC<Props> = ({
                       : null
                   }
                   isCompleted={isCompleted}
+                  user={user}
                   userAuth={memberRole}
                 />
               ) : issueView === "kanban" ? (
@@ -535,6 +550,7 @@ export const IssuesView: React.FC<Props> = ({
                       : null
                   }
                   isCompleted={isCompleted}
+                  user={user}
                   userAuth={memberRole}
                 />
               ) : issueView === "calendar" ? (
@@ -543,6 +559,7 @@ export const IssuesView: React.FC<Props> = ({
                   handleDeleteIssue={handleDeleteIssue}
                   addIssueToDate={addIssueToDate}
                   isCompleted={isCompleted}
+                  user={user}
                   userAuth={memberRole}
                 />
               ) : issueView === "spreadsheet" ? (
