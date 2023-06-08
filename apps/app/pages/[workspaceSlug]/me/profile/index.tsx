@@ -90,10 +90,7 @@ const Profile: NextPage = () => {
 
     setIsRemoving(true);
 
-    const index = url.indexOf(".com");
-    const asset = url.substring(index + 5);
-
-    fileService.deleteUserFile(asset).then(() => {
+    fileService.deleteUserFile(url).then(() => {
       if (updateUser)
         userService
           .updateUser({ avatar: "" })

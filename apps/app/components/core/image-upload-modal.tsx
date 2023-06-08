@@ -62,12 +62,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           setIsImageUploading(false);
           setImage(null);
 
-          if (value) {
-            const index = value.indexOf(".com");
-            const asset = value.substring(index + 5);
-
-            fileServices.deleteUserFile(asset);
-          }
+          if (value) fileServices.deleteUserFile(value);
         })
         .catch((err) => {
           console.error(err);
@@ -81,12 +76,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           setIsImageUploading(false);
           setImage(null);
 
-          if (value) {
-            const index = value.indexOf(".com");
-            const asset = value.substring(index + 5);
-
-            fileServices.deleteFile(asset);
-          }
+          if (value) fileServices.deleteFile(value);
         })
         .catch((err) => {
           console.error(err);
