@@ -111,7 +111,7 @@ const WorkspaceSettings: NextPage = () => {
 
     setIsImageRemoving(true);
 
-    fileService.deleteFile(url).then(() => {
+    fileService.deleteFile(activeWorkspace.id, url).then(() => {
       workspaceService
         .updateWorkspace(activeWorkspace.slug, { logo: "" }, user)
         .then((res) => {

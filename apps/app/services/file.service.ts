@@ -40,11 +40,11 @@ class FileServices extends APIService {
       });
   }
 
-  async deleteFile(assetUrl: string): Promise<any> {
+  async deleteFile(workspaceId: string, assetUrl: string): Promise<any> {
     const lastIndex = assetUrl.lastIndexOf("/");
     const assetId = assetUrl.substring(lastIndex + 1);
 
-    return this.delete(`/api/workspaces/file-assets/${assetId}/`)
+    return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
