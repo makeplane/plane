@@ -16,7 +16,7 @@ import { ContrastIcon } from "components/icons";
 // types
 import { ICycle, IIssue, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_INCOMPLETE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
@@ -33,9 +33,14 @@ export const SidebarCycleSelect: React.FC<Props> = ({
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: incompleteCycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_INCOMPLETE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getIncompleteCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cyclesService.getCyclesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            "incomplete"
+          )
       : null
   );
 

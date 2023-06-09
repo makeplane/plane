@@ -18,7 +18,7 @@ import { Loader, PrimaryButton } from "components/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse } from "types";
+import { IAnalyticsParams, IAnalyticsResponse, ICurrentUserResponse } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 
@@ -29,6 +29,7 @@ type Props = {
   control: Control<IAnalyticsParams, any>;
   setValue: UseFormSetValue<IAnalyticsParams>;
   fullScreen: boolean;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const CustomAnalytics: React.FC<Props> = ({
@@ -38,6 +39,7 @@ export const CustomAnalytics: React.FC<Props> = ({
   control,
   setValue,
   fullScreen,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -124,6 +126,7 @@ export const CustomAnalytics: React.FC<Props> = ({
         params={params}
         fullScreen={fullScreen}
         isProjectLevel={isProjectLevel}
+        user={user}
       />
     </div>
   );

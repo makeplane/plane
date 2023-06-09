@@ -1,7 +1,6 @@
 import React from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -40,25 +39,12 @@ import {
 } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import {
-  CompletedCyclesResponse,
-  CurrentAndUpcomingCyclesResponse,
-  DraftCyclesResponse,
-  ICycle,
-  IIssue,
-} from "types";
+import { ICycle, IIssue } from "types";
 // fetch-keys
-import {
-  CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  CYCLE_DETAILS,
-  CYCLE_DRAFT_LIST,
-  CYCLE_ISSUES,
-} from "constants/fetch-keys";
+import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
 type TSingleStatProps = {
   cycle: ICycle;
-  isCompleted?: boolean;
 };
 
 const stateGroups = [
@@ -89,7 +75,7 @@ const stateGroups = [
   },
 ];
 
-export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isCompleted = false }) => {
+export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -111,51 +97,18 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId || !cycle) return;
 
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
+    mutate<ICycle[]>(
+      CURRENT_CYCLE_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((c) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? true : c.is_favorite,
+        })),
+      false
+    );
+
     mutate(
-      CYCLE_DETAILS(projectId as string),
+      CYCLES_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,
@@ -180,51 +133,18 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !projectId || !cycle) return;
 
-    switch (cycleStatus) {
-      case "current":
-      case "upcoming":
-        mutate<CurrentAndUpcomingCyclesResponse>(
-          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-          (prevData) => ({
-            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "completed":
-        mutate<CompletedCyclesResponse>(
-          CYCLE_COMPLETE_LIST(projectId as string),
-          (prevData) => ({
-            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-      case "draft":
-        mutate<DraftCyclesResponse>(
-          CYCLE_DRAFT_LIST(projectId as string),
-          (prevData) => ({
-            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          }),
-          false
-        );
-        break;
-    }
+    mutate<ICycle[]>(
+      CURRENT_CYCLE_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((c) => ({
+          ...c,
+          is_favorite: c.id === cycle.id ? false : c.is_favorite,
+        })),
+      false
+    );
+
     mutate(
-      CYCLE_DETAILS(projectId as string),
+      CYCLES_LIST(projectId as string),
       (prevData: any) =>
         (prevData ?? []).map((c: any) => ({
           ...c,
@@ -244,17 +164,20 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
       });
   };
 
-  const { data: issues } = useSWR<IIssue[]>(
-    workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId && cycle.id
+      ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "high" })
+      : null,
     workspaceSlug && projectId && cycle.id
       ? () =>
-          cyclesService.getCycleIssues(
+          cyclesService.getCycleIssuesWithParams(
             workspaceSlug as string,
             projectId as string,
-            cycle.id as string
+            cycle.id,
+            { priority: "high" }
           )
       : null
-  );
+  ) as { data: IIssue[] };
 
   const progressIndicatorData = stateGroups.map((group, index) => ({
     id: index,
@@ -379,7 +302,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle, isComple
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2.5 text-brand-secondary">
                   {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                    <Image
+                    <img
                       src={cycle.owned_by.avatar}
                       height={16}
                       width={16}

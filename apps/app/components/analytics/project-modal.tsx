@@ -13,6 +13,7 @@ import analyticsService from "services/analytics.service";
 import projectService from "services/project.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
+import trackEventServices from "services/track-event.service";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // icons
@@ -22,9 +23,10 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { IAnalyticsParams } from "types";
+import { IAnalyticsParams, IWorkspace } from "types";
 // fetch-keys
 import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
+import useUserAuth from "hooks/use-user-auth";
 
 type Props = {
   isOpen: boolean;
@@ -45,6 +47,8 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
 
@@ -94,6 +98,51 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
           )
       : null
   );
+
+  const trackAnalyticsEvent = (tab: string) => {
+    const eventPayload: any = {
+      workspaceSlug: workspaceSlug?.toString(),
+    };
+
+    if (projectDetails) {
+      const workspaceDetails = projectDetails.workspace as IWorkspace;
+
+      eventPayload.workspaceId = workspaceDetails.id;
+      eventPayload.workspaceName = workspaceDetails.name;
+      eventPayload.projectId = projectDetails.id;
+      eventPayload.projectIdentifier = projectDetails.identifier;
+      eventPayload.projectName = projectDetails.name;
+    }
+
+    if (cycleDetails || moduleDetails) {
+      const details = cycleDetails || moduleDetails;
+
+      eventPayload.workspaceId = details?.workspace_detail?.id;
+      eventPayload.workspaceName = details?.workspace_detail?.name;
+      eventPayload.projectId = details?.project_detail.id;
+      eventPayload.projectIdentifier = details?.project_detail.identifier;
+      eventPayload.projectName = details?.project_detail.name;
+    }
+
+    if (cycleDetails) {
+      eventPayload.cycleId = cycleDetails.id;
+      eventPayload.cycleName = cycleDetails.name;
+    }
+
+    if (moduleDetails) {
+      eventPayload.moduleId = moduleDetails.id;
+      eventPayload.moduleName = moduleDetails.name;
+    }
+
+    const eventType =
+      tab === "Scope and Demand" ? "SCOPE_AND_DEMAND_ANALYTICS" : "CUSTOM_ANALYTICS";
+
+    trackEventServices.trackAnalyticsEvent(
+      eventPayload,
+      cycleId ? `CYCLE_${eventType}` : moduleId ? `MODULE_${eventType}` : `PROJECT_${eventType}`,
+      user
+    );
+  };
 
   const handleClose = () => {
     onClose();
@@ -146,6 +195,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     selected ? "bg-brand-surface-2" : ""
                   }`
                 }
+                onClick={() => trackAnalyticsEvent(tab)}
               >
                 {tab}
               </Tab>
@@ -164,6 +214,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 control={control}
                 setValue={setValue}
                 fullScreen={fullScreen}
+                user={user}
               />
             </Tab.Panel>
           </Tab.Panels>

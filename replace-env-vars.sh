@@ -11,7 +11,4 @@ fi
 # Only peform action if $FROM and $TO are different.
 echo "Replacing all statically built instances of $FROM with this string $TO ."
 
-find apps/app/.next -type f |
-while read file; do
-    sed -i "s|$FROM|$TO|g" "$file"
-done
+grep -R -la "${FROM}" apps/app/.next | xargs -I{} sed -i "s|$FROM|$TO|g" "{}"

@@ -96,12 +96,8 @@ from plane.api.views import (
     CycleViewSet,
     CycleIssueViewSet,
     CycleDateCheckEndpoint,
-    CurrentUpcomingCyclesEndpoint,
-    CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
-    DraftCyclesEndpoint,
     TransferCycleIssueEndpoint,
-    InCompleteCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -115,10 +111,6 @@ from plane.api.views import (
     PageBlockViewSet,
     PageFavoriteViewSet,
     CreateIssueFromPageBlockEndpoint,
-    RecentPagesEndpoint,
-    FavoritePagesEndpoint,
-    MyPagesEndpoint,
-    CreatedbyOtherPagesEndpoint,
     ## End Pages
     # Api Tokens
     ApiTokenEndpoint,
@@ -178,7 +170,7 @@ urlpatterns = [
     ),
     # Password Manipulation
     path(
-        "password-reset/<uidb64>/<token>/",
+        "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
         name="password-reset",
     ),
@@ -665,21 +657,6 @@ urlpatterns = [
         name="project-cycle",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/current-upcoming-cycles/",
-        CurrentUpcomingCyclesEndpoint.as_view(),
-        name="project-cycle-upcoming",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/completed-cycles/",
-        CompletedCyclesEndpoint.as_view(),
-        name="project-cycle-completed",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/draft-cycles/",
-        DraftCyclesEndpoint.as_view(),
-        name="project-cycle-draft",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-cycles/",
         CycleFavoriteViewSet.as_view(
             {
@@ -701,11 +678,6 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
         TransferCycleIssueEndpoint.as_view(),
-        name="transfer-issues",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/incomplete-cycles/",
-        InCompleteCyclesEndpoint.as_view(),
         name="transfer-issues",
     ),
     ## End Cycles
@@ -1076,26 +1048,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/page-blocks/<uuid:page_block_id>/issues/",
         CreateIssueFromPageBlockEndpoint.as_view(),
         name="page-block-issues",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/recent-pages/",
-        RecentPagesEndpoint.as_view(),
-        name="recent-pages",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/favorite-pages/",
-        FavoritePagesEndpoint.as_view(),
-        name="recent-pages",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/my-pages/",
-        MyPagesEndpoint.as_view(),
-        name="user-pages",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/created-by-other-pages/",
-        CreatedbyOtherPagesEndpoint.as_view(),
-        name="created-by-other-pages",
     ),
     ## End Pages
     # API Tokens

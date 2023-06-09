@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
 // hooks
-import useUser from "hooks/use-user";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import SettingsNavbar from "layouts/settings-navbar";
@@ -15,7 +15,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ICustomTheme } from "types";
 
 const ProfilePreferences = () => {
-  const { user: myProfile } = useUser();
+  const { user: myProfile } = useUserAuth();
   const { theme } = useTheme();
   const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
   const [preLoadedData, setPreLoadedData] = useState<ICustomTheme | null>(null);
@@ -29,9 +29,6 @@ const ProfilePreferences = () => {
 
   return (
     <WorkspaceAuthorizationLayout
-      meta={{
-        title: "Plane - My Profile",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="My Profile Preferences" />

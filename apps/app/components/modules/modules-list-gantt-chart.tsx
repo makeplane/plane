@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // components
 import { GanttChartRoot } from "components/gantt-chart";
+// ui
+import { Tooltip } from "components/ui";
 // types
 import { IModule } from "types";
 // constants
@@ -38,9 +40,11 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
           className="flex-shrink-0 w-[4px] h-full"
           style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color }}
         />
-        <div className="w-full text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden">
-          {data?.name}
-        </div>
+        <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
+          <div className="text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
+            {data?.name}
+          </div>
+        </Tooltip>
       </a>
     </Link>
   );

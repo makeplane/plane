@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
@@ -6,10 +6,13 @@ import useSWR from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
 import analyticsService from "services/analytics.service";
+import trackEventServices from "services/track-event.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
@@ -34,6 +37,8 @@ const Analytics = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { user } = useUserAuth();
+
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
 
   const params: IAnalyticsParams = {
@@ -47,6 +52,29 @@ const Analytics = () => {
     workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
     workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
   );
+
+  const trackAnalyticsEvent = (tab: string) => {
+    const eventPayload = {
+      workspaceSlug: workspaceSlug?.toString(),
+    };
+
+    const eventType =
+      tab === "Scope and Demand"
+        ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
+        : "WORKSPACE_CUSTOM_ANALYTICS";
+
+    trackEventServices.trackAnalyticsEvent(eventPayload, eventType, user);
+  };
+
+  useEffect(() => {
+    if (!workspaceSlug) return;
+
+    trackEventServices.trackAnalyticsEvent(
+      { workspaceSlug: workspaceSlug?.toString() },
+      "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
+      user
+    );
+  }, [workspaceSlug]);
 
   return (
     <WorkspaceAuthorizationLayout
@@ -79,6 +107,7 @@ const Analytics = () => {
                     selected ? "bg-brand-surface-2" : ""
                   }`
                 }
+                onClick={() => trackAnalyticsEvent(tab)}
               >
                 {tab}
               </Tab>
@@ -95,6 +124,7 @@ const Analytics = () => {
                 params={params}
                 control={control}
                 setValue={setValue}
+                user={user}
                 fullScreen
               />
             </Tab.Panel>

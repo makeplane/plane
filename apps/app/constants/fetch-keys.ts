@@ -71,9 +71,18 @@ export const PROJECT_ISSUE_LABELS = (projectId: string) =>
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
   `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
-export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId.toUpperCase()}`;
-export const CYCLE_INCOMPLETE_LIST = (projectId: string) =>
-  `CYCLE_INCOMPLETE_LIST_${projectId.toUpperCase()}`;
+// cycles
+export const CYCLES_LIST = (projectId: string) => `CYCLE_LIST_${projectId.toUpperCase()}`;
+export const INCOMPLETE_CYCLES_LIST = (projectId: string) =>
+  `INCOMPLETE_CYCLES_LIST_${projectId.toUpperCase()}`;
+export const CURRENT_CYCLE_LIST = (projectId: string) =>
+  `CURRENT_CYCLE_LIST_${projectId.toUpperCase()}`;
+export const UPCOMING_CYCLES_LIST = (projectId: string) =>
+  `UPCOMING_CYCLES_LIST_${projectId.toUpperCase()}`;
+export const DRAFT_CYCLES_LIST = (projectId: string) =>
+  `DRAFT_CYCLES_LIST_${projectId.toUpperCase()}`;
+export const COMPLETED_CYCLES_LIST = (projectId: string) =>
+  `COMPLETED_CYCLES_LIST_${projectId.toUpperCase()}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId.toUpperCase()}`;
 export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
   if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}`;
@@ -83,12 +92,6 @@ export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
   return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAILS_${cycleId.toUpperCase()}`;
-export const CYCLE_CURRENT_AND_UPCOMING_LIST = (projectId: string) =>
-  `CYCLE_CURRENT_AND_UPCOMING_LIST_${projectId.toUpperCase()}`;
-export const CYCLE_DRAFT_LIST = (projectId: string) =>
-  `CYCLE_DRAFT_LIST_${projectId.toUpperCase()}`;
-export const CYCLE_COMPLETE_LIST = (projectId: string) =>
-  `CYCLE_COMPLETE_LIST_${projectId.toUpperCase()}`;
 
 export const STATES_LIST = (projectId: string) => `STATES_LIST_${projectId.toUpperCase()}`;
 export const STATE_DETAILS = "STATE_DETAILS";

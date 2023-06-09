@@ -9,6 +9,7 @@ import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
 import useWorkspaces from "hooks/use-workspaces";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
@@ -30,6 +31,8 @@ const ProjectsPage: NextPage = () => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { user } = useUserAuth();
   // context data
   const { activeWorkspace } = useWorkspaces();
   const { projects } = useProjects();
@@ -81,6 +84,7 @@ const ProjectsPage: NextPage = () => {
         isOpen={!!deleteProject}
         onClose={() => setDeleteProject(null)}
         data={projects?.find((item) => item.id === deleteProject) ?? null}
+        user={user}
       />
       {projects ? (
         <div className="p-8">

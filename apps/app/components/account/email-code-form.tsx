@@ -21,6 +21,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   const [codeResent, setCodeResent] = useState(false);
   const [isCodeResending, setIsCodeResending] = useState(false);
   const [errorResendingCode, setErrorResendingCode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { setToastAlert } = useToast();
   const { timer: resendCodeTimer, setTimer: setResendCodeTimer } = useTimer();
@@ -64,22 +65,19 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   };
 
   const handleSignin = async (formData: EmailCodeFormValues) => {
-    await authenticationService
-      .magicSignIn(formData)
-      .then((response) => {
-        onSuccess(response);
-      })
-      .catch((error) => {
-        setToastAlert({
-          title: "Oops!",
-          type: "error",
-          message: error?.response?.data?.error ?? "Enter the correct code to sign in",
-        });
-        setError("token" as keyof EmailCodeFormValues, {
-          type: "manual",
-          message: error.error,
-        });
+    setIsLoading(true);
+    await authenticationService.magicSignIn(formData).catch((error) => {
+      setIsLoading(false);
+      setToastAlert({
+        title: "Oops!",
+        type: "error",
+        message: error?.response?.data?.error ?? "Enter the correct code to sign in",
       });
+      setError("token" as keyof EmailCodeFormValues, {
+        type: "manual",
+        message: error.error,
+      });
+    });
   };
 
   const emailOld = getValues("email");
@@ -87,6 +85,25 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   useEffect(() => {
     setErrorResendingCode(false);
   }, [emailOld]);
+
+  useEffect(() => {
+    const submitForm = (e: KeyboardEvent) => {
+      if (!codeSent && e.key === "Enter") {
+        e.preventDefault();
+        handleSubmit(onSubmit)().then(() => {
+          setResendCodeTimer(30);
+        });
+      }
+    };
+
+    if (!codeSent) {
+      window.addEventListener("keydown", submitForm);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", submitForm);
+    };
+  }, [handleSubmit, codeSent]);
 
   return (
     <>
@@ -177,9 +194,9 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               size="md"
               onClick={handleSubmit(handleSignin)}
               disabled={!isValid && isDirty}
-              loading={isSubmitting}
+              loading={isLoading}
             >
-              {isSubmitting ? "Signing in..." : "Sign in"}
+              {isLoading ? "Signing in..." : "Sign in"}
             </PrimaryButton>
           ) : (
             <PrimaryButton

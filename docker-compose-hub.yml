@@ -1,116 +1,145 @@
 version: "3.8"
 
 services:
-  nginx:
-    container_name: nginx
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - 80:80
-    depends_on:
-      - plane-web
-      - plane-api
-  db:
-    image: postgres:15.2-alpine
-    container_name: db
-    restart: always
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: plane
-      POSTGRES_DB: plane
-      POSTGRES_PASSWORD: xyzzyspoon
-      PGDATA: /var/lib/postgresql/data
-    command: postgres -c 'max_connections=1000'
-    ports:
-      - 5432:5432
-  redis:
-    image: redis:6.2.7-alpine
-    container_name: redis
-    restart: always
-    ports:
-      - 6379:6379
-    volumes:
-      - redisdata:/data
-  plane-web:
-    container_name: planefrontend
-    image: makeplane/plane-frontend:0.6
-    restart: always
-    command: [ "/usr/local/bin/start.sh" ]
-    environment:
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-      NEXT_PUBLIC_GOOGLE_CLIENTID: 0
-      NEXT_PUBLIC_GITHUB_APP_NAME: 0
-      NEXT_PUBLIC_GITHUB_ID: 0
-      NEXT_PUBLIC_SENTRY_DSN: 0
-      NEXT_PUBLIC_ENABLE_OAUTH: 0
-      NEXT_PUBLIC_ENABLE_SENTRY: 0
-    ports:
-      - 3000:3000
-  plane-api:
-    container_name: planebackend
-    image: makeplane/plane-backend:0.6
-    build:
-      context: ./apiserver
-      dockerfile: Dockerfile.api
-    restart: always
-    ports:
-      - 8000:8000
-    environment:
-      DJANGO_SETTINGS_MODULE: plane.settings.production
-      DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
-      REDIS_URL: redis://redis:6379/
-      EMAIL_HOST: ${EMAIL_HOST}
-      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
-      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
-      AWS_REGION: ${AWS_REGION}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-      WEB_URL: localhost/
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-      DISABLE_COLLECTSTATIC: 1
-      DOCKERIZED: 1
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      GPT_ENGINE: ${GPT_ENGINE}
-      SECRET_KEY: ${SECRET_KEY}
-    depends_on:
-      - db
-      - redis
-    command: ./bin/takeoff
-    links:
-      - db:db
-      - redis:redis
-  plane-worker:
-    container_name: planerqworker
-    image: makeplane/plane-worker:0.6
-    depends_on:
-      - redis
-      - db
-      - plane-api
-    command: ./bin/worker
-    links:
-      - redis:redis
-      - db:db
-    environment:
-      DJANGO_SETTINGS_MODULE: plane.settings.production
-      DATABASE_URL: postgres://plane:xyzzyspoon@db:5432/plane
-      REDIS_URL: redis://redis:6379/
-      EMAIL_HOST: ${EMAIL_HOST}
-      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
-      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
-      AWS_REGION: ${AWS_REGION}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-      WEB_URL: localhost/
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-      DISABLE_COLLECTSTATIC: 1
-      DOCKERIZED: 1
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      GPT_ENGINE: ${GPT_ENGINE}
-      SECRET_KEY: ${SECRET_KEY}
+        plane-web:
+                container_name: planefrontend
+                image: makeplane/plane-frontend:latest
+                restart: always
+                command: /usr/local/bin/start.sh
+                environment:
+                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+                        NEXT_PUBLIC_GOOGLE_CLIENTID: 0
+                        NEXT_PUBLIC_GITHUB_APP_NAME: 0
+                        NEXT_PUBLIC_GITHUB_ID: 0
+                        NEXT_PUBLIC_SENTRY_DSN: 0
+                        NEXT_PUBLIC_ENABLE_OAUTH: 0
+                        NEXT_PUBLIC_ENABLE_SENTRY: 0
+
+        plane-api:
+                container_name: planebackend
+                image: makeplane/plane-backend:latest
+                restart: always
+                command: ./bin/takeoff
+                environment:
+                        DJANGO_SETTINGS_MODULE: plane.settings.production
+                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
+                        REDIS_URL: redis://plane-redis:6379/
+                        EMAIL_HOST: ${EMAIL_HOST}
+                        EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+                        EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+                        EMAIL_PORT: ${EMAIL_PORT}
+                        EMAIL_FROM: ${EMAIL_FROM}
+                        EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+                        AWS_REGION: ${AWS_REGION}
+                        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+                        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                        AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
+                        WEB_URL: ${WEB_URL}
+                        GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+                        DISABLE_COLLECTSTATIC: 1
+                        DOCKERIZED: 1
+                        OPENAI_API_KEY: ${OPENAI_API_KEY}
+                        GPT_ENGINE: ${GPT_ENGINE}
+                        SECRET_KEY: ${SECRET_KEY}
+                        DEFAULT_EMAIL: ${DEFAULT_EMAIL}
+                        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+                        USE_MINIO: ${USE_MINIO}
+                depends_on:
+                        - plane-db
+                        - plane-redis
+
+        plane-worker:
+                container_name: planerqworker
+                image: makeplane/plane-worker:latest
+                restart: always
+                command: ./bin/worker
+                environment:
+                        DJANGO_SETTINGS_MODULE: plane.settings.production
+                        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
+                        REDIS_URL: redis://plane-redis:6379/
+                        EMAIL_HOST: ${EMAIL_HOST}
+                        EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+                        EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+                        EMAIL_PORT: ${EMAIL_PORT}
+                        EMAIL_FROM: ${EMAIL_FROM}
+                        EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+                        AWS_REGION: ${AWS_REGION}
+                        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+                        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                        AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
+                        WEB_URL: ${WEB_URL}
+                        GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+                        DISABLE_COLLECTSTATIC: 1
+                        DOCKERIZED: 1
+                        OPENAI_API_KEY: ${OPENAI_API_KEY}
+                        GPT_ENGINE: ${GPT_ENGINE}
+                        SECRET_KEY: ${SECRET_KEY}
+                        DEFAULT_EMAIL: ${DEFAULT_EMAIL}
+                        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+                        USE_MINIO: ${USE_MINIO}
+                depends_on:
+                        - plane-api
+                        - plane-db
+                        - plane-redis
+
+        plane-db:
+                container_name: plane-db
+                image: postgres:15.2-alpine
+                restart: always
+                command: postgres -c 'max_connections=1000'
+                environment:
+                        POSTGRES_USER: ${PGUSER}
+                        POSTGRES_DB: ${PGDATABASE}
+                        POSTGRES_PASSWORD: ${PGPASSWORD}
+                volumes:
+                        - pgdata:/var/lib/postgresql/data
+
+        plane-redis:
+                container_name: plane-redis
+                image: redis:6.2.7-alpine
+                restart: always
+                volumes:
+                        - redisdata:/data
+
+        plane-minio:
+                container_name: plane-minio
+                image: minio/minio
+                volumes:
+                        - uploads:/export
+                environment:
+                        MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+                        MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+                command: server /export --console-address ":9090"
+
+        createbuckets:
+                image: minio/mc
+                depends_on:
+                  - plane-minio
+                entrypoint: >
+                  /bin/sh -c "
+                  /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
+                  /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME;
+                  /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME;
+                  exit 0;
+                  "
+
+# Comment this if you already have a reverse proxy running
+        plane-proxy:
+                container_name: planeproxy
+                image: makeplane/plane-proxy:latest
+                ports:
+                - ${NGINX_PORT}:80
+                environment:
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+                        BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+                depends_on:
+                - plane-web
+                - plane-api
+
+
 volumes:
-  pgdata:
-  redisdata:
+        pgdata:
+        redisdata:
+        uploads:

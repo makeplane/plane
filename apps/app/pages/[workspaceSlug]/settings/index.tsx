@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -12,6 +11,7 @@ import workspaceService from "services/workspace.service";
 import fileService from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import SettingsNavbar from "layouts/settings-navbar";
@@ -49,6 +49,8 @@ const WorkspaceSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { user } = useUserAuth();
+
   const { setToastAlert } = useToast();
 
   const { data: activeWorkspace } = useSWR(
@@ -82,7 +84,7 @@ const WorkspaceSettings: NextPage = () => {
     };
 
     await workspaceService
-      .updateWorkspace(activeWorkspace.slug, payload)
+      .updateWorkspace(activeWorkspace.slug, payload, user)
       .then((res) => {
         mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
           prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
@@ -109,12 +111,9 @@ const WorkspaceSettings: NextPage = () => {
 
     setIsImageRemoving(true);
 
-    const index = url.indexOf(".com");
-    const asset = url.substring(index + 5);
-
-    fileService.deleteFile(asset).then(() => {
+    fileService.deleteFile(activeWorkspace.id, url).then(() => {
       workspaceService
-        .updateWorkspace(activeWorkspace.slug, { logo: "" })
+        .updateWorkspace(activeWorkspace.slug, { logo: "" }, user)
         .then((res) => {
           setToastAlert({
             type: "success",
@@ -146,9 +145,6 @@ const WorkspaceSettings: NextPage = () => {
 
   return (
     <WorkspaceAuthorizationLayout
-      meta={{
-        title: "Plane - Workspace Settings",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
@@ -172,6 +168,7 @@ const WorkspaceSettings: NextPage = () => {
           setIsOpen(false);
         }}
         data={activeWorkspace ?? null}
+        user={user}
       />
       <div className="p-8">
         <SettingsHeader />
@@ -189,13 +186,10 @@ const WorkspaceSettings: NextPage = () => {
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                     {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                       <div className="relative mx-auto flex h-12 w-12">
-                        <Image
+                        <img
                           src={watch("logo")!}
+                          className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
                           alt="Workspace Logo"
-                          objectFit="cover"
-                          layout="fill"
-                          className="rounded-md"
-                          priority
                         />
                       </div>
                     ) : (

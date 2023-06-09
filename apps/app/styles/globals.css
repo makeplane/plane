@@ -17,9 +17,9 @@
   }
 
   :root {
-    --color-bg-base: 243, 244, 246;
+    --color-bg-base: 255, 255, 255;
     --color-bg-surface-1: 249, 250, 251;
-    --color-bg-surface-2: 255, 255, 255;
+    --color-bg-surface-2: 243, 244, 246;
 
     --color-border: 229, 231, 235;
     --color-bg-sidebar: 255, 255, 255;

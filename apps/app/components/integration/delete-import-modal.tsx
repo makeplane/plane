@@ -15,7 +15,7 @@ import { DangerButton, Input, SecondaryButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import { IImporterService } from "types";
+import { ICurrentUserResponse, IImporterService } from "types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
@@ -23,9 +23,10 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [confirmDeleteImport, setConfirmDeleteImport] = useState(false);
 
@@ -45,7 +46,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
       false
     );
 
-    IntegrationService.deleteImporterService(workspaceSlug as string, data.service, data.id)
+    IntegrationService.deleteImporterService(workspaceSlug as string, data.service, data.id, user)
       .catch(() =>
         setToastAlert({
           type: "error",

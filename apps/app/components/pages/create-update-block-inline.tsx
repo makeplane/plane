@@ -20,7 +20,7 @@ import { GptAssistantModal } from "components/core";
 // ui
 import { Loader, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
-import { IPageBlock } from "types";
+import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -30,6 +30,7 @@ type Props = {
   handleAiAssistance?: (response: string) => void;
   setIsSyncing?: React.Dispatch<React.SetStateAction<boolean>>;
   focus?: keyof IPageBlock;
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues = {
@@ -61,6 +62,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   handleAiAssistance,
   setIsSyncing,
   focus,
+  user,
 }) => {
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
@@ -96,11 +98,17 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
       if (!workspaceSlug || !projectId || !pageId) return;
 
       await pagesService
-        .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
-          name: formData.name,
-          description: formData.description ?? "",
-          description_html: formData.description_html ?? "<p></p>",
-        })
+        .createPageBlock(
+          workspaceSlug as string,
+          projectId as string,
+          pageId as string,
+          {
+            name: formData.name,
+            description: formData.description ?? "",
+            description_html: formData.description_html ?? "<p></p>",
+          },
+          user
+        )
         .then((res) => {
           mutate<IPageBlock[]>(
             PAGE_BLOCKS_LIST(pageId as string),
@@ -139,21 +147,34 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
       );
 
       await pagesService
-        .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, data.id, {
-          name: formData.name,
-          description: formData.description,
-          description_html: formData.description_html,
-        })
+        .patchPageBlock(
+          workspaceSlug as string,
+          projectId as string,
+          pageId as string,
+          data.id,
+          {
+            name: formData.name,
+            description: formData.description,
+            description_html: formData.description_html,
+          },
+          user
+        )
         .then((res) => {
           mutate(PAGE_BLOCKS_LIST(pageId as string));
           editorRef.current?.setEditorValue(res.description_html);
           if (data.issue && data.sync)
             issuesService
-              .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
-                name: res.name,
-                description: res.description,
-                description_html: res.description_html,
-              })
+              .patchIssue(
+                workspaceSlug as string,
+                projectId as string,
+                data.issue,
+                {
+                  name: res.name,
+                  description: res.description,
+                  description_html: res.description_html,
+                },
+                user
+              )
               .finally(() => {
                 if (setIsSyncing) setIsSyncing(false);
               });
@@ -169,10 +190,15 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug as string, projectId as string, {
-        prompt: watch("name"),
-        task: "Generate a proper description for this issue in context of a project management software.",
-      })
+      .createGptTask(
+        workspaceSlug as string,
+        projectId as string,
+        {
+          prompt: watch("name"),
+          task: "Generate a proper description for this issue in context of a project management software.",
+        },
+        user
+      )
       .then((res) => {
         if (res.response === "")
           setToastAlert({

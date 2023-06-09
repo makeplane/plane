@@ -7,7 +7,7 @@ import { Command } from "cmdk";
 // services
 import issuesService from "services/issues.service";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // constants
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, PROJECT_MEMBERS } from "constants/fetch-keys";
 // icons
@@ -18,9 +18,10 @@ import { Avatar } from "components/ui";
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
   issue: IIssue;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }) => {
+export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -57,18 +58,21 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }
     async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutate(
+      mutate<IIssue>(
         ISSUE_DETAILS(issueId as string),
-        (prevData: IIssue) => ({
-          ...prevData,
-          ...formData,
-        }),
+        async (prevData) => {
+          if (!prevData) return prevData;
+          return {
+            ...prevData,
+            ...formData,
+          };
+        },
         false
       );
 
       const payload = { ...formData };
       await issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
@@ -80,7 +84,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }
   );
 
   const handleIssueAssignees = (assignee: string) => {
-    const updatedAssignees = issue.assignees ?? [];
+    const updatedAssignees = issue.assignees_list ?? [];
 
     if (updatedAssignees.includes(assignee)) {
       updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);

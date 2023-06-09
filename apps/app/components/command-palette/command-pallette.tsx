@@ -120,18 +120,23 @@ export const CommandPalette: React.FC = () => {
     async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutate(
+      mutate<IIssue>(
         ISSUE_DETAILS(issueId as string),
-        (prevData: IIssue) => ({
-          ...prevData,
-          ...formData,
-        }),
+
+        (prevData) => {
+          if (!prevData) return prevData;
+
+          return {
+            ...prevData,
+            ...formData,
+          };
+        },
         false
       );
 
       const payload = { ...formData };
       await issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
           mutate(ISSUE_DETAILS(issueId as string));
@@ -325,25 +330,33 @@ export const CommandPalette: React.FC = () => {
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
       {workspaceSlug && (
-        <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
+        <CreateProjectModal
+          isOpen={isProjectModalOpen}
+          setIsOpen={setIsProjectModalOpen}
+          user={user}
+        />
       )}
       {projectId && (
         <>
           <CreateUpdateCycleModal
             isOpen={isCreateCycleModalOpen}
             handleClose={() => setIsCreateCycleModalOpen(false)}
+            user={user}
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
+            user={user}
           />
           <CreateUpdateViewModal
             handleClose={() => setIsCreateViewModalOpen(false)}
             isOpen={isCreateViewModalOpen}
+            user={user}
           />
           <CreateUpdatePageModal
             isOpen={isCreateUpdatePageModalOpen}
             handleClose={() => setIsCreateUpdatePageModalOpen(false)}
+            user={user}
           />
         </>
       )}
@@ -352,6 +365,7 @@ export const CommandPalette: React.FC = () => {
           handleClose={() => setDeleteIssueModal(false)}
           isOpen={deleteIssueModal}
           data={issueDetails}
+          user={user}
         />
       )}
 
@@ -362,6 +376,7 @@ export const CommandPalette: React.FC = () => {
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}
         setIsOpen={setIsBulkDeleteIssuesModalOpen}
+        user={user}
       />
       <Transition.Root
         show={isPaletteOpen}
@@ -849,6 +864,7 @@ export const CommandPalette: React.FC = () => {
                         <ChangeIssueState
                           issue={issueDetails}
                           setIsPaletteOpen={setIsPaletteOpen}
+                          user={user}
                         />
                       </>
                     )}
@@ -856,12 +872,14 @@ export const CommandPalette: React.FC = () => {
                       <ChangeIssuePriority
                         issue={issueDetails}
                         setIsPaletteOpen={setIsPaletteOpen}
+                        user={user}
                       />
                     )}
                     {page === "change-issue-assignee" && issueDetails && (
                       <ChangeIssueAssignee
                         issue={issueDetails}
                         setIsPaletteOpen={setIsPaletteOpen}
+                        user={user}
                       />
                     )}
                     {page === "change-interface-theme" && (

@@ -66,6 +66,7 @@ const MembersSettings: NextPage = () => {
       role: item.role,
       status: true,
       member: true,
+      accountCreated: true,
     })) || []),
     ...(workspaceInvitations?.map((item) => ({
       id: item.id,
@@ -77,6 +78,7 @@ const MembersSettings: NextPage = () => {
       role: item.role,
       status: item.accepted,
       member: false,
+      accountCreated: item?.accepted ? false : true,
     })) || []),
   ];
 
@@ -133,6 +135,7 @@ const MembersSettings: NextPage = () => {
         setIsOpen={setInviteModal}
         workspace_slug={workspaceSlug as string}
         members={members}
+        user={user}
       />
       <WorkspaceAuthorizationLayout
         breadcrumbs={
@@ -174,12 +177,10 @@ const MembersSettings: NextPage = () => {
                         <div className="flex items-center gap-x-8 gap-y-2">
                           <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
                             {member.avatar && member.avatar !== "" ? (
-                              <Image
+                              <img
                                 src={member.avatar}
+                                className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                                 alt={member.first_name}
-                                layout="fill"
-                                objectFit="cover"
-                                className="rounded-lg"
                               />
                             ) : member.first_name !== "" ? (
                               member.first_name.charAt(0)
@@ -198,6 +199,11 @@ const MembersSettings: NextPage = () => {
                           {!member?.status && (
                             <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
                               <p>Pending</p>
+                            </div>
+                          )}
+                          {member?.status && !member?.accountCreated && (
+                            <div className="mr-2 flex items-center justify-center rounded-full bg-blue-500/20 px-2 py-1 text-center text-xs text-blue-500">
+                              <p>Account not created</p>
                             </div>
                           )}
                           <CustomSelect

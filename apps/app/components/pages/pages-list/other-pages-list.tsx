@@ -18,13 +18,14 @@ export const OtherPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
   const { data: pages } = useSWR(
     workspaceSlug && projectId ? OTHER_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => pagesService.getOtherPages(workspaceSlug as string, projectId as string)
+      ? () =>
+          pagesService.getPagesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            "created_by_other"
+          )
       : null
   );
 
-  return (
-    <div className="mt-4 space-y-4">
-      <PagesView pages={pages} viewType={viewType} />
-    </div>
-  );
+  return <PagesView pages={pages} viewType={viewType} />;
 };

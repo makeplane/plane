@@ -44,7 +44,7 @@ import { LayerDiagonalIcon } from "components/icons";
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import { IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -69,6 +69,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -87,6 +88,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   handleDeleteIssue,
   handleTrashBox,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   // context menu
@@ -170,7 +172,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData, user)
         .then(() => {
           if (cycleId) {
             mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
@@ -342,6 +344,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
             )}
@@ -350,6 +353,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
             )}
@@ -357,6 +361,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -384,6 +389,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
                 tooltipPosition="left"
+                user={user}
                 selfPositioned
               />
             )}
@@ -392,6 +398,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
             )}
