@@ -30,13 +30,13 @@ const HomePage: NextPage = () => {
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
       if (clientId && credential) {
-        mutateUser(
-          await authenticationService.socialAuth({
-            medium: "google",
-            credential,
-            clientId,
-          })
-        );
+        const socialAuthPayload = {
+          medium: "google",
+          credential,
+          clientId,
+        };
+        const response = await authenticationService.socialAuth(socialAuthPayload);
+        if (response && response?.user) mutateUser({ ...response?.user });
       } else {
         throw Error("Cant find credentials");
       }
@@ -53,13 +53,13 @@ const HomePage: NextPage = () => {
   const handleGithubSignIn = async (credential: string) => {
     try {
       if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
-        const { user, ...response } = await authenticationService.socialAuth({
+        const socialAuthPayload = {
           medium: "github",
           credential,
           clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
-        });
-
-        mutateUser({ ...response, ...user });
+        };
+        const response = await authenticationService.socialAuth(socialAuthPayload);
+        if (response && response?.user) mutateUser({ ...response?.user });
       } else {
         throw Error("Cant find credentials");
       }

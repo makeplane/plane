@@ -86,18 +86,7 @@ const Onboarding: NextPage = () => {
                           userService
                             .updateUserOnBoard({ userRole }, user)
                             .then(async () => {
-                              mutate<ICurrentUserResponse>(
-                                CURRENT_USER,
-                                (prevData) => {
-                                  if (!prevData) return prevData;
-
-                                  return {
-                                    ...prevData,
-                                    is_onboarded: true,
-                                  };
-                                },
-                                false
-                              );
+                              mutateUser();
                               const userWorkspaces = await workspaceService.userWorkspaces();
 
                               const lastActiveWorkspace =
