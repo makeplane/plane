@@ -36,7 +36,7 @@ const HomePage: NextPage = () => {
           clientId,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
-        if (response && response?.user) mutateUser({ ...response?.user });
+        if (response && response?.user) mutateUser();
       } else {
         throw Error("Cant find credentials");
       }
@@ -59,7 +59,7 @@ const HomePage: NextPage = () => {
           clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
-        if (response && response?.user) mutateUser({ ...response?.user });
+        if (response && response?.user) mutateUser();
       } else {
         throw Error("Cant find credentials");
       }
