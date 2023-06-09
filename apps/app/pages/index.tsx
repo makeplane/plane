@@ -53,13 +53,13 @@ const HomePage: NextPage = () => {
   const handleGithubSignIn = async (credential: string) => {
     try {
       if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
-        mutateUser(
-          await authenticationService.socialAuth({
-            medium: "github",
-            credential,
-            clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
-          })
-        );
+        const { user, ...response } = await authenticationService.socialAuth({
+          medium: "github",
+          credential,
+          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
+        });
+
+        mutateUser({ ...response, ...user });
       } else {
         throw Error("Cant find credentials");
       }
