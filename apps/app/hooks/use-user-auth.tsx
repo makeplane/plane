@@ -24,6 +24,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     mutate,
   } = useSWR<ICurrentUserResponse>(CURRENT_USER, () => userService.currentUser(), {
     refreshInterval: 0,
+    shouldRetryOnError: false,
   });
 
   useEffect(() => {
