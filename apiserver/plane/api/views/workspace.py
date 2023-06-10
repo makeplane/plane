@@ -249,8 +249,8 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 email__in=[email.get("email") for email in emails]
             ).select_related("workspace")
 
-            # create the user 
-            if settings.DOCKERIZED:
+            # create the user if signup is disabled
+            if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
                 _ = User.objects.bulk_create([
                     User(
                         email=email.get("email"),
