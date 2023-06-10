@@ -1,3 +1,9 @@
+if( -not (Get-Module -ListAvailable -Name posh-git )){
+    Write-Host "Module does not exist"
+    Install-Module Posh-Git -Scope CurrentUser -Force
+}
+Import-Module posh-git
+
 if ($PSVersionTable.Platform -eq 'Unix') {
     $logPath = '/tmp'
 }
@@ -59,10 +65,10 @@ if (Test-Path "plane" -PathType Container) {
     Remove-Item -Path "plane" -Confirm -Force -Recurse -ErrorAction Stop | Out-Null
 } 
 Add-Content -Path $logFile -Value "[INFO] Cloning Github Repo"
-"git clone https://github.com/makeplane/plane.git" | cmd.exe
+git clone https://github.com/makeplane/plane.git
 
 Set-Location "plane"
-"git checkout master" | cmd.exe
+git checkout master
 
 Add-Content -Path $logFile -Value "[INFO] Setting Setup.sh up"
 
