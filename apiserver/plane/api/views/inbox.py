@@ -1,6 +1,6 @@
 # Django import
 from django.utils import timezone
-from django.db.models import Q, Count
+from django.db.models import Q, Count, OuterRef, Func, F
 
 # Third party imports
 from rest_framework import status
@@ -10,12 +10,22 @@ from sentry_sdk import capture_exception
 # Module imports
 from .base import BaseViewSet
 from plane.api.permissions import ProjectBasePermission
-from plane.db.models import Project, Inbox, InboxIssue, Issue, State
+from plane.db.models import (
+    Project,
+    Inbox,
+    InboxIssue,
+    Issue,
+    State,
+    IssueLink,
+    IssueAttachment,
+)
 from plane.api.serializers import (
     InboxSerializer,
     InboxIssueSerializer,
     IssueCreateSerializer,
+    IssueStateSerializer
 )
+from plane.utils.issue_filters import issue_filters
 
 
 class InboxViewSet(BaseViewSet):
@@ -75,7 +85,9 @@ class InboxIssueViewSet(BaseViewSet):
     serializer_class = InboxIssueSerializer
     model = InboxIssue
 
-    filterset_fields = ["status",]
+    filterset_fields = [
+        "status",
+    ]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -89,6 +101,62 @@ class InboxIssueViewSet(BaseViewSet):
             )
             .select_related("issue", "workspace", "project")
         )
+
+    def list(self, request, slug, project_id, inbox_id):
+        try:
+            order_by = request.GET.get("order_by", "created_at")
+            group_by = request.GET.get("group_by", False)
+            filters = issue_filters(request.query_params, "GET")
+            issues = (
+                Issue.objects.filter(
+                    issue_inbox__inbox_id=inbox_id,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(bridge_id=F("issue_cycle__id"))
+                .filter(project_id=project_id)
+                .filter(workspace__slug=slug)
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .order_by(order_by)
+                .filter(**filters)
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+            )
+            issues_data = IssueStateSerializer(issues, many=True).data
+            return Response(
+                issues_data,
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def create(self, request, slug, project_id, inbox_id):
         try:
