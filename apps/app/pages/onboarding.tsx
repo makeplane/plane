@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import Image from "next/image";
-import Router, { useRouter } from "next/router";
+import Router from "next/router";
 
 import { mutate } from "swr";
 
@@ -37,8 +36,6 @@ const Onboarding: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [workspace, setWorkspace] = useState();
-
-  const router = useRouter();
 
   const { user, mutateUser } = useUserAuth("onboarding");
 
@@ -89,21 +86,7 @@ const Onboarding: NextPage = () => {
                           userService
                             .updateUserOnBoard({ userRole }, user)
                             .then(async () => {
-                              mutate<ICurrentUserResponse>(
-                                CURRENT_USER,
-                                (prevData) => {
-                                  if (!prevData) return prevData;
-
-                                  return {
-                                    ...prevData,
-                                    user: {
-                                      ...prevData.user,
-                                      is_onboarded: true,
-                                    },
-                                  };
-                                },
-                                false
-                              );
+                              mutateUser();
                               const userWorkspaces = await workspaceService.userWorkspaces();
 
                               const lastActiveWorkspace =

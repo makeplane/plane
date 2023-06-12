@@ -19,12 +19,14 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
   } = useRouter();
   // states
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
+  const [gitCode, setGitCode] = useState<null | string>(null);
 
   useEffect(() => {
-    if (code) {
+    if (code && !gitCode) {
+      setGitCode(code.toString());
       handleSignIn(code.toString());
     }
-  }, [code, handleSignIn]);
+  }, [code, gitCode, handleSignIn]);
 
   useEffect(() => {
     const origin =
