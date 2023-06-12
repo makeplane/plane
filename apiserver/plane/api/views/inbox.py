@@ -1,6 +1,6 @@
 # Django import
 from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F
+from django.db.models import Q, Count, OuterRef, Func, F, Prefetch
 
 # Third party imports
 from rest_framework import status
@@ -23,7 +23,7 @@ from plane.api.serializers import (
     InboxSerializer,
     InboxIssueSerializer,
     IssueCreateSerializer,
-    IssueStateSerializer
+    IssueStateInboxSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -143,9 +143,9 @@ class InboxIssueViewSet(BaseViewSet):
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
-                )
+                ).prefetch_related(Prefetch("issue_inbox", queryset=InboxIssue.objects.only("status", "duplicate_to", "snoozed_till", "source")))
             )
-            issues_data = IssueStateSerializer(issues, many=True).data
+            issues_data = IssueStateInboxSerializer(issues, many=True).data
             return Response(
                 issues_data,
                 status=status.HTTP_200_OK,

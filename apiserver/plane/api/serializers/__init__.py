@@ -75,5 +75,5 @@ from .estimate import (
     EstimateReadSerializer,
 )
 
-from .inbox import InboxSerializer, InboxIssueSerializer
+from .inbox import InboxSerializer, InboxIssueSerializer, IssueStateInboxSerializer
 from .analytic import AnalyticViewSerializer
