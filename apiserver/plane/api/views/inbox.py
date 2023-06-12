@@ -119,7 +119,7 @@ class InboxIssueViewSet(BaseViewSet):
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
-                .annotate(bridge_id=F("issue_cycle__id"))
+                .annotate(bridge_id=F("issue_inbox__id"))
                 .filter(project_id=project_id)
                 .filter(workspace__slug=slug)
                 .select_related("project")
