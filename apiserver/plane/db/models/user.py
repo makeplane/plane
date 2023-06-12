@@ -19,10 +19,13 @@ from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-def generate_display_name():
-    letters = string.ascii_letters
-    random_letters = ''.join(random.choice(letters) for _ in range(6))
-    return random_letters
+def generate_display_name(instance):
+    if not instance.first_name:
+        letters = string.ascii_letters
+        random_letters = ''.join(random.choice(letters) for _ in range(6))
+        return random_letters
+    else:
+        return instance.first_name.lower()
 
 
 
@@ -104,6 +107,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.token_updated_at is not None:
             self.token = uuid.uuid4().hex + uuid.uuid4().hex
             self.token_updated_at = timezone.now()
+
+        if not self.display_name:
+            self.display_name = generate_display_name(self)
 
         if self.is_superuser:
             self.is_staff = True

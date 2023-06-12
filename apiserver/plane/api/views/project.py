@@ -397,7 +397,7 @@ class ProjectMemberViewSet(BaseViewSet):
     ]
 
     search_fields = [
-        "member__email",
+        "member__display_name",
         "member__first_name",
     ]
 

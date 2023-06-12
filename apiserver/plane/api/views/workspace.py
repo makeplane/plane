@@ -419,7 +419,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     ]
 
     search_fields = [
-        "member__email",
+        "member__display_name",
         "member__first_name",
     ]
 
@@ -519,7 +519,7 @@ class TeamMemberViewSet(BaseViewSet):
     ]
 
     search_fields = [
-        "member__email",
+        "member__display_name",
         "member__first_name",
     ]
 
