@@ -1,9 +1,6 @@
 import { useState } from "react";
-
+// next imports
 import Router from "next/router";
-
-import { mutate } from "swr";
-
 // services
 import userService from "services/user.service";
 import workspaceService from "services/workspace.service";
@@ -11,7 +8,6 @@ import workspaceService from "services/workspace.service";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
 // components
 import {
   InviteMembers,
@@ -26,9 +22,6 @@ import { PrimaryButton, Spinner } from "components/ui";
 import { ONBOARDING_CARDS } from "constants/workspace";
 // types
 import type { NextPage } from "next";
-import { ICurrentUserResponse } from "types";
-// fetch-keys
-import { CURRENT_USER } from "constants/fetch-keys";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);
@@ -37,109 +30,117 @@ const Onboarding: NextPage = () => {
 
   const [workspace, setWorkspace] = useState();
 
-  const { user, mutateUser } = useUserAuth("onboarding");
+  const { user, isLoading: userLoading, mutateUser } = useUserAuth("onboarding");
 
   return (
-    <UserAuthorizationLayout>
-      <DefaultLayout>
-        {isLoading ? (
-          <div className="grid h-screen place-items-center">
-            <Spinner />
-          </div>
-        ) : (
-          <div className="relative grid h-full place-items-center p-5">
-            {step <= 3 ? (
-              <div className="h-full flex flex-col justify-center w-full py-4">
-                <div className="mb-7 flex items-center justify-center text-center">
-                  <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
-                </div>
-                {step === 1 ? (
-                  <UserDetails user={user} setStep={setStep} setUserRole={setUserRole} />
-                ) : step === 2 ? (
-                  <Workspace setStep={setStep} setWorkspace={setWorkspace} user={user} />
-                ) : (
-                  <InviteMembers setStep={setStep} workspace={workspace} user={user} />
-                )}
-              </div>
-            ) : (
-              <div className="flex w-full max-w-2xl flex-col gap-12">
-                <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-brand-base pb-7 text-center shadow-md">
-                  {step === 4 ? (
-                    <OnboardingCard data={ONBOARDING_CARDS.welcome} />
-                  ) : step === 5 ? (
-                    <OnboardingCard data={ONBOARDING_CARDS.issue} gradient />
-                  ) : step === 6 ? (
-                    <OnboardingCard data={ONBOARDING_CARDS.cycle} gradient />
-                  ) : step === 7 ? (
-                    <OnboardingCard data={ONBOARDING_CARDS.module} gradient />
+    <DefaultLayout>
+      {userLoading ? (
+        <div className="grid h-screen place-items-center">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          {isLoading ? (
+            <div className="grid h-screen place-items-center">
+              <Spinner />
+            </div>
+          ) : (
+            <div className="relative grid h-full place-items-center p-5">
+              {step <= 3 ? (
+                <div className="h-full flex flex-col justify-center w-full py-4">
+                  <div className="mb-7 flex items-center justify-center text-center">
+                    <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
+                  </div>
+                  {step === 1 ? (
+                    <UserDetails user={user} setStep={setStep} setUserRole={setUserRole} />
+                  ) : step === 2 ? (
+                    <Workspace setStep={setStep} setWorkspace={setWorkspace} user={user} />
                   ) : (
-                    <OnboardingCard data={ONBOARDING_CARDS.commandMenu} />
+                    step === 3 && (
+                      <InviteMembers setStep={setStep} workspace={workspace} user={user} />
+                    )
                   )}
-                  <div className="mx-auto flex h-1/4 items-end lg:w-1/2">
-                    <PrimaryButton
-                      type="button"
-                      className="flex w-full items-center justify-center text-center "
-                      size="md"
-                      onClick={() => {
-                        if (step === 8) {
-                          setIsLoading(true);
-                          userService
-                            .updateUserOnBoard({ userRole }, user)
-                            .then(async () => {
-                              mutateUser();
-                              const userWorkspaces = await workspaceService.userWorkspaces();
+                </div>
+              ) : (
+                <div className="flex w-full max-w-2xl flex-col gap-12">
+                  <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-brand-base pb-7 text-center shadow-md">
+                    {step === 4 ? (
+                      <OnboardingCard data={ONBOARDING_CARDS.welcome} />
+                    ) : step === 5 ? (
+                      <OnboardingCard data={ONBOARDING_CARDS.issue} gradient />
+                    ) : step === 6 ? (
+                      <OnboardingCard data={ONBOARDING_CARDS.cycle} gradient />
+                    ) : step === 7 ? (
+                      <OnboardingCard data={ONBOARDING_CARDS.module} gradient />
+                    ) : (
+                      step === 8 && <OnboardingCard data={ONBOARDING_CARDS.commandMenu} />
+                    )}
+                    <div className="mx-auto flex h-1/4 items-end lg:w-1/2">
+                      <PrimaryButton
+                        type="button"
+                        className="flex w-full items-center justify-center text-center "
+                        size="md"
+                        onClick={() => {
+                          if (step === 8) {
+                            setIsLoading(true);
+                            userService
+                              .updateUserOnBoard({ userRole }, user)
+                              .then(async () => {
+                                mutateUser();
+                                const userWorkspaces = await workspaceService.userWorkspaces();
 
-                              const lastActiveWorkspace =
-                                userWorkspaces.find(
-                                  (workspace) => workspace.id === user?.last_workspace_id
-                                ) ?? userWorkspaces[0];
+                                const lastActiveWorkspace =
+                                  userWorkspaces.find(
+                                    (workspace) => workspace.id === user?.last_workspace_id
+                                  ) ?? userWorkspaces[0];
 
-                              if (lastActiveWorkspace) {
-                                userService
-                                  .updateUser({
-                                    last_workspace_id: lastActiveWorkspace.id,
-                                  })
-                                  .then((res) => {
-                                    mutateUser();
-                                  })
-                                  .catch((err) => {
-                                    console.log(err);
-                                  });
-                                Router.push(`/${lastActiveWorkspace.slug}`);
-                                return;
-                              } else {
-                                const invitations =
-                                  await workspaceService.userWorkspaceInvitations();
-                                if (invitations.length > 0) {
-                                  Router.push(`/invitations`);
+                                if (lastActiveWorkspace) {
+                                  userService
+                                    .updateUser({
+                                      last_workspace_id: lastActiveWorkspace.id,
+                                    })
+                                    .then((res) => {
+                                      mutateUser();
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                    });
+                                  Router.push(`/${lastActiveWorkspace.slug}`);
                                   return;
                                 } else {
-                                  Router.push(`/create-workspace`);
-                                  return;
+                                  const invitations =
+                                    await workspaceService.userWorkspaceInvitations();
+                                  if (invitations.length > 0) {
+                                    Router.push(`/invitations`);
+                                    return;
+                                  } else {
+                                    Router.push(`/create-workspace`);
+                                    return;
+                                  }
                                 }
-                              }
-                            })
-                            .catch((err) => {
-                              setIsLoading(false);
-                              console.log(err);
-                            });
-                        } else setStep((prevData) => prevData + 1);
-                      }}
-                    >
-                      {step === 4 || step === 8 ? "Get Started" : "Next"}
-                    </PrimaryButton>
+                              })
+                              .catch((err) => {
+                                setIsLoading(false);
+                                console.log(err);
+                              });
+                          } else setStep((prevData) => prevData + 1);
+                        }}
+                      >
+                        {step === 4 || step === 8 ? "Get Started" : "Next"}
+                      </PrimaryButton>
+                    </div>
                   </div>
                 </div>
+              )}
+              <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
+                <span className="text-xs text-brand-secondary">Logged in:</span>
+                <span className="text-sm text-brand-base">{user?.email}</span>
               </div>
-            )}
-            <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
-              <span className="text-xs text-brand-secondary">Logged in:</span>
-              <span className="text-sm text-brand-base">{user?.email}</span>
             </div>
-          </div>
-        )}
-      </DefaultLayout>
-    </UserAuthorizationLayout>
+          )}
+        </>
+      )}
+    </DefaultLayout>
   );
 };
 
