@@ -28,7 +28,11 @@ export interface IssueDescriptionFormValues {
 }
 
 export interface IssueDetailsProps {
-  issue: IIssue;
+  issue: {
+    name: string;
+    description: string;
+    description_html: string;
+  };
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
 }
 

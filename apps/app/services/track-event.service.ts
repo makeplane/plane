@@ -750,7 +750,11 @@ class TrackEventServices extends APIService {
   }
 
   // TODO: add types to the data
-  async trackInboxEvent(data: any, eventName: InboxEventType): Promise<any> {
+  async trackInboxEvent(
+    data: any,
+    eventName: InboxEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     let payload: any;
     if (eventName !== "INBOX_DELETE")
       payload = {
@@ -772,6 +776,7 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
       },
     });
   }

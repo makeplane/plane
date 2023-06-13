@@ -21,23 +21,35 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
       }`}
     >
       <div className="flex items-center gap-x-2">
-        <p className="flex-shrink-0">
-          <span className="text-xs">
-            {issue.project_detail.identifier}-{issue.issue_detail.sequence_id}
-          </span>
+        <p className="flex-shrink-0 text-brand-secondary text-xs">
+          {issue.project_detail.identifier}-{issue.sequence_id}
         </p>
-        <p className="truncate font-medium">{issue.issue_detail.name}</p>
+        <h5 className="truncate text-sm">{issue.name}</h5>
       </div>
       <div className="flex gap-2">
-        {getPriorityIcon(
-          issue.issue_detail.priority ?? "None",
-          "text-sm rounded bg-orange-200 bg-opacity-50 w-6 h-6 flex justify-center items-center text-orange-600"
-        )}
-        {issue.snoozed_till && (
+        <div
+          className={`grid h-6 w-6 place-items-center rounded border items-center shadow-sm ${
+            issue.priority === "urgent"
+              ? "border-red-500/20 bg-red-500/20 text-red-500"
+              : issue.priority === "high"
+              ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+              : issue.priority === "medium"
+              ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+              : issue.priority === "low"
+              ? "border-green-500/20 bg-green-500/20 text-green-500"
+              : "border-brand-base"
+          }`}
+        >
+          {getPriorityIcon(
+            issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
+            "text-sm"
+          )}
+        </div>
+        {issue.issue_inbox.snoozed_till && (
           <div className="px-2 rounded border border-brand-base flex gap-1 items-center">
             <CalendarIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary" />
             <p className="text-xs">
-              {new Date(issue.snoozed_till).toLocaleDateString("en-US", {
+              {new Date(issue.issue_inbox.snoozed_till).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
               })}

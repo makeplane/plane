@@ -7,7 +7,13 @@ const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 // types
-import type { IInboxIssue, IInbox, TInboxStatus } from "types";
+import type {
+  IInboxIssue,
+  IInbox,
+  TInboxStatus,
+  IInboxIssueDetail,
+  ICurrentUserResponse,
+} from "types";
 
 class InboxServices extends APIService {
   constructor() {
@@ -23,7 +29,7 @@ class InboxServices extends APIService {
   }
 
   async getInboxById(workspaceSlug: string, projectId: string, inboxId: string): Promise<IInbox> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}`)
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -37,7 +43,7 @@ class InboxServices extends APIService {
     params?: any
   ): Promise<IInboxIssue[]> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`,
       { params }
     )
       .then((response) => response?.data)
@@ -51,9 +57,9 @@ class InboxServices extends APIService {
     projectId: string,
     inboxId: string,
     inboxIssueId: string
-  ): Promise<IInboxIssue> {
+  ): Promise<IInboxIssueDetail> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -66,7 +72,8 @@ class InboxServices extends APIService {
     projectId: string,
     inboxId: string,
     inboxIssueId: string,
-    data: TInboxStatus
+    data: TInboxStatus,
+    user: ICurrentUserResponse | undefined
   ): Promise<IInboxIssue> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
@@ -81,7 +88,7 @@ class InboxServices extends APIService {
             : data.status === 1
             ? "INBOX_ISSUE_ACCEPTED"
             : "INBOX_ISSUE_DUPLICATED";
-        if (trackEvent) trackEventServices.trackInboxEvent(response?.data, action);
+        if (trackEvent) trackEventServices.trackInboxEvent(response?.data, action, user);
         return response?.data;
       })
       .catch((error) => {
@@ -93,14 +100,16 @@ class InboxServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    data: any
+    data: any,
+    user: ICurrentUserResponse | undefined
   ): Promise<IInboxIssue> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE");
+        if (trackEvent)
+          trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
