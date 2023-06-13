@@ -16,7 +16,7 @@ type EmailCodeFormValues = {
   token?: string;
 };
 
-export const EmailCodeForm = ({ onSuccess }: any) => {
+export const EmailCodeForm = ({ handleSignIn }: any) => {
   const [codeSent, setCodeSent] = useState(false);
   const [codeResent, setCodeResent] = useState(false);
   const [isCodeResending, setIsCodeResending] = useState(false);
@@ -66,18 +66,23 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
 
   const handleSignin = async (formData: EmailCodeFormValues) => {
     setIsLoading(true);
-    await authenticationService.magicSignIn(formData).catch((error) => {
-      setIsLoading(false);
-      setToastAlert({
-        title: "Oops!",
-        type: "error",
-        message: error?.response?.data?.error ?? "Enter the correct code to sign in",
+    await authenticationService
+      .magicSignIn(formData)
+      .then((response) => {
+        handleSignIn(response);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: error?.response?.data?.error ?? "Enter the correct code to sign in",
+        });
+        setError("token" as keyof EmailCodeFormValues, {
+          type: "manual",
+          message: error?.error,
+        });
       });
-      setError("token" as keyof EmailCodeFormValues, {
-        type: "manual",
-        message: error.error,
-      });
-    });
   };
 
   const emailOld = getValues("email");
