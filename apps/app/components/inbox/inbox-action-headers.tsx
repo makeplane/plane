@@ -4,8 +4,12 @@ import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 // headless ui
 import { Popover } from "@headlessui/react";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // components
-import { PrimaryButton, SecondaryButton, MultiLevelDropdown } from "components/ui";
+import { FiltersDropdown } from "components/inbox";
+// ui
+import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { InboxIcon, StackedLayersHorizontalIcon } from "components/icons";
 import {
@@ -16,15 +20,14 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 // types
-import type { IInboxIssue } from "types";
-import { useProjectMyMembership } from "contexts/project-member.context";
+import type { IInboxFilterOptions, IInboxIssue } from "types";
 
 type Props = {
   issueCount: number;
   currentIssueIndex: number;
-  filter: any;
-  setFilter: (value: any) => void;
-  inboxIssue?: IInboxIssue;
+  filters: Partial<IInboxFilterOptions>;
+  setFilters: React.Dispatch<React.SetStateAction<Partial<IInboxFilterOptions>>>;
+  issue?: IInboxIssue;
   onAccept: () => void;
   onDecline: () => void;
   onMarkAsDuplicate: () => void;
@@ -39,9 +42,9 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
     onDecline,
     onMarkAsDuplicate,
     onSnooze,
-    filter,
-    setFilter,
-    inboxIssue,
+    filters,
+    setFilters,
+    issue,
   } = props;
 
   const [date, setDate] = useState(new Date());
@@ -49,11 +52,12 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
   const { memberRole } = useProjectMyMembership();
 
   useEffect(() => {
-    if (!inboxIssue?.issue_inbox.snoozed_till) return;
+    if (!issue?.issue_inbox[0].snoozed_till) return;
 
-    setDate(new Date(inboxIssue.issue_inbox.snoozed_till));
-  }, [inboxIssue]);
+    setDate(new Date(issue.issue_inbox[0].snoozed_till));
+  }, [issue]);
 
+  const issueStatus = issue?.issue_inbox[0].status;
   const isAllowed = memberRole.isMember || memberRole.isOwner;
 
   return (
@@ -64,50 +68,32 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
           <h3 className="font-medium">Inbox</h3>
         </div>
         <div>
-          <MultiLevelDropdown
-            label="Filters"
-            onSelect={(value) => {
-              setFilter({
-                status: value,
-              });
+          <FiltersDropdown
+            filters={filters}
+            onSelect={(option) => {
+              const key = option.key as keyof typeof filters;
+
+              const valueExists = filters[key]?.includes(option.value);
+
+              if (valueExists) {
+                setFilters({
+                  ...filters,
+                  [option.key]: ((filters[key] ?? []) as any[])?.filter(
+                    (val) => val !== option.value
+                  ),
+                });
+              } else {
+                setFilters({
+                  ...filters,
+                  [option.key]: [...((filters[key] ?? []) as any[]), option.value],
+                });
+              }
             }}
-            direction="left"
-            options={[
-              {
-                id: "all",
-                label: "All",
-                value: null,
-                selected: filter === null,
-              },
-              {
-                id: "snooze",
-                label: "Snooze",
-                value: 0,
-                selected: filter === 0,
-              },
-              {
-                id: "mark_as_duplicate",
-                label: "Duplicate",
-                value: 2,
-                selected: filter === 2,
-              },
-              {
-                id: "accepted",
-                label: "Accepted",
-                value: 1,
-                selected: filter === 1,
-              },
-              {
-                id: "declined",
-                label: "Declined",
-                value: -1,
-                selected: filter === -1,
-              },
-            ]}
+            direction="right"
+            height="rg"
           />
         </div>
       </div>
-
       <div className="flex justify-between items-center px-4 col-span-3">
         <div className="flex items-center gap-x-2">
           <button
@@ -135,10 +121,15 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
           </div>
         </div>
         {isAllowed && (
-          <div className="flex gap-x-3">
+          <div className={`flex gap-x-3 ${issueStatus !== -2 ? "opacity-80" : ""}`}>
             <Popover className="relative">
-              <Popover.Button as="div">
-                <SecondaryButton className="flex gap-x-1 items-center" size="sm">
+              <Popover.Button as="button" type="button" disabled={issueStatus !== -2}>
+                <SecondaryButton
+                  className={`flex gap-x-1 items-center ${
+                    issueStatus !== -2 ? "cursor-not-allowed" : ""
+                  }`}
+                  size="sm"
+                >
                   <ClockIcon className="h-4 w-4 text-brand-secondary" />
                   <span>Snooze</span>
                 </SecondaryButton>
@@ -172,15 +163,26 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
               size="sm"
               className="flex gap-2 items-center"
               onClick={onMarkAsDuplicate}
+              disabled={issueStatus !== -2}
             >
               <StackedLayersHorizontalIcon className="h-4 w-4 text-brand-secondary" />
               <span>Mark as duplicate</span>
             </SecondaryButton>
-            <SecondaryButton size="sm" className="flex gap-2 items-center" onClick={onAccept}>
+            <SecondaryButton
+              size="sm"
+              className="flex gap-2 items-center"
+              onClick={onAccept}
+              disabled={issueStatus !== -2}
+            >
               <CheckCircleIcon className="h-4 w-4 text-green-500" />
               <span>Accept</span>
             </SecondaryButton>
-            <SecondaryButton size="sm" className="flex gap-2 items-center" onClick={onDecline}>
+            <SecondaryButton
+              size="sm"
+              className="flex gap-2 items-center"
+              onClick={onDecline}
+              disabled={issueStatus !== -2}
+            >
               <XCircleIcon className="h-4 w-4 text-red-500" />
               <span>Decline</span>
             </SecondaryButton>

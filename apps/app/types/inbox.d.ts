@@ -20,7 +20,7 @@ export interface IInboxIssue {
     snoozed_till: Date | null;
     source: string;
     status: -2 | -1 | 0 | 1 | 2;
-  };
+  }[];
   label_details: IIssueLabels[];
   labels: string[];
   name: string;

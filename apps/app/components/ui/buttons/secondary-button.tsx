@@ -19,11 +19,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({
         : size === "md"
         ? "rounded-md px-3.5 py-2 text-sm"
         : "rounded-lg px-4 py-2 text-base"
-    } ${
-      disabled
-        ? "cursor-not-allowed border-brand-base bg-brand-surface-1 hover:border-brand-base hover:border-opacity-100 hover:bg-brand-surface-1 hover:bg-opacity-100"
-        : ""
-    } ${
+    } ${disabled ? "cursor-not-allowed border-brand-base bg-brand-surface-1" : ""} ${
       outline
         ? "bg-transparent hover:bg-brand-surface-2"
         : "bg-brand-surface-2 hover:border-opacity-70 hover:bg-opacity-70"
