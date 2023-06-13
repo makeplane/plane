@@ -47,7 +47,7 @@ from plane.db.models import (
     Page,
     IssueAssignee,
     ModuleMember,
-    Inbox
+    Inbox,
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
@@ -104,15 +104,13 @@ class ProjectViewSet(BaseViewSet):
                     .values("count")
                 )
                 .annotate(
-                    total_cycles=Cycle.objects.filter(
-                        project_id=OuterRef("id"))
+                    total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
                 .annotate(
-                    total_modules=Module.objects.filter(
-                        project_id=OuterRef("id"))
+                    total_modules=Module.objects.filter(project_id=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
@@ -242,7 +240,18 @@ class ProjectViewSet(BaseViewSet):
                 serializer.save()
                 if serializer.data["inbox_view"]:
                     Inbox.objects.get_or_create(
-                        name=f"{project.name} Inbox", project=project, is_default=True)
+                        name=f"{project.name} Inbox", project=project, is_default=True
+                    )
+
+                    # Create the triage state in Backlog group
+                    State.objects.get_or_create(
+                        name="Triage",
+                        group="backlog",
+                        description="Default state for managing all Inbox Issues",
+                        project_id=pk,
+                        color="#ff7700"
+                    )
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -325,8 +334,7 @@ class InviteProjectEndpoint(BaseAPIView):
             )
 
             return Response(
-                ProjectMemberSerializer(
-                    project_member).data, status=status.HTTP_200_OK
+                ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
             )
 
         except ValidationError:
@@ -473,7 +481,9 @@ class ProjectMemberViewSet(BaseViewSet):
             )
             if requesting_project_member.role < project_member.role:
                 return Response(
-                    {"error": "You cannot remove a user having role higher than yourself"},
+                    {
+                        "error": "You cannot remove a user having role higher than yourself"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -521,6 +531,7 @@ class ProjectMemberViewSet(BaseViewSet):
         except Exception as e:
             capture_exception(e)
             return Response({"error": "Something went wrong please try again later"})
+
 
 class AddMemberToProjectEndpoint(BaseAPIView):
     permission_classes = [
@@ -714,8 +725,7 @@ class ProjectIdentifierEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            ProjectIdentifier.objects.filter(
-                name=name, workspace__slug=slug).delete()
+            ProjectIdentifier.objects.filter(name=name, workspace__slug=slug).delete()
 
             return Response(
                 status=status.HTTP_204_NO_CONTENT,
@@ -791,8 +801,7 @@ class ProjectUserViewsEndpoint(BaseAPIView):
             view_props = project_member.view_props
             default_props = project_member.default_props
 
-            project_member.view_props = request.data.get(
-                "view_props", view_props)
+            project_member.view_props = request.data.get("view_props", view_props)
             project_member.default_props = request.data.get(
                 "default_props", default_props
             )

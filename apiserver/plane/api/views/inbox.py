@@ -143,7 +143,15 @@ class InboxIssueViewSet(BaseViewSet):
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
-                ).prefetch_related(Prefetch("issue_inbox", queryset=InboxIssue.objects.only("status", "duplicate_to", "snoozed_till", "source")))
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_inbox",
+                        queryset=InboxIssue.objects.only(
+                            "status", "duplicate_to", "snoozed_till", "source"
+                        ),
+                    )
+                )
             )
             issues_data = IssueStateInboxSerializer(issues, many=True).data
             return Response(
@@ -160,28 +168,55 @@ class InboxIssueViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id, inbox_id):
         try:
-            project = Project.objects.get(workspace__slug=slug, pk=project_id)
-            issue_serializer = IssueCreateSerializer(
-                data=request.data.get("issue"), context={"project": project}
+            if not request.data.get("issue", {}).get("name", False):
+                return Response(
+                    {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if not request.data.get("issue", {}).get("priority", "low") in [
+                "low",
+                "medium",
+                "high",
+                "urgent",
+            ]:
+                return Response(
+                    {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Create or get state
+            state, _ = State.objects.get_or_create(
+                name="Triage",
+                group="backlog",
+                description="Default state for managing all Inbox Issues",
+                project_id=project_id,
+                color="#ff7700",
             )
 
-            if issue_serializer.is_valid():
-                issue_serializer.save()
-                inbox_issue = InboxIssue.objects.create(
-                    issue_id=issue_serializer.data["id"],
-                    inbox_id=inbox_id,
-                    project_id=project_id,
-                )
-                inbox_serializer = InboxIssueSerializer(inbox_issue)
+            print(state)
 
-                return Response(
-                    {
-                        "issue": issue_serializer.data,
-                        "inbox_issue": inbox_serializer.data,
-                    },
-                    status=status.HTTP_201_CREATED,
-                )
-            return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # create an issue
+            issue = Issue.objects.create(
+                name=request.data.get("issue", {}).get("name"),
+                description=request.data.get("issue", {}).get("description", {}),
+                description_html=request.data.get("issue", {}).get(
+                    "description_html", "<p></p>"
+                ),
+                priority=request.data.get("issue", {}).get("priority", "low"),
+                project_id=project_id,
+                state=state,
+            )
+
+            # create an inbox issue
+            InboxIssue.objects.create(
+                inbox_id=inbox_id,
+                project_id=project_id,
+                issue=issue,
+                source=request.data.get("source", "in-app"),
+            )
+
+            serializer = IssueStateInboxSerializer(issue)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
             capture_exception(e)
