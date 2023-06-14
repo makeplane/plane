@@ -7,7 +7,7 @@ import { ICurrentUserResponse, IUser } from "types";
 import { MultiInput, PrimaryButton, SecondaryButton } from "components/ui";
 
 type Props = {
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setStep: React.Dispatch<React.SetStateAction<number | null>>;
   workspace: any;
   user: ICurrentUserResponse | undefined;
 };

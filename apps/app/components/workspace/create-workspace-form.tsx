@@ -6,6 +6,7 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
 import workspaceService from "services/workspace.service";
+import userService from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -77,7 +78,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                 message: "Workspace created successfully.",
               });
               mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
-              onSubmit(res);
+              updateLastWorkspaceIdUnderUSer(res);
             })
             .catch((err) => {
               console.error(err);
@@ -90,6 +91,18 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });
+      });
+  };
+
+  // update last_workspace_id
+  const updateLastWorkspaceIdUnderUSer = (workspace: any) => {
+    userService
+      .updateUser({ last_workspace_id: workspace.id })
+      .then((res) => {
+        onSubmit(workspace);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 

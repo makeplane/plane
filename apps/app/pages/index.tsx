@@ -30,22 +30,24 @@ const HomePage: NextPage = () => {
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
       if (clientId && credential) {
-        mutateUser(
-          await authenticationService.socialAuth({
-            medium: "google",
-            credential,
-            clientId,
-          })
-        );
+        const socialAuthPayload = {
+          medium: "google",
+          credential,
+          clientId,
+        };
+        const response = await authenticationService.socialAuth(socialAuthPayload);
+        if (response && response?.user) mutateUser();
       } else {
         throw Error("Cant find credentials");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       setToastAlert({
         title: "Error signing in!",
         type: "error",
-        message: "Something went wrong. Please try again later or contact the support team.",
+        message:
+          error?.error ||
+          "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
@@ -53,37 +55,54 @@ const HomePage: NextPage = () => {
   const handleGithubSignIn = async (credential: string) => {
     try {
       if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
-        mutateUser(
-          await authenticationService.socialAuth({
-            medium: "github",
-            credential,
-            clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
-          })
-        );
+        const socialAuthPayload = {
+          medium: "github",
+          credential,
+          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
+        };
+        const response = await authenticationService.socialAuth(socialAuthPayload);
+        if (response && response?.user) mutateUser();
       } else {
         throw Error("Cant find credentials");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       setToastAlert({
         title: "Error signing in!",
         type: "error",
-        message: "Something went wrong. Please try again later or contact the support team.",
+        message:
+          error?.error ||
+          "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
 
   const handleEmailPasswordSignIn = async (response: any) => {
     try {
-      if (response) {
-        mutateUser();
-      }
-    } catch (error) {
+      if (response) mutateUser();
+    } catch (error: any) {
       console.log(error);
       setToastAlert({
         title: "Error signing in!",
         type: "error",
-        message: "Something went wrong. Please try again later or contact the support team.",
+        message:
+          error?.error ||
+          "Something went wrong. Please try again later or contact the support team.",
+      });
+    }
+  };
+
+  const handleEmailCodeSignIn = async (response: any) => {
+    try {
+      if (response) mutateUser();
+    } catch (error: any) {
+      console.log(error);
+      setToastAlert({
+        title: "Error signing in!",
+        type: "error",
+        message:
+          error?.error ||
+          "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
@@ -91,8 +110,11 @@ const HomePage: NextPage = () => {
   return (
     <DefaultLayout>
       {isLoading ? (
-        <div className="grid h-screen place-items-center">
-          <Spinner />
+        <div className="flex flex-col gap-3 w-full h-screen justify-center items-center">
+          <div>
+            <Spinner />
+          </div>
+          {/* <div className="text-gray-500">Validating authentication</div> */}
         </div>
       ) : (
         <div className="flex h-screen w-full items-center justify-center overflow-auto">
@@ -108,16 +130,14 @@ const HomePage: NextPage = () => {
               <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
                 {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                   <>
-                    <EmailCodeForm />
+                    <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
                     <div className="flex flex-col items-center justify-center gap-3 border-t border-brand-base py-5 px-5">
                       <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
                       <GithubLoginButton handleSignIn={handleGithubSignIn} />
                     </div>
                   </>
                 ) : (
-                  <>
-                    <EmailPasswordForm handleSignIn={handleEmailPasswordSignIn} />
-                  </>
+                  <EmailPasswordForm handleSignIn={handleEmailPasswordSignIn} />
                 )}
               </div>
             </div>
