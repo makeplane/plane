@@ -178,6 +178,7 @@ class InboxIssueViewSet(BaseViewSet):
                 "medium",
                 "high",
                 "urgent",
+                None
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
