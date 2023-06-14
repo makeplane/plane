@@ -26,7 +26,7 @@ const MagicSignIn: NextPage = () => {
     setIsSigningIn(() => false);
     setErrorSignIn(() => undefined);
     if (!password || !key) {
-      setErrorSignIn("Url is not matching please check again");
+      setErrorSignIn("URL is invalid");
       return;
     } else {
       setIsSigningIn(() => true);
