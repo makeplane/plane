@@ -96,16 +96,7 @@ const Onboarding: NextPage = () => {
                               ) ?? userWorkspaces[0];
 
                             if (lastActiveWorkspace) {
-                              userService
-                                .updateUser({
-                                  last_workspace_id: lastActiveWorkspace.id,
-                                })
-                                .then((res) => {
-                                  mutateUser();
-                                })
-                                .catch((err) => {
-                                  console.log(err);
-                                });
+                              mutateUser();
                               Router.push(`/${lastActiveWorkspace.slug}`);
                               return;
                             } else {
