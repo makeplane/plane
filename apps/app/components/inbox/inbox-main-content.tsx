@@ -7,8 +7,9 @@ import useSWR, { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // services
-import issuesService from "services/issues.service";
 import inboxServices from "services/inbox.service";
+// hooks
+import useInboxView from "hooks/use-inbox-view";
 // ui
 import { Loader } from "components/ui";
 // hooks
@@ -24,8 +25,7 @@ import {
 } from "components/issues";
 
 // types
-import type { IInboxIssue, IInboxIssueDetail } from "types";
-import useInboxView from "hooks/use-inbox-view";
+import type { IInboxIssue, IIssue } from "types";
 
 const defaultValues = {
   name: "",
@@ -45,7 +45,7 @@ export const InboxMainContent: React.FC = () => {
   const { user } = useUser();
   const { params } = useInboxView();
 
-  const { reset, control, watch } = useForm<IInboxIssue>({
+  const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
 

@@ -79,7 +79,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
             onSelect={(option) => {
               const key = option.key as keyof typeof filters;
 
-              const valueExists = filters[key]?.includes(option.value);
+              const valueExists = (filters[key] as any[])?.includes(option.value);
 
               if (valueExists) {
                 setFilters({

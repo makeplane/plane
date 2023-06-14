@@ -15,7 +15,7 @@ export interface IInboxIssue extends Partial<IIssue> {
 
 export interface IInboxIssueDetail {
   id: string;
-  issue_detail: Partial<IIssue> & { bridge_id: string };
+  issue_detail: IIssue & { bridge_id: string };
   project_detail: IProjectLite;
   created_at: string;
   updated_at: string;
