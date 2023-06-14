@@ -193,8 +193,6 @@ class InboxIssueViewSet(BaseViewSet):
                 color="#ff7700",
             )
 
-            print(state)
-
             # create an issue
             issue = Issue.objects.create(
                 name=request.data.get("issue", {}).get("name"),
