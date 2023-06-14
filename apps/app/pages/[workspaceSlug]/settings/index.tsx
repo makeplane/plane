@@ -111,10 +111,7 @@ const WorkspaceSettings: NextPage = () => {
 
     setIsImageRemoving(true);
 
-    const index = url.indexOf(".com");
-    const asset = url.substring(index + 5);
-
-    fileService.deleteFile(asset).then(() => {
+    fileService.deleteFile(activeWorkspace.id, url).then(() => {
       workspaceService
         .updateWorkspace(activeWorkspace.slug, { logo: "" }, user)
         .then((res) => {

@@ -59,7 +59,7 @@ const featuresList = [
     title: "Inbox",
     description:
       "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
-    icon: <InboxIcon color="#fcbe1d" width={28} height={28} className="flex-shrink-0" />,
+    icon: <InboxIcon color="#fcbe1d" width={24} height={24} className="flex-shrink-0" />,
     property: "inbox_view",
   },
 ];

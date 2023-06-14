@@ -69,12 +69,13 @@ const Analytics = () => {
   useEffect(() => {
     if (!workspaceSlug) return;
 
-    trackEventServices.trackAnalyticsEvent(
-      { workspaceSlug: workspaceSlug?.toString() },
-      "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
-      user
-    );
-  }, [workspaceSlug]);
+    if (user && workspaceSlug)
+      trackEventServices.trackAnalyticsEvent(
+        { workspaceSlug: workspaceSlug?.toString() },
+        "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
+        user
+      );
+  }, [user, workspaceSlug]);
 
   return (
     <WorkspaceAuthorizationLayout
