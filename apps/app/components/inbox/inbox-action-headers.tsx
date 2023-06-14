@@ -121,7 +121,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
           </div>
         </div>
         {isAllowed && (
-          <div className={`flex gap-x-3 ${issueStatus !== -2 ? "opacity-80" : ""}`}>
+          <div className={`flex gap-x-3 ${issueStatus !== -2 ? "opacity-70" : ""}`}>
             <Popover className="relative">
               <Popover.Button as="button" type="button" disabled={issueStatus !== -2}>
                 <SecondaryButton

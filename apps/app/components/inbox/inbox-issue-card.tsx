@@ -18,7 +18,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
       id={issue.id}
       className={`relative h-20 cursor-pointer select-none space-y-3 py-2 px-4 border-b border-brand-base hover:bg-brand-accent hover:bg-opacity-10 ${
         active ? "bg-brand-accent bg-opacity-5" : " "
-      }`}
+      } ${issue.issue_inbox[0].status !== -2 ? "opacity-60" : ""}`}
     >
       <div className="flex items-center gap-x-2">
         <p className="flex-shrink-0 text-brand-secondary text-xs">
@@ -45,11 +45,11 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
             "text-sm"
           )}
         </div>
-        {issue.issue_inbox.snoozed_till && (
+        {issue.issue_inbox[0].snoozed_till && (
           <div className="px-2 rounded border border-brand-base flex gap-1 items-center">
             <CalendarIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary" />
             <p className="text-xs">
-              {new Date(issue.issue_inbox.snoozed_till).toLocaleDateString("en-US", {
+              {new Date(issue.issue_inbox[0].snoozed_till).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
               })}
