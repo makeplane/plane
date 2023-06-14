@@ -21,7 +21,7 @@ const defaultValues: Partial<IUser> = {
 
 type Props = {
   user?: IUser;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setStep: React.Dispatch<React.SetStateAction<number | null>>;
   setUserRole: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
