@@ -30,7 +30,7 @@ const Onboarding: NextPage = () => {
 
   const [workspace, setWorkspace] = useState();
 
-  const { user, isLoading: userLoading, mutateUser } = useUserAuth();
+  const { user, isLoading: userLoading, mutateUser } = useUserAuth("onboarding");
 
   useEffect(() => {
     if (user && step === null) {
