@@ -178,6 +178,7 @@ class InboxIssueViewSet(BaseViewSet):
                 "medium",
                 "high",
                 "urgent",
+                None
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
@@ -191,8 +192,6 @@ class InboxIssueViewSet(BaseViewSet):
                 project_id=project_id,
                 color="#ff7700",
             )
-
-            print(state)
 
             # create an issue
             issue = Issue.objects.create(
@@ -230,6 +229,18 @@ class InboxIssueViewSet(BaseViewSet):
             inbox_issue = InboxIssue.objects.get(
                 pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
             )
+
+            issue_data = request.data.pop("issue", False)
+
+            if bool(issue_data):
+                issue = Issue.objects.get(pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id)
+                issue_serializer = IssueCreateSerializer(issue, data=issue_data, partial=True)
+
+                if issue_serializer.is_valid():
+                    issue_serializer.save()
+                else:
+                    return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
