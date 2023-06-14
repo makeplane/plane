@@ -123,7 +123,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
                     <p className="text-sm text-brand-secondary">
                       Are you sure you want to delete issue{" "}
                       <span className="break-all font-medium text-brand-base">
-                        {data?.project_detail.identifier}-{data?.sequence_id}
+                        {data?.project_detail?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? This action cannot be undone.
                     </p>

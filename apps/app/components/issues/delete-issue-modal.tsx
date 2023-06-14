@@ -17,11 +17,10 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { IInboxIssue, IIssue, ICurrentUserResponse } from "types";
+import type { IIssue, ICurrentUserResponse } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
-  INBOX_ISSUES,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   VIEW_ISSUES,
@@ -38,7 +37,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId, inboxId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { issueView, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
@@ -80,11 +79,6 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
           else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         }
-
-        if (inboxId)
-          mutate<IInboxIssue[]>(INBOX_ISSUES(inboxId.toString()), (prevData) =>
-            prevData?.filter((issue) => issue.issue !== data.id)
-          );
 
         handleClose();
         setToastAlert({
