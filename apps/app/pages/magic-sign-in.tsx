@@ -1,67 +1,63 @@
 import React, { useState, useEffect } from "react";
-
+// next imports
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // services
 import authenticationService from "services/authentication.service";
 // hooks
-import useUser from "hooks/use-user";
+import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // types
 import type { NextPage } from "next";
-// constants
-import { USER_WORKSPACES } from "constants/fetch-keys";
 
 const MagicSignIn: NextPage = () => {
   const router = useRouter();
-
-  const [isSigningIn, setIsSigningIn] = useState(true);
-  const [errorSigningIn, setErrorSignIn] = useState<string | undefined>();
-
   const { password, key } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { mutateUser } = useUser();
+  const { user, isLoading, mutateUser } = useUserAuth("sign-in");
+
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [errorSigningIn, setErrorSignIn] = useState<string | undefined>();
 
   useEffect(() => {
-    setIsSigningIn(true);
-    setErrorSignIn(undefined);
-    if (!password || !key) return;
-    authenticationService
-      .magicSignIn({ token: password, key })
-      .then(async (res) => {
-        setIsSigningIn(false);
-        await mutateUser();
-        mutate(USER_WORKSPACES);
-        if (res.user.is_onboarded) router.push("/");
-        else router.push("/invitations");
-      })
-      .catch((err) => {
-        setErrorSignIn(err.response.data.error);
-        setIsSigningIn(false);
-      });
+    setIsSigningIn(() => false);
+    setErrorSignIn(() => undefined);
+    if (!password || !key) {
+      setErrorSignIn("URL is invalid");
+      return;
+    } else {
+      setIsSigningIn(() => true);
+      authenticationService
+        .magicSignIn({ token: password, key })
+        .then(async (res) => {
+          setIsSigningIn(false);
+          await mutateUser();
+        })
+        .catch((err) => {
+          setErrorSignIn(err.response.data.error);
+          setIsSigningIn(false);
+        });
+    }
   }, [password, key, mutateUser, router]);
 
   return (
     <DefaultLayout>
       <div className="h-screen w-full overflow-auto bg-brand-surface-1">
         {isSigningIn ? (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
-            <h2 className="text-4xl">Signing you in...</h2>
-            <p className="text-sm text-brand-secondary">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+            <h2 className="text-4xl font-medium">Signing you in...</h2>
+            <p className="text-sm font-medium text-brand-secondary">
               Please wait while we are preparing your take off.
             </p>
           </div>
         ) : errorSigningIn ? (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
-            <h2 className="text-4xl">Error</h2>
-            <p className="text-sm text-brand-secondary">
-              {errorSigningIn}.
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+            <h2 className="text-4xl font-medium">Error</h2>
+            <div className="text-sm font-medium text-brand-secondary flex gap-2">
+              <div>{errorSigningIn}.</div>
               <span
                 className="cursor-pointer underline"
                 onClick={() => {
@@ -85,12 +81,14 @@ const MagicSignIn: NextPage = () => {
               >
                 Send link again?
               </span>
-            </p>
+            </div>
           </div>
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
-            <h2 className="text-4xl">Success</h2>
-            <p className="text-sm text-brand-secondary">Redirecting you to the app...</p>
+            <h2 className="text-4xl font-medium">Success</h2>
+            <p className="text-sm font-medium text-brand-secondary">
+              Redirecting you to the app...
+            </p>
           </div>
         )}
       </div>
