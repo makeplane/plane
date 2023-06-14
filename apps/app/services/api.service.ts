@@ -2,7 +2,12 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const unAuthorizedStatus = [401];
-const nonValidatedRoutes = ["/", "/reset-password", "/workspace-member-invitation"];
+const nonValidatedRoutes = [
+  "/",
+  "/magic-sign-in",
+  "/reset-password",
+  "/workspace-member-invitation",
+];
 
 const validateRouteCheck = (route: string): boolean => {
   let validationToggle = false;
