@@ -40,7 +40,7 @@ class InboxIssueSerializer(BaseSerializer):
 class InboxIssueLiteSerializer(BaseSerializer):
     class Meta:
         model = InboxIssue
-        fields = ["status", "duplicate_to", "snoozed_till", "source"]
+        fields = ["id", "status", "duplicate_to", "snoozed_till", "source"]
         read_only_fields = fields
 
 
