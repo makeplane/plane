@@ -34,10 +34,10 @@ const Onboarding: NextPage = () => {
 
   useEffect(() => {
     if (user && step === null) {
-      let currentStep: null | number = null;
+      let currentStep: number = 1;
       if (user?.role) currentStep = 2;
       if (user?.last_workspace_id) currentStep = 4;
-      if (currentStep != null) setStep(() => currentStep);
+      setStep(() => currentStep);
     }
   }, [step, user]);
 
