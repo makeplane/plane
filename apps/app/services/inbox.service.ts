@@ -13,6 +13,8 @@ import type {
   TInboxStatus,
   IInboxIssueDetail,
   ICurrentUserResponse,
+  IInboxFilterOptions,
+  IInboxQueryParams,
 } from "types";
 
 class InboxServices extends APIService {
@@ -36,11 +38,27 @@ class InboxServices extends APIService {
       });
   }
 
+  async patchInbox(
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    data: Partial<IInbox>
+  ): Promise<any> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getInboxIssues(
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    params?: any
+    params?: IInboxQueryParams
   ): Promise<IInboxIssue[]> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`,
@@ -62,6 +80,26 @@ class InboxServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
     )
       .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteInboxIssue(
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    inboxIssueId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
+    )
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_DELETE", user);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -89,6 +127,28 @@ class InboxServices extends APIService {
             ? "INBOX_ISSUE_ACCEPTED"
             : "INBOX_ISSUE_DUPLICATED";
         if (trackEvent) trackEventServices.trackInboxEvent(response?.data, action, user);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async patchInboxIssue(
+    workspaceSlug: string,
+    projectId: string,
+    inboxId: string,
+    inboxIssueId: string,
+    data: { issue: Partial<IInboxIssue> },
+    user: ICurrentUserResponse | undefined
+  ): Promise<IInboxIssue> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
+      data
+    )
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
