@@ -296,11 +296,14 @@ class InboxIssueViewSet(BaseViewSet):
                         workspace__slug=slug,
                         project_id=project_id,
                     )
-                    # Move to default state
-                    state = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).first()
-                    if state is not None:
-                        issue.state = state
-                        issue.save()
+
+                    # Update the issue state only if it is in triage state
+                    if issue.state.name == "Triage":
+                        # Move to default state
+                        state = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).first()
+                        if state is not None:
+                            issue.state = state
+                            issue.save()
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
