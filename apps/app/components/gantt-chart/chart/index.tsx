@@ -310,9 +310,54 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
       {/* content */}
       <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-brand-base">
+        {blocks && blocks.length > 0 && (
+          <div className="w-[300px] h-full flex flex-col flex-shrink-0 divide-y divide-brand-base border-r overflow-y-auto">
+            <div className="h-[3.58rem] flex justify-center items-center flex-shrink-0">
+              <h3 className="text-sm font-medium text-brand-base">
+                All {loaderTitle} ({blocks && blocks.length})
+              </h3>
+            </div>
+
+            <div id="blocks-sidebar" className="flex flex-col flex-1 overflow-y-auto">
+              {blocks.map((block: any, _idx: number) => (
+                <div
+                  className="relative h-[40px] bg-brand-base flex-shrink-0 truncate flex items-center px-2 cursor-pointer hover:bg-brand-surface-1"
+                  key={`sidebar-blocks-${_idx}`}
+                  onClick={() => {
+                    const blockCard = document.getElementById(`block-${block?.data?.id}`);
+
+                    if (!blockCard) return;
+
+                    blockCard.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                      inline: "nearest",
+                    });
+
+                    blockCard.classList.remove("bg-brand-base");
+                    blockCard.classList.add("bg-brand-surface-1");
+
+                    // animate pulse
+                    blockCard.classList.add("animate-pulse");
+
+                    const interval = setInterval(() => {
+                      blockCard.classList.remove("bg-brand-surface-1");
+                      blockCard.classList.add("bg-brand-base");
+                      blockCard.classList.remove("animate-pulse");
+                      clearInterval(interval);
+                    }, 1000);
+                  }}
+                >
+                  {sidebarBlockRender(block?.data)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div
-          className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
           id="scroll-container"
+          className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
         >
           {/* blocks components */}
           {currentView && currentViewData && (
@@ -321,6 +366,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               blocks={chartBlocks}
               sidebarBlockRender={sidebarBlockRender}
               blockRender={blockRender}
+              handleUpdate={blockUpdateHandler}
             />
           )}
 
