@@ -16,6 +16,7 @@ import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
+import useInboxView from "hooks/use-inbox-view";
 // components
 import { IssueForm } from "components/issues";
 // types
@@ -35,7 +36,8 @@ import {
   VIEW_ISSUES,
   INBOX_ISSUES,
 } from "constants/fetch-keys";
-import useInboxView from "hooks/use-inbox-view";
+// constants
+import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
 export interface IssuesModalProps {
   isOpen: boolean;
@@ -43,6 +45,19 @@ export interface IssuesModalProps {
   data?: IIssue | null;
   prePopulateData?: Partial<IIssue>;
   isUpdatingSingleIssue?: boolean;
+  fieldsToShow?: (
+    | "project"
+    | "name"
+    | "description"
+    | "state"
+    | "priority"
+    | "assignee"
+    | "label"
+    | "dueDate"
+    | "estimate"
+    | "parent"
+    | "all"
+  )[];
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
@@ -51,6 +66,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   data,
   prePopulateData,
   isUpdatingSingleIssue = false,
+  fieldsToShow = ["all"],
 }) => {
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -144,17 +160,25 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       });
   };
 
-  const addIssueToInbox = async (payload: Partial<IIssue>) => {
+  const addIssueToInbox = async (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId || !inboxId) return;
+
+    const payload = {
+      issue: {
+        name: formData.name,
+        description: formData.description,
+        description_html: formData.description_html,
+        priority: formData.priority,
+      },
+      source: INBOX_ISSUE_SOURCE,
+    };
 
     await inboxServices
       .createInboxIssue(
         workspaceSlug.toString(),
         projectId.toString(),
         inboxId.toString(),
-        {
-          issue: { ...payload, source: "web" },
-        },
+        payload,
         user
       )
       .then((res) => {
@@ -264,8 +288,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     const payload: Partial<IIssue> = {
       ...formData,
-      assignees_list: formData.assignees,
-      labels_list: formData.labels,
+      assignees_list: formData.assignees ?? [],
+      labels_list: formData.labels ?? [],
       description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };
@@ -312,6 +336,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                   setActiveProject={setActiveProject}
                   status={data ? true : false}
                   user={user}
+                  fieldsToShow={fieldsToShow}
                 />
               </Dialog.Panel>
             </Transition.Child>

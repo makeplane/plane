@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext } from "react";
 
 import { useRouter } from "next/router";
 
@@ -39,12 +39,21 @@ const useInboxView = () => {
       : null
   );
 
+  let filtersLength = 0;
+  Object.keys(filters ?? {}).forEach((key) => {
+    const filterKey = key as keyof typeof filters;
+
+    if (filters[filterKey] && Array.isArray(filters[filterKey]))
+      filtersLength += (filters[filterKey] ?? []).length;
+  });
+
   return {
     filters,
     setFilters,
     params,
     issues: inboxIssues,
     mutate: mutateInboxIssues,
+    filtersLength,
   } as const;
 };
 

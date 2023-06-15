@@ -69,8 +69,8 @@ const ProjectInbox: NextPage = () => {
             query: {
               inboxIssueId:
                 currentIssueIndex === 0
-                  ? inboxIssues[inboxIssues.length - 1].id
-                  : inboxIssues[currentIssueIndex - 1].id,
+                  ? inboxIssues[inboxIssues.length - 1].bridge_id
+                  : inboxIssues[currentIssueIndex - 1].bridge_id,
             },
           });
           break;
@@ -80,8 +80,8 @@ const ProjectInbox: NextPage = () => {
             query: {
               inboxIssueId:
                 currentIssueIndex === inboxIssues.length - 1
-                  ? inboxIssues[0].id
-                  : inboxIssues[currentIssueIndex + 1].id,
+                  ? inboxIssues[0].bridge_id
+                  : inboxIssues[currentIssueIndex + 1].bridge_id,
             },
           });
 

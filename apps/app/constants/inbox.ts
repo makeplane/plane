@@ -5,3 +5,5 @@ export const STATUS: { [key: string]: number } = {
   Accepted: 1,
   Duplicate: 2,
 };
+
+export const INBOX_ISSUE_SOURCE = "in-app";

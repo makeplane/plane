@@ -69,6 +69,9 @@ export const InboxMainContent: React.FC = () => {
 
     reset({
       ...issueDetails,
+      assignees_list:
+        issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
+      labels_list: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset, inboxIssueId]);
 
@@ -76,15 +79,12 @@ export const InboxMainContent: React.FC = () => {
     async (formData: Partial<IInboxIssue>) => {
       if (!workspaceSlug || !projectId || !inboxIssueId || !inboxId || !issueDetails) return;
 
-      mutateIssueDetails((prevData) => {
+      mutateIssueDetails((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
           ...prevData,
-          issue_detail: {
-            ...prevData,
-            ...formData,
-          },
+          ...formData,
         };
       }, false);
       mutate<IInboxIssue[]>(

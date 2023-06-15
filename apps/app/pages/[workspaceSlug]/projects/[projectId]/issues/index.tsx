@@ -77,7 +77,7 @@ const ProjectIssues: NextPage = () => {
                   >
                     <span>Inbox</span>
                     {inboxList && inboxList?.[0]?.pending_issue_count !== 0 && (
-                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full text-brand-base bg-brand-surface-2 border">
+                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full text-brand-base bg-brand-surface-2 border border-brand-base">
                         {inboxList?.[0]?.pending_issue_count}
                       </span>
                     )}
