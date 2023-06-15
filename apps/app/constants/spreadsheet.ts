@@ -10,11 +10,6 @@ export const SPREADSHEET_COLUMN = [
     colSize: "360px",
   },
   {
-    propertyName: "priority",
-    colName: "Priority",
-    colSize: "100px",
-  },
-  {
     propertyName: "state",
     colName: "State",
     colSize: "120px",
@@ -23,6 +18,11 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "due_date",
     colName: "Due Date",
     colSize: "120px",
+  },
+  {
+    propertyName: "priority",
+    colName: "Priority",
+    colSize: "100px",
   },
   {
     propertyName: "labels",

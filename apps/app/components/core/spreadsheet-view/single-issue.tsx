@@ -25,7 +25,7 @@ import {
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 // types
-import { IIssue, Properties, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
 // helper
 import { truncateText } from "helpers/string.helper";
 
@@ -33,6 +33,7 @@ type Props = {
   issue: IIssue;
   properties: Properties;
   gridTemplateColumns: string;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -40,6 +41,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   issue,
   properties,
   gridTemplateColumns,
+  user,
   userAuth,
 }) => {
   const router = useRouter();
@@ -77,7 +79,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       );
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData, user)
         .then(() => {
           mutate(fetchKey);
         })
@@ -85,75 +87,77 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, viewId, params]
+    [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
   );
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div
-      className="grid auto-rows-[minmax(36px,1fr)] rounded-lg hover:bg-brand-surface-2"
+      className="group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 w-full"
       style={{ gridTemplateColumns }}
     >
       {properties.key && (
-        <div className="flex  items-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
+        <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
           {issue.project_detail?.identifier}-{issue.sequence_id}
         </div>
       )}
-      <div className="flex items-center text-[0.825rem] text-brand-secondary p-2 border-b border-brand-base">
-        {truncateText(issue.name, 30)}
+      <div className="flex items-center cursor-pointer text-[0.825rem] text-brand-secondary p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+        {truncateText(issue.name, 45)}
       </div>
-      {properties.priority && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
-          <ViewPrioritySelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            position="right"
-            isNotAllowed={isNotAllowed}
-          />
-        </div>
-      )}
       {properties.state && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
           <ViewStateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="right"
+            customButton
+            user={user}
             isNotAllowed={isNotAllowed}
           />
         </div>
       )}
       {properties.due_date && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
           <ViewDueDateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
+            noBorder
+            user={user}
+            isNotAllowed={isNotAllowed}
+          />
+        </div>
+      )}
+      {properties.priority && (
+        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+          <ViewPrioritySelect
+            issue={issue}
+            partialUpdateIssue={partialUpdateIssue}
+            position="right"
+            noBorder
+            user={user}
             isNotAllowed={isNotAllowed}
           />
         </div>
       )}
       {properties.labels ? (
         issue.label_details.length > 0 ? (
-          <div className="flex items-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
-            <div className="flex flex-wrap gap-1">
-              {issue.label_details.map((label) => (
+          <div className="flex items-center justify-center gap-2 text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+            {issue.label_details.slice(0, 4).map((label, index) => (
+              <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
                 <span
-                  key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                >
-                  <span
-                    className="h-1.5 w-1.5  rounded-full"
-                    style={{
-                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                    }}
-                  />
-                  {label.name}
-                </span>
-              ))}
-            </div>
+                  className={`h-4 w-4 flex-shrink-0 rounded-full border hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base
+                `}
+                  style={{
+                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
+                  }}
+                />
+              </div>
+            ))}
+            {issue.label_details.length > 4 ? <span>+{issue.label_details.length - 4}</span> : null}
           </div>
         ) : (
-          <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
+          <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
             No Labels
           </div>
         )
@@ -161,29 +165,31 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         ""
       )}
       {properties.assignee && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
+        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
           <ViewAssigneeSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="right"
+            customButton
+            user={user}
             isNotAllowed={isNotAllowed}
           />
         </div>
       )}
       {properties.estimate && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
+        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
           <ViewEstimateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="right"
+            user={user}
             isNotAllowed={isNotAllowed}
           />
         </div>
       )}
-
       {properties.link && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
-          <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+          <div className="flex cursor-default items-center px-2.5 py-1 text-xs">
             <div className="flex items-center gap-1 text-brand-secondary">
               <LinkIcon className="h-3.5 w-3.5" />
               {issue.link_count}
@@ -192,8 +198,8 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.attachment_count && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 border-b border-brand-base">
-          <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+          <div className="flex cursor-default items-center px-2.5 py-1 text-xs">
             <div className="flex items-center gap-1 text-brand-secondary">
               <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
               {issue.attachment_count}

@@ -563,7 +563,7 @@ export const IssuesView: React.FC<Props> = ({
                   userAuth={memberRole}
                 />
               ) : issueView === "spreadsheet" ? (
-                <SpreadsheetView userAuth={memberRole} />
+                <SpreadsheetView user={user} userAuth={memberRole} />
               ) : (
                 issueView === "gantt_chart" && <GanttChartView />
               )}

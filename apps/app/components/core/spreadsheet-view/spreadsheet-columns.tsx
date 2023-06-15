@@ -7,13 +7,13 @@ type Props = {
 
 export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateColumns }) => (
   <div
-    className={`sticky z-10 top-0 grid pt-4 auto-rows-[minmax(36px,1fr)] rounded-lg border-b border-brand-base bg-brand-base`}
+    className={`grid auto-rows-[minmax(36px,1fr)] bg-brand-base`}
     style={{ gridTemplateColumns }}
   >
     {columnData.map((col: any) => {
       if (col.isActive) {
         return (
-          <div className="flex items-center justify-center text-base text-brand-base text-current p-2.5 border-b border-brand-base ">
+          <div className="flex items-center justify-start cursor-default text-base text-brand-base text-current py-2.5 px-2">
             {col.colName}
           </div>
         );

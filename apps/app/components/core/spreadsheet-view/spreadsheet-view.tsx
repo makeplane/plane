@@ -9,15 +9,16 @@ import { SingleSpreadsheetIssue, SpreadsheetColumns } from "components/core";
 import useIssuesProperties from "hooks/use-issue-properties";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // types
-import { Properties, UserAuth } from "types";
+import { ICurrentUserResponse, Properties, UserAuth } from "types";
 // constants
 import { SPREADSHEET_COLUMN } from "constants/spreadsheet";
 
 type Props = {
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
-export const SpreadsheetView: React.FC<Props> = ({ userAuth }) => {
+export const SpreadsheetView: React.FC<Props> = ({ user, userAuth }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -47,18 +48,23 @@ export const SpreadsheetView: React.FC<Props> = ({ userAuth }) => {
     .join(" ");
 
   return (
-    <div className="h-full rounded-lg text-brand-secondary overflow-x-scroll pb-4 bg-brand-base">
-      <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
+    <div className="h-full rounded-lg text-brand-secondary overflow-x-auto whitespace-nowrap px-4 bg-brand-base">
+      <div className="sticky z-10 top-0 border-b border-brand-base w-full min-w-max">
+        <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
+      </div>
 
       {spreadsheetIssues && (
-        <div className="flex flex-col h-full w-full px-4 bg-brand-base rounded-sm ">
+        <div className="flex flex-col h-full w-full bg-brand-base rounded-sm ">
           {spreadsheetIssues.map((issue, index) => (
-            <SingleSpreadsheetIssue
-              issue={issue}
-              gridTemplateColumns={gridTemplateColumns}
-              properties={properties}
-              userAuth={userAuth}
-            />
+            <div className="border-b border-brand-base w-full min-w-max">
+              <SingleSpreadsheetIssue
+                issue={issue}
+                gridTemplateColumns={gridTemplateColumns}
+                properties={properties}
+                user={user}
+                userAuth={userAuth}
+              />
+            </div>
           ))}
         </div>
       )}
