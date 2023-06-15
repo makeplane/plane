@@ -13,7 +13,7 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from .base import BaseViewSet
-from plane.api.permissions import ProjectBasePermission, WorkspaceEntityPermission
+from plane.api.permissions import ProjectBasePermission, ProjectLitePermission
 from plane.db.models import (
     Project,
     Inbox,
@@ -87,7 +87,7 @@ class InboxViewSet(BaseViewSet):
 
 class InboxIssueViewSet(BaseViewSet):
     permission_classes = [
-        WorkspaceEntityPermission,
+        ProjectLitePermission,
     ]
 
     serializer_class = InboxIssueSerializer

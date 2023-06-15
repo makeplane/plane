@@ -89,3 +89,16 @@ class ProjectEntityPermission(BasePermission):
             role__in=[Admin, Member],
             project_id=view.project_id,
         ).exists()
+
+
+class ProjectLitePermission(BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return False
+        
+        return ProjectMember.objects.filter(
+            workspace__slug=view.workspace_slug,
+            member=request.user,
+            project_id=view.project_id,
+        ).exists()
