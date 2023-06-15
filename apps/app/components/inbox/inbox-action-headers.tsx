@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useRouter } from "next/router";
+
 // react-datepicker
 import DatePicker from "react-datepicker";
 // headless ui
@@ -24,7 +26,6 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { IInboxIssue } from "types";
-import { useRouter } from "next/router";
 
 type Props = {
   issueCount: number;
@@ -55,7 +56,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
   const { inboxIssueId } = router.query;
 
   const { memberRole } = useProjectMyMembership();
-  const { filters, setFilters } = useInboxView();
+  const { filters, setFilters, filtersLength } = useInboxView();
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
@@ -73,7 +74,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
           <InboxIcon className="h-4 w-4 text-brand-secondary" />
           <h3 className="font-medium">Inbox</h3>
         </div>
-        <div>
+        <div className="relative">
           <FiltersDropdown
             filters={filters}
             onSelect={(option) => {
@@ -96,6 +97,11 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
             direction="right"
             height="rg"
           />
+          {filtersLength > 0 && (
+            <div className="absolute -top-2 -right-2 h-4 w-4 text-[0.65rem] grid place-items-center rounded-full text-brand-base bg-brand-surface-2 border border-brand-base z-10">
+              <span>{filtersLength}</span>
+            </div>
+          )}
         </div>
       </div>
       {inboxIssueId && (
@@ -194,12 +200,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
                 </SecondaryButton>
               </div>
               <div className="flex-shrink-0">
-                <SecondaryButton
-                  size="sm"
-                  className="flex gap-2 items-center"
-                  onClick={onDelete}
-                  disabled={issueStatus !== -2}
-                >
+                <SecondaryButton size="sm" className="flex gap-2 items-center" onClick={onDelete}>
                   <TrashIcon className="h-4 w-4 text-red-500" />
                   <span>Delete</span>
                 </SecondaryButton>

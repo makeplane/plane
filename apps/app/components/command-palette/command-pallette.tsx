@@ -102,7 +102,7 @@ export const CommandPalette: React.FC = () => {
   const page = pages[pages.length - 1];
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId, inboxId } = router.query;
 
   const { user } = useUser();
   const { setToastAlert } = useToast();
@@ -145,7 +145,7 @@ export const CommandPalette: React.FC = () => {
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId]
+    [workspaceSlug, issueId, projectId, user]
   );
 
   const handleIssueAssignees = (assignee: string) => {
@@ -372,6 +372,7 @@ export const CommandPalette: React.FC = () => {
       <CreateUpdateIssueModal
         isOpen={isIssueModalOpen}
         handleClose={() => setIsIssueModalOpen(false)}
+        fieldsToShow={inboxId ? ["name", "description", "priority"] : ["all"]}
       />
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}

@@ -105,7 +105,7 @@ const IssueDetailsPage: NextPage = () => {
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, mutateIssueDetails]
+    [workspaceSlug, issueId, projectId, mutateIssueDetails, user]
   );
 
   useEffect(() => {

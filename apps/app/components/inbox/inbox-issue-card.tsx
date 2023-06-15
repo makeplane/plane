@@ -1,15 +1,16 @@
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 // ui
 import { Tooltip } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons";
+import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 import { CalendarDaysIcon, ClockIcon } from "@heroicons/react/24/outline";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import type { IInboxIssue } from "types";
-import Link from "next/link";
 
 type Props = {
   issue: IInboxIssue;
@@ -20,28 +21,29 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
   const { issue, active } = props;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
+  const { workspaceSlug, projectId, inboxId } = router.query;
 
   const issueStatus = issue.issue_inbox[0].status;
 
   return (
-    <Tooltip
-      tooltipContent={
-        issueStatus === -2
-          ? "Pending issue"
-          : issueStatus === -1
-          ? "Rejected issue"
-          : issueStatus === 0
-          ? "Issue snoozed"
-          : issueStatus === 1
-          ? "Issue accepted"
-          : "Marked as duplicate"
-      }
+    <Link
+      href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.bridge_id}`}
     >
-      <Link
-        href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.bridge_id}`}
-      >
-        <a>
+      <a>
+        <Tooltip
+          tooltipContent={
+            issueStatus === -2
+              ? "Pending issue"
+              : issueStatus === -1
+              ? "Rejected issue"
+              : issueStatus === 0
+              ? "Snoozed issue"
+              : issueStatus === 1
+              ? "Accepted issue"
+              : "Marked as duplicate"
+          }
+          position="right"
+        >
           <div
             id={issue.id}
             className={`relative min-h-[5rem] cursor-pointer select-none space-y-3 py-2 px-4 border-b border-brand-base hover:bg-brand-accent hover:bg-opacity-10 ${
@@ -55,6 +57,20 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               <h5 className="truncate text-sm">{issue.name}</h5>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
+              <Tooltip
+                tooltipHeading="State"
+                tooltipContent={addSpaceIfCamelCase(issue.state_detail?.name ?? "Triage")}
+              >
+                <div className="flex items-center gap-2 rounded border border-brand-base shadow-sm text-xs px-2 py-[0.19rem] text-brand-secondary">
+                  {getStateGroupIcon(
+                    issue.state_detail?.group ?? "backlog",
+                    "14",
+                    "14",
+                    issue.state_detail?.color
+                  )}
+                  {issue.state_detail?.name ?? "Triage"}
+                </div>
+              </Tooltip>
               <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
                 <div
                   className={`grid h-6 w-6 place-items-center rounded border items-center shadow-sm ${
@@ -94,8 +110,8 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               )}
             </div>
           </div>
-        </a>
-      </Link>
-    </Tooltip>
+        </Tooltip>
+      </a>
+    </Link>
   );
 };
