@@ -13,7 +13,7 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from .base import BaseViewSet
-from plane.api.permissions import ProjectBasePermission
+from plane.api.permissions import ProjectBasePermission, WorkspaceEntityPermission
 from plane.db.models import (
     Project,
     Inbox,
@@ -87,8 +87,9 @@ class InboxViewSet(BaseViewSet):
 
 class InboxIssueViewSet(BaseViewSet):
     permission_classes = [
-        ProjectBasePermission,
+        WorkspaceEntityPermission,
     ]
+
     serializer_class = InboxIssueSerializer
     model = InboxIssue
 
@@ -112,7 +113,6 @@ class InboxIssueViewSet(BaseViewSet):
     def list(self, request, slug, project_id, inbox_id):
         try:
             order_by = request.GET.get("order_by", "created_at")
-            group_by = request.GET.get("group_by", False)
             filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.objects.filter(
@@ -185,7 +185,7 @@ class InboxIssueViewSet(BaseViewSet):
                 "medium",
                 "high",
                 "urgent",
-                None
+                None,
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
@@ -213,7 +213,7 @@ class InboxIssueViewSet(BaseViewSet):
             )
 
             # Create an Issue Activity
-                # Track the issue
+            # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
@@ -250,8 +250,12 @@ class InboxIssueViewSet(BaseViewSet):
             issue_data = request.data.pop("issue", False)
 
             if bool(issue_data):
-                issue = Issue.objects.get(pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id)
-                issue_serializer = IssueCreateSerializer(issue, data=issue_data, partial=True)
+                issue = Issue.objects.get(
+                    pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
+                )
+                issue_serializer = IssueCreateSerializer(
+                    issue, data=issue_data, partial=True
+                )
 
                 if issue_serializer.is_valid():
                     current_instance = issue
@@ -266,11 +270,14 @@ class InboxIssueViewSet(BaseViewSet):
                             issue_id=str(issue.id),
                             project_id=str(project_id),
                             current_instance=json.dumps(
-                                IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                                IssueSerializer(current_instance).data,
+                                cls=DjangoJSONEncoder,
                             ),
                         )
                 else:
-                    return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                    )
 
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
@@ -285,7 +292,9 @@ class InboxIssueViewSet(BaseViewSet):
                         workspace__slug=slug,
                         project_id=project_id,
                     )
-                    state = State.objects.filter(group="cancelled", workspace__slug=slug, project_id=project_id).first()
+                    state = State.objects.filter(
+                        group="cancelled", workspace__slug=slug, project_id=project_id
+                    ).first()
                     if state is not None:
                         issue.state = state
                         issue.save()
@@ -301,7 +310,9 @@ class InboxIssueViewSet(BaseViewSet):
                     # Update the issue state only if it is in triage state
                     if issue.state.name == "Triage":
                         # Move to default state
-                        state = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).first()
+                        state = State.objects.filter(
+                            workspace__slug=slug, project_id=project_id, default=True
+                        ).first()
                         if state is not None:
                             issue.state = state
                             issue.save()
@@ -322,8 +333,12 @@ class InboxIssueViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, inbox_id, pk):
         try:
-            inbox_issue = InboxIssue.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id)
-            issue = Issue.objects.get(pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id)
+            inbox_issue = InboxIssue.objects.get(
+                pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+            )
+            issue = Issue.objects.get(
+                pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
+            )
             serializer = IssueStateInboxSerializer(issue)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
