@@ -1,6 +1,10 @@
+# Python imports
+import json
+
 # Django import
 from django.utils import timezone
 from django.db.models import Q, Count, OuterRef, Func, F, Prefetch
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
@@ -18,14 +22,17 @@ from plane.db.models import (
     State,
     IssueLink,
     IssueAttachment,
+    IssueActivity,
 )
 from plane.api.serializers import (
+    IssueSerializer,
     InboxSerializer,
     InboxIssueSerializer,
     IssueCreateSerializer,
     IssueStateInboxSerializer,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.bgtasks.issue_activites_task import issue_activity
 
 
 class InboxViewSet(BaseViewSet):
@@ -205,6 +212,16 @@ class InboxIssueViewSet(BaseViewSet):
                 state=state,
             )
 
+            # Create an Issue Activity
+                # Track the issue
+            issue_activity.delay(
+                type="issue.activity.created",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(issue.id),
+                project_id=str(project_id),
+                current_instance=None,
+            )
             # create an inbox issue
             InboxIssue.objects.create(
                 inbox_id=inbox_id,
@@ -238,6 +255,20 @@ class InboxIssueViewSet(BaseViewSet):
 
                 if issue_serializer.is_valid():
                     issue_serializer.save()
+                    # Log all the updates
+                    requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
+                    current_instance = issue
+                    if current_instance is not None:
+                        issue_activity.delay(
+                            type="issue.activity.updated",
+                            requested_data=requested_data,
+                            actor_id=str(request.user.id),
+                            issue_id=str(issue.id),
+                            project_id=str(project_id),
+                            current_instance=json.dumps(
+                                (current_instance).data, cls=DjangoJSONEncoder
+                            ),
+                        )
                 else:
                     return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -265,6 +296,19 @@ class InboxIssueViewSet(BaseViewSet):
                 {"error": "Inbox Issue does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def retrieve(self, request, slug, project_id, inbox_id, pk):
+        try:
+            inbox_issue = InboxIssue.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id)
+            issue = Issue.objects.get(pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id)
+            serializer = IssueStateInboxSerializer(issue)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
