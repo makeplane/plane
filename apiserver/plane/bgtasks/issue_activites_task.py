@@ -44,7 +44,7 @@ def track_name(
                 field="name",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated the start date to {requested_data.get('name')}",
+                comment=f"{actor.email} updated the name to {requested_data.get('name')}",
             )
         )
 
