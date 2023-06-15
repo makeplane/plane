@@ -254,6 +254,7 @@ class InboxIssueViewSet(BaseViewSet):
                 issue_serializer = IssueCreateSerializer(issue, data=issue_data, partial=True)
 
                 if issue_serializer.is_valid():
+                    current_instance = issue
                     issue_serializer.save()
                     # Log all the updates
                     requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
@@ -265,7 +266,7 @@ class InboxIssueViewSet(BaseViewSet):
                             issue_id=str(issue.id),
                             project_id=str(project_id),
                             current_instance=json.dumps(
-                                issue_serializer.data, cls=DjangoJSONEncoder
+                                IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
                             ),
                         )
                 else:
@@ -284,7 +285,7 @@ class InboxIssueViewSet(BaseViewSet):
                         workspace__slug=slug,
                         project_id=project_id,
                     )
-                    state = State.objects.filter(group="cancelled").first()
+                    state = State.objects.filter(group="cancelled", workspace__slug=slug, project_id=project_id).first()
                     if state is not None:
                         issue.state = state
                         issue.save()
