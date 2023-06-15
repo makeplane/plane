@@ -133,7 +133,7 @@ class IssueViewSet(BaseViewSet):
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
-                sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -263,7 +263,7 @@ class UserWorkSpaceIssues(BaseAPIView):
             issues = (
                 Issue.issue_objects.filter(assignees__in=[request.user], workspace__slug=slug)
                 .annotate(
-                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
@@ -579,7 +579,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            issues = Issue.objects.filter(
+            issues = Issue.issue_objects.filter(
                 workspace__slug=slug, project_id=project_id, pk__in=issue_ids
             )
 
@@ -654,7 +654,7 @@ class SubIssuesEndpoint(BaseAPIView):
     # Assign multiple sub issues
     def post(self, request, slug, project_id, issue_id):
         try:
-            parent_issue = Issue.objects.get(pk=issue_id)
+            parent_issue = Issue.issue_objects.get(pk=issue_id)
             sub_issue_ids = request.data.get("sub_issue_ids", [])
 
             if not len(sub_issue_ids):
@@ -670,7 +670,7 @@ class SubIssuesEndpoint(BaseAPIView):
 
             _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-            updated_sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+            updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
 
             return Response(
                 IssueFlatSerializer(updated_sub_issues, many=True).data,
