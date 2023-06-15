@@ -67,7 +67,12 @@ interface StatusDuplicate {
   duplicate_to: string;
 }
 
-type TInboxStatus = StatusReject | StatusSnoozed | StatusAccepted | StatusDuplicate | StatePending;
+export type TInboxStatus =
+  | StatusReject
+  | StatusSnoozed
+  | StatusAccepted
+  | StatusDuplicate
+  | StatePending;
 
 export interface IInboxFilterOptions {
   priority: string[] | null;
