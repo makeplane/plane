@@ -68,6 +68,11 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
           message: "Issue deleted successfully.",
         });
 
+        // remove inboxIssueId from the url
+        router.push({
+          pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+        });
+
         onClose();
       })
       .catch(() =>
