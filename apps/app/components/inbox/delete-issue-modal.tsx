@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -17,9 +17,9 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { IInboxIssue, IInboxIssueDetail } from "types";
+import type { IInboxIssue } from "types";
 // fetch-keys
-import { INBOX_ISSUES, INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
+import { INBOX_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;

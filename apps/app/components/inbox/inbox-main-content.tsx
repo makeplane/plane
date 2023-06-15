@@ -149,7 +149,7 @@ export const InboxMainContent: React.FC = () => {
             <div className="space-y-5 pt-3">
               <h3 className="text-lg text-brand-base">Comments/Activity</h3>
               <IssueActivitySection issueId={issueDetails.id} user={user} />
-              <AddComment user={user} />
+              <AddComment issueId={issueDetails.id} user={user} />
             </div>
           </div>
 
