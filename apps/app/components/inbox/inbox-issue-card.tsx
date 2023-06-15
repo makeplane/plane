@@ -35,7 +35,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
             issueStatus === -2
               ? "Pending issue"
               : issueStatus === -1
-              ? "Rejected issue"
+              ? "Declined issue"
               : issueStatus === 0
               ? "Snoozed issue"
               : issueStatus === 1

@@ -66,7 +66,7 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }
 
             return {
               ...prevData,
-              status: -1,
+              issue_inbox: [{ ...prevData.issue_inbox[0], status: -1 }],
             };
           },
           false
@@ -74,8 +74,10 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }
         mutate<IInboxIssue[]>(
           INBOX_ISSUES(inboxId.toString(), params),
           (prevData) =>
-            prevData?.map((item) =>
-              item.bridge_id === data.bridge_id ? { ...item, status: -1 } : item
+            prevData?.map((i) =>
+              i.bridge_id === data.bridge_id
+                ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], status: -1 }] }
+                : i
             ),
           false
         );

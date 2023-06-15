@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 
-import Link from "next/link";
 import Router, { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -17,7 +16,6 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import { InboxViewContextProvider } from "contexts/inbox-view-context";
 // components
 import {
-  InboxIssueCard,
   InboxActionHeader,
   InboxMainContent,
   SelectDuplicateInboxIssueModal,
@@ -28,12 +26,13 @@ import {
 // helper
 import { truncateText } from "helpers/string.helper";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { InboxIcon } from "components/icons";
 // types
+import { IInboxIssueDetail, TInboxStatus } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { INBOX_ISSUE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
@@ -101,19 +100,42 @@ const ProjectInbox: NextPage = () => {
     };
   }, [onKeyDown]);
 
-  // // show the first issue by default in the main content
-  // useEffect(() => {
-  //   if (!workspaceSlug || !projectId || !inboxId) return;
+  const markInboxStatus = async (data: TInboxStatus) => {
+    if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId) return;
 
-  //   if (!inboxIssues || inboxIssues.length === 0) return;
+    await inboxServices
+      .markInboxStatus(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        inboxId.toString(),
+        inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)?.bridge_id!,
+        data,
+        user
+      )
+      .then(() => {
+        mutate<IInboxIssueDetail>(
+          INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string),
+          (prevData) => {
+            if (!prevData) return prevData;
 
-  //   Router.push({
-  //     pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
-  //     query: {
-  //       inboxIssueId: inboxIssues[0].bridge_id,
-  //     },
-  //   });
-  // }, [inboxIssues, workspaceSlug, projectId, inboxId]);
+            return {
+              ...prevData,
+              issue_inbox: [{ ...prevData.issue_inbox[0], ...data }],
+            };
+          },
+          false
+        );
+        mutateInboxIssues(
+          (prevData) =>
+            (prevData ?? []).map((i) =>
+              i.bridge_id === inboxIssueId
+                ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] }
+                : i
+            ),
+          false
+        );
+      });
+  };
 
   return (
     <InboxViewContextProvider>
@@ -150,32 +172,10 @@ const ProjectInbox: NextPage = () => {
                 ?.issue_inbox[0].duplicate_to
             }
             onSubmit={(dupIssueId: string) => {
-              inboxServices
-                .markInboxStatus(
-                  workspaceSlug!.toString(),
-                  projectId!.toString(),
-                  inboxId!.toString(),
-                  inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)?.id!,
-                  {
-                    status: 2,
-                    duplicate_to: dupIssueId,
-                  },
-                  user
-                )
-                .then(() => {
-                  setSelectDuplicateIssue(false);
-                  mutate(INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string));
-                  mutateInboxIssues((prevData) =>
-                    (prevData ?? [])?.map((item) => ({
-                      ...item,
-                      status: item.bridge_id === inboxIssueId ? 2 : item.issue_inbox[0].status,
-                      duplicate_to: dupIssueId,
-                    }))
-                  );
-                })
-                .catch(() => {
-                  setSelectDuplicateIssue(false);
-                });
+              markInboxStatus({
+                status: 2,
+                duplicate_to: dupIssueId,
+              }).finally(() => setSelectDuplicateIssue(false));
             }}
           />
           <DeclineIssueModal
@@ -195,56 +195,18 @@ const ProjectInbox: NextPage = () => {
                 inboxIssues?.findIndex((issue) => issue.bridge_id === inboxIssueId) ?? 0
               }
               issueCount={inboxIssues?.length ?? 0}
-              onAccept={() => {
-                inboxServices
-                  .markInboxStatus(
-                    workspaceSlug!.toString(),
-                    projectId!.toString(),
-                    inboxId!.toString(),
-                    inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)
-                      ?.bridge_id!,
-                    {
-                      status: 1,
-                    },
-                    user
-                  )
-                  .then(() => {
-                    mutate(INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string));
-                    mutateInboxIssues((prevData) =>
-                      prevData?.map((item) =>
-                        item.bridge_id === inboxIssueId ? { ...item, status: 1 } : item
-                      )
-                    );
-                  });
-              }}
+              onAccept={() =>
+                markInboxStatus({
+                  status: 1,
+                })
+              }
               onDecline={() => setDeclineIssueModal(true)}
-              onMarkAsDuplicate={() => {
-                setSelectDuplicateIssue(true);
-              }}
+              onMarkAsDuplicate={() => setSelectDuplicateIssue(true)}
               onSnooze={(date) => {
-                inboxServices
-                  .markInboxStatus(
-                    workspaceSlug!.toString(),
-                    projectId!.toString(),
-                    inboxId!.toString(),
-                    inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)
-                      ?.bridge_id!,
-                    {
-                      status: 0,
-                      snoozed_till: new Date(date),
-                    },
-                    user
-                  )
-                  .then(() => {
-                    mutate(INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string));
-                    mutateInboxIssues((prevData) =>
-                      prevData?.map((item) =>
-                        item.bridge_id === inboxIssueId
-                          ? { ...item, status: 0, snoozed_till: new Date(date) }
-                          : item
-                      )
-                    );
-                  });
+                markInboxStatus({
+                  status: 0,
+                  snoozed_till: new Date(date),
+                });
               }}
               onDelete={() => setDeleteIssueModal(true)}
             />
