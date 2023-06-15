@@ -247,6 +247,25 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     reset();
   }, [createLabelForm, reset]);
 
+  const showFirstSection =
+    fieldsToShow.includes("all") ||
+    fieldsToShow.includes("state") ||
+    fieldsToShow.includes("assignee") ||
+    fieldsToShow.includes("priority") ||
+    fieldsToShow.includes("estimate");
+
+  const showSecondSection =
+    fieldsToShow.includes("all") ||
+    fieldsToShow.includes("parent") ||
+    fieldsToShow.includes("blocker") ||
+    fieldsToShow.includes("blocked") ||
+    fieldsToShow.includes("dueDate");
+
+  const showThirdSection =
+    fieldsToShow.includes("all") ||
+    fieldsToShow.includes("cycle") ||
+    fieldsToShow.includes("module");
+
   const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
 
   return (
@@ -287,153 +306,159 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           </div>
         </div>
         <div className="divide-y-2 divide-brand-base">
-          <div className="py-1">
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
-              <Controller
-                control={control}
-                name="state"
-                render={({ field: { value } }) => (
-                  <SidebarStateSelect
-                    value={value}
-                    onChange={(val: string) => submitChanges({ state: val })}
-                    userAuth={memberRole}
-                  />
-                )}
-              />
-            )}
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
-              <Controller
-                control={control}
-                name="assignees_list"
-                render={({ field: { value } }) => (
-                  <SidebarAssigneeSelect
-                    value={value}
-                    onChange={(val: string[]) => submitChanges({ assignees_list: val })}
-                    userAuth={memberRole}
-                  />
-                )}
-              />
-            )}
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
-              <Controller
-                control={control}
-                name="priority"
-                render={({ field: { value } }) => (
-                  <SidebarPrioritySelect
-                    value={value}
-                    onChange={(val: string) => submitChanges({ priority: val })}
-                    userAuth={memberRole}
-                  />
-                )}
-              />
-            )}
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
-              <Controller
-                control={control}
-                name="estimate_point"
-                render={({ field: { value } }) => (
-                  <SidebarEstimateSelect
-                    value={value}
-                    onChange={(val: number | null) => submitChanges({ estimate_point: val })}
-                    userAuth={memberRole}
-                  />
-                )}
-              />
-            )}
-          </div>
-          <div className="py-1">
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-              <SidebarParentSelect
-                control={control}
-                submitChanges={submitChanges}
-                issuesList={
-                  issues?.filter(
-                    (i) =>
-                      i.id !== issueDetail?.id &&
-                      i.id !== issueDetail?.parent &&
-                      i.parent !== issueDetail?.id
-                  ) ?? []
-                }
-                customDisplay={
-                  issueDetail?.parent_detail ? (
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 rounded bg-brand-surface-2 px-3 py-2 text-xs"
-                      onClick={() => submitChanges({ parent: null })}
-                    >
-                      {issueDetail.parent_detail?.name}
-                      <XMarkIcon className="h-3 w-3" />
-                    </button>
-                  ) : (
-                    <div className="inline-block rounded bg-brand-surface-1 px-3 py-2 text-xs">
-                      No parent selected
-                    </div>
-                  )
-                }
-                watch={watchIssue}
-                userAuth={memberRole}
-              />
-            )}
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
-              <SidebarBlockerSelect
-                submitChanges={submitChanges}
-                issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
-                watch={watchIssue}
-                userAuth={memberRole}
-              />
-            )}
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
-              <SidebarBlockedSelect
-                submitChanges={submitChanges}
-                issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
-                watch={watchIssue}
-                userAuth={memberRole}
-              />
-            )}
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
-              <div className="flex flex-wrap items-center py-2">
-                <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
-                  <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                  <p>Due date</p>
+          {showFirstSection && (
+            <div className="py-1">
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
+                <Controller
+                  control={control}
+                  name="state"
+                  render={({ field: { value } }) => (
+                    <SidebarStateSelect
+                      value={value}
+                      onChange={(val: string) => submitChanges({ state: val })}
+                      userAuth={memberRole}
+                    />
+                  )}
+                />
+              )}
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
+                <Controller
+                  control={control}
+                  name="assignees_list"
+                  render={({ field: { value } }) => (
+                    <SidebarAssigneeSelect
+                      value={value}
+                      onChange={(val: string[]) => submitChanges({ assignees_list: val })}
+                      userAuth={memberRole}
+                    />
+                  )}
+                />
+              )}
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
+                <Controller
+                  control={control}
+                  name="priority"
+                  render={({ field: { value } }) => (
+                    <SidebarPrioritySelect
+                      value={value}
+                      onChange={(val: string) => submitChanges({ priority: val })}
+                      userAuth={memberRole}
+                    />
+                  )}
+                />
+              )}
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
+                <Controller
+                  control={control}
+                  name="estimate_point"
+                  render={({ field: { value } }) => (
+                    <SidebarEstimateSelect
+                      value={value}
+                      onChange={(val: number | null) => submitChanges({ estimate_point: val })}
+                      userAuth={memberRole}
+                    />
+                  )}
+                />
+              )}
+            </div>
+          )}
+          {showSecondSection && (
+            <div className="py-1">
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
+                <SidebarParentSelect
+                  control={control}
+                  submitChanges={submitChanges}
+                  issuesList={
+                    issues?.filter(
+                      (i) =>
+                        i.id !== issueDetail?.id &&
+                        i.id !== issueDetail?.parent &&
+                        i.parent !== issueDetail?.id
+                    ) ?? []
+                  }
+                  customDisplay={
+                    issueDetail?.parent_detail ? (
+                      <button
+                        type="button"
+                        className="flex items-center gap-2 rounded bg-brand-surface-2 px-3 py-2 text-xs"
+                        onClick={() => submitChanges({ parent: null })}
+                      >
+                        {issueDetail.parent_detail?.name}
+                        <XMarkIcon className="h-3 w-3" />
+                      </button>
+                    ) : (
+                      <div className="inline-block rounded bg-brand-surface-1 px-3 py-2 text-xs">
+                        No parent selected
+                      </div>
+                    )
+                  }
+                  watch={watchIssue}
+                  userAuth={memberRole}
+                />
+              )}
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
+                <SidebarBlockerSelect
+                  submitChanges={submitChanges}
+                  issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
+                  watch={watchIssue}
+                  userAuth={memberRole}
+                />
+              )}
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
+                <SidebarBlockedSelect
+                  submitChanges={submitChanges}
+                  issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
+                  watch={watchIssue}
+                  userAuth={memberRole}
+                />
+              )}
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
+                <div className="flex flex-wrap items-center py-2">
+                  <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+                    <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                    <p>Due date</p>
+                  </div>
+                  <div className="sm:basis-1/2">
+                    <Controller
+                      control={control}
+                      name="target_date"
+                      render={({ field: { value } }) => (
+                        <CustomDatePicker
+                          placeholder="Due date"
+                          value={value}
+                          onChange={(val) =>
+                            submitChanges({
+                              target_date: val,
+                            })
+                          }
+                          className="bg-brand-surface-1"
+                          disabled={isNotAllowed}
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="sm:basis-1/2">
-                  <Controller
-                    control={control}
-                    name="target_date"
-                    render={({ field: { value } }) => (
-                      <CustomDatePicker
-                        placeholder="Due date"
-                        value={value}
-                        onChange={(val) =>
-                          submitChanges({
-                            target_date: val,
-                          })
-                        }
-                        className="bg-brand-surface-1"
-                        disabled={isNotAllowed}
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="py-1">
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && (
-              <SidebarCycleSelect
-                issueDetail={issueDetail}
-                handleCycleChange={handleCycleChange}
-                userAuth={memberRole}
-              />
-            )}
-            {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
-              <SidebarModuleSelect
-                issueDetail={issueDetail}
-                handleModuleChange={handleModuleChange}
-                userAuth={memberRole}
-              />
-            )}
-          </div>
+              )}
+            </div>
+          )}
+          {showThirdSection && (
+            <div className="py-1">
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && (
+                <SidebarCycleSelect
+                  issueDetail={issueDetail}
+                  handleCycleChange={handleCycleChange}
+                  userAuth={memberRole}
+                />
+              )}
+              {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
+                <SidebarModuleSelect
+                  issueDetail={issueDetail}
+                  handleModuleChange={handleModuleChange}
+                  userAuth={memberRole}
+                />
+              )}
+            </div>
+          )}
         </div>
         {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
           <div className="space-y-3 py-3">
