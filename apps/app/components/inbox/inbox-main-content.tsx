@@ -6,26 +6,26 @@ import useSWR, { mutate } from "swr";
 
 // react hook form
 import { useForm } from "react-hook-form";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // services
 import inboxServices from "services/inbox.service";
 // hooks
 import useInboxView from "hooks/use-inbox-view";
-// ui
-import { Loader } from "components/ui";
-// hooks
-import useUser from "hooks/use-user";
-// fetch-keys
-import { INBOX_ISSUES, INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
-
+import useUserAuth from "hooks/use-user-auth";
+// components
 import {
   AddComment,
   IssueActivitySection,
   IssueDescriptionForm,
   IssueDetailsSidebar,
 } from "components/issues";
-
+// ui
+import { Loader } from "components/ui";
 // types
 import type { IInboxIssue, IIssue } from "types";
+// fetch-keys
+import { INBOX_ISSUES, INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
 
 const defaultValues = {
   name: "",
@@ -42,7 +42,8 @@ export const InboxMainContent: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
 
-  const { user } = useUser();
+  const { user } = useUserAuth();
+  const { memberRole } = useProjectMyMembership();
   const { params } = useInboxView();
 
   const { reset, control, watch } = useForm<IIssue>({
@@ -144,6 +145,9 @@ export const InboxMainContent: React.FC = () => {
                   description_html: issueDetails.description_html,
                 }}
                 handleFormSubmit={submitChanges}
+                isAllowed={
+                  memberRole.isMember || memberRole.isOwner || user?.id === issueDetails.created_by
+                }
               />
             </div>
             <div className="space-y-5 pt-3">

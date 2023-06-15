@@ -10,6 +10,7 @@ import { Popover } from "@headlessui/react";
 import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useInboxView from "hooks/use-inbox-view";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import { FiltersDropdown } from "components/inbox";
 // ui
@@ -57,6 +58,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
 
   const { memberRole } = useProjectMyMembership();
   const { filters, setFilters, filtersLength } = useInboxView();
+  const { user } = useUserAuth();
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
@@ -131,8 +133,8 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
               {currentIssueIndex + 1}/{issueCount}
             </div>
           </div>
-          {isAllowed && (
-            <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap">
+            {isAllowed && (
               <div className={`flex gap-3 flex-wrap ${issueStatus !== -2 ? "opacity-70" : ""}`}>
                 <Popover className="relative">
                   <Popover.Button as="button" type="button" disabled={issueStatus !== -2}>
@@ -199,14 +201,16 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
                   <span>Decline</span>
                 </SecondaryButton>
               </div>
+            )}
+            {(isAllowed || user?.id === issue?.created_by) && (
               <div className="flex-shrink-0">
                 <SecondaryButton size="sm" className="flex gap-2 items-center" onClick={onDelete}>
                   <TrashIcon className="h-4 w-4 text-red-500" />
                   <span>Delete</span>
                 </SecondaryButton>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </div>

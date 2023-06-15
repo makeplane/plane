@@ -7,10 +7,12 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -53,6 +55,7 @@ const IssueDetailsPage: NextPage = () => {
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { user } = useUserAuth();
+  const { memberRole } = useProjectMyMembership();
 
   const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -194,7 +197,11 @@ const IssueDetailsPage: NextPage = () => {
                   </CustomMenu>
                 </div>
               ) : null}
-              <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
+              <IssueDescriptionForm
+                issue={issueDetails}
+                handleFormSubmit={submitChanges}
+                isAllowed={memberRole.isMember || memberRole.isOwner}
+              />
               <div className="mt-2 space-y-2">
                 <SubIssuesList parentIssue={issueDetails} user={user} />
               </div>
