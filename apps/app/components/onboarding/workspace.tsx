@@ -17,7 +17,7 @@ import { PrimaryButton } from "components/ui";
 import { getFirstCharacters, truncateText } from "helpers/string.helper";
 
 type Props = {
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setStep: React.Dispatch<React.SetStateAction<number | null>>;
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
   user: ICurrentUserResponse | undefined;
 };
