@@ -80,9 +80,22 @@ class WorkSpaceViewSet(BaseViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
+        member_count = (
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+
+        issue_count = (
+            Issue.objects.filter(workspace=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
         return self.filter_queryset(
             super().get_queryset().select_related("owner")
-        ).order_by("name")
+        ).order_by("name").filter(workspace_member__member=self.request.user).annotate(total_members=member_count).annotate(total_issues=issue_count)
 
     def create(self, request):
         try:
@@ -139,6 +152,13 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                 .values("count")
             )
 
+            issue_count = (
+                Issue.objects.filter(workspace=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+
             workspace = (
                 Workspace.objects.prefetch_related(
                     Prefetch("workspace_member", queryset=WorkspaceMember.objects.all())
@@ -147,7 +167,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                     workspace_member__member=request.user,
                 )
                 .select_related("owner")
-            ).annotate(total_members=member_count)
+            ).annotate(total_members=member_count).annotate(total_issues=issue_count)
 
             serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
