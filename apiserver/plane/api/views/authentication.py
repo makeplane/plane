@@ -156,6 +156,14 @@ class SignInEndpoint(BaseAPIView):
 
             user = User.objects.filter(email=email).first()
 
+            if user is None:
+                return Response(
+                    {
+                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             # Sign up Process
             if not user.check_password(password):
                 return Response(
