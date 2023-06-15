@@ -13,22 +13,22 @@ export interface IInboxIssue extends Partial<IIssue> {
   }[];
 }
 
-export interface IInboxIssueDetail {
+export interface IInboxIssueDetail extends IIssue {
   id: string;
-  issue_detail: IIssue & { bridge_id: string };
   project_detail: IProjectLite;
   created_at: string;
   updated_at: string;
-  status: -2 | -1 | 0 | 1 | 2;
-  snoozed_till: string | null;
-  source: string | null;
+  issue_inbox: {
+    duplicate_to: string | null;
+    id: string;
+    snoozed_till: Date | null;
+    source: string;
+    status: -2 | -1 | 0 | 1 | 2;
+  }[];
   created_by: string;
   updated_by: string;
   project: string;
   workspace: string;
-  inbox: string;
-  issue: string;
-  duplicate_to: string | null;
 }
 export interface IInbox {
   id: string;

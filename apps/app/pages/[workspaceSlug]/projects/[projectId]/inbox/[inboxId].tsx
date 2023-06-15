@@ -23,6 +23,7 @@ import {
   SelectDuplicateInboxIssueModal,
   DeclineIssueModal,
   DeleteIssueModal,
+  IssuesListSidebar,
 } from "components/inbox";
 // helper
 import { truncateText } from "helpers/string.helper";
@@ -47,8 +48,6 @@ const ProjectInbox: NextPage = () => {
 
   const { user } = useUserAuth();
   const { issues: inboxIssues, mutate: mutateInboxIssues } = useInboxView();
-
-  console.log("inboxIssues", inboxIssues);
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -250,33 +249,7 @@ const ProjectInbox: NextPage = () => {
               onDelete={() => setDeleteIssueModal(true)}
             />
             <div className="grid grid-cols-4 flex-1 overflow-auto divide-x divide-brand-base">
-              {inboxIssues ? (
-                inboxIssues.length > 0 ? (
-                  <div className="divide-y divide-brand-base overflow-auto h-full pb-10">
-                    {inboxIssues.map((issue) => (
-                      <Link
-                        key={issue.id}
-                        href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.bridge_id}`}
-                      >
-                        <a>
-                          <InboxIssueCard active={issue.bridge_id === inboxIssueId} issue={issue} />
-                        </a>
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="h-full p-4 grid place-items-center text-center text-sm text-brand-secondary">
-                    No issues found for the selected filters. Try changing the filters.
-                  </div>
-                )
-              ) : (
-                <Loader className="p-4 space-y-4">
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                </Loader>
-              )}
+              <IssuesListSidebar />
               <div className="col-span-3 h-full overflow-auto">
                 {inboxIssueId ? (
                   <InboxMainContent />

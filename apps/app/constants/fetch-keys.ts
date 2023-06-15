@@ -145,8 +145,6 @@ export const INBOX_ISSUES = (inboxId: string, params?: any) => {
 
   const paramsKey = inboxParamsToKey(params);
 
-  console.log("triggered 2");
-
   return `INBOX_ISSUES_${inboxId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 export const INBOX_ISSUE_DETAILS = (inboxId: string, issueId: string) =>

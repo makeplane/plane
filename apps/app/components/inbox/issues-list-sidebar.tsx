@@ -1,0 +1,44 @@
+import { useRouter } from "next/router";
+
+// hooks
+import useInboxView from "hooks/use-inbox-view";
+// components
+import { InboxIssueCard } from "components/inbox";
+// ui
+import { Loader } from "components/ui";
+
+export const IssuesListSidebar = () => {
+  const router = useRouter();
+  const { inboxIssueId } = router.query;
+
+  const { issues: inboxIssues } = useInboxView();
+
+  return (
+    <>
+      {inboxIssues ? (
+        inboxIssues.length > 0 ? (
+          <div className="divide-y divide-brand-base overflow-auto h-full pb-10">
+            {inboxIssues.map((issue) => (
+              <InboxIssueCard
+                key={issue.id}
+                active={issue.bridge_id === inboxIssueId}
+                issue={issue}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="h-full p-4 grid place-items-center text-center text-sm text-brand-secondary">
+            No issues found for the selected filters. Try changing the filters.
+          </div>
+        )
+      ) : (
+        <Loader className="p-4 space-y-4">
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" />
+        </Loader>
+      )}
+    </>
+  );
+};

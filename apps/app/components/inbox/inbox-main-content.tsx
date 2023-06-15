@@ -68,7 +68,7 @@ export const InboxMainContent: React.FC = () => {
     if (!issueDetails || !inboxIssueId) return;
 
     reset({
-      ...issueDetails.issue_detail,
+      ...issueDetails,
     });
   }, [issueDetails, reset, inboxIssueId]);
 
@@ -82,7 +82,7 @@ export const InboxMainContent: React.FC = () => {
         return {
           ...prevData,
           issue_detail: {
-            ...prevData.issue_detail,
+            ...prevData,
             ...formData,
           },
         };
@@ -110,7 +110,7 @@ export const InboxMainContent: React.FC = () => {
           workspaceSlug.toString(),
           projectId.toString(),
           inboxId.toString(),
-          issueDetails.id,
+          issueDetails.issue_inbox[0].id,
           payload,
           user
         )
@@ -139,9 +139,9 @@ export const InboxMainContent: React.FC = () => {
             <div>
               <IssueDescriptionForm
                 issue={{
-                  name: issueDetails.issue_detail.name ?? "",
-                  description: issueDetails.issue_detail.description,
-                  description_html: issueDetails.issue_detail.description_html,
+                  name: issueDetails.name,
+                  description: issueDetails.description,
+                  description_html: issueDetails.description_html,
                 }}
                 handleFormSubmit={submitChanges}
               />
@@ -156,19 +156,10 @@ export const InboxMainContent: React.FC = () => {
           <div className="basis-1/3 space-y-5 border-brand-base p-5">
             <IssueDetailsSidebar
               control={control}
-              issueDetail={{
-                ...issueDetails.issue_detail,
-                project_detail: issueDetails.project_detail,
-              }}
+              issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
-              fieldsToShow={{
-                assignee: true,
-                priority: true,
-                estimate: true,
-                dueDate: true,
-                label: true,
-              }}
+              fieldsToShow={["assignee", "priority", "estimate", "dueDate", "label", "state"]}
             />
           </div>
         </div>

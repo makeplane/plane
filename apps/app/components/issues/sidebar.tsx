@@ -57,23 +57,22 @@ type Props = {
   submitChanges: (formData: any) => void;
   issueDetail: IIssue | undefined;
   watch: UseFormWatch<IIssue>;
-  fieldsToShow?:
-    | {
-        state?: boolean;
-        assignee?: boolean;
-        priority?: boolean;
-        estimate?: boolean;
-        parent?: boolean;
-        blocker?: boolean;
-        blocked?: boolean;
-        dueDate?: boolean;
-        cycle?: boolean;
-        module?: boolean;
-        label?: boolean;
-        link?: boolean;
-        delete?: boolean;
-      }
-    | "all";
+  fieldsToShow?: (
+    | "state"
+    | "assignee"
+    | "priority"
+    | "estimate"
+    | "parent"
+    | "blocker"
+    | "blocked"
+    | "dueDate"
+    | "cycle"
+    | "module"
+    | "label"
+    | "link"
+    | "delete"
+    | "all"
+  )[];
 };
 
 const defaultValues: Partial<IIssueLabels> = {
@@ -86,7 +85,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   submitChanges,
   issueDetail,
   watch: watchIssue,
-  fieldsToShow = "all",
+  fieldsToShow = ["all"],
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -276,7 +275,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             >
               <LinkIcon className="h-3.5 w-3.5" />
             </button>
-            {!isNotAllowed && (fieldsToShow === "all" || fieldsToShow.delete) && (
+            {!isNotAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
               <button
                 type="button"
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
@@ -289,7 +288,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         </div>
         <div className="divide-y-2 divide-brand-base">
           <div className="py-1">
-            {(fieldsToShow === "all" || fieldsToShow.state) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
               <Controller
                 control={control}
                 name="state"
@@ -302,7 +301,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 )}
               />
             )}
-            {(fieldsToShow === "all" || fieldsToShow.assignee) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
               <Controller
                 control={control}
                 name="assignees_list"
@@ -315,7 +314,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 )}
               />
             )}
-            {(fieldsToShow === "all" || fieldsToShow.priority) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
               <Controller
                 control={control}
                 name="priority"
@@ -328,7 +327,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 )}
               />
             )}
-            {(fieldsToShow === "all" || fieldsToShow.estimate) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
               <Controller
                 control={control}
                 name="estimate_point"
@@ -343,7 +342,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
           <div className="py-1">
-            {(fieldsToShow === "all" || fieldsToShow.parent) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
               <SidebarParentSelect
                 control={control}
                 submitChanges={submitChanges}
@@ -375,7 +374,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 userAuth={memberRole}
               />
             )}
-            {(fieldsToShow === "all" || fieldsToShow.blocker) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
               <SidebarBlockerSelect
                 submitChanges={submitChanges}
                 issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
@@ -383,7 +382,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 userAuth={memberRole}
               />
             )}
-            {(fieldsToShow === "all" || fieldsToShow.blocked) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
               <SidebarBlockedSelect
                 submitChanges={submitChanges}
                 issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
@@ -391,7 +390,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 userAuth={memberRole}
               />
             )}
-            {(fieldsToShow === "all" || fieldsToShow.dueDate) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
               <div className="flex flex-wrap items-center py-2">
                 <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
                   <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
@@ -420,14 +419,14 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
           <div className="py-1">
-            {(fieldsToShow === "all" || fieldsToShow.cycle) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && (
               <SidebarCycleSelect
                 issueDetail={issueDetail}
                 handleCycleChange={handleCycleChange}
                 userAuth={memberRole}
               />
             )}
-            {(fieldsToShow === "all" || fieldsToShow.module) && (
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
               <SidebarModuleSelect
                 issueDetail={issueDetail}
                 handleModuleChange={handleModuleChange}
@@ -436,7 +435,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
         </div>
-        {(fieldsToShow === "all" || fieldsToShow.label) && (
+        {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
           <div className="space-y-3 py-3">
             <div className="flex items-start justify-between">
               <div className="flex basis-1/2 items-center gap-x-2 text-sm text-brand-secondary">
@@ -685,7 +684,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
         )}
-        {(fieldsToShow === "all" || fieldsToShow.link) && (
+        {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
           <div className="min-h-[116px] py-1 text-xs">
             <div className="flex items-center justify-between gap-2">
               <h4>Links</h4>
