@@ -208,7 +208,7 @@ const IssueDetailsPage: NextPage = () => {
             </div>
             <div className="space-y-5 pt-3">
               <h3 className="text-lg text-brand-base">Comments/Activity</h3>
-              <IssueActivitySection user={user} />
+              <IssueActivitySection issueId={issueId as string} user={user} />
               <AddComment user={user} />
             </div>
           </div>

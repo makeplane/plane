@@ -100,7 +100,9 @@ export interface IIssue {
     url: string;
   }[];
   issue_module: IIssueModule | null;
+  labels: string[];
   label_details: any[];
+  labels_list: string[];
   links_list: IIssueLink[];
   link_count: number;
   module: string | null;
@@ -123,8 +125,6 @@ export interface IIssue {
   updated_by: string;
   workspace: string;
   workspace_detail: IWorkspaceLite;
-  labels: any[];
-  labels_list: string[];
 }
 
 export interface ISubIssuesState {

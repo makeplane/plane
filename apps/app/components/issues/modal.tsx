@@ -35,6 +35,7 @@ import {
   VIEW_ISSUES,
   INBOX_ISSUES,
 } from "constants/fetch-keys";
+import useInboxView from "hooks/use-inbox-view";
 
 export interface IssuesModalProps {
   isOpen: boolean;
@@ -61,6 +62,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const { issueView, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
   const { order_by, group_by, ...viewGanttParams } = params;
+  const { params: inboxParams } = useInboxView();
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
@@ -162,11 +164,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           message: "Issue created successfully.",
         });
 
-        mutate<IIssue[]>(calendarFetchKey);
-
-        if (!createMore) handleClose();
-
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        mutate(INBOX_ISSUES(inboxId.toString(), inboxParams));
       })
       .catch(() => {
         setToastAlert({
@@ -174,7 +172,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           title: "Error!",
           message: "Issue could not be created. Please try again.",
         });
-        mutate(INBOX_ISSUES(inboxId.toString()));
       });
   };
 
@@ -210,8 +207,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           if (issueView === "calendar") mutate(calendarFetchKey);
           if (issueView === "gantt_chart") mutate(ganttFetchKey);
 
-          if (!createMore) handleClose();
-
           setToastAlert({
             type: "success",
             title: "Success!",
@@ -229,6 +224,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             message: "Issue could not be created. Please try again.",
           });
         });
+
+    if (!createMore) handleClose();
   };
 
   const updateIssue = async (payload: Partial<IIssue>) => {

@@ -7,90 +7,77 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import issueServices from "services/issues.service";
+import inboxServices from "services/inbox.service";
 // hooks
-import useIssuesView from "hooks/use-issues-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
+import useInboxView from "hooks/use-inbox-view";
+import useUser from "hooks/use-user";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { IIssue, ICurrentUserResponse } from "types";
+import type { IInboxIssue, IInboxIssueDetail } from "types";
 // fetch-keys
-import {
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_ISSUES_WITH_PARAMS,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
-  VIEW_ISSUES,
-} from "constants/fetch-keys";
+import { INBOX_ISSUES, INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue | null;
-  user: ICurrentUserResponse | undefined;
+  data: IInboxIssue | undefined;
 };
 
-export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { issueView, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
-
+  const { user } = useUser();
   const { setToastAlert } = useToast();
-
-  useEffect(() => {
-    setIsDeleteLoading(false);
-  }, [isOpen]);
+  const { params } = useInboxView();
 
   const onClose = () => {
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
     handleClose();
   };
 
-  const handleDeletion = async () => {
-    setIsDeleteLoading(true);
-    if (!workspaceSlug || !projectId || !data) return;
+  const handleDelete = () => {
+    if (!workspaceSlug || !projectId || !inboxId || !data) return;
 
-    await issueServices
-      .deleteIssue(workspaceSlug as string, projectId as string, data.id, user)
+    setIsDeleting(true);
+
+    inboxServices
+      .deleteInboxIssue(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        inboxId.toString(),
+        data.bridge_id.toString(),
+        user
+      )
       .then(() => {
-        if (issueView === "calendar") {
-          const calendarFetchKey = cycleId
-            ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
-            : moduleId
-            ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
-            : viewId
-            ? VIEW_ISSUES(viewId.toString(), calendarParams)
-            : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), calendarParams);
+        mutate<IInboxIssue[]>(
+          INBOX_ISSUES(inboxId.toString(), params),
+          (prevData) => (prevData ?? []).filter((i) => i.id !== data.id),
+          false
+        );
 
-          mutate<IIssue[]>(
-            calendarFetchKey,
-            (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
-            false
-          );
-        } else {
-          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-          else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-        }
-
-        handleClose();
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Issue deleted successfully",
+          title: "Success!",
+          message: "Issue deleted successfully.",
         });
+
+        onClose();
       })
-      .catch((error) => {
-        console.log(error);
-        setIsDeleteLoading(false);
-      });
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Issue could not be deleted. Please try again.",
+        })
+      )
+      .finally(() => setIsDeleting(false));
   };
 
   return (
@@ -136,16 +123,15 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
                     <p className="text-sm text-brand-secondary">
                       Are you sure you want to delete issue{" "}
                       <span className="break-all font-medium text-brand-base">
-                        {data?.project_detail.identifier}-{data?.sequence_id}
+                        {data?.project_detail?.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? All of the data related to the issue will be permanently removed. This
-                      action cannot be undone.
+                      {""}? This action cannot be undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                    <DangerButton onClick={handleDelete} loading={isDeleting}>
+                      {isDeleting ? "Deleting..." : "Delete Issue"}
                     </DangerButton>
                   </div>
                 </div>
