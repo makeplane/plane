@@ -257,8 +257,7 @@ class InboxIssueViewSet(BaseViewSet):
                     issue_serializer.save()
                     # Log all the updates
                     requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
-                    current_instance = issue
-                    if current_instance is not None:
+                    if issue is not None:
                         issue_activity.delay(
                             type="issue.activity.updated",
                             requested_data=requested_data,
@@ -266,7 +265,7 @@ class InboxIssueViewSet(BaseViewSet):
                             issue_id=str(issue.id),
                             project_id=str(project_id),
                             current_instance=json.dumps(
-                                (current_instance).data, cls=DjangoJSONEncoder
+                                issue_serializer.data, cls=DjangoJSONEncoder
                             ),
                         )
                 else:
@@ -289,6 +288,20 @@ class InboxIssueViewSet(BaseViewSet):
                     if state is not None:
                         issue.state = state
                         issue.save()
+
+                # Update the issue state if it is accepted
+                if serializer.data["status"] in [1]:
+                    issue = Issue.objects.get(
+                        pk=inbox_issue.issue_id,
+                        workspace__slug=slug,
+                        project_id=project_id,
+                    )
+                    # Move to default state
+                    state = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).first()
+                    if state is not None:
+                        issue.state = state
+                        issue.save()
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except InboxIssue.DoesNotExist:
