@@ -117,6 +117,14 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
         gridXValues={chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : ""))}
         theme={{
           background: "rgb(var(--color-bg-sidebar))",
+          axis: {
+            domain: {
+              line: {
+                stroke: "rgb(var(--color-border))",
+                strokeWidth: 1,
+              },
+            },
+          },
         }}
       />
     </div>
