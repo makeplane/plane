@@ -2,7 +2,7 @@
 import jwt
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
-
+from uuid import uuid4
 # Django imports
 from django.db import IntegrityError
 from django.db.models import Prefetch
@@ -248,6 +248,17 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             workspace_invitations = WorkspaceMemberInvite.objects.filter(
                 email__in=[email.get("email") for email in emails]
             ).select_related("workspace")
+
+            # create the user if signup is disabled
+            if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
+                _ = User.objects.bulk_create([
+                    User(
+                        email=email.get("email"),
+                        password=str(uuid4().hex),
+                        is_password_autoset=True
+                    )
+                     for email in emails
+                ], batch_size=100)
 
             for invitation in workspace_invitations:
                 workspace_invitation.delay(

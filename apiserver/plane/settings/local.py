@@ -91,3 +91,5 @@ CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
+
+ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
