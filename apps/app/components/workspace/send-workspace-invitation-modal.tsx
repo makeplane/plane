@@ -1,17 +1,22 @@
 import React from "react";
+
 import { mutate } from "swr";
+
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
-// ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+// contexts
+import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // hooks
 import useToast from "hooks/use-toast";
+// ui
+import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
-// fetch keys
+// fetch-keys
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
@@ -37,6 +42,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
   user,
 }) => {
   const { setToastAlert } = useToast();
+  const { memberDetails } = useWorkspaceMyMembership();
 
   const {
     control,
@@ -145,11 +151,15 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                               width="w-full"
                               input
                             >
-                              {Object.entries(ROLE).map(([key, value]) => (
-                                <CustomSelect.Option key={key} value={key}>
-                                  {value}
-                                </CustomSelect.Option>
-                              ))}
+                              {Object.entries(ROLE).map(([key, value]) => {
+                                if (parseInt(key) > (memberDetails?.role ?? 5)) return null;
+
+                                return (
+                                  <CustomSelect.Option key={key} value={key}>
+                                    {value}
+                                  </CustomSelect.Option>
+                                );
+                              })}
                             </CustomSelect>
                           )}
                         />
