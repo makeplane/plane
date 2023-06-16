@@ -18,7 +18,7 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
   selected = false,
 }) => (
   <div
-    className={`flex w-full items-center justify-between rounded p-2 text-xs ${
+    className={`flex w-full items-center gap-4 justify-between rounded-sm p-1 text-xs ${
       onClick ? "cursor-pointer hover:bg-brand-surface-1" : ""
     } ${selected ? "bg-brand-surface-1" : ""}`}
     onClick={onClick}
@@ -29,7 +29,12 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
         <span className="h-4 w-4 ">
           <ProgressBar value={completed} maxValue={total} />
         </span>
-        <span className="w-8 text-right">{Math.floor((completed / total) * 100)}%</span>
+        <span className="w-8 text-right">
+          {isNaN(Math.floor((completed / total) * 100))
+            ? "0"
+            : Math.floor((completed / total) * 100)}
+          %
+        </span>
       </div>
       <span>of</span>
       <span>{total}</span>

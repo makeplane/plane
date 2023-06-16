@@ -12,6 +12,7 @@ import { TwitterPicker } from "react-color";
 import { Popover, Listbox, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import issuesService from "services/issues.service";
 import modulesService from "services/modules.service";
@@ -76,6 +77,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
@@ -110,7 +113,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const handleNewLabel = (formData: any) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
     issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         reset(defaultValues);
         issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
@@ -124,9 +127,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
       issuesService
-        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetails.id, {
-          issues: [issueDetail.id],
-        })
+        .addIssueToCycle(
+          workspaceSlug as string,
+          projectId as string,
+          cycleDetails.id,
+          {
+            issues: [issueDetail.id],
+          },
+          user
+        )
         .then((res) => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
@@ -139,9 +148,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
       modulesService
-        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleDetail.id, {
-          issues: [issueDetail.id],
-        })
+        .addIssuesToModule(
+          workspaceSlug as string,
+          projectId as string,
+          moduleDetail.id,
+          {
+            issues: [issueDetail.id],
+          },
+          user
+        )
         .then((res) => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
@@ -228,6 +243,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         handleClose={() => setDeleteIssueModal(false)}
         isOpen={deleteIssueModal}
         data={issueDetail ?? null}
+        user={user}
       />
       <div className="sticky top-5 w-full divide-y-2 divide-brand-base">
         <div className="flex items-center justify-between pb-3">
@@ -450,7 +466,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-brand-surface-2 py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-brand-surface-2 py-1 text-xs shadow-lg border border-brand-base focus:outline-none">
                               <div className="py-1">
                                 {issueLabels ? (
                                   issueLabels.length > 0 ? (
@@ -468,8 +484,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                                 `${
                                                   active || selected ? "bg-brand-surface-1" : ""
                                                 } ${
-                                                  selected ? "font-medium" : ""
-                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-brand-base`
+                                                  selected ? "" : "text-brand-secondary"
+                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                               }
                                               value={label.id}
                                             >
@@ -489,7 +505,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                         return (
                                           <div className="border-y border-brand-base bg-brand-surface-1">
                                             <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-brand-base">
-                                              <RectangleGroupIcon className="h-3 w-3" />{" "}
+                                              <RectangleGroupIcon className="h-3 w-3" />
                                               {label.name}
                                             </div>
                                             <div>
@@ -497,9 +513,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                                 <Listbox.Option
                                                   key={child.id}
                                                   className={({ active, selected }) =>
-                                                    `${active || selected ? "bg-indigo-50" : ""} ${
-                                                      selected ? "font-medium" : ""
-                                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-brand-base`
+                                                    `${active || selected ? "bg-brand-base" : ""} ${
+                                                      selected ? "" : "text-brand-secondary"
+                                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                                   }
                                                   value={child.id}
                                                 >

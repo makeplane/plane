@@ -6,6 +6,7 @@ import type {
   IWorkspace,
   IWorkspaceLite,
   IIssueFilterOptions,
+  IUserLite,
 } from "types";
 
 export interface ICycle {
@@ -29,24 +30,12 @@ export interface ICycle {
   unstarted_issues: number;
   updated_at: Date;
   updated_by: string;
+  assignees: IUserLite[];
   view_props: {
     filters: IIssueFilterOptions;
   };
   workspace: string;
   workspace_detail: IWorkspaceLite;
-}
-
-export interface CurrentAndUpcomingCyclesResponse {
-  current_cycle: ICycle[];
-  upcoming_cycle: ICycle[];
-}
-
-export interface DraftCyclesResponse {
-  draft_cycles: ICycle[];
-}
-
-export interface CompletedCyclesResponse {
-  completed_cycles: ICycle[];
 }
 
 export interface CycleIssueResponse {

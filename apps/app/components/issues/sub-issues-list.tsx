@@ -21,15 +21,16 @@ import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outli
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, ISubIssueResponse } from "types";
+import { ICurrentUserResponse, IIssue, ISubIssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   parentIssue: IIssue;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -134,7 +135,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
     );
 
     issuesService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null })
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null }, user)
       .then((res) => {
         mutate(SUB_ISSUES(parentIssue.id ?? ""));
 
@@ -165,15 +166,10 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
     });
   };
 
-  const completedSubIssues =
-    subIssuesResponse && subIssuesResponse.state_distribution
-      ? (subIssuesResponse?.state_distribution.completed
-          ? subIssuesResponse?.state_distribution.completed
-          : 0) +
-        (subIssuesResponse?.state_distribution.cancelled
-          ? subIssuesResponse?.state_distribution.cancelled
-          : 0)
-      : 0;
+  const completedSubIssues = subIssuesResponse
+    ? subIssuesResponse?.state_distribution.completed +
+      subIssuesResponse?.state_distribution.cancelled
+    : 0;
 
   const totalSubIssues =
     subIssuesResponse && subIssuesResponse.sub_issues ? subIssuesResponse?.sub_issues.length : 0;
@@ -278,7 +274,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                     >
-                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-brand-surface-1">
+                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-brand-base">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
                             className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"

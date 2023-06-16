@@ -3,7 +3,17 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch, Sum
+from django.db.models import (
+    OuterRef,
+    Func,
+    F,
+    Q,
+    Exists,
+    OuterRef,
+    Count,
+    Prefetch,
+    Sum,
+)
 from django.core import serializers
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -141,6 +151,75 @@ class CycleViewSet(BaseViewSet):
             .order_by("-is_favorite", "name")
             .distinct()
         )
+
+    def list(self, request, slug, project_id):
+        try:
+            queryset = self.get_queryset()
+            cycle_view = request.GET.get("cycle_view", False)
+            if not cycle_view:
+                return Response(
+                    {"error": "Cycle View parameter is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # All Cycles
+            if cycle_view == "all":
+                return Response(
+                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                )
+            
+            # Current Cycle
+            if cycle_view == "current":
+                queryset = queryset.filter(
+                    start_date__lte=timezone.now(),
+                    end_date__gte=timezone.now(),
+                )
+                return Response(
+                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                )
+
+            # Upcoming Cycles
+            if cycle_view == "upcoming":
+                queryset = queryset.filter(start_date__gt=timezone.now())
+                return Response(
+                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                )
+
+            # Completed Cycles
+            if cycle_view == "completed":
+                queryset = queryset.filter(end_date__lt=timezone.now())
+                return Response(
+                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                )
+
+            # Draft Cycles
+            if cycle_view == "draft":
+                queryset = queryset.filter(
+                    end_date=None,
+                    start_date=None,
+                )
+                return Response(
+                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                )
+
+            # Incomplete Cycles
+            if cycle_view == "incomplete":
+                queryset = queryset.filter(
+                    Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
+                )
+                return Response(
+                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                )
+
+            return Response(
+                {"error": "No matching view found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def create(self, request, slug, project_id):
         try:
@@ -433,7 +512,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
         try:
             start_date = request.data.get("start_date", False)
             end_date = request.data.get("end_date", False)
-
+            cycle_id = request.data.get("cycle_id")
             if not start_date or not end_date:
                 return Response(
                     {"error": "Start date and end date both are required"},
@@ -441,12 +520,14 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 )
 
             cycles = Cycle.objects.filter(
-                Q(start_date__lte=start_date, end_date__gte=start_date)
-                | Q(start_date__lte=end_date, end_date__gte=end_date)
-                | Q(start_date__gte=start_date, end_date__lte=end_date),
-                workspace__slug=slug,
-                project_id=project_id,
-            )
+                Q(workspace__slug=slug)
+                & Q(project_id=project_id)
+                & (
+                    Q(start_date__lte=start_date, end_date__gte=start_date)
+                    | Q(start_date__lte=end_date, end_date__gte=end_date)
+                    | Q(start_date__gte=start_date, end_date__lte=end_date)
+                )
+            ).exclude(pk=cycle_id)
 
             if cycles.exists():
                 return Response(
@@ -458,352 +539,6 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 )
             else:
                 return Response({"status": True}, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class CurrentUpcomingCyclesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        try:
-            subquery = CycleFavorite.objects.filter(
-                user=self.request.user,
-                cycle_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            current_cycle = (
-                Cycle.objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    start_date__lte=timezone.now(),
-                    end_date__gte=timezone.now(),
-                )
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .annotate(is_favorite=Exists(subquery))
-                .annotate(total_issues=Count("issue_cycle"))
-                .annotate(
-                    completed_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="completed"),
-                    )
-                )
-                .annotate(
-                    cancelled_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="cancelled"),
-                    )
-                )
-                .annotate(
-                    started_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="started"),
-                    )
-                )
-                .annotate(
-                    unstarted_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="unstarted"),
-                    )
-                )
-                .annotate(
-                    backlog_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="backlog"),
-                    )
-                )
-                .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
-                .annotate(
-                    completed_estimates=Sum(
-                        "issue_cycle__issue__estimate_point",
-                        filter=Q(issue_cycle__issue__state__group="completed"),
-                    )
-                )
-                .annotate(
-                    started_estimates=Sum(
-                        "issue_cycle__issue__estimate_point",
-                        filter=Q(issue_cycle__issue__state__group="started"),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle__issue__assignees",
-                        queryset=User.objects.only(
-                            "avatar", "first_name", "id"
-                        ).distinct(),
-                    )
-                )
-                .order_by("name", "-is_favorite")
-            )
-
-            upcoming_cycle = (
-                Cycle.objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    start_date__gt=timezone.now(),
-                )
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .annotate(is_favorite=Exists(subquery))
-                .annotate(total_issues=Count("issue_cycle"))
-                .annotate(
-                    completed_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="completed"),
-                    )
-                )
-                .annotate(
-                    cancelled_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="cancelled"),
-                    )
-                )
-                .annotate(
-                    started_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="started"),
-                    )
-                )
-                .annotate(
-                    unstarted_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="unstarted"),
-                    )
-                )
-                .annotate(
-                    backlog_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="backlog"),
-                    )
-                )
-                .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
-                .annotate(
-                    completed_estimates=Sum(
-                        "issue_cycle__issue__estimate_point",
-                        filter=Q(issue_cycle__issue__state__group="completed"),
-                    )
-                )
-                .annotate(
-                    started_estimates=Sum(
-                        "issue_cycle__issue__estimate_point",
-                        filter=Q(issue_cycle__issue__state__group="started"),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle__issue__assignees",
-                        queryset=User.objects.only(
-                            "avatar", "first_name", "id"
-                        ).distinct(),
-                    )
-                )
-                .order_by("name", "-is_favorite")
-            )
-
-            return Response(
-                {
-                    "current_cycle": CycleSerializer(current_cycle, many=True).data,
-                    "upcoming_cycle": CycleSerializer(upcoming_cycle, many=True).data,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class CompletedCyclesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        try:
-            subquery = CycleFavorite.objects.filter(
-                user=self.request.user,
-                cycle_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            completed_cycles = (
-                Cycle.objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    end_date__lt=timezone.now(),
-                )
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .annotate(is_favorite=Exists(subquery))
-                .annotate(total_issues=Count("issue_cycle"))
-                .annotate(
-                    completed_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="completed"),
-                    )
-                )
-                .annotate(
-                    cancelled_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="cancelled"),
-                    )
-                )
-                .annotate(
-                    started_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="started"),
-                    )
-                )
-                .annotate(
-                    unstarted_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="unstarted"),
-                    )
-                )
-                .annotate(
-                    backlog_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="backlog"),
-                    )
-                )
-                .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
-                .annotate(
-                    completed_estimates=Sum(
-                        "issue_cycle__issue__estimate_point",
-                        filter=Q(issue_cycle__issue__state__group="completed"),
-                    )
-                )
-                .annotate(
-                    started_estimates=Sum(
-                        "issue_cycle__issue__estimate_point",
-                        filter=Q(issue_cycle__issue__state__group="started"),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle__issue__assignees",
-                        queryset=User.objects.only(
-                            "avatar", "first_name", "id"
-                        ).distinct(),
-                    )
-                )
-                .order_by("name", "-is_favorite")
-            )
-
-            return Response(
-                {
-                    "completed_cycles": CycleSerializer(
-                        completed_cycles, many=True
-                    ).data,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class DraftCyclesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        try:
-            subquery = CycleFavorite.objects.filter(
-                user=self.request.user,
-                cycle_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            draft_cycles = (
-                Cycle.objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    end_date=None,
-                    start_date=None,
-                )
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("owned_by")
-                .annotate(is_favorite=Exists(subquery))
-                .annotate(total_issues=Count("issue_cycle"))
-                .annotate(
-                    completed_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="completed"),
-                    )
-                )
-                .annotate(
-                    cancelled_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="cancelled"),
-                    )
-                )
-                .annotate(
-                    started_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="started"),
-                    )
-                )
-                .annotate(
-                    unstarted_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="unstarted"),
-                    )
-                )
-                .annotate(
-                    backlog_issues=Count(
-                        "issue_cycle__issue__state__group",
-                        filter=Q(issue_cycle__issue__state__group="backlog"),
-                    )
-                )
-                .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
-                .annotate(
-                    completed_estimates=Sum(
-                        "issue_cycle__issue__estimate_point",
-                        filter=Q(issue_cycle__issue__state__group="completed"),
-                    )
-                )
-                .annotate(
-                    started_estimates=Sum(
-                        "issue_cycle__issue__estimate_point",
-                        filter=Q(issue_cycle__issue__state__group="started"),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle__issue__assignees",
-                        queryset=User.objects.only(
-                            "avatar", "first_name", "id"
-                        ).distinct(),
-                    )
-                )
-                .order_by("name", "-is_favorite")
-            )
-
-            return Response(
-                {"draft_cycles": CycleSerializer(draft_cycles, many=True).data},
-                status=status.HTTP_200_OK,
-            )
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -930,25 +665,6 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 {"error": "New Cycle Does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class InCompleteCyclesEndpoint(BaseAPIView):
-    def get(self, request, slug, project_id):
-        try:
-            cycles = Cycle.objects.filter(
-                Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
-                workspace__slug=slug,
-                project_id=project_id,
-            ).select_related("owned_by")
-
-            serializer = CycleSerializer(cycles, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

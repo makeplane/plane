@@ -13,7 +13,7 @@ import { getStateGroupIcon } from "components/icons";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -22,6 +22,7 @@ type Props = {
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -30,6 +31,7 @@ export const ViewStateSelect: React.FC<Props> = ({
   partialUpdateIssue,
   position = "left",
   selfPositioned = false,
+  user,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -77,21 +79,25 @@ export const ViewStateSelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PROPERTY_UPDATE_STATE"
+          "ISSUE_PROPERTY_UPDATE_STATE",
+          user
         );
 
         const oldState = states.find((s) => s.id === issue.state);
         const newState = states.find((s) => s.id === data);
 
         if (oldState?.group !== "completed" && newState?.group !== "completed") {
-          trackEventServices.trackIssueMarkedAsDoneEvent({
-            workspaceSlug: issue.workspace_detail.slug,
-            workspaceId: issue.workspace_detail.id,
-            projectId: issue.project_detail.id,
-            projectIdentifier: issue.project_detail.identifier,
-            projectName: issue.project_detail.name,
-            issueId: issue.id,
-          });
+          trackEventServices.trackIssueMarkedAsDoneEvent(
+            {
+              workspaceSlug: issue.workspace_detail.slug,
+              workspaceId: issue.workspace_detail.id,
+              projectId: issue.project_detail.id,
+              projectIdentifier: issue.project_detail.identifier,
+              projectName: issue.project_detail.name,
+              issueId: issue.id,
+            },
+            user
+          );
         }
       }}
       options={options}

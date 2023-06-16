@@ -1,5 +1,7 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
+// helpers
+import { capitalizeFirstLetter, generateRandomColor } from "helpers/string.helper";
 // types
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse } from "types";
 // constants
@@ -17,7 +19,7 @@ export const convertResponseToBarGraphData = (
   const data: BarDatum[] = [];
 
   let xAxisKeys: string[] = [];
-  const yAxisKey = params.y_axis === "issue_count" ? "count" : "effort";
+  const yAxisKey = params.y_axis === "issue_count" ? "count" : "estimate";
 
   Object.keys(response).forEach((key) => {
     const segments: { [key: string]: number } = {};
@@ -31,7 +33,11 @@ export const convertResponseToBarGraphData = (
       });
 
       data.push({
-        name: DATE_KEYS.includes(params.x_axis) ? renderMonthAndYear(key) : key,
+        name: DATE_KEYS.includes(params.x_axis)
+          ? renderMonthAndYear(key)
+          : params.x_axis === "priority" || params.x_axis === "state__group"
+          ? capitalizeFirstLetter(key)
+          : key,
         ...segments,
       });
     } else {
@@ -42,6 +48,8 @@ export const convertResponseToBarGraphData = (
       data.push({
         name: DATE_KEYS.includes(params.x_axis)
           ? renderMonthAndYear(item.dimension)
+          : params.x_axis === "priority" || params.x_axis === "state__group"
+          ? capitalizeFirstLetter(item.dimension ?? "None")
           : item.dimension ?? "None",
         [yAxisKey]: item[yAxisKey] ?? 0,
       });
@@ -57,28 +65,31 @@ export const generateBarColor = (
   params: IAnalyticsParams,
   type: "x_axis" | "segment"
 ): string => {
-  let color: string | undefined = "rgb(var(--color-accent))";
+  let color: string | undefined = generateRandomColor(value);
 
   if (!analytics) return color;
 
   if (params[type] === "state__name" || params[type] === "labels__name")
     color = analytics?.extras?.colors.find((c) => c.name === value)?.color;
 
-  if (params[type] === "state__group") color = STATE_GROUP_COLORS[value];
+  if (params[type] === "state__group") color = STATE_GROUP_COLORS[value.toLowerCase()];
 
-  if (params[type] === "priority")
+  if (params[type] === "priority") {
+    const priority = value.toLowerCase();
+
     color =
-      value === "urgent"
+      priority === "urgent"
         ? "#ef4444"
-        : value === "high"
+        : priority === "high"
         ? "#f97316"
-        : value === "medium"
+        : priority === "medium"
         ? "#eab308"
-        : value === "low"
+        : priority === "low"
         ? "#22c55e"
         : "#ced4da";
+  }
 
-  return color ?? "rgb(var(--color-accent))";
+  return color ?? generateRandomColor(value);
 };
 
 export const renderMonthAndYear = (date: string | number | null): string => {

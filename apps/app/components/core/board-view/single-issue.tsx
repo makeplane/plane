@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -17,6 +17,7 @@ import issuesService from "services/issues.service";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import {
   ViewAssigneeSelect,
@@ -36,12 +37,14 @@ import {
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
   PaperClipIcon,
+  EllipsisHorizontalIcon,
 } from "@heroicons/react/24/outline";
+import { LayerDiagonalIcon } from "components/icons";
 // helpers
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import { IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -66,6 +69,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -84,11 +88,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
   handleDeleteIssue,
   handleTrashBox,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const { orderBy, params } = useIssuesView();
 
@@ -164,7 +172,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData, user)
         .then(() => {
           if (cycleId) {
             mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
@@ -206,12 +214,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
         title: "Link Copied!",
         message: "Issue link copied to clipboard.",
       });
+      setIsMenuActive(false);
     });
   };
 
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
+
+  useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
@@ -265,9 +276,23 @@ export const SingleBoardIssue: React.FC<Props> = ({
       >
         <div className="group/card relative select-none p-3.5">
           {!isNotAllowed && (
-            <div className="z-1 absolute top-1.5 right-1.5 opacity-0 group-hover/card:opacity-100">
+            <div
+              ref={actionSectionRef}
+              className={`z-1 absolute top-1.5 right-1.5 hidden group-hover/card:!flex ${
+                isMenuActive ? "!flex" : ""
+              }`}
+            >
               {type && !isNotAllowed && (
-                <CustomMenu width="auto" ellipsis>
+                <CustomMenu
+                  customButton={
+                    <button
+                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded p-1 text-left text-xs duration-300 hover:bg-brand-surface-2"
+                      onClick={() => setIsMenuActive(!isMenuActive)}
+                    >
+                      <EllipsisHorizontalIcon className="h-4 w-4" />
+                    </button>
+                  }
+                >
                   <CustomMenu.MenuItem onClick={editIssue}>
                     <div className="flex items-center justify-start gap-2">
                       <PencilIcon className="h-4 w-4" />
@@ -319,6 +344,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
             )}
@@ -327,6 +353,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
             )}
@@ -334,13 +361,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
-            )}
-            {properties.sub_issue_count && (
-              <div className="flex flex-shrink-0 items-center gap-1 rounded-md border border-brand-base px-2 py-1 text-xs text-brand-secondary shadow-sm">
-                {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-              </div>
             )}
             {properties.labels && issue.label_details.length > 0 && (
               <div className="flex flex-wrap gap-1">
@@ -366,6 +389,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
                 tooltipPosition="left"
+                user={user}
                 selfPositioned
               />
             )}
@@ -374,8 +398,19 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
+            )}
+            {properties.sub_issue_count && (
+              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+                <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
+                  <div className="flex items-center gap-1 text-brand-secondary">
+                    <LayerDiagonalIcon className="h-3.5 w-3.5" />
+                    {issue.sub_issues_count}
+                  </div>
+                </Tooltip>
+              </div>
             )}
             {properties.link && (
               <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">

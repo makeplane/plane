@@ -21,12 +21,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
   const { asPath: currentPath } = useRouter();
 
   return (
-    <DefaultLayout
-      meta={{
-        title: "Plane - Not Authorized",
-        description: "You are not authorized to view this page",
-      }}
-    >
+    <DefaultLayout>
       <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-brand-surface-1 text-center">
         <div className="h-44 w-72">
           <Image
@@ -44,7 +39,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
           {user ? (
             <p>
               You have signed in as {user.email}. <br />
-              <Link href={`/signin?next=${currentPath}`}>
+              <Link href={`/?next=${currentPath}`}>
                 <a className="font-medium text-brand-base">Sign in</a>
               </Link>{" "}
               with different account that has access to this page.
@@ -52,7 +47,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
           ) : (
             <p>
               You need to{" "}
-              <Link href={`/signin?next=${currentPath}`}>
+              <Link href={`/?next=${currentPath}`}>
                 <a className="font-medium text-brand-base">Sign in</a>
               </Link>{" "}
               with an account that has access to this page.

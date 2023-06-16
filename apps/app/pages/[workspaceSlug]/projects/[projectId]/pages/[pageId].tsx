@@ -116,7 +116,7 @@ const SinglePage: NextPage = () => {
     if (!formData.name || formData.name.length === 0 || formData.name === "") return;
 
     await pagesService
-      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData)
+      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
       .then(() => {
         mutate<IPage>(
           PAGE_DETAILS(pageId as string),
@@ -143,7 +143,7 @@ const SinglePage: NextPage = () => {
     );
 
     await pagesService
-      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData)
+      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
       .then(() => {
         mutate(PAGE_DETAILS(pageId as string));
       });
@@ -237,7 +237,8 @@ const SinglePage: NextPage = () => {
       result.draggableId,
       {
         sort_order: newSortOrder,
-      }
+      },
+      user
     );
   };
 
@@ -290,9 +291,6 @@ const SinglePage: NextPage = () => {
 
   return (
     <ProjectAuthorizationWrapper
-      meta={{
-        title: "Plane - Pages",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -329,7 +327,7 @@ const SinglePage: NextPage = () => {
                 </div>
 
                 <div className="flex w-full flex-wrap gap-1">
-                  {pageDetails.labels.length > 0 ? (
+                  {pageDetails.labels.length > 0 && (
                     <>
                       {pageDetails.labels.map((labelId) => {
                         const label = labels?.find((label) => label.id === labelId);
@@ -362,54 +360,38 @@ const SinglePage: NextPage = () => {
                           </div>
                         );
                       })}
-                      <CustomSearchSelect
-                        customButton={
-                          <button
-                            type="button"
-                            className="flex items-center gap-1 rounded-sm bg-brand-surface-2 p-1.5 text-xs"
-                          >
-                            <PlusIcon className="h-3.5 w-3.5" />
-                          </button>
-                        }
-                        value={pageDetails.labels}
-                        onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
-                        options={options}
-                        multiple
-                        noChevron
-                      />
                     </>
-                  ) : (
-                    <CustomSearchSelect
-                      customButton={
-                        <button
-                          type="button"
-                          className="flex items-center gap-1 rounded-sm bg-brand-surface-2 px-3 py-1.5 text-xs"
-                        >
-                          <PlusIcon className="h-3 w-3" />
-                          Add label
-                        </button>
-                      }
-                      value={pageDetails.labels}
-                      onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
-                      footerOption={
-                        <button
-                          type="button"
-                          className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
-                          onClick={() => {
-                            setLabelModal(true);
-                          }}
-                        >
-                          <span className="flex items-center justify-start gap-1 text-brand-secondary">
-                            <PlusIcon className="h-4 w-4" aria-hidden="true" />
-                            <span>Create New Label</span>
-                          </span>
-                        </button>
-                      }
-                      options={options}
-                      multiple
-                      noChevron
-                    />
                   )}
+                  <CustomSearchSelect
+                    customButton={
+                      <button
+                        type="button"
+                        className="flex items-center gap-1 rounded-sm bg-brand-surface-2 p-1.5 text-xs"
+                      >
+                        <PlusIcon className="h-3.5 w-3.5" />
+                        {pageDetails.labels.length <= 0 && <span>Add Label</span>}
+                      </button>
+                    }
+                    value={pageDetails.labels}
+                    footerOption={
+                      <button
+                        type="button"
+                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
+                        onClick={() => {
+                          setLabelModal(true);
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-1 text-brand-secondary">
+                          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                          <span>Create New Label</span>
+                        </span>
+                      </button>
+                    }
+                    onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                    options={options}
+                    multiple
+                    noChevron
+                  />
                 </div>
               </div>
               <div className="flex items-center">
@@ -458,6 +440,33 @@ const SinglePage: NextPage = () => {
                             <Popover.Panel className="absolute top-full right-0 z-20 mt-1 max-w-xs px-2 sm:px-0">
                               <TwitterPicker
                                 color={pageDetails.color}
+                                styles={{
+                                  default: {
+                                    card: {
+                                      backgroundColor: `rgba(var(--color-bg-surface-2))`,
+                                    },
+                                    triangle: {
+                                      position: "absolute",
+                                      borderColor:
+                                        "transparent transparent rgba(var(--color-bg-surface-2)) transparent",
+                                    },
+                                    input: {
+                                      border: "none",
+                                      height: "1.85rem",
+                                      fontSize: "0.875rem",
+                                      paddingLeft: "0.25rem",
+                                      color: `rgba(var(--color-text-secondary))`,
+                                      boxShadow: "none",
+                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
+                                      borderLeft: `1px solid rgba(var(--color-bg-surface-2))`,
+                                    },
+                                    hash: {
+                                      color: `rgba(var(--color-text-secondary))`,
+                                      boxShadow: "none",
+                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
+                                    },
+                                  },
+                                }}
                                 onChange={(val) => partialUpdatePage({ color: val.hex })}
                               />
                             </Popover.Panel>
@@ -521,6 +530,7 @@ const SinglePage: NextPage = () => {
                                 block={block}
                                 projectDetails={projectDetails}
                                 index={index}
+                                user={user}
                               />
                             ))}
                             {provided.placeholder}
@@ -534,6 +544,7 @@ const SinglePage: NextPage = () => {
                       <CreateUpdateBlockInline
                         handleClose={() => setCreateBlockForm(false)}
                         focus="name"
+                        user={user}
                       />
                     </div>
                   )}
@@ -542,6 +553,7 @@ const SinglePage: NextPage = () => {
                       isOpen={labelModal}
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
+                      user={user}
                     />
                   )}
                 </>
@@ -554,7 +566,7 @@ const SinglePage: NextPage = () => {
             </div>
           </div>
           <div>
-            <CreateBlock />
+            <CreateBlock user={user} />
           </div>
         </div>
       ) : (

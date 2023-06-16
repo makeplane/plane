@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
 import issuesService from "services/issues.service";
@@ -12,6 +14,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import {
   CreateUpdateLabelInline,
+  DeleteLabelModal,
   LabelsListModal,
   SingleLabel,
   SingleLabelGroup,
@@ -40,8 +43,13 @@ const LabelsSettings: NextPage = () => {
   const [labelsListModal, setLabelsListModal] = useState(false);
   const [parentLabel, setParentLabel] = useState<IIssueLabels | undefined>(undefined);
 
+  // delete label
+  const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabels | null>(null);
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const scrollToRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +60,7 @@ const LabelsSettings: NextPage = () => {
       : null
   );
 
-  const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
+  const { data: issueLabels } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
@@ -75,21 +83,19 @@ const LabelsSettings: NextPage = () => {
     setLabelToUpdate(label);
   };
 
-  const handleLabelDelete = (labelId: string) => {
-    if (workspaceSlug && projectDetails) {
-      mutate((prevData) => prevData?.filter((p) => p.id !== labelId), false);
-      issuesService
-        .deleteIssueLabel(workspaceSlug as string, projectDetails.id, labelId)
-        .catch((e) => console.log(e));
-    }
-  };
-
   return (
     <>
       <LabelsListModal
         isOpen={labelsListModal}
         handleClose={() => setLabelsListModal(false)}
         parent={parentLabel}
+        user={user}
+      />
+      <DeleteLabelModal
+        isOpen={!!selectDeleteLabel}
+        data={selectDeleteLabel ?? null}
+        onClose={() => setSelectDeleteLabel(null)}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -102,7 +108,7 @@ const LabelsSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8 lg:px-24">
+        <div className="p-8">
           <SettingsHeader />
           <section className="grid grid-cols-12 gap-10">
             <div className="col-span-12 sm:col-span-5">
@@ -143,7 +149,7 @@ const LabelsSettings: NextPage = () => {
                                 behavior: "smooth",
                               });
                             }}
-                            handleLabelDelete={handleLabelDelete}
+                            handleLabelDelete={() => setSelectDeleteLabel(label)}
                           />
                         );
                     } else
@@ -159,7 +165,8 @@ const LabelsSettings: NextPage = () => {
                               behavior: "smooth",
                             });
                           }}
-                          handleLabelDelete={handleLabelDelete}
+                          handleLabelDelete={() => setSelectDeleteLabel(label)}
+                          user={user}
                         />
                       );
                   })

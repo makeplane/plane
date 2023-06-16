@@ -39,11 +39,11 @@ const BillingSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8 lg:px-24">
+      <div className="p-8">
         <SettingsHeader />
         <section className="space-y-8">
           <div>
-            <h3 className="text-3xl font-bold leading-6">Billing & Plans</h3>
+            <h3 className="text-2xl font-semibold leading-6">Billing & Plans</h3>
             <p className="mt-4 text-sm text-brand-secondary">[Free launch preview] plan Pro</p>
           </div>
           <div className="space-y-8 md:w-2/3">

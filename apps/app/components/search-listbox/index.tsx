@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -62,12 +61,10 @@ const SearchListbox: React.FC<Props> = ({
     if (user.member.avatar && user.member.avatar !== "") {
       return (
         <div className="relative h-4 w-4">
-          <Image
+          <img
             src={user.member.avatar}
+            className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
             alt="avatar"
-            className="rounded-full"
-            layout="fill"
-            objectFit="cover"
           />
         </div>
       );
@@ -151,7 +148,9 @@ const SearchListbox: React.FC<Props> = ({
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-xs text-brand-secondary px-2">No {title.toLowerCase()} found</p>
+                    <p className="text-xs text-brand-secondary px-2">
+                      No {title.toLowerCase()} found
+                    </p>
                   )
                 ) : (
                   <p className="text-xs text-brand-secondary px-2">Loading...</p>

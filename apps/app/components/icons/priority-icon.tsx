@@ -1,6 +1,8 @@
 export const getPriorityIcon = (priority: string | null, className?: string) => {
   if (!className || className === "") className = "text-xs flex items-center";
 
+  priority = priority?.toLowerCase() ?? null;
+
   switch (priority) {
     case "urgent":
       return <span className={`material-symbols-rounded ${className}`}>error</span>;

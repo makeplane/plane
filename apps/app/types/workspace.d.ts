@@ -30,8 +30,22 @@ export interface IWorkspaceMemberInvitation {
   message: string;
   responded_at: Date;
   role: 5 | 10 | 15 | 20;
+  created_by_detail: IUser;
   workspace: IWorkspace;
 }
+
+export type Properties = {
+  assignee: boolean;
+  due_date: boolean;
+  labels: boolean;
+  key: boolean;
+  priority: boolean;
+  state: boolean;
+  sub_issue_count: boolean;
+  link: boolean;
+  attachment_count: boolean;
+  estimate: boolean;
+};
 
 export interface IWorkspaceMember {
   readonly id: string;
@@ -40,6 +54,7 @@ export interface IWorkspaceMember {
   member: IUserLite;
   role: 5 | 10 | 15 | 20;
   company_role: string | null;
+  view_props: Properties;
   created_at: Date;
   updated_at: Date;
   created_by: string;

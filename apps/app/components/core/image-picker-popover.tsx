@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 
-// next
-import Image from "next/image";
-
 // swr
 import useSWR from "swr";
 
@@ -107,12 +104,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                       onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                       placeholder="Search for images"
                     />
-                    <PrimaryButton
-                      type="button"
-                      onClick={() => setSearchParams(formData.search)}
-                      className="bg-indigo-600"
-                      size="sm"
-                    >
+                    <PrimaryButton onClick={() => setSearchParams(formData.search)} size="sm">
                       Search
                     </PrimaryButton>
                   </div>
@@ -123,12 +115,10 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                           key={image.id}
                           className="relative col-span-2 aspect-video md:col-span-1"
                         >
-                          <Image
+                          <img
                             src={image.urls.small}
                             alt={image.alt_description}
-                            layout="fill"
-                            objectFit="cover"
-                            className="cursor-pointer rounded"
+                            className="cursor-pointer rounded absolute top-0 left-0 h-full w-full object-cover"
                             onClick={() => {
                               setIsOpen(false);
                               onChange(image.urls.regular);

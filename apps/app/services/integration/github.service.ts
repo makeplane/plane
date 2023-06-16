@@ -1,7 +1,7 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
-import { IGithubRepoInfo, IGithubServiceImportFormData } from "types";
+import { ICurrentUserResponse, IGithubRepoInfo, IGithubServiceImportFormData } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -39,7 +39,8 @@ class GithubIntegrationService extends APIService {
 
   async createGithubServiceImport(
     workspaceSlug: string,
-    data: IGithubServiceImportFormData
+    data: IGithubServiceImportFormData,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/importers/${integrationServiceType}/`,
@@ -47,7 +48,7 @@ class GithubIntegrationService extends APIService {
     )
       .then((response) => {
         if (trackEvent)
-          trackEventServices.trackImporterEvent(response?.data, "GITHUB_IMPORTER_CREATE");
+          trackEventServices.trackImporterEvent(response?.data, "GITHUB_IMPORTER_CREATE", user);
         return response?.data;
       })
       .catch((error) => {

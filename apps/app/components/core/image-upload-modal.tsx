@@ -9,6 +9,8 @@ import { useDropzone } from "react-dropzone";
 import { Transition, Dialog } from "@headlessui/react";
 // services
 import fileServices from "services/file.service";
+// hooks
+import useWorkspaceDetails from "hooks/use-workspace-details";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
@@ -34,6 +36,8 @@ export const ImageUploadModal: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { workspaceDetails } = useWorkspaceDetails();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setImage(acceptedFiles[0]);
@@ -62,12 +66,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           setIsImageUploading(false);
           setImage(null);
 
-          if (value) {
-            const index = value.indexOf(".com");
-            const asset = value.substring(index + 5);
-
-            fileServices.deleteUserFile(asset);
-          }
+          if (value) fileServices.deleteUserFile(value);
         })
         .catch((err) => {
           console.error(err);
@@ -81,12 +80,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           setIsImageUploading(false);
           setImage(null);
 
-          if (value) {
-            const index = value.indexOf(".com");
-            const asset = value.substring(index + 5);
-
-            fileServices.deleteFile(asset);
-          }
+          if (value && workspaceDetails) fileServices.deleteFile(workspaceDetails.id, value);
         })
         .catch((err) => {
           console.error(err);

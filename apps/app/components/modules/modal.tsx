@@ -15,7 +15,7 @@ import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import type { IModule } from "types";
+import type { ICurrentUserResponse, IModule } from "types";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
 
@@ -23,17 +23,18 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IModule;
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues: Partial<IModule> = {
   name: "",
   description: "",
-  status: null,
+  status: "backlog",
   lead: null,
   members_list: [],
 };
 
-export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -50,7 +51,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
   const createModule = async (payload: Partial<IModule>) => {
     await modulesService
-      .createModule(workspaceSlug as string, projectId as string, payload)
+      .createModule(workspaceSlug as string, projectId as string, payload, user)
       .then(() => {
         mutate(MODULE_LIST(projectId as string));
         handleClose();
@@ -72,7 +73,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
   const updateModule = async (payload: Partial<IModule>) => {
     await modulesService
-      .updateModule(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
+      .updateModule(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
       .then((res) => {
         mutate<IModule[]>(
           MODULE_LIST(projectId as string),

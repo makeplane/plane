@@ -58,6 +58,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const { issueView, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
+  const { order_by, group_by, ...viewGanttParams } = params;
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
@@ -101,9 +102,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await issuesService
-      .addIssueToCycle(workspaceSlug as string, activeProject ?? "", cycleId, {
-        issues: [issueId],
-      })
+      .addIssueToCycle(
+        workspaceSlug as string,
+        activeProject ?? "",
+        cycleId,
+        {
+          issues: [issueId],
+        },
+        user
+      )
       .then(() => {
         if (cycleId) {
           mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
@@ -116,9 +123,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await modulesService
-      .addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
-        issues: [issueId],
-      })
+      .addIssuesToModule(
+        workspaceSlug as string,
+        activeProject ?? "",
+        moduleId as string,
+        {
+          issues: [issueId],
+        },
+        user
+      )
       .then(() => {
         if (moduleId) {
           mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
@@ -135,15 +148,26 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     ? VIEW_ISSUES(viewId.toString(), calendarParams)
     : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
 
-  const createIssue = async (payload: Partial<IIssue>) => {
-    await issuesService
-      .createIssues(workspaceSlug as string, activeProject ?? "", payload)
-      .then((res) => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-        if (issueView === "calendar") mutate(calendarFetchKey);
+  const ganttFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
 
-        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
+  const createIssue = async (payload: Partial<IIssue>) => {
+    if (!workspaceSlug) return;
+
+    await issuesService
+      .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
+      .then(async (res) => {
+        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
+        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
+
+        if (issueView === "calendar") mutate(calendarFetchKey);
+        if (issueView === "gantt_chart") mutate(ganttFetchKey);
 
         if (!createMore) handleClose();
 
@@ -168,13 +192,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
-      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
+      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
           if (issueView === "calendar") mutate(calendarFetchKey);
-          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
@@ -249,6 +273,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                   projectId={activeProject ?? ""}
                   setActiveProject={setActiveProject}
                   status={data ? true : false}
+                  user={user}
                 />
               </Dialog.Panel>
             </Transition.Child>

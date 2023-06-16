@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { DangerButton, SecondaryButton } from "components/ui";
 // types
-import type { IState, IStateResponse } from "types";
+import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -23,9 +23,10 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IState | null;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => {
+export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -44,7 +45,7 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
     setIsDeleteLoading(true);
 
     await stateServices
-      .deleteState(workspaceSlug as string, data.project, data.id)
+      .deleteState(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         mutate<IStateResponse>(
           STATES_LIST(data.project),

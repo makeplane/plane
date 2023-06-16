@@ -1,8 +1,5 @@
 # Django imports
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 
 # Third party imports
 from celery import shared_task
@@ -15,31 +12,11 @@ from plane.db.models import User
 
 
 @shared_task
-def send_welcome_email(user_id, created, message):
+def send_welcome_slack(user_id, created, message):
     try:
         instance = User.objects.get(pk=user_id)
 
         if created and not instance.is_bot:
-            first_name = instance.first_name.capitalize()
-            to_email = instance.email
-            from_email_string = settings.EMAIL_FROM
-
-            subject = f"Welcome to Plane ✈️!"
-
-            context = {"first_name": first_name, "email": instance.email}
-
-            html_content = render_to_string(
-                "emails/auth/user_welcome_email.html", context
-            )
-
-            text_content = strip_tags(html_content)
-
-            msg = EmailMultiAlternatives(
-                subject, text_content, from_email_string, [to_email]
-            )
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
-
             # Send message on slack as well
             if settings.SLACK_BOT_TOKEN:
                 client = WebClient(token=settings.SLACK_BOT_TOKEN)

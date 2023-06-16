@@ -16,7 +16,7 @@ import { ContrastIcon } from "components/icons";
 // types
 import { ICycle, IIssue, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_INCOMPLETE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
@@ -33,9 +33,14 @@ export const SidebarCycleSelect: React.FC<Props> = ({
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: incompleteCycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_INCOMPLETE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getIncompleteCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cyclesService.getCyclesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            "incomplete"
+          )
       : null
   );
 
@@ -84,7 +89,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
               ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
               : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
           }}
-          width="w-full"
+          width="auto"
           position="right"
           maxHeight="rg"
           disabled={isNotAllowed}
@@ -95,7 +100,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
                 {incompleteCycles.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     <Tooltip position="left-bottom" tooltipContent={option.name}>
-                      <span className="w-full truncate ">{truncateText(option.name, 15)}</span>
+                      <span className="w-full truncate">{truncateText(option.name, 25)}</span>
                     </Tooltip>
                   </CustomSelect.Option>
                 ))}

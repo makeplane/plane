@@ -50,16 +50,19 @@ class UserService extends APIService {
       });
   }
 
-  async updateUserOnBoard({ userRole }: any): Promise<any> {
+  async updateUserOnBoard({ userRole }: any, user: ICurrentUserResponse | undefined): Promise<any> {
     return this.patch("/api/users/me/onboard/", {
       is_onboarded: true,
     })
       .then((response) => {
         if (trackEvent)
-          trackEventServices.trackUserOnboardingCompleteEvent({
-            ...response.data,
-            user_role: userRole ?? "None",
-          });
+          trackEventServices.trackUserOnboardingCompleteEvent(
+            {
+              ...response.data,
+              user_role: userRole ?? "None",
+            },
+            user
+          );
         return response?.data;
       })
       .catch((error) => {
@@ -84,6 +87,29 @@ class UserService extends APIService {
         month: month,
       },
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async forgotPassword(data: { email: string }): Promise<any> {
+    return this.post(`/api/forgot-password/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async resetPassword(
+    uidb64: string,
+    token: string,
+    data: {
+      new_password: string;
+      confirm_password: string;
+    }
+  ): Promise<any> {
+    return this.post(`/api/reset-password/${uidb64}/${token}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

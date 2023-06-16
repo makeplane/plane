@@ -1,9 +1,10 @@
 import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
+
 import { useRouter } from "next/router";
-import Image from "next/image";
 import Link from "next/link";
-import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+
+// headless ui
+import { Menu, Transition } from "@headlessui/react";
 // hooks
 import useUser from "hooks/use-user";
 import useTheme from "hooks/use-theme";
@@ -14,7 +15,9 @@ import userService from "services/user.service";
 import authenticationService from "services/authentication.service";
 // components
 import { Avatar, Loader } from "components/ui";
-// helper
+// icons
+import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+// helpers
 import { truncateText } from "helpers/string.helper";
 // types
 import { IWorkspace } from "types";
@@ -67,17 +70,19 @@ export const WorkspaceSidebarDropdown = () => {
   };
 
   const handleSignOut = async () => {
-    router.push("/signin").then(() => {
-      mutateUser();
-    });
-
-    await authenticationService.signOut().catch(() =>
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Failed to sign out. Please try again.",
+    await authenticationService
+      .signOut()
+      .then(() => {
+        mutateUser(undefined);
+        router.push("/");
       })
-    );
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        })
+      );
   };
 
   return (
@@ -92,12 +97,10 @@ export const WorkspaceSidebarDropdown = () => {
             >
               <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white dark:bg-brand-surface-2 dark:text-gray-800">
                 {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                  <Image
+                  <img
                     src={activeWorkspace.logo}
+                    className="absolute top-0 left-0 h-full w-full object-cover rounded"
                     alt="Workspace Logo"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded"
                   />
                 ) : (
                   activeWorkspace?.name?.charAt(0) ?? "..."
@@ -137,8 +140,8 @@ export const WorkspaceSidebarDropdown = () => {
           border border-brand-base bg-brand-surface-2 shadow-lg focus:outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
-              <div className="text-sm text-brand-secondary">{user?.email}</div>
-              <span className="text-sm font-semibold text-brand-secondary">Workspace</span>
+              <div className="text-sm text-gray-500">{user?.email}</div>
+              <span className="text-sm font-semibold text-gray-500">Workspace</span>
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-3.5">
                   {workspaces.length > 0 ? (
@@ -153,12 +156,10 @@ export const WorkspaceSidebarDropdown = () => {
                             <div className="flex items-center justify-start gap-2.5">
                               <span className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 text-xs uppercase text-white">
                                 {workspace?.logo && workspace.logo !== "" ? (
-                                  <Image
+                                  <img
                                     src={workspace.logo}
+                                    className="absolute top-0 left-0 h-full w-full object-cover rounded"
                                     alt="Workspace Logo"
-                                    layout="fill"
-                                    objectFit="cover"
-                                    className="rounded"
                                   />
                                 ) : (
                                   workspace?.name?.charAt(0) ?? "..."

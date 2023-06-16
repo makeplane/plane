@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // services
 import viewsService from "services/views.service";
 import projectService from "services/project.service";
@@ -34,6 +36,8 @@ const ProjectViews: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
@@ -60,9 +64,6 @@ const ProjectViews: NextPage = () => {
 
   return (
     <ProjectAuthorizationWrapper
-      meta={{
-        title: "Plane - Views",
-      }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -89,16 +90,18 @@ const ProjectViews: NextPage = () => {
         isOpen={createUpdateViewModal}
         handleClose={() => setCreateUpdateViewModal(false)}
         data={selectedViewToUpdate}
+        user={user}
       />
       <DeleteViewModal
         isOpen={deleteViewModal}
         data={selectedViewToDelete}
         setIsOpen={setDeleteViewModal}
+        user={user}
       />
       {views ? (
         views.length > 0 ? (
           <div className="space-y-5 p-8">
-            <h3 className="text-3xl font-semibold text-brand-base">Views</h3>
+            <h3 className="text-2xl font-semibold text-brand-base">Views</h3>
             <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
               {views.map((view) => (
                 <SingleViewItem

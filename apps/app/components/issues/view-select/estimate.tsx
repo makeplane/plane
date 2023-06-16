@@ -11,13 +11,14 @@ import { CustomSelect, Tooltip } from "components/ui";
 // icons
 import { PlayIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -26,6 +27,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   partialUpdateIssue,
   position = "left",
   selfPositioned = false,
+  user,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -51,7 +53,8 @@ export const ViewEstimateSelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PROPERTY_UPDATE_ESTIMATE"
+          "ISSUE_PROPERTY_UPDATE_ESTIMATE",
+          user
         );
       }}
       label={

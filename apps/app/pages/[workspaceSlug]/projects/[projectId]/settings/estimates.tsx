@@ -16,6 +16,7 @@ import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates"
 import { SettingsHeader } from "components/project";
 //hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // ui
 import { EmptyState, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -36,6 +37,8 @@ const EstimatesSettings: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -63,7 +66,7 @@ const EstimatesSettings: NextPage = () => {
     );
 
     estimatesService
-      .deleteEstimate(workspaceSlug as string, projectId as string, estimateId)
+      .deleteEstimate(workspaceSlug as string, projectId as string, estimateId, user)
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -87,7 +90,7 @@ const EstimatesSettings: NextPage = () => {
     );
 
     projectService
-      .updateProject(workspaceSlug as string, projectId as string, { estimate: null })
+      .updateProject(workspaceSlug as string, projectId as string, { estimate: null }, user)
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -106,6 +109,7 @@ const EstimatesSettings: NextPage = () => {
           setEstimateFormOpen(false);
           setEstimateToUpdate(undefined);
         }}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -118,7 +122,7 @@ const EstimatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8 lg:px-24">
+        <div className="p-8">
           <SettingsHeader />
           <section className="flex items-center justify-between">
             <h3 className="text-2xl font-semibold">Estimates</h3>
@@ -142,13 +146,14 @@ const EstimatesSettings: NextPage = () => {
           </section>
           {estimatesList ? (
             estimatesList.length > 0 ? (
-              <section className="mt-4 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
+              <section className="mt-5 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
                 {estimatesList.map((estimate) => (
                   <SingleEstimate
                     key={estimate.id}
                     estimate={estimate}
                     editEstimate={(estimate) => editEstimate(estimate)}
                     handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
+                    user={user}
                   />
                 ))}
               </section>

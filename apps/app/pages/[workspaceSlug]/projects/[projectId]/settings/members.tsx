@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -87,6 +86,8 @@ const MembersSettings: NextPage = () => {
     })) || []),
   ];
 
+  const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
+
   return (
     <>
       <ConfirmProjectMemberRemove
@@ -133,6 +134,7 @@ const MembersSettings: NextPage = () => {
         isOpen={inviteModal}
         setIsOpen={setInviteModal}
         members={members}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -145,9 +147,9 @@ const MembersSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8 lg:px-24">
+        <div className="p-8">
           <SettingsHeader />
-          <section className="space-y-8">
+          <section className="space-y-5">
             <div className="flex items-end justify-between gap-4">
               <h3 className="text-2xl font-semibold">Members</h3>
               <button
@@ -174,12 +176,10 @@ const MembersSettings: NextPage = () => {
                         <div className="flex items-center gap-x-6 gap-y-2">
                           <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
                             {member.avatar && member.avatar !== "" ? (
-                              <Image
+                              <img
                                 src={member.avatar}
                                 alt={member.first_name}
-                                layout="fill"
-                                objectFit="cover"
-                                className="rounded-lg"
+                                className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                               />
                             ) : member.first_name !== "" ? (
                               member.first_name.charAt(0)
@@ -206,6 +206,14 @@ const MembersSettings: NextPage = () => {
                             onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
                               if (!activeWorkspace || !projectDetails) return;
 
+                              mutateMembers(
+                                (prevData: any) =>
+                                  prevData.map((m: any) =>
+                                    m.id === member.id ? { ...m, role: value } : m
+                                  ),
+                                false
+                              );
+
                               projectService
                                 .updateProjectMember(
                                   activeWorkspace.slug,
@@ -215,32 +223,38 @@ const MembersSettings: NextPage = () => {
                                     role: value,
                                   }
                                 )
-                                .then((res) => {
+                                .catch(() => {
                                   setToastAlert({
-                                    type: "success",
-                                    message: "Member role updated successfully.",
-                                    title: "Success",
+                                    type: "error",
+                                    title: "Error!",
+                                    message:
+                                      "An error occurred while updating member role. Please try again.",
                                   });
-                                  mutateMembers(
-                                    (prevData: any) =>
-                                      prevData.map((m: any) =>
-                                        m.id === member.id ? { ...m, ...res, role: value } : m
-                                      ),
-                                    false
-                                  );
-                                })
-                                .catch((err) => {
-                                  console.log(err);
                                 });
                             }}
                             position="right"
-                            disabled={member.memberId === user?.id}
+                            disabled={
+                              member.memberId === user?.id ||
+                              !member.member ||
+                              (currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < member.role)
+                            }
                           >
-                            {Object.keys(ROLE).map((key) => (
-                              <CustomSelect.Option key={key} value={key}>
-                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                              </CustomSelect.Option>
-                            ))}
+                            {Object.keys(ROLE).map((key) => {
+                              if (
+                                currentUser &&
+                                currentUser.role !== 20 &&
+                                currentUser.role < parseInt(key)
+                              )
+                                return null;
+
+                              return (
+                                <CustomSelect.Option key={key} value={key}>
+                                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                                </CustomSelect.Option>
+                              );
+                            })}
                           </CustomSelect>
                           <CustomMenu ellipsis>
                             <CustomMenu.MenuItem

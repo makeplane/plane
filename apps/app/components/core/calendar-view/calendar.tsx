@@ -24,7 +24,7 @@ import {
   formatDate,
 } from "helpers/calendar.helper";
 // types
-import { ICalendarRange, IIssue, UserAuth } from "types";
+import { ICalendarRange, ICurrentUserResponse, IIssue, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -38,6 +38,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   addIssueToDate: (date: string) => void;
   isCompleted: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -46,6 +47,7 @@ export const CalendarView: React.FC<Props> = ({
   handleDeleteIssue,
   addIssueToDate,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   const [showWeekEnds, setShowWeekEnds] = useState(false);
@@ -134,9 +136,15 @@ export const CalendarView: React.FC<Props> = ({
     );
 
     issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, draggableId, {
-        target_date: destination?.droppableId,
-      })
+      .patchIssue(
+        workspaceSlug as string,
+        projectId as string,
+        draggableId,
+        {
+          target_date: destination?.droppableId,
+        },
+        user
+      )
       .then(() => mutate(fetchKey));
   };
 
@@ -162,9 +170,9 @@ export const CalendarView: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return calendarIssues ? (
-    <div className="mb-4 h-full">
+    <div className="h-full">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="-m-2 h-full rounded-lg p-8 text-brand-secondary">
+        <div className="h-full rounded-lg p-8 text-brand-secondary">
           <CalendarHeader
             isMonthlyView={isMonthlyView}
             setIsMonthlyView={setIsMonthlyView}
@@ -219,6 +227,7 @@ export const CalendarView: React.FC<Props> = ({
                 addIssueToDate={addIssueToDate}
                 isMonthlyView={isMonthlyView}
                 showWeekEnds={showWeekEnds}
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             ))}

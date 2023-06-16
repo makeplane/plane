@@ -1,6 +1,5 @@
 FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat
-RUN apk update
 # Set working directory
 WORKDIR /app
 ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
@@ -13,9 +12,7 @@ RUN turbo prune --scope=app --docker
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
 
-
 RUN apk add --no-cache libc6-compat
-RUN apk update
 WORKDIR /app
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 # First install the dependencies (as they change less often)
@@ -44,10 +41,12 @@ FROM python:3.11.1-alpine3.17 AS backend
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
+ENV DJANGO_SETTINGS_MODULE plane.settings.production
+ENV DOCKERIZED 1
 
 WORKDIR /code
 
-RUN apk --update --no-cache add \
+RUN apk --no-cache add \
     "libpq~=15" \
     "libxslt~=1.1" \
     "nodejs-current~=19" \
@@ -59,8 +58,8 @@ RUN apk --update --no-cache add \
 
 COPY apiserver/requirements.txt ./
 COPY apiserver/requirements ./requirements
-RUN apk add libffi-dev
-RUN apk --update --no-cache --virtual .build-deps add \
+RUN apk add --no-cache libffi-dev
+RUN apk add --no-cache --virtual .build-deps \
     "bash~=5.2" \
     "g++~=12.2" \
     "gcc~=12.2" \
@@ -81,18 +80,13 @@ COPY apiserver/plane plane/
 COPY apiserver/templates templates/
 
 COPY apiserver/gunicorn.config.py ./
-RUN apk --update --no-cache add "bash~=5.2"
+RUN apk --no-cache add "bash~=5.2"
 COPY apiserver/bin ./bin/
 
 RUN chmod +x ./bin/takeoff ./bin/worker
 RUN chmod -R 777 /code
 
 # Expose container port and run entry point script
-EXPOSE 8000
-EXPOSE 3000
-EXPOSE 80
-
-
 
 WORKDIR /app
 
@@ -126,9 +120,6 @@ COPY start.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/replace-env-vars.sh
 RUN chmod +x /usr/local/bin/start.sh
 
+EXPOSE 80
 
 CMD ["supervisord","-c","/code/supervisor.conf"]
-
-
-
-

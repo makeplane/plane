@@ -62,7 +62,7 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
         x_axis: "priority",
         y_axis: "issue_count",
         ...params,
-        project: params?.project ? [params.project] : [],
+        project: params?.project ?? [],
       },
     };
 

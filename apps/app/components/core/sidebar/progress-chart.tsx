@@ -16,6 +16,8 @@ type Props = {
   issues: IIssue[];
   start: string;
   end: string;
+  width?: number;
+  height?: number;
 };
 
 const styleById = {
@@ -173,47 +175,47 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
     </div>
   );
 
-  return (
-    <div className="absolute -left-4  flex h-full w-full  items-center justify-center text-xs">
-      <AreaChart
-        width={360}
-        height={160}
-        data={ChartData}
-        margin={{
-          top: 12,
-          right: 12,
-          left: 0,
-          bottom: 12,
-        }}
-      >
-        <defs>
-          <linearGradient id="linearblue" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3F76FF" stopOpacity={0.7} />
-            <stop offset="50%" stopColor="#3F76FF" stopOpacity={0.1} />
-            <stop offset="100%" stopColor="#3F76FF" stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <XAxis dataKey="currentDate" tickSize={10} minTickGap={10} />
-        <YAxis tickSize={10} minTickGap={10} allowDecimals={false} />
-        <Tooltip content={<CustomTooltip />} />
-        <Area
-          type="monotone"
-          dataKey="pending"
-          stroke="#8884d8"
-          fill="url(#linearblue)"
-          activeDot={{ r: 8 }}
-        />
-        <ReferenceLine
-          stroke="#16a34a"
-          strokeDasharray="3 3"
-          segment={[
-            { x: `${renderShortNumericDateFormat(endDate)}`, y: 0 },
-            { x: `${renderShortNumericDateFormat(startDate)}`, y: issues.length },
-          ]}
-        />
-      </AreaChart>
-    </div>
-  );
+  // return (
+  //   <div className="absolute -left-4  flex h-full w-full  items-center justify-center text-xs">
+  //     <AreaChart
+  //       width={width}
+  //       height={height}
+  //       data={ChartData}
+  //       margin={{
+  //         top: 12,
+  //         right: 12,
+  //         left: 0,
+  //         bottom: 12,
+  //       }}
+  //     >
+  //       <defs>
+  //         <linearGradient id="linearblue" x1="0" y1="0" x2="0" y2="1">
+  //           <stop offset="0%" stopColor="#3F76FF" stopOpacity={0.7} />
+  //           <stop offset="50%" stopColor="#3F76FF" stopOpacity={0.1} />
+  //           <stop offset="100%" stopColor="#3F76FF" stopOpacity={0} />
+  //         </linearGradient>
+  //       </defs>
+  //       <XAxis dataKey="currentDate" tickSize={10} minTickGap={10} />
+  //       <YAxis tickSize={10} minTickGap={10} allowDecimals={false} />
+  //       <Tooltip content={<CustomTooltip />} />
+  //       <Area
+  //         type="monotone"
+  //         dataKey="pending"
+  //         stroke="#8884d8"
+  //         fill="url(#linearblue)"
+  //         activeDot={{ r: 8 }}
+  //       />
+  //       <ReferenceLine
+  //         stroke="#16a34a"
+  //         strokeDasharray="3 3"
+  //         segment={[
+  //           { x: `${renderShortNumericDateFormat(endDate)}`, y: 0 },
+  //           { x: `${renderShortNumericDateFormat(startDate)}`, y: issues.length },
+  //         ]}
+  //       />
+  //     </AreaChart>
+  //   </div>
+  // );
 };
 
 export default ProgressChart;

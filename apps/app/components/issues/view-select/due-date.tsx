@@ -7,15 +7,21 @@ import { findHowManyDaysLeft } from "helpers/date-time.helper";
 // services
 import trackEventServices from "services/track-event.service";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
-export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, isNotAllowed }) => {
+export const ViewDueDateSelect: React.FC<Props> = ({
+  issue,
+  partialUpdateIssue,
+  user,
+  isNotAllowed,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -51,7 +57,8 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
                 projectName: issue.project_detail.name,
                 issueId: issue.id,
               },
-              "ISSUE_PROPERTY_UPDATE_DUE_DATE"
+              "ISSUE_PROPERTY_UPDATE_DUE_DATE",
+              user
             );
           }}
           className={issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}

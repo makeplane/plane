@@ -20,7 +20,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { IIssueLabels } from "types";
+import { ICurrentUserResponse, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -29,7 +29,8 @@ type Props = {
   labelChildren: IIssueLabels[];
   addLabelToGroup: (parentLabel: IIssueLabels) => void;
   editLabel: (label: IIssueLabels) => void;
-  handleLabelDelete: (labelId: string) => void;
+  handleLabelDelete: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const SingleLabelGroup: React.FC<Props> = ({
@@ -38,6 +39,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
   addLabelToGroup,
   editLabel,
   handleLabelDelete,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -57,9 +59,15 @@ export const SingleLabelGroup: React.FC<Props> = ({
     );
 
     issuesService
-      .patchIssueLabel(workspaceSlug as string, projectId as string, label.id, {
-        parent: null,
-      })
+      .patchIssueLabel(
+        workspaceSlug as string,
+        projectId as string,
+        label.id,
+        {
+          parent: null,
+        },
+        user
+      )
       .then(() => {
         mutate(PROJECT_ISSUE_LABELS(projectId as string));
       });
@@ -94,7 +102,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                     <span>Edit label</span>
                   </span>
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
+                <CustomMenu.MenuItem onClick={handleLabelDelete}>
                   <span className="flex items-center justify-start gap-2">
                     <TrashIcon className="h-4 w-4" />
                     <span>Delete label</span>
@@ -150,7 +158,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                             <span>Edit label</span>
                           </span>
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={() => handleLabelDelete(child.id)}>
+                        <CustomMenu.MenuItem onClick={handleLabelDelete}>
                           <span className="flex items-center justify-start gap-2">
                             <TrashIcon className="h-4 w-4" />
                             <span>Delete label</span>
