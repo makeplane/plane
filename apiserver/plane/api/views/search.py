@@ -210,7 +210,7 @@ class IssueSearchEndpoint(BaseAPIView):
             blocker_blocked_by = request.query_params.get("blocker_blocked_by", "false")
             cycle = request.query_params.get("cycle", "false")
             module = request.query_params.get("module", "false")
-            
+
             issue_id = request.query_params.get("issue_id", False)
 
             issues = Issue.issue_objects.filter(
@@ -253,6 +253,9 @@ class IssueSearchEndpoint(BaseAPIView):
                     "project__identifier",
                     "project_id",
                     "workspace__slug",
+                    "state__name",
+                    "state__group",
+                    "state__color",
                 ),
                 status=status.HTTP_200_OK,
             )
