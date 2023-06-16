@@ -368,14 +368,6 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <SidebarParentSelect
                   control={control}
                   submitChanges={submitChanges}
-                  issuesList={
-                    issues?.filter(
-                      (i) =>
-                        i.id !== issueDetail?.id &&
-                        i.id !== issueDetail?.parent &&
-                        i.parent !== issueDetail?.id
-                    ) ?? []
-                  }
                   customDisplay={
                     issueDetail?.parent_detail ? (
                       <button
