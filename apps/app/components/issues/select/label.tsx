@@ -6,6 +6,10 @@ import useSWR from "swr";
 
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
+// services
+import issuesServices from "services/issues.service";
+// ui
+import { IssueLabelsList } from "components/ui";
 // icons
 import {
   CheckIcon,
@@ -14,13 +18,10 @@ import {
   RectangleGroupIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
-// services
-import issuesServices from "services/issues.service";
 // types
 import type { IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import { IssueLabelsList } from "components/ui";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;

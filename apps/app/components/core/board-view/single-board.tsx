@@ -145,43 +145,45 @@ export const SingleBoard: React.FC<Props> = ({
                   {provided.placeholder}
                 </span>
               </div>
-              <div>
-                {type === "issue" ? (
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 font-medium text-brand-accent outline-none p-1"
-                    onClick={addIssueToState}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    Add Issue
-                  </button>
-                ) : (
-                  !isCompleted && (
-                    <CustomMenu
-                      customButton={
-                        <button
-                          type="button"
-                          className="flex items-center gap-2 font-medium text-brand-accent outline-none"
-                        >
-                          <PlusIcon className="h-4 w-4" />
-                          Add Issue
-                        </button>
-                      }
-                      position="left"
-                      noBorder
+              {selectedGroup !== "created_by" && (
+                <div>
+                  {type === "issue" ? (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 font-medium text-brand-accent outline-none p-1"
+                      onClick={addIssueToState}
                     >
-                      <CustomMenu.MenuItem onClick={addIssueToState}>
-                        Create new
-                      </CustomMenu.MenuItem>
-                      {openIssuesListModal && (
-                        <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                          Add an existing issue
+                      <PlusIcon className="h-4 w-4" />
+                      Add Issue
+                    </button>
+                  ) : (
+                    !isCompleted && (
+                      <CustomMenu
+                        customButton={
+                          <button
+                            type="button"
+                            className="flex items-center gap-2 font-medium text-brand-accent outline-none"
+                          >
+                            <PlusIcon className="h-4 w-4" />
+                            Add Issue
+                          </button>
+                        }
+                        position="left"
+                        noBorder
+                      >
+                        <CustomMenu.MenuItem onClick={addIssueToState}>
+                          Create new
                         </CustomMenu.MenuItem>
-                      )}
-                    </CustomMenu>
-                  )
-                )}
-              </div>
+                        {openIssuesListModal && (
+                          <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                            Add an existing issue
+                          </CustomMenu.MenuItem>
+                        )}
+                      </CustomMenu>
+                    )
+                  )}
+                </div>
+              )}
             </div>
           )}
         </StrictModeDroppable>
