@@ -1,9 +1,9 @@
 // components
-import { Loader, CalendarGraph } from "components/ui";
+import { ActivityGraph } from "components/workspace";
+// ui
+import { Loader } from "components/ui";
 // types
 import { IUserWorkspaceDashboard } from "types";
-// constants
-import { CHARTS_THEME } from "constants/graph";
 
 type Props = {
   data: IUserWorkspaceDashboard | undefined;
@@ -67,26 +67,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => (
     </div>
     <div className="p-4 lg:col-span-2">
       <h3 className="mb-2 font-semibold capitalize">Activity Graph</h3>
-      <CalendarGraph
-        data={
-          data?.issue_activities.map((activity) => ({
-            day: activity.created_date,
-            value: activity.activity_count,
-          })) ?? []
-        }
-        from={data?.issue_activities.length ? data.issue_activities[0].created_date : new Date()}
-        to={
-          data?.issue_activities.length
-            ? data.issue_activities[data.issue_activities.length - 1].created_date
-            : new Date()
-        }
-        height="200px"
-        margin={{ bottom: 0, left: 10, right: 10, top: 0 }}
-        theme={{
-          ...CHARTS_THEME,
-          background: "rgb(var(--color-bg-base))",
-        }}
-      />
+      <ActivityGraph activities={data?.issue_activities} />
     </div>
   </div>
 );

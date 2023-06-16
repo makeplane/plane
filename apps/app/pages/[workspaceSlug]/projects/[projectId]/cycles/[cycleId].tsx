@@ -75,11 +75,6 @@ const SingleCycle: React.FC = () => {
       : null
   );
 
-  const cycleStatus =
-    cycleDetails?.start_date && cycleDetails?.end_date
-      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
-      : "draft";
-
   const { data: issues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
@@ -88,6 +83,11 @@ const SingleCycle: React.FC = () => {
       ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const cycleStatus =
+    cycleDetails?.start_date && cycleDetails?.end_date
+      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
+      : "draft";
 
   const openIssuesListModal = () => {
     setCycleIssuesListModal(true);
