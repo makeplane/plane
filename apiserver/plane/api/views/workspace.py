@@ -195,6 +195,11 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                     {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
+            # check for role level
+            requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
+            if len([email for email in emails if int(email.get("role", 10)) > requesting_user.role]):
+                return Response({"error": "You cannot invite a user with higher role"}, status=status.HTTP_400_BAD_REQUEST)
+
             workspace = Workspace.objects.get(slug=slug)
 
             # Check if user is already a member of workspace
