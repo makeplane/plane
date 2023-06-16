@@ -206,8 +206,11 @@ class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
             query = request.query_params.get("search", False)
-            parent = request.query_params.get("parent", False)
-            blocker_blocked_by = request.query_params.get("blocker_blocked_by", False)
+            parent = request.query_params.get("parent", "false")
+            blocker_blocked_by = request.query_params.get("blocker_blocked_by", "false")
+            cycle = request.query_params.get("cycle", "false")
+            module = request.query_params.get("module", "false")
+            
             issue_id = request.query_params.get("issue_id", False)
 
             issues = Issue.issue_objects.filter(
@@ -235,6 +238,12 @@ class IssueSearchEndpoint(BaseAPIView):
                     ~Q(blocked_issues__block=issue),
                     ~Q(blocker_issues__blocked_by=issue),
                 )
+
+            if cycle == "true":
+                issues = issues.exclude(issue_cycle__isnull=False)
+
+            if module == "true":
+                issues = issues.exclude(issue_module__isnull=False)
 
             return Response(
                 issues.values(
