@@ -22,6 +22,17 @@ import {
 } from "components/issues";
 // ui
 import { Loader } from "components/ui";
+// icons
+import {
+  ArrowTopRightOnSquareIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  DocumentDuplicateIcon,
+  ExclamationTriangleIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
@@ -132,11 +143,69 @@ export const InboxMainContent: React.FC = () => {
     ]
   );
 
+  const issueStatus = issueDetails?.issue_inbox[0].status;
+
   return (
     <>
       {issueDetails ? (
         <div className="flex h-full overflow-auto divide-x">
-          <div className="basis-2/3 h-full overflow-auto p-5">
+          <div className="basis-2/3 h-full overflow-auto p-5 space-y-3">
+            <div
+              className={`flex items-center gap-2 p-3 text-sm border rounded-md ${
+                issueStatus === -2
+                  ? "text-orange-500 border-orange-500 bg-orange-500/10"
+                  : issueStatus === -1
+                  ? "text-red-500 border-red-500 bg-red-500/10"
+                  : issueStatus === 0
+                  ? "text-blue-500 border-blue-500 bg-blue-500/10"
+                  : issueStatus === 1
+                  ? "text-green-500 border-green-500 bg-green-500/10"
+                  : issueStatus === 2
+                  ? "text-yellow-500 border-yellow-500 bg-yellow-500/10"
+                  : ""
+              }`}
+            >
+              {issueStatus === -2 ? (
+                <>
+                  <ExclamationTriangleIcon className="h-5 w-5" />
+                  <p>This issue is still pending.</p>
+                </>
+              ) : issueStatus === -1 ? (
+                <>
+                  <XCircleIcon className="h-5 w-5" />
+                  <p>This issue has been declined.</p>
+                </>
+              ) : issueStatus === 0 ? (
+                <>
+                  <ClockIcon className="h-5 w-5" />
+                  <p>
+                    This issue has been snoozed till{" "}
+                    {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
+                  </p>
+                </>
+              ) : issueStatus === 1 ? (
+                <>
+                  <CheckCircleIcon className="h-5 w-5" />
+                  <p>This issue has been accepted.</p>
+                </>
+              ) : issueStatus === 2 ? (
+                <>
+                  <DocumentDuplicateIcon className="h-5 w-5" />
+                  <p className="flex items-center gap-1">
+                    This issue has been marked as a duplicate of
+                    <a
+                      href={`/${workspaceSlug}/projects/${projectId}/issues/${issueDetails.issue_inbox[0].duplicate_to}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline flex items-center gap-2"
+                    >
+                      this issue <ArrowTopRightOnSquareIcon className="h-3 w-3" />
+                    </a>
+                    .
+                  </p>
+                </>
+              ) : null}
+            </div>
             <div>
               <IssueDescriptionForm
                 issue={{
@@ -150,7 +219,7 @@ export const InboxMainContent: React.FC = () => {
                 }
               />
             </div>
-            <div className="space-y-5 pt-3">
+            <div className="space-y-5">
               <h3 className="text-lg text-brand-base">Comments/Activity</h3>
               <IssueActivitySection issueId={issueDetails.id} user={user} />
               <AddComment issueId={issueDetails.id} user={user} />
