@@ -32,7 +32,7 @@ type Props = {
   issueCount: number;
   currentIssueIndex: number;
   issue?: IInboxIssue;
-  onAccept: () => void;
+  onAccept: () => Promise<void>;
   onDecline: () => void;
   onMarkAsDuplicate: () => void;
   onSnooze: (date: Date | string) => void;
@@ -51,6 +51,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
     issue,
   } = props;
 
+  const [isAccepting, setIsAccepting] = useState(false);
   const [date, setDate] = useState(new Date());
 
   const router = useRouter();
@@ -59,6 +60,12 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
   const { memberRole } = useProjectMyMembership();
   const { filters, setFilters, filtersLength } = useInboxView();
   const { user } = useUserAuth();
+
+  const handleAcceptIssue = () => {
+    setIsAccepting(true);
+
+    onAccept().finally(() => setIsAccepting(false));
+  };
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
@@ -185,11 +192,12 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
                 <SecondaryButton
                   size="sm"
                   className="flex gap-2 items-center"
-                  onClick={onAccept}
+                  onClick={handleAcceptIssue}
                   disabled={issueStatus !== -2}
+                  loading={isAccepting}
                 >
                   <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                  <span>Accept</span>
+                  <span>{isAccepting ? "Accepting..." : "Accept"}</span>
                 </SecondaryButton>
                 <SecondaryButton
                   size="sm"
