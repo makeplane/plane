@@ -72,6 +72,7 @@ class ProjectViewSet(BaseViewSet):
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
         )
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -81,6 +82,15 @@ class ProjectViewSet(BaseViewSet):
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
             .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                is_member=Exists(
+                    ProjectMember.objects.filter(
+                        member=self.request.user,
+                        project_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
+            )
             .distinct()
         )
 
