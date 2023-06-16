@@ -13,6 +13,10 @@ export interface IProject {
   created_by: string;
   cover_image: string | null;
   cycle_view: boolean;
+  issue_views_view: boolean;
+  module_view: boolean;
+  page_view: boolean;
+  inbox_view: boolean;
   default_assignee: IUser | string | null;
   description: string;
   emoji: string | null;

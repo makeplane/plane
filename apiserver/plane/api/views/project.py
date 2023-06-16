@@ -47,8 +47,8 @@ from plane.db.models import (
     Page,
     IssueAssignee,
     ModuleMember,
+    Inbox,
 )
-
 
 from plane.bgtasks.project_invitation_task import project_invitation
 
@@ -248,6 +248,20 @@ class ProjectViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
+                if serializer.data["inbox_view"]:
+                    Inbox.objects.get_or_create(
+                        name=f"{project.name} Inbox", project=project, is_default=True
+                    )
+
+                    # Create the triage state in Backlog group
+                    State.objects.get_or_create(
+                        name="Triage",
+                        group="backlog",
+                        description="Default state for managing all Inbox Issues",
+                        project_id=pk,
+                        color="#ff7700"
+                    )
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -477,7 +491,9 @@ class ProjectMemberViewSet(BaseViewSet):
             )
             if requesting_project_member.role < project_member.role:
                 return Response(
-                    {"error": "You cannot remove a user having role higher than yourself"},
+                    {
+                        "error": "You cannot remove a user having role higher than yourself"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 

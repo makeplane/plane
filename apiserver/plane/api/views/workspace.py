@@ -755,7 +755,7 @@ class UserIssueCompletedGraphEndpoint(BaseAPIView):
             month = request.GET.get("month", 1)
 
             issues = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     assignees__in=[request.user],
                     workspace__slug=slug,
                     completed_at__month=month,
@@ -800,7 +800,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             month = request.GET.get("month", 1)
 
             completed_issues = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     assignees__in=[request.user],
                     workspace__slug=slug,
                     completed_at__month=month,
@@ -813,24 +813,24 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 .order_by("week_in_month")
             )
 
-            assigned_issues = Issue.objects.filter(
+            assigned_issues = Issue.issue_objects.filter(
                 workspace__slug=slug, assignees__in=[request.user]
             ).count()
 
-            pending_issues_count = Issue.objects.filter(
+            pending_issues_count = Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 workspace__slug=slug,
                 assignees__in=[request.user],
             ).count()
 
-            completed_issues_count = Issue.objects.filter(
+            completed_issues_count = Issue.issue_objects.filter(
                 workspace__slug=slug,
                 assignees__in=[request.user],
                 state__group="completed",
             ).count()
 
             issues_due_week = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     workspace__slug=slug,
                     assignees__in=[request.user],
                 )
@@ -840,14 +840,14 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                Issue.objects.filter(workspace__slug=slug, assignees__in=[request.user])
+                Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
                 .annotate(state_group=F("state__group"))
                 .values("state_group")
                 .annotate(state_count=Count("state_group"))
                 .order_by("state_group")
             )
 
-            overdue_issues = Issue.objects.filter(
+            overdue_issues = Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 workspace__slug=slug,
                 assignees__in=[request.user],
@@ -855,7 +855,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 completed_at__isnull=True,
             ).values("id", "name", "workspace__slug", "project_id", "target_date")
 
-            upcoming_issues = Issue.objects.filter(
+            upcoming_issues = Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 target_date__gte=timezone.now(),
                 workspace__slug=slug,

@@ -41,6 +41,7 @@ class IssueFlatSerializer(BaseSerializer):
             "id",
             "name",
             "description",
+            "description_html",
             "priority",
             "start_date",
             "target_date",

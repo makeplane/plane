@@ -323,7 +323,7 @@ class CycleIssueViewSet(BaseViewSet):
             super()
             .get_queryset()
             .annotate(
-                sub_issues_count=Issue.objects.filter(parent=OuterRef("issue_id"))
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -347,9 +347,9 @@ class CycleIssueViewSet(BaseViewSet):
             group_by = request.GET.get("group_by", False)
             filters = issue_filters(request.query_params, "GET")
             issues = (
-                Issue.objects.filter(issue_cycle__cycle_id=cycle_id)
+                Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
                 .annotate(
-                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")

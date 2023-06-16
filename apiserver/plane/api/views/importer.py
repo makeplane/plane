@@ -241,7 +241,7 @@ class ImportServiceEndpoint(BaseAPIView):
             )
             # Delete all imported Issues
             imported_issues = importer.imported_data.get("issues", [])
-            Issue.objects.filter(id__in=imported_issues).delete()
+            Issue.issue_objects.filter(id__in=imported_issues).delete()
 
             # Delete all imported Labels
             imported_labels = importer.imported_data.get("labels", [])
