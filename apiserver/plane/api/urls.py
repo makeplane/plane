@@ -70,7 +70,6 @@ from plane.api.views import (
     BulkDeleteIssuesEndpoint,
     BulkImportIssuesEndpoint,
     ProjectUserViewsEndpoint,
-    TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
@@ -826,30 +825,6 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     ## End IssueComments
-    ## Roadmap
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/roadmaps/",
-        TimeLineIssueViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-issue-roadmap",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/roadmaps/<uuid:pk>/",
-        TimeLineIssueViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-issue-roadmap",
-    ),
-    ## End Roadmap
     ## IssueProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",

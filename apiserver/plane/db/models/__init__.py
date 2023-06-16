@@ -23,7 +23,6 @@ from .project import (
 from .issue import (
     Issue,
     IssueActivity,
-    TimelineIssue,
     IssueProperty,
     IssueComment,
     IssueBlocker,
