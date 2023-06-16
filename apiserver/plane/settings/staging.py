@@ -211,3 +211,5 @@ CELERY_RESULT_BACKEND = broker_url
 CELERY_BROKER_URL = broker_url
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
+
+ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"

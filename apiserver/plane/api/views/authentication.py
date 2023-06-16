@@ -36,6 +36,99 @@ def get_tokens_for_user(user):
     )
 
 
+class SignUpEndpoint(BaseAPIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        try:
+            if not settings.ENABLE_SIGNUP:
+                return Response(
+                    {
+                        "error": "New account creation is disabled. Please contact your site administrator"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            email = request.data.get("email", False)
+            password = request.data.get("password", False)
+
+            ## Raise exception if any of the above are missing
+            if not email or not password:
+                return Response(
+                    {"error": "Both email and password are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            email = email.strip().lower()
+
+            try:
+                validate_email(email)
+            except ValidationError as e:
+                return Response(
+                    {"error": "Please provide a valid email address."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Check if the user already exists
+            if User.objects.filter(email=email).exists():
+                return Response(
+                    {"error": "User already exist please sign in"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            user = User.objects.create(email=email, username=uuid.uuid4().hex)
+            user.set_password(password)
+
+            # settings last actives for the user
+            user.last_active = timezone.now()
+            user.last_login_time = timezone.now()
+            user.last_login_ip = request.META.get("REMOTE_ADDR")
+            user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+            user.token_updated_at = timezone.now()
+            user.save()
+
+            serialized_user = UserSerializer(user).data
+
+            access_token, refresh_token = get_tokens_for_user(user)
+
+            data = {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user": serialized_user,
+            }
+
+            # Send Analytics
+            if settings.ANALYTICS_BASE_API:
+                _ = requests.post(
+                    settings.ANALYTICS_BASE_API,
+                    headers={
+                        "Content-Type": "application/json",
+                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                    },
+                    json={
+                        "event_id": uuid.uuid4().hex,
+                        "event_data": {
+                            "medium": "email",
+                        },
+                        "user": {"email": email, "id": str(user.id)},
+                        "device_ctx": {
+                            "ip": request.META.get("REMOTE_ADDR"),
+                            "user_agent": request.META.get("HTTP_USER_AGENT"),
+                        },
+                        "event_type": "SIGN_UP",
+                    },
+                )
+
+            return Response(data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
 class SignInEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
@@ -63,108 +156,69 @@ class SignInEndpoint(BaseAPIView):
 
             user = User.objects.filter(email=email).first()
 
-            # Sign up Process
             if user is None:
-                user = User.objects.create(email=email, username=uuid.uuid4().hex)
-                user.set_password(password)
+                return Response(
+                    {
+                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
-                # settings last actives for the user
-                user.last_active = timezone.now()
-                user.last_login_time = timezone.now()
-                user.last_login_ip = request.META.get("REMOTE_ADDR")
-                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-                user.token_updated_at = timezone.now()
-                user.save()
+            # Sign up Process
+            if not user.check_password(password):
+                return Response(
+                    {
+                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            if not user.is_active:
+                return Response(
+                    {
+                        "error": "Your account has been deactivated. Please contact your site administrator."
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
-                serialized_user = UserSerializer(user).data
+            serialized_user = UserSerializer(user).data
 
-                access_token, refresh_token = get_tokens_for_user(user)
+            # settings last active for the user
+            user.last_active = timezone.now()
+            user.last_login_time = timezone.now()
+            user.last_login_ip = request.META.get("REMOTE_ADDR")
+            user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+            user.token_updated_at = timezone.now()
+            user.save()
 
-                data = {
-                    "access_token": access_token,
-                    "refresh_token": refresh_token,
-                    "user": serialized_user,
-                }
-
-                # Send Analytics
-                if settings.ANALYTICS_BASE_API:
-                    _ = requests.post(
-                        settings.ANALYTICS_BASE_API,
-                        headers={
-                            "Content-Type": "application/json",
-                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+            access_token, refresh_token = get_tokens_for_user(user)
+            # Send Analytics
+            if settings.ANALYTICS_BASE_API:
+                _ = requests.post(
+                    settings.ANALYTICS_BASE_API,
+                    headers={
+                        "Content-Type": "application/json",
+                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                    },
+                    json={
+                        "event_id": uuid.uuid4().hex,
+                        "event_data": {
+                            "medium": "email",
                         },
-                        json={
-                            "event_id": uuid.uuid4().hex,
-                            "event_data": {
-                                "medium": "email",
-                            },
-                            "user": {"email": email, "id": str(user.id)},
-                            "device_ctx": {
-                                "ip": request.META.get("REMOTE_ADDR"),
-                                "user_agent": request.META.get("HTTP_USER_AGENT"),
-                            },
-                            "event_type": "SIGN_UP",
+                        "user": {"email": email, "id": str(user.id)},
+                        "device_ctx": {
+                            "ip": request.META.get("REMOTE_ADDR"),
+                            "user_agent": request.META.get("HTTP_USER_AGENT"),
                         },
-                    )
+                        "event_type": "SIGN_IN",
+                    },
+                )
+            data = {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user": serialized_user,
+            }
 
-                return Response(data, status=status.HTTP_200_OK)
-            # Sign in Process
-            else:
-                if not user.check_password(password):
-                    return Response(
-                        {
-                            "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                        },
-                        status=status.HTTP_403_FORBIDDEN,
-                    )
-                if not user.is_active:
-                    return Response(
-                        {
-                            "error": "Your account has been deactivated. Please contact your site administrator."
-                        },
-                        status=status.HTTP_403_FORBIDDEN,
-                    )
-
-                serialized_user = UserSerializer(user).data
-
-                # settings last active for the user
-                user.last_active = timezone.now()
-                user.last_login_time = timezone.now()
-                user.last_login_ip = request.META.get("REMOTE_ADDR")
-                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-                user.token_updated_at = timezone.now()
-                user.save()
-
-                access_token, refresh_token = get_tokens_for_user(user)
-                # Send Analytics
-                if settings.ANALYTICS_BASE_API:
-                    _ = requests.post(
-                        settings.ANALYTICS_BASE_API,
-                        headers={
-                            "Content-Type": "application/json",
-                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                        },
-                        json={
-                            "event_id": uuid.uuid4().hex,
-                            "event_data": {
-                                "medium": "email",
-                            },
-                            "user": {"email": email, "id": str(user.id)},
-                            "device_ctx": {
-                                "ip": request.META.get("REMOTE_ADDR"),
-                                "user_agent": request.META.get("HTTP_USER_AGENT"),
-                            },
-                            "event_type": "SIGN_IN",
-                        },
-                    )
-                data = {
-                    "access_token": access_token,
-                    "refresh_token": refresh_token,
-                    "user": serialized_user,
-                }
-
-                return Response(data, status=status.HTTP_200_OK)
+            return Response(data, status=status.HTTP_200_OK)
 
         except Exception as e:
             capture_exception(e)
