@@ -379,7 +379,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         <XMarkIcon className="h-3 w-3" />
                       </button>
                     ) : (
-                      <div className="inline-block rounded bg-brand-surface-1 px-3 py-2 text-xs">
+                      <div className="inline-block rounded bg-brand-surface-1 px-3 py-2 text-xs text-brand-secondary">
                         No parent selected
                       </div>
                     )
@@ -390,16 +390,16 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
                 <SidebarBlockerSelect
+                  issueId={issueId as string}
                   submitChanges={submitChanges}
-                  issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
                   watch={watchIssue}
                   userAuth={memberRole}
                 />
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
                 <SidebarBlockedSelect
+                  issueId={issueId as string}
                   submitChanges={submitChanges}
-                  issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
                   watch={watchIssue}
                   userAuth={memberRole}
                 />

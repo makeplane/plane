@@ -89,6 +89,7 @@ const IssueDetailsPage: NextPage = () => {
         ISSUE_DETAILS(issueId as string),
         (prevData) => {
           if (!prevData) return prevData;
+
           return {
             ...prevData,
             ...formData,
@@ -97,10 +98,24 @@ const IssueDetailsPage: NextPage = () => {
         false
       );
 
-      const payload = { ...formData };
+      const payload: Partial<IIssue> = {
+        ...formData,
+      };
+
+      if (formData.blocker_issues) {
+        payload.blockers_list = formData.blocker_issues.map(
+          (i) => i.blocker_issue_detail?.id ?? ""
+        );
+        delete formData.blocker_issues;
+      }
+      if (formData.blocked_issues) {
+        payload.blocks_list = formData.blocked_issues.map((i) => i.blocked_issue_detail?.id ?? "");
+        delete formData.blocked_issues;
+      }
+
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
-        .then((res) => {
+        .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
@@ -117,12 +132,6 @@ const IssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
-      blockers_list:
-        issueDetails.blockers_list ??
-        issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
-      blocked_list:
-        issueDetails.blocks_list ??
-        issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
       assignees_list:
         issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,

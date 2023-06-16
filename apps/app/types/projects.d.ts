@@ -141,6 +141,7 @@ export interface ISearchIssueResponse {
   project__identifier: string;
   sequence_id: number;
   state__color: string;
+  state__group: string;
   state__name: string;
   workspace__slug: string;
 }

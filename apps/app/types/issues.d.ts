@@ -141,26 +141,14 @@ export interface ISubIssueResponse {
 }
 
 export interface BlockeIssue {
-  id: string;
   blocked_issue_detail?: BlockeIssueDetail;
-  created_at: Date;
-  updated_at: Date;
-  created_by: string;
-  updated_by: string;
-  project: string;
-  workspace: string;
-  block: string;
-  blocked_by: string;
   blocker_issue_detail?: BlockeIssueDetail;
 }
 
 export interface BlockeIssueDetail {
   id: string;
   name: string;
-  description: string;
-  priority: null;
-  start_date: null;
-  target_date: null;
+  sequence_id: number;
 }
 
 export interface IIssueComment {

@@ -117,7 +117,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                     />
                     <Combobox.Input
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
-                      placeholder="Search..."
+                      placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       displayValue={() => ""}
@@ -125,19 +125,30 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                   </div>
                   {customDisplay && <div className="p-3">{customDisplay}</div>}
                   <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
-                    {searchTerm === "" ? (
-                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <MagnifyingGlassIcon className="h-12 w-12 text-brand-secondary" />
-                        <h3 className="text-brand-secondary">Type something to search</h3>
-                      </div>
-                    ) : isLoading || isSearching ? (
+                    {!isLoading &&
+                      issues.length === 0 &&
+                      searchTerm !== "" &&
+                      debouncedSearchTerm !== "" && (
+                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                          <LayerDiagonalIcon height="52" width="52" />
+                          <h3 className="text-brand-secondary">
+                            No issues found. Create a new issue with{" "}
+                            <pre className="inline rounded bg-brand-surface-2 px-2 py-1 text-sm">
+                              C
+                            </pre>
+                            .
+                          </h3>
+                        </div>
+                      )}
+
+                    {isLoading || isSearching ? (
                       <Loader className="space-y-3 p-3 -mt-4">
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                       </Loader>
-                    ) : issues.length > 0 ? (
+                    ) : (
                       <li className="p-2">
                         <ul className="text-sm">
                           {issues.map((issue) => (
@@ -167,17 +178,6 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                           ))}
                         </ul>
                       </li>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayerDiagonalIcon height="52" width="52" />
-                        <h3 className="text-brand-secondary">
-                          No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-brand-surface-2 px-2 py-1 text-sm">
-                            C
-                          </pre>
-                          .
-                        </h3>
-                      </div>
                     )}
                   </Combobox.Options>
                 </Combobox>
