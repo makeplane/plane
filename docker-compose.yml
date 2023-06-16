@@ -38,6 +38,7 @@ services:
                         EMAIL_PORT: ${EMAIL_PORT}
                         EMAIL_FROM: ${EMAIL_FROM}
                         EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+                        EMAIL_USE_SSL: ${EMAIL_USE_SSL}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -76,6 +77,7 @@ services:
                         EMAIL_PORT: ${EMAIL_PORT}
                         EMAIL_FROM: ${EMAIL_FROM}
                         EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+                        EMAIL_USE_SSL: ${EMAIL_USE_SSL}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
