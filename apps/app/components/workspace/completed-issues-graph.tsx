@@ -2,7 +2,6 @@
 import { CustomMenu, LineGraph } from "components/ui";
 // constants
 import { MONTHS } from "constants/project";
-import { CHARTS_THEME } from "constants/graph";
 
 type Props = {
   issues:
@@ -51,7 +50,7 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
               data={[
                 {
                   id: "completed_issues",
-                  // color: "hsl(279.5,100%,76.5%)",
+                  color: "#d687ff",
                   data: data.map((item) => ({
                     x: item.week_in_month,
                     y: item.completed_count,
@@ -60,8 +59,8 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
               ]}
               margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
               customYAxisTickValues={data.map((item) => item.completed_count)}
+              colors={(datum) => datum.color}
               theme={{
-                ...CHARTS_THEME,
                 background: "rgb(var(--color-bg-base))",
               }}
             />

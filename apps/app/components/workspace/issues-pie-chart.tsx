@@ -1,12 +1,11 @@
+// ui
+import { PieGraph } from "components/ui";
+// helpers
+import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IUserStateDistribution } from "types";
-// helper
-import { capitalizeFirstLetter } from "helpers/string.helper";
 // constants
-import { CHARTS_THEME } from "constants/graph";
 import { STATE_GROUP_COLORS } from "constants/state";
-// components
-import { PieGraph } from "components/ui";
 
 type Props = {
   groupedIssues: IUserStateDistribution[] | undefined;
@@ -22,33 +21,39 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
             id: cell.state_group,
             label: cell.state_group,
             value: cell.state_count,
-            // TODO: convert hex to hsl
             color: STATE_GROUP_COLORS[cell.state_group.toLowerCase()],
           })) ?? []
         }
         height="320px"
         innerRadius={0.5}
         arcLinkLabel={(cell) => `${capitalizeFirstLetter(cell.label.toString())} (${cell.value})`}
-        legends={
-          groupedIssues?.map((cell) => ({
-            data: [
-              {
+        legends={[
+          {
+            anchor: "right",
+            direction: "column",
+            justify: false,
+            translateX: 0,
+            translateY: 56,
+            itemsSpacing: 10,
+            itemWidth: 100,
+            itemHeight: 18,
+            itemTextColor: "rgb(var(--color-text-secondary))",
+            itemDirection: "left-to-right",
+            itemOpacity: 1,
+            symbolSize: 12,
+            symbolShape: "square",
+            data:
+              groupedIssues?.map((cell) => ({
                 id: cell.state_group,
                 label: capitalizeFirstLetter(cell.state_group),
                 value: cell.state_count,
                 color: STATE_GROUP_COLORS[cell.state_group.toLowerCase()],
-              },
-            ],
-
-            direction: "column",
-            itemHeight: 20,
-            itemWidth: 100,
-            anchor: "right",
-          })) ?? []
-        }
+              })) ?? [],
+          },
+        ]}
         activeInnerRadiusOffset={5}
+        colors={(datum) => datum.data.color}
         theme={{
-          ...CHARTS_THEME,
           background: "rgb(var(--color-bg-base))",
         }}
       />
