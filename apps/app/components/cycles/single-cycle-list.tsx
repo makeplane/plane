@@ -244,7 +244,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
 
                   <div className="flex items-center gap-2.5 text-brand-secondary">
                     {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                      <Image
+                      <img
                         src={cycle.owned_by.avatar}
                         height={16}
                         width={16}

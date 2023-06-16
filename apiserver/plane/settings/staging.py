@@ -54,7 +54,7 @@ DOCKERIZED = int(os.environ.get(
     "DOCKERIZED", 0
 ))  == 1
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
-USE_MINIO = int(os.environ.get("USE_MINIO"), 0) == 1
+USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
@@ -211,3 +211,5 @@ CELERY_RESULT_BACKEND = broker_url
 CELERY_BROKER_URL = broker_url
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
+
+ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"

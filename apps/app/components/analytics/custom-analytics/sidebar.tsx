@@ -27,6 +27,7 @@ import { renderShortDate } from "helpers/date-time.helper";
 import {
   IAnalyticsParams,
   IAnalyticsResponse,
+  ICurrentUserResponse,
   IExportAnalyticsFormData,
   IProject,
   IWorkspace,
@@ -41,6 +42,7 @@ type Props = {
   params: IAnalyticsParams;
   fullScreen: boolean;
   isProjectLevel: boolean;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const AnalyticsSidebar: React.FC<Props> = ({
@@ -48,6 +50,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
   params,
   fullScreen,
   isProjectLevel = false,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -138,7 +141,8 @@ export const AnalyticsSidebar: React.FC<Props> = ({
         ? "MODULE_ANALYTICS_EXPORT"
         : projectId
         ? "PROJECT_ANALYTICS_EXPORT"
-        : "WORKSPACE_ANALYTICS_EXPORT"
+        : "WORKSPACE_ANALYTICS_EXPORT",
+      user
     );
   };
 

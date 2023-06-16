@@ -436,7 +436,7 @@ class ProjectMemberViewSet(BaseViewSet):
             )
             if (
                 "role" in request.data
-                and request.data.get("role", project_member.role)
+                and int(request.data.get("role", project_member.role))
                 > requested_project_member.role
             ):
                 return Response(
@@ -471,6 +471,16 @@ class ProjectMemberViewSet(BaseViewSet):
             project_member = ProjectMember.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
+            # check requesting user role
+            requesting_project_member = ProjectMember.objects.get(
+                workspace__slug=slug, member=request.user, project_id=project_id
+            )
+            if requesting_project_member.role < project_member.role:
+                return Response(
+                    {"error": "You cannot remove a user having role higher than yourself"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Remove all favorites
             ProjectFavorite.objects.filter(
                 workspace__slug=slug, project_id=project_id, user=project_member.member

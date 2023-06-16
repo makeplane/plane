@@ -47,6 +47,7 @@ const CreateWorkspace: NextPage = () => {
                 defaultValues={defaultValues}
                 setDefaultValues={() => {}}
                 onSubmit={(res) => router.push(`/${res.slug}`)}
+                user={user}
               />
             </div>
           </div>

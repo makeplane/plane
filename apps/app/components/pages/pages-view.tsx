@@ -8,6 +8,7 @@ import pagesService from "services/pages.service";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import {
   CreateUpdatePageModal,
@@ -43,6 +44,8 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -181,7 +184,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
     );
 
     pagesService
-      .patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData)
+      .patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId.toString()));
       });
@@ -193,11 +196,13 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         isOpen={createUpdatePageModal}
         handleClose={() => setCreateUpdatePageModal(false)}
         data={selectedPageToUpdate}
+        user={user}
       />
       <DeletePageModal
         isOpen={deletePageModal}
         setIsOpen={setDeletePageModal}
         data={selectedPageToDelete}
+        user={user}
       />
       {pages ? (
         <div className="space-y-4 h-full overflow-y-auto">

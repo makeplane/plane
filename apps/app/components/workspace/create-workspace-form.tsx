@@ -6,12 +6,13 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
 import workspaceService from "services/workspace.service";
+import userService from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
-import { IWorkspace } from "types";
+import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
@@ -25,6 +26,7 @@ type Props = {
     company_size: number | null;
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
+  user: ICurrentUserResponse | undefined;
 };
 
 const restrictedUrls = [
@@ -35,6 +37,7 @@ const restrictedUrls = [
   "invitations",
   "magic-sign-in",
   "onboarding",
+  "reset-password",
   "signin",
   "workspace-member-invitation",
   "404",
@@ -44,6 +47,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   onSubmit,
   defaultValues,
   setDefaultValues,
+  user,
 }) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
@@ -66,7 +70,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
         if (res.status === true && !restrictedUrls.includes(formData.slug)) {
           setSlugError(false);
           await workspaceService
-            .createWorkspace(formData)
+            .createWorkspace(formData, user)
             .then((res) => {
               setToastAlert({
                 type: "success",
@@ -74,7 +78,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                 message: "Workspace created successfully.",
               });
               mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
-              onSubmit(res);
+              updateLastWorkspaceIdUnderUSer(res);
             })
             .catch((err) => {
               console.error(err);
@@ -90,6 +94,18 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       });
   };
 
+  // update last_workspace_id
+  const updateLastWorkspaceIdUnderUSer = (workspace: any) => {
+    userService
+      .updateUser({ last_workspace_id: workspace.id })
+      .then((res) => {
+        onSubmit(workspace);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(
     () => () => {
       // when the component unmounts set the default values to whatever user typed in
@@ -100,10 +116,10 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
 
   return (
     <form className="flex h-full w-full flex-col" onSubmit={handleSubmit(handleCreateWorkspace)}>
-      <div className="divide-y h-[255px]">
-        <div className="flex flex-col justify-between gap-3.5 px-7 pb-3.5">
-          <div className="flex flex-col items-start justify-center gap-2.5">
-            <span className="text-sm">Workspace name</span>
+      <div className="divide-y h-[280px]">
+        <div className="flex flex-col justify-between gap-3 px-7 pb-3.5">
+          <div className="flex flex-col items-start justify-center gap-1">
+            <span className="mb-1.5 text-sm">Workspace name</span>
             <Input
               name="name"
               register={register}
@@ -122,8 +138,8 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
               error={errors.name}
             />
           </div>
-          <div className="flex flex-col items-start justify-center gap-2.5">
-            <span className="text-sm">Workspace URL</span>
+          <div className="flex flex-col items-start justify-center gap-1">
+            <span className="mb-1.5 text-sm">Workspace URL</span>
             <div className="flex w-full items-center rounded-md border border-brand-base px-3">
               <span className="whitespace-nowrap text-sm text-brand-secondary">
                 {typeof window !== "undefined" && window.location.origin}/
@@ -153,8 +169,8 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className="flex flex-col items-start justify-center gap-2.5 border-t border-brand-base px-7 pt-3.5 ">
-          <span className="text-sm">How large is your company?</span>
+        <div className="flex flex-col items-start justify-center gap-1 border-t border-brand-base px-7 pt-3.5 ">
+          <span className="mb-1.5 text-sm">How large is your company?</span>
           <div className="w-full">
             <Controller
               name="company_size"

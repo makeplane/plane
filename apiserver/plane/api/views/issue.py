@@ -817,14 +817,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
             serializer = IssueAttachmentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(project_id=project_id, issue_id=issue_id)
-                response_data = serializer.data
-                if (
-                    settings.DOCKERIZED
-                    and settings.USE_MINIO
-                ):
-                    response_data["asset"] = response_data["asset"].replace(
-                        settings.AWS_S3_ENDPOINT_URL, settings.WEB_URL
-                    )
                 issue_activity.delay(
                     type="attachment.activity.created",
                     requested_data=None,
@@ -836,7 +828,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                         cls=DjangoJSONEncoder,
                     ),
                 )
-                return Response(response_data, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             capture_exception(e)

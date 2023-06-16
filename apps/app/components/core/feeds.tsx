@@ -1,5 +1,6 @@
 import React from "react";
-import Image from "next/image";
+
+import Link from "next/link";
 
 // icons
 import {
@@ -22,7 +23,6 @@ import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper"
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import RemirrorRichTextEditor from "components/rich-text-editor";
-import Link from "next/link";
 
 const activityDetails: {
   [key: string]: {
@@ -206,7 +206,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
               <div className="relative flex items-start space-x-3">
                 <div className="relative px-1">
                   {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
-                    <Image
+                    <img
                       src={activity.actor_detail.avatar}
                       alt={activity.actor_detail.first_name}
                       height={30}
@@ -276,7 +276,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                               activityDetails[activity.field as keyof typeof activityDetails]?.icon
                             ) : activity.actor_detail.avatar &&
                               activity.actor_detail.avatar !== "" ? (
-                              <Image
+                              <img
                                 src={activity.actor_detail.avatar}
                                 alt={activity.actor_detail.first_name}
                                 height={24}

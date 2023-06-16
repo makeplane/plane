@@ -16,11 +16,12 @@ type EmailCodeFormValues = {
   token?: string;
 };
 
-export const EmailCodeForm = ({ onSuccess }: any) => {
+export const EmailCodeForm = ({ handleSignIn }: any) => {
   const [codeSent, setCodeSent] = useState(false);
   const [codeResent, setCodeResent] = useState(false);
   const [isCodeResending, setIsCodeResending] = useState(false);
   const [errorResendingCode, setErrorResendingCode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { setToastAlert } = useToast();
   const { timer: resendCodeTimer, setTimer: setResendCodeTimer } = useTimer();
@@ -64,16 +65,14 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   };
 
   const handleSignin = async (formData: EmailCodeFormValues) => {
+    setIsLoading(true);
     await authenticationService
       .magicSignIn(formData)
-      .then(() => {
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Successfully logged in!",
-        });
+      .then((response) => {
+        handleSignIn(response);
       })
       .catch((error) => {
+        setIsLoading(false);
         setToastAlert({
           title: "Oops!",
           type: "error",
@@ -81,7 +80,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
         });
         setError("token" as keyof EmailCodeFormValues, {
           type: "manual",
-          message: error.error,
+          message: error?.error,
         });
       });
   };
@@ -200,9 +199,9 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               size="md"
               onClick={handleSubmit(handleSignin)}
               disabled={!isValid && isDirty}
-              loading={isSubmitting}
+              loading={isLoading}
             >
-              {isSubmitting ? "Signing in..." : "Sign in"}
+              {isLoading ? "Signing in..." : "Sign in"}
             </PrimaryButton>
           ) : (
             <PrimaryButton

@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // types
-import { IProjectMemberInvitation } from "types";
+import { ICurrentUserResponse, IProjectMemberInvitation } from "types";
 // fetch-keys
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -25,6 +25,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   members: any[];
+  user: ICurrentUserResponse | undefined;
 };
 
 type ProjectMember = IProjectMemberInvitation & {
@@ -40,7 +41,7 @@ const defaultValues: Partial<ProjectMember> = {
   user_id: "",
 };
 
-const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, members }) => {
+const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, members, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -70,7 +71,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
   const onSubmit = async (formData: ProjectMember) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
     await projectService
-      .inviteProject(workspaceSlug as string, projectId as string, formData)
+      .inviteProject(workspaceSlug as string, projectId as string, formData, user)
       .then((response) => {
         setIsOpen(false);
         mutate<any[]>(

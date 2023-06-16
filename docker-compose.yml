@@ -4,10 +4,10 @@ services:
         plane-web:
                 container_name: planefrontend
                 build:
-                  context: .
-                  dockerfile: ./apps/app/Dockerfile.web
-                  args:
-                    NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+                        context: .
+                        dockerfile: ./apps/app/Dockerfile.web
+                        args:
+                                NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
                 restart: always
                 command: [ "/usr/local/bin/start.sh" ]
                 environment:
@@ -24,19 +24,20 @@ services:
         plane-api:
                 container_name: planebackend
                 build:
-                  context: ./apiserver
-                  dockerfile: Dockerfile.api
+                        context: ./apiserver
+                        dockerfile: Dockerfile.api
                 restart: always
                 command: ./bin/takeoff
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
-                        REDIS_URL: redis://redis:6379/
+                        REDIS_URL: redis://plane-redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
                         EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
                         EMAIL_PORT: ${EMAIL_PORT}
                         EMAIL_FROM: ${EMAIL_FROM}
+                        EMAIL_USE_TLS: ${EMAIL_USE_TLS}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -52,7 +53,8 @@ services:
                         SECRET_KEY: ${SECRET_KEY}
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        USE_MINIO: ${USE_MINIO}
+                        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -60,19 +62,20 @@ services:
         plane-worker:
                 container_name: planebgworker
                 build:
-                  context: ./apiserver
-                  dockerfile: Dockerfile.api
+                        context: ./apiserver
+                        dockerfile: Dockerfile.api
                 restart: always
                 command: ./bin/worker
                 environment:
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
-                        REDIS_URL: redis://redis:6379/
+                        REDIS_URL: redis://plane-redis:6379/
                         EMAIL_HOST: ${EMAIL_HOST}
                         EMAIL_HOST_USER: ${EMAIL_HOST_USER}
                         EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
                         EMAIL_PORT: ${EMAIL_PORT}
                         EMAIL_FROM: ${EMAIL_FROM}
+                        EMAIL_USE_TLS: ${EMAIL_USE_TLS}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -86,9 +89,10 @@ services:
                         OPENAI_API_KEY: ${OPENAI_API_KEY}
                         GPT_ENGINE: ${GPT_ENGINE}
                         SECRET_KEY: ${SECRET_KEY}
-                        DEFAULT_EMAIL: ${DEFAULT_EMAIL}
-                        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-                        USE_MINIO: 1
+                        DEFAULT_EMAIL: ${DEFAULT_EMAIL:-captain@plane.so}
+                        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD:-password123}
+                        USE_MINIO: ${USE_MINIO}
+                        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
                 depends_on:
                         - plane-api
                         - plane-db
@@ -108,7 +112,7 @@ services:
                         PGDATA: /var/lib/postgresql/data
 
         plane-redis:
-                container_name: redis
+                container_name: plane-redis
                 image: redis:6.2.7-alpine
                 restart: always
                 volumes:
@@ -128,27 +132,24 @@ services:
         createbuckets:
                 image: minio/mc
                 entrypoint: >
-                        /bin/sh -c "
-                        /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
-                        /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME;
-                        /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME;
-                        exit 0;
-                        "
+                        /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
                 depends_on:
                         - plane-minio
 
-        nginx:
-                container_name: nginx
+        plane-proxy:
+                container_name: planeproxy
                 build:
-                  context: ./nginx
-                  dockerfile: Dockerfile
+                        context: ./nginx
+                        dockerfile: Dockerfile
                 restart: always
                 ports:
                         - ${NGINX_PORT}:80
+                environment:
+                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+                        BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
                 depends_on:
-                  - plane-web
-                  - plane-api
-
+                        - plane-web
+                        - plane-api
 
 volumes:
         pgdata:

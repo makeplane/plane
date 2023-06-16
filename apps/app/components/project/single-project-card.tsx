@@ -2,7 +2,6 @@ import React from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Image from "next/image";
 
 import { mutate } from "swr";
 
@@ -142,15 +141,13 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
           <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
             <a>
               <div className="relative h-32 w-full rounded-t-[10px]">
-                <Image
+                <img
                   src={
                     project.cover_image ??
                     "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                   }
                   alt={project.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-t-[10px]"
+                  className="absolute top-0 left-0 h-full w-full object-cover rounded-t-[10px]"
                 />
                 <div className="absolute left-7 bottom-4 flex items-center gap-3 text-white">
                   {!hasJoined ? (

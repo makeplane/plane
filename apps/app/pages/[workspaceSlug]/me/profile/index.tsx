@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Image from "next/image";
-
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
@@ -69,7 +67,7 @@ const Profile: NextPage = () => {
       .then((res) => {
         mutateUser((prevData) => {
           if (!prevData) return prevData;
-          return { ...prevData, user: { ...payload, ...res } };
+          return { ...prevData, ...res };
         }, false);
         setIsEditing(false);
         setToastAlert({
@@ -92,14 +90,11 @@ const Profile: NextPage = () => {
 
     setIsRemoving(true);
 
-    const index = url.indexOf(".com");
-    const asset = url.substring(index + 5);
-
-    fileService.deleteUserFile(asset).then(() => {
+    fileService.deleteUserFile(url).then(() => {
       if (updateUser)
         userService
           .updateUser({ avatar: "" })
-          .then((res) => {
+          .then(() => {
             setToastAlert({
               type: "success",
               title: "Success!",
@@ -107,7 +102,7 @@ const Profile: NextPage = () => {
             });
             mutateUser((prevData) => {
               if (!prevData) return prevData;
-              return { ...prevData, user: res };
+              return { ...prevData, avatar: "" };
             }, false);
           })
           .catch(() => {
@@ -168,14 +163,11 @@ const Profile: NextPage = () => {
                       </div>
                     ) : (
                       <div className="relative h-12 w-12 overflow-hidden">
-                        <Image
+                        <img
                           src={watch("avatar")}
-                          alt={myProfile.first_name}
-                          layout="fill"
-                          objectFit="cover"
-                          className="rounded-md"
+                          className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
                           onClick={() => setIsImageUploadModalOpen(true)}
-                          priority
+                          alt={myProfile.first_name}
                         />
                       </div>
                     )}

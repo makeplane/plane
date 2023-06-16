@@ -29,7 +29,7 @@ DOCKERIZED = int(os.environ.get(
     "DOCKERIZED", 0
 ))  == 1
 
-USE_MINIO = int(os.environ.get("USE_MINIO"), 0) == 1
+USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT",  5242880))
 
@@ -91,3 +91,5 @@ CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
+
+ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"

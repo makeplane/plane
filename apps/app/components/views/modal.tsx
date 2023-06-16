@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // components
 import { ViewForm } from "components/views";
 // types
-import { IView } from "types";
+import { ICurrentUserResponse, IView } from "types";
 // fetch-keys
 import { VIEWS_LIST } from "constants/fetch-keys";
 
@@ -22,6 +22,7 @@ type Props = {
   handleClose: () => void;
   data?: IView | null;
   preLoadedData?: Partial<IView> | null;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const CreateUpdateViewModal: React.FC<Props> = ({
@@ -29,6 +30,7 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
   handleClose,
   data,
   preLoadedData,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -45,7 +47,7 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
       query_data: payload.query,
     };
     await viewsService
-      .createView(workspaceSlug as string, projectId as string, payload)
+      .createView(workspaceSlug as string, projectId as string, payload, user)
       .then(() => {
         mutate(VIEWS_LIST(projectId as string));
         handleClose();
@@ -71,7 +73,7 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
       query_data: payload.query,
     };
     await viewsService
-      .updateView(workspaceSlug as string, projectId as string, data?.id ?? "", payloadData)
+      .updateView(workspaceSlug as string, projectId as string, data?.id ?? "", payloadData, user)
       .then((res) => {
         mutate<IView[]>(
           VIEWS_LIST(projectId as string),

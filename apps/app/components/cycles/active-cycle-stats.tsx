@@ -1,6 +1,5 @@
 import React from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -16,8 +15,6 @@ import useLocalStorage from "hooks/use-local-storage";
 import { SingleProgressStats } from "components/core";
 // ui
 import { Avatar } from "components/ui";
-// icons
-import User from "public/user.png";
 // types
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
@@ -125,9 +122,9 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ issues }) => {
             <SingleProgressStats
               title={
                 <div className="flex items-center gap-2">
-                  <div className="h-5 w-5 rounded-full border-2 border-white bg-brand-surface-2">
-                    <Image
-                      src={User}
+                  <div className="h-5 w-5 rounded-full border-2 border-brand-base bg-brand-surface-2">
+                    <img
+                      src="/user.png"
                       height="100%"
                       width="100%"
                       className="rounded-full"

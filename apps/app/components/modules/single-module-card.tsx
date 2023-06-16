@@ -27,16 +27,17 @@ import { CalendarMonthIcon, TargetIcon } from "components/icons";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { IModule } from "types";
+import { ICurrentUserResponse, IModule } from "types";
 // fetch-key
 import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   module: IModule;
   handleEditModule: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) => {
+export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, user }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
 
   const router = useRouter();
@@ -128,6 +129,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
         isOpen={moduleDeleteModal}
         setIsOpen={setModuleDeleteModal}
         data={module}
+        user={user}
       />
       <div className="flex flex-col divide-y divide-brand-base overflow-hidden rounded-[10px] border border-brand-base bg-brand-base text-xs">
         <div className="p-4">

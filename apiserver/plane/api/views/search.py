@@ -210,12 +210,14 @@ class IssueSearchEndpoint(BaseAPIView):
             blocker_blocked_by = request.query_params.get("blocker_blocked_by", False)
             issue_id = request.query_params.get("issue_id", False)
 
-            issues = search_issues(query)
-            issues = issues.filter(
+            issues = Issue.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 project__project_projectmember__member=self.request.user,
             )
+
+            if query:
+                issues = search_issues(query, issues)
 
             if parent == "true" and issue_id:
                 issue = Issue.objects.get(pk=issue_id)
@@ -227,7 +229,12 @@ class IssueSearchEndpoint(BaseAPIView):
                     )
                 )
             if blocker_blocked_by == "true" and issue_id:
-                issues = issues.filter(blocker_issues=issue_id, blocked_issues=issue_id)
+                issue = Issue.objects.get(pk=issue_id)
+                issues = issues.filter(
+                    ~Q(pk=issue_id),
+                    ~Q(blocked_issues__block=issue),
+                    ~Q(blocker_issues__blocked_by=issue),
+                )
 
             return Response(
                 issues.values(

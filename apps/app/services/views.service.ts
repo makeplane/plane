@@ -1,6 +1,7 @@
 // services
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
+import { ICurrentUserResponse } from "types";
 
 // types
 import { IView } from "types/views";
@@ -15,10 +16,15 @@ class ViewServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createView(workspaceSlug: string, projectId: string, data: IView): Promise<any> {
+  async createView(
+    workspaceSlug: string,
+    projectId: string,
+    data: IView,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_CREATE");
+        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -30,11 +36,12 @@ class ViewServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     viewId: string,
-    data: IView
+    data: IView,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE");
+        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -46,14 +53,15 @@ class ViewServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     viewId: string,
-    data: Partial<IView>
+    data: Partial<IView>,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE");
+        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -61,10 +69,15 @@ class ViewServices extends APIService {
       });
   }
 
-  async deleteView(workspaceSlug: string, projectId: string, viewId: string): Promise<any> {
+  async deleteView(
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_DELETE");
+        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_DELETE", user);
         return response?.data;
       })
       .catch((error) => {

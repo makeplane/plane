@@ -1,10 +1,6 @@
-import { useState } from "react";
-
-import Image from "next/image";
-import Router, { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
+import { useEffect, useState } from "react";
+// next imports
+import Router from "next/router";
 // services
 import userService from "services/user.service";
 import workspaceService from "services/workspace.service";
@@ -12,7 +8,6 @@ import workspaceService from "services/workspace.service";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
 // components
 import {
   InviteMembers,
@@ -22,30 +17,37 @@ import {
   Workspace,
 } from "components/onboarding";
 // ui
-import { PrimaryButton } from "components/ui";
+import { PrimaryButton, Spinner } from "components/ui";
 // constant
 import { ONBOARDING_CARDS } from "constants/workspace";
 // types
 import type { NextPage } from "next";
-import { ICurrentUserResponse } from "types";
-// fetch-keys
-import { CURRENT_USER } from "constants/fetch-keys";
 
 const Onboarding: NextPage = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<null | number>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [workspace, setWorkspace] = useState();
 
-  const router = useRouter();
+  const { user, isLoading: userLoading, mutateUser } = useUserAuth("onboarding");
 
-  const { user } = useUserAuth("onboarding");
-
-  console.log("user", user);
+  useEffect(() => {
+    if (user && step === null) {
+      let currentStep: number = 1;
+      if (user?.role) currentStep = 2;
+      if (user?.last_workspace_id) currentStep = 4;
+      setStep(() => currentStep);
+    }
+  }, [step, user]);
 
   return (
-    <UserAuthorizationLayout>
-      <DefaultLayout>
+    <DefaultLayout>
+      {userLoading || isLoading || step === null ? (
+        <div className="grid h-screen place-items-center">
+          <Spinner />
+        </div>
+      ) : (
         <div className="relative grid h-full place-items-center p-5">
           {step <= 3 ? (
             <div className="h-full flex flex-col justify-center w-full py-4">
@@ -55,9 +57,9 @@ const Onboarding: NextPage = () => {
               {step === 1 ? (
                 <UserDetails user={user} setStep={setStep} setUserRole={setUserRole} />
               ) : step === 2 ? (
-                <Workspace setStep={setStep} setWorkspace={setWorkspace} />
+                <Workspace setStep={setStep} setWorkspace={setWorkspace} user={user} />
               ) : (
-                <InviteMembers setStep={setStep} workspace={workspace} />
+                step === 3 && <InviteMembers setStep={setStep} workspace={workspace} user={user} />
               )}
             </div>
           ) : (
@@ -72,7 +74,7 @@ const Onboarding: NextPage = () => {
                 ) : step === 7 ? (
                   <OnboardingCard data={ONBOARDING_CARDS.module} gradient />
                 ) : (
-                  <OnboardingCard data={ONBOARDING_CARDS.commandMenu} />
+                  step === 8 && <OnboardingCard data={ONBOARDING_CARDS.commandMenu} />
                 )}
                 <div className="mx-auto flex h-1/4 items-end lg:w-1/2">
                   <PrimaryButton
@@ -81,35 +83,21 @@ const Onboarding: NextPage = () => {
                     size="md"
                     onClick={() => {
                       if (step === 8) {
+                        setIsLoading(true);
                         userService
-                          .updateUserOnBoard({ userRole })
+                          .updateUserOnBoard({ userRole }, user)
                           .then(async () => {
-                            mutate<ICurrentUserResponse>(
-                              CURRENT_USER,
-                              (prevData) => {
-                                if (!prevData) return prevData;
-
-                                return {
-                                  ...prevData,
-                                  user: {
-                                    ...prevData.user,
-                                    is_onboarded: true,
-                                  },
-                                };
-                              },
-                              false
-                            );
+                            mutateUser();
                             const userWorkspaces = await workspaceService.userWorkspaces();
 
-                            const lastActiveWorkspace = userWorkspaces.find(
-                              (workspace) => workspace.id === user?.last_workspace_id
-                            );
+                            const lastActiveWorkspace =
+                              userWorkspaces.find(
+                                (workspace) => workspace.id === user?.last_workspace_id
+                              ) ?? userWorkspaces[0];
 
                             if (lastActiveWorkspace) {
+                              mutateUser();
                               Router.push(`/${lastActiveWorkspace.slug}`);
-                              return;
-                            } else if (userWorkspaces.length > 0) {
-                              Router.push(`/${userWorkspaces[0].slug}`);
                               return;
                             } else {
                               const invitations = await workspaceService.userWorkspaceInvitations();
@@ -123,9 +111,10 @@ const Onboarding: NextPage = () => {
                             }
                           })
                           .catch((err) => {
+                            setIsLoading(false);
                             console.log(err);
                           });
-                      } else setStep((prevData) => prevData + 1);
+                      } else setStep((prevData) => (prevData != null ? prevData + 1 : prevData));
                     }}
                   >
                     {step === 4 || step === 8 ? "Get Started" : "Next"}
@@ -139,8 +128,8 @@ const Onboarding: NextPage = () => {
             <span className="text-sm text-brand-base">{user?.email}</span>
           </div>
         </div>
-      </DefaultLayout>
-    </UserAuthorizationLayout>
+      )}
+    </DefaultLayout>
   );
 };
 

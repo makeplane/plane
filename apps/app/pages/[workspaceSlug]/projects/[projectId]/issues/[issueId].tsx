@@ -7,6 +7,8 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // services
 import issuesService from "services/issues.service";
 // layouts
@@ -50,6 +52,8 @@ const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
@@ -92,7 +96,7 @@ const IssueDetailsPage: NextPage = () => {
 
       const payload = { ...formData };
       await issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then((res) => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
@@ -192,7 +196,7 @@ const IssueDetailsPage: NextPage = () => {
               ) : null}
               <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
               <div className="mt-2 space-y-2">
-                <SubIssuesList parentIssue={issueDetails} />
+                <SubIssuesList parentIssue={issueDetails} user={user} />
               </div>
             </div>
             <div className="flex flex-col gap-3 py-3">
@@ -204,8 +208,8 @@ const IssueDetailsPage: NextPage = () => {
             </div>
             <div className="space-y-5 pt-3">
               <h3 className="text-lg text-brand-base">Comments/Activity</h3>
-              <IssueActivitySection />
-              <AddComment />
+              <IssueActivitySection user={user} />
+              <AddComment user={user} />
             </div>
           </div>
           <div className="basis-1/3 space-y-5 border-l border-brand-base p-5">

@@ -17,6 +17,7 @@ import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
@@ -48,6 +49,8 @@ const SingleModule: React.FC = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
@@ -95,7 +98,13 @@ const SingleModule: React.FC = () => {
     if (!workspaceSlug || !projectId) return;
 
     await modulesService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, data)
+      .addIssuesToModule(
+        workspaceSlug as string,
+        projectId as string,
+        moduleId as string,
+        data,
+        user
+      )
       .then(() => mutate(MODULE_ISSUES(moduleId as string)))
       .catch(() =>
         setToastAlert({
@@ -186,6 +195,7 @@ const SingleModule: React.FC = () => {
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
+          user={user}
         />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

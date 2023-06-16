@@ -10,7 +10,7 @@ import { PlusSmallIcon } from "@heroicons/react/24/outline";
 // helper
 import { formatDate } from "helpers/calendar.helper";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
   handleEditIssue: (issue: IIssue) => void;
@@ -23,6 +23,7 @@ type Props = {
   addIssueToDate: (date: string) => void;
   isMonthlyView: boolean;
   showWeekEnds: boolean;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -34,6 +35,7 @@ export const SingleCalendarDate: React.FC<Props> = ({
   addIssueToDate,
   isMonthlyView,
   showWeekEnds,
+  user,
   isNotAllowed,
 }) => {
   const [showAllIssues, setShowAllIssues] = useState(false);
@@ -72,6 +74,7 @@ export const SingleCalendarDate: React.FC<Props> = ({
                     issue={issue}
                     handleEditIssue={handleEditIssue}
                     handleDeleteIssue={handleDeleteIssue}
+                    user={user}
                     isNotAllowed={isNotAllowed}
                   />
                 )}

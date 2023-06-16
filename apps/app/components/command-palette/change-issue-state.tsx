@@ -12,7 +12,7 @@ import { getStatesList } from "helpers/state.helper";
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, STATES_LIST } from "constants/fetch-keys";
 // icons
@@ -21,9 +21,10 @@ import { CheckIcon, getStateGroupIcon } from "components/icons";
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
   issue: IIssue;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue }) => {
+export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -53,7 +54,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue }) =
 
       const payload = { ...formData };
       await issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
