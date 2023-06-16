@@ -21,6 +21,12 @@ import {
 import { Spinner } from "components/ui";
 // icons
 import Logo from "public/logo.png";
+// types
+type EmailPasswordFormValues = {
+  email: string;
+  password?: string;
+  medium?: string;
+};
 
 const HomePage: NextPage = () => {
   const { user, isLoading, mutateUser } = useUserAuth("sign-in");
@@ -66,7 +72,6 @@ const HomePage: NextPage = () => {
         throw Error("Cant find credentials");
       }
     } catch (error: any) {
-      console.log(error);
       setToastAlert({
         title: "Error signing in!",
         type: "error",
@@ -77,19 +82,30 @@ const HomePage: NextPage = () => {
     }
   };
 
-  const handleEmailPasswordSignIn = async (response: any) => {
-    try {
-      if (response) mutateUser();
-    } catch (error: any) {
-      console.log(error);
-      setToastAlert({
-        title: "Error signing in!",
-        type: "error",
-        message:
-          error?.error ||
-          "Something went wrong. Please try again later or contact the support team.",
-      });
-    }
+  const handlePasswordSignIn = async (formData: EmailPasswordFormValues) => {
+    await authenticationService
+      .emailLogin(formData)
+      .then((response) => {
+        try {
+          if (response) mutateUser();
+        } catch (error: any) {
+          console.log(error);
+          setToastAlert({
+            title: "Error signing in!",
+            type: "error",
+            message:
+              error?.error ||
+              "Something went wrong. Please try again later or contact the support team.",
+          });
+        }
+      })
+      .catch(() =>
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: "Enter the correct email address and password to sign in",
+        })
+      );
   };
 
   const handleEmailCodeSignIn = async (response: any) => {
@@ -114,7 +130,6 @@ const HomePage: NextPage = () => {
           <div>
             <Spinner />
           </div>
-          {/* <div className="text-gray-500">Validating authentication</div> */}
         </div>
       ) : (
         <div className="flex h-screen w-full items-center justify-center overflow-auto">
@@ -137,7 +152,7 @@ const HomePage: NextPage = () => {
                     </div>
                   </>
                 ) : (
-                  <EmailPasswordForm handleSignIn={handleEmailPasswordSignIn} />
+                  <EmailPasswordForm onSubmit={handlePasswordSignIn} />
                 )}
               </div>
             </div>
