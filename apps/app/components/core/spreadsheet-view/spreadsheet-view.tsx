@@ -4,7 +4,8 @@ import React from "react";
 import { useRouter } from "next/router";
 
 // components
-import { SingleSpreadsheetIssue, SpreadsheetColumns } from "components/core";
+import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
+import { Spinner } from "components/ui";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
@@ -26,17 +27,12 @@ export const SpreadsheetView: React.FC<Props> = ({ user, userAuth }) => {
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
-  const hasLabelsCountGreaterThanZero =
-    spreadsheetIssues && spreadsheetIssues.some((item) => item.labels.length > 0);
-
   const columnData = SPREADSHEET_COLUMN.map((column) => ({
     ...column,
     isActive: properties
       ? column.propertyName === "labels"
-        ? hasLabelsCountGreaterThanZero
-          ? properties[column.propertyName as keyof Properties]
-          : false
-        : column.propertyName === "name"
+        ? properties[column.propertyName as keyof Properties]
+        : column.propertyName === "name" || column.propertyName === "position"
         ? true
         : properties[column.propertyName as keyof Properties]
       : false,
@@ -52,21 +48,23 @@ export const SpreadsheetView: React.FC<Props> = ({ user, userAuth }) => {
       <div className="sticky z-10 top-0 border-b border-brand-base w-full min-w-max">
         <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
       </div>
-
-      {spreadsheetIssues && (
+      {spreadsheetIssues ? (
         <div className="flex flex-col h-full w-full bg-brand-base rounded-sm ">
-          {spreadsheetIssues.map((issue, index) => (
-            <div className="border-b border-brand-base w-full min-w-max">
-              <SingleSpreadsheetIssue
+          {spreadsheetIssues
+            .filter((i) => !i.parent)
+            .map((issue, index) => (
+              <SpreadsheetIssues
                 issue={issue}
+                index={index}
                 gridTemplateColumns={gridTemplateColumns}
                 properties={properties}
                 user={user}
                 userAuth={userAuth}
               />
-            </div>
-          ))}
+            ))}
         </div>
+      ) : (
+        <Spinner />
       )}
     </div>
   );

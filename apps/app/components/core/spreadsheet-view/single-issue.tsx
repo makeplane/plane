@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 import { mutate } from "swr";
@@ -11,6 +11,7 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
+import { Icon } from "components/ui";
 // icons
 import { LinkIcon, PaperClipIcon } from "@heroicons/react/24/outline";
 // hooks
@@ -31,16 +32,22 @@ import { truncateText } from "helpers/string.helper";
 
 type Props = {
   issue: IIssue;
+  position?: number | string;
   properties: Properties;
   gridTemplateColumns: string;
+  expanded: boolean;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
 export const SingleSpreadsheetIssue: React.FC<Props> = ({
   issue,
+  position,
   properties,
   gridTemplateColumns,
+  expanded,
+  setExpanded,
   user,
   userAuth,
 }) => {
@@ -48,7 +55,6 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  // const { groupByProperty: selectedGroup, orderBy, params } = useIssuesView();
   const { params } = useSpreadsheetIssuesView();
 
   const partialUpdateIssue = useCallback(
@@ -97,13 +103,20 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       className="group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 w-full"
       style={{ gridTemplateColumns }}
     >
-      {properties.key && (
-        <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
-          {issue.project_detail?.identifier}-{issue.sequence_id}
+      <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
+        {position ? position : ""}
+      </div>
+      <div className="flex items-center cursor-pointer justify-start gap-1 text-brand-secondary p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="h-5 w-5">
+          <button
+            className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm"
+            onClick={() => setExpanded(!expanded)}
+          >
+            <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
+          </button>
         </div>
-      )}
-      <div className="flex items-center cursor-pointer text-[0.825rem] text-brand-secondary p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
-        {truncateText(issue.name, 45)}
+
+        <span className=" text-[0.825rem]">{truncateText(issue.name, 45)}</span>
       </div>
       {properties.state && (
         <div className="flex items-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
@@ -138,6 +151,11 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             user={user}
             isNotAllowed={isNotAllowed}
           />
+        </div>
+      )}
+      {properties.key && (
+        <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
+          {issue.project_detail?.identifier}-{issue.sequence_id}
         </div>
       )}
       {properties.labels ? (

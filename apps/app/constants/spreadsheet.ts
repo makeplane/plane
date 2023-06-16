@@ -1,8 +1,8 @@
 export const SPREADSHEET_COLUMN = [
   {
-    propertyName: "key",
-    colName: "ID",
-    colSize: "72px",
+    propertyName: "position",
+    colName: "",
+    colSize: "36px",
   },
   {
     propertyName: "name",
@@ -23,6 +23,11 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "priority",
     colName: "Priority",
     colSize: "100px",
+  },
+  {
+    propertyName: "key",
+    colName: "ID",
+    colSize: "72px",
   },
   {
     propertyName: "labels",

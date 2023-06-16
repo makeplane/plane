@@ -13,7 +13,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
     {columnData.map((col: any) => {
       if (col.isActive) {
         return (
-          <div className="flex items-center justify-start cursor-default text-base text-brand-base text-current py-2.5 px-2">
+          <div className="flex items-center justify-start cursor-default text-sm text-brand-base text-current py-2.5 px-2">
             {col.colName}
           </div>
         );
