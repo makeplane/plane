@@ -210,6 +210,7 @@ class IssueSearchEndpoint(BaseAPIView):
             blocker_blocked_by = request.query_params.get("blocker_blocked_by", "false")
             cycle = request.query_params.get("cycle", "false")
             module = request.query_params.get("module", "false")
+            sub_issue = request.query_params.get("sub_issue", "false")
 
             issue_id = request.query_params.get("issue_id", False)
 
@@ -238,12 +239,18 @@ class IssueSearchEndpoint(BaseAPIView):
                     ~Q(blocked_issues__block=issue),
                     ~Q(blocker_issues__blocked_by=issue),
                 )
+            if sub_issue == "true" and issue_id:
+                issue = Issue.issue_objects.get(pk=issue_id)
+                issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
+                if issue.parent:
+                    issues = issues.filter(~Q(pk=issue.parent_id))
 
             if cycle == "true":
                 issues = issues.exclude(issue_cycle__isnull=False)
 
             if module == "true":
                 issues = issues.exclude(issue_module__isnull=False)
+
 
             return Response(
                 issues.values(
@@ -264,7 +271,7 @@ class IssueSearchEndpoint(BaseAPIView):
                 {"error": "Issue Does not exist"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
