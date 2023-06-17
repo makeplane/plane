@@ -131,6 +131,7 @@ export type TProjectIssuesSearchParams = {
   blocker_blocked_by?: boolean;
   cycle?: boolean;
   module?: boolean;
+  sub_issues?: boolean;
   issue_id?: string;
 };
 
