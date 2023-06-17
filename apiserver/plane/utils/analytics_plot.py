@@ -82,19 +82,19 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
 
 def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
-    # Get all dates between the two dates
-    date_range = [
-        queryset.start_date + timedelta(days=x)
-        for x in range((queryset.end_date - queryset.start_date).days + 1)
-    ]
-
-    chart_data = {str(date): 0 for date in date_range}
-
     # Total Issues in Cycle or Module
     total_issues = queryset.total_issues
 
 
     if cycle_id:
+        # Get all dates between the two dates
+        date_range = [
+            queryset.start_date + timedelta(days=x)
+            for x in range((queryset.end_date - queryset.start_date).days + 1)
+        ]
+
+        chart_data = {str(date): 0 for date in date_range}
+
         completed_issues_distribution = (
             Issue.objects.filter(
                 workspace__slug=slug,
@@ -109,6 +109,14 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
         )
     
     if module_id:
+        # Get all dates between the two dates
+        date_range = [
+            queryset.start_date + timedelta(days=x)
+            for x in range((queryset.target_date - queryset.start_date).days + 1)
+        ]
+
+        chart_data = {str(date): 0 for date in date_range}
+
         completed_issues_distribution = (
             Issue.objects.filter(
                 workspace__slug=slug,

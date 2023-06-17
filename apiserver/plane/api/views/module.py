@@ -192,7 +192,7 @@ class ModuleViewSet(BaseViewSet):
 
             label_distribution = (
                 Issue.objects.filter(
-                    issue_module__modulea_id=pk,
+                    issue_module__module_id=pk,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -223,7 +223,7 @@ class ModuleViewSet(BaseViewSet):
                 "completion_chart": {},
             }
 
-            if queryset.start_date and queryset.end_date:
+            if queryset.start_date and queryset.target_date:
                 data["distribution"]["completion_chart"] = burndown_plot(
                     queryset=queryset, slug=slug, project_id=project_id, module_id=pk
                 )
