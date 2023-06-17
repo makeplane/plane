@@ -42,8 +42,6 @@ const defaultValues = {
   state: "",
   assignees_list: [],
   priority: "low",
-  blockers_list: [],
-  blocked_list: [],
   target_date: new Date().toString(),
   issue_cycle: null,
   issue_module: null,
@@ -101,17 +99,6 @@ const IssueDetailsPage: NextPage = () => {
       const payload: Partial<IIssue> = {
         ...formData,
       };
-
-      if (formData.blocker_issues) {
-        payload.blockers_list = formData.blocker_issues.map(
-          (i) => i.blocker_issue_detail?.id ?? ""
-        );
-        delete formData.blocker_issues;
-      }
-      if (formData.blocked_issues) {
-        payload.blocks_list = formData.blocked_issues.map((i) => i.blocked_issue_detail?.id ?? "");
-        delete formData.blocked_issues;
-      }
 
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)

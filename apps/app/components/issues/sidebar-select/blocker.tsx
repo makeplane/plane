@@ -85,7 +85,10 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
       data.blocker_issues_list = [data.blocker_issues_list];
 
     const newBlockers = [...watch("blocker_issues"), ...data.blocker_issues_list];
-    submitChanges({ blocker_issues: newBlockers });
+    submitChanges({
+      blocker_issues: newBlockers,
+      blockers_list: newBlockers.map((i) => i.blocker_issue_detail?.id ?? ""),
+    });
     handleClose();
   };
 
@@ -151,6 +154,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
 
                       submitChanges({
                         blocker_issues: updatedBlockers,
+                        blockers_list: updatedBlockers.map((i) => i.blocker_issue_detail?.id ?? ""),
                       });
                     }}
                   >

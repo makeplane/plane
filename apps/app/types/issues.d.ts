@@ -69,12 +69,8 @@ export interface IIssue {
   assignees_list: string[];
   attachment_count: number;
   attachments: any[];
-  blocked_by_issue_details: any[];
-  blocked_issue_details: any[];
   blocked_issues: BlockeIssue[];
-  blocked_list: string[];
   blocker_issues: BlockeIssue[];
-  blockers: any[];
   blockers_list: string[];
   blocks_list: string[];
   bridge_id?: string | null;
