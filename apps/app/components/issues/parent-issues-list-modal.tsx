@@ -123,8 +123,20 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       displayValue={() => ""}
                     />
                   </div>
-                  {customDisplay && <div className="p-3">{customDisplay}</div>}
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                  {customDisplay && <div className="p-2">{customDisplay}</div>}
+                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto mt-2">
+                    {debouncedSearchTerm !== "" && (
+                      <h5 className="text-[0.825rem] text-brand-secondary mx-2">
+                        Search results for{" "}
+                        <span className="text-brand-base">
+                          {'"'}
+                          {debouncedSearchTerm}
+                          {'"'}
+                        </span>{" "}
+                        in project:
+                      </h5>
+                    )}
+
                     {!isLoading &&
                       issues.length === 0 &&
                       searchTerm !== "" &&
@@ -142,42 +154,40 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       )}
 
                     {isLoading || isSearching ? (
-                      <Loader className="space-y-3 p-3 -mt-4">
+                      <Loader className="space-y-3 p-3">
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                       </Loader>
                     ) : (
-                      <li className="p-2">
-                        <ul className="text-sm">
-                          {issues.map((issue) => (
-                            <Combobox.Option
-                              key={issue.id}
-                              value={issue.id}
-                              className={({ active, selected }) =>
-                                `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
-                                  active ? "bg-brand-surface-2 text-brand-base" : ""
-                                } ${selected ? "text-brand-base" : ""}`
-                              }
-                              onClick={handleClose}
-                            >
-                              <>
-                                <span
-                                  className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                  style={{
-                                    backgroundColor: issue.state__color,
-                                  }}
-                                />
-                                <span className="flex-shrink-0 text-xs">
-                                  {issue.project__identifier}-{issue.sequence_id}
-                                </span>{" "}
-                                {issue.name}
-                              </>
-                            </Combobox.Option>
-                          ))}
-                        </ul>
-                      </li>
+                      <ul className={`text-sm ${issues.length > 0 ? "p-2" : ""}`}>
+                        {issues.map((issue) => (
+                          <Combobox.Option
+                            key={issue.id}
+                            value={issue.id}
+                            className={({ active, selected }) =>
+                              `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
+                                active ? "bg-brand-surface-2 text-brand-base" : ""
+                              } ${selected ? "text-brand-base" : ""}`
+                            }
+                            onClick={handleClose}
+                          >
+                            <>
+                              <span
+                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                style={{
+                                  backgroundColor: issue.state__color,
+                                }}
+                              />
+                              <span className="flex-shrink-0 text-xs">
+                                {issue.project__identifier}-{issue.sequence_id}
+                              </span>{" "}
+                              {issue.name}
+                            </>
+                          </Combobox.Option>
+                        ))}
+                      </ul>
                     )}
                   </Combobox.Options>
                 </Combobox>

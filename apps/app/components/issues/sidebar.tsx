@@ -375,6 +375,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         className="flex items-center gap-2 rounded bg-brand-surface-2 px-3 py-2 text-xs"
                         onClick={() => submitChanges({ parent: null })}
                       >
+                        <span className="text-brand-secondary">Selected:</span>{" "}
                         {issueDetail.parent_detail?.name}
                         <XMarkIcon className="h-3 w-3" />
                       </button>

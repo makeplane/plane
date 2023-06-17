@@ -15,7 +15,7 @@ import useDebounce from "hooks/use-debounce";
 // ui
 import { Loader, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
@@ -176,10 +176,49 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                     />
                   </div>
 
-                  <Combobox.Options
-                    static
-                    className="max-h-80 scroll-py-2 divide-y divide-brand-base overflow-y-auto"
-                  >
+                  <div className="text-brand-secondary text-[0.825rem] p-2">
+                    {selectedIssues.length > 0 ? (
+                      <div className="flex items-center gap-2 flex-wrap mt-1">
+                        {selectedIssues.map((issue) => (
+                          <div
+                            key={issue.id}
+                            className="flex items-center gap-1 text-xs border border-brand-base bg-brand-surface-2 pl-2 py-1 rounded-md text-brand-base whitespace-nowrap"
+                          >
+                            {issue.project__identifier}-{issue.sequence_id}
+                            <button
+                              type="button"
+                              className="group p-1"
+                              onClick={() =>
+                                setSelectedIssues((prevData) =>
+                                  prevData.filter((i) => i.id !== issue.id)
+                                )
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3 text-brand-secondary group-hover:text-brand-base" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="w-min text-xs border border-brand-base bg-brand-surface-2 p-2 rounded-md whitespace-nowrap">
+                        No issues selected
+                      </div>
+                    )}
+                  </div>
+
+                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto mt-2">
+                    {debouncedSearchTerm !== "" && (
+                      <h5 className="text-[0.825rem] text-brand-secondary mx-2">
+                        Search results for{" "}
+                        <span className="text-brand-base">
+                          {'"'}
+                          {debouncedSearchTerm}
+                          {'"'}
+                        </span>{" "}
+                        in project:
+                      </h5>
+                    )}
+
                     {!isLoading &&
                       issues.length === 0 &&
                       searchTerm !== "" &&
@@ -197,50 +236,48 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                       )}
 
                     {isLoading || isSearching ? (
-                      <Loader className="space-y-3 p-3 -mt-4">
+                      <Loader className="space-y-3 p-3">
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
                       </Loader>
                     ) : (
-                      <li className="p-2">
-                        <ul className="text-sm text-brand-base">
-                          {issues.map((issue) => {
-                            const selected = selectedIssues.some((i) => i.id === issue.id);
+                      <ul className={`text-sm text-brand-base ${issues.length > 0 ? "p-2" : ""}`}>
+                        {issues.map((issue) => {
+                          const selected = selectedIssues.some((i) => i.id === issue.id);
 
-                            return (
-                              <Combobox.Option
-                                key={issue.id}
-                                as="label"
-                                htmlFor={`issue-${issue.id}`}
-                                value={issue}
-                                className={({ active }) =>
-                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
-                                    active ? "bg-brand-surface-2 text-brand-base" : ""
-                                  } ${selected ? "text-brand-base" : ""}`
-                                }
-                              >
-                                <input type="checkbox" checked={selected} readOnly />
-                                <span
-                                  className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                  style={{
-                                    backgroundColor: issue.state__color,
-                                  }}
-                                />
-                                <span className="flex-shrink-0 text-xs">
-                                  {issue.project__identifier}-{issue.sequence_id}
-                                </span>
-                                {issue.name}
-                              </Combobox.Option>
-                            );
-                          })}
-                        </ul>
-                      </li>
+                          return (
+                            <Combobox.Option
+                              key={issue.id}
+                              as="label"
+                              htmlFor={`issue-${issue.id}`}
+                              value={issue}
+                              className={({ active }) =>
+                                `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
+                                  active ? "bg-brand-surface-2 text-brand-base" : ""
+                                } ${selected ? "text-brand-base" : ""}`
+                              }
+                            >
+                              <input type="checkbox" checked={selected} readOnly />
+                              <span
+                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                style={{
+                                  backgroundColor: issue.state__color,
+                                }}
+                              />
+                              <span className="flex-shrink-0 text-xs">
+                                {issue.project__identifier}-{issue.sequence_id}
+                              </span>
+                              {issue.name}
+                            </Combobox.Option>
+                          );
+                        })}
+                      </ul>
                     )}
                   </Combobox.Options>
                 </Combobox>
-                {issues.length > 0 && (
+                {selectedIssues.length > 0 && (
                   <div className="flex items-center justify-end gap-2 p-3">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                     <PrimaryButton onClick={onSubmit} loading={isSubmitting}>
