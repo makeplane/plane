@@ -192,7 +192,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
       <ExistingIssuesListModal
         isOpen={subIssuesListModal}
         handleClose={() => setSubIssuesListModal(false)}
-        searchParams={{ sub_issues: true, issue_id: parentIssue?.id }}
+        searchParams={{ sub_issue: true, issue_id: parentIssue?.id }}
         handleOnSubmit={addAsSubIssue}
       />
       {subIssuesResponse &&
