@@ -173,7 +173,8 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(first_name=F("assignees__first_name"))
                 .annotate(last_name=F("assignees__last_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .values("first_name", "last_name", "assignee_id")
+                .annotate(avatar=F("assignees__avatar"))
+                .values("first_name", "last_name", "assignee_id", "avatar")
                 .annotate(total_issues=Count("assignee_id"))
                 .annotate(
                     completed_issues=Count(
