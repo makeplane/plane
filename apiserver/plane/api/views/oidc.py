@@ -111,8 +111,6 @@ class OIDCEndpoint(BaseAPIView):
             id_token = request.data.get("credential", False)
             client_id = request.data.get("clientId", False)
 
-            print(id_token, client_id)
-
             if not id_token:
                 return Response(
                     {
@@ -285,7 +283,6 @@ class OIDCEndpoint(BaseAPIView):
             return Response(data, status=status.HTTP_201_CREATED)
         except Exception as e:
             capture_exception(e)
-            print(e)
             return Response(
                 {
                     "error": "Something went wrong. Please try again later or contact the support team."

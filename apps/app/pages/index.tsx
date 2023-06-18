@@ -79,7 +79,6 @@ const HomePage: NextPage = () => {
   };
 
   const handleOidcSignIn = async (credential: string) => {
-    console.log(credential);
     try {
       if (process.env.NEXT_PUBLIC_OIDC_CLIENT_ID && credential) {
         const oidcAuthPayload = {
