@@ -20,6 +20,9 @@ services:
                         NEXT_PUBLIC_ENABLE_SENTRY: "0"
                         NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
                         NEXT_PUBLIC_TRACK_EVENTS: "0"
+                        NEXT_PUBLIC_ENABLE_OIDC: ${NEXT_PUBLIC_ENABLE_OIDC}
+                        NEXT_PUBLIC_OIDC_CLIENT_ID: ${NEXT_PUBLIC_OIDC_CLIENT_ID}
+                        NEXT_PUBLIC_OIDC_URL_AUTHORIZE: ${NEXT_PUBLIC_OIDC_URL_AUTHORIZE}
 
         plane-api:
                 container_name: planebackend
@@ -54,6 +57,9 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
+                        OIDC_URL_TOKEN: ${OIDC_URL_TOKEN}
+                        OIDC_URL_USERINFO: ${OIDC_URL_USERINFO}
+                        OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
                 depends_on:
                         - plane-db
                         - plane-redis

@@ -14,6 +14,7 @@ import authenticationService from "services/authentication.service";
 import {
   GoogleLoginButton,
   GithubLoginButton,
+  OidcLoginButton,
   EmailCodeForm,
   EmailPasswordForm,
 } from "components/account";
@@ -61,6 +62,31 @@ const HomePage: NextPage = () => {
           clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
+        if (response && response?.user) mutateUser();
+      } else {
+        throw Error("Cant find credentials");
+      }
+    } catch (error: any) {
+      console.log(error);
+      setToastAlert({
+        title: "Error signing in!",
+        type: "error",
+        message:
+          error?.error ||
+          "Something went wrong. Please try again later or contact the support team.",
+      });
+    }
+  };
+
+  const handleOidcSignIn = async (credential: string) => {
+    console.log(credential);
+    try {
+      if (process.env.NEXT_PUBLIC_OIDC_CLIENT_ID && credential) {
+        const oidcAuthPayload = {
+          credential,
+          clientId: process.env.NEXT_PUBLIC_OIDC_CLIENT_ID,
+        };
+        const response = await authenticationService.oidcAuth(oidcAuthPayload);
         if (response && response?.user) mutateUser();
       } else {
         throw Error("Cant find credentials");
@@ -128,12 +154,20 @@ const HomePage: NextPage = () => {
               </div>
 
               <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
-                {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ||
+                parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
                   <>
                     <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
                     <div className="flex flex-col items-center justify-center gap-3 border-t border-brand-base py-5 px-5">
-                      <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                      <GithubLoginButton handleSignIn={handleGithubSignIn} />
+                      {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                        <>
+                          <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
+                          <GithubLoginButton handleSignIn={handleGithubSignIn} />
+                        </>
+                      ) : null}
+                      {parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
+                        <OidcLoginButton handleSignIn={handleOidcSignIn} />
+                      ) : null}
                     </div>
                   </>
                 ) : (
