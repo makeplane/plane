@@ -464,9 +464,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                issues={issues}
-                                start={module?.start_date ?? ""}
-                                end={module?.target_date ?? ""}
+                                distribution={module.distribution.completion_chart}
+                                startDate={module.start_date ?? ""}
+                                endDate={module.target_date ?? ""}
+                                totalIssues={module.total_issues}
                               />
                             </div>
                           </div>

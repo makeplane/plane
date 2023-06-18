@@ -201,15 +201,7 @@ const ProjectCycles: NextPage = () => {
             </Tab.Panel>
             {cyclesView !== "gantt_chart" && (
               <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
-                {currentCycle?.[0] ? (
-                  <ActiveCycleDetails cycle={currentCycle?.[0]} />
-                ) : (
-                  <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
-                    <h3 className="text-base font-medium text-brand-base ">
-                      No active cycle is present.
-                    </h3>
-                  </div>
-                )}
+                <ActiveCycleDetails />
               </Tab.Panel>
             )}
             <Tab.Panel as="div" className="h-full overflow-y-auto">

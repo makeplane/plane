@@ -554,9 +554,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                issues={issues ?? []}
-                                start={cycle?.start_date ?? ""}
-                                end={cycle?.end_date ?? ""}
+                                distribution={cycle.distribution.completion_chart}
+                                startDate={cycle.start_date ?? ""}
+                                endDate={cycle.end_date ?? ""}
+                                totalIssues={cycle.total_issues}
                               />
                             </div>
                           </div>
