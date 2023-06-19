@@ -36,6 +36,7 @@ import { IInboxIssueDetail, TInboxStatus } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { INBOX_ISSUE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
+import useToast from "hooks/use-toast";
 
 const ProjectInbox: NextPage = () => {
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
@@ -47,6 +48,7 @@ const ProjectInbox: NextPage = () => {
 
   const { user } = useUserAuth();
   const { issues: inboxIssues, mutate: mutateInboxIssues } = useInboxView();
+  const { setToastAlert } = useToast();
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -103,6 +105,28 @@ const ProjectInbox: NextPage = () => {
   const markInboxStatus = async (data: TInboxStatus) => {
     if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId) return;
 
+    mutate<IInboxIssueDetail>(
+      INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string),
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          issue_inbox: [{ ...prevData.issue_inbox[0], ...data }],
+        };
+      },
+      false
+    );
+    mutateInboxIssues(
+      (prevData) =>
+        (prevData ?? []).map((i) =>
+          i.bridge_id === inboxIssueId
+            ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] }
+            : i
+        ),
+      false
+    );
+
     await inboxServices
       .markInboxStatus(
         workspaceSlug.toString(),
@@ -112,28 +136,16 @@ const ProjectInbox: NextPage = () => {
         data,
         user
       )
-      .then(() => {
-        mutate<IInboxIssueDetail>(
-          INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string),
-          (prevData) => {
-            if (!prevData) return prevData;
-
-            return {
-              ...prevData,
-              issue_inbox: [{ ...prevData.issue_inbox[0], ...data }],
-            };
-          },
-          false
-        );
-        mutateInboxIssues(
-          (prevData) =>
-            (prevData ?? []).map((i) =>
-              i.bridge_id === inboxIssueId
-                ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] }
-                : i
-            ),
-          false
-        );
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong while updating inbox status. Please try again.",
+        })
+      )
+      .finally(() => {
+        mutate(INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string));
+        mutateInboxIssues();
       });
   };
 

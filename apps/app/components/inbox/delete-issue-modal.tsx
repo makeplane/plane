@@ -130,7 +130,8 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
                       <span className="break-all font-medium text-brand-base">
                         {data?.project_detail?.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? This action cannot be undone.
+                      {""}? The issue will only be deleted from the inbox and this action cannot be
+                      undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
