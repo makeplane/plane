@@ -83,6 +83,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                       <Avatar
                         user={{
                           id: assignee.assignee_id,
+                          avatar: assignee.avatar ?? "",
                           first_name: assignee.first_name ?? "",
                           last_name: assignee.last_name ?? "",
                         }}

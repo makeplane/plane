@@ -32,7 +32,7 @@ import { ListBulletIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/24/ou
 import { SelectCycleType } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { CURRENT_CYCLE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
 
@@ -69,14 +69,6 @@ const ProjectCycles: NextPage = () => {
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: currentCycle } = useSWR(
-    workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () =>
-          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
       : null
   );
 

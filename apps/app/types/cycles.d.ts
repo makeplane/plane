@@ -45,6 +45,7 @@ export interface ICycle {
 
 export type TAssigneesDistribution = {
   assignee_id: string | null;
+  avatar: string | null;
   completed_issues: number;
   first_name: string | null;
   last_name: string | null;
