@@ -19,6 +19,7 @@ from plane.db.models import (
 class WorkSpaceSerializer(BaseSerializer):
     owner = UserLiteSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
+    total_issues = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Workspace

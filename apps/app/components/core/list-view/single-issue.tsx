@@ -154,7 +154,18 @@ export const SingleListIssue: React.FC<Props> = ({
           } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, groupTitle, index, selectedGroup, orderBy, params]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      groupTitle,
+      index,
+      selectedGroup,
+      orderBy,
+      params,
+      user,
+    ]
   );
 
   const handleCopyText = () => {

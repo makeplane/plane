@@ -67,7 +67,7 @@ class ViewIssuesEndpoint(BaseAPIView):
             filters = issue_filters(request.query_params, "GET")
 
             issues = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     **queries, project_id=project_id, workspace__slug=slug
                 )
                 .filter(**filters)

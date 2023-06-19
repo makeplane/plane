@@ -47,8 +47,8 @@ from plane.db.models import (
     Page,
     IssueAssignee,
     ModuleMember,
+    Inbox,
 )
-
 
 from plane.bgtasks.project_invitation_task import project_invitation
 
@@ -72,6 +72,7 @@ class ProjectViewSet(BaseViewSet):
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
         )
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -81,6 +82,15 @@ class ProjectViewSet(BaseViewSet):
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
             .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                is_member=Exists(
+                    ProjectMember.objects.filter(
+                        member=self.request.user,
+                        project_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
+            )
             .distinct()
         )
 
@@ -238,6 +248,20 @@ class ProjectViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
+                if serializer.data["inbox_view"]:
+                    Inbox.objects.get_or_create(
+                        name=f"{project.name} Inbox", project=project, is_default=True
+                    )
+
+                    # Create the triage state in Backlog group
+                    State.objects.get_or_create(
+                        name="Triage",
+                        group="backlog",
+                        description="Default state for managing all Inbox Issues",
+                        project_id=pk,
+                        color="#ff7700"
+                    )
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -467,7 +491,9 @@ class ProjectMemberViewSet(BaseViewSet):
             )
             if requesting_project_member.role < project_member.role:
                 return Response(
-                    {"error": "You cannot remove a user having role higher than yourself"},
+                    {
+                        "error": "You cannot remove a user having role higher than yourself"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 

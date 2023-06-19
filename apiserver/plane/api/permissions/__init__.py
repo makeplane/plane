@@ -1,2 +1,2 @@
-from .workspace import WorkSpaceBasePermission, WorkSpaceAdminPermission
-from .project import ProjectBasePermission, ProjectEntityPermission, ProjectMemberPermission
+from .workspace import WorkSpaceBasePermission, WorkSpaceAdminPermission, WorkspaceEntityPermission
+from .project import ProjectBasePermission, ProjectEntityPermission, ProjectMemberPermission, ProjectLitePermission

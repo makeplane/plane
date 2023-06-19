@@ -1,10 +1,15 @@
 # Python imports
 from itertools import groupby
+from datetime import timedelta
 
 # Django import
 from django.db import models
+from django.db.models.functions import TruncDate
 from django.db.models import Count, F, Sum, Value, Case, When, CharField
 from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, Concat
+
+# Module imports
+from plane.db.models import Issue
 
 
 def build_graph_plot(queryset, x_axis, y_axis, segment=None):
@@ -74,3 +79,44 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     else:
         sorted_data = dict(sorted(grouped_data.items(), key=lambda x: (x[0] == "None", x[0])))
     return sorted_data
+
+
+def burndown_plot(queryset, slug, project_id, cycle_id):
+    # Get all dates between the two dates
+    date_range = [
+        queryset.start_date + timedelta(days=x)
+        for x in range((queryset.end_date - queryset.start_date).days + 1)
+    ]
+
+    chart_data = {str(date): 0 for date in date_range}
+
+    # Total Issues in Cycle
+    total_issues = queryset.total_issues
+
+    completed_issues_distribution = (
+        Issue.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_cycle__cycle_id=cycle_id,
+        )
+        .annotate(date=TruncDate("completed_at"))
+        .values("date")
+        .annotate(total_completed=Count("id"))
+        .values("date", "total_completed")
+        .order_by("date")
+    )
+
+    for date in date_range:
+        cumulative_pending_issues = total_issues
+        total_completed = 0
+        total_completed = sum(
+            [
+                item["total_completed"]
+                for item in completed_issues_distribution
+                if item["date"] is not None and item["date"] <= date
+            ]
+        )
+        cumulative_pending_issues -= total_completed
+        chart_data[str(date)] = cumulative_pending_issues
+
+    return chart_data

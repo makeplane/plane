@@ -1,3 +1,6 @@
+# Django imports
+from django.db.models.functions import TruncDate
+
 # Third party imports
 from rest_framework import serializers
 
@@ -20,13 +23,13 @@ class CycleSerializer(BaseSerializer):
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
     assignees = serializers.SerializerMethodField(read_only=True)
+    labels = serializers.SerializerMethodField(read_only=True)
     total_estimates = serializers.IntegerField(read_only=True)
     completed_estimates = serializers.IntegerField(read_only=True)
     started_estimates = serializers.IntegerField(read_only=True)
-
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-
+    
     def get_assignees(self, obj):
         members = [
             {
@@ -39,6 +42,24 @@ class CycleSerializer(BaseSerializer):
         ]
         # Use a set comprehension to return only the unique objects
         unique_objects = {frozenset(item.items()) for item in members}
+
+        # Convert the set back to a list of dictionaries
+        unique_list = [dict(item) for item in unique_objects]
+
+        return unique_list
+    
+    def get_labels(self, obj):
+        labels = [
+            {
+                "name": label.name,
+                "color": label.color,
+                "id": label.id,
+            }
+            for issue_cycle in obj.issue_cycle.all()
+            for label in issue_cycle.issue.labels.all()
+        ]
+        # Use a set comprehension to return only the unique objects
+        unique_objects = {frozenset(item.items()) for item in labels}
 
         # Convert the set back to a list of dictionaries
         unique_list = [dict(item) for item in unique_objects]

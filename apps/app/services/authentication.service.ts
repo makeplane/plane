@@ -20,6 +20,18 @@ class AuthService extends APIService {
       });
   }
 
+  async emailSignUp(data: { email: string; password: string }) {
+    return this.post("/api/sign-up/", data, { headers: {} })
+      .then((response) => {
+        this.setAccessToken(response?.data?.access_token);
+        this.setRefreshToken(response?.data?.refresh_token);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async socialAuth(data: any) {
     return this.post("/api/social-auth/", data, { headers: {} })
       .then((response) => {
