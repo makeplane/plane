@@ -16,10 +16,10 @@ DEBUG = True
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "plane",
+        "NAME": os.environ.get("PGUSER", "plane"),
         "USER": "",
         "PASSWORD": "",
-        "HOST": "",
+        "HOST": os.environ.get("PGHOST", "localhost"),
     }
 }
 
