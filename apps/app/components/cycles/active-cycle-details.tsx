@@ -531,8 +531,6 @@ export const ActiveCycleDetails: React.FC = () => {
               startDate={cycle.start_date ?? ""}
               endDate={cycle.end_date ?? ""}
               totalIssues={cycle.total_issues}
-              width={475}
-              height={256}
             />
           </div>
         </div>

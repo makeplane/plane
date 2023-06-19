@@ -52,7 +52,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
         animate
         curve="monotoneX"
         height="160px"
-        width="360px"
+        width="100%"
         enableGridY={false}
         lineWidth={1}
         margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
@@ -94,7 +94,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
         customYAxisTickValues={[0, totalIssues]}
         gridXValues={chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : ""))}
         theme={{
-          background: "rgb(var(--color-bg-sidebar))",
+          background: "transparent",
           axis: {
             domain: {
               line: {
