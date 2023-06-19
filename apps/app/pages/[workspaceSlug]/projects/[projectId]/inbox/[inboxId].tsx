@@ -10,6 +10,7 @@ import projectService from "services/project.service";
 // hooks
 import useInboxView from "hooks/use-inbox-view";
 import useUserAuth from "hooks/use-user-auth";
+import useToast from "hooks/use-toast";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
@@ -36,7 +37,6 @@ import { IInboxIssueDetail, TInboxStatus } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { INBOX_ISSUE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
-import useToast from "hooks/use-toast";
 
 const ProjectInbox: NextPage = () => {
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
