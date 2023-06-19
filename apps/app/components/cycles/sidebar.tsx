@@ -485,7 +485,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
             </div>
-
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
@@ -552,7 +551,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
+                            <div className="relative">
                               <ProgressChart
                                 issues={issues ?? []}
                                 start={cycle?.start_date ?? ""}
@@ -569,7 +568,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 )}
               </Disclosure>
             </div>
-
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
@@ -604,7 +602,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <Transition show={open}>
                       <Disclosure.Panel>
                         {cycle.total_issues > 0 ? (
-                          <div className=" h-full w-full py-4">
+                          <div className="h-full w-full py-4">
                             <SidebarProgressStats
                               issues={issues ?? []}
                               groupedIssues={{
