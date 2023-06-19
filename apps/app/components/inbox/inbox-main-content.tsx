@@ -179,10 +179,19 @@ export const InboxMainContent: React.FC = () => {
               ) : issueStatus === 0 ? (
                 <>
                   <ClockIcon className="h-5 w-5" />
-                  <p>
-                    This issue has been snoozed till{" "}
-                    {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
-                  </p>
+                  {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
+                    <p>
+                      This issue was snoozed till{" "}
+                      {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}
+                      .
+                    </p>
+                  ) : (
+                    <p>
+                      This issue has been snoozed till{" "}
+                      {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}
+                      .
+                    </p>
+                  )}
                 </>
               ) : issueStatus === 1 ? (
                 <>
