@@ -276,6 +276,7 @@ export const IssuesView: React.FC<Props> = ({
       handleDeleteIssue,
       params,
       states,
+      user,
     ]
   );
 

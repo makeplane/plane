@@ -201,7 +201,7 @@ class ModuleIssueViewSet(BaseViewSet):
             super()
             .get_queryset()
             .annotate(
-                sub_issues_count=Issue.objects.filter(parent=OuterRef("issue"))
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -226,9 +226,9 @@ class ModuleIssueViewSet(BaseViewSet):
             group_by = request.GET.get("group_by", False)
             filters = issue_filters(request.query_params, "GET")
             issues = (
-                Issue.objects.filter(issue_module__module_id=module_id)
+                Issue.issue_objects.filter(issue_module__module_id=module_id)
                 .annotate(
-                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")

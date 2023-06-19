@@ -41,10 +41,11 @@ const defaultValues: Partial<IIssueComment> = {
 };
 
 type Props = {
+  issueId: string;
   user: ICurrentUserResponse | undefined;
 };
 
-export const AddComment: React.FC<Props> = ({ user }) => {
+export const AddComment: React.FC<Props> = ({ issueId, user }) => {
   const {
     handleSubmit,
     control,
@@ -56,7 +57,7 @@ export const AddComment: React.FC<Props> = ({ user }) => {
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 

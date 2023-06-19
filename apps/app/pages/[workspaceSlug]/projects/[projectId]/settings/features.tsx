@@ -18,7 +18,7 @@ import { SettingsHeader } from "components/project";
 import { SecondaryButton, ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
+import { ContrastIcon, PeopleGroupIcon, ViewListIcon, InboxIcon } from "components/icons";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
 import { IFavoriteProject, IProject } from "types";
@@ -55,6 +55,13 @@ const featuresList = [
     icon: <DocumentTextIcon color="#fcbe1d" width={28} height={28} className="flex-shrink-0" />,
     property: "page_view",
   },
+  {
+    title: "Inbox",
+    description:
+      "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
+    icon: <InboxIcon color="#fcbe1d" width={24} height={24} className="flex-shrink-0" />,
+    property: "inbox_view",
+  },
 ];
 
 const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType => {
@@ -67,8 +74,10 @@ const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType 
       return toggle ? "TOGGLE_VIEW_ON" : "TOGGLE_VIEW_OFF";
     case "Pages":
       return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
+    case "Inbox":
+      return toggle ? "TOGGLE_INBOX_ON" : "TOGGLE_INBOX_OFF";
     default:
-      return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
+      throw new Error("Invalid feature");
   }
 };
 
@@ -195,9 +204,10 @@ const FeaturesSettings: NextPage = () => {
                         projectIdentifier: projectDetails?.identifier,
                         projectName: projectDetails?.name,
                       },
-                      !projectDetails?.[feature.property as keyof IProject]
-                        ? getEventType(feature.title, true)
-                        : getEventType(feature.title, false),
+                      getEventType(
+                        feature.title,
+                        !projectDetails?.[feature.property as keyof IProject]
+                      ),
                       user
                     );
                     handleSubmit({

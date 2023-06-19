@@ -20,7 +20,7 @@ import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fe
 import { PRIORITIES } from "constants/project";
 
 type Props = {
-  filters: IIssueFilterOptions | IQuery;
+  filters: Partial<IIssueFilterOptions> | IQuery;
   onSelect: (option: any) => void;
   direction?: "left" | "right";
   height?: "sm" | "md" | "rg" | "lg";

@@ -89,7 +89,7 @@ class StateViewSet(BaseViewSet):
                 )
 
             # Check for any issues in the state
-            issue_exist = Issue.objects.filter(state=pk).exists()
+            issue_exist = Issue.issue_objects.filter(state=pk).exists()
 
             if issue_exist:
                 return Response(

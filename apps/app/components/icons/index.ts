@@ -78,3 +78,5 @@ export * from "./video-file-icon";
 export * from "./audio-file-icon";
 export * from "./command-icon";
 export * from "./color-picker-icon";
+export * from "./inbox-icon";
+export * from "./stacked-layers-horizontal-icon";

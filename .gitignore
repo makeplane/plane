@@ -43,6 +43,7 @@ yarn-error.log*
 
 ## Django ##
 venv
+.venv
 *.pyc
 staticfiles
 mediafiles

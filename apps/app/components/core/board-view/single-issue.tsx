@@ -186,7 +186,18 @@ export const SingleBoardIssue: React.FC<Props> = ({
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, groupTitle, index, selectedGroup, orderBy, params]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      groupTitle,
+      index,
+      selectedGroup,
+      orderBy,
+      params,
+      user,
+    ]
   );
 
   const getStyle = (

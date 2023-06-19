@@ -132,10 +132,8 @@ class IssueViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            super()
-            .get_queryset()
-            .annotate(
-                sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+            Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -248,7 +246,7 @@ class IssueViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, pk=None):
         try:
-            issue = Issue.objects.get(
+            issue = Issue.issue_objects.get(
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
             return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
@@ -263,9 +261,9 @@ class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
         try:
             issues = (
-                Issue.objects.filter(assignees__in=[request.user], workspace__slug=slug)
+                Issue.issue_objects.filter(assignees__in=[request.user], workspace__slug=slug)
                 .annotate(
-                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
@@ -311,7 +309,7 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             issues = (
-                Issue.objects.filter(workspace__slug=slug)
+                Issue.issue_objects.filter(workspace__slug=slug)
                 .filter(project__project_projectmember__member=self.request.user)
                 .order_by("-created_at")
             )
@@ -581,7 +579,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            issues = Issue.objects.filter(
+            issues = Issue.issue_objects.filter(
                 workspace__slug=slug, project_id=project_id, pk__in=issue_ids
             )
 
@@ -610,7 +608,7 @@ class SubIssuesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, issue_id):
         try:
             sub_issues = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     parent_id=issue_id, workspace__slug=slug, project_id=project_id
                 )
                 .select_related("project")
@@ -656,7 +654,7 @@ class SubIssuesEndpoint(BaseAPIView):
     # Assign multiple sub issues
     def post(self, request, slug, project_id, issue_id):
         try:
-            parent_issue = Issue.objects.get(pk=issue_id)
+            parent_issue = Issue.issue_objects.get(pk=issue_id)
             sub_issue_ids = request.data.get("sub_issue_ids", [])
 
             if not len(sub_issue_ids):
@@ -665,14 +663,14 @@ class SubIssuesEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+            sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
 
             for sub_issue in sub_issues:
                 sub_issue.parent = parent_issue
 
             _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-            updated_sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+            updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
 
             return Response(
                 IssueFlatSerializer(updated_sub_issues, many=True).data,
