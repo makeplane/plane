@@ -142,3 +142,5 @@ export const currentViewDataWithView = (view: string = "month") => {
   );
   return currentView;
 };
+
+export const scrollSpeed = 5;
