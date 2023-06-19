@@ -36,7 +36,7 @@ import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
-import { INBOX_ISSUES, INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
+import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const defaultValues = {
   name: "",
@@ -129,6 +129,7 @@ export const InboxMainContent: React.FC = () => {
         .then(() => {
           mutateIssueDetails();
           mutate(INBOX_ISSUES(inboxId.toString(), params));
+          mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
         });
     },
     [
