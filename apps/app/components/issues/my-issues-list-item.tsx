@@ -67,7 +67,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
           console.log(error);
         });
     },
-    [workspaceSlug, projectId]
+    [workspaceSlug, projectId, user]
   );
 
   const handleCopyText = () => {

@@ -37,7 +37,7 @@ class UserEndpoint(BaseViewSet):
             workspace_invites = WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).count()
-            assigned_issues = Issue.objects.filter(assignees__in=[request.user]).count()
+            assigned_issues = Issue.issue_objects.filter(assignees__in=[request.user]).count()
 
             serialized_data = UserSerializer(request.user).data
             serialized_data["workspace"] = {
@@ -59,7 +59,7 @@ class UserEndpoint(BaseViewSet):
             workspace_invites = WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).count()
-            assigned_issues = Issue.objects.filter(assignees__in=[request.user]).count()
+            assigned_issues = Issue.issue_objects.filter(assignees__in=[request.user]).count()
 
             fallback_workspace = Workspace.objects.filter(
                 workspace_member__member=request.user

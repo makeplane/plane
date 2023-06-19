@@ -36,7 +36,7 @@ row_mapping = {
 def analytic_export_task(email, data, slug):
     try:
         filters = issue_filters(data, "POST")
-        queryset = Issue.objects.filter(**filters, workspace__slug=slug)
+        queryset = Issue.issue_objects.filter(**filters, workspace__slug=slug)
 
         x_axis = data.get("x_axis", False)
         y_axis = data.get("y_axis", False)
@@ -53,7 +53,7 @@ def analytic_export_task(email, data, slug):
         assignee_details = {}
         if x_axis in ["assignees__email"] or segment in ["assignees__email"]:
             assignee_details = (
-                Issue.objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
+                Issue.issue_objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
                 .order_by("assignees__id")
                 .distinct("assignees__id")
                 .values("assignees__avatar", "assignees__email", "assignees__first_name", "assignees__last_name")

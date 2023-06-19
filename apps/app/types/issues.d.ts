@@ -79,7 +79,7 @@ export interface IIssue {
   blocks_list: string[];
   bridge_id?: string | null;
   completed_at: Date;
-  created_at: Date;
+  created_at: string;
   created_by: string;
   cycle: string | null;
   cycle_id: string | null;
@@ -100,7 +100,9 @@ export interface IIssue {
     url: string;
   }[];
   issue_module: IIssueModule | null;
+  labels: string[];
   label_details: any[];
+  labels_list: string[];
   links_list: IIssueLink[];
   link_count: number;
   module: string | null;
@@ -119,12 +121,10 @@ export interface IIssue {
   state_detail: IState;
   sub_issues_count: number;
   target_date: string | null;
-  updated_at: Date;
+  updated_at: string;
   updated_by: string;
   workspace: string;
   workspace_detail: IWorkspaceLite;
-  labels: any[];
-  labels_list: string[];
 }
 
 export interface ISubIssuesState {

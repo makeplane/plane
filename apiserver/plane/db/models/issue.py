@@ -17,6 +17,20 @@ from plane.utils.html_processor import strip_tags
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
+class IssueManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                models.Q(issue_inbox__status=1)
+                | models.Q(issue_inbox__status=-1)
+                | models.Q(issue_inbox__status=2)
+                | models.Q(issue_inbox__isnull=True)
+            )
+        )
+
+
 class Issue(ProjectBaseModel):
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
@@ -67,6 +81,9 @@ class Issue(ProjectBaseModel):
     )
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
+
+    objects = models.Manager()
+    issue_objects = IssueManager()
 
     class Meta:
         verbose_name = "Issue"

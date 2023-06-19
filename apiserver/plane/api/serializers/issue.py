@@ -41,6 +41,7 @@ class IssueFlatSerializer(BaseSerializer):
             "id",
             "name",
             "description",
+            "description_html",
             "priority",
             "start_date",
             "target_date",
@@ -482,6 +483,8 @@ class IssueStateSerializer(BaseSerializer):
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
     bridge_id = serializers.UUIDField(read_only=True)
+    attachment_count = serializers.IntegerField(read_only=True)
+    link_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue

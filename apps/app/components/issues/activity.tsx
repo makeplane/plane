@@ -4,6 +4,14 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// services
+import issuesService from "services/issues.service";
+// hooks
+import useEstimateOption from "hooks/use-estimate-option";
+// components
+import { CommentCard } from "components/issues/comment";
+// ui
+import { Loader } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -17,20 +25,13 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
-// services
-import issuesService from "services/issues.service";
-// components
-import { CommentCard } from "components/issues/comment";
-// ui
-import { Loader } from "components/ui";
-
 // helpers
 import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssueComment, IIssueLabels } from "types";
+// fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import useEstimateOption from "hooks/use-estimate-option";
 
 const activityDetails: {
   [key: string]: {
@@ -60,7 +61,7 @@ const activityDetails: {
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-brand-secondary" aria-hidden="true" />,
   },
   labels: {
     icon: <TagIcon height="12" width="12" color="#6b7280" />,
@@ -99,25 +100,26 @@ const activityDetails: {
   },
   estimate: {
     message: "updated the estimate",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-brand-secondary" aria-hidden="true" />,
   },
   link: {
     message: "updated the link",
-    icon: <LinkIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <LinkIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
   attachment: {
     message: "updated the attachment",
-    icon: <PaperClipIcon className="h-3 w-3 text-gray-500 " aria-hidden="true" />,
+    icon: <PaperClipIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
   },
 };
 
 type Props = {
+  issueId: string;
   user: ICurrentUserResponse | undefined;
 };
 
-export const IssueActivitySection: React.FC<Props> = ({ user }) => {
+export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { isEstimateActive, estimatePoints } = useEstimateOption();
 

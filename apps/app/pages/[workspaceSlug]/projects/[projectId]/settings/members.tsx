@@ -89,7 +89,17 @@ const MembersSettings: NextPage = () => {
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
   return (
-    <>
+    <ProjectAuthorizationWrapper
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem
+            title={`${projectDetails?.name ?? "Project"}`}
+            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+          />
+          <BreadcrumbItem title="Members Settings" />
+        </Breadcrumbs>
+      }
+    >
       <ConfirmProjectMemberRemove
         isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
         onClose={() => {
@@ -136,149 +146,137 @@ const MembersSettings: NextPage = () => {
         members={members}
         user={user}
       />
-      <ProjectAuthorizationWrapper
-        breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${projectDetails?.name ?? "Project"}`}
-              link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-            />
-            <BreadcrumbItem title="Members Settings" />
-          </Breadcrumbs>
-        }
-      >
-        <div className="p-8">
-          <SettingsHeader />
-          <section className="space-y-5">
-            <div className="flex items-end justify-between gap-4">
-              <h3 className="text-2xl font-semibold">Members</h3>
-              <button
-                type="button"
-                className="flex items-center gap-2 text-brand-accent outline-none"
-                onClick={() => setInviteModal(true)}
-              >
-                <PlusIcon className="h-4 w-4" />
-                Add Member
-              </button>
-            </div>
-            {!projectMembers || !projectInvitations ? (
-              <Loader className="space-y-5">
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-              </Loader>
-            ) : (
-              <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base px-6">
-                {members.length > 0
-                  ? members.map((member) => (
-                      <div key={member.id} className="flex items-center justify-between py-6">
-                        <div className="flex items-center gap-x-6 gap-y-2">
-                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-                            {member.avatar && member.avatar !== "" ? (
-                              <img
-                                src={member.avatar}
-                                alt={member.first_name}
-                                className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
-                              />
-                            ) : member.first_name !== "" ? (
-                              member.first_name.charAt(0)
-                            ) : (
-                              member.email.charAt(0)
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="text-sm">
-                              {member.first_name} {member.last_name}
-                            </h4>
-                            <p className="mt-0.5 text-xs text-brand-secondary">{member.email}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs">
-                          {!member.member && (
-                            <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
-                              Pending
-                            </div>
+      <div className="p-8">
+        <SettingsHeader />
+        <section className="space-y-5">
+          <div className="flex items-end justify-between gap-4">
+            <h3 className="text-2xl font-semibold">Members</h3>
+            <button
+              type="button"
+              className="flex items-center gap-2 text-brand-accent outline-none"
+              onClick={() => setInviteModal(true)}
+            >
+              <PlusIcon className="h-4 w-4" />
+              Add Member
+            </button>
+          </div>
+          {!projectMembers || !projectInvitations ? (
+            <Loader className="space-y-5">
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+            </Loader>
+          ) : (
+            <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base px-6">
+              {members.length > 0
+                ? members.map((member) => (
+                    <div key={member.id} className="flex items-center justify-between py-6">
+                      <div className="flex items-center gap-x-6 gap-y-2">
+                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                          {member.avatar && member.avatar !== "" ? (
+                            <img
+                              src={member.avatar}
+                              alt={member.first_name}
+                              className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
+                            />
+                          ) : member.first_name !== "" ? (
+                            member.first_name.charAt(0)
+                          ) : (
+                            member.email.charAt(0)
                           )}
-                          <CustomSelect
-                            label={ROLE[member.role as keyof typeof ROLE]}
-                            value={member.role}
-                            onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
-                              if (!activeWorkspace || !projectDetails) return;
-
-                              mutateMembers(
-                                (prevData: any) =>
-                                  prevData.map((m: any) =>
-                                    m.id === member.id ? { ...m, role: value } : m
-                                  ),
-                                false
-                              );
-
-                              projectService
-                                .updateProjectMember(
-                                  activeWorkspace.slug,
-                                  projectDetails.id,
-                                  member.id,
-                                  {
-                                    role: value,
-                                  }
-                                )
-                                .catch(() => {
-                                  setToastAlert({
-                                    type: "error",
-                                    title: "Error!",
-                                    message:
-                                      "An error occurred while updating member role. Please try again.",
-                                  });
-                                });
-                            }}
-                            position="right"
-                            disabled={
-                              member.memberId === user?.id ||
-                              !member.member ||
-                              (currentUser &&
-                                currentUser.role !== 20 &&
-                                currentUser.role < member.role)
-                            }
-                          >
-                            {Object.keys(ROLE).map((key) => {
-                              if (
-                                currentUser &&
-                                currentUser.role !== 20 &&
-                                currentUser.role < parseInt(key)
-                              )
-                                return null;
-
-                              return (
-                                <CustomSelect.Option key={key} value={key}>
-                                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                                </CustomSelect.Option>
-                              );
-                            })}
-                          </CustomSelect>
-                          <CustomMenu ellipsis>
-                            <CustomMenu.MenuItem
-                              onClick={() => {
-                                if (member.member) setSelectedRemoveMember(member.id);
-                                else setSelectedInviteRemoveMember(member.id);
-                              }}
-                            >
-                              <span className="flex items-center justify-start gap-2">
-                                <XMarkIcon className="h-4 w-4" />
-                                <span>Remove member</span>
-                              </span>
-                            </CustomMenu.MenuItem>
-                          </CustomMenu>
+                        </div>
+                        <div>
+                          <h4 className="text-sm">
+                            {member.first_name} {member.last_name}
+                          </h4>
+                          <p className="mt-0.5 text-xs text-brand-secondary">{member.email}</p>
                         </div>
                       </div>
-                    ))
-                  : null}
-              </div>
-            )}
-          </section>
-        </div>
-      </ProjectAuthorizationWrapper>
-    </>
+                      <div className="flex items-center gap-2 text-xs">
+                        {!member.member && (
+                          <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
+                            Pending
+                          </div>
+                        )}
+                        <CustomSelect
+                          label={ROLE[member.role as keyof typeof ROLE]}
+                          value={member.role}
+                          onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
+                            if (!activeWorkspace || !projectDetails) return;
+
+                            mutateMembers(
+                              (prevData: any) =>
+                                prevData.map((m: any) =>
+                                  m.id === member.id ? { ...m, role: value } : m
+                                ),
+                              false
+                            );
+
+                            projectService
+                              .updateProjectMember(
+                                activeWorkspace.slug,
+                                projectDetails.id,
+                                member.id,
+                                {
+                                  role: value,
+                                }
+                              )
+                              .catch(() => {
+                                setToastAlert({
+                                  type: "error",
+                                  title: "Error!",
+                                  message:
+                                    "An error occurred while updating member role. Please try again.",
+                                });
+                              });
+                          }}
+                          position="right"
+                          disabled={
+                            member.memberId === user?.id ||
+                            !member.member ||
+                            (currentUser &&
+                              currentUser.role !== 20 &&
+                              currentUser.role < member.role)
+                          }
+                        >
+                          {Object.keys(ROLE).map((key) => {
+                            if (
+                              currentUser &&
+                              currentUser.role !== 20 &&
+                              currentUser.role < parseInt(key)
+                            )
+                              return null;
+
+                            return (
+                              <CustomSelect.Option key={key} value={key}>
+                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                              </CustomSelect.Option>
+                            );
+                          })}
+                        </CustomSelect>
+                        <CustomMenu ellipsis>
+                          <CustomMenu.MenuItem
+                            onClick={() => {
+                              if (member.member) setSelectedRemoveMember(member.id);
+                              else setSelectedInviteRemoveMember(member.id);
+                            }}
+                          >
+                            <span className="flex items-center justify-start gap-2">
+                              <XMarkIcon className="h-4 w-4" />
+                              <span>Remove member</span>
+                            </span>
+                          </CustomMenu.MenuItem>
+                        </CustomMenu>
+                      </div>
+                    </div>
+                  ))
+                : null}
+            </div>
+          )}
+        </section>
+      </div>
+    </ProjectAuthorizationWrapper>
   );
 };
 

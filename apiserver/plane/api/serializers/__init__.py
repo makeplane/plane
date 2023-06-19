@@ -69,6 +69,11 @@ from .importer import ImporterSerializer
 
 from .page import PageSerializer, PageBlockSerializer, PageFavoriteSerializer
 
-from .estimate import EstimateSerializer, EstimatePointSerializer, EstimateReadSerializer
+from .estimate import (
+    EstimateSerializer,
+    EstimatePointSerializer,
+    EstimateReadSerializer,
+)
 
+from .inbox import InboxSerializer, InboxIssueSerializer, IssueStateInboxSerializer
 from .analytic import AnalyticViewSerializer
