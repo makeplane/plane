@@ -84,9 +84,6 @@ from plane.api.views import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
     ## End Estimates
-    # Shortcuts
-    ShortCutViewSet,
-    ## End Shortcuts
     # Views
     IssueViewViewSet,
     ViewIssuesEndpoint,
@@ -539,30 +536,6 @@ urlpatterns = [
         name="bulk-create-estimate-points",
     ),
     # End Estimates ##
-    # Shortcuts
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/shortcuts/",
-        ShortCutViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-shortcut",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/shortcuts/<uuid:pk>/",
-        ShortCutViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-shortcut",
-    ),
-    ## End Shortcuts
     # Views
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
