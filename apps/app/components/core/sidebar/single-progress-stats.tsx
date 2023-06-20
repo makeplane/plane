@@ -23,10 +23,10 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
     } ${selected ? "bg-brand-surface-1" : ""}`}
     onClick={onClick}
   >
-    <div className="flex w-1/2 items-center justify-start gap-2">{title}</div>
+    <div className="w-1/2">{title}</div>
     <div className="flex w-1/2 items-center justify-end gap-1 px-2">
       <div className="flex h-5 items-center justify-center gap-1">
-        <span className="h-4 w-4 ">
+        <span className="h-4 w-4">
           <ProgressBar value={completed} maxValue={total} />
         </span>
         <span className="w-8 text-right">
@@ -36,8 +36,7 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
           %
         </span>
       </div>
-      <span>of</span>
-      <span>{total}</span>
+      <span>of {total}</span>
     </div>
   </div>
 );

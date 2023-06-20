@@ -37,6 +37,7 @@ services:
                 env_file:
                         - .env
                 environment:
+                        DEBUG: ${DEBUG}
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://plane-redis:6379/
@@ -78,6 +79,7 @@ services:
                 env_file:
                         - .env
                 environment:
+                        DEBUG: ${DEBUG}
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://plane-redis:6379/

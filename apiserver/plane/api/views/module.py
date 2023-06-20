@@ -37,7 +37,7 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
-
+from plane.utils.analytics_plot import burndown_plot
 
 class ModuleViewSet(BaseViewSet):
     model = Module
@@ -153,6 +153,87 @@ class ModuleViewSet(BaseViewSet):
                     {"name": "The module name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def retrieve(self, request, slug, project_id, pk):
+        try:
+            queryset = self.get_queryset().get(pk=pk)
+
+            assignee_distribution = (
+                Issue.objects.filter(
+                    issue_module__module_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(first_name=F("assignees__first_name"))
+                .annotate(last_name=F("assignees__last_name"))
+                .annotate(assignee_id=F("assignees__id"))
+                .annotate(avatar=F("assignees__avatar"))
+                .values("first_name", "last_name", "assignee_id", "avatar")
+                .annotate(total_issues=Count("assignee_id"))
+                .annotate(
+                    completed_issues=Count(
+                        "assignee_id",
+                        filter=Q(completed_at__isnull=False),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "assignee_id",
+                        filter=Q(completed_at__isnull=True),
+                    )
+                )
+                .order_by("first_name", "last_name")
+            )
+
+            label_distribution = (
+                Issue.objects.filter(
+                    issue_module__module_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(label_name=F("labels__name"))
+                .annotate(color=F("labels__color"))
+                .annotate(label_id=F("labels__id"))
+                .values("label_name", "color", "label_id")
+                .annotate(total_issues=Count("label_id"))
+                .annotate(
+                    completed_issues=Count(
+                        "label_id",
+                        filter=Q(completed_at__isnull=False),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "label_id",
+                        filter=Q(completed_at__isnull=True),
+                    )
+                )
+                .order_by("label_name")
+            )
+
+            data = ModuleSerializer(queryset).data
+            data["distribution"] = {
+                "assignees": assignee_distribution,
+                "labels": label_distribution,
+                "completion_chart": {},
+            }
+
+            if queryset.start_date and queryset.target_date:
+                data["distribution"]["completion_chart"] = burndown_plot(
+                    queryset=queryset, slug=slug, project_id=project_id, module_id=pk
+                )
+
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
+            )
+
         except Exception as e:
             capture_exception(e)
             return Response(
