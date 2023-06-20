@@ -104,9 +104,17 @@
   color: rgba(var(--color-text-base)) !important;
 }
 
-.react-datepicker__day--selected {
+.react-datepicker__day--selected,
+.react-datepicker__day--selected:hover {
   background-color: #216ba5 !important;
   color: white !important;
+}
+
+.react-datepicker__day--disabled,
+.react-datepicker__day--disabled:hover {
+  background: transparent !important;
+  color: rgba(var(--color-text-secondary)) !important;
+  cursor: default;
 }
 
 .react-datepicker__day--today {

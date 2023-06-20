@@ -76,6 +76,11 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
   const issueStatus = issue?.issue_inbox[0].status;
   const isAllowed = memberRole.isMember || memberRole.isOwner;
 
+  const today = new Date();
+  const tomorrow = new Date(today);
+
+  tomorrow.setDate(today.getDate() + 1);
+
   return (
     <div className="grid grid-cols-4 border-b border-brand-base divide-x divide-brand-base">
       <div className="col-span-1 flex justify-between p-4">
@@ -165,6 +170,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
                             setDate(val);
                           }}
                           dateFormat="dd-MM-yyyy"
+                          minDate={tomorrow}
                           inline
                         />
                         <PrimaryButton
