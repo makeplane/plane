@@ -16,7 +16,9 @@ import {
   GithubLoginButton,
   EmailCodeForm,
   EmailPasswordForm,
+  TequilaLoginButton,
 } from "components/account";
+
 // ui
 import { Spinner } from "components/ui";
 // icons
@@ -154,6 +156,7 @@ const HomePage: NextPage = () => {
                 ) : (
                   <EmailPasswordForm onSubmit={handlePasswordSignIn} />
                 )}
+                <TequilaLoginButton />
               </div>
             </div>
           </div>

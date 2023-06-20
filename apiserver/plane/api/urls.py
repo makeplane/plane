@@ -1,5 +1,6 @@
 from django.urls import path
 
+from django_tequila.urls import urlpatterns as django_tequila_urlpatterns
 
 # Create your urls here.
 
@@ -1327,3 +1328,5 @@ urlpatterns = [
     ),
     ## End Analytics
 ]
+
+urlpatterns += django_tequila_urlpatterns

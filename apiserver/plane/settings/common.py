@@ -46,6 +46,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.auth.middleware.RemoteUserMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
@@ -54,7 +55,8 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'django_tequila.django_tequila.TequilaAuthentication',  # Added for Tequila authentication
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "django_tequila.django_backend.TequilaBackend",  # Added for Tequila authentication
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
@@ -62,8 +64,9 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    # "django.contrib.auth.backends.ModelBackend",  # default
+    "django.contrib.auth.backends.ModelBackend",  # default
     # "guardian.backends.ObjectPermissionBackend",
+    "django.contrib.auth.backends.RemoteUserBackend",
     'django_tequila.django_backend.TequilaBackend', # tequila
 )
 
@@ -217,9 +220,9 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
 
-TEQUILA_SERVICE_NAME = "django_tequila_service"
+TEQUILA_SERVICE_NAME = "scitas_plane"
 LOGIN_URL = "/login"
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = ""
 LOGOUT_URL = '/'
 LOGIN_REDIRECT_IF_NOT_ALLOWED = "/not_allowed"
 LOGIN_REDIRECT_TEXT_IF_NOT_ALLOWED  = "Not allowed"
@@ -232,3 +235,29 @@ TEQUILA_NEW_USER_INACTIVE = False
 TEQUILA_CUSTOM_USERNAME_ATTRIBUTE = 'uniqueid'
 # TEQUILA_ALLOWED_REQUEST_HOSTS = "192.168.1.1|192.168.1.2"
 TEQUILA_ALLOW_GUESTS = True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django_tequila': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}

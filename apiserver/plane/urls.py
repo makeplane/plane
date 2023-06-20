@@ -10,7 +10,6 @@ from django.conf import settings
 from django.conf.urls import include, url, static
 
 # from django.conf.urls.static import static
-from django_tequila.urls import urlpatterns as django_tequila_urlpatterns
 
 urlpatterns = [
     # path("admin/", admin.site.urls),
@@ -18,8 +17,6 @@ urlpatterns = [
     path("api/", include("plane.api.urls")),
     path("", include("plane.web.urls")),
 ]
-
-urlpatterns += django_tequila_urlpatterns
 
 urlpatterns = urlpatterns + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
