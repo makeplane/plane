@@ -158,7 +158,9 @@ export const InboxMainContent: React.FC = () => {
                   : issueStatus === -1
                   ? "text-red-500 border-red-500 bg-red-500/10"
                   : issueStatus === 0
-                  ? "text-blue-500 border-blue-500 bg-blue-500/10"
+                  ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
+                    ? "text-red-500 border-red-500 bg-red-500/10"
+                    : "text-blue-500 border-blue-500 bg-blue-500/10"
                   : issueStatus === 1
                   ? "text-green-500 border-green-500 bg-green-500/10"
                   : issueStatus === 2

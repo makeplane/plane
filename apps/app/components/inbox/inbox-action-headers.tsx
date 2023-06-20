@@ -147,12 +147,20 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             {isAllowed && (
-              <div className={`flex gap-3 flex-wrap ${issueStatus !== -2 ? "opacity-70" : ""}`}>
+              <div
+                className={`flex-shrink-0 ${
+                  issueStatus === 0 || issueStatus === -2 ? "" : "opacity-70"
+                }`}
+              >
                 <Popover className="relative">
-                  <Popover.Button as="button" type="button" disabled={issueStatus !== -2}>
+                  <Popover.Button
+                    as="button"
+                    type="button"
+                    disabled={!(issueStatus === 0 || issueStatus === -2)}
+                  >
                     <SecondaryButton
                       className={`flex gap-x-1 items-center ${
-                        issueStatus !== -2 ? "cursor-not-allowed" : ""
+                        issueStatus === 0 || issueStatus === -2 ? "" : "cursor-not-allowed"
                       }`}
                       size="sm"
                     >
@@ -186,6 +194,10 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
                     )}
                   </Popover.Panel>
                 </Popover>
+              </div>
+            )}
+            {isAllowed && (
+              <div className={`flex gap-3 flex-wrap ${issueStatus !== -2 ? "opacity-70" : ""}`}>
                 <SecondaryButton
                   size="sm"
                   className="flex gap-2 items-center"
