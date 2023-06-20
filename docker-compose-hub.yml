@@ -52,6 +52,7 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
+                        DEBUG: ${DEBUG}
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -88,6 +89,7 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
+                        DEBUG: ${DEBUG}
                 depends_on:
                         - plane-api
                         - plane-db

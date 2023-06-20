@@ -13,7 +13,10 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from .common import *  # noqa
 
 # Database
-DEBUG = False
+DEBUG = int(os.environ.get(
+    "DEBUG", 0
+))  == 1
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
