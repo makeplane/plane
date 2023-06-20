@@ -63,7 +63,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, mutateIssueDetails]
+    [workspaceSlug, issueId, projectId, mutateIssueDetails, user]
   );
 
   const handleIssueState = (stateId: string) => {
