@@ -259,7 +259,6 @@ class InboxIssueViewSet(BaseViewSet):
 
                 if issue_serializer.is_valid():
                     current_instance = issue
-                    issue_serializer.save()
                     # Log all the updates
                     requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
                     if issue is not None:
@@ -274,6 +273,7 @@ class InboxIssueViewSet(BaseViewSet):
                                 cls=DjangoJSONEncoder,
                             ),
                         )
+                    issue_serializer.save()
                 else:
                     return Response(
                         issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST

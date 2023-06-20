@@ -1,8 +1,7 @@
 // components
-import { Loader } from "components/ui";
 import { ActivityGraph } from "components/workspace";
-// helpers
-import { groupBy } from "helpers/array.helper";
+// ui
+import { Loader } from "components/ui";
 // types
 import { IUserWorkspaceDashboard } from "types";
 

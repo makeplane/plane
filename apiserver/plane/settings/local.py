@@ -10,7 +10,9 @@ from sentry_sdk.integrations.redis import RedisIntegration
 
 from .common import *  # noqa
 
-DEBUG = True
+DEBUG = int(os.environ.get(
+    "DEBUG", 1
+))  == 1
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 

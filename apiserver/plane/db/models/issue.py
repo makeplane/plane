@@ -293,24 +293,6 @@ class IssueActivity(ProjectBaseModel):
         return str(self.issue)
 
 
-class TimelineIssue(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_timeline"
-    )
-    sequence_id = models.FloatField(default=1.0)
-    links = models.JSONField(default=dict, blank=True)
-
-    class Meta:
-        verbose_name = "Timeline Issue"
-        verbose_name_plural = "Timeline Issues"
-        db_table = "issue_timelines"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return project of the project member"""
-        return str(self.issue)
-
-
 class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
