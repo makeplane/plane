@@ -259,7 +259,9 @@ class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
         try:
             issues = (
-                Issue.issue_objects.filter(assignees__in=[request.user], workspace__slug=slug)
+                Issue.issue_objects.filter(
+                    assignees__in=[request.user], workspace__slug=slug
+                )
                 .annotate(
                     sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
@@ -582,6 +584,12 @@ class SubIssuesEndpoint(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
+                .annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
 
             state_distribution = (
