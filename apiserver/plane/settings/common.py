@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "taggit",
+    "django_tequila",
 ]
 
 MIDDLEWARE = [
@@ -48,11 +49,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
+    "django_tequila.middleware.TequilaMiddleware",
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'django_tequila.django_tequila.TequilaAuthentication',  # Added for Tequila authentication
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
@@ -60,8 +62,9 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",  # default
+    # "django.contrib.auth.backends.ModelBackend",  # default
     # "guardian.backends.ObjectPermissionBackend",
+    'django_tequila.django_backend.TequilaBackend', # tequila
 )
 
 ROOT_URLCONF = "plane.urls"
@@ -213,3 +216,19 @@ SIMPLE_JWT = {
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
+
+TEQUILA_SERVICE_NAME = "django_tequila_service"
+LOGIN_URL = "/login"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_URL = '/'
+LOGIN_REDIRECT_IF_NOT_ALLOWED = "/not_allowed"
+LOGIN_REDIRECT_TEXT_IF_NOT_ALLOWED  = "Not allowed"
+TEQUILA_SERVER_URL = "https://tequila.epfl.ch"
+TEQUILA_NEW_USER_INACTIVE = False
+# TEQUILA_CONFIG_ALLOW = 'categorie=shibboleth'
+# TEQUILA_CONFIG_ADDITIONAL = {'allowedorgs': 'EPFL, UNIL'}
+# TEQUILA_CLEAN_URL = True
+# TEQUILA_STRONG_AUTHENTICATION = True
+TEQUILA_CUSTOM_USERNAME_ATTRIBUTE = 'uniqueid'
+# TEQUILA_ALLOWED_REQUEST_HOSTS = "192.168.1.1|192.168.1.2"
+TEQUILA_ALLOW_GUESTS = True
