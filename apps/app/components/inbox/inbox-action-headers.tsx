@@ -144,7 +144,7 @@ export const InboxActionHeader: React.FC<Props> = (props) => {
             {isAllowed && (
               <div className={`flex gap-3 flex-wrap ${issueStatus !== -2 ? "opacity-70" : ""}`}>
                 <Popover className="relative">
-                  <Popover.Button as="button" type="button" disabled={issueStatus !== -2}>
+                  <Popover.Button as="div" disabled={issueStatus !== -2}>
                     <SecondaryButton
                       className={`flex gap-x-1 items-center ${
                         issueStatus !== -2 ? "cursor-not-allowed" : ""

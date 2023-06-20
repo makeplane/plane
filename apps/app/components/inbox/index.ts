@@ -1,6 +1,7 @@
 export * from "./decline-issue-modal";
 export * from "./delete-issue-modal";
 export * from "./filters-dropdown";
+export * from "./filters-list";
 export * from "./inbox-action-headers";
 export * from "./inbox-issue-card";
 export * from "./inbox-main-content";
