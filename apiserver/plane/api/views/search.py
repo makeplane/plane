@@ -57,7 +57,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             else:
                 q |= Q(**{f"{field}__icontains": query})
         return (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 q,
                 project__project_projectmember__member=self.request.user,
                 workspace__slug=slug,
@@ -206,11 +206,15 @@ class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
             query = request.query_params.get("search", False)
-            parent = request.query_params.get("parent", False)
-            blocker_blocked_by = request.query_params.get("blocker_blocked_by", False)
+            parent = request.query_params.get("parent", "false")
+            blocker_blocked_by = request.query_params.get("blocker_blocked_by", "false")
+            cycle = request.query_params.get("cycle", "false")
+            module = request.query_params.get("module", "false")
+            sub_issue = request.query_params.get("sub_issue", "false")
+
             issue_id = request.query_params.get("issue_id", False)
 
-            issues = Issue.objects.filter(
+            issues = Issue.issue_objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 project__project_projectmember__member=self.request.user,
@@ -220,21 +224,33 @@ class IssueSearchEndpoint(BaseAPIView):
                 issues = search_issues(query, issues)
 
             if parent == "true" and issue_id:
-                issue = Issue.objects.get(pk=issue_id)
+                issue = Issue.issue_objects.get(pk=issue_id)
                 issues = issues.filter(
                     ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
                 ).exclude(
-                    pk__in=Issue.objects.filter(parent__isnull=False).values_list(
+                    pk__in=Issue.issue_objects.filter(parent__isnull=False).values_list(
                         "parent_id", flat=True
                     )
                 )
             if blocker_blocked_by == "true" and issue_id:
-                issue = Issue.objects.get(pk=issue_id)
+                issue = Issue.issue_objects.get(pk=issue_id)
                 issues = issues.filter(
                     ~Q(pk=issue_id),
                     ~Q(blocked_issues__block=issue),
                     ~Q(blocker_issues__blocked_by=issue),
                 )
+            if sub_issue == "true" and issue_id:
+                issue = Issue.issue_objects.get(pk=issue_id)
+                issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
+                if issue.parent:
+                    issues = issues.filter(~Q(pk=issue.parent_id))
+
+            if cycle == "true":
+                issues = issues.exclude(issue_cycle__isnull=False)
+
+            if module == "true":
+                issues = issues.exclude(issue_module__isnull=False)
+
 
             return Response(
                 issues.values(
@@ -244,6 +260,9 @@ class IssueSearchEndpoint(BaseAPIView):
                     "project__identifier",
                     "project_id",
                     "workspace__slug",
+                    "state__name",
+                    "state__group",
+                    "state__color",
                 ),
                 status=status.HTTP_200_OK,
             )
@@ -252,7 +271,7 @@ class IssueSearchEndpoint(BaseAPIView):
                 {"error": "Issue Does not exist"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

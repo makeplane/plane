@@ -633,6 +633,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       mutateModuleDetails,
       viewId,
       mutateViewDetails,
+      user,
     ]
   );
 

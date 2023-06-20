@@ -231,6 +231,29 @@ def filter_module(params, filter, method):
     return filter
 
 
+def filter_inbox_status(params, filter, method):
+    if method == "GET":
+        status = params.get("inbox_status").split(",")
+        if len(status) and "" not in status:
+            filter["issue_inbox__status__in"] = status
+    else:
+        if params.get("inbox_status", None) and len(params.get("inbox_status")):
+            filter["issue_inbox__status__in"] = params.get("inbox_status")
+    return filter
+
+
+def filter_sub_issue_toggle(params, filter, method):
+    if method == "GET":
+        sub_issue = params.get("sub_issue", "false")
+        if sub_issue == "false":
+            filter["parent__isnull"] = True
+    else:
+        sub_issue = params.get("sub_issue", "false")
+        if sub_issue == "false":
+            filter["parent__isnull"] = True
+    return filter
+
+
 def issue_filters(query_params, method):
     filter = dict()
 
@@ -252,6 +275,8 @@ def issue_filters(query_params, method):
         "project": filter_project,
         "cycle": filter_cycle,
         "module": filter_module,
+        "inbox_status": filter_inbox_status,
+        "sub_issue": filter_sub_issue_toggle,
     }
 
     for key, value in ISSUE_FILTER.items():

@@ -70,7 +70,6 @@ from plane.api.views import (
     BulkDeleteIssuesEndpoint,
     BulkImportIssuesEndpoint,
     ProjectUserViewsEndpoint,
-    TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
@@ -85,9 +84,6 @@ from plane.api.views import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
     ## End Estimates
-    # Shortcuts
-    ShortCutViewSet,
-    ## End Shortcuts
     # Views
     IssueViewViewSet,
     ViewIssuesEndpoint,
@@ -141,6 +137,10 @@ from plane.api.views import (
     # Release Notes
     ReleaseNotesEndpoint,
     ## End Release Notes
+    # Inbox
+    InboxViewSet,
+    InboxIssueViewSet,
+    ## End Inbox
     # Analytics
     AnalyticsEndpoint,
     AnalyticViewViewset,
@@ -536,30 +536,6 @@ urlpatterns = [
         name="bulk-create-estimate-points",
     ),
     # End Estimates ##
-    # Shortcuts
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/shortcuts/",
-        ShortCutViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-shortcut",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/shortcuts/<uuid:pk>/",
-        ShortCutViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-shortcut",
-    ),
-    ## End Shortcuts
     # Views
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
@@ -822,30 +798,6 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     ## End IssueComments
-    ## Roadmap
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/roadmaps/",
-        TimeLineIssueViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-issue-roadmap",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/roadmaps/<uuid:pk>/",
-        TimeLineIssueViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-issue-roadmap",
-    ),
-    ## End Roadmap
     ## IssueProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",
@@ -1244,6 +1196,50 @@ urlpatterns = [
         name="release-notes",
     ),
     ## End Release Notes
+    # Inbox
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
+        InboxViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="inbox",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:pk>/",
+        InboxViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="inbox",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/",
+        InboxIssueViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="inbox-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/<uuid:pk>/",
+        InboxIssueViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="inbox-issue",
+    ),
+    ## End Inbox
     # Analytics
     path(
         "workspaces/<str:slug>/analytics/",
