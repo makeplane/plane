@@ -106,7 +106,7 @@ const HomePage: NextPage = () => {
       });
     }
   };
-  
+
   const handlePasswordSignIn = async (formData: EmailPasswordFormValues) => {
     await authenticationService
       .emailLogin(formData)
