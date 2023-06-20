@@ -5,13 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // icons
-import {
-  ArrowLeftIcon,
-  ListBulletIcon,
-  PlusIcon,
-  RectangleGroupIcon,
-  RectangleStackIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // services
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
@@ -191,7 +185,6 @@ const SingleModule: React.FC = () => {
         </div>
 
         <ModuleDetailsSidebar
-          issues={moduleIssues ?? []}
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
