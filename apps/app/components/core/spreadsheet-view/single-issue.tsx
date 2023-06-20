@@ -106,14 +106,16 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
         {position ? position : ""}
       </div>
-      <div className="flex items-center cursor-pointer justify-start gap-1 text-brand-secondary p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+      <div className="flex gap-1 items-center">
         <div className="h-5 w-5">
-          <button
-            className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm"
-            onClick={() => setExpanded(!expanded)}
-          >
-            <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
-          </button>
+          {issue.sub_issues_count > 0 && (
+            <button
+              className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm"
+              onClick={() => setExpanded(!expanded)}
+            >
+              <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
+            </button>
+          )}
         </div>
 
         <span className=" text-[0.825rem]">{truncateText(issue.name, 45)}</span>

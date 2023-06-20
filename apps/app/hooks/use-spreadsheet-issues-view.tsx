@@ -46,6 +46,7 @@ const useSpreadsheetIssuesView = () => {
       ? filters?.issue__labels__id.join(",")
       : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
+    sub_issue: "false",
   };
 
   const { data: projectSpreadsheetIssues } = useSWR(
