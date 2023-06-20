@@ -3,7 +3,7 @@ import React from "react";
 // ui
 import { LineGraph } from "components/ui";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { getDatesInRange, renderShortNumericDateFormat } from "helpers/date-time.helper";
 //types
 import { TCompletionChartDistribution } from "types";
 
@@ -46,6 +46,27 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
     pending: distribution[key],
   }));
 
+  const generateXAxisTickValues = () => {
+    const dates = getDatesInRange(startDate, endDate);
+
+    const maxDates = 4;
+    const totalDates = dates.length;
+
+    if (totalDates <= maxDates) return dates;
+    else {
+      const interval = Math.ceil(totalDates / maxDates);
+      const limitedDates = [];
+
+      for (let i = 0; i < totalDates; i += interval)
+        limitedDates.push(renderShortNumericDateFormat(dates[i]));
+
+      if (!limitedDates.includes(renderShortNumericDateFormat(dates[totalDates - 1])))
+        limitedDates.push(renderShortNumericDateFormat(dates[totalDates - 1]));
+
+      return limitedDates;
+    }
+  };
+
   return (
     <div className="w-full flex justify-center items-center">
       <LineGraph
@@ -86,7 +107,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
         ]}
         layers={["grid", "markers", "areas", DashedLine, "slices", "points", "axes", "legends"]}
         axisBottom={{
-          tickValues: chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : "")),
+          tickValues: generateXAxisTickValues(),
         }}
         enablePoints={false}
         enableArea
