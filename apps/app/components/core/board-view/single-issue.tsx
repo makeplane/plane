@@ -181,9 +181,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
             mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
             mutate(MODULE_DETAILS(moduleId as string));
           } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
     [

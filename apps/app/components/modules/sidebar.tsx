@@ -52,20 +52,13 @@ const defaultValues: Partial<IModule> = {
 };
 
 type Props = {
-  issues: IIssue[];
   module?: IModule;
   isOpen: boolean;
   moduleIssues?: IIssue[];
   user: ICurrentUserResponse | undefined;
 };
 
-export const ModuleDetailsSidebar: React.FC<Props> = ({
-  issues,
-  module,
-  isOpen,
-  moduleIssues,
-  user,
-}) => {
+export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIssues, user }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
 
@@ -464,9 +457,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                issues={issues}
-                                start={module?.start_date ?? ""}
-                                end={module?.target_date ?? ""}
+                                distribution={module.distribution.completion_chart}
+                                startDate={module.start_date ?? ""}
+                                endDate={module.target_date ?? ""}
+                                totalIssues={module.total_issues}
                               />
                             </div>
                           </div>
@@ -517,7 +511,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                           <>
                             <div className=" h-full w-full py-4">
                               <SidebarProgressStats
-                                issues={issues}
+                                distribution={module.distribution}
                                 groupedIssues={{
                                   backlog: module.backlog_issues,
                                   unstarted: module.unstarted_issues,
@@ -525,7 +519,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                                   completed: module.completed_issues,
                                   cancelled: module.cancelled_issues,
                                 }}
-                                userAuth={memberRole}
+                                totalIssues={module.total_issues}
                                 module={module}
                               />
                             </div>
