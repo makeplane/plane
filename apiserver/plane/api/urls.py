@@ -76,6 +76,7 @@ from plane.api.views import (
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
     IssueAttachmentEndpoint,
+    IssueSubscriberViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -798,6 +799,19 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     ## End IssueComments
+    # Issue Subscribers
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribers/",
+        IssueSubscriberViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "delete": "destroy"
+            }
+        ),
+        name="project-issue-subscriber",
+    ),
+    ## End Issue Subscribers
     ## IssueProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",

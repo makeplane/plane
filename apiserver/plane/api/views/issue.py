@@ -42,6 +42,7 @@ from plane.api.serializers import (
     IssueLinkSerializer,
     IssueLiteSerializer,
     IssueAttachmentSerializer,
+    IssueSubscriberSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -58,6 +59,7 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     State,
+    IssueSubscriber,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -842,3 +844,29 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class IssueSubscriberViewSet(BaseViewSet):
+    serializer_class = IssueSubscriberSerializer
+    model = IssueSubscriber
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(
+            subscriber_id=self.request.user.id, issue_id=self.kwargs.get("issue_id")
+        )
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
+            .distinct()
+        )

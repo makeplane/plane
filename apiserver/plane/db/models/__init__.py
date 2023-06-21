@@ -33,6 +33,7 @@ from .issue import (
     IssueLink,
     IssueSequence,
     IssueAttachment,
+    IssueSubscriber,
 )
 
 from .asset import FileAsset

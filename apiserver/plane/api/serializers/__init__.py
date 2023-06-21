@@ -41,6 +41,7 @@ from .issue import (
     IssueLinkSerializer,
     IssueLiteSerializer,
     IssueAttachmentSerializer,
+    IssueSubscriberSerializer,
 )
 
 from .module import (
