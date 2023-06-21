@@ -10,12 +10,18 @@ services:
                         - .env
                 environment:
                         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-                        NEXT_PUBLIC_GOOGLE_CLIENTID: 0
-                        NEXT_PUBLIC_GITHUB_APP_NAME: 0
-                        NEXT_PUBLIC_GITHUB_ID: 0
-                        NEXT_PUBLIC_SENTRY_DSN: 0
-                        NEXT_PUBLIC_ENABLE_OAUTH: 0
-                        NEXT_PUBLIC_ENABLE_SENTRY: 0
+                        NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
+                        NEXT_PUBLIC_GITHUB_APP_NAME: "0"
+                        NEXT_PUBLIC_GITHUB_ID: "0"
+                        NEXT_PUBLIC_SENTRY_DSN: "0"
+                        NEXT_PUBLIC_ENABLE_OAUTH: "0"
+                        NEXT_PUBLIC_ENABLE_SENTRY: "0"
+                        NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
+                        NEXT_PUBLIC_TRACK_EVENTS: "0"
+                        NEXT_PUBLIC_AUTO_OIDC: ${NEXT_PUBLIC_AUTO_OIDC}
+                        NEXT_PUBLIC_ENABLE_OIDC: ${NEXT_PUBLIC_ENABLE_OIDC}
+                        NEXT_PUBLIC_OIDC_CLIENT_ID: ${NEXT_PUBLIC_OIDC_CLIENT_ID}
+                        NEXT_PUBLIC_OIDC_URL_AUTHORIZE: ${NEXT_PUBLIC_OIDC_URL_AUTHORIZE}
                 depends_on:
                         - plane-api
                         - plane-worker
@@ -52,6 +58,10 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
+                        OIDC_URL_TOKEN: ${OIDC_URL_TOKEN}
+                        OIDC_URL_USERINFO: ${OIDC_URL_USERINFO}
+                        OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+                        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -88,6 +98,7 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
+                        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
                 depends_on:
                         - plane-api
                         - plane-db

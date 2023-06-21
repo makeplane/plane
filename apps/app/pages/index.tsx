@@ -171,7 +171,11 @@ const HomePage: NextPage = () => {
                 {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ||
                 parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
                   <>
-                    <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                    {parseInt(process.env.NEXT_PUBLIC_AUTO_OIDC || "0") ? (
+                      <></>
+                    ) : (
+                      <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                    )}
                     <div className="flex flex-col items-center justify-center gap-3 border-t border-brand-base py-5 px-5">
                       {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                         <>
