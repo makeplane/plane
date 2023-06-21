@@ -65,8 +65,8 @@ if ($i -eq 1) {
     "curl https://raw.githubusercontent.com/makeplane/plane/develop/.env.example --output .env.example" | cmd.exe
     "curl https://raw.githubusercontent.com/makeplane/plane/develop/setup.sh --output setup.sh" | cmd.exe
 
-    [string]$host = Read-Host -Promopt "Enter the host url [http://localhost]"
-    '"C:\Program Files\Git\bin\sh.exe" ./setup.sh ' + $host | cmd
+    [string]$host = Read-Host -Prompt "Enter the host url [http://localhost]"
+    'C:\Windows\System32\bash.exe -c  "./setup.sh' + $host + '"' | cmd
 
     "docker compose -f docker-compose-hub.yml up -d" | cmd.exe
     Write-Output("You dont have to run this script again. You can start plane by running the following command:")
@@ -88,8 +88,8 @@ elseif ($i -eq 2) {
 
     Add-Content -Path $logFile -Value "[INFO] Setting Setup.sh up"
 
-    [string]$host = Read-Host -Promopt "Enter the host url [http://localhost]"
-    '"C:\Program Files\Git\bin\sh.exe" ./setup.sh ' + $host | cmd
+    [string]$host = Read-Host -Prompt "Enter the host url [http://localhost]"
+    'C:\Windows\System32\bash.exe -c  "./setup.sh' + $host + '"' | cmd
     
     Get-Content -Path ".env" | ForEach-Object {
         $line = $_ -split "="
@@ -105,8 +105,6 @@ elseif ($i -eq 2) {
     Write-Output("You dont have to run this script again. You can start plane by running the following command:")
     Write-Output("docker-compose up -d")
 }
-Set-Location ..
-
 Write-Output("Plane is now installed. You can access it at $host")
 
 
