@@ -1,4 +1,4 @@
-if( -not (Get-Module -ListAvailable -Name posh-git )){
+if ( -not (Get-Module -ListAvailable -Name posh-git )) {
     Write-Host "Module does not exist"
     Install-Module Posh-Git -Scope CurrentUser -Force
 }
@@ -59,41 +59,48 @@ if ($i -eq 3) {
     Write-Output("Exiting")
     exit
 }
-if (Test-Path "plane" -PathType Container) {
-    Add-Content -Path $logFile -Value "[INFO] Trying Removing Old Plane"
-    Write-Output("Plane is already installed. Do you want to reinstall it? [yes/all/no]")
-    Remove-Item -Path "plane" -Confirm -Force -Recurse -ErrorAction Stop | Out-Null
-} 
-Add-Content -Path $logFile -Value "[INFO] Cloning Github Repo"
-git clone https://github.com/makeplane/plane.git
-
-Set-Location "plane"
-git checkout master
-
-Add-Content -Path $logFile -Value "[INFO] Setting Setup.sh up"
-
-[string]$host = Read-Host -Promopt "Enter the host url [http://localhost]"
-'"C:\Program Files\Git\bin\sh.exe" ./setup.sh ' + $host | cmd
-
-Get-Content -Path ".env" | ForEach-Object {
-    $line = $_ -split "="
-    if ($line.Length -ge 2) {
-        $variable = $line[0].Trim()
-        $value = $line[1..($line.Length - 1)] -join "="
-        Set-Item -Path "Env:\$variable" -Value $value
-    }
-}
 
 if ($i -eq 1) {
     Add-Content -Path $logFile -Value "[INFO] Starting Docker Hub Installation"
-    "docker compose -f docker-compose-hub.yml up -d" | cmd.exe
+    "curl https://raw.githubusercontent.com/makeplane/plane/develop/.env.example --output .env.example" | cmd.exe
+    "curl https://raw.githubusercontent.com/makeplane/plane/develop/setup.sh --output setup.sh" | cmd.exe
 
+    [string]$host = Read-Host -Promopt "Enter the host url [http://localhost]"
+    '"C:\Program Files\Git\bin\sh.exe" ./setup.sh ' + $host | cmd
+
+    "docker compose -f docker-compose-hub.yml up -d" | cmd.exe
     Write-Output("You dont have to run this script again. You can start plane by running the following command:")
     Write-Output("docker compose -f docker-compose-hub.yml up -d")
 }
 elseif ($i -eq 2) {
     Add-Content -Path $logFile -Value "[INFO] Starting local Docker Installation"
-    'docker-compose up -d ' | cmd
+    
+    if (Test-Path "plane" -PathType Container) {
+        Add-Content -Path $logFile -Value "[INFO] Trying Removing Old Plane"
+        Write-Output("Plane is already installed. Do you want to reinstall it? [yes/all/no]")
+        Remove-Item -Path "plane" -Confirm -Force -Recurse -ErrorAction Stop | Out-Null
+    } 
+    Add-Content -Path $logFile -Value "[INFO] Cloning Github Repo"
+    git clone https://github.com/makeplane/plane.git
+
+    Set-Location "plane"
+    git checkout master
+
+    Add-Content -Path $logFile -Value "[INFO] Setting Setup.sh up"
+
+    [string]$host = Read-Host -Promopt "Enter the host url [http://localhost]"
+    '"C:\Program Files\Git\bin\sh.exe" ./setup.sh ' + $host | cmd
+    
+    Get-Content -Path ".env" | ForEach-Object {
+        $line = $_ -split "="
+        if ($line.Length -ge 2) {
+            $variable = $line[0].Trim()
+            $value = $line[1..($line.Length - 1)] -join "="
+            Set-Item -Path "Env:\$variable" -Value $value
+        }
+    }
+    
+    'docker-compose up -d' | cmd
 
     Write-Output("You dont have to run this script again. You can start plane by running the following command:")
     Write-Output("docker-compose up -d")
@@ -104,3 +111,4 @@ Write-Output("Plane is now installed. You can access it at $host")
 
 
 Add-Content -Path $logFile -Value "[INFO] Finished Installation"
+Read-Host -Prompt "Press Enter to Close"
