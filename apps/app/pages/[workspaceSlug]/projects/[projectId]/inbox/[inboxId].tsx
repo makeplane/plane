@@ -222,7 +222,7 @@ const ProjectInbox: NextPage = () => {
               }}
               onDelete={() => setDeleteIssueModal(true)}
             />
-            <div className="grid grid-cols-4 flex-1 overflow-auto divide-x divide-brand-base">
+            <div className="grid grid-cols-4 flex-1 divide-x divide-brand-base overflow-hidden">
               <IssuesListSidebar />
               <div className="col-span-3 h-full overflow-auto">
                 {inboxIssueId ? (
