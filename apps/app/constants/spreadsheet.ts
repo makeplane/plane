@@ -1,22 +1,12 @@
 export const SPREADSHEET_COLUMN = [
   {
-    propertyName: "key",
-    colName: "",
-    colSize: "72px",
-  },
-  {
     propertyName: "title",
     colName: "Title",
-    colSize: "360px",
+    colSize: "440px",
   },
   {
     propertyName: "state",
     colName: "State",
-    colSize: "120px",
-  },
-  {
-    propertyName: "due_date",
-    colName: "Due Date",
     colSize: "120px",
   },
   {
@@ -25,13 +15,18 @@ export const SPREADSHEET_COLUMN = [
     colSize: "100px",
   },
   {
+    propertyName: "assignee",
+    colName: "Assignees",
+    colSize: "120px",
+  },
+  {
     propertyName: "labels",
     colName: "Labels",
     colSize: "120px",
   },
   {
-    propertyName: "assignee",
-    colName: "Assignees",
+    propertyName: "due_date",
+    colName: "Due Date",
     colSize: "120px",
   },
   {

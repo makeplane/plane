@@ -96,30 +96,30 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
   );
 
-  const paddingLeft = `${(nestingLevel - 1) * 48}px`;
+  const paddingLeft = `${nestingLevel * 48}px`;
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div
-      className="group grid auto-rows-[minmax(44px,1fr)] px-2 hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
+      className="group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      {properties.key ? (
-        issue.parent ? (
-          <span className="p-1" />
+      <div className="flex gap-1 items-center px-2 sticky left-0 z-10 bg-brand-base hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+        {properties.key ? (
+          issue.parent ? (
+            <span className="p-1" />
+          ) : (
+            <div className="flex items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
+              {issue.project_detail?.identifier}-{issue.sequence_id}
+            </div>
+          )
         ) : (
-          <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
-            {issue.project_detail?.identifier}-{issue.sequence_id}
-          </div>
-        )
-      ) : (
-        ""
-      )}
-      <div className="flex gap-1 items-center">
+          ""
+        )}
         {properties.key && issue.parent && (
           <div
-            className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base"
+            className="flex items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base"
             style={{ paddingLeft }}
           >
             {issue.project_detail?.identifier}-{issue.sequence_id}
@@ -151,17 +151,6 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           />
         </div>
       )}
-      {properties.due_date && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
-          <ViewDueDateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            noBorder
-            user={user}
-            isNotAllowed={isNotAllowed}
-          />
-        </div>
-      )}
       {properties.priority && (
         <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
           <ViewPrioritySelect
@@ -169,6 +158,18 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             partialUpdateIssue={partialUpdateIssue}
             position="right"
             noBorder
+            user={user}
+            isNotAllowed={isNotAllowed}
+          />
+        </div>
+      )}
+      {properties.assignee && (
+        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+          <ViewAssigneeSelect
+            issue={issue}
+            partialUpdateIssue={partialUpdateIssue}
+            position="right"
+            customButton
             user={user}
             isNotAllowed={isNotAllowed}
           />
@@ -198,13 +199,12 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       ) : (
         ""
       )}
-      {properties.assignee && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
-          <ViewAssigneeSelect
+      {properties.due_date && (
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+          <ViewDueDateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
-            position="right"
-            customButton
+            noBorder
             user={user}
             isNotAllowed={isNotAllowed}
           />
