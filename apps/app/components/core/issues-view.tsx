@@ -443,7 +443,6 @@ export const IssuesView: React.FC<Props> = ({
       />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
-        prePopulateData={{ ...issueToEdit }}
         handleClose={() => setEditIssueModal(false)}
         data={issueToEdit}
       />
