@@ -194,6 +194,11 @@ const ProjectInbox: NextPage = () => {
             isOpen={declineIssueModal}
             handleClose={() => setDeclineIssueModal(false)}
             data={inboxIssues?.find((i) => i.bridge_id === inboxIssueId)}
+            onSubmit={async () => {
+              await markInboxStatus({
+                status: -1,
+              }).finally(() => setDeclineIssueModal(false));
+            }}
           />
           <DeleteIssueModal
             isOpen={deleteIssueModal}
