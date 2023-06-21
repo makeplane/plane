@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -9,13 +11,15 @@ import { ISubIssueResponse } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
-const useSubIssue = (issueId: string) => {
+const useSubIssue = (issueId: string, isExpanded: boolean) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: subIssuesResponse } = useSWR<ISubIssueResponse>(
-    workspaceSlug && projectId && issueId ? SUB_ISSUES(issueId as string) : null,
-    workspaceSlug && projectId && issueId
+  const shouldFetch = workspaceSlug && projectId && issueId && isExpanded;
+
+  const { data: subIssuesResponse, isLoading } = useSWR<ISubIssueResponse>(
+    shouldFetch ? SUB_ISSUES(issueId as string) : null,
+    shouldFetch
       ? () =>
           issuesService.subIssues(workspaceSlug as string, projectId as string, issueId as string)
       : null
@@ -23,7 +27,8 @@ const useSubIssue = (issueId: string) => {
 
   return {
     subIssues: subIssuesResponse?.sub_issues ?? [],
-  } as const;
+    isLoading,
+  };
 };
 
 export default useSubIssue;

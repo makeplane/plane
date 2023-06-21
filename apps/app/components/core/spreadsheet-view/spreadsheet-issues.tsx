@@ -1,53 +1,82 @@
 import React, { useState } from "react";
 
 // components
-import { SingleSpreadsheetIssue, SubIssues } from "components/core";
+import { SingleSpreadsheetIssue } from "components/core";
+// hooks
+import useSubIssue from "hooks/use-sub-issue";
 // types
 import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
 
 type Props = {
+  key: string;
   issue: IIssue;
-  index: number;
+  expandedIssues: string[];
+  setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: Properties;
   gridTemplateColumns: string;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
+  nestingLevel?: number;
 };
 
 export const SpreadsheetIssues: React.FC<Props> = ({
+  key,
   issue,
-  index,
+  expandedIssues,
+  setExpandedIssues,
   gridTemplateColumns,
   properties,
   user,
   userAuth,
+  nestingLevel = 0,
 }) => {
-  const [expanded, setExpanded] = useState(false);
+  const handleToggleExpand = (issueId: string) => {
+    setExpandedIssues((prevState) => {
+      const newArray = [...prevState];
+      const index = newArray.indexOf(issueId);
+      if (index > -1) {
+        newArray.splice(index, 1);
+      } else {
+        newArray.push(issueId);
+      }
+      return newArray;
+    });
+  };
+
+  const isExpanded = expandedIssues.indexOf(issue.id) > -1;
+
+  const { subIssues, isLoading } = useSubIssue(issue.id, isExpanded);
 
   return (
-    <>
-      <div className="border-b border-brand-base w-full min-w-max">
-        <SingleSpreadsheetIssue
-          issue={issue}
-          position={index + 1}
-          gridTemplateColumns={gridTemplateColumns}
-          properties={properties}
-          expanded={expanded}
-          setExpanded={setExpanded}
-          user={user}
-          userAuth={userAuth}
-        />
-      </div>
+    <div>
+      <SingleSpreadsheetIssue
+        issue={issue}
+        expanded={isExpanded}
+        handleToggleExpand={handleToggleExpand}
+        gridTemplateColumns={gridTemplateColumns}
+        properties={properties}
+        user={user}
+        userAuth={userAuth}
+        nestingLevel={nestingLevel}
+      />
 
-      {expanded && (
-        <SubIssues
-          issue={issue}
-          gridTemplateColumns={gridTemplateColumns}
-          properties={properties}
-          user={user}
-          userAuth={userAuth}
-        />
-      )}
-    </>
+      {isExpanded &&
+        !isLoading &&
+        subIssues &&
+        subIssues.length > 0 &&
+        subIssues.map((subIssue: IIssue, subIndex: number) => (
+          <SpreadsheetIssues
+            key={subIssue.id}
+            issue={subIssue}
+            expandedIssues={expandedIssues}
+            setExpandedIssues={setExpandedIssues}
+            gridTemplateColumns={gridTemplateColumns}
+            properties={properties}
+            user={user}
+            userAuth={userAuth}
+            nestingLevel={nestingLevel + 1}
+          />
+        ))}
+    </div>
   );
 };

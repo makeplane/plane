@@ -32,24 +32,24 @@ import { truncateText } from "helpers/string.helper";
 
 type Props = {
   issue: IIssue;
-  position?: number | string;
+  expanded: boolean;
+  handleToggleExpand: (issueId: string) => void;
   properties: Properties;
   gridTemplateColumns: string;
-  expanded: boolean;
-  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
+  nestingLevel: number;
 };
 
 export const SingleSpreadsheetIssue: React.FC<Props> = ({
   issue,
-  position,
+  expanded,
+  handleToggleExpand,
   properties,
   gridTemplateColumns,
-  expanded,
-  setExpanded,
   user,
   userAuth,
+  nestingLevel,
 }) => {
   const router = useRouter();
 
@@ -96,22 +96,41 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
   );
 
+  const paddingLeft = `${(nestingLevel - 1) * 48}px`;
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div
-      className="group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 w-full"
+      className="group grid auto-rows-[minmax(44px,1fr)] px-2 hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
-        {position ? position : ""}
-      </div>
+      {properties.key ? (
+        issue.parent ? (
+          <span className="p-1" />
+        ) : (
+          <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
+            {issue.project_detail?.identifier}-{issue.sequence_id}
+          </div>
+        )
+      ) : (
+        ""
+      )}
       <div className="flex gap-1 items-center">
+        {properties.key && issue.parent && (
+          <div
+            className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base"
+            style={{ paddingLeft }}
+          >
+            {issue.project_detail?.identifier}-{issue.sequence_id}
+          </div>
+        )}
+
         <div className="h-5 w-5">
           {issue.sub_issues_count > 0 && (
             <button
               className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm"
-              onClick={() => setExpanded(!expanded)}
+              onClick={() => handleToggleExpand(issue.id)}
             >
               <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
             </button>
@@ -153,11 +172,6 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             user={user}
             isNotAllowed={isNotAllowed}
           />
-        </div>
-      )}
-      {properties.key && (
-        <div className="flex  items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
-          {issue.project_detail?.identifier}-{issue.sequence_id}
         </div>
       )}
       {properties.labels ? (
