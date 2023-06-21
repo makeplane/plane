@@ -4,6 +4,10 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// hooks
+import useWorkspaces from "hooks/use-workspaces";
+import useWindowWidth from "hooks/use-window-width";
+
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // services
@@ -16,10 +20,13 @@ import {
   IssuesStats,
 } from "components/workspace";
 import { ProductUpdatesModal } from "components/ui";
+
 // types
 import type { NextPage } from "next";
+
 // fetch-keys
 import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
+import { BreadcrumbItem } from "components/breadcrumbs";
 
 const WorkspacePage: NextPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -27,6 +34,8 @@ const WorkspacePage: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const { windowWidth } = useWindowWidth();
+  const { activeWorkspace } = useWorkspaces();
 
   const { data: workspaceDashboardData } = useSWR(
     workspaceSlug ? USER_WORKSPACE_DASHBOARD(workspaceSlug as string) : null,
@@ -40,14 +49,18 @@ const WorkspacePage: NextPage = () => {
   }, [month, workspaceSlug]);
 
   return (
-    <WorkspaceAuthorizationLayout noHeader>
+    <WorkspaceAuthorizationLayout
+      noHeader={windowWidth && windowWidth >= 768 ? true : false}
+      breadcrumbs={<BreadcrumbItem title={activeWorkspace?.name ?? "Projects"} />}
+    >
+      {/* 768 is the medium size so at medium size we'll show the navigation bar */}
       {isProductUpdatesModalOpen && (
         <ProductUpdatesModal
           isOpen={isProductUpdatesModalOpen}
           setIsOpen={setIsProductUpdatesModalOpen}
         />
       )}
-      <div className="p-8">
+      <div className="md:p-8 p-4">
         <div className="flex flex-col gap-8">
           <div className="text-brand-muted-1 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg border border-brand-base bg-brand-base px-8 py-6 md:flex-row md:items-center md:py-3">
             <p className="font-semibold">
