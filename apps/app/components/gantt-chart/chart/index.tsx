@@ -7,14 +7,15 @@ import {
   ArrowsPointingOutIcon,
 } from "@heroicons/react/20/solid";
 // components
+import { ChartHeader, ChartSidebar } from "../helpers";
 import { GanttChartBlocks } from "../blocks";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
-// import { WeekChartView } from "./week";
+import { WeekChartView } from "./week";
 // import { BiWeekChartView } from "./bi-week";
 import { MonthChartView } from "./month";
 // import { QuarterChartView } from "./quarter";
-// import { YearChartView } from "./year";
+import { YearChartView } from "./year";
 // views
 import {
   // generateHourChart,
@@ -33,7 +34,7 @@ import {
 import { ChartDataType } from "../types";
 // data
 import { datePreview, currentViewDataWithView } from "../data";
-// context
+// hooks
 import { useChart } from "../hooks";
 
 type ChartViewRootProps = {
@@ -57,9 +58,13 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 }) => {
   const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
-  const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
-  const [blocksSidebarView, setBlocksSidebarView] = useState<boolean>(false);
+  const [blocksSidebarView, setBlocksSidebarView] = useState<boolean>(true);
+
+  const [currentHoverElement, setCurrentHoverElement] = useState<number | null>(null);
+  const [currentSelectedElement, setCurrentSelectedElement] = useState<number | null>(null);
+
+  const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
 
   // blocks state management starts
   const [chartBlocks, setChartBlocks] = useState<any[] | null>(null);
@@ -94,13 +99,13 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
     // if (view === "hours") currentRender = generateHourChart(selectedCurrentViewData, side);
     // if (view === "day") currentRender = generateDayChart(selectedCurrentViewData, side);
-    // if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
+    if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
     // if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
     if (selectedCurrentView === "month")
       currentRender = generateMonthChart(selectedCurrentViewData, side);
     // if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
-    // if (selectedCurrentView === "year")
-    //   currentRender = generateYearChart(selectedCurrentViewData, side);
+    if (selectedCurrentView === "year")
+      currentRender = generateYearChart(selectedCurrentViewData, side);
 
     // updating the prevData, currentData and nextData
     if (currentRender.payload.length > 0) {
@@ -114,7 +119,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           },
         });
         updatingCurrentLeftScrollPosition(currentRender.scrollWidth);
-        setItemsContainerWidth(itemsContainerWidth + currentRender.scrollWidth);
+        setItemsContainerWidth(() => itemsContainerWidth + currentRender.scrollWidth);
       } else if (side === "right") {
         dispatch({
           type: "PARTIAL_UPDATE",
@@ -124,7 +129,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             renderView: [...renderView, ...currentRender.payload],
           },
         });
-        setItemsContainerWidth(itemsContainerWidth + currentRender.scrollWidth);
+        setItemsContainerWidth(() => itemsContainerWidth + currentRender.scrollWidth);
       } else {
         dispatch({
           type: "PARTIAL_UPDATE",
@@ -134,13 +139,11 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             renderView: [...currentRender.payload],
           },
         });
-        setItemsContainerWidth(currentRender.scrollWidth);
-        setTimeout(() => {
-          handleScrollToCurrentSelectedDate(
-            currentRender.state,
-            currentRender.state.data.currentDate
-          );
-        }, 50);
+        setItemsContainerWidth(() => currentRender.scrollWidth);
+        handleScrollToCurrentSelectedDate(
+          currentRender.state,
+          currentRender.state.data.currentDate
+        );
       }
     }
   };
@@ -168,16 +171,16 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     // if (currentView === "day")
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
-    // if (currentView === "week")
-    //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
+    if (currentView === "week")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     // if (currentView === "bi_week")
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     if (currentView === "month")
       daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     // if (currentView === "quarter")
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInQuarter(currentState.data.startDate, date);
-    // if (currentView === "year")
-    //   daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
+    if (currentView === "year")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
 
     scrollWidth =
       daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);
@@ -220,139 +223,31 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         border ? `border border-brand-base` : ``
       } flex h-full flex-col rounded-sm select-none bg-brand-base shadow`}
     >
-      {/* chart title */}
-      {/* <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-brand-base">
-        {title && (
-          <div className="text-lg font-medium flex gap-2 items-center">
-            <div>{title}</div>
-            <div className="text-xs rounded-full px-2 py-1 font-bold border border-brand-accent/75 bg-brand-accent/5 text-brand-base">
-              Gantt View Beta
-            </div>
-          </div>
-        )}
-        {blocks === null ? (
-          <div className="text-sm font-medium ml-auto">Loading...</div>
-        ) : (
-          <div className="text-sm font-medium ml-auto">
-            {blocks.length} {loaderTitle}
-          </div>
-        )}
-      </div> */}
-
-      {/* chart header */}
-      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
-        {/* <div
-          className="transition-all border border-brand-base w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-brand-surface-2"
-          onClick={() => setBlocksSidebarView(() => !blocksSidebarView)}
-        >
-          {blocksSidebarView ? (
-            <XMarkIcon className="h-5 w-5" />
-          ) : (
-            <Bars4Icon className="h-4 w-4" />
-          )}
-        </div> */}
-
-        {title && (
-          <div className="text-lg font-medium flex gap-2 items-center">
-            <div>{title}</div>
-            <div className="text-xs rounded-full px-2 py-1 font-bold border border-brand-accent/75 bg-brand-accent/5 text-brand-base">
-              Gantt View Beta
-            </div>
-          </div>
-        )}
-
-        <div className="ml-auto">
-          {blocks === null ? (
-            <div className="text-sm font-medium ml-auto">Loading...</div>
-          ) : (
-            <div className="text-sm font-medium ml-auto">
-              {blocks.length} {loaderTitle}
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {allViews &&
-            allViews.length > 0 &&
-            allViews.map((_chatView: any, _idx: any) => (
-              <div
-                key={_chatView?.key}
-                className={`cursor-pointer rounded-sm border border-brand-base p-1 px-2 text-xs ${
-                  currentView === _chatView?.key ? `bg-brand-surface-2` : `hover:bg-brand-surface-1`
-                }`}
-                onClick={() => handleChartView(_chatView?.key)}
-              >
-                {_chatView?.title}
-              </div>
-            ))}
-        </div>
-
-        <div className="flex items-center gap-1">
-          <div
-            className={`cursor-pointer rounded-sm border border-brand-base p-1 px-2 text-xs hover:bg-brand-surface-2`}
-            onClick={handleToday}
-          >
-            Today
-          </div>
-        </div>
-
-        <div
-          className="transition-all border border-brand-base w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-brand-surface-2"
-          onClick={() => setFullScreenMode(() => !fullScreenMode)}
-        >
-          {fullScreenMode ? (
-            <ArrowsPointingInIcon className="h-4 w-4" />
-          ) : (
-            <ArrowsPointingOutIcon className="h-4 w-4" />
-          )}
-        </div>
-      </div>
+      {/* header */}
+      <ChartHeader
+        title={title}
+        blocks={blocks}
+        loaderTitle={loaderTitle}
+        handleChartView={handleChartView}
+        handleToday={handleToday}
+        blocksSidebarView={blocksSidebarView}
+        setBlocksSidebarView={setBlocksSidebarView}
+        fullScreenMode={fullScreenMode}
+        setFullScreenMode={setFullScreenMode}
+      />
 
       {/* content */}
       <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-brand-base">
-        {blocks && blocks.length > 0 && (
-          <div className="w-[300px] h-full flex flex-col flex-shrink-0 divide-y divide-brand-base border-r overflow-y-auto">
-            <div className="h-[3.58rem] flex justify-center items-center flex-shrink-0">
-              <h3 className="text-sm font-medium text-brand-base">
-                All {loaderTitle} ({blocks && blocks.length})
-              </h3>
-            </div>
-
-            <div id="blocks-sidebar" className="flex flex-col flex-1 overflow-y-auto">
-              {blocks.map((block: any, _idx: number) => (
-                <div
-                  className="relative h-[40px] bg-brand-base flex-shrink-0 truncate flex items-center px-2 cursor-pointer hover:bg-brand-surface-1"
-                  key={`sidebar-blocks-${_idx}`}
-                  onClick={() => {
-                    const blockCard = document.getElementById(`block-${block?.data?.id}`);
-
-                    if (!blockCard) return;
-
-                    blockCard.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                      inline: "nearest",
-                    });
-
-                    blockCard.classList.remove("bg-brand-base");
-                    blockCard.classList.add("bg-brand-surface-1");
-
-                    // animate pulse
-                    blockCard.classList.add("animate-pulse");
-
-                    const interval = setInterval(() => {
-                      blockCard.classList.remove("bg-brand-surface-1");
-                      blockCard.classList.add("bg-brand-base");
-                      blockCard.classList.remove("animate-pulse");
-                      clearInterval(interval);
-                    }, 1000);
-                  }}
-                >
-                  {sidebarBlockRender(block?.data)}
-                </div>
-              ))}
-            </div>
-          </div>
+        {blocksSidebarView && blocks && blocks.length > 0 && (
+          <ChartSidebar
+            blocks={blocks}
+            loaderTitle={loaderTitle}
+            sidebarBlockRender={sidebarBlockRender}
+            currentHoverElement={currentHoverElement}
+            setCurrentHoverElement={setCurrentHoverElement}
+            currentSelectedElement={currentSelectedElement}
+            setCurrentSelectedElement={setCurrentSelectedElement}
+          />
         )}
 
         <div
@@ -367,17 +262,21 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               sidebarBlockRender={sidebarBlockRender}
               blockRender={blockRender}
               handleUpdate={blockUpdateHandler}
+              currentHoverElement={currentHoverElement}
+              setCurrentHoverElement={setCurrentHoverElement}
+              currentSelectedElement={currentSelectedElement}
+              setCurrentSelectedElement={setCurrentSelectedElement}
             />
           )}
 
           {/* chart */}
           {/* {currentView && currentView === "hours" && <HourChartView />} */}
           {/* {currentView && currentView === "day" && <DayChartView />} */}
-          {/* {currentView && currentView === "week" && <WeekChartView />} */}
+          {currentView && currentView === "week" && <WeekChartView />}
           {/* {currentView && currentView === "bi_week" && <BiWeekChartView />} */}
           {currentView && currentView === "month" && <MonthChartView />}
           {/* {currentView && currentView === "quarter" && <QuarterChartView />} */}
-          {/* {currentView && currentView === "year" && <YearChartView />} */}
+          {currentView && currentView === "year" && <YearChartView />}
         </div>
       </div>
     </div>

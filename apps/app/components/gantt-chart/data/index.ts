@@ -79,17 +79,17 @@ export const allViewsWithData: ChartDataType[] = [
   //     width: 40,
   //   },
   // },
-  // {
-  //   key: "week",
-  //   title: "Week",
-  //   data: {
-  //     startDate: new Date(),
-  //     currentDate: new Date(),
-  //     endDate: new Date(),
-  //     approxFilterRange: 4,
-  //     width: 180, // it will preview week dates with weekends highlighted with 1 week limitations ex: title (Wed 1, Thu 2, Fri 3)
-  //   },
-  // },
+  {
+    key: "week",
+    title: "Week",
+    data: {
+      startDate: new Date(),
+      currentDate: new Date(),
+      endDate: new Date(),
+      approxFilterRange: 4,
+      width: 180, // it will preview week dates with weekends highlighted with 1 week limitations ex: title (Wed 1, Thu 2, Fri 3)
+    },
+  },
   // {
   //   key: "bi_week",
   //   title: "Bi-Week",
@@ -123,17 +123,17 @@ export const allViewsWithData: ChartDataType[] = [
   //     width: 100, // it will preview week starting dates all months data and there is 3 months limitation for preview ex: title (2, 9, 16, 23, 30)
   //   },
   // },
-  // {
-  //   key: "year",
-  //   title: "Year",
-  //   data: {
-  //     startDate: new Date(),
-  //     currentDate: new Date(),
-  //     endDate: new Date(),
-  //     approxFilterRange: 10,
-  //     width: 80, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
-  //   },
-  // },
+  {
+    key: "year",
+    title: "Year",
+    data: {
+      startDate: new Date(),
+      currentDate: new Date(),
+      endDate: new Date(),
+      approxFilterRange: 10,
+      width: 80, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
+    },
+  },
 ];
 
 export const currentViewDataWithView = (view: string = "month") => {

@@ -24,12 +24,12 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
 
   // rendering issues on gantt sidebar
   const GanttSidebarBlockView = ({ data }: any) => (
-    <div className="relative flex w-full h-full items-center p-1 overflow-hidden gap-1">
+    <div className="relative flex w-full h-full items-center px-2 overflow-hidden gap-2 bg-transparent">
       <div
         className="rounded-sm flex-shrink-0 w-[10px] h-[10px] flex justify-center items-center"
         style={{ backgroundColor: data?.state_detail?.color || "#858e96" }}
       />
-      <div className="text-brand-base text-sm">{data?.name}</div>
+      <div className="text-brand-base text-sm overflow-hidden whitespace-nowrap">{data?.name}</div>
     </div>
   );
 
@@ -38,11 +38,11 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
     <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${data?.id}`}>
       <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm font-normal">
         <div
-          className="flex-shrink-0 w-[4px] h-full"
+          className="flex-shrink-0 w-[10px] h-[10px] rounded-sm mx-2"
           style={{ backgroundColor: data?.state_detail?.color || "#858e96" }}
         />
-        <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
-          <div className="text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
+        <Tooltip tooltipContent={data?.name} className={`z-[99]`}>
+          <div className="text-brand-base text-[15px] whitespace-nowrap py-[4px] overflow-hidden w-full text-sm">
             {data?.name}
           </div>
         </Tooltip>
@@ -52,7 +52,7 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
             className={`z-[999999]`}
           >
             <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center">
-              <span className="material-symbols-rounded text-brand-secondary text-[18px]">
+              <span className="material-symbols-rounded text-brand-secondary text-[16px]">
                 info
               </span>
             </div>
@@ -84,41 +84,29 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
   const blockFormat = (blocks: IIssue[] | undefined) => {
     if (!blocks || blocks.length === 0) return [];
 
-    // FIXME: group by will be handled by backend
-    const uniqueStates = [
-      ...(new Set(blocks.map((block) => block.state_detail?.id)) as any),
-    ].sort();
+    return blocks.map((block: IIssue) => {
+      let startDate = new Date(block.created_at);
+      let targetDate = new Date(block.updated_at);
+      let infoToggle = true;
 
-    return blocks
-      .map((block: IIssue) => {
-        let startDate = new Date(block.created_at);
-        let targetDate = new Date(block.updated_at);
-        let infoToggle = true;
+      if (block?.start_date && block.target_date) {
+        startDate = new Date(block?.start_date);
+        targetDate = new Date(block.target_date);
+        infoToggle = false;
+      }
 
-        if (block?.start_date && block.target_date) {
-          startDate = new Date(block?.start_date);
-          targetDate = new Date(block.target_date);
-          infoToggle = false;
-        }
-
-        return {
-          start_date: new Date(startDate),
-          target_date: new Date(targetDate),
-          infoToggle: infoToggle,
-          renderOnlyOnSideBar: startDate === null || targetDate === null,
-          data: block,
-        };
-      })
-      .sort((a, b) => {
-        const stateA = uniqueStates.indexOf(a.data.state_detail?.id);
-        const stateB = uniqueStates.indexOf(b.data.state_detail?.id);
-
-        return stateA - stateB;
-      });
+      return {
+        start_date: new Date(startDate),
+        target_date: new Date(targetDate),
+        infoToggle: infoToggle,
+        renderOnlyOnSideBar: startDate === null || targetDate === null,
+        data: block,
+      };
+    });
   };
 
   useEffect(() => {
-    if (ganttIssues) setBlocks(blockFormat(ganttIssues as any[]));
+    if (ganttIssues) setBlocks(() => blockFormat(ganttIssues as any[]));
   }, [ganttIssues]);
 
   return (

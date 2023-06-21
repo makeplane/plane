@@ -63,7 +63,14 @@ const useHandleLeftDrag = (block: any, handleBlock: any, ref: any) => {
   }, [block, ref]);
 };
 
-export const ChartDraggable = ({ children, block, handleBlock, className }: any) => {
+export const ChartDraggable = ({
+  block,
+  handleBlock,
+  children,
+  id,
+  className = "",
+  style,
+}: any) => {
   const draggingBlock = useRef<HTMLDivElement>(null);
 
   const refLeft = useRef<HTMLDivElement>(null);
@@ -140,112 +147,36 @@ export const ChartDraggable = ({ children, block, handleBlock, className }: any)
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      className={`${className ? className : ``}`}
+      id={id}
+      className={`${className ? className : ``} border border-green-500`}
+      style={style}
     >
       {children}
 
-      {dragging && (
+      {/* {dragging && (
         <div
           id={`drag-block-${block.id}`}
           ref={draggingBlock}
-          style={{
-            width: `${block.position.width}px`,
-          }}
-          className="absolute top-0 h-full bg-brand-surface-2 opacity-20 pointer-events-none"
+          style={style}
+          className="absolute top-0 h-full bg-brand-surface-2 opacity-20 pointer-events-none border border-red-500"
         />
-      )}
+      )} */}
 
-      <div
-        ref={refRight}
-        style={{
-          marginLeft: `${block.position.marginLeft + block.position.width}px`,
-        }}
-        className="absolute top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-backdrop rounded-md cursor-e-resize"
-      />
-      <div
+      {/* <div
         ref={refLeft}
         style={{
           marginLeft: `${block.position.marginLeft}px`,
         }}
-        className="absolute top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-backdrop rounded-md cursor-e-resize"
-      />
+        className="absolute top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-backdrop rounded-md cursor-e-resize border border-red-500"
+      /> */}
+
+      {/* <div
+        ref={refRight}
+        style={{
+          marginLeft: `${block.position.marginLeft + block.position.width}px`,
+        }}
+        className="absolute top-1/2 -translate-y-1/2 w-1 h-6 bg-brand-backdrop rounded-md cursor-e-resize border border-green-500"
+      /> */}
     </div>
   );
 };
-
-// import { useState } from "react";
-
-// export const ChartDraggable = ({ children, id, className = "", style }: any) => {
-//   const [dragging, setDragging] = useState(false);
-
-//   const [chartBlockPositionLeft, setChartBlockPositionLeft] = useState(0);
-//   const [blockPositionLeft, setBlockPositionLeft] = useState(0);
-//   const [dragBlockOffsetX, setDragBlockOffsetX] = useState(0);
-
-//   const handleDragStart = (event: any) => {
-//     // event.dataTransfer.setData("text/plain", event.target.id);
-
-//     const chartBlockPositionLeft: number = parseInt(event.target.style.left.slice(0, -2));
-//     const blockPositionLeft: number = event.target.getBoundingClientRect().left;
-//     const dragBlockOffsetX: number = event.clientX - event.target.getBoundingClientRect().left;
-
-// //     console.log("chartBlockPositionLeft", chartBlockPositionLeft);
-// //     console.log("blockPositionLeft", blockPositionLeft);
-// //     console.log("dragBlockOffsetX", dragBlockOffsetX);
-// //     console.log("--------------------");
-
-//     setDragging(true);
-//     setChartBlockPositionLeft(chartBlockPositionLeft);
-//     setBlockPositionLeft(blockPositionLeft);
-//     setDragBlockOffsetX(dragBlockOffsetX);
-//   };
-
-//   const handleDragEnd = () => {
-//     setDragging(false);
-//     setChartBlockPositionLeft(0);
-//     setBlockPositionLeft(0);
-//     setDragBlockOffsetX(0);
-//   };
-
-//   const handleDragOver = (event: any) => {
-//     event.preventDefault();
-//     if (dragging) {
-//       const scrollContainer = document.getElementById(`block-parent-${id}`) as HTMLElement;
-//       const currentBlockPosition = event.clientX - dragBlockOffsetX;
-// //       console.log('currentBlockPosition')
-//       if (currentBlockPosition <= blockPositionLeft) {
-//         const updatedPosition = chartBlockPositionLeft - (blockPositionLeft - currentBlockPosition);
-// //         console.log("updatedPosition", updatedPosition);
-//         if (scrollContainer) scrollContainer.style.left = `${updatedPosition}px`;
-//       } else {
-//         const updatedPosition = chartBlockPositionLeft + (blockPositionLeft - currentBlockPosition);
-// //         console.log("updatedPosition", updatedPosition);
-//         if (scrollContainer) scrollContainer.style.left = `${updatedPosition}px`;
-//       }
-// //       console.log("--------------------");
-//     }
-//   };
-
-//   const handleDrop = (event: any) => {
-//     event.preventDefault();
-//     setDragging(false);
-//     setChartBlockPositionLeft(0);
-//     setBlockPositionLeft(0);
-//     setDragBlockOffsetX(0);
-//   };
-
-//   return (
-//     <div
-//       id={id}
-//       draggable
-//       onDragStart={handleDragStart}
-//       onDragEnd={handleDragEnd}
-//       onDragOver={handleDragOver}
-//       onDrop={handleDrop}
-//       className={`${className} ${dragging ? "dragging" : ""}`}
-//       style={style}
-//     >
-//       {children}
-//     </div>
-//   );
-// };

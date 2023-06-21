@@ -11,6 +11,10 @@ export const GanttChartBlocks: FC<{
   blockRender: FC;
   fullScreenMode?: boolean;
   handleUpdate: (data: any) => void;
+  currentHoverElement: any;
+  setCurrentHoverElement: any;
+  currentSelectedElement: any;
+  setCurrentSelectedElement: any;
 }> = ({
   itemsContainerWidth,
   blocks,
@@ -18,6 +22,10 @@ export const GanttChartBlocks: FC<{
   blockRender,
   fullScreenMode,
   handleUpdate,
+  currentHoverElement,
+  setCurrentHoverElement,
+  currentSelectedElement,
+  setCurrentSelectedElement,
 }) => {
   const handleChartBlockPosition = (block: any) => {
     handleUpdate(block);
@@ -44,28 +52,37 @@ export const GanttChartBlocks: FC<{
               !block.renderOnlyOnSideBar && (
                 <>
                   {block.start_date && block.target_date && (
-                    <ChartDraggable
-                      className="relative flex h-[40px] items-center"
-                      key={`blocks-${_idx}`}
-                      block={block}
-                      handleBlock={handleChartBlockPosition}
+                    <div
+                      key={`render-blocks-${_idx}`}
+                      className={`relative flex h-[40px] items-center group hover:bg-gray-100 hover:bg-opacity-30 ${
+                        currentSelectedElement == block?.data?.id
+                          ? `bg-gray-100 bg-opacity-30`
+                          : currentHoverElement == block?.data?.id
+                          ? `bg-gray-100 bg-opacity-30`
+                          : ``
+                      }`}
+                      onMouseEnter={() => setCurrentHoverElement(() => block?.data?.id)}
+                      onMouseLeave={() => setCurrentHoverElement(() => null)}
                     >
                       <div
-                        className="relative group inline-flex cursor-pointer items-center font-medium transition-all"
-                        // style={{ marginLeft: `${block?.position?.marginLeft}px` }}
+                        className="relative inline-flex items-center font-medium transition-all"
+                        style={{ marginLeft: `${block?.position?.marginLeft}px` }}
                       >
                         <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                          <div className="absolute right-0 mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
+                          <div className="absolute right-0 mr-[10px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
                             {block?.start_date ? datePreview(block?.start_date) : "-"}
                           </div>
                         </div>
 
+                        <div className="flex-shrink-0 relative w-0 h-0 flex items-center">
+                          <div className="absolute right-0 mr-[2px] w-[5px] h-[26px] bg-brand-backdrop rounded cursor-col-resize" />
+                        </div>
+
                         <div
                           id={`block-${block?.data?.id}`}
-                          className="rounded shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
+                          className="cursor-pointer rounded shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
                           style={{
                             width: `${block?.position?.width}px`,
-                            marginLeft: `${block?.position?.marginLeft}px`,
                           }}
                         >
                           {blockRender({
@@ -74,35 +91,22 @@ export const GanttChartBlocks: FC<{
                           })}
                         </div>
 
+                        <div className="flex-shrink-0 relative w-0 h-0 flex items-center">
+                          <div className="absolute left-0 ml-[2px] w-[5px] h-[26px] bg-brand-backdrop rounded cursor-col-resize" />
+                        </div>
+
                         <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                          <div className="absolute left-0 ml-[5px] mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
+                          <div className="absolute left-0 ml-[10px] mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
                             {block?.target_date ? datePreview(block?.target_date) : "-"}
                           </div>
                         </div>
                       </div>
-                    </ChartDraggable>
+                    </div>
                   )}
                 </>
               )
           )}
       </div>
-
-      {/* sidebar */}
-      {/* <div
-        id="blocks-sidebar"
-        style={{ height: fullScreenMode ? "calc(100vh - 6.6rem)" : "calc(100vh - 10.8rem)" }}
-        className={`fixed w-[300px] flex-shrink-0 divide-y divide-brand-base border-r border-brand-base overflow-y-auto ${
-          fullScreenMode ? "top-[6.6rem]" : "top-[10.8rem]"
-        }`}
-      >
-        {blocks &&
-          blocks.length > 0 &&
-          blocks.map((block: any, _idx: number) => (
-            <div className="relative h-[40px] bg-brand-base" key={`sidebar-blocks-${_idx}`}>
-              {sidebarBlockRender(block?.data)}
-            </div>
-          ))}
-      </div> */}
     </div>
   );
 };
