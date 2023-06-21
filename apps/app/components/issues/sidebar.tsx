@@ -287,13 +287,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
           </h4>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              className="rounded-md border border-brand-base p-2 shadow-sm duration-300 hover:bg-brand-surface-1 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent"
-              onClick={handleCopyText}
-            >
-              <LinkIcon className="h-3.5 w-3.5" />
-            </button>
+            {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
+              <button
+                type="button"
+                className="rounded-md border border-brand-base p-2 shadow-sm duration-300 hover:bg-brand-surface-1 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                onClick={handleCopyText}
+              >
+                <LinkIcon className="h-3.5 w-3.5" />
+              </button>
+            )}
             {!isNotAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
               <button
                 type="button"

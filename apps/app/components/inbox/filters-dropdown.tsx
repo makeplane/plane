@@ -6,7 +6,7 @@ import { getPriorityIcon } from "components/icons";
 import { IInboxFilterOptions } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
-import { STATUS } from "constants/inbox";
+import { INBOX_STATUS } from "constants/inbox";
 
 type Props = {
   filters: Partial<IInboxFilterOptions>;
@@ -45,16 +45,16 @@ export const FiltersDropdown: React.FC<Props> = ({ filters, onSelect, direction,
       {
         id: "inbox_status",
         label: "Status",
-        value: Object.values(STATUS),
+        value: INBOX_STATUS.map((status) => status.value),
         children: [
-          ...Object.keys(STATUS).map((status) => ({
-            id: status,
-            label: status,
+          ...INBOX_STATUS.map((status) => ({
+            id: status.key,
+            label: status.label,
             value: {
               key: "inbox_status",
-              value: STATUS[status],
+              value: status.value,
             },
-            selected: filters?.inbox_status?.includes(STATUS[status]),
+            selected: filters?.inbox_status?.includes(status.value),
           })),
         ],
       },
