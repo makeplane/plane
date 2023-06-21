@@ -10,7 +10,7 @@ import cyclesService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { LinearProgressIndicator, Tooltip } from "components/ui";
+import { LinearProgressIndicator, Loader, Tooltip } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
 // components
@@ -43,10 +43,6 @@ import { ICycle, IIssue } from "types";
 // fetch-keys
 import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
-type TSingleStatProps = {
-  cycle: ICycle;
-};
-
 const stateGroups = [
   {
     key: "backlog_issues",
@@ -75,11 +71,42 @@ const stateGroups = [
   },
 ];
 
-export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
+export const ActiveCycleDetails: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { data: currentCycle } = useSWR(
+    workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () =>
+          cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
+      : null
+  );
+  const cycle = currentCycle ? currentCycle[0] : null;
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId && cycle?.id
+      ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" })
+      : null,
+    workspaceSlug && projectId && cycle?.id
+      ? () =>
+          cyclesService.getCycleIssuesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            cycle.id,
+            { priority: "urgent,high" }
+          )
+      : null
+  ) as { data: IIssue[] | undefined };
+
+  if (!cycle)
+    return (
+      <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
+        <h3 className="text-base font-medium text-brand-base ">No active cycle is present.</h3>
+      </div>
+    );
 
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
@@ -164,21 +191,6 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
       });
   };
 
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId && cycle.id
-      ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "high" })
-      : null,
-    workspaceSlug && projectId && cycle.id
-      ? () =>
-          cyclesService.getCycleIssuesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            cycle.id,
-            { priority: "high" }
-          )
-      : null
-  ) as { data: IIssue[] };
-
   const progressIndicatorData = stateGroups.map((group, index) => ({
     id: index,
     name: group.title,
@@ -193,7 +205,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
     <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-brand-base border border-brand-base">
       <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-y-0 lg:divide-x lg:grid-cols-3">
         <div className="flex flex-col text-xs">
-          <a className="h-full w-full">
+          <div className="h-full w-full">
             <div className="flex h-60 flex-col gap-5 justify-between rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
                 <span className="flex items-center gap-1">
@@ -341,7 +353,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
                 </a>
               </Link>
             </div>
-          </a>
+          </div>
         </div>
         <div className="grid col-span-2 grid-cols-1 divide-y border-brand-base md:divide-y-0 md:divide-x md:grid-cols-2">
           <div className="flex h-60 flex-col border-brand-base">
@@ -373,19 +385,17 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
             </div>
           </div>
           <div className="border-brand-base h-60 overflow-y-scroll">
-            <ActiveCycleProgressStats issues={issues ?? []} />
+            <ActiveCycleProgressStats cycle={cycle} />
           </div>
         </div>
       </div>
       <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-y-0 lg:divide-x lg:grid-cols-2">
         <div className="flex flex-col justify-between p-4">
           <div>
-            <div className="text-brand-primary mb-2">High Priority Issues</div>
-
-            <div className="mb-2 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
-              {issues
-                ?.filter((issue) => issue.priority === "urgent" || issue.priority === "high")
-                .map((issue) => (
+            <div className="text-brand-primary">High Priority Issues</div>
+            <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
+              {issues ? (
+                issues.map((issue) => (
                   <div
                     key={issue.id}
                     className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-brand-base bg-brand-surface-1 px-3 py-1.5"
@@ -414,16 +424,10 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
 
                     <div className="flex items-center gap-1.5">
                       <div
-                        className={`grid h-6 w-6 place-items-center items-center rounded border shadow-sm ${
+                        className={`grid h-6 w-6 place-items-center items-center rounded border shadow-sm flex-shrink-0 ${
                           issue.priority === "urgent"
                             ? "border-red-500/20 bg-red-500/20 text-red-500"
-                            : issue.priority === "high"
-                            ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
-                            : issue.priority === "medium"
-                            ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
-                            : issue.priority === "low"
-                            ? "border-green-500/20 bg-green-500/20 text-green-500"
-                            : "border-brand-base"
+                            : "border-orange-500/20 bg-orange-500/20 text-orange-500"
                         }`}
                       >
                         {getPriorityIcon(issue.priority, "text-sm")}
@@ -455,7 +459,7 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
                         Array.isArray(issue.assignees) ? (
                           <div className="-my-0.5 flex items-center justify-center gap-2">
                             <AssigneesList
-                              userIds={issue.assignees}
+                              users={issue.assignee_details}
                               length={3}
                               showLength={false}
                             />
@@ -466,7 +470,14 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
                       </div>
                     </div>
                   </div>
-                ))}
+                ))
+              ) : (
+                <Loader className="space-y-3">
+                  <Loader.Item height="50px" />
+                  <Loader.Item height="50px" />
+                  <Loader.Item height="50px" />
+                </Loader>
+              )}
             </div>
           </div>
 
@@ -478,33 +489,17 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
                   width:
                     issues &&
                     `${
-                      (issues?.filter(
-                        (issue) =>
-                          issue?.state_detail?.group === "completed" &&
-                          (issue?.priority === "urgent" || issue?.priority === "high")
-                      )?.length /
-                        issues?.filter(
-                          (issue) => issue?.priority === "urgent" || issue?.priority === "high"
-                        )?.length) *
+                      (issues.filter((issue) => issue?.state_detail?.group === "completed")
+                        ?.length /
+                        issues.length) *
                         100 ?? 0
                     }%`,
                 }}
               />
             </div>
             <div className="w-16 text-end text-xs text-brand-secondary">
-              {
-                issues?.filter(
-                  (issue) =>
-                    issue?.state_detail?.group === "completed" &&
-                    (issue?.priority === "urgent" || issue?.priority === "high")
-                )?.length
-              }{" "}
-              of{" "}
-              {
-                issues?.filter(
-                  (issue) => issue?.priority === "urgent" || issue?.priority === "high"
-                )?.length
-              }
+              {issues?.filter((issue) => issue?.state_detail?.group === "completed")?.length} of{" "}
+              {issues?.length}
             </div>
           </div>
         </div>
@@ -512,11 +507,11 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
           <div className="flex items-start justify-between gap-4 py-1.5 text-xs">
             <div className="flex items-center gap-3 text-brand-base">
               <div className="flex items-center justify-center gap-1">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#a9bbd0]" />
                 <span>Ideal</span>
               </div>
               <div className="flex items-center justify-center gap-1">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#4c8fff]" />
                 <span>Current</span>
               </div>
             </div>
@@ -532,11 +527,10 @@ export const ActiveCycleDetails: React.FC<TSingleStatProps> = ({ cycle }) => {
           </div>
           <div className="relative h-64">
             <ProgressChart
-              issues={issues ?? []}
-              start={cycle?.start_date ?? ""}
-              end={cycle?.end_date ?? ""}
-              width={475}
-              height={256}
+              distribution={cycle.distribution.completion_chart}
+              startDate={cycle.start_date ?? ""}
+              endDate={cycle.end_date ?? ""}
+              totalIssues={cycle.total_issues}
             />
           </div>
         </div>

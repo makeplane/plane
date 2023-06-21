@@ -51,7 +51,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId]
+    [workspaceSlug, issueId, projectId, user]
   );
 
   const handleIssueState = (priority: string | null) => {
