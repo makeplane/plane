@@ -53,7 +53,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                 <CustomMenu
                   customButton={
                     <div
-                      className={`flex items-center justify-start gap-1.5 cursor-default text-sm text-brand-secondary text-current py-2.5 px-2`}
+                      className={`flex items-center justify-start gap-1.5 cursor-pointer text-sm text-brand-secondary text-current py-2.5 px-2`}
                     >
                       {col.icon ? (
                         <col.icon
@@ -84,10 +84,24 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                       setOrderBy(col.ascendingOrder);
                     }}
                   >
-                    <div className="flex gap-1.5 items-center text-brand-secondary hover:text-brand-base">
-                      <span>First</span>
-                      <Icon iconName="east" className="text-sm" />
-                      <span>Last</span>
+                    <div className="flex gap-1.5 px-1 items-center text-brand-secondary hover:text-brand-base">
+                      {col.propertyName === "assignee" || col.propertyName === "labels" ? (
+                        <>
+                          <span>A-Z</span>
+                          <span>Ascending</span>
+                        </>
+                      ) : col.propertyName === "due_date" || col.propertyName === "estimate" ? (
+                        <>
+                          <span>1-9</span>
+                          <span>Ascending</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>First</span>
+                          <Icon iconName="east" className="text-sm" />
+                          <span>Last</span>
+                        </>
+                      )}
                     </div>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem
@@ -96,10 +110,24 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                       setOrderBy(col.descendingOrder);
                     }}
                   >
-                    <div className="flex gap-1.5 items-center text-brand-secondary hover:text-brand-base">
-                      <span>Last</span>
-                      <Icon iconName="east" className="text-sm" />
-                      <span>First</span>
+                    <div className="flex gap-1.5 px-1 items-center text-brand-secondary hover:text-brand-base">
+                      {col.propertyName === "assignee" || col.propertyName === "labels" ? (
+                        <>
+                          <span>Z-A</span>
+                          <span>Descending</span>
+                        </>
+                      ) : col.propertyName === "due_date" || col.propertyName === "estimate" ? (
+                        <>
+                          <span>9-1</span>
+                          <span>Descending</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Last</span>
+                          <Icon iconName="east" className="text-sm" />
+                          <span>First</span>
+                        </>
+                      )}
                     </div>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem
@@ -108,7 +136,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                       setOrderBy("-created_at");
                     }}
                   >
-                    <div className="flex gap-1.5 items-center text-brand-secondary hover:text-brand-base">
+                    <div className="flex gap-1.5 px-1 items-center text-brand-secondary hover:text-brand-base">
                       <Icon iconName="block" className="text-sm" />
                       <span>None</span>
                     </div>
