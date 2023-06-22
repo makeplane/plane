@@ -20,8 +20,10 @@ from plane.db.models import (
     State,
     Cycle,
     Module,
+    IssueSubscriber,
+    Notification,
 )
-from plane.api.serializers import IssueActivitySerializer
+from plane.api.serializers import IssueActivitySerializer, IssueFlatSerializer
 
 
 # Track Chnages in name
@@ -992,18 +994,57 @@ def issue_activity(
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
             # Don't send activities if the actor is a bot
-            if settings.PROXY_BASE_URL:
-                for issue_activity in issue_activities_created:
-                    headers = {"Content-Type": "application/json"}
-                    issue_activity_json = json.dumps(
-                        IssueActivitySerializer(issue_activity).data,
-                        cls=DjangoJSONEncoder,
+            try:
+                if settings.PROXY_BASE_URL:
+                    for issue_activity in issue_activities_created:
+                        headers = {"Content-Type": "application/json"}
+                        issue_activity_json = json.dumps(
+                            IssueActivitySerializer(issue_activity).data,
+                            cls=DjangoJSONEncoder,
+                        )
+                        _ = requests.post(
+                            f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
+                            json=issue_activity_json,
+                            headers=headers,
+                        )
+            except Exception as e:
+                capture_exception(e)
+
+        # Create Notifications
+        bulk_notifications = []
+
+        issue_subscribers = (
+            IssueSubscriber.objects.filter(project=project)
+            .exclude(subscriber_id=actor_id)
+            .values_list("subscriber")
+        )
+
+        issue = Issue.objects.get(project=project, pk=issue_id)
+        for subscriber in issue_subscribers:
+            for issue_activity in issue_activities_created:
+                bulk_notifications.append(
+                    Notification(
+                        workspace=project.workspace,
+                        sender="in_app:issue_activities",
+                        triggered_by=actor,
+                        receiver_id=subscriber,
+                        entity_identifier=issue_id,
+                        entity_name="issue",
+                        project=project,
+                        title=issue_activity.comment,
+                        data={
+                            "issue": {
+                                "id": str(issue_id),
+                                "identifier": str(project.identifier),
+                                "sequence_id": issue.sequence_id,
+                                "state_name": issue.state.name,
+                                "state_group": issue.state.group,
+                            },
+                            "issue_activity": str(issue_activity.id),
+                        },
                     )
-                    _ = requests.post(
-                        f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
-                        json=issue_activity_json,
-                        headers=headers,
-                    )
+                )
+
         return
     except Exception as e:
         capture_exception(e)

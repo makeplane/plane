@@ -149,6 +149,9 @@ from plane.api.views import (
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
     ## End Analytics
+    # Notification
+    NotificationViewSet,
+    ## End Notification
 )
 
 
@@ -803,11 +806,7 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribers/",
         IssueSubscriberViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-                "delete": "destroy"
-            }
+            {"get": "list", "post": "create", "delete": "destroy"}
         ),
         name="project-issue-subscriber",
     ),
@@ -1288,4 +1287,26 @@ urlpatterns = [
         name="default-analytics",
     ),
     ## End Analytics
+    # Notification
+    path(
+        "workspaces/<str:slug>/users/notifications/",
+        NotificationViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/",
+        NotificationViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="notifications",
+    ),
+    ## End Notification
 ]

@@ -12,12 +12,15 @@ class Notification(BaseModel):
     project = models.ForeignKey(
         "db.Project", related_name="notifications", on_delete=models.CASCADE, null=True
     )
+    data = models.JSONField(null=True)
     entity_identifier = models.UUIDField(null=True)
+    entity_name = models.CharField(max_length=255)
     title = models.TextField()
     message = models.JSONField(null=True)
     message_html = models.TextField(blank=True, default="<p></p>")
     message_stripped = models.TextField(blank=True, null=True)
-    sender = models.ForeignKey("db.User", related_name="sent_notifications", on_delete=models.SET_NULL, null=True)
+    sender = models.CharField(max_length=255)
+    triggered_by = models.ForeignKey("db.User", related_name="triggered_notifications", on_delete=models.SET_NULL, null=True)
     receiver = models.ForeignKey("db.User", related_name="received_notifications", on_delete=models.CASCADE)
     read_at = models.DateTimeField(null=True)
     snoozed_till = models.DateTimeField(null=True)
