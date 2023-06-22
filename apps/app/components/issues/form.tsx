@@ -198,7 +198,7 @@ export const IssueForm: FC<IssueFormProps> = ({
         projectId as string,
         {
           prompt: issueName,
-          task: "Generate a proper description for this issue in context of a project management software.",
+          task: "Generate a proper description for this issue.",
         },
         user
       )
