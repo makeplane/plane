@@ -158,7 +158,7 @@ export const IssuesFilterView: React.FC = () => {
               <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-brand-base bg-brand-surface-1 p-3 shadow-lg">
                 <div className="relative divide-y-2 divide-brand-base">
                   <div className="space-y-4 pb-3 text-xs">
-                    {issueView !== "calendar" && (
+                    {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
                         <div className="flex items-center justify-between">
                           <h4 className="text-brand-secondary">Group by</h4>
@@ -230,7 +230,7 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
 
-                    {issueView !== "calendar" && (
+                    {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
                         <div className="flex items-center justify-between">
                           <h4 className="text-brand-secondary">Show empty states</h4>
@@ -260,6 +260,13 @@ export const IssuesFilterView: React.FC = () => {
                     <div className="flex flex-wrap items-center gap-2">
                       {Object.keys(properties).map((key) => {
                         if (key === "estimate" && !isEstimateActive) return null;
+
+                        if (
+                          (issueView === "spreadsheet" && key === "sub_issue_count") ||
+                          key === "attachment_count" ||
+                          key === "link"
+                        )
+                          return null;
 
                         return (
                           <button
