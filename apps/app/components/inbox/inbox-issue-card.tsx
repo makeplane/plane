@@ -5,11 +5,20 @@ import Link from "next/link";
 import { Tooltip } from "components/ui";
 // icons
 import { getPriorityIcon } from "components/icons";
-import { CalendarDaysIcon, ClockIcon } from "@heroicons/react/24/outline";
+import {
+  CalendarDaysIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  DocumentDuplicateIcon,
+  ExclamationTriangleIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue } from "types";
+// constants
+import { INBOX_STATUS } from "constants/inbox";
 
 type Props = {
   issue: IInboxIssue;
@@ -71,41 +80,45 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
                 <span>{renderShortNumericDateFormat(issue.created_at ?? "")}</span>
               </div>
             </Tooltip>
-            <div
-              className={`text-xs flex items-center gap-1 ${
-                issueStatus === -2
-                  ? "text-orange-500"
-                  : issueStatus === -1
+          </div>
+          <div
+            className={`text-xs flex items-center justify-end gap-1 w-full ${
+              issueStatus === 0
+                ? new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date()
                   ? "text-red-500"
-                  : issueStatus === 0
-                  ? new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date()
-                    ? "text-red-500"
-                    : "text-blue-500"
-                  : issueStatus === 1
-                  ? "text-green-500"
-                  : issueStatus === 2
-                  ? "text-yellow-500"
-                  : ""
-              }`}
-            >
-              {issueStatus === -2 ? (
-                "Pending issue"
-              ) : issueStatus === -1 ? (
-                "Declined issue"
-              ) : issueStatus === 0 ? (
-                <>
-                  <ClockIcon className="h-3.5 w-3.5" />
-                  <span>
-                    Snoozed till{" "}
-                    {renderShortNumericDateFormat(issue.issue_inbox[0].snoozed_till ?? "")}
-                  </span>
-                </>
-              ) : issueStatus === 1 ? (
-                "Accepted issue"
-              ) : (
-                "Marked as duplicate"
-              )}
-            </div>
+                  : "text-blue-500"
+                : INBOX_STATUS.find((s) => s.value === issueStatus)?.textColor
+            }`}
+          >
+            {issueStatus === -2 ? (
+              <>
+                <ExclamationTriangleIcon className="h-3.5 w-3.5" />
+                <span>Pending issue</span>
+              </>
+            ) : issueStatus === -1 ? (
+              <>
+                <XCircleIcon className="h-3.5 w-3.5" />
+                <span>Declined issue</span>
+              </>
+            ) : issueStatus === 0 ? (
+              <>
+                <ClockIcon className="h-3.5 w-3.5" />
+                <span>
+                  Snoozed till{" "}
+                  {renderShortNumericDateFormat(issue.issue_inbox[0].snoozed_till ?? "")}
+                </span>
+              </>
+            ) : issueStatus === 1 ? (
+              <>
+                <CheckCircleIcon className="h-3.5 w-3.5" />
+                <span>Accepted issue</span>
+              </>
+            ) : (
+              <>
+                <DocumentDuplicateIcon className="h-3.5 w-3.5" />
+                <span>Marked as duplicate</span>
+              </>
+            )}
           </div>
         </div>
       </a>
