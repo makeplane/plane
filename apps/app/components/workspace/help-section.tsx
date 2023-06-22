@@ -1,6 +1,10 @@
 import { useState, useRef, FC } from "react";
 
+import { useRouter } from "next/router";
+
 import Link from "next/link";
+
+import useSWR from "swr";
 
 // headless ui
 import { Transition } from "@headlessui/react";
@@ -12,8 +16,18 @@ import {
   ArrowLongLeftIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   RocketLaunchIcon,
+  ArrowUpCircleIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon, DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
+// services
+import workspaceService from "services/workspace.service";
+// fetch-keys
+import { WORKSPACE_DETAILS } from "constants/fetch-keys";
+// ui
+import { CircularProgress } from "components/ui";
+// components
+import UpgradeToProModal from "./upgrade-to-pto-modal";
 
 const helpOptions = [
   {
@@ -43,7 +57,14 @@ export interface WorkspaceHelpSectionProps {
   setSidebarActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+type progress = {
+  progress: number;
+};
 export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { setSidebarActive } = props;
   // theme
   const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
@@ -56,103 +77,187 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
 
   const helpOptionMode = sidebarCollapse ? "left-full" : "left-[-75px]";
 
-  return (
-    <div
-      className={`flex w-full items-center justify-between self-baseline border-t border-brand-base bg-brand-sidebar px-6 py-2 ${
-        sidebarCollapse ? "flex-col" : ""
-      }`}
-    >
-      <button
-        type="button"
-        className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base ${
-          sidebarCollapse ? "w-full justify-center" : ""
-        }`}
-        onClick={() => {
-          const e = new KeyboardEvent("keydown", {
-            key: "h",
-          });
-          document.dispatchEvent(e);
-        }}
-        title="Shortcuts"
-      >
-        <RocketLaunchIcon className="h-4 w-4 text-brand-secondary" />
-        {!sidebarCollapse && <span>Shortcuts</span>}
-      </button>
-      <button
-        type="button"
-        className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base ${
-          sidebarCollapse ? "w-full justify-center" : ""
-        }`}
-        onClick={() => setIsNeedHelpOpen((prev) => !prev)}
-        title="Help"
-      >
-        <QuestionMarkCircleIcon className="h-4 w-4 text-brand-secondary" />
-        {!sidebarCollapse && <span>Help</span>}
-      </button>
-      <button
-        type="button"
-        className="flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base md:hidden"
-        onClick={() => setSidebarActive(false)}
-      >
-        <ArrowLongLeftIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary group-hover:text-brand-base" />
-      </button>
-      <button
-        type="button"
-        className={`hidden items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base md:flex ${
-          sidebarCollapse ? "w-full justify-center" : ""
-        }`}
-        onClick={() => toggleCollapsed()}
-      >
-        <ArrowLongLeftIcon
-          className={`h-4 w-4 flex-shrink-0 text-brand-secondary duration-300 group-hover:text-brand-base ${
-            sidebarCollapse ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+  const [alert, setAlert] = useState(false);
 
-      <div className="relative">
-        <Transition
-          show={isNeedHelpOpen}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
+  const [upgradeModal, setUpgradeModal] = useState(false);
+
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+
+  const { data: workspaceDetails } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.getWorkspace(workspaceSlug as string) : null
+  );
+  const issueNumber = workspaceDetails?.total_issues || 0;
+
+  return (
+    <>
+      <UpgradeToProModal
+        isOpen={upgradeModal}
+        data={null}
+        onClose={() => setUpgradeModal(false)}
+        user={undefined}
+        issueNumber={issueNumber}
+      />
+      {!sidebarCollapse && (alert || (issueNumber && issueNumber >= 750)) ? (
+        <>
           <div
-            className={`absolute bottom-2 ${helpOptionMode} space-y-2 rounded-sm bg-brand-surface-2 p-1 shadow-md`}
-            ref={helpOptionsRef}
+            className={`border-t p-4 ${
+              issueNumber >= 750
+                ? "bg-red-50 text-red-600 border-red-200"
+                : issueNumber >= 500
+                ? "bg-yellow-50 text-yellow-600 border-yellow-200"
+                : "text-green-600"
+            }`}
           >
-            {helpOptions.map(({ name, Icon, href, onClick }) => {
-              if (href)
-                return (
-                  <Link href={href} key={name}>
-                    <a
-                      target="_blank"
-                      className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-brand-surface-1"
+            <div className="flex items-center gap-2 w-full">
+              <CircularProgress progress={(issueNumber / 1024) * 100} />
+              <div className="">Free Plan</div>
+              {issueNumber < 750 && (
+                <div className="ml-auto text-brand-secondary" onClick={() => setAlert(false)}>
+                  <XMarkIcon className="h-4 w-4" />
+                </div>
+              )}
+            </div>
+            <div className="text-brand-secondary text-xs mt-2">
+              This workspace has used {issueNumber} of its 1024 issues creation limit (
+              {((issueNumber / 1024) * 100).toFixed(0)}
+              %).
+            </div>
+          </div>
+        </>
+      ) : (
+        ""
+      )}
+      <div
+        className={`flex w-full items-center justify-between self-baseline border-t border-brand-base bg-brand-sidebar px-6 py-2 ${
+          sidebarCollapse ? "flex-col" : ""
+        }`}
+      >
+        {alert || (issueNumber && issueNumber >= 750) ? (
+          <button
+            type="button"
+            className={`flex items-center gap-x-1 rounded-md px-2 py-2 font-medium outline-none text-sm 
+            ${issueNumber >= 750 ? "bg-brand-accent text-white" : "bg-blue-50 text-brand-accent"}
+            ${sidebarCollapse ? "w-full justify-center" : ""}`}
+            title="Shortcuts"
+            onClick={() => setUpgradeModal(true)}
+          >
+            <ArrowUpCircleIcon className="h-4 w-4 " />
+            {!sidebarCollapse && <span> Learn more</span>}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={`flex items-center gap-x-1 rounded-md px-2 py-2 font-medium outline-none text-sm ${
+              issueNumber >= 750
+                ? "bg-red-50 text-red-600"
+                : issueNumber >= 500
+                ? "bg-yellow-50 text-yellow-600"
+                : "bg-green-50 text-green-600"
+            }
+            ${sidebarCollapse ? "w-full justify-center" : ""}`}
+            title="Shortcuts"
+            onClick={() => setAlert(true)}
+          >
+            <CircularProgress
+              progress={(issueNumber / 1024) * 100 > 100 ? 100 : (issueNumber / 1024) * 100}
+            />
+            {!sidebarCollapse && <span>Free Plan</span>}
+          </button>
+        )}
+
+        <button
+          type="button"
+          className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base ${
+            sidebarCollapse ? "w-full justify-center" : ""
+          }`}
+          onClick={() => {
+            const e = new KeyboardEvent("keydown", {
+              key: "h",
+            });
+            document.dispatchEvent(e);
+          }}
+          title="Shortcuts"
+        >
+          <RocketLaunchIcon className="h-4 w-4 text-brand-secondary" />
+          {/* {!sidebarCollapse && <span>Shortcuts</span>} */}
+        </button>
+        <button
+          type="button"
+          className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base ${
+            sidebarCollapse ? "w-full justify-center" : ""
+          }`}
+          onClick={() => setIsNeedHelpOpen((prev) => !prev)}
+          title="Help"
+        >
+          <QuestionMarkCircleIcon className="h-4 w-4 text-brand-secondary" />
+          {/* {!sidebarCollapse && <span>Help</span>} */}
+        </button>
+        <button
+          type="button"
+          className="flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base md:hidden"
+          onClick={() => setSidebarActive(false)}
+        >
+          <ArrowLongLeftIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary group-hover:text-brand-base" />
+        </button>
+        <button
+          type="button"
+          className={`hidden items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base md:flex ${
+            sidebarCollapse ? "w-full justify-center" : ""
+          }`}
+          onClick={() => toggleCollapsed()}
+        >
+          <ArrowLongLeftIcon
+            className={`h-4 w-4 flex-shrink-0 text-brand-secondary duration-300 group-hover:text-brand-base ${
+              sidebarCollapse ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        <div className="relative">
+          <Transition
+            show={isNeedHelpOpen}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <div
+              className={`absolute bottom-2 ${helpOptionMode} space-y-2 rounded-sm bg-brand-surface-2 p-1 shadow-md`}
+              ref={helpOptionsRef}
+            >
+              {helpOptions.map(({ name, Icon, href, onClick }) => {
+                if (href)
+                  return (
+                    <Link href={href} key={name}>
+                      <a
+                        target="_blank"
+                        className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-brand-surface-1"
+                      >
+                        <Icon className="h-4 w-4 text-brand-secondary" />
+                        <span className="text-sm">{name}</span>
+                      </a>
+                    </Link>
+                  );
+                else
+                  return (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={onClick ? onClick : undefined}
+                      className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-brand-surface-1"
                     >
                       <Icon className="h-4 w-4 text-brand-secondary" />
                       <span className="text-sm">{name}</span>
-                    </a>
-                  </Link>
-                );
-              else
-                return (
-                  <button
-                    key={name}
-                    type="button"
-                    onClick={onClick ? onClick : undefined}
-                    className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-brand-surface-1"
-                  >
-                    <Icon className="h-4 w-4 text-brand-secondary" />
-                    <span className="text-sm">{name}</span>
-                  </button>
-                );
-            })}
-          </div>
-        </Transition>
+                    </button>
+                  );
+              })}
+            </div>
+          </Transition>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
