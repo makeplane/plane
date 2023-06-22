@@ -1,3 +1,11 @@
+import {
+  CalendarDaysIcon,
+  PlayIcon,
+  Squares2X2Icon,
+  TagIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
+
 export const SPREADSHEET_COLUMN = [
   {
     propertyName: "title",
@@ -7,41 +15,46 @@ export const SPREADSHEET_COLUMN = [
   {
     propertyName: "state",
     colName: "State",
-    colSize: "120px",
+    colSize: "128px",
+    icon: Squares2X2Icon,
+    ascendingOrder: "state__name",
+    descendingOrder: "-state__name",
   },
   {
     propertyName: "priority",
     colName: "Priority",
-    colSize: "100px",
+    colSize: "128px",
   },
   {
     propertyName: "assignee",
     colName: "Assignees",
-    colSize: "120px",
+    colSize: "128px",
+    icon: UserGroupIcon,
+    ascendingOrder: "assignees__name",
+    descendingOrder: "-assignees__name",
   },
   {
     propertyName: "labels",
     colName: "Labels",
-    colSize: "120px",
+    colSize: "128px",
+    icon: TagIcon,
+    ascendingOrder: "labels__name",
+    descendingOrder: "-labels__name",
   },
   {
     propertyName: "due_date",
     colName: "Due Date",
-    colSize: "120px",
+    colSize: "128px",
+    icon: CalendarDaysIcon,
+    ascendingOrder: "target_date",
+    descendingOrder: "-target_date",
   },
   {
     propertyName: "estimate",
     colName: "Estimate",
-    colSize: "120px",
-  },
-  {
-    propertyName: "link",
-    colName: "Link",
-    colSize: "120px",
-  },
-  {
-    propertyName: "attachment_count",
-    colName: "Attachment",
-    colSize: "120px",
+    colSize: "128px",
+    icon: PlayIcon,
+    ascendingOrder: "estimate__point",
+    descendingOrder: "-estimate__point",
   },
 ];

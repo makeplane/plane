@@ -23,6 +23,8 @@ import {
 const useSpreadsheetIssuesView = () => {
   const {
     issueView,
+    orderBy,
+    setOrderBy,
     filters,
     setFilters,
     resetFilterToDefault,
@@ -34,6 +36,7 @@ const useSpreadsheetIssuesView = () => {
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const params: any = {
+    order_by: orderBy,
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
     state: filters?.state ? filters?.state.join(",") : undefined,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
@@ -108,6 +111,8 @@ const useSpreadsheetIssuesView = () => {
   return {
     issueView,
     spreadsheetIssues: spreadsheetIssues ?? [],
+    orderBy,
+    setOrderBy,
     filters,
     setFilters,
     params,

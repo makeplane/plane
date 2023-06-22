@@ -105,46 +105,45 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       className="group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      <div className="flex gap-1 items-center px-2 sticky left-0 z-10 bg-brand-base hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+      <div className="flex gap-2 items-center px-4 sticky left-0 z-10 text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base">
         {properties.key ? (
           issue.parent ? (
             <span className="p-1" />
           ) : (
-            <div className="flex items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base">
+            <div className="flex items-center cursor-pointer text-xs text-center border-brand-base">
               {issue.project_detail?.identifier}-{issue.sequence_id}
             </div>
           )
         ) : (
           ""
         )}
-        {properties.key && issue.parent && (
-          <div
-            className="flex items-center cursor-pointer text-xs text-brand-secondary text-center p-2 border-brand-base"
-            style={{ paddingLeft }}
-          >
-            {issue.project_detail?.identifier}-{issue.sequence_id}
-          </div>
-        )}
-
-        <div className="h-5 w-5">
-          {issue.sub_issues_count > 0 && (
-            <button
-              className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm"
-              onClick={() => handleToggleExpand(issue.id)}
-            >
-              <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
-            </button>
+        <span className="flex gap-1 items-center" style={{ paddingLeft }}>
+          {properties.key && issue.parent && (
+            <div className="flex items-center cursor-pointer text-xs text-center border-brand-base">
+              {issue.project_detail?.identifier}-{issue.sequence_id}
+            </div>
           )}
-        </div>
+
+          <div className="h-5 w-5">
+            {issue.sub_issues_count > 0 && (
+              <button
+                className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm"
+                onClick={() => handleToggleExpand(issue.id)}
+              >
+                <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
+              </button>
+            )}
+          </div>
+        </span>
 
         <span className=" text-[0.825rem]">{truncateText(issue.name, 45)}</span>
       </div>
       {properties.state && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
           <ViewStateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
-            position="right"
+            position="left"
             customButton
             user={user}
             isNotAllowed={isNotAllowed}
@@ -152,11 +151,11 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.priority && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
           <ViewPrioritySelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
-            position="right"
+            position="left"
             noBorder
             user={user}
             isNotAllowed={isNotAllowed}
@@ -164,11 +163,11 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.assignee && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
           <ViewAssigneeSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
-            position="right"
+            position="left"
             customButton
             user={user}
             isNotAllowed={isNotAllowed}
@@ -177,11 +176,11 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       )}
       {properties.labels ? (
         issue.label_details.length > 0 ? (
-          <div className="flex items-center justify-center gap-2 text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+          <div className="flex items-center gap-2 text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
             {issue.label_details.slice(0, 4).map((label, index) => (
               <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
                 <span
-                  className={`h-4 w-4 flex-shrink-0 rounded-full border hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base
+                  className={`h-4 w-4 flex-shrink-0 rounded-full border group-hover:bg-brand-surface-2 border-brand-base
                 `}
                   style={{
                     backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
@@ -192,7 +191,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             {issue.label_details.length > 4 ? <span>+{issue.label_details.length - 4}</span> : null}
           </div>
         ) : (
-          <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+          <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
             No Labels
           </div>
         )
@@ -200,7 +199,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         ""
       )}
       {properties.due_date && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
           <ViewDueDateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -211,34 +210,14 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.estimate && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
           <ViewEstimateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
-            position="right"
+            position="left"
             user={user}
             isNotAllowed={isNotAllowed}
           />
-        </div>
-      )}
-      {properties.link && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
-          <div className="flex cursor-default items-center px-2.5 py-1 text-xs">
-            <div className="flex items-center gap-1 text-brand-secondary">
-              <LinkIcon className="h-3.5 w-3.5" />
-              {issue.link_count}
-            </div>
-          </div>
-        </div>
-      )}
-      {properties.attachment_count && (
-        <div className="flex items-center justify-center text-xs text-brand-secondary text-center p-2 hover:rounded-md hover:shadow-sm hover:border group-hover:bg-brand-surface-2 border-brand-base">
-          <div className="flex cursor-default items-center px-2.5 py-1 text-xs">
-            <div className="flex items-center gap-1 text-brand-secondary">
-              <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
-              {issue.attachment_count}
-            </div>
-          </div>
         </div>
       )}
     </div>

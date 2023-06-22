@@ -10,7 +10,7 @@ import { Spinner } from "components/ui";
 import useIssuesProperties from "hooks/use-issue-properties";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // types
-import { ICurrentUserResponse, Properties, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
 // constants
 import { SPREADSHEET_COLUMN } from "constants/spreadsheet";
 
@@ -47,14 +47,14 @@ export const SpreadsheetView: React.FC<Props> = ({ user, userAuth }) => {
 
   return (
     <div className="h-full rounded-lg text-brand-secondary overflow-x-auto whitespace-nowrap bg-brand-base">
-      <div className="sticky z-[9] top-0 border-b border-brand-base bg-brand-surface-2 w-full min-w-max">
+      <div className="sticky z-20 top-0 border-b border-brand-base bg-brand-surface-2 w-full min-w-max">
         <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
       </div>
       {spreadsheetIssues ? (
         <div className="flex flex-col h-full w-full bg-brand-base rounded-sm ">
-          {spreadsheetIssues.map((issue, index) => (
+          {spreadsheetIssues.map((issue: IIssue, index) => (
             <SpreadsheetIssues
-              key={issue.id}
+              key={`${issue.id}_${index}`}
               issue={issue}
               expandedIssues={expandedIssues}
               setExpandedIssues={setExpandedIssues}
