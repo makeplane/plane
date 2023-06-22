@@ -52,13 +52,7 @@ export const InboxActionHeader = () => {
 
   const { user } = useUserAuth();
   const { memberRole } = useProjectMyMembership();
-  const {
-    filters,
-    setFilters,
-    filtersLength,
-    issues: inboxIssues,
-    mutate: mutateInboxIssues,
-  } = useInboxView();
+  const { issues: inboxIssues, mutate: mutateInboxIssues } = useInboxView();
   const { setToastAlert } = useToast();
 
   const markInboxStatus = async (data: TInboxStatus) => {
@@ -171,35 +165,7 @@ export const InboxActionHeader = () => {
             <InboxIcon className="h-4 w-4 text-brand-secondary" />
             <h3 className="font-medium">Inbox</h3>
           </div>
-          <div className="relative">
-            <FiltersDropdown
-              filters={filters}
-              onSelect={(option) => {
-                const key = option.key as keyof typeof filters;
-
-                const valueExists = (filters[key] as any[])?.includes(option.value);
-
-                if (valueExists) {
-                  setFilters({
-                    [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                      (val) => val !== option.value
-                    ),
-                  });
-                } else {
-                  setFilters({
-                    [option.key]: [...((filters[key] ?? []) as any[]), option.value],
-                  });
-                }
-              }}
-              direction="right"
-              height="rg"
-            />
-            {filtersLength > 0 && (
-              <div className="absolute -top-2 -right-2 h-4 w-4 text-[0.65rem] grid place-items-center rounded-full text-brand-base bg-brand-surface-2 border border-brand-base z-10">
-                <span>{filtersLength}</span>
-              </div>
-            )}
-          </div>
+          <FiltersDropdown />
         </div>
         {inboxIssueId && (
           <div className="flex justify-between items-center gap-4 px-4 col-span-3">
@@ -229,24 +195,11 @@ export const InboxActionHeader = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              {isAllowed && (
-                <div
-                  className={`flex-shrink-0 ${
-                    issueStatus === 0 || issueStatus === -2 ? "" : "opacity-70"
-                  }`}
-                >
+              {isAllowed && (issueStatus === 0 || issueStatus === -2) && (
+                <div className="flex-shrink-0">
                   <Popover className="relative">
-                    <Popover.Button
-                      as="button"
-                      type="button"
-                      disabled={!(issueStatus === 0 || issueStatus === -2)}
-                    >
-                      <SecondaryButton
-                        className={`flex gap-x-1 items-center ${
-                          issueStatus === 0 || issueStatus === -2 ? "" : "cursor-not-allowed"
-                        }`}
-                        size="sm"
-                      >
+                    <Popover.Button as="button" type="button">
+                      <SecondaryButton className="flex gap-x-1 items-center" size="sm">
                         <ClockIcon className="h-4 w-4 text-brand-secondary" />
                         <span>Snooze</span>
                       </SecondaryButton>
@@ -282,32 +235,37 @@ export const InboxActionHeader = () => {
                   </Popover>
                 </div>
               )}
-              {isAllowed && (
-                <div className={`flex gap-3 flex-wrap ${issueStatus !== -2 ? "opacity-70" : ""}`}>
+              {isAllowed && issueStatus === -2 && (
+                <div className="flex-shrink-0">
                   <SecondaryButton
                     size="sm"
                     className="flex gap-2 items-center"
                     onClick={() => setSelectDuplicateIssue(true)}
-                    disabled={issueStatus !== -2}
                   >
                     <StackedLayersHorizontalIcon className="h-4 w-4 text-brand-secondary" />
                     <span>Mark as duplicate</span>
                   </SecondaryButton>
+                </div>
+              )}
+              {isAllowed && (issueStatus === 0 || issueStatus === -2) && (
+                <div className="flex-shrink-0">
                   <SecondaryButton
                     size="sm"
                     className="flex gap-2 items-center"
                     onClick={handleAcceptIssue}
-                    disabled={issueStatus !== -2}
                     loading={isAccepting}
                   >
                     <CheckCircleIcon className="h-4 w-4 text-green-500" />
                     <span>{isAccepting ? "Accepting..." : "Accept"}</span>
                   </SecondaryButton>
+                </div>
+              )}
+              {isAllowed && issueStatus === -2 && (
+                <div className="flex-shrink-0">
                   <SecondaryButton
                     size="sm"
                     className="flex gap-2 items-center"
                     onClick={() => setDeclineIssueModal(true)}
-                    disabled={issueStatus !== -2}
                   >
                     <XCircleIcon className="h-4 w-4 text-red-500" />
                     <span>Decline</span>
