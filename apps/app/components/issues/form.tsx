@@ -163,6 +163,8 @@ export const IssueForm: FC<IssueFormProps> = ({
   const handleCreateUpdateIssue = async (formData: Partial<IIssue>) => {
     await handleFormSubmit(formData);
 
+    setGptAssistantModal(false);
+
     reset({
       ...defaultValues,
       project: projectId,

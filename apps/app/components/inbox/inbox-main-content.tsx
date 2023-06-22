@@ -77,17 +77,6 @@ export const InboxMainContent: React.FC = () => {
       : null
   );
 
-  useEffect(() => {
-    if (!issueDetails || !inboxIssueId) return;
-
-    reset({
-      ...issueDetails,
-      assignees_list:
-        issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
-    });
-  }, [issueDetails, reset, inboxIssueId]);
-
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
       if (!workspaceSlug || !projectId || !inboxIssueId || !inboxId || !issueDetails) return;
@@ -145,8 +134,6 @@ export const InboxMainContent: React.FC = () => {
     ]
   );
 
-  const issueStatus = issueDetails?.issue_inbox[0].status;
-
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!inboxIssues || !inboxIssueId) return;
@@ -175,7 +162,6 @@ export const InboxMainContent: React.FC = () => {
                   : inboxIssues[currentIssueIndex + 1].bridge_id,
             },
           });
-
           break;
         default:
           break;
@@ -191,6 +177,19 @@ export const InboxMainContent: React.FC = () => {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [onKeyDown]);
+
+  useEffect(() => {
+    if (!issueDetails || !inboxIssueId) return;
+
+    reset({
+      ...issueDetails,
+      assignees_list:
+        issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
+      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+    });
+  }, [issueDetails, reset, inboxIssueId]);
+
+  const issueStatus = issueDetails?.issue_inbox[0].status;
 
   if (!inboxIssueId)
     return (
@@ -335,6 +334,4 @@ export const InboxMainContent: React.FC = () => {
       )}
     </>
   );
-
-  return null;
 };
