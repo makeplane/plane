@@ -534,11 +534,11 @@ class IssueLiteSerializer(BaseSerializer):
 
 
 class IssueSubscriberSerializer(BaseSerializer):
+    project = serializers.PrimaryKeyRelatedField(read_only=True)
+    workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    issue = serializers.PrimaryKeyRelatedField(read_only=True)
+    subscriber = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = IssueSubscriber
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-        ]

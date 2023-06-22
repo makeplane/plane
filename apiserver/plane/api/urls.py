@@ -801,30 +801,12 @@ urlpatterns = [
     ## End IssueComments
     # Issue Subscribers
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribers/",
         IssueSubscriberViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
-            }
-        ),
-        name="project-issue-subscriber",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/<uuid:subscriber_id>",
-        IssueSubscriberViewSet.as_view(
-            {
                 "delete": "destroy"
-            }
-        ),
-        name="project-issue-subscriber",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribe/",
-        IssueSubscriberViewSet.as_view(
-            {
-                "get": "subscription_status",
-                "post": "subscribe",
             }
         ),
         name="project-issue-subscriber",
