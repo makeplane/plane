@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import { mutate } from "swr";
@@ -11,9 +11,8 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
-import { Icon } from "components/ui";
 // icons
-import { LinkIcon, PaperClipIcon } from "@heroicons/react/24/outline";
+import { Icon } from "components/ui";
 // hooks
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // services
@@ -51,6 +50,12 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   userAuth,
   nestingLevel,
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(issue.name);
+  const titleRef = useRef<HTMLInputElement>(null);
+
+  const singleClickRef = useRef<NodeJS.Timeout | null>(null);
+
   const router = useRouter();
 
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
@@ -98,6 +103,40 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   const paddingLeft = `${nestingLevel * 48}px`;
 
+  useEffect(() => {
+    if (isEditing) {
+      titleRef.current?.focus();
+    }
+  }, [isEditing]);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handleTitleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      partialUpdateIssue({ name: title }, issue.id);
+      setIsEditing(false);
+    }
+  };
+
+  const handleTitleClick = () => {
+    if (singleClickRef.current) {
+      clearTimeout(singleClickRef.current);
+    }
+    singleClickRef.current = setTimeout(() => {
+      // handle redirecting to the page on single click
+      router.push(`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`);
+    }, 200);
+  };
+
+  const handleTitleDoubleClick = () => {
+    if (singleClickRef.current) {
+      clearTimeout(singleClickRef.current);
+    }
+    setIsEditing(true);
+  };
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -105,7 +144,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       className="group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      <div className="flex gap-2 items-center px-4 sticky left-0 z-10 text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base">
+      <div className="flex gap-2 items-center px-4 sticky left-0 z-10 text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full">
         {properties.key ? (
           issue.parent ? (
             <span className="p-1" />
@@ -136,7 +175,26 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           </div>
         </span>
 
-        <span className=" text-[0.825rem]">{truncateText(issue.name, 45)}</span>
+        <span className="truncate cursor-pointer w-full text-[0.825rem]">
+          {isEditing ? (
+            <input
+              ref={titleRef}
+              type="text"
+              value={title}
+              className="rounded border-none outline-none bg-transparent ring-0 w-full"
+              onChange={handleTitleChange}
+              onKeyDown={handleTitleKeyPress}
+            />
+          ) : (
+            <span
+              onClick={handleTitleClick}
+              onDoubleClick={handleTitleDoubleClick}
+              className="truncate w-full"
+            >
+              {issue.name}
+            </span>
+          )}
+        </span>
       </div>
       {properties.state && (
         <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
