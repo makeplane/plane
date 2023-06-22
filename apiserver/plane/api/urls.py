@@ -824,6 +824,7 @@ urlpatterns = [
             {
                 "get": "subscription_status",
                 "post": "subscribe",
+                "delete": "unsubscribe",
             }
         ),
         name="project-issue-subscribers",
