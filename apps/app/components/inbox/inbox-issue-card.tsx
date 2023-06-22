@@ -101,7 +101,13 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
                 </div>
               </Tooltip>
               {issue.issue_inbox[0].snoozed_till && (
-                <div className="text-xs flex items-center gap-1 text-brand-accent">
+                <div
+                  className={`text-xs flex items-center gap-1 ${
+                    new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date()
+                      ? "text-red-500"
+                      : "text-blue-500"
+                  }`}
+                >
                   <ClockIcon className="h-3.5 w-3.5" />
                   <span>
                     Snoozed till {renderShortNumericDateFormat(issue.issue_inbox[0].snoozed_till)}
