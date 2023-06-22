@@ -54,7 +54,7 @@ export const SPREADSHEET_COLUMN = [
     colName: "Estimate",
     colSize: "128px",
     icon: PlayIcon,
-    ascendingOrder: "estimate__point",
-    descendingOrder: "-estimate__point",
+    ascendingOrder: "estimate_point",
+    descendingOrder: "-estimate_point",
   },
 ];
