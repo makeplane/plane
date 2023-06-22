@@ -14,7 +14,7 @@ import { IInboxQueryParams } from "types";
 import { INBOX_ISSUES } from "constants/fetch-keys";
 
 const useInboxView = () => {
-  const { filters, setFilters } = useContext(inboxViewContext);
+  const { filters, setFilters, clearAllFilters } = useContext(inboxViewContext);
 
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
@@ -50,10 +50,11 @@ const useInboxView = () => {
   return {
     filters,
     setFilters,
+    clearAllFilters,
+    filtersLength,
     params,
     issues: inboxIssues,
     mutate: mutateInboxIssues,
-    filtersLength,
   } as const;
 };
 
