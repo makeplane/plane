@@ -856,7 +856,8 @@ class IssueSubscriberViewSet(BaseViewSet):
 
     def perform_create(self, serializer):
         serializer.save(
-            subscriber_id=self.request.user.id, issue_id=self.kwargs.get("issue_id")
+            project_id=self.kwargs.get("project_id"),
+            issue_id=self.kwargs.get("issue_id"),
         )
 
     def get_queryset(self):
@@ -870,3 +871,86 @@ class IssueSubscriberViewSet(BaseViewSet):
             .order_by("-created_at")
             .distinct()
         )
+
+    def destroy(self, request, slug, project_id, issue_id, subscriber_id):
+        try:
+            issue_subscriber = IssueSubscriber.objects.get(
+                project=project_id,
+                subscriber=subscriber_id,
+                workspace__slug=slug,
+                issue=issue_id,
+            )
+
+            issue_subscriber.delete()
+
+            return Response(
+                {"message": "Removed Subscription"},
+                status=status.HTTP_200_OK,
+            )
+
+        except IssueSubscriber.DoesNotExist:
+            return Response(
+                {"error": "User is not subscribed to this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def subscribe(self, request, slug, project_id, issue_id):
+        try:
+            if IssueSubscriber.objects.filter(
+                issue_id=issue_id,
+                subscriber=request.user,
+                workspace__slug=slug,
+                project=project_id,
+            ).exists():
+                return Response(
+                    {"message": "User already subscribed to the issue."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            issue = Issue.objects.get(id=issue_id)
+
+            subscriber = IssueSubscriber.objects.create(
+                issue_id=issue_id,
+                subscriber_id=request.user.id,
+                project_id=project_id,
+            )
+
+            serilaizer = IssueSubscriberSerializer(subscriber)
+            return Response(serilaizer.data, status=status.HTTP_201_CREATED)
+
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong, please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def subscription_status(self, request, slug, project_id, issue_id):
+        try:
+            issue_subscriber = IssueSubscriber.objects.filter(
+                issue=issue_id,
+                subscriber=request.user,
+                workspace__slug=slug,
+                project=project_id,
+            ).exists()
+            return Response({"subscribed": issue_subscriber}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong, please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
