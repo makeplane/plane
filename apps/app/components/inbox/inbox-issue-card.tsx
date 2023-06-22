@@ -83,40 +83,39 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
           </div>
           <div
             className={`text-xs flex items-center justify-end gap-1 w-full ${
-              issueStatus === 0
-                ? new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date()
-                  ? "text-red-500"
-                  : "text-blue-500"
+              issueStatus === 0 && new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date()
+                ? "text-red-500"
                 : INBOX_STATUS.find((s) => s.value === issueStatus)?.textColor
             }`}
           >
             {issueStatus === -2 ? (
               <>
                 <ExclamationTriangleIcon className="h-3.5 w-3.5" />
-                <span>Pending issue</span>
+                <span>Pending</span>
               </>
             ) : issueStatus === -1 ? (
               <>
                 <XCircleIcon className="h-3.5 w-3.5" />
-                <span>Declined issue</span>
+                <span>Declined</span>
               </>
             ) : issueStatus === 0 ? (
               <>
                 <ClockIcon className="h-3.5 w-3.5" />
                 <span>
-                  Snoozed till{" "}
-                  {renderShortNumericDateFormat(issue.issue_inbox[0].snoozed_till ?? "")}
+                  {new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date()
+                    ? "Snoozed date passed"
+                    : "Snoozed"}
                 </span>
               </>
             ) : issueStatus === 1 ? (
               <>
                 <CheckCircleIcon className="h-3.5 w-3.5" />
-                <span>Accepted issue</span>
+                <span>Accepted</span>
               </>
             ) : (
               <>
                 <DocumentDuplicateIcon className="h-3.5 w-3.5" />
-                <span>Marked as duplicate</span>
+                <span>Duplicate</span>
               </>
             )}
           </div>

@@ -3,9 +3,9 @@ export const INBOX_STATUS = [
     key: "pending",
     label: "Pending",
     value: -2,
-    textColor: "text-orange-500",
-    bgColor: "bg-orange-500/10",
-    borderColor: "border-orange-500",
+    textColor: "text-yellow-500",
+    bgColor: "bg-yellow-500/10",
+    borderColor: "border-yellow-500",
   },
   {
     key: "declined",
@@ -19,9 +19,9 @@ export const INBOX_STATUS = [
     key: "snoozed",
     label: "Snoozed",
     value: 0,
-    textColor: "text-blue-500",
-    bgColor: "bg-blue-500/10",
-    borderColor: "border-blue-500",
+    textColor: "text-brand-secondary",
+    bgColor: "bg-gray-500/10",
+    borderColor: "border-gray-500",
   },
   {
     key: "accepted",
@@ -35,9 +35,9 @@ export const INBOX_STATUS = [
     key: "duplicate",
     label: "Duplicate",
     value: 2,
-    textColor: "text-yellow-500",
-    bgColor: "bg-yellow-500/10",
-    borderColor: "border-yellow-500",
+    textColor: "text-brand-secondary",
+    bgColor: "bg-gray-500/10",
+    borderColor: "border-gray-500",
   },
 ];
 
