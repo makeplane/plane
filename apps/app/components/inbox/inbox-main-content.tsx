@@ -36,7 +36,7 @@ import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
-import { INBOX_ISSUES, INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
+import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const defaultValues = {
   name: "",
@@ -129,6 +129,7 @@ export const InboxMainContent: React.FC = () => {
         .then(() => {
           mutateIssueDetails();
           mutate(INBOX_ISSUES(inboxId.toString(), params));
+          mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
         });
     },
     [
@@ -157,7 +158,9 @@ export const InboxMainContent: React.FC = () => {
                   : issueStatus === -1
                   ? "text-red-500 border-red-500 bg-red-500/10"
                   : issueStatus === 0
-                  ? "text-blue-500 border-blue-500 bg-blue-500/10"
+                  ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
+                    ? "text-red-500 border-red-500 bg-red-500/10"
+                    : "text-blue-500 border-blue-500 bg-blue-500/10"
                   : issueStatus === 1
                   ? "text-green-500 border-green-500 bg-green-500/10"
                   : issueStatus === 2
@@ -178,10 +181,19 @@ export const InboxMainContent: React.FC = () => {
               ) : issueStatus === 0 ? (
                 <>
                   <ClockIcon className="h-5 w-5" />
-                  <p>
-                    This issue has been snoozed till{" "}
-                    {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
-                  </p>
+                  {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
+                    <p>
+                      This issue was snoozed till{" "}
+                      {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}
+                      .
+                    </p>
+                  ) : (
+                    <p>
+                      This issue has been snoozed till{" "}
+                      {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}
+                      .
+                    </p>
+                  )}
                 </>
               ) : issueStatus === 1 ? (
                 <>
