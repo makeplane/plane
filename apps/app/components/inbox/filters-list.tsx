@@ -98,7 +98,7 @@ export const InboxFiltersList = () => {
                         type="button"
                         onClick={() =>
                           setFilters({
-                            priority: null,
+                            inbox_status: null,
                           })
                         }
                       >
