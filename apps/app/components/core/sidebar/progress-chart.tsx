@@ -3,16 +3,15 @@ import React from "react";
 // ui
 import { LineGraph } from "components/ui";
 // helpers
-import { getDatesInRange, renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 //types
-import { IIssue } from "types";
+import { TCompletionChartDistribution } from "types";
 
 type Props = {
-  issues: IIssue[];
-  start: string;
-  end: string;
-  width?: number;
-  height?: number;
+  distribution: TCompletionChartDistribution;
+  startDate: string | Date;
+  endDate: string | Date;
+  totalIssues: number;
 };
 
 const styleById = {
@@ -41,32 +40,11 @@ const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
     />
   ));
 
-const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-
-  const getChartData = () => {
-    const dateRangeArray = getDatesInRange(startDate, endDate);
-    let count = 0;
-
-    const dateWiseData = dateRangeArray.map((d) => {
-      const current = d.toISOString().split("T")[0];
-      const total = issues.length;
-      const currentData = issues.filter(
-        (i) => i.completed_at && i.completed_at.toString().split("T")[0] === current
-      );
-      count = currentData ? currentData.length + count : count;
-
-      return {
-        currentDate: renderShortNumericDateFormat(current),
-        currentDateData: currentData,
-        pending: new Date(current) < new Date() ? total - count : null,
-      };
-    });
-    return dateWiseData;
-  };
-
-  const chartData = getChartData();
+const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, totalIssues }) => {
+  const chartData = Object.keys(distribution).map((key) => ({
+    currentDate: renderShortNumericDateFormat(key),
+    pending: distribution[key],
+  }));
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -74,7 +52,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
         animate
         curve="monotoneX"
         height="160px"
-        width="360px"
+        width="100%"
         enableGridY={false}
         lineWidth={1}
         margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
@@ -97,7 +75,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
             data: [
               {
                 x: chartData[0].currentDate,
-                y: issues.length,
+                y: totalIssues,
               },
               {
                 x: chartData[chartData.length - 1].currentDate,
@@ -113,10 +91,10 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
         enablePoints={false}
         enableArea
         colors={(datum) => datum.color ?? "#3F76FF"}
-        customYAxisTickValues={[0, issues.length]}
+        customYAxisTickValues={[0, totalIssues]}
         gridXValues={chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : ""))}
         theme={{
-          background: "rgb(var(--color-bg-sidebar))",
+          background: "transparent",
           axis: {
             domain: {
               line: {

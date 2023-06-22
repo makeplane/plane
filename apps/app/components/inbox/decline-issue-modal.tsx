@@ -1,41 +1,23 @@
-import React, { useEffect, useState } from "react";
-
-import { useRouter } from "next/router";
-
-import { mutate } from "swr";
+import React, { useState } from "react";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import inboxServices from "services/inbox.service";
-// hooks
-import useToast from "hooks/use-toast";
-import useInboxView from "hooks/use-inbox-view";
-import useUser from "hooks/use-user";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { IInboxIssue, ICurrentUserResponse, IInboxIssueDetail } from "types";
-// fetch-keys
-import { INBOX_ISSUES, INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
+import type { IInboxIssue } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IInboxIssue | undefined;
+  onSubmit: () => Promise<void>;
 };
 
-export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, onSubmit }) => {
   const [isDeclining, setIsDeclining] = useState(false);
-
-  const router = useRouter();
-  const { workspaceSlug, projectId, inboxId } = router.query;
-
-  const { user } = useUser();
-  const { setToastAlert } = useToast();
-  const { params } = useInboxView();
 
   const onClose = () => {
     setIsDeclining(false);
@@ -43,60 +25,9 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }
   };
 
   const handleDecline = () => {
-    if (!workspaceSlug || !projectId || !inboxId || !data) return;
-
     setIsDeclining(true);
 
-    inboxServices
-      .markInboxStatus(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        inboxId.toString(),
-        data.bridge_id,
-        {
-          status: -1,
-        },
-        user
-      )
-      .then(() => {
-        mutate<IInboxIssueDetail>(
-          INBOX_ISSUE_DETAILS(inboxId.toString(), data.bridge_id),
-          (prevData) => {
-            if (!prevData) return prevData;
-
-            return {
-              ...prevData,
-              issue_inbox: [{ ...prevData.issue_inbox[0], status: -1 }],
-            };
-          },
-          false
-        );
-        mutate<IInboxIssue[]>(
-          INBOX_ISSUES(inboxId.toString(), params),
-          (prevData) =>
-            prevData?.map((i) =>
-              i.bridge_id === data.bridge_id
-                ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], status: -1 }] }
-                : i
-            ),
-          false
-        );
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue declined successfully.",
-        });
-        onClose();
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be declined. Please try again.",
-        })
-      )
-      .finally(() => setIsDeclining(false));
+    onSubmit().finally(() => setIsDeclining(false));
   };
 
   return (
