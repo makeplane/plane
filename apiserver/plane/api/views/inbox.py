@@ -112,7 +112,6 @@ class InboxIssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, inbox_id):
         try:
-            order_by = request.GET.get("order_by", "created_at")
             filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.objects.filter(
@@ -135,7 +134,7 @@ class InboxIssueViewSet(BaseViewSet):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
-                .order_by(order_by)
+                .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
                 .filter(**filters)
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
