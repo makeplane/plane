@@ -367,8 +367,7 @@ class InboxIssueViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
-    def delete(self, request, slug, project_id, inbox_id, pk):
+    def destroy(self, request, slug, project_id, inbox_id, pk):
         try:
             inbox_issue = InboxIssue.objects.get(
                 pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
