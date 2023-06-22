@@ -1014,9 +1014,9 @@ def issue_activity(
         bulk_notifications = []
 
         issue_subscribers = (
-            IssueSubscriber.objects.filter(project=project)
+            IssueSubscriber.objects.filter(project=project, issue_id=issue_id)
             .exclude(subscriber_id=actor_id)
-            .values_list("subscriber")
+            .values_list("subscriber", flat=True)
         )
 
         issue = Issue.objects.get(project=project, pk=issue_id)
@@ -1026,7 +1026,7 @@ def issue_activity(
                     Notification(
                         workspace=project.workspace,
                         sender="in_app:issue_activities",
-                        triggered_by=actor,
+                        triggered_by_id=actor_id,
                         receiver_id=subscriber,
                         entity_identifier=issue_id,
                         entity_name="issue",
@@ -1044,6 +1044,9 @@ def issue_activity(
                         },
                     )
                 )
+
+        # Bulk create notifications
+        Notification.objects.bulk_create(bulk_notifications, batch_size=100)
 
         return
     except Exception as e:

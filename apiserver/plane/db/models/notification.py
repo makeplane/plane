@@ -33,4 +33,4 @@ class Notification(BaseModel):
 
     def __str__(self):
         """Return name of the notifications"""
-        return f"{self.receiver.name} <{self.workspace.name}>"
+        return f"{self.receiver.email} <{self.workspace.name}>"
