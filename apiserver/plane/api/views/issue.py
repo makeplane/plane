@@ -925,8 +925,7 @@ class IssueSubscriberViewSet(BaseViewSet):
             )
             issue_subscriber.delete()
             return Response(
-                {"message": "Removed Subscription"},
-                status=status.HTTP_200_OK,
+                status=status.HTTP_204_NO_CONTENT,
             )
         except IssueSubscriber.DoesNotExist:
             return Response(
