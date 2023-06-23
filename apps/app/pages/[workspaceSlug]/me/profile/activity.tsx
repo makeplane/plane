@@ -4,6 +4,7 @@ import useSWR from "swr";
 import userService from "services/user.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { Feeds } from "components/core";
 // ui
@@ -11,7 +12,6 @@ import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
-import SettingsNavbar from "layouts/settings-navbar";
 
 const ProfileActivity = () => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
@@ -24,8 +24,8 @@ const ProfileActivity = () => {
         </Breadcrumbs>
       }
     >
-      <div className="px-24 py-8">
-        <div className="mb-12 space-y-6">
+      <div className="p-8">
+        <div className="mb-8 space-y-6">
           <div>
             <h3 className="text-3xl font-semibold">Profile Settings</h3>
             <p className="mt-1 text-brand-secondary">

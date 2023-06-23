@@ -10,6 +10,7 @@ import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImageUploadModal } from "components/core";
 // ui
@@ -22,7 +23,6 @@ import type { NextPage } from "next";
 import type { IUser } from "types";
 // constants
 import { USER_ROLES } from "constants/workspace";
-import SettingsNavbar from "layouts/settings-navbar";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -136,8 +136,8 @@ const Profile: NextPage = () => {
         userImage
       />
       {myProfile ? (
-        <div className="px-24 py-8">
-          <div className="mb-12 space-y-6">
+        <div className="p-8">
+          <div className="mb-8 space-y-6">
             <div>
               <h3 className="text-3xl font-semibold">Profile Settings</h3>
               <p className="mt-1 text-brand-secondary">

@@ -124,3 +124,25 @@ export interface GithubRepositoriesResponse {
   repositories: IGithubRepository[];
   total_count: number;
 }
+
+export type TProjectIssuesSearchParams = {
+  search: string;
+  parent?: boolean;
+  blocker_blocked_by?: boolean;
+  cycle?: boolean;
+  module?: boolean;
+  sub_issue?: boolean;
+  issue_id?: string;
+};
+
+export interface ISearchIssueResponse {
+  id: string;
+  name: string;
+  project_id: string;
+  project__identifier: string;
+  sequence_id: number;
+  state__color: string;
+  state__group: string;
+  state__name: string;
+  workspace__slug: string;
+}

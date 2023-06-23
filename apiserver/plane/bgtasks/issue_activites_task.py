@@ -1006,5 +1006,8 @@ def issue_activity(
                     )
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

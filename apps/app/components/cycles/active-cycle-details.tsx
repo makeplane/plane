@@ -395,82 +395,87 @@ export const ActiveCycleDetails: React.FC = () => {
             <div className="text-brand-primary">High Priority Issues</div>
             <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
               {issues ? (
-                issues.map((issue) => (
-                  <div
-                    key={issue.id}
-                    className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-brand-base bg-brand-surface-1 px-3 py-1.5"
-                  >
-                    <div className="flex flex-col gap-1">
-                      <div>
+                issues.length > 0 ? (
+                  issues.map((issue) => (
+                    <div
+                      key={issue.id}
+                      className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-brand-base bg-brand-surface-1 px-3 py-1.5"
+                    >
+                      <div className="flex flex-col gap-1">
+                        <div>
+                          <Tooltip
+                            tooltipHeading="Issue ID"
+                            tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+                          >
+                            <span className="flex-shrink-0 text-xs text-brand-secondary">
+                              {issue.project_detail?.identifier}-{issue.sequence_id}
+                            </span>
+                          </Tooltip>
+                        </div>
                         <Tooltip
-                          tooltipHeading="Issue ID"
-                          tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+                          position="top-left"
+                          tooltipHeading="Title"
+                          tooltipContent={issue.name}
                         >
-                          <span className="flex-shrink-0 text-xs text-brand-secondary">
-                            {issue.project_detail?.identifier}-{issue.sequence_id}
+                          <span className="text-[0.825rem] text-brand-base">
+                            {truncateText(issue.name, 30)}
                           </span>
                         </Tooltip>
                       </div>
-                      <Tooltip
-                        position="top-left"
-                        tooltipHeading="Title"
-                        tooltipContent={issue.name}
-                      >
-                        <span className="text-[0.825rem] text-brand-base">
-                          {truncateText(issue.name, 30)}
-                        </span>
-                      </Tooltip>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        className={`grid h-6 w-6 place-items-center items-center rounded border shadow-sm flex-shrink-0 ${
-                          issue.priority === "urgent"
-                            ? "border-red-500/20 bg-red-500/20 text-red-500"
-                            : "border-orange-500/20 bg-orange-500/20 text-orange-500"
-                        }`}
-                      >
-                        {getPriorityIcon(issue.priority, "text-sm")}
-                      </div>
-                      {issue.label_details.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {issue.label_details.map((label) => (
-                            <span
-                              key={label.id}
-                              className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                            >
-                              <span
-                                className="h-1.5 w-1.5  rounded-full"
-                                style={{
-                                  backgroundColor:
-                                    label?.color && label.color !== "" ? label.color : "#000",
-                                }}
-                              />
-                              {label.name}
-                            </span>
-                          ))}
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className={`grid h-6 w-6 place-items-center items-center rounded border shadow-sm flex-shrink-0 ${
+                            issue.priority === "urgent"
+                              ? "border-red-500/20 bg-red-500/20 text-red-500"
+                              : "border-orange-500/20 bg-orange-500/20 text-orange-500"
+                          }`}
+                        >
+                          {getPriorityIcon(issue.priority, "text-sm")}
                         </div>
-                      ) : (
-                        ""
-                      )}
-                      <div className={`flex items-center gap-2 text-brand-secondary`}>
-                        {issue.assignees &&
-                        issue.assignees.length > 0 &&
-                        Array.isArray(issue.assignees) ? (
-                          <div className="-my-0.5 flex items-center justify-center gap-2">
-                            <AssigneesList
-                              users={issue.assignee_details}
-                              length={3}
-                              showLength={false}
-                            />
+                        {issue.label_details.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {issue.label_details.map((label) => (
+                              <span
+                                key={label.id}
+                                className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
+                              >
+                                <span
+                                  className="h-1.5 w-1.5  rounded-full"
+                                  style={{
+                                    backgroundColor:
+                                      label?.color && label.color !== "" ? label.color : "#000",
+                                  }}
+                                />
+                                {label.name}
+                              </span>
+                            ))}
                           </div>
                         ) : (
                           ""
                         )}
+                        <div className={`flex items-center gap-2 text-brand-secondary`}>
+                          {issue.assignees &&
+                          issue.assignees.length > 0 &&
+                          Array.isArray(issue.assignees) ? (
+                            <div className="-my-0.5 flex items-center justify-center gap-2">
+                              <AssigneesList
+                                users={issue.assignee_details}
+                                length={3}
+                                showLength={false}
+                              />
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="grid place-items-center text-brand-secondary text-sm text-center">
+                    No issues present in the cycle.
                   </div>
-                ))
+                )
               ) : (
                 <Loader className="space-y-3">
                   <Loader.Item height="50px" />
@@ -481,27 +486,29 @@ export const ActiveCycleDetails: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-2">
-            <div className="h-1 w-full rounded-full bg-brand-surface-2">
-              <div
-                className="h-1 rounded-full bg-green-600"
-                style={{
-                  width:
-                    issues &&
-                    `${
-                      (issues.filter((issue) => issue?.state_detail?.group === "completed")
-                        ?.length /
-                        issues.length) *
-                        100 ?? 0
-                    }%`,
-                }}
-              />
+          {issues && issues.length > 0 && (
+            <div className="flex items-center justify-between gap-2">
+              <div className="h-1 w-full rounded-full bg-brand-surface-2">
+                <div
+                  className="h-1 rounded-full bg-green-600"
+                  style={{
+                    width:
+                      issues &&
+                      `${
+                        (issues.filter((issue) => issue?.state_detail?.group === "completed")
+                          ?.length /
+                          issues.length) *
+                          100 ?? 0
+                      }%`,
+                  }}
+                />
+              </div>
+              <div className="w-16 text-end text-xs text-brand-secondary">
+                {issues?.filter((issue) => issue?.state_detail?.group === "completed")?.length} of{" "}
+                {issues?.length}
+              </div>
             </div>
-            <div className="w-16 text-end text-xs text-brand-secondary">
-              {issues?.filter((issue) => issue?.state_detail?.group === "completed")?.length} of{" "}
-              {issues?.length}
-            </div>
-          </div>
+          )}
         </div>
         <div className="flex flex-col justify-between border-brand-base p-4">
           <div className="flex items-start justify-between gap-4 py-1.5 text-xs">

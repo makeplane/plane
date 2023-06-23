@@ -21,7 +21,7 @@ import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outli
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { ICurrentUserResponse, IIssue, ISubIssueResponse } from "types";
+import { ICurrentUserResponse, IIssue, ISearchIssueResponse, ISubIssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -58,14 +58,16 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
       : null
   );
 
-  const addAsSubIssue = async (data: { issues: string[] }) => {
+  const addAsSubIssue = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
 
+    const payload = {
+      sub_issue_ids: data.map((i) => i.id),
+    };
+
     await issuesService
-      .addSubIssues(workspaceSlug as string, projectId as string, parentIssue?.id ?? "", {
-        sub_issue_ids: data.issues,
-      })
-      .then((res) => {
+      .addSubIssues(workspaceSlug as string, projectId as string, parentIssue?.id ?? "", payload)
+      .then(() => {
         mutate<ISubIssueResponse>(
           SUB_ISSUES(parentIssue?.id ?? ""),
           (prevData) => {
@@ -74,10 +76,12 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
 
             const stateDistribution = { ...prevData.state_distribution };
 
-            data.issues.forEach((issueId: string) => {
+            payload.sub_issue_ids.forEach((issueId: string) => {
               const issue = issues?.find((i) => i.id === issueId);
+
               if (issue) {
                 newSubIssues.push(issue);
+
                 const issueGroup = issue.state_detail.group;
                 stateDistribution[issueGroup] = stateDistribution[issueGroup] + 1;
               }
@@ -96,7 +100,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
           (prevData) =>
             (prevData ?? []).map((p) => {
-              if (data.issues.includes(p.id))
+              if (payload.sub_issue_ids.includes(p.id))
                 return {
                   ...p,
                   parent: parentIssue.id,
@@ -188,14 +192,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
       <ExistingIssuesListModal
         isOpen={subIssuesListModal}
         handleClose={() => setSubIssuesListModal(false)}
-        issues={
-          issues?.filter(
-            (i) =>
-              (i.parent === "" || i.parent === null) &&
-              i.id !== parentIssue?.id &&
-              i.id !== parentIssue?.parent
-          ) ?? []
-        }
+        searchParams={{ sub_issue: true, issue_id: parentIssue?.id }}
         handleOnSubmit={addAsSubIssue}
       />
       {subIssuesResponse &&

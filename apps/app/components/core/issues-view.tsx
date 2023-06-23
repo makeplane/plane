@@ -290,9 +290,17 @@ export const IssuesView: React.FC<Props> = ({
   const addIssueToState = useCallback(
     (groupTitle: string) => {
       setCreateIssueModal(true);
+
+      let preloadedValue: string | string[] = groupTitle;
+
+      if (selectedGroup === "labels") {
+        if (groupTitle === "None") preloadedValue = [];
+        else preloadedValue = [groupTitle];
+      }
+
       if (selectedGroup)
         setPreloadedData({
-          [selectedGroup]: groupTitle,
+          [selectedGroup]: preloadedValue,
           actionType: "createIssue",
         });
       else setPreloadedData({ actionType: "createIssue" });
@@ -450,7 +458,6 @@ export const IssuesView: React.FC<Props> = ({
       />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
-        prePopulateData={{ ...issueToEdit }}
         handleClose={() => setEditIssueModal(false)}
         data={issueToEdit}
       />
