@@ -123,7 +123,7 @@ const ProjectPages: NextPage = () => {
           </PrimaryButton>
         }
       >
-        <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">
+        <div className="relative space-y-5 p-8 h-full overflow-hidden flex flex-col">
           <h3 className="text-2xl font-semibold text-brand-base">Pages</h3>
           <Tab.Group
             as={Fragment}
@@ -146,8 +146,11 @@ const ProjectPages: NextPage = () => {
               }
             }}
           >
-            <Tab.List as="div" className="mb-6 flex items-center justify-between">
-              <div className="flex gap-4">
+            <Tab.List
+              as="div"
+              className="page-viewer-wrapper relative mb-6 flex items-center justify-between"
+            >
+              <div className="tabs-container flex gap-4">
                 {tabsList.map((tab, index) => (
                   <Tab
                     key={`${tab}-${index}`}
@@ -163,7 +166,7 @@ const ProjectPages: NextPage = () => {
                   </Tab>
                 ))}
               </div>
-              <div className="flex gap-x-1">
+              <div className="page-viewer flex gap-x-1">
                 <button
                   type="button"
                   className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
