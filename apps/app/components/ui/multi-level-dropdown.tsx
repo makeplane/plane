@@ -35,7 +35,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
   const [openChildFor, setOpenChildFor] = useState<string | null>(null);
 
   return (
-    <Menu as="div" className="relative z-30 inline-block text-left">
+    <Menu as="div" className="relative z-10 inline-block text-left">
       {({ open }) => (
         <>
           <div>

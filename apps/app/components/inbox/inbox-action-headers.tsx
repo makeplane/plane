@@ -18,6 +18,7 @@ import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // components
 import {
+  AcceptIssueModal,
   DeclineIssueModal,
   DeleteIssueModal,
   FiltersDropdown,
@@ -41,9 +42,9 @@ import type { IInboxIssueDetail, TInboxStatus } from "types";
 import { INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
 
 export const InboxActionHeader = () => {
-  const [isAccepting, setIsAccepting] = useState(false);
   const [date, setDate] = useState(new Date());
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
+  const [acceptIssueModal, setAcceptIssueModal] = useState(false);
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
@@ -102,14 +103,6 @@ export const InboxActionHeader = () => {
       });
   };
 
-  const handleAcceptIssue = () => {
-    setIsAccepting(true);
-
-    markInboxStatus({
-      status: 1,
-    }).finally(() => setIsAccepting(false));
-  };
-
   const issue = inboxIssues?.find((issue) => issue.bridge_id === inboxIssueId);
   const currentIssueIndex =
     inboxIssues?.findIndex((issue) => issue.bridge_id === inboxIssueId) ?? 0;
@@ -142,6 +135,16 @@ export const InboxActionHeader = () => {
             status: 2,
             duplicate_to: dupIssueId,
           }).finally(() => setSelectDuplicateIssue(false));
+        }}
+      />
+      <AcceptIssueModal
+        isOpen={acceptIssueModal}
+        handleClose={() => setAcceptIssueModal(false)}
+        data={inboxIssues?.find((i) => i.bridge_id === inboxIssueId)}
+        onSubmit={async () => {
+          await markInboxStatus({
+            status: 1,
+          }).finally(() => setAcceptIssueModal(false));
         }}
       />
       <DeclineIssueModal
@@ -252,11 +255,10 @@ export const InboxActionHeader = () => {
                   <SecondaryButton
                     size="sm"
                     className="flex gap-2 items-center"
-                    onClick={handleAcceptIssue}
-                    loading={isAccepting}
+                    onClick={() => setAcceptIssueModal(true)}
                   >
                     <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                    <span>{isAccepting ? "Accepting..." : "Accept"}</span>
+                    <span>Accept</span>
                   </SecondaryButton>
                 </div>
               )}
