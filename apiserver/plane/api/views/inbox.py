@@ -120,23 +120,17 @@ class InboxIssueViewSet(BaseViewSet):
                     workspace__slug=slug,
                     project_id=project_id,
                 )
+                .filter(**filters)
+                .order_by(order_by)
+                .annotate(bridge_id=F("issue_inbox__id"))
+                .select_related("workspace", "project", "state", "parent")
+                .prefetch_related("assignees", "labels")
                 .annotate(
                     sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
-                .annotate(bridge_id=F("issue_inbox__id"))
-                .filter(project_id=project_id)
-                .filter(workspace__slug=slug)
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("state")
-                .select_related("parent")
-                .prefetch_related("assignees")
-                .prefetch_related("labels")
-                .order_by(order_by)
-                .filter(**filters)
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                     .order_by()
