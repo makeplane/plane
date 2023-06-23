@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 # Django imports
-from django.db.models import Max
+from django.db.models import Max, Q
 
 # Module imports
 from plane.api.views import BaseAPIView
@@ -309,11 +309,13 @@ class BulkImportIssuesEndpoint(BaseAPIView):
 
             # Get the default state
             default_state = State.objects.filter(
-                project_id=project_id, default=True
+                ~Q(name="Triage"), project_id=project_id, default=True
             ).first()
             # if there is no default state assign any random state
             if default_state is None:
-                default_state = State.objects.filter(project_id=project_id).first()
+                default_state = State.objects.filter(
+                    ~Q(name="Triage"), sproject_id=project_id
+                ).first()
 
             # Get the maximum sequence_id
             last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(

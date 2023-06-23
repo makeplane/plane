@@ -607,7 +607,7 @@ class SubIssuesEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                State.objects.filter(workspace__slug=slug, project_id=project_id)
+                State.objects.filter(~Q(name="Triage"), workspace__slug=slug, project_id=project_id)
                 .annotate(
                     state_count=Count(
                         "state_issue",
