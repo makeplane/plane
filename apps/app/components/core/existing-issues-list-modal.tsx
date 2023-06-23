@@ -72,9 +72,9 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     if (!data.issues || data.issues.length === 0) {
       setToastAlert({
-        title: "Error",
         type: "error",
-        message: "Please select atleast one issue",
+        title: "Error!",
+        message: "Please select at least one issue.",
       });
 
       return;
