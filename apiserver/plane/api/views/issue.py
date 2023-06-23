@@ -34,7 +34,6 @@ from plane.api.serializers import (
     IssueCreateSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
-    TimeLineIssueSerializer,
     IssuePropertySerializer,
     LabelSerializer,
     IssueSerializer,
@@ -54,7 +53,6 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    TimelineIssue,
     IssueProperty,
     Label,
     IssueLink,
@@ -261,7 +259,9 @@ class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
         try:
             issues = (
-                Issue.issue_objects.filter(assignees__in=[request.user], workspace__slug=slug)
+                Issue.issue_objects.filter(
+                    assignees__in=[request.user], workspace__slug=slug
+                )
                 .annotate(
                     sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
@@ -443,39 +443,6 @@ class IssueCommentViewSet(BaseViewSet):
         )
 
 
-class TimeLineIssueViewSet(BaseViewSet):
-    serializer_class = TimeLineIssueSerializer
-    model = TimelineIssue
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    filterset_fields = [
-        "issue__id",
-        "workspace__id",
-    ]
-
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"),
-            issue_id=self.kwargs.get("issue_id"),
-        )
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("issue")
-            .distinct()
-        )
-
-
 class IssuePropertyViewSet(BaseViewSet):
     serializer_class = IssuePropertySerializer
     model = IssueProperty
@@ -617,6 +584,26 @@ class SubIssuesEndpoint(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
+                .annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
 
             state_distribution = (

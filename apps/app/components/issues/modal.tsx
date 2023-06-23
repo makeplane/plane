@@ -328,7 +328,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                 <IssueForm
                   issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
-                  initialData={prePopulateData}
+                  initialData={data ?? prePopulateData}
                   createMore={createMore}
                   setCreateMore={setCreateMore}
                   handleClose={handleClose}

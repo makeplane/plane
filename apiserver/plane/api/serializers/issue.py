@@ -16,7 +16,6 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    TimelineIssue,
     IssueProperty,
     IssueBlocker,
     IssueAssignee,
@@ -276,21 +275,6 @@ class IssueCommentSerializer(BaseSerializer):
 
     class Meta:
         model = IssueComment
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class TimeLineIssueSerializer(BaseSerializer):
-    class Meta:
-        model = TimelineIssue
         fields = "__all__"
         read_only_fields = [
             "workspace",

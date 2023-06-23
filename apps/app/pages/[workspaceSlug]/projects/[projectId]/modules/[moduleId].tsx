@@ -172,7 +172,6 @@ const SingleModule: React.FC = () => {
         </div>
 
         <ModuleDetailsSidebar
-          issues={moduleIssues ?? []}
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}

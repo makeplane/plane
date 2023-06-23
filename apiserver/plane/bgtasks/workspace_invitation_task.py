@@ -66,5 +66,8 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
     except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

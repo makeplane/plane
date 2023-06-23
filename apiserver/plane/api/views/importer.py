@@ -239,17 +239,19 @@ class ImportServiceEndpoint(BaseAPIView):
             importer = Importer.objects.get(
                 pk=pk, service=service, workspace__slug=slug
             )
-            # Delete all imported Issues
-            imported_issues = importer.imported_data.get("issues", [])
-            Issue.issue_objects.filter(id__in=imported_issues).delete()
 
-            # Delete all imported Labels
-            imported_labels = importer.imported_data.get("labels", [])
-            Label.objects.filter(id__in=imported_labels).delete()
+            if importer.imported_data is not None:
+                # Delete all imported Issues
+                imported_issues = importer.imported_data.get("issues", [])
+                Issue.issue_objects.filter(id__in=imported_issues).delete()
 
-            if importer.service == "jira":
-                imported_modules = importer.imported_data.get("modules", [])
-                Module.objects.filter(id__in=imported_modules).delete()
+                # Delete all imported Labels
+                imported_labels = importer.imported_data.get("labels", [])
+                Label.objects.filter(id__in=imported_labels).delete()
+
+                if importer.service == "jira":
+                    imported_modules = importer.imported_data.get("modules", [])
+                    Module.objects.filter(id__in=imported_modules).delete()
             importer.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:

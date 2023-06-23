@@ -169,6 +169,8 @@ def analytic_export_task(email, data, slug):
             msg.send(fail_silently=False)
 
     except Exception as e:
-        print(e)
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return
