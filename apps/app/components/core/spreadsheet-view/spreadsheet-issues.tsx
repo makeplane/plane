@@ -78,7 +78,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
             setExpandedIssues={setExpandedIssues}
             gridTemplateColumns={gridTemplateColumns}
             properties={properties}
-            handleEditIssue={() => handleEditIssue(issue)}
+            handleEditIssue={() => handleEditIssue(subIssue)}
             handleDeleteIssue={handleDeleteIssue}
             user={user}
             userAuth={userAuth}
