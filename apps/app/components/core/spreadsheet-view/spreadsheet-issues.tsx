@@ -59,7 +59,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
         handleToggleExpand={handleToggleExpand}
         gridTemplateColumns={gridTemplateColumns}
         properties={properties}
-        handleEditIssue={() => handleEditIssue(issue)}
+        handleEditIssue={handleEditIssue}
         handleDeleteIssue={handleDeleteIssue}
         user={user}
         userAuth={userAuth}
@@ -78,7 +78,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
             setExpandedIssues={setExpandedIssues}
             gridTemplateColumns={gridTemplateColumns}
             properties={properties}
-            handleEditIssue={() => handleEditIssue(subIssue)}
+            handleEditIssue={handleEditIssue}
             handleDeleteIssue={handleDeleteIssue}
             user={user}
             userAuth={userAuth}
