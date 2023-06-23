@@ -195,7 +195,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         projectId as string,
         {
           prompt: watch("name"),
-          task: "Generate a proper description for this issue in context of a project management software.",
+          task: "Generate a proper description for this issue.",
         },
         user
       )

@@ -194,7 +194,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index,
         projectId as string,
         {
           prompt: block.name,
-          task: "Generate a proper description for this issue in context of a project management software.",
+          task: "Generate a proper description for this issue.",
         },
         user
       )
