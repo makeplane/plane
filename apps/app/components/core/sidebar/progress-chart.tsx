@@ -93,16 +93,19 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
             id: "ideal",
             color: "#a9bbd0",
             fill: "transparent",
-            data: [
-              {
-                x: chartData[0].currentDate,
-                y: totalIssues,
-              },
-              {
-                x: chartData[chartData.length - 1].currentDate,
-                y: 0,
-              },
-            ],
+            data:
+              chartData.length > 0
+                ? [
+                    {
+                      x: chartData[0].currentDate,
+                      y: totalIssues,
+                    },
+                    {
+                      x: chartData[chartData.length - 1].currentDate,
+                      y: 0,
+                    },
+                  ]
+                : [],
           },
         ]}
         layers={["grid", "markers", "areas", DashedLine, "slices", "points", "axes", "legends"]}
