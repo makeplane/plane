@@ -152,8 +152,9 @@ class IssueViewSet(BaseViewSet):
             filters = issue_filters(request.query_params, "GET")
             show_sub_issues = request.GET.get("show_sub_issues", "true")
 
-            # Custom ordering for priority
+            # Custom ordering for priority and state
             priority_order = ["urgent", "high", "medium", "low", None]
+            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
             order_by_param = request.GET.get("order_by", "-created_at")
 
@@ -178,7 +179,13 @@ class IssueViewSet(BaseViewSet):
                 )
             )
 
-            if order_by_param == "priority":
+            # Priority Ordering
+            if order_by_param == "priority" or order_by_param == "-priority":
+                priority_order = (
+                    priority_order
+                    if order_by_param == "priority"
+                    else priority_order[::-1]
+                )
                 issue_queryset = issue_queryset.annotate(
                     priority_order=Case(
                         *[
@@ -188,6 +195,29 @@ class IssueViewSet(BaseViewSet):
                         output_field=CharField(),
                     )
                 ).order_by("priority_order")
+            
+            # State Ordering
+            elif order_by_param in [
+                "state__name",
+                "state__group",
+                "-state__name",
+                "-state__group",
+            ]:
+                state_order = (
+                    state_order
+                    if order_by_param in ["state__name", "state__group"]
+                    else state_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    state_order=Case(
+                        *[
+                            When(state__group=state_group, then=Value(i))
+                            for i, state_group in enumerate(state_order)
+                        ],
+                        default=Value(len(state_order)),
+                        output_field=CharField(),
+                    )
+                ).order_by("state_order")
             else:
                 issue_queryset = issue_queryset.order_by(order_by_param)
 
@@ -209,7 +239,7 @@ class IssueViewSet(BaseViewSet):
             return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -607,7 +637,9 @@ class SubIssuesEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                State.objects.filter(~Q(name="Triage"), workspace__slug=slug, project_id=project_id)
+                State.objects.filter(
+                    ~Q(name="Triage"), workspace__slug=slug, project_id=project_id
+                )
                 .annotate(
                     state_count=Count(
                         "state_issue",
