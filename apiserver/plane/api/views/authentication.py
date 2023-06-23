@@ -72,7 +72,7 @@ class SignUpEndpoint(BaseAPIView):
             # Check if the user already exists
             if User.objects.filter(email=email).exists():
                 return Response(
-                    {"error": "User already exist please sign in"},
+                    {"error": "User with this email already exists"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
