@@ -128,15 +128,15 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      <div className="flex gap-1.5 items-center px-4 sticky left-0 z-10 text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full">
+      <div className="flex gap-1.5 items-center px-4 sticky left-0 z-[1] text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full">
         <span className="flex gap-1 items-center" style={issue.parent ? { paddingLeft } : {}}>
-          {properties.key && (
-            <>
-              <div className="flex items-center cursor-pointer text-xs text-center hover:text-brand-base w-14 ">
+          <div className="flex items-center cursor-pointer text-xs text-center hover:text-brand-base w-14  opacity-100 group-hover:opacity-0">
+            {properties.key && (
+              <span>
                 {issue.project_detail?.identifier}-{issue.sequence_id}
-              </div>
-            </>
-          )}
+              </span>
+            )}
+          </div>
 
           <div className="h-5 w-5">
             {issue.sub_issues_count > 0 && (
@@ -237,9 +237,14 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           />
         </div>
       )}
-      <div className="absolute top-2.5 right-2.5 z-30 cursor-pointer opacity-0 group-hover:opacity-100">
+      <div
+        className="absolute top-2.5 z-10 cursor-pointer opacity-0 group-hover:opacity-100"
+        style={{
+          left: `${nestingLevel * 68 + 24}px`,
+        }}
+      >
         {!isNotAllowed && (
-          <CustomMenu width="auto" ellipsis>
+          <CustomMenu width="auto" position="left" ellipsis>
             <CustomMenu.MenuItem onClick={handleEditIssue}>
               <div className="flex items-center justify-start gap-2">
                 <PencilIcon className="h-4 w-4" />

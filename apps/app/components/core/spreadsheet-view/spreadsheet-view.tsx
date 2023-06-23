@@ -56,7 +56,7 @@ export const SpreadsheetView: React.FC<Props> = ({
 
   return (
     <div className="h-full rounded-lg text-brand-secondary overflow-x-auto whitespace-nowrap bg-brand-base">
-      <div className="sticky z-20 top-0 border-b border-brand-base bg-brand-surface-2 w-full min-w-max">
+      <div className="sticky z-[2] top-0 border-b border-brand-base bg-brand-surface-1 w-full min-w-max">
         <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
       </div>
       {spreadsheetIssues ? (

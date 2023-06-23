@@ -24,6 +24,8 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "priority",
     colName: "Priority",
     colSize: "128px",
+    ascendingOrder: "priority",
+    descendingOrder: "-priority",
   },
   {
     propertyName: "assignee",
