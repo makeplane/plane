@@ -68,13 +68,12 @@ class InboxViewSet(BaseViewSet):
             inbox = Inbox.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
-
+            # Handle default inbox delete
             if inbox.is_default:
                 return Response(
                     {"error": "You cannot delete the default inbox"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             inbox.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
@@ -174,7 +173,8 @@ class InboxIssueViewSet(BaseViewSet):
                     {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            if not request.data.get("issue", {}).get("priority", "low") in [
+            # Check for valid priority
+            if not request.data.get("issue", {}).get("priority", None) in [
                 "low",
                 "medium",
                 "high",
@@ -207,7 +207,6 @@ class InboxIssueViewSet(BaseViewSet):
             )
 
             # Create an Issue Activity
-            # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
@@ -225,9 +224,7 @@ class InboxIssueViewSet(BaseViewSet):
             )
 
             serializer = IssueStateInboxSerializer(issue)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
-
         except Exception as e:
             capture_exception(e)
             return Response(
