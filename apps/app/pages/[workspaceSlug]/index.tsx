@@ -40,7 +40,7 @@ const WorkspacePage: NextPage = () => {
   }, [month, workspaceSlug]);
 
   return (
-    <WorkspaceAuthorizationLayout noHeader>
+    <WorkspaceAuthorizationLayout>
       {isProductUpdatesModalOpen && (
         <ProductUpdatesModal
           isOpen={isProductUpdatesModalOpen}
