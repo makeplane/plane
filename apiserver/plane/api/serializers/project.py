@@ -96,7 +96,6 @@ class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     project = ProjectSerializer(read_only=True)
     member = UserLiteSerializer(read_only=True)
-    is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = ProjectMember
@@ -134,4 +133,14 @@ class ProjectLiteSerializer(BaseSerializer):
     class Meta:
         model = Project
         fields = ["id", "identifier", "name"]
+        read_only_fields = fields
+
+
+class ProjectMemberLiteSerializer(BaseSerializer):
+    member = UserLiteSerializer(read_only=True)
+    is_subscribed = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = ProjectMember
+        fields = ["member", "id", "is_subscribed"]
         read_only_fields = fields

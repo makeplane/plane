@@ -1,3 +1,7 @@
+# Django imports
+from django.db.models import Q
+from django.utils import timezone
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -24,6 +28,28 @@ class NotificationViewSet(BaseViewSet):
             .select_related("workspace")
         )
 
+    def list(self, request, slug):
+        try:
+            order_by = request.GET.get("ordeer_by", "-created_at")
+            snoozed = request.GET.get("snoozed", "false")
+            notifications = Notification.objects.filter(
+                workspace__slug=slug, receiver=request.user
+            ).order_by(order_by)
+
+            if snoozed == "false":
+                notifications = notifications.filter(
+                    Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+                )
+
+            serializer = NotificationSerializer(notifications, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
     def partial_update(self, request, slug, pk):
         try:
             notification = Notification.objects.get(
@@ -34,7 +60,9 @@ class NotificationViewSet(BaseViewSet):
                 "read_at": request.data.get("read_at", None),
                 "snoozed_till": request.data.get("snoozed_till", None),
             }
-            serializer = NotificationSerializer(notification, data=notification_data, partial=True)
+            serializer = NotificationSerializer(
+                notification, data=notification_data, partial=True
+            )
 
             if serializer.is_valid():
                 serializer.save()
