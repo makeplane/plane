@@ -148,7 +148,7 @@ export const IssueForm: FC<IssueFormProps> = ({
     setValue,
     setFocus,
   } = useForm<IIssue>({
-    defaultValues,
+    defaultValues: initialData ?? defaultValues,
     reValidateMode: "onChange",
   });
 
