@@ -43,8 +43,9 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
       .updateUser(formData)
       .then(() => {
         setToastAlert({
-          title: "User details updated successfully!",
           type: "success",
+          title: "Success!",
+          message: "Details updated successfully.",
         });
         setStep(2);
       })
@@ -65,44 +66,45 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
   }, [user, reset, setUserRole]);
 
   return (
-    <form className="flex w-full items-center justify-center" onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex w-full max-w-xl flex-col gap-7">
-        <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
-          <div className="flex flex-col gap-2 justify-center px-7 pt-7 pb-3.5">
-            <h3 className="text-base font-semibold text-brand-base">User Details</h3>
-            <p className="text-sm text-brand-secondary">
-              Enter your details as a first step to open your Plane account.
-            </p>
-          </div>
+    <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
+      <div className="space-y-9">
+        <div className="space-y-5 relative">
+          <div className="text-brand-accent text-xl absolute -top-1 -left-3">{'"'}</div>
+          <h5 className="text-sm">Hey there 👋🏻</h5>
+          <h5 className="text-sm">Let{"'"}s get started.</h5>
+          <h4 className="text-xl font-semibold">Set up your Plane profile.</h4>
+        </div>
 
-          <div className="flex flex-col justify-between gap-4 px-7 py-3.5 sm:flex-row">
-            <div className="flex flex-col items-start justify-center gap-1 w-full sm:w-1/2">
-              <span className="mb-1.5">First name</span>
-              <Input
-                name="first_name"
-                autoComplete="off"
-                register={register}
-                validations={{
-                  required: "First name is required",
-                }}
-                error={errors.first_name}
-              />
-            </div>
-            <div className="flex flex-col items-start justify-center gap-1 w-full sm:w-1/2">
-              <span className="mb-1.5">Last name</span>
-              <Input
-                name="last_name"
-                autoComplete="off"
-                register={register}
-                validations={{
-                  required: "Last name is required",
-                }}
-                error={errors.last_name}
-              />
-            </div>
+        <div className="space-y-7 md:w-1/3">
+          <div className="space-y-1 text-sm">
+            <label htmlFor="firstName">First Name</label>
+            <Input
+              id="firstName"
+              name="first_name"
+              autoComplete="off"
+              placeholder="Enter your first name..."
+              register={register}
+              validations={{
+                required: "First name is required",
+              }}
+              error={errors.first_name}
+            />
           </div>
-
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-brand-base px-7 pt-3.5 pb-7">
+          <div className="space-y-1 text-sm">
+            <label htmlFor="lastName">Last Name</label>
+            <Input
+              id="lastName"
+              name="last_name"
+              autoComplete="off"
+              register={register}
+              placeholder="Enter your last name..."
+              validations={{
+                required: "Last name is required",
+              }}
+              error={errors.last_name}
+            />
+          </div>
+          <div className="space-y-1 text-sm">
             <span>What is your role?</span>
             <div className="w-full">
               <Controller
@@ -116,7 +118,13 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
                       onChange(value);
                       setUserRole(value ?? null);
                     }}
-                    label={value ? value.toString() : "Select your role"}
+                    label={
+                      value ? (
+                        value.toString()
+                      ) : (
+                        <span className="text-gray-400">Select your role...</span>
+                      )
+                    }
                     input
                     width="w-full"
                   >
@@ -133,16 +141,9 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
           </div>
         </div>
 
-        <div className="flex w-full items-center justify-center ">
-          <PrimaryButton
-            type="submit"
-            className="flex w-1/2 items-center justify-center text-center"
-            size="md"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Updating..." : "Continue"}
-          </PrimaryButton>
-        </div>
+        <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
+          {isSubmitting ? "Updating..." : "Continue"}
+        </PrimaryButton>
       </div>
     </form>
   );
