@@ -9,6 +9,21 @@
     font-size: 1.375rem;
     line-height: 1.875rem;
   }
+
+  @media screen and (max-width: 500px) {
+    .page-viewer-wrapper {
+      flex-direction: column;
+    }
+
+    .tabs-container {
+      flex-wrap: wrap;
+    }
+
+    .page-viewer {
+      align-self: start;
+      margin-top: 1rem;
+    }
+  }
 }
 
 @layer base {

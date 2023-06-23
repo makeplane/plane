@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -56,6 +56,8 @@ const OtherPagesList = dynamic<TPagesListProps>(
     ssr: false,
   }
 );
+
+// const isMobileScreen = window.innerWidth <= 500;
 
 const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
 
@@ -146,8 +148,11 @@ const ProjectPages: NextPage = () => {
               }
             }}
           >
-            <Tab.List as="div" className="mb-6 flex items-center justify-between">
-              <div className="flex gap-4">
+            <Tab.List
+              as="div"
+              className="page-viewer-wrapper relative mb-6 flex items-center justify-between"
+            >
+              <div className="tabs-container flex gap-4">
                 {tabsList.map((tab, index) => (
                   <Tab
                     key={`${tab}-${index}`}
@@ -163,7 +168,7 @@ const ProjectPages: NextPage = () => {
                   </Tab>
                 ))}
               </div>
-              <div className="flex gap-x-1">
+              <div className="page-viewer flex gap-x-1">
                 <button
                   type="button"
                   className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
