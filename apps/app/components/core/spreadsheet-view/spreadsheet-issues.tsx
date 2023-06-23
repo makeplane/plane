@@ -13,6 +13,8 @@ type Props = {
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: Properties;
+  handleEditIssue: (issue: IIssue) => void;
+  handleDeleteIssue: (issue: IIssue) => void;
   gridTemplateColumns: string;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
@@ -26,6 +28,8 @@ export const SpreadsheetIssues: React.FC<Props> = ({
   setExpandedIssues,
   gridTemplateColumns,
   properties,
+  handleEditIssue,
+  handleDeleteIssue,
   user,
   userAuth,
   nestingLevel = 0,
@@ -55,6 +59,8 @@ export const SpreadsheetIssues: React.FC<Props> = ({
         handleToggleExpand={handleToggleExpand}
         gridTemplateColumns={gridTemplateColumns}
         properties={properties}
+        handleEditIssue={() => handleEditIssue(issue)}
+        handleDeleteIssue={handleDeleteIssue}
         user={user}
         userAuth={userAuth}
         nestingLevel={nestingLevel}
@@ -72,6 +78,8 @@ export const SpreadsheetIssues: React.FC<Props> = ({
             setExpandedIssues={setExpandedIssues}
             gridTemplateColumns={gridTemplateColumns}
             properties={properties}
+            handleEditIssue={() => handleEditIssue(issue)}
+            handleDeleteIssue={handleDeleteIssue}
             user={user}
             userAuth={userAuth}
             nestingLevel={nestingLevel + 1}

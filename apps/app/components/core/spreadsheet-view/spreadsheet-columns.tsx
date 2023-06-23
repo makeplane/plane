@@ -66,11 +66,11 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                 <CustomMenu
                   customButton={
                     <div
-                      className={`flex items-center justify-start gap-1.5 cursor-pointer text-sm text-brand-secondary text-current py-2.5 px-2`}
+                      className={`group flex items-center justify-start gap-1.5 cursor-pointer text-sm text-brand-secondary text-current hover:text-brand-base py-2.5 px-2`}
                     >
                       {col.icon ? (
                         <col.icon
-                          className={`text-brand-secondary ${
+                          className={`text-brand-secondary group-hover:text-brand-base ${
                             col.propertyName === "estimate" ? "-rotate-90" : ""
                           }`}
                           aria-hidden="true"
