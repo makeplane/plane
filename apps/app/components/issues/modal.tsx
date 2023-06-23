@@ -17,6 +17,7 @@ import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 import useInboxView from "hooks/use-inbox-view";
+import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // components
 import { IssueForm } from "components/issues";
 // types
@@ -79,6 +80,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const { params: calendarParams } = useCalendarIssuesView();
   const { order_by, group_by, ...viewGanttParams } = params;
   const { params: inboxParams } = useInboxView();
+  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
@@ -211,6 +213,14 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     ? VIEW_ISSUES(viewId.toString(), calendarParams)
     : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
 
+  const spreadsheetFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", spreadsheetParams);
+
   const ganttFetchKey = cycleId
     ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
     : moduleId
@@ -234,6 +244,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
           if (issueView === "calendar") mutate(calendarFetchKey);
           if (issueView === "gantt_chart") mutate(ganttFetchKey);
+          if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
 
           setToastAlert({
             type: "success",
@@ -264,6 +275,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
           if (issueView === "calendar") mutate(calendarFetchKey);
+          if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }
 

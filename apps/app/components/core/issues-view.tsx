@@ -19,7 +19,14 @@ import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { AllLists, AllBoards, FilterList, CalendarView, GanttChartView } from "components/core";
+import {
+  AllLists,
+  AllBoards,
+  FilterList,
+  CalendarView,
+  GanttChartView,
+  SpreadsheetView,
+} from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 import { CycleIssuesGanttChartView, TransferIssues, TransferIssuesModal } from "components/cycles";
@@ -560,6 +567,13 @@ export const IssuesView: React.FC<Props> = ({
                   handleDeleteIssue={handleDeleteIssue}
                   addIssueToDate={addIssueToDate}
                   isCompleted={isCompleted}
+                  user={user}
+                  userAuth={memberRole}
+                />
+              ) : issueView === "spreadsheet" ? (
+                <SpreadsheetView
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
                   user={user}
                   userAuth={memberRole}
                 />
