@@ -42,7 +42,7 @@ export const Tooltip: React.FC<Props> = ({
     disabled={disabled}
     content={
       <div
-        className={`${className} relative flex max-w-[600px] flex-col items-start justify-center gap-1 rounded-md p-2 text-left text-xs shadow-md ${
+        className={`${className} relative z-50 flex max-w-[600px] flex-col items-start justify-center gap-1 rounded-md p-2 text-left text-xs shadow-md ${
           theme === "light" ? "text-brand-muted-1 bg-brand-surface-2" : "bg-black text-white"
         }`}
       >

@@ -22,6 +22,7 @@ type Props = {
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
+  customButton?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
@@ -31,6 +32,7 @@ export const ViewStateSelect: React.FC<Props> = ({
   partialUpdateIssue,
   position = "left",
   selfPositioned = false,
+  customButton = false,
   user,
   isNotAllowed,
 }) => {
@@ -57,6 +59,19 @@ export const ViewStateSelect: React.FC<Props> = ({
   }));
 
   const selectedOption = states?.find((s) => s.id === issue.state);
+
+  const stateLabel = (
+    <Tooltip
+      tooltipHeading="State"
+      tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
+    >
+      <div className="flex items-center cursor-pointer gap-2 text-brand-secondary">
+        {selectedOption &&
+          getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
+        {selectedOption?.name ?? "State"}
+      </div>
+    </Tooltip>
+  );
 
   return (
     <CustomSearchSelect
@@ -101,18 +116,7 @@ export const ViewStateSelect: React.FC<Props> = ({
         }
       }}
       options={options}
-      label={
-        <Tooltip
-          tooltipHeading="State"
-          tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
-        >
-          <div className="flex items-center gap-2 text-brand-secondary">
-            {selectedOption &&
-              getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
-            {selectedOption?.name ?? "State"}
-          </div>
-        </Tooltip>
-      }
+      {...(customButton ? { customButton: stateLabel } : { label: stateLabel })}
       position={position}
       disabled={isNotAllowed}
       noChevron

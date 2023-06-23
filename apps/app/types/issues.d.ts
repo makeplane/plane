@@ -247,11 +247,25 @@ export interface IIssueFilterOptions {
   created_by: string[] | null;
 }
 
-export type TIssueViewOptions = "list" | "kanban" | "calendar" | "gantt_chart";
+export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
 export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
 
-export type TIssueOrderByOptions = "-created_at" | "-updated_at" | "priority" | "sort_order";
+export type TIssueOrderByOptions =
+  | "-created_at"
+  | "-updated_at"
+  | "priority"
+  | "sort_order"
+  | "state__name"
+  | "-state__name"
+  | "assignees__name"
+  | "-assignees__name"
+  | "labels__name"
+  | "-labels__name"
+  | "target_date"
+  | "-target_date"
+  | "estimate__point"
+  | "-estimate__point";
 
 export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;
