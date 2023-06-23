@@ -81,7 +81,7 @@ export const CommandPalette: React.FC = () => {
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
 
-  const [searchTerm, setSearchTerm] = React.useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<IWorkspaceSearchResults>({
     results: {
       workspace: [],

@@ -10,7 +10,9 @@ import type {
   IProject,
   IProjectMember,
   IProjectMemberInvitation,
+  ISearchIssueResponse,
   ProjectViewTheme,
+  TProjectIssuesSearchParams,
 } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
@@ -318,6 +320,20 @@ class ProjectServices extends APIService {
 
   async removeProjectFromFavorites(workspaceSlug: string, projectId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/user-favorite-projects/${projectId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async projectIssuesSearch(
+    workspaceSlug: string,
+    projectId: string,
+    params: TProjectIssuesSearchParams
+  ): Promise<ISearchIssueResponse[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search-issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

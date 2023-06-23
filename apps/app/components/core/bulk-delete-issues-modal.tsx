@@ -12,6 +12,8 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import issuesServices from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useIssuesView from "hooks/use-issues-view";
+import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 // ui
 import { DangerButton, SecondaryButton } from "components/ui";
 // icons
@@ -20,7 +22,15 @@ import { LayerDiagonalIcon } from "components/icons";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 // fetch keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import {
+  CYCLE_DETAILS,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  VIEW_ISSUES,
+} from "constants/fetch-keys";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -36,7 +46,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
   const [query, setQuery] = useState("");
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
@@ -48,6 +58,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
   );
 
   const { setToastAlert } = useToast();
+  const { issueView, params } = useIssuesView();
+  const { params: calendarParams } = useCalendarIssuesView();
+  const { order_by, group_by, ...viewGanttParams } = params;
 
   const {
     handleSubmit,
@@ -61,6 +74,81 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
     },
   });
 
+  const handleClose = () => {
+    setIsOpen(false);
+    setQuery("");
+    reset();
+  };
+
+  const handleDelete: SubmitHandler<FormInput> = async (data) => {
+    if (!workspaceSlug || !projectId) return;
+
+    if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Please select at least one issue.",
+      });
+      return;
+    }
+
+    if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
+
+    const calendarFetchKey = cycleId
+      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
+      : moduleId
+      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
+      : viewId
+      ? VIEW_ISSUES(viewId.toString(), calendarParams)
+      : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
+
+    const ganttFetchKey = cycleId
+      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
+      : moduleId
+      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
+      : viewId
+      ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
+      : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
+
+    await issuesServices
+      .bulkDeleteIssues(
+        workspaceSlug as string,
+        projectId as string,
+        {
+          issue_ids: data.delete_issue_ids,
+        },
+        user
+      )
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Issues deleted successfully!",
+        });
+
+        if (issueView === "calendar") mutate(calendarFetchKey);
+        else if (issueView === "gantt_chart") mutate(ganttFetchKey);
+        else {
+          if (cycleId) {
+            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params));
+            mutate(CYCLE_DETAILS(cycleId.toString()));
+          } else if (moduleId) {
+            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+            mutate(MODULE_DETAILS(moduleId as string));
+          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));
+        }
+
+        handleClose();
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        })
+      );
+  };
+
   const filteredIssues: IIssue[] =
     query === ""
       ? issues ?? []
@@ -71,48 +159,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
               .toLowerCase()
               .includes(query.toLowerCase())
         ) ?? [];
-
-  const handleClose = () => {
-    setIsOpen(false);
-    setQuery("");
-    reset();
-  };
-
-  const handleDelete: SubmitHandler<FormInput> = async (data) => {
-    if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
-      setToastAlert({
-        title: "Error",
-        type: "error",
-        message: "Please select atleast one issue",
-      });
-      return;
-    }
-
-    if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
-
-    if (workspaceSlug && projectId) {
-      await issuesServices
-        .bulkDeleteIssues(
-          workspaceSlug as string,
-          projectId as string,
-          {
-            issue_ids: data.delete_issue_ids,
-          },
-          user
-        )
-        .then((res) => {
-          setToastAlert({
-            title: "Success",
-            type: "success",
-            message: res.message,
-          });
-          handleClose();
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-  };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
