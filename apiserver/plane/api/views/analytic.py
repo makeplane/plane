@@ -3,6 +3,7 @@ from django.db.models import (
     Count,
     Sum,
     F,
+    Q
 )
 from django.db.models.functions import ExtractMonth
 
@@ -59,10 +60,11 @@ class AnalyticsEndpoint(BaseAPIView):
 
                 colors = (
                     State.objects.filter(
+                        ~Q(name="Triage"),
                         workspace__slug=slug, project_id__in=filters.get("project__in")
                     ).values(key, "color")
                     if filters.get("project__in", False)
-                    else State.objects.filter(workspace__slug=slug).values(key, "color")
+                    else State.objects.filter(~Q(name="Triage"), workspace__slug=slug).values(key, "color")
                 )
 
             if x_axis in ["labels__name"] or segment in ["labels__name"]:
