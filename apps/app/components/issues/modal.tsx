@@ -276,6 +276,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         } else {
           if (issueView === "calendar") mutate(calendarFetchKey);
           if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
+          if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }
 

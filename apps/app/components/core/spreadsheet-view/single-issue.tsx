@@ -38,7 +38,7 @@ type Props = {
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
   properties: Properties;
-  handleEditIssue: () => void;
+  handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   gridTemplateColumns: string;
   user: ICurrentUserResponse | undefined;
@@ -245,7 +245,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       >
         {!isNotAllowed && (
           <CustomMenu width="auto" position="left" ellipsis>
-            <CustomMenu.MenuItem onClick={handleEditIssue}>
+            <CustomMenu.MenuItem onClick={() => handleEditIssue(issue)}>
               <div className="flex items-center justify-start gap-2">
                 <PencilIcon className="h-4 w-4" />
                 <span>Edit issue</span>
