@@ -188,6 +188,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           message: "Issue created successfully.",
         });
 
+        router.push(
+          `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`
+        );
+
         mutate(INBOX_ISSUES(inboxId.toString(), inboxParams));
       })
       .catch(() => {
