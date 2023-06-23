@@ -99,6 +99,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
               },
               false
             );
+            mutate<IIssue[]>(spreadsheetFetchKey);
           } else {
             mutate<IIssue[]>(
               spreadsheetFetchKey,
