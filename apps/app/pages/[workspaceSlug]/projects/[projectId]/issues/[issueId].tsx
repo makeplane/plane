@@ -31,8 +31,6 @@ const defaultValues = {
   state: "",
   assignees_list: [],
   priority: "low",
-  blockers_list: [],
-  blocked_list: [],
   target_date: new Date().toString(),
   issue_cycle: null,
   issue_module: null,
@@ -65,6 +63,7 @@ const IssueDetailsPage: NextPage = () => {
         ISSUE_DETAILS(issueId as string),
         (prevData) => {
           if (!prevData) return prevData;
+
           return {
             ...prevData,
             ...formData,
@@ -73,10 +72,13 @@ const IssueDetailsPage: NextPage = () => {
         false
       );
 
-      const payload = { ...formData };
+      const payload: Partial<IIssue> = {
+        ...formData,
+      };
+
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
-        .then((res) => {
+        .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
@@ -93,12 +95,6 @@ const IssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
-      blockers_list:
-        issueDetails.blockers_list ??
-        issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
-      blocked_list:
-        issueDetails.blocks_list ??
-        issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
       assignees_list:
         issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,

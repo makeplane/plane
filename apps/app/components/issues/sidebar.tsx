@@ -370,14 +370,6 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <SidebarParentSelect
                   control={control}
                   submitChanges={submitChanges}
-                  issuesList={
-                    issues?.filter(
-                      (i) =>
-                        i.id !== issueDetail?.id &&
-                        i.id !== issueDetail?.parent &&
-                        i.parent !== issueDetail?.id
-                    ) ?? []
-                  }
                   customDisplay={
                     issueDetail?.parent_detail ? (
                       <button
@@ -385,11 +377,12 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         className="flex items-center gap-2 rounded bg-brand-surface-2 px-3 py-2 text-xs"
                         onClick={() => submitChanges({ parent: null })}
                       >
+                        <span className="text-brand-secondary">Selected:</span>{" "}
                         {issueDetail.parent_detail?.name}
                         <XMarkIcon className="h-3 w-3" />
                       </button>
                     ) : (
-                      <div className="inline-block rounded bg-brand-surface-1 px-3 py-2 text-xs">
+                      <div className="inline-block rounded bg-brand-surface-1 px-3 py-2 text-xs text-brand-secondary">
                         No parent selected
                       </div>
                     )
@@ -400,16 +393,16 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
                 <SidebarBlockerSelect
+                  issueId={issueId as string}
                   submitChanges={submitChanges}
-                  issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
                   watch={watchIssue}
                   userAuth={memberRole}
                 />
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
                 <SidebarBlockedSelect
+                  issueId={issueId as string}
                   submitChanges={submitChanges}
-                  issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
                   watch={watchIssue}
                   userAuth={memberRole}
                 />
