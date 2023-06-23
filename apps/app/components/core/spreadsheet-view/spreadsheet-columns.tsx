@@ -19,13 +19,17 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
     "spreadsheetViewSorting",
     ""
   );
+  const { storedValue: activeSortingProperty, setValue: setActiveSortingProperty } =
+    useLocalStorage("spreadsheetViewActiveSortingProperty", "");
 
   const { orderBy, setOrderBy } = useSpreadsheetIssuesView();
 
   const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
     setOrderBy(order);
     setSelectedMenuItem(`${order}_${itemKey}`);
+    setActiveSortingProperty(order === "-created_at" ? "" : itemKey);
   };
+
   return (
     <div
       className={`grid auto-rows-[minmax(36px,1fr)] w-full min-w-max`}
@@ -35,22 +39,34 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
         if (col.isActive) {
           return (
             <div
-              className={`bg-brand-surface-2 ${
-                col.propertyName === "title" ? "sticky left-0 z-[2] bg-brand-surface-2 pl-24" : ""
+              className={`bg-brand-surface-1 w-full ${
+                col.propertyName === "title" ? "sticky left-0 z-[2] bg-brand-surface-1 pl-24" : ""
               }`}
             >
               {col.propertyName === "title" ? (
                 <div
-                  className={`flex items-center justify-start gap-1.5 cursor-default text-sm text-brand-secondary text-current py-2.5 px-2`}
+                  className={`flex items-center justify-start gap-1.5 cursor-default text-sm text-brand-secondary text-current w-full py-2.5 px-2`}
                 >
                   {col.colName}
                 </div>
               ) : (
                 <CustomMenu
+                  className="!w-full"
                   customButton={
                     <div
-                      className={`group flex items-center justify-start gap-1.5 cursor-pointer text-sm text-brand-secondary text-current hover:text-brand-base py-2.5 px-2`}
+                      className={`relative group flex items-center justify-start gap-1.5 cursor-pointer text-sm text-brand-secondary text-current hover:text-brand-base w-full py-3 px-2 ${
+                        activeSortingProperty === col.propertyName ? "bg-brand-surface-2" : ""
+                      }`}
                     >
+                      {activeSortingProperty === col.propertyName && (
+                        <div className="absolute top-1 right-1.5">
+                          <Icon
+                            iconName="filter_list"
+                            className="flex items-center justify-center h-3.5 w-3.5 rounded-full bg-brand-accent text-xs text-white"
+                          />
+                        </div>
+                      )}
+
                       {col.icon ? (
                         <col.icon
                           className={`text-brand-secondary group-hover:text-brand-base ${
@@ -146,7 +162,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                     </div>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem
-                    className={`mt-0.5${
+                    className={`mt-0.5 ${
                       selectedMenuItem === `${col.descendingOrder}_${col.propertyName}`
                         ? "bg-brand-surface-2"
                         : ""
