@@ -151,7 +151,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
                   <span>
                     <p className="text-sm text-brand-secondary">
                       Are you sure you want to delete issue{" "}
-                      <span className="break-all font-medium text-brand-base">
+                      <span className="break-words font-medium text-brand-base">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This

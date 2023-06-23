@@ -417,7 +417,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index,
               </div>
               <div className={`flex items-start gap-2 px-3 ${snapshot.isDragging ? "" : "py-4"}`}>
                 <div
-                  className="w-full cursor-pointer overflow-hidden break-all px-4"
+                  className="w-full cursor-pointer overflow-hidden break-words px-4"
                   onClick={() => setCreateBlockForm(true)}
                 >
                   <div className="flex items-center">

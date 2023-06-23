@@ -338,8 +338,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <h5 className="text-sm group-hover:text-brand-accent">
-                {truncateText(issue.name, 120)}
+              <h5 className="text-sm group-hover:text-brand-accent break-words line-clamp-3">
+                {issue.name}
               </h5>
             </a>
           </Link>

@@ -115,7 +115,7 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, user
                       <div className="mt-2">
                         <p className="text-sm text-brand-secondary">
                           Are you sure you want to delete view-{" "}
-                          <span className="break-all font-medium text-brand-base">
+                          <span className="break-words font-medium text-brand-base">
                             {data?.name}
                           </span>
                           ? All of the data related to the view will be permanently removed. This

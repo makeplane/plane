@@ -143,7 +143,7 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
                       <div className="mt-2">
                         <p className="text-sm text-brand-secondary">
                           Are you sure you want to delete cycle-{" "}
-                          <span className="break-all font-medium text-brand-base">
+                          <span className="break-words font-medium text-brand-base">
                             {data?.name}
                           </span>
                           ? All of the data related to the cycle will be permanently removed. This

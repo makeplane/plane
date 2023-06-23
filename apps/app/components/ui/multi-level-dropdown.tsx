@@ -127,7 +127,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                             }}
                             className={`${
                               child.selected ? "bg-brand-surface-2" : ""
-                            } flex w-full items-center whitespace-nowrap break-all rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-2`}
+                            } flex w-full items-center whitespace-nowrap break-words rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-2`}
                           >
                             {child.label}
                           </button>
