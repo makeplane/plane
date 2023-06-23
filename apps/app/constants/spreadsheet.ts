@@ -48,8 +48,8 @@ export const SPREADSHEET_COLUMN = [
     colName: "Due Date",
     colSize: "128px",
     icon: CalendarDaysIcon,
-    ascendingOrder: "target_date",
-    descendingOrder: "-target_date",
+    ascendingOrder: "-target_date",
+    descendingOrder: "target_date",
   },
   {
     propertyName: "estimate",
