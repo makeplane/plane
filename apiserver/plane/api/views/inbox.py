@@ -250,7 +250,7 @@ class InboxIssueViewSet(BaseViewSet):
                     pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
                 )
                 # Only allow guests and viewers to edit name and description
-                if project_member <= 10:
+                if project_member.role <= 10:
                     # viewers and guests since only viewers and guests 
                     issue_data = {
                         "name": issue_data.get("name", issue.name),
