@@ -52,7 +52,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({ title, link, icon }) =>
       <div className="max-w-64 px-3 text-sm">
         <p className={`${icon ? "flex items-center gap-2" : ""}`}>
           {icon}
-          <span className="break-all">{title}</span>
+          <span className="break-words">{title}</span>
         </p>
       </div>
     )}

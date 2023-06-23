@@ -105,7 +105,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, params]
+    [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
   );
 
   const handleCopyText = () => {

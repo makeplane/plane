@@ -18,6 +18,7 @@ type Props = {
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
+  customButton?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
@@ -27,6 +28,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   partialUpdateIssue,
   position = "left",
   selfPositioned = false,
+  customButton = false,
   user,
   isNotAllowed,
 }) => {
@@ -36,6 +38,15 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   const { isEstimateActive, estimatePoints } = useEstimateOption(issue.estimate_point);
 
   const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
+
+  const estimateLabels = (
+    <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue}>
+      <div className="flex items-center gap-1 text-brand-secondary">
+        <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
+        {estimateValue ?? "None"}
+      </div>
+    </Tooltip>
+  );
 
   if (!isEstimateActive) return null;
 
@@ -57,14 +68,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
           user
         );
       }}
-      label={
-        <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue}>
-          <div className="flex items-center gap-1 text-brand-secondary">
-            <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
-            {estimateValue ?? "Estimate"}
-          </div>
-        </Tooltip>
-      }
+      {...(customButton ? { customButton: estimateLabels } : { label: estimateLabels })}
       maxHeight="md"
       noChevron
       disabled={isNotAllowed}

@@ -13,6 +13,10 @@ export interface IProject {
   created_by: string;
   cover_image: string | null;
   cycle_view: boolean;
+  issue_views_view: boolean;
+  module_view: boolean;
+  page_view: boolean;
+  inbox_view: boolean;
   default_assignee: IUser | string | null;
   description: string;
   emoji: string | null;
@@ -119,4 +123,26 @@ export interface IGithubRepository {
 export interface GithubRepositoriesResponse {
   repositories: IGithubRepository[];
   total_count: number;
+}
+
+export type TProjectIssuesSearchParams = {
+  search: string;
+  parent?: boolean;
+  blocker_blocked_by?: boolean;
+  cycle?: boolean;
+  module?: boolean;
+  sub_issue?: boolean;
+  issue_id?: string;
+};
+
+export interface ISearchIssueResponse {
+  id: string;
+  name: string;
+  project_id: string;
+  project__identifier: string;
+  sequence_id: number;
+  state__color: string;
+  state__group: string;
+  state__name: string;
+  workspace__slug: string;
 }

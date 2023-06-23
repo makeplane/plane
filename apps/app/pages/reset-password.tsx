@@ -63,11 +63,13 @@ const ResetPasswordPage: NextPage = () => {
         });
         router.push("/");
       })
-      .catch(() =>
+      .catch((err) =>
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Something went wrong. Please try again.",
+          message:
+            err?.error ||
+            "Something went wrong. Please try again later or contact the support team.",
         })
       );
   };

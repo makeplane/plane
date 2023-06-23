@@ -173,8 +173,12 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     }`}
                   />
                   <div>
-                    <Tooltip tooltipContent={cycle.name} className="break-all" position="top-left">
-                      <h3 className="break-all text-base font-semibold">
+                    <Tooltip
+                      tooltipContent={cycle.name}
+                      className="break-words"
+                      position="top-left"
+                    >
+                      <h3 className="break-words text-base font-semibold">
                         {truncateText(cycle.name, 70)}
                       </h3>
                     </Tooltip>
@@ -282,12 +286,18 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     >
                       {cycleStatus === "current" ? (
                         <span className="flex gap-1">
-                          <RadialProgressBar
-                            progress={(cycle.completed_issues / cycle.total_issues) * 100}
-                          />
-                          <span>
-                            {Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %
-                          </span>
+                          {cycle.total_issues > 0 ? (
+                            <>
+                              <RadialProgressBar
+                                progress={(cycle.completed_issues / cycle.total_issues) * 100}
+                              />
+                              <span>
+                                {Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %
+                              </span>
+                            </>
+                          ) : (
+                            <span className="normal-case">No issues present</span>
+                          )}
                         </span>
                       ) : cycleStatus === "upcoming" ? (
                         <span className="flex gap-1">

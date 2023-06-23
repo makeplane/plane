@@ -37,7 +37,7 @@ class UserEndpoint(BaseViewSet):
             workspace_invites = WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).count()
-            assigned_issues = Issue.objects.filter(assignees__in=[request.user]).count()
+            assigned_issues = Issue.issue_objects.filter(assignees__in=[request.user]).count()
 
             serialized_data = UserSerializer(request.user).data
             serialized_data["workspace"] = {
@@ -59,7 +59,7 @@ class UserEndpoint(BaseViewSet):
             workspace_invites = WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).count()
-            assigned_issues = Issue.objects.filter(assignees__in=[request.user]).count()
+            assigned_issues = Issue.issue_objects.filter(assignees__in=[request.user]).count()
 
             fallback_workspace = Workspace.objects.filter(
                 workspace_member__member=request.user
@@ -98,20 +98,6 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
             user = User.objects.get(pk=request.user.id)
             user.is_onboarded = request.data.get("is_onboarded", False)
             user.save()
-
-            if user.last_workspace_id is not None:
-                user_role = WorkspaceMember.objects.filter(
-                    workspace_id=user.last_workspace_id, member=request.user.id
-                ).first()
-                return Response(
-                    {
-                        "message": "Updated successfully",
-                        "role": user_role.company_role
-                        if user_role is not None
-                        else None,
-                    },
-                    status=status.HTTP_200_OK,
-                )
             return Response(
                 {"message": "Updated successfully"}, status=status.HTTP_200_OK
             )

@@ -44,7 +44,7 @@ def track_name(
                 field="name",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated the start date to {requested_data.get('name')}",
+                comment=f"{actor.email} updated the name to {requested_data.get('name')}",
             )
         )
 
@@ -1006,5 +1006,8 @@ def issue_activity(
                     )
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

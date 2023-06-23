@@ -33,7 +33,7 @@ export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
                   {user.firstName !== "" ? user.firstName[0] : "?"}
                 </div>
               )}
-              <span className="break-all text-brand-secondary">
+              <span className="break-words text-brand-secondary">
                 {user.firstName !== "" ? `${user.firstName} ${user.lastName}` : "No assignee"}
               </span>
             </div>

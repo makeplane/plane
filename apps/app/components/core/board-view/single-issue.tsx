@@ -181,12 +181,20 @@ export const SingleBoardIssue: React.FC<Props> = ({
             mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
             mutate(MODULE_DETAILS(moduleId as string));
           } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, groupTitle, index, selectedGroup, orderBy, params]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      groupTitle,
+      index,
+      selectedGroup,
+      orderBy,
+      params,
+      user,
+    ]
   );
 
   const getStyle = (
@@ -330,11 +338,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <h5
-                className="break-all text-sm group-hover:text-brand-accent"
-                style={{ lineClamp: 3, WebkitLineClamp: 3 }}
-              >
-                {truncateText(issue.name, 100)}
+              <h5 className="text-sm group-hover:text-brand-accent break-words line-clamp-3">
+                {issue.name}
               </h5>
             </a>
           </Link>

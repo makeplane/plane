@@ -22,6 +22,7 @@ type Props = {
   position?: "left" | "right";
   selfPositioned?: boolean;
   tooltipPosition?: "left" | "right";
+  customButton?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
@@ -34,6 +35,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
   tooltipPosition = "right",
   user,
   isNotAllowed,
+  customButton = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -65,6 +67,38 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
     ),
   }));
 
+  const assigneeLabel = (
+    <Tooltip
+      position={`top-${tooltipPosition}`}
+      tooltipHeading="Assignees"
+      tooltipContent={
+        issue.assignee_details.length > 0
+          ? issue.assignee_details
+              .map((assignee) =>
+                assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
+              )
+              .join(", ")
+          : "No Assignee"
+      }
+    >
+      <div
+        className={`flex ${
+          isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+        } items-center gap-2 text-brand-secondary`}
+      >
+        {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
+          <div className="-my-0.5 flex items-center justify-center gap-2">
+            <AssigneesList userIds={issue.assignees} length={5} showLength={true} />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-2">
+            <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+          </div>
+        )}
+      </div>
+    </Tooltip>
+  );
+
   return (
     <CustomSearchSelect
       value={issue.assignees}
@@ -90,37 +124,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         );
       }}
       options={options}
-      label={
-        <Tooltip
-          position={`top-${tooltipPosition}`}
-          tooltipHeading="Assignees"
-          tooltipContent={
-            issue.assignee_details.length > 0
-              ? issue.assignee_details
-                  .map((assignee) =>
-                    assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
-                  )
-                  .join(", ")
-              : "No Assignee"
-          }
-        >
-          <div
-            className={`flex ${
-              isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-            } items-center gap-2 text-brand-secondary`}
-          >
-            {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
-              <div className="-my-0.5 flex items-center justify-center gap-2">
-                <AssigneesList userIds={issue.assignees} length={5} showLength={true} />
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-2">
-                <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
-              </div>
-            )}
-          </div>
-        </Tooltip>
-      }
+      {...(customButton ? { customButton: assigneeLabel } : { label: assigneeLabel })}
       multiple
       noChevron
       position={position}

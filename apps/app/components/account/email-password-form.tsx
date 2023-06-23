@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 
+import { useRouter } from "next/router";
+import Link from "next/link";
+
 // react hook form
 import { useForm } from "react-hook-form";
-// services
-import authenticationService from "services/authentication.service";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import { EmailResetPasswordForm } from "components/account";
 // ui
@@ -17,15 +16,19 @@ type EmailPasswordFormValues = {
   medium?: string;
 };
 
-export const EmailPasswordForm = ({ handleSignIn }: any) => {
+type Props = {
+  onSubmit: (formData: EmailPasswordFormValues) => Promise<void>;
+};
+
+export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
   const [isResettingPassword, setIsResettingPassword] = useState(false);
 
-  const { setToastAlert } = useToast();
+  const router = useRouter();
+  const isSignUpPage = router.pathname === "/sign-up";
 
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
     defaultValues: {
@@ -36,31 +39,6 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
     mode: "onChange",
     reValidateMode: "onChange",
   });
-
-  const onSubmit = (formData: EmailPasswordFormValues) => {
-    authenticationService
-      .emailLogin(formData)
-      .then((response) => {
-        if (handleSignIn) handleSignIn(response);
-      })
-      .catch((error) => {
-        console.log(error);
-        setToastAlert({
-          title: "Oops!",
-          type: "error",
-          message: "Enter the correct email address and password to sign in",
-        });
-        if (!error?.response?.data) return;
-        Object.keys(error.response.data).forEach((key) => {
-          const err = error.response.data[key];
-          console.log(err);
-          setError(key as keyof EmailPasswordFormValues, {
-            type: "manual",
-            message: Array.isArray(err) ? err.join(", ") : err,
-          });
-        });
-      });
-  };
 
   return (
     <>
@@ -82,7 +60,7 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
                   ) || "Email ID is not valid",
               }}
               error={errors.email}
-              placeholder="Enter your Email ID"
+              placeholder="Enter your email ID"
             />
           </div>
           <div className="mt-5">
@@ -100,13 +78,21 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
           </div>
           <div className="mt-2 flex items-center justify-between">
             <div className="ml-auto text-sm">
-              <button
-                type="button"
-                onClick={() => setIsResettingPassword(true)}
-                className="font-medium text-brand-accent hover:text-brand-accent"
-              >
-                Forgot your password?
-              </button>
+              {isSignUpPage ? (
+                <Link href="/">
+                  <a className="font-medium text-brand-accent hover:text-brand-accent">
+                    Already have an account? Sign in.
+                  </a>
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsResettingPassword(true)}
+                  className="font-medium text-brand-accent hover:text-brand-accent"
+                >
+                  Forgot your password?
+                </button>
+              )}
             </div>
           </div>
           <div className="mt-5">
@@ -116,8 +102,21 @@ export const EmailPasswordForm = ({ handleSignIn }: any) => {
               disabled={!isValid && isDirty}
               loading={isSubmitting}
             >
-              {isSubmitting ? "Signing in..." : "Sign In"}
+              {isSignUpPage
+                ? isSubmitting
+                  ? "Signing up..."
+                  : "Sign Up"
+                : isSubmitting
+                ? "Signing in..."
+                : "Sign In"}
             </SecondaryButton>
+            {!isSignUpPage && (
+              <Link href="/sign-up">
+                <a className="block font-medium text-brand-accent hover:text-brand-accent text-sm mt-1">
+                  Don{"'"}t have an account? Sign up.
+                </a>
+              </Link>
+            )}
           </div>
         </form>
       )}

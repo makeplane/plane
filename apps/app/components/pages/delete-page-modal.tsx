@@ -136,7 +136,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
                       <div className="mt-2">
                         <p className="text-sm text-brand-secondary">
                           Are you sure you want to delete Page-{" "}
-                          <span className="break-all font-medium text-brand-base">
+                          <span className="break-words font-medium text-brand-base">
                             {data?.name}
                           </span>
                           ? All of the data related to the page will be permanently removed. This
