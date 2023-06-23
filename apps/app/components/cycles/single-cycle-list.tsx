@@ -282,12 +282,18 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     >
                       {cycleStatus === "current" ? (
                         <span className="flex gap-1">
-                          <RadialProgressBar
-                            progress={(cycle.completed_issues / cycle.total_issues) * 100}
-                          />
-                          <span>
-                            {Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %
-                          </span>
+                          {cycle.total_issues > 0 ? (
+                            <>
+                              <RadialProgressBar
+                                progress={(cycle.completed_issues / cycle.total_issues) * 100}
+                              />
+                              <span>
+                                {Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %
+                              </span>
+                            </>
+                          ) : (
+                            <span className="normal-case">No issues present</span>
+                          )}
                         </span>
                       ) : cycleStatus === "upcoming" ? (
                         <span className="flex gap-1">

@@ -25,13 +25,18 @@ export const findHowManyDaysLeft = (date: string | Date) => {
   return Math.ceil(timeDiff / (1000 * 3600 * 24));
 };
 
-export const getDatesInRange = (startDate: Date, endDate: Date) => {
+export const getDatesInRange = (startDate: string | Date, endDate: string | Date) => {
+  startDate = new Date(startDate);
+  endDate = new Date(endDate);
+
   const date = new Date(startDate.getTime());
   const dates = [];
+
   while (date <= endDate) {
     dates.push(new Date(date));
     date.setDate(date.getDate() + 1);
   }
+
   return dates;
 };
 
