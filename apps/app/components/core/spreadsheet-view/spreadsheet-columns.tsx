@@ -1,10 +1,13 @@
 import React from "react";
 // hooks
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
+import useLocalStorage from "hooks/use-local-storage";
 // component
 import { CustomMenu, Icon } from "components/ui";
 // icon
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+// types
+import { TIssueOrderByOptions } from "types";
 
 type Props = {
   columnData: any;
@@ -12,7 +15,17 @@ type Props = {
 };
 
 export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateColumns }) => {
+  const { storedValue: selectedMenuItem, setValue: setSelectedMenuItem } = useLocalStorage(
+    "spreadsheetViewSorting",
+    ""
+  );
+
   const { orderBy, setOrderBy } = useSpreadsheetIssuesView();
+
+  const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
+    setOrderBy(order);
+    setSelectedMenuItem(`${order}_${itemKey}`);
+  };
   return (
     <div
       className={`grid auto-rows-[minmax(36px,1fr)] w-full min-w-max`}
@@ -76,69 +89,145 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                       <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                     </div>
                   }
+                  menuItemsWhiteBg
                   width="xl"
                 >
                   <CustomMenu.MenuItem
+                    className={`${
+                      selectedMenuItem === `${col.ascendingOrder}_${col.propertyName}`
+                        ? "bg-brand-surface-2"
+                        : ""
+                    }`}
                     key={col.propertyName}
                     onClick={() => {
-                      setOrderBy(col.ascendingOrder);
+                      handleOrderBy(col.ascendingOrder, col.propertyName);
                     }}
                   >
-                    <div className="flex gap-1.5 px-1 items-center text-brand-secondary hover:text-brand-base">
-                      {col.propertyName === "assignee" || col.propertyName === "labels" ? (
-                        <>
-                          <span>A-Z</span>
-                          <span>Ascending</span>
-                        </>
-                      ) : col.propertyName === "due_date" || col.propertyName === "estimate" ? (
-                        <>
-                          <span>1-9</span>
-                          <span>Ascending</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>First</span>
-                          <Icon iconName="east" className="text-sm" />
-                          <span>Last</span>
-                        </>
-                      )}
+                    <div
+                      className={`group flex gap-1.5 px-1 items-center justify-between ${
+                        selectedMenuItem === `${col.ascendingOrder}_${col.propertyName}`
+                          ? "text-brand-base"
+                          : "text-brand-secondary hover:text-brand-base"
+                      }`}
+                    >
+                      <div className="flex gap-1.5 items-center">
+                        {col.propertyName === "assignee" || col.propertyName === "labels" ? (
+                          <>
+                            <span>A-Z</span>
+                            <span>Ascending</span>
+                          </>
+                        ) : col.propertyName === "due_date" ? (
+                          <>
+                            <span>1-9</span>
+                            <span>Ascending</span>
+                          </>
+                        ) : col.propertyName === "estimate" ? (
+                          <>
+                            <span>0</span>
+                            <Icon iconName="east" className="text-sm" />
+                            <span>10</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>First</span>
+                            <Icon iconName="east" className="text-sm" />
+                            <span>Last</span>
+                          </>
+                        )}
+                      </div>
+
+                      <CheckIcon
+                        className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
+                          selectedMenuItem === `${col.ascendingOrder}_${col.propertyName}`
+                            ? "opacity-100"
+                            : ""
+                        }`}
+                      />
                     </div>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem
+                    className={`${
+                      selectedMenuItem === `${col.descendingOrder}_${col.propertyName}`
+                        ? "bg-brand-surface-2"
+                        : ""
+                    }`}
                     key={col.property}
                     onClick={() => {
-                      setOrderBy(col.descendingOrder);
+                      handleOrderBy(col.descendingOrder, col.propertyName);
                     }}
                   >
-                    <div className="flex gap-1.5 px-1 items-center text-brand-secondary hover:text-brand-base">
-                      {col.propertyName === "assignee" || col.propertyName === "labels" ? (
-                        <>
-                          <span>Z-A</span>
-                          <span>Descending</span>
-                        </>
-                      ) : col.propertyName === "due_date" || col.propertyName === "estimate" ? (
-                        <>
-                          <span>9-1</span>
-                          <span>Descending</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Last</span>
-                          <Icon iconName="east" className="text-sm" />
-                          <span>First</span>
-                        </>
-                      )}
+                    <div
+                      className={`group flex gap-1.5 px-1 items-center justify-between ${
+                        selectedMenuItem === `${col.descendingOrder}_${col.propertyName}`
+                          ? "text-brand-base"
+                          : "text-brand-secondary hover:text-brand-base"
+                      }`}
+                    >
+                      <div className="flex gap-1.5 items-center">
+                        {col.propertyName === "assignee" || col.propertyName === "labels" ? (
+                          <>
+                            <span>Z-A</span>
+                            <span>Descending</span>
+                          </>
+                        ) : col.propertyName === "due_date" ? (
+                          <>
+                            <span>9-1</span>
+                            <span>Descending</span>
+                          </>
+                        ) : col.propertyName === "estimate" ? (
+                          <>
+                            <span>10</span>
+                            <Icon iconName="east" className="text-sm" />
+                            <span>0</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Last</span>
+                            <Icon iconName="east" className="text-sm" />
+                            <span>First</span>
+                          </>
+                        )}
+                      </div>
+
+                      <CheckIcon
+                        className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
+                          selectedMenuItem === `${col.descendingOrder}_${col.propertyName}`
+                            ? "opacity-100"
+                            : ""
+                        }`}
+                      />
                     </div>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem
+                    className={`${
+                      selectedMenuItem === `-created_at_${col.propertyName}`
+                        ? "bg-brand-surface-2"
+                        : ""
+                    }`}
                     key={col.property}
                     onClick={() => {
-                      setOrderBy("-created_at");
+                      handleOrderBy("-created_at", col.propertyName);
                     }}
                   >
-                    <div className="flex gap-1.5 px-1 items-center text-brand-secondary hover:text-brand-base">
-                      <Icon iconName="block" className="text-sm" />
-                      <span>None</span>
+                    <div
+                      className={`group flex gap-1.5 px-1 items-center justify-between ${
+                        selectedMenuItem === `-created_at_${col.propertyName}`
+                          ? "text-brand-base"
+                          : "text-brand-secondary hover:text-brand-base"
+                      }`}
+                    >
+                      <div className="flex gap-1.5 items-center">
+                        <Icon iconName="block" className="text-sm" />
+                        <span>None</span>
+                      </div>
+
+                      <CheckIcon
+                        className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
+                          selectedMenuItem === `-created_at_${col.propertyName}`
+                            ? "opacity-100"
+                            : ""
+                        }`}
+                      />
                     </div>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
