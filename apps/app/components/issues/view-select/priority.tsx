@@ -17,7 +17,7 @@ import { capitalizeFirstLetter } from "helpers/string.helper";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
   noBorder?: boolean;
@@ -41,7 +41,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
     <CustomSelect
       value={issue.priority}
       onChange={(data: string) => {
-        partialUpdateIssue({ priority: data }, issue.id);
+        partialUpdateIssue({ priority: data }, issue);
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,

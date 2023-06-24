@@ -19,7 +19,7 @@ import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
   tooltipPosition?: "left" | "right";
@@ -131,7 +131,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
       <CustomSearchSelect
         value={issue.labels}
         onChange={(data: string[]) => {
-          partialUpdateIssue({ labels_list: data }, issue.id);
+          partialUpdateIssue({ labels_list: data }, issue);
         }}
         options={options}
         {...(customButton ? { customButton: labelsLabel } : { label: labelsLabel })}

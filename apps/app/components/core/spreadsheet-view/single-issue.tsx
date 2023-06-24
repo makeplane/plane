@@ -27,10 +27,11 @@ import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 // types
-import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, ISubIssueResponse, Properties, UserAuth } from "types";
 // helper
 import { copyTextToClipboard } from "helpers/string.helper";
 
@@ -68,7 +69,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
-    (formData: Partial<IIssue>, issueId: string) => {
+    (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
       const fetchKey = cycleId
@@ -79,23 +80,52 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         ? VIEW_ISSUES(viewId.toString(), params)
         : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
 
-      mutate<IIssue[]>(
-        fetchKey,
-        (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === issueId) {
-              return {
-                ...p,
-                ...formData,
-              };
-            }
-            return p;
-          }),
-        false
-      );
+      if (issue.parent) {
+        mutate<ISubIssueResponse>(
+          SUB_ISSUES(issue.parent.toString()),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              sub_issues: (prevData.sub_issues ?? []).map((i) => {
+                if (i.id === issue.id) {
+                  return {
+                    ...i,
+                    ...formData,
+                  };
+                }
+                return i;
+              }),
+            };
+          },
+          false
+        );
+      } else {
+        mutate<IIssue[]>(
+          fetchKey,
+          (prevData) =>
+            (prevData ?? []).map((p) => {
+              if (p.id === issue.id) {
+                return {
+                  ...p,
+                  ...formData,
+                };
+              }
+              return p;
+            }),
+          false
+        );
+      }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData, user)
+        .patchIssue(
+          workspaceSlug as string,
+          projectId as string,
+          issue.id as string,
+          formData,
+          user
+        )
         .then(() => {
           mutate(fetchKey);
         })
