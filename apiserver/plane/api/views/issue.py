@@ -15,6 +15,7 @@ from django.db.models import (
     Value,
     CharField,
     When,
+    Max,
 )
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
@@ -195,7 +196,7 @@ class IssueViewSet(BaseViewSet):
                         output_field=CharField(),
                     )
                 ).order_by("priority_order")
-            
+
             # State Ordering
             elif order_by_param in [
                 "state__name",
@@ -218,6 +219,22 @@ class IssueViewSet(BaseViewSet):
                         output_field=CharField(),
                     )
                 ).order_by("state_order")
+            # assignee and label ordering
+            elif order_by_param in [
+                "labels__name",
+                "-labels__name",
+                "assignees__first_name",
+                "-assignees__first_name",
+            ]:
+                issue_queryset = issue_queryset.annotate(
+                    max_values=Max(
+                        order_by_param[1::]
+                        if order_by_param.startswith("-")
+                        else order_by_param
+                    )
+                ).order_by(
+                    "-max_values" if order_by_param.startswith("-") else "max_values"
+                )
             else:
                 issue_queryset = issue_queryset.order_by(order_by_param)
 
@@ -239,7 +256,7 @@ class IssueViewSet(BaseViewSet):
             return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
