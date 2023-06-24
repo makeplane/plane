@@ -23,6 +23,7 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
+  ViewLabelSelect,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
@@ -44,7 +45,14 @@ import { LayerDiagonalIcon } from "components/icons";
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  ISubIssueResponse,
+  Properties,
+  TIssueGroupByOptions,
+  UserAuth,
+} from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -52,6 +60,8 @@ import {
   MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -101,86 +111,68 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const { orderBy, params } = useIssuesView();
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
-    (formData: Partial<IIssue>, issueId: string) => {
+    (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
-      if (cycleId)
-        mutate<
-          | {
-              [key: string]: IIssue[];
-            }
-          | IIssue[]
-        >(
-          CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
-          (prevData) =>
-            handleIssuesMutation(
-              formData,
-              groupTitle ?? "",
-              selectedGroup,
-              index,
-              orderBy,
-              prevData
-            ),
-          false
-        );
-      else if (moduleId)
-        mutate<
-          | {
-              [key: string]: IIssue[];
-            }
-          | IIssue[]
-        >(
-          MODULE_ISSUES_WITH_PARAMS(moduleId as string),
-          (prevData) =>
-            handleIssuesMutation(
-              formData,
-              groupTitle ?? "",
-              selectedGroup,
-              index,
-              orderBy,
-              prevData
-            ),
-          false
-        );
-      else {
-        mutate<
-          | {
-              [key: string]: IIssue[];
-            }
-          | IIssue[]
-        >(
-          PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
+      const fetchKey = cycleId
+        ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
+        : moduleId
+        ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
+        : viewId
+        ? VIEW_ISSUES(viewId.toString(), params)
+        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
+
+      if (issue.parent) {
+        mutate<ISubIssueResponse>(
+          SUB_ISSUES(issue.parent.toString()),
           (prevData) => {
             if (!prevData) return prevData;
 
-            return handleIssuesMutation(
+            return {
+              ...prevData,
+              sub_issues: (prevData.sub_issues ?? []).map((i) => {
+                if (i.id === issue.id) {
+                  return {
+                    ...i,
+                    ...formData,
+                  };
+                }
+                return i;
+              }),
+            };
+          },
+          false
+        );
+      } else {
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          fetchKey,
+          (prevData) =>
+            handleIssuesMutation(
               formData,
               groupTitle ?? "",
               selectedGroup,
               index,
               orderBy,
               prevData
-            );
-          },
+            ),
           false
         );
       }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData, user)
+        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData, user)
         .then(() => {
-          if (cycleId) {
-            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-            mutate(CYCLE_DETAILS(cycleId as string));
-          } else if (moduleId) {
-            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-            mutate(MODULE_DETAILS(moduleId as string));
-          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+          mutate(fetchKey);
         });
     },
     [
@@ -188,6 +180,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       projectId,
       cycleId,
       moduleId,
+      viewId,
       groupTitle,
       index,
       selectedGroup,
@@ -370,23 +363,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.labels && issue.label_details.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {issue.label_details.map((label) => (
-                  <div
-                    key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                  >
-                    <span
-                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                      }}
-                    />
-                    {label.name}
-                  </div>
-                ))}
-              </div>
+            {properties.labels && (
+              <ViewLabelSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+                tooltipPosition="left"
+                user={user}
+                selfPositioned
+              />
             )}
             {properties.assignee && (
               <ViewAssigneeSelect

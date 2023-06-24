@@ -14,6 +14,7 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
+  ViewLabelSelect,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
@@ -36,7 +37,7 @@ import { LayerDiagonalIcon } from "components/icons";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { handleIssuesMutation } from "constants/issue";
 // types
-import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, ISubIssueResponse, Properties, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -44,6 +45,8 @@ import {
   MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -80,24 +83,53 @@ export const SingleListIssue: React.FC<Props> = ({
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { setToastAlert } = useToast();
 
   const { groupByProperty: selectedGroup, orderBy, params } = useIssueView();
 
   const partialUpdateIssue = useCallback(
-    (formData: Partial<IIssue>, issueId: string) => {
+    (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
-      if (cycleId)
+      const fetchKey = cycleId
+        ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
+        : moduleId
+        ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
+        : viewId
+        ? VIEW_ISSUES(viewId.toString(), params)
+        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
+
+      if (issue.parent) {
+        mutate<ISubIssueResponse>(
+          SUB_ISSUES(issue.parent.toString()),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              sub_issues: (prevData.sub_issues ?? []).map((i) => {
+                if (i.id === issue.id) {
+                  return {
+                    ...i,
+                    ...formData,
+                  };
+                }
+                return i;
+              }),
+            };
+          },
+          false
+        );
+      } else {
         mutate<
           | {
               [key: string]: IIssue[];
             }
           | IIssue[]
         >(
-          CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
+          fetchKey,
           (prevData) =>
             handleIssuesMutation(
               formData,
@@ -109,49 +141,12 @@ export const SingleListIssue: React.FC<Props> = ({
             ),
           false
         );
-
-      if (moduleId)
-        mutate<
-          | {
-              [key: string]: IIssue[];
-            }
-          | IIssue[]
-        >(
-          MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
-          (prevData) =>
-            handleIssuesMutation(
-              formData,
-              groupTitle ?? "",
-              selectedGroup,
-              index,
-              orderBy,
-              prevData
-            ),
-          false
-        );
-
-      mutate<
-        | {
-            [key: string]: IIssue[];
-          }
-        | IIssue[]
-      >(
-        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
-        (prevData) =>
-          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, orderBy, prevData),
-        false
-      );
+      }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData, user)
+        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData, user)
         .then(() => {
-          if (cycleId) {
-            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-            mutate(CYCLE_DETAILS(cycleId as string));
-          } else if (moduleId) {
-            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-            mutate(MODULE_DETAILS(moduleId as string));
-          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+          mutate(fetchKey);
         });
     },
     [
@@ -159,6 +154,7 @@ export const SingleListIssue: React.FC<Props> = ({
       projectId,
       cycleId,
       moduleId,
+      viewId,
       groupTitle,
       index,
       selectedGroup,
@@ -275,25 +271,14 @@ export const SingleListIssue: React.FC<Props> = ({
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.labels && issue.label_details.length > 0 ? (
-            <div className="flex flex-wrap gap-1">
-              {issue.label_details.map((label) => (
-                <span
-                  key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                >
-                  <span
-                    className="h-1.5 w-1.5  rounded-full"
-                    style={{
-                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                    }}
-                  />
-                  {label.name}
-                </span>
-              ))}
-            </div>
-          ) : (
-            ""
+          {properties.labels && (
+            <ViewLabelSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              position="right"
+              user={user}
+              isNotAllowed={isNotAllowed}
+            />
           )}
           {properties.assignee && (
             <ViewAssigneeSelect

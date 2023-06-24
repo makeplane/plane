@@ -10,6 +10,7 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
+  ViewLabelSelect,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
@@ -26,10 +27,11 @@ import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 // types
-import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, ISubIssueResponse, Properties, UserAuth } from "types";
 // helper
 import { copyTextToClipboard } from "helpers/string.helper";
 
@@ -67,7 +69,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
-    (formData: Partial<IIssue>, issueId: string) => {
+    (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
       const fetchKey = cycleId
@@ -78,23 +80,52 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         ? VIEW_ISSUES(viewId.toString(), params)
         : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
 
-      mutate<IIssue[]>(
-        fetchKey,
-        (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === issueId) {
-              return {
-                ...p,
-                ...formData,
-              };
-            }
-            return p;
-          }),
-        false
-      );
+      if (issue.parent) {
+        mutate<ISubIssueResponse>(
+          SUB_ISSUES(issue.parent.toString()),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              sub_issues: (prevData.sub_issues ?? []).map((i) => {
+                if (i.id === issue.id) {
+                  return {
+                    ...i,
+                    ...formData,
+                  };
+                }
+                return i;
+              }),
+            };
+          },
+          false
+        );
+      } else {
+        mutate<IIssue[]>(
+          fetchKey,
+          (prevData) =>
+            (prevData ?? []).map((p) => {
+              if (p.id === issue.id) {
+                return {
+                  ...p,
+                  ...formData,
+                };
+              }
+              return p;
+            }),
+          false
+        );
+      }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, formData, user)
+        .patchIssue(
+          workspaceSlug as string,
+          projectId as string,
+          issue.id as string,
+          formData,
+          user
+        )
         .then(() => {
           mutate(fetchKey);
         })
@@ -191,30 +222,19 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           />
         </div>
       )}
-      {properties.labels ? (
-        issue.label_details.length > 0 ? (
-          <div className="flex items-center gap-2 text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
-            {issue.label_details.slice(0, 4).map((label, index) => (
-              <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
-                <span
-                  className={`h-4 w-4 flex-shrink-0 rounded-full border group-hover:bg-brand-surface-2 border-brand-base
-                `}
-                  style={{
-                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
-                  }}
-                />
-              </div>
-            ))}
-            {issue.label_details.length > 4 ? <span>+{issue.label_details.length - 4}</span> : null}
-          </div>
-        ) : (
-          <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
-            No Labels
-          </div>
-        )
-      ) : (
-        ""
+      {properties.labels && (
+        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+          <ViewLabelSelect
+            issue={issue}
+            partialUpdateIssue={partialUpdateIssue}
+            position="left"
+            customButton
+            user={user}
+            isNotAllowed={isNotAllowed}
+          />
+        </div>
       )}
+
       {properties.due_date && (
         <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
           <ViewDueDateSelect
