@@ -19,6 +19,7 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
+  ViewLabelSelect,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
@@ -207,25 +208,14 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.labels && issue.label_details.length > 0 ? (
-              <div className="flex flex-wrap gap-1">
-                {issue.label_details.map((label) => (
-                  <span
-                    key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                  >
-                    <span
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{
-                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                      }}
-                    />
-                    {label.name}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              ""
+            {properties.labels && (
+              <ViewLabelSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="left"
+                user={user}
+                isNotAllowed={isNotAllowed}
+              />
             )}
             {properties.assignee && (
               <ViewAssigneeSelect

@@ -23,6 +23,7 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
+  ViewLabelSelect,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
@@ -370,23 +371,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.labels && issue.label_details.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {issue.label_details.map((label) => (
-                  <div
-                    key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                  >
-                    <span
-                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                      }}
-                    />
-                    {label.name}
-                  </div>
-                ))}
-              </div>
+            {properties.labels && (
+              <ViewLabelSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+                tooltipPosition="left"
+                user={user}
+                selfPositioned
+              />
             )}
             {properties.assignee && (
               <ViewAssigneeSelect
