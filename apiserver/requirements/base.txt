@@ -29,3 +29,4 @@ channels==4.0.0
 openai==0.27.2
 slack-sdk==3.20.2
 celery==5.2.7
+django_celery_beat=2.5.0
