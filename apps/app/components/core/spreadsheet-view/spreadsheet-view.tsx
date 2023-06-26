@@ -75,16 +75,21 @@ export const SpreadsheetView: React.FC<Props> = ({
               userAuth={userAuth}
             />
           ))}
-          <button
-            className="flex items-center gap-1.5 pl-7 py-2.5 text-sm text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", { key: "c" });
-              document.dispatchEvent(e);
-            }}
+          <div
+            className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
+            style={{ gridTemplateColumns }}
           >
-            <PlusIcon className="h-4 w-4" />
-            Add Issue
-          </button>
+            <button
+              className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full"
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", { key: "c" });
+                document.dispatchEvent(e);
+              }}
+            >
+              <PlusIcon className="h-4 w-4" />
+              Add Issue
+            </button>
+          </div>
         </div>
       ) : (
         <Spinner />
