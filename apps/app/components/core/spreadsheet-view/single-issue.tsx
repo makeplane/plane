@@ -127,7 +127,11 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           user
         )
         .then(() => {
-          mutate(fetchKey);
+          if (issue.parent) {
+            mutate(SUB_ISSUES(issue.parent as string));
+          } else {
+            mutate(fetchKey);
+          }
         })
         .catch((error) => {
           console.log(error);
