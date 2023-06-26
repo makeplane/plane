@@ -19,6 +19,7 @@ type Props = {
   noChevron?: boolean;
   position?: "left" | "right";
   verticalPosition?: "top" | "bottom";
+  menuItemsClassName?: string;
   customButton?: JSX.Element;
   menuItemsWhiteBg?: boolean;
 };
@@ -44,6 +45,7 @@ const CustomMenu = ({
   noChevron = false,
   position = "right",
   verticalPosition = "bottom",
+  menuItemsClassName = "",
   customButton,
   menuItemsWhiteBg = false,
 }: Props) => (
@@ -133,7 +135,7 @@ const CustomMenu = ({
               menuItemsWhiteBg
                 ? "border-brand-surface-1 bg-brand-base"
                 : "border-brand-base bg-brand-surface-1"
-            }`}
+            } ${menuItemsClassName}`}
           >
             <div className="py-1">{children}</div>
           </Menu.Items>
