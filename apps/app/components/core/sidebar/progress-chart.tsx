@@ -117,6 +117,14 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
         colors={(datum) => datum.color ?? "#3F76FF"}
         customYAxisTickValues={[0, totalIssues]}
         gridXValues={chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : ""))}
+        enableSlices="x"
+        sliceTooltip={(datum) => (
+          <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+            {datum.slice.points[0].data.yFormatted}
+            <span className="text-brand-secondary"> issues pending on </span>
+            {datum.slice.points[0].data.xFormatted}
+          </div>
+        )}
         theme={{
           background: "transparent",
           axis: {
