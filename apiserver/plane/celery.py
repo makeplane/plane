@@ -15,9 +15,9 @@ app = Celery("plane")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
 app.conf.beat_schedule = {
-    # Executes every day at 12 a.m.
+    # Executes every day at 12 AM
     "check-every-day-to-archive": {
-        "task": "plane.tasks.archive_old_issues",
+        "task": "plane.bgtasks.issue_archival_task.archive_old_issues",
         "schedule": crontab(hour=0, minute=0),
     },
 }
