@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 
@@ -93,6 +93,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const labelSubmitButtonRef = useRef<HTMLButtonElement>(null);
 
   const { user } = useUserAuth();
 
@@ -239,6 +241,10 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         message: "Issue link copied to clipboard.",
       });
     });
+  };
+
+  const handleLabelInputkeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") labelSubmitButtonRef?.current?.click();
   };
 
   useEffect(() => {
@@ -685,6 +691,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     required: "This is required",
                   }}
                   autoComplete="off"
+                  onKeyDown={handleLabelInputkeyDown}
                 />
                 <button
                   type="submit"
@@ -694,6 +701,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <XMarkIcon className="h-4 w-4 text-white" />
                 </button>
                 <button
+                  ref={labelSubmitButtonRef}
                   type="submit"
                   className="grid place-items-center rounded bg-green-500 p-2.5"
                   disabled={isSubmitting}
