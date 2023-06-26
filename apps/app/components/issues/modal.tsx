@@ -82,11 +82,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const { params: inboxParams } = useInboxView();
   const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
-  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
-  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
-
   const { user } = useUser();
   const { setToastAlert } = useToast();
+
+  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
+  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
+  if (router.asPath.includes("my-issues"))
+    prePopulateData = {
+      ...prePopulateData,
+      assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
+    };
 
   const { data: issues } = useSWR(
     workspaceSlug && activeProject
@@ -121,7 +126,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   }, [handleClose]);
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !activeProject) return;
 
     await issuesService
       .addIssueToCycle(
@@ -142,7 +147,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !activeProject) return;
 
     await modulesService
       .addIssuesToModule(
@@ -163,7 +168,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const addIssueToInbox = async (formData: Partial<IIssue>) => {
-    if (!workspaceSlug || !projectId || !inboxId) return;
+    if (!workspaceSlug || !activeProject || !inboxId) return;
 
     const payload = {
       issue: {
@@ -178,7 +183,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     await inboxServices
       .createInboxIssue(
         workspaceSlug.toString(),
-        projectId.toString(),
+        activeProject.toString(),
         inboxId.toString(),
         payload,
         user
@@ -191,7 +196,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         });
 
         router.push(
-          `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`
+          `/${workspaceSlug}/projects/${activeProject}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`
         );
 
         mutate(INBOX_ISSUES(inboxId.toString(), inboxParams));
@@ -211,7 +216,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
     : viewId
     ? VIEW_ISSUES(viewId.toString(), calendarParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", calendarParams);
 
   const spreadsheetFetchKey = cycleId
     ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
@@ -219,7 +224,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
     : viewId
     ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", spreadsheetParams);
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", spreadsheetParams);
 
   const ganttFetchKey = cycleId
     ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
@@ -227,10 +232,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
     : viewId
     ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "");
 
   const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !activeProject) return;
 
     if (inboxId) await addIssueToInbox(payload);
     else
@@ -252,7 +257,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             message: "Issue created successfully.",
           });
 
-          if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
+          if (payload.assignees_list?.some((assignee) => assignee === user?.id))
+            mutate(USER_ISSUE(workspaceSlug as string));
 
           if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
         })
