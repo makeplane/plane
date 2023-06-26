@@ -111,7 +111,7 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
                       <div className="mt-2">
                         <p className="text-sm text-brand-secondary">
                           Are you sure you want to delete module-{" "}
-                          <span className="break-all font-medium text-brand-base">
+                          <span className="break-words font-medium text-brand-base">
                             {data?.name}
                           </span>
                           ? All of the data related to the module will be permanently removed. This

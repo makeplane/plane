@@ -1,7 +1,7 @@
 import { IAnalyticsParams, IJiraMetadata } from "types";
 
 const paramsToKey = (params: any) => {
-  const { state, priority, assignees, created_by, labels, target_date } = params;
+  const { state, priority, assignees, created_by, labels, target_date, sub_issue } = params;
 
   let stateKey = state ? state.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
@@ -12,6 +12,7 @@ const paramsToKey = (params: any) => {
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const subIssue = sub_issue ? sub_issue.toUpperCase() : "NULL";
 
   // sorting each keys in ascending order
   stateKey = stateKey.sort().join("_");
@@ -20,7 +21,7 @@ const paramsToKey = (params: any) => {
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}_${subIssue}`;
 };
 
 const inboxParamsToKey = (params: any) => {

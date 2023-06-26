@@ -10,7 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu, ToggleSwitch } from "components/ui";
+import { CustomMenu, Icon, ToggleSwitch } from "components/ui";
 // icons
 import {
   ChevronDownIcon,
@@ -85,6 +85,15 @@ export const IssuesFilterView: React.FC = () => {
         </button>
         <button
           type="button"
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+            issueView === "spreadsheet" ? "bg-brand-surface-2" : ""
+          }`}
+          onClick={() => setIssueView("spreadsheet")}
+        >
+          <Icon iconName="table_chart" className="text-brand-secondary" />
+        </button>
+        <button
+          type="button"
           className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
             issueView === "gantt_chart" ? "bg-brand-surface-2" : ""
           }`}
@@ -146,10 +155,10 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform rounded-lg border border-brand-base bg-brand-surface-1 p-3 shadow-lg">
+              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-brand-base bg-brand-surface-1 p-3 shadow-lg">
                 <div className="relative divide-y-2 divide-brand-base">
                   <div className="space-y-4 pb-3 text-xs">
-                    {issueView !== "calendar" && (
+                    {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
                         <div className="flex items-center justify-between">
                           <h4 className="text-brand-secondary">Group by</h4>
@@ -221,7 +230,7 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
 
-                    {issueView !== "calendar" && (
+                    {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
                         <div className="flex items-center justify-between">
                           <h4 className="text-brand-secondary">Show empty states</h4>
@@ -251,6 +260,13 @@ export const IssuesFilterView: React.FC = () => {
                     <div className="flex flex-wrap items-center gap-2">
                       {Object.keys(properties).map((key) => {
                         if (key === "estimate" && !isEstimateActive) return null;
+
+                        if (
+                          (issueView === "spreadsheet" && key === "sub_issue_count") ||
+                          key === "attachment_count" ||
+                          key === "link"
+                        )
+                          return null;
 
                         return (
                           <button

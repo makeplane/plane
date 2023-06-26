@@ -47,20 +47,15 @@ const SignUp: NextPage = () => {
         if (response) await mutateUser();
         router.push("/");
       })
-      .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "An user already exists with this Email ID.",
-          });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Something went wrong. Please try again later or contact the support team.",
-          });
-      });
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message:
+            err?.error ||
+            "Something went wrong. Please try again later or contact the support team.",
+        })
+      );
   };
 
   return (

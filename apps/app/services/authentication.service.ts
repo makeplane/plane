@@ -28,7 +28,7 @@ class AuthService extends APIService {
         return response?.data;
       })
       .catch((error) => {
-        throw error?.response;
+        throw error?.response?.data;
       });
   }
 
@@ -51,6 +51,7 @@ class AuthService extends APIService {
         throw error?.response?.data;
       });
   }
+
   async magicSignIn(data: any) {
     const response = await this.post("/api/magic-sign-in/", data, { headers: {} });
     if (response?.status === 200) {

@@ -41,6 +41,14 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
           colors={(datum) => datum.color}
           curve="monotoneX"
           margin={{ top: 20 }}
+          enableSlices="x"
+          sliceTooltip={(datum) => (
+            <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+              {datum.slice.points[0].data.yFormatted}
+              <span className="text-brand-secondary"> issues closed in </span>
+              {datum.slice.points[0].data.xFormatted}
+            </div>
+          )}
           theme={{
             background: "rgb(var(--color-bg-base))",
           }}

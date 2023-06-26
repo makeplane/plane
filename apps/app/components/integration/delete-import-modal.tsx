@@ -104,7 +104,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                   <span>
                     <p className="text-sm leading-7 text-brand-secondary">
                       Are you sure you want to delete import from{" "}
-                      <span className="break-all font-semibold capitalize text-brand-base">
+                      <span className="break-words font-semibold capitalize text-brand-base">
                         {data?.service}
                       </span>
                       ? All of the data related to the import will be permanently removed. This

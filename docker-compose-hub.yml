@@ -28,6 +28,8 @@ services:
                 env_file:
                         - .env
                 environment:
+                        DEBUG: ${DEBUG}
+                        SENTRY_DSN: ${SENTRY_DSN}
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://plane-redis:6379/
@@ -52,7 +54,6 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
-                        DEBUG: ${DEBUG}
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -65,6 +66,8 @@ services:
                 env_file:
                         - .env
                 environment:
+                        DEBUG: ${DEBUG}
+                        SENTRY_DSN: ${SENTRY_DSN}
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://plane-redis:6379/
@@ -89,7 +92,6 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
-                        DEBUG: ${DEBUG}
                 depends_on:
                         - plane-api
                         - plane-db
