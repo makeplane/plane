@@ -85,7 +85,7 @@ const IntegrationGuide = () => {
                   key={service.provider}
                   className="rounded-[10px] border border-brand-base bg-brand-base p-4"
                 >
-                  <div className="flex items-center gap-4 whitespace-nowrap">
+                  <div className="flex items-center gap-4">
                     <div className="relative h-10 w-10 flex-shrink-0">
                       <Image
                         src={service.logo}
