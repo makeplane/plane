@@ -15,7 +15,6 @@ import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
 // components
 import SingleInvitation from "components/workspace/single-invitation";
-import { OnboardingLogo } from "components/onboarding";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, SecondaryButton, PrimaryButton } from "components/ui";
 // icons
@@ -85,7 +84,7 @@ const OnBoard: NextPage = () => {
         <div className="relative grid h-full place-items-center p-5">
           <div className="h-full flex flex-col items-center justify-center w-full py-4">
             <div className="mb-7 flex items-center justify-center text-center">
-              <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
+              {/* <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" /> */}
             </div>
 
             <div className="flex h-[436px] w-full max-w-xl rounded-[10px] p-7 bg-brand-base shadow-md">

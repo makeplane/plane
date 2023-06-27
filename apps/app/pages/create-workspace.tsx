@@ -1,16 +1,12 @@
 import React from "react";
 
 import { useRouter } from "next/router";
-import Image from "next/image";
+
 // hooks
 import useUser from "hooks/use-user";
-// components
-import { OnboardingLogo } from "components/onboarding";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
-// images
-import Logo from "public/onboarding/logo.svg";
 // types
 import type { NextPage } from "next";
 // constants
@@ -31,7 +27,7 @@ const CreateWorkspace: NextPage = () => {
         <div className="relative grid h-full place-items-center p-5">
           <div className="h-full flex flex-col items-center justify-center w-full py-4">
             <div className="mb-7 flex items-center justify-center text-center">
-              <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
+              {/* <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" /> */}
             </div>
 
             <div className="flex h-[366px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md">
