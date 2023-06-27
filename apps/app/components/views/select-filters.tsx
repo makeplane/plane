@@ -70,7 +70,7 @@ export const SelectFilters: React.FC<Props> = ({
           value: PRIORITIES,
           children: [
             ...PRIORITIES.map((priority) => ({
-              id: priority ?? "none",
+              id: priority === null ? "null" : priority,
               label: (
                 <div className="flex items-center gap-2">
                   {getPriorityIcon(priority)} {priority ?? "None"}
@@ -78,9 +78,9 @@ export const SelectFilters: React.FC<Props> = ({
               ),
               value: {
                 key: "priority",
-                value: priority,
+                value: priority === null ? "null" : priority,
               },
-              selected: filters?.priority?.includes(priority ?? "none"),
+              selected: filters?.priority?.includes(priority === null ? "null" : priority),
             })),
           ],
         },

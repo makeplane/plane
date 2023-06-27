@@ -226,7 +226,7 @@ export const ActiveCycleDetails: React.FC = () => {
                     />
                   </span>
                   <Tooltip tooltipContent={cycle.name} position="top-left">
-                    <h3 className="break-all text-lg font-semibold">
+                    <h3 className="break-words text-lg font-semibold">
                       {truncateText(cycle.name, 70)}
                     </h3>
                   </Tooltip>

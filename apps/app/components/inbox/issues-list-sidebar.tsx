@@ -11,7 +11,7 @@ export const IssuesListSidebar = () => {
   const router = useRouter();
   const { inboxIssueId } = router.query;
 
-  const { issues: inboxIssues } = useInboxView();
+  const { issues: inboxIssues, filtersLength } = useInboxView();
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
@@ -29,7 +29,8 @@ export const IssuesListSidebar = () => {
           </div>
         ) : (
           <div className="h-full p-4 grid place-items-center text-center text-sm text-brand-secondary">
-            No issues found for the selected filters. Try changing the filters.
+            {filtersLength > 0 &&
+              "No issues found for the selected filters. Try changing the filters."}
           </div>
         )
       ) : (

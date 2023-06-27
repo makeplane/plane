@@ -3,9 +3,9 @@ import React, { useState } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { SecondaryButton, PrimaryButton } from "components/ui";
 // types
 import type { IInboxIssue } from "types";
 
@@ -16,18 +16,18 @@ type Props = {
   onSubmit: () => Promise<void>;
 };
 
-export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, onSubmit }) => {
-  const [isDeclining, setIsDeclining] = useState(false);
+export const AcceptIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, onSubmit }) => {
+  const [isAccepting, setIsAccepting] = useState(false);
 
   const onClose = () => {
-    setIsDeclining(false);
+    setIsAccepting(false);
     handleClose();
   };
 
-  const handleDecline = () => {
-    setIsDeclining(true);
+  const handleAccept = () => {
+    setIsAccepting(true);
 
-    onSubmit().finally(() => setIsDeclining(false));
+    onSubmit().finally(() => setIsAccepting(false));
   };
 
   return (
@@ -59,30 +59,27 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, 
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
-                    <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                    <span className="place-items-center rounded-full bg-green-500/20 p-4">
+                      <CheckCircleIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Decline Issue</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Accept Issue</h3>
                     </span>
                   </div>
                   <span>
                     <p className="text-sm text-brand-secondary">
-                      Are you sure you want to decline issue{" "}
-                      <span className="break-words font-medium text-brand-base">
+                      Are you sure you want to accept issue{" "}
+                      <span className="break-all font-medium text-brand-base">
                         {data?.project_detail?.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? This action cannot be undone.
+                      {""}? Once accepted, this issue will be added to the project issues list.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDecline} loading={isDeclining}>
-                      {isDeclining ? "Declining..." : "Decline Issue"}
-                    </DangerButton>
+                    <PrimaryButton onClick={handleAccept} loading={isAccepting}>
+                      {isAccepting ? "Accepting..." : "Accept Issue"}
+                    </PrimaryButton>
                   </div>
                 </div>
               </Dialog.Panel>

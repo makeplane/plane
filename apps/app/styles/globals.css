@@ -225,3 +225,8 @@ body {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
 }
+
+/* popover2 styling */
+.bp4-popover2-transition-container {
+  z-index: 20 !important;
+}

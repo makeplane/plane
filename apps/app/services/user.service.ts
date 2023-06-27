@@ -58,7 +58,6 @@ class UserService extends APIService {
         if (trackEvent)
           trackEventServices.trackUserOnboardingCompleteEvent(
             {
-              ...response.data,
               user_role: userRole ?? "None",
             },
             user

@@ -11,7 +11,7 @@ import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   noBorder?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
@@ -48,7 +48,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
                 priority: issue.priority,
                 state: issue.state,
               },
-              issue.id
+              issue
             );
             trackEventServices.trackIssuePartialPropertyUpdateEvent(
               {

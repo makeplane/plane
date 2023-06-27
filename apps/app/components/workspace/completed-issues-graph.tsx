@@ -60,6 +60,14 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
               margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
               customYAxisTickValues={data.map((item) => item.completed_count)}
               colors={(datum) => datum.color}
+              enableSlices="x"
+              sliceTooltip={(datum) => (
+                <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+                  {datum.slice.points[0].data.yFormatted}
+                  <span className="text-brand-secondary"> issues closed in </span>
+                  {datum.slice.points[0].data.xFormatted}
+                </div>
+              )}
               theme={{
                 background: "rgb(var(--color-bg-base))",
               }}

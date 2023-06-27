@@ -282,7 +282,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
                           <span className="flex-shrink-0 text-brand-secondary">
                             {issue.project_detail.identifier}-{issue.sequence_id}
                           </span>
-                          <span className="max-w-sm break-all font-medium">{issue.name}</span>
+                          <span className="max-w-sm break-words font-medium">{issue.name}</span>
                         </div>
 
                         {!isNotAllowed && (

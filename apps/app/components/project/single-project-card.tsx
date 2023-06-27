@@ -195,7 +195,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                     </span>
                   ) : null}
                 </div>
-                <p className="mt-3.5 mb-7 break-all">
+                <p className="mt-3.5 mb-7 break-words">
                   {truncateText(project.description ?? "", 100)}
                 </p>
               </a>

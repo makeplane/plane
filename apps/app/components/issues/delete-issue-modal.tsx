@@ -18,12 +18,13 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { IIssue, ICurrentUserResponse } from "types";
+import type { IIssue, ICurrentUserResponse, ISubIssueResponse } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
@@ -84,12 +85,28 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
             : viewId
             ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
             : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", spreadsheetParams);
+          if (data.parent) {
+            mutate<ISubIssueResponse>(
+              SUB_ISSUES(data.parent.toString()),
+              (prevData) => {
+                if (!prevData) return prevData;
+                const updatedArray = (prevData.sub_issues ?? []).filter((i) => i.id !== data.id);
 
-          mutate<IIssue[]>(
-            spreadsheetFetchKey,
-            (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
-            false
-          );
+                return {
+                  ...prevData,
+                  sub_issues: updatedArray,
+                };
+              },
+              false
+            );
+            mutate<IIssue[]>(spreadsheetFetchKey);
+          } else {
+            mutate<IIssue[]>(
+              spreadsheetFetchKey,
+              (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
+              false
+            );
+          }
         } else {
           if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
@@ -151,7 +168,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
                   <span>
                     <p className="text-sm text-brand-secondary">
                       Are you sure you want to delete issue{" "}
-                      <span className="break-all font-medium text-brand-base">
+                      <span className="break-words font-medium text-brand-base">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This

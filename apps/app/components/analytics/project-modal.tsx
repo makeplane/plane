@@ -160,7 +160,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
         }`}
       >
         <div className="flex items-center justify-between gap-4 bg-brand-base px-5 py-4 text-sm">
-          <h3 className="break-all">
+          <h3 className="break-words">
             Analytics for{" "}
             {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
           </h3>
