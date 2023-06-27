@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,9 +14,15 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
+import { Popover2 } from "@blueprintjs/popover2";
 // icons
-import { CustomMenu, Icon } from "components/ui";
-import { LinkIcon, PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Icon } from "components/ui";
+import {
+  EllipsisHorizontalIcon,
+  LinkIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // hooks
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useToast from "hooks/use-toast";
@@ -60,6 +66,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   userAuth,
   nestingLevel,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
@@ -163,27 +170,87 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      <div className="flex gap-1.5 items-center px-4 sticky left-0 z-[1] text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full">
-        <span className="flex gap-1 items-center" style={issue.parent ? { paddingLeft } : {}}>
-          <div className="flex items-center cursor-pointer text-xs text-center hover:text-brand-base w-14  opacity-100 group-hover:opacity-0">
+      <div className="flex gap-1.5 items-center px-4 sticky z-10 left-0 text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full">
+        <div className="flex gap-1.5 items-center" style={issue.parent ? { paddingLeft } : {}}>
+          <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-brand-base w-14">
             {properties.key && (
-              <span>
+              <span className="flex items-center justify-center opacity-100 group-hover:opacity-0">
                 {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
             )}
+            {!isNotAllowed && (
+              <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">
+                <Popover2
+                  isOpen={isOpen}
+                  canEscapeKeyClose
+                  onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
+                  content={
+                    <div
+                      className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-brand-base bg-brand-surface-1`}
+                    >
+                      <button
+                        type="button"
+                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2"
+                        onClick={() => {
+                          handleEditIssue(issue);
+                          setIsOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center justify-start gap-2">
+                          <PencilIcon className="h-4 w-4" />
+                          <span>Edit issue</span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2"
+                        onClick={() => {
+                          handleDeleteIssue(issue);
+                          setIsOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center justify-start gap-2">
+                          <TrashIcon className="h-4 w-4" />
+                          <span>Delete issue</span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2"
+                        onClick={() => {
+                          handleCopyText();
+                          setIsOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center justify-start gap-2">
+                          <LinkIcon className="h-4 w-4" />
+                          <span>Copy issue link</span>
+                        </div>
+                      </button>
+                    </div>
+                  }
+                  placement="bottom-start"
+                >
+                  <EllipsisHorizontalIcon className="h-5 w-5 text-brand-secondary" />
+                </Popover2>
+              </div>
+            )}
           </div>
 
-          <div className="h-5 w-5">
+          <div className="h-6 w-6 flex justify-center items-center">
             {issue.sub_issues_count > 0 && (
               <button
-                className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm"
+                className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm cursor-pointer"
                 onClick={() => handleToggleExpand(issue.id)}
               >
                 <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
               </button>
             )}
           </div>
-        </span>
+        </div>
+
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="truncate text-brand-base cursor-pointer w-full text-[0.825rem]">
             {issue.name}
@@ -261,35 +328,6 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           />
         </div>
       )}
-      <div
-        className="absolute top-2.5 z-10 cursor-pointer opacity-0 group-hover:opacity-100"
-        style={{
-          left: `${nestingLevel * 68 + 24}px`,
-        }}
-      >
-        {!isNotAllowed && (
-          <CustomMenu width="auto" position="left" ellipsis>
-            <CustomMenu.MenuItem onClick={() => handleEditIssue(issue)}>
-              <div className="flex items-center justify-start gap-2">
-                <PencilIcon className="h-4 w-4" />
-                <span>Edit issue</span>
-              </div>
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-              <div className="flex items-center justify-start gap-2">
-                <TrashIcon className="h-4 w-4" />
-                <span>Delete issue</span>
-              </div>
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem onClick={handleCopyText}>
-              <div className="flex items-center justify-start gap-2">
-                <LinkIcon className="h-4 w-4" />
-                <span>Copy issue link</span>
-              </div>
-            </CustomMenu.MenuItem>
-          </CustomMenu>
-        )}
-      </div>
     </div>
   );
 };
