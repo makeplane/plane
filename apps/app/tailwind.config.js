@@ -24,6 +24,7 @@ module.exports = {
       borderColor: {
         brand: {
           base: withOpacity("--color-border"),
+          secondary: withOpacity("--color-text-base"),
           "surface-1": withOpacity("--color-bg-surface-1"),
           "surface-2": withOpacity("--color-bg-surface-2"),
         },

@@ -31,42 +31,6 @@ export const USER_ROLES = [
   { value: "Other", label: "Other" },
 ];
 
-export const ONBOARDING_CARDS = {
-  welcome: {
-    imgURL: Welcome,
-    step: "1/5",
-    title: "Welcome to Plane",
-    description: "Plane helps you plan your issues, cycles, and product modules to ship faster.",
-  },
-  issue: {
-    imgURL: Issue,
-    step: "2/5",
-    title: "Plan with Issues",
-    description:
-      "Issues are the building blocks of Plane. Most concepts in Plane are associated with issues or their properties.",
-  },
-  cycle: {
-    imgURL: Cycle,
-    step: "3/5",
-    title: "Move with Cycles",
-    description:
-      "Cycles help you and your team progress faster, similar to sprints commonly used in agile development.",
-  },
-  module: {
-    imgURL: Module,
-    step: "4/5",
-    title: "Break into Modules ",
-    description:
-      "Modules break your big thoughts into Projects or Features, to help you organize better.",
-  },
-  commandMenu: {
-    imgURL: CommandMenu,
-    step: "5 /5",
-    title: "Command Menu",
-    description: "With Command Menu, you can create, update, and navigate across the platform.",
-  },
-};
-
 export const IMPORTERS_EXPORTERS_LIST = [
   {
     provider: "github",
