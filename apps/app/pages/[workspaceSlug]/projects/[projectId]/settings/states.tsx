@@ -98,6 +98,7 @@ const StatesSettings: NextPage = () => {
                         <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
                           {key === activeGroup && (
                             <CreateUpdateStateInline
+                              groupLength={orderedStateGroups[key].length}
                               onClose={() => {
                                 setActiveGroup(null);
                                 setSelectedState(null);
@@ -128,6 +129,7 @@ const StatesSettings: NextPage = () => {
                                     setActiveGroup(null);
                                     setSelectedState(null);
                                   }}
+                                  groupLength={orderedStateGroups[key].length}
                                   data={
                                     statesList?.find((state) => state.id === selectedState) ?? null
                                   }

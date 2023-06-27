@@ -23,7 +23,6 @@ import {
   IssueStateSelect,
 } from "components/issues/select";
 import { CreateStateModal } from "components/states";
-import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
 // ui
 import {
@@ -73,7 +72,6 @@ const defaultValues: Partial<IIssue> = {
   description_html: "<p></p>",
   estimate_point: null,
   state: "",
-  cycle: null,
   priority: null,
   assignees: [],
   assignees_list: [],
@@ -122,7 +120,6 @@ export const IssueForm: FC<IssueFormProps> = ({
 }) => {
   // states
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
-  const [cycleModal, setCycleModal] = useState(false);
   const [stateModal, setStateModal] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -250,11 +247,6 @@ export const IssueForm: FC<IssueFormProps> = ({
             isOpen={stateModal}
             handleClose={() => setStateModal(false)}
             projectId={projectId}
-            user={user}
-          />
-          <CreateUpdateCycleModal
-            isOpen={cycleModal}
-            handleClose={() => setCycleModal(false)}
             user={user}
           />
           <CreateLabelModal
