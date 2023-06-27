@@ -572,8 +572,11 @@ export const IssuesView: React.FC<Props> = ({
                 />
               ) : issueView === "spreadsheet" ? (
                 <SpreadsheetView
+                  type={type}
                   handleEditIssue={handleEditIssue}
                   handleDeleteIssue={handleDeleteIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                  isCompleted={isCompleted}
                   user={user}
                   userAuth={memberRole}
                 />
