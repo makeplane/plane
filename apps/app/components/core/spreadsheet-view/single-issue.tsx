@@ -49,6 +49,7 @@ type Props = {
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   gridTemplateColumns: string;
+  isCompleted?: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   nestingLevel: number;
@@ -62,6 +63,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   handleEditIssue,
   handleDeleteIssue,
   gridTemplateColumns,
+  isCompleted = false,
   user,
   userAuth,
   nestingLevel,
@@ -170,7 +172,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      <div className="flex gap-1.5 items-center px-4 sticky z-10 left-0 text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full">
+      <div className="flex gap-1.5 items-center px-4 sticky z-[1] left-0 text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full">
         <div className="flex gap-1.5 items-center" style={issue.parent ? { paddingLeft } : {}}>
           <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-brand-base w-14">
             {properties.key && (
@@ -178,7 +180,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                 {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
             )}
-            {!isNotAllowed && (
+            {!isNotAllowed && !isCompleted && (
               <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">
                 <Popover2
                   isOpen={isOpen}
