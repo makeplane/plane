@@ -101,6 +101,13 @@ export const ActiveCycleDetails: React.FC = () => {
       : null
   ) as { data: IIssue[] | undefined };
 
+  if (!currentCycle)
+    return (
+      <Loader>
+        <Loader.Item height="250px" />
+      </Loader>
+    );
+
   if (!cycle)
     return (
       <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
