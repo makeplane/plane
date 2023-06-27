@@ -19,7 +19,7 @@ import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
   customButton?: boolean;
@@ -83,7 +83,7 @@ export const ViewStateSelect: React.FC<Props> = ({
             priority: issue.priority,
             target_date: issue.target_date,
           },
-          issue.id
+          issue
         );
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
