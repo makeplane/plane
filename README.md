@@ -165,4 +165,4 @@ Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CON
 
 ## ⛓️ Security
 
-If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email security@plane.so to disclose any security vulnerabilities.
+If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email engineering@plane.so to disclose any security vulnerabilities.
