@@ -1,7 +1,6 @@
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 
-
 def filter_state(params, filter, method):
     if method == "GET":
         states = params.get("state").split(",")
@@ -26,12 +25,27 @@ def filter_estimate_point(params, filter, method):
 
 def filter_priority(params, filter, method):
     if method == "GET":
-        priorties = params.get("priority").split(",")
-        if len(priorties) and "" not in priorties:
-            filter["priority__in"] = priorties
+        priorities = params.get("priority").split(",")
+        if len(priorities) and "" not in priorities:
+            if len(priorities) == 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+            elif len(priorities) > 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+            else:
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+
     else:
         if params.get("priority", None) and len(params.get("priority")):
-            filter["priority__in"] = params.get("priority")
+            priorities = params.get("priority")
+            if len(priorities) == 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+            elif len(priorities) > 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+            else:
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+
     return filter
 
 
