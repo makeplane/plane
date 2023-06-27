@@ -16,6 +16,7 @@ type Props = {
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   gridTemplateColumns: string;
+  isCompleted?: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   nestingLevel?: number;
@@ -30,6 +31,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
   properties,
   handleEditIssue,
   handleDeleteIssue,
+  isCompleted = false,
   user,
   userAuth,
   nestingLevel = 0,
@@ -61,6 +63,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
         properties={properties}
         handleEditIssue={handleEditIssue}
         handleDeleteIssue={handleDeleteIssue}
+        isCompleted={isCompleted}
         user={user}
         userAuth={userAuth}
         nestingLevel={nestingLevel}
@@ -80,6 +83,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
             properties={properties}
             handleEditIssue={handleEditIssue}
             handleDeleteIssue={handleDeleteIssue}
+            isCompleted={isCompleted}
             user={user}
             userAuth={userAuth}
             nestingLevel={nestingLevel + 1}
