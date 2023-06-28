@@ -29,16 +29,18 @@ export interface IUser {
 }
 
 export interface ICustomTheme {
-  "accent-50": string;
-  "accent-100": string;
-  "accent-200": string;
-  "accent-300": string;
-  "accent-400": string;
-  "accent-500": string;
-  "accent-600": string;
-  "accent-700": string;
-  "accent-800": string;
-  "accent-900": string;
+  accent: {
+    50: string;
+    100: string;
+    200: string;
+    300: string;
+    400: string;
+    500: string;
+    600: string;
+    700: string;
+    800: string;
+    900: string;
+  };
   bgBase: string;
   bgSurface1: string;
   bgSurface2: string;

@@ -79,26 +79,26 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
 
   const handleFormSubmit = async (formData: any) => {
     const accent = {
-      "accent-50": calculateShade(formData["accent-500"], 50),
-      "accent-100": calculateShade(formData["accent-500"], 100),
-      "accent-200": calculateShade(formData["accent-500"], 200),
-      "accent-300": calculateShade(formData["accent-500"], 300),
-      "accent-400": calculateShade(formData["accent-500"], 400),
-      "accent-500": formData["accent-500"],
-      "accent-600": calculateShade(formData["accent-500"], 600),
-      "accent-700": calculateShade(formData["accent-500"], 700),
-      "accent-800": calculateShade(formData["accent-500"], 800),
-      "accent-900": calculateShade(formData["accent-500"], 900),
+      50: calculateShade(formData["accent-500"], 50),
+      100: calculateShade(formData["accent-500"], 100),
+      200: calculateShade(formData["accent-500"], 200),
+      300: calculateShade(formData["accent-500"], 300),
+      400: calculateShade(formData["accent-500"], 400),
+      500: formData["accent-500"],
+      600: calculateShade(formData["accent-500"], 600),
+      700: calculateShade(formData["accent-500"], 700),
+      800: calculateShade(formData["accent-500"], 800),
+      900: calculateShade(formData["accent-500"], 900),
     };
 
     const payload: ICustomTheme = {
-      ...accent,
+      accent,
       bgBase: formData.bgBase,
       bgSurface1: formData.bgSurface1,
       bgSurface2: formData.bgSurface2,
       border: formData.border,
       darkPalette: darkPalette,
-      palette: `${formData.bgBase},${formData.bgSurface1},${formData.bgSurface2},${formData.border},${formData.sidebar},${accent["accent-50"]},${accent["accent-100"]},${accent["accent-200"]},${accent["accent-300"]},${accent["accent-400"]},${accent["accent-500"]},${accent["accent-600"]},${accent["accent-700"]},${accent["accent-800"]},${accent["accent-900"]},${formData.textBase},${formData.textSecondary}`,
+      palette: `${formData.bgBase},${formData.bgSurface1},${formData.bgSurface2},${formData.border},${formData.sidebar},${accent[50]},${accent[100]},${accent[200]},${accent[300]},${accent[400]},${accent[500]},${accent[600]},${accent[700]},${accent[800]},${accent[900]},${formData.textBase},${formData.textSecondary}`,
       sidebar: formData.sidebar,
       textBase: formData.textBase,
       textSecondary: formData.textSecondary,
