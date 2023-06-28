@@ -56,10 +56,10 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
     if (shade > 500) {
       let decimalValue = 0.1;
 
-      if (shade === 600) decimalValue = 0.1;
-      else if (shade === 700) decimalValue = 0.2;
-      else if (shade === 800) decimalValue = 0.3;
-      else if (shade === 900) decimalValue = 0.4;
+      if (shade === 600) decimalValue = 0.9;
+      else if (shade === 700) decimalValue = 0.8;
+      else if (shade === 800) decimalValue = 0.7;
+      else if (shade === 900) decimalValue = 0.6;
 
       const newR = Math.ceil(r * decimalValue);
       const newG = Math.ceil(g * decimalValue);
