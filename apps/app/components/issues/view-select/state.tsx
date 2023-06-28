@@ -19,9 +19,11 @@ import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
+  customButton?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
@@ -30,7 +32,9 @@ export const ViewStateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   position = "left",
+  tooltipPosition = "top",
   selfPositioned = false,
+  customButton = false,
   user,
   isNotAllowed,
 }) => {
@@ -58,6 +62,20 @@ export const ViewStateSelect: React.FC<Props> = ({
 
   const selectedOption = states?.find((s) => s.id === issue.state);
 
+  const stateLabel = (
+    <Tooltip
+      tooltipHeading="State"
+      tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
+      position={tooltipPosition}
+    >
+      <div className="flex items-center cursor-pointer gap-2 text-brand-secondary">
+        {selectedOption &&
+          getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
+        {selectedOption?.name ?? "State"}
+      </div>
+    </Tooltip>
+  );
+
   return (
     <CustomSearchSelect
       value={issue.state}
@@ -68,7 +86,7 @@ export const ViewStateSelect: React.FC<Props> = ({
             priority: issue.priority,
             target_date: issue.target_date,
           },
-          issue.id
+          issue
         );
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
@@ -101,18 +119,7 @@ export const ViewStateSelect: React.FC<Props> = ({
         }
       }}
       options={options}
-      label={
-        <Tooltip
-          tooltipHeading="State"
-          tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
-        >
-          <div className="flex items-center gap-2 text-brand-secondary">
-            {selectedOption &&
-              getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
-            {selectedOption?.name ?? "State"}
-          </div>
-        </Tooltip>
-      }
+      {...(customButton ? { customButton: stateLabel } : { label: stateLabel })}
       position={position}
       disabled={isNotAllowed}
       noChevron

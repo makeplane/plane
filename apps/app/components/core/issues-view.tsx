@@ -19,7 +19,14 @@ import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { AllLists, AllBoards, FilterList, CalendarView, GanttChartView } from "components/core";
+import {
+  AllLists,
+  AllBoards,
+  FilterList,
+  CalendarView,
+  GanttChartView,
+  SpreadsheetView,
+} from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 import { CycleIssuesGanttChartView, TransferIssues, TransferIssuesModal } from "components/cycles";
@@ -276,15 +283,24 @@ export const IssuesView: React.FC<Props> = ({
       handleDeleteIssue,
       params,
       states,
+      user,
     ]
   );
 
   const addIssueToState = useCallback(
     (groupTitle: string) => {
       setCreateIssueModal(true);
+
+      let preloadedValue: string | string[] = groupTitle;
+
+      if (selectedGroup === "labels") {
+        if (groupTitle === "None") preloadedValue = [];
+        else preloadedValue = [groupTitle];
+      }
+
       if (selectedGroup)
         setPreloadedData({
-          [selectedGroup]: groupTitle,
+          [selectedGroup]: preloadedValue,
           actionType: "createIssue",
         });
       else setPreloadedData({ actionType: "createIssue" });
@@ -442,7 +458,6 @@ export const IssuesView: React.FC<Props> = ({
       />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
-        prePopulateData={{ ...issueToEdit }}
         handleClose={() => setEditIssueModal(false)}
         data={issueToEdit}
       />
@@ -551,6 +566,16 @@ export const IssuesView: React.FC<Props> = ({
                   handleEditIssue={handleEditIssue}
                   handleDeleteIssue={handleDeleteIssue}
                   addIssueToDate={addIssueToDate}
+                  isCompleted={isCompleted}
+                  user={user}
+                  userAuth={memberRole}
+                />
+              ) : issueView === "spreadsheet" ? (
+                <SpreadsheetView
+                  type={type}
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
                   isCompleted={isCompleted}
                   user={user}
                   userAuth={memberRole}

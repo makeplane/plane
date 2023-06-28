@@ -175,5 +175,8 @@ def service_importer(service, importer_id):
         importer = Importer.objects.get(pk=importer_id)
         importer.status = "failed"
         importer.save()
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

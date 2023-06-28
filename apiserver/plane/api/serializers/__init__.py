@@ -23,7 +23,6 @@ from .project import (
     ProjectLiteSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
-from .shortcut import ShortCutSerializer
 from .view import IssueViewSerializer, IssueViewFavoriteSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer, CycleFavoriteSerializer
 from .asset import FileAssetSerializer
@@ -31,7 +30,6 @@ from .issue import (
     IssueCreateSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
-    TimeLineIssueSerializer,
     IssuePropertySerializer,
     BlockerIssueSerializer,
     BlockedIssueSerializer,
@@ -69,6 +67,11 @@ from .importer import ImporterSerializer
 
 from .page import PageSerializer, PageBlockSerializer, PageFavoriteSerializer
 
-from .estimate import EstimateSerializer, EstimatePointSerializer, EstimateReadSerializer
+from .estimate import (
+    EstimateSerializer,
+    EstimatePointSerializer,
+    EstimateReadSerializer,
+)
 
+from .inbox import InboxSerializer, InboxIssueSerializer, IssueStateInboxSerializer
 from .analytic import AnalyticViewSerializer

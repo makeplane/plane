@@ -12,17 +12,19 @@ import issueServices from "services/issues.service";
 import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
+import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { ICurrentUserResponse, IIssue } from "types";
+import type { IIssue, ICurrentUserResponse, ISubIssueResponse } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
@@ -41,6 +43,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
 
   const { issueView, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
+  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { setToastAlert } = useToast();
 
@@ -74,6 +77,36 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
             (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
             false
           );
+        } else if (issueView === "spreadsheet") {
+          const spreadsheetFetchKey = cycleId
+            ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
+            : moduleId
+            ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
+            : viewId
+            ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
+            : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", spreadsheetParams);
+          if (data.parent) {
+            mutate<ISubIssueResponse>(
+              SUB_ISSUES(data.parent.toString()),
+              (prevData) => {
+                if (!prevData) return prevData;
+                const updatedArray = (prevData.sub_issues ?? []).filter((i) => i.id !== data.id);
+
+                return {
+                  ...prevData,
+                  sub_issues: updatedArray,
+                };
+              },
+              false
+            );
+            mutate<IIssue[]>(spreadsheetFetchKey);
+          } else {
+            mutate<IIssue[]>(
+              spreadsheetFetchKey,
+              (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
+              false
+            );
+          }
         } else {
           if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
@@ -135,7 +168,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
                   <span>
                     <p className="text-sm text-brand-secondary">
                       Are you sure you want to delete issue{" "}
-                      <span className="break-all font-medium text-brand-base">
+                      <span className="break-words font-medium text-brand-base">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This

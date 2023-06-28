@@ -10,6 +10,8 @@ services:
                                 NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
                 restart: always
                 command: [ "/usr/local/bin/start.sh" ]
+                env_file:
+                        - .env
                 environment:
                         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
                         NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
@@ -20,6 +22,10 @@ services:
                         NEXT_PUBLIC_ENABLE_SENTRY: "0"
                         NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
                         NEXT_PUBLIC_TRACK_EVENTS: "0"
+                depends_on:
+                        - plane-api
+                        - plane-worker
+
 
         plane-api:
                 container_name: planebackend
@@ -28,7 +34,11 @@ services:
                         dockerfile: Dockerfile.api
                 restart: always
                 command: ./bin/takeoff
+                env_file:
+                        - .env
                 environment:
+                        DEBUG: ${DEBUG}
+                        SENTRY_DSN: ${SENTRY_DSN}
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://plane-redis:6379/
@@ -38,6 +48,7 @@ services:
                         EMAIL_PORT: ${EMAIL_PORT}
                         EMAIL_FROM: ${EMAIL_FROM}
                         EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+                        EMAIL_USE_SSL: ${EMAIL_USE_SSL}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -54,6 +65,7 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
                         USE_MINIO: ${USE_MINIO}
+                        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -65,7 +77,11 @@ services:
                         dockerfile: Dockerfile.api
                 restart: always
                 command: ./bin/worker
+                env_file:
+                        - .env
                 environment:
+                        DEBUG: ${DEBUG}
+                        SENTRY_DSN: ${SENTRY_DSN}
                         DJANGO_SETTINGS_MODULE: plane.settings.production
                         DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
                         REDIS_URL: redis://plane-redis:6379/
@@ -75,6 +91,7 @@ services:
                         EMAIL_PORT: ${EMAIL_PORT}
                         EMAIL_FROM: ${EMAIL_FROM}
                         EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+                        EMAIL_USE_SSL: ${EMAIL_USE_SSL}
                         AWS_REGION: ${AWS_REGION}
                         AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
                         AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -91,6 +108,7 @@ services:
                         DEFAULT_EMAIL: ${DEFAULT_EMAIL:-captain@plane.so}
                         DEFAULT_PASSWORD: ${DEFAULT_PASSWORD:-password123}
                         USE_MINIO: ${USE_MINIO}
+                        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
                 depends_on:
                         - plane-api
                         - plane-db
@@ -103,6 +121,8 @@ services:
                 command: postgres -c 'max_connections=1000'
                 volumes:
                         - pgdata:/var/lib/postgresql/data
+                env_file:
+                        - .env
                 environment:
                         POSTGRES_USER: ${PGUSER}
                         POSTGRES_DB: ${PGDATABASE}
@@ -123,6 +143,8 @@ services:
                 command: server /export --console-address ":9090"
                 volumes:
                         - uploads:/export
+                env_file:
+                        - .env
                 environment:
                         MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
                         MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
@@ -130,7 +152,11 @@ services:
         createbuckets:
                 image: minio/mc
                 entrypoint: >
-                        /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
+                        /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; 
+                        /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; 
+                        /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
+                env_file:
+                        - .env
                 depends_on:
                         - plane-minio
 
@@ -142,6 +168,8 @@ services:
                 restart: always
                 ports:
                         - ${NGINX_PORT}:80
+                env_file:
+                        - .env
                 environment:
                         FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
                         BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}

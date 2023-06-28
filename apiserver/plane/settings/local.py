@@ -10,7 +10,9 @@ from sentry_sdk.integrations.redis import RedisIntegration
 
 from .common import *  # noqa
 
-DEBUG = True
+DEBUG = int(os.environ.get(
+    "DEBUG", 1
+))  == 1
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -18,10 +20,10 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "plane",
+        "NAME": os.environ.get("PGUSER", "plane"),
         "USER": "",
         "PASSWORD": "",
-        "HOST": "",
+        "HOST": os.environ.get("PGHOST", "localhost"),
     }
 }
 
@@ -91,3 +93,5 @@ CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
+
+ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"

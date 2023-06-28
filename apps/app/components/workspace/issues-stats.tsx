@@ -1,8 +1,9 @@
 // components
-import { Loader } from "components/ui";
 import { ActivityGraph } from "components/workspace";
-// helpers
-import { groupBy } from "helpers/array.helper";
+// ui
+import { Loader, Tooltip } from "components/ui";
+// icons
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 // types
 import { IUserWorkspaceDashboard } from "types";
 
@@ -67,7 +68,15 @@ export const IssuesStats: React.FC<Props> = ({ data }) => (
       </div>
     </div>
     <div className="p-4 lg:col-span-2">
-      <h3 className="mb-2 font-semibold capitalize">Activity Graph</h3>
+      <h3 className="mb-2 font-semibold capitalize flex items-center gap-2">
+        Activity Graph
+        <Tooltip
+          tooltipContent="Your profile activity graph is a record of actions you've performed on issues across the workspace."
+          className="w-72 border border-brand-base"
+        >
+          <InformationCircleIcon className="h-3 w-3" />
+        </Tooltip>
+      </h3>
       <ActivityGraph activities={data?.issue_activities} />
     </div>
   </div>

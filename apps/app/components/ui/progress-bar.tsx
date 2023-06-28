@@ -63,7 +63,7 @@ export const ProgressBar: React.FC<Props> = ({
   return (
     <svg width={radius * 2} height={radius * 2}>
       {renderOuterCircle()}
-      <circle r={radius - strokeWidth} cx={radius} cy={radius} className="progress-bar"/>
+      <circle r={radius - strokeWidth} cx={radius} cy={radius} className="progress-bar" />
     </svg>
   );
 };

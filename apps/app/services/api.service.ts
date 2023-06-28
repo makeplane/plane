@@ -7,6 +7,7 @@ const nonValidatedRoutes = [
   "/magic-sign-in",
   "/reset-password",
   "/workspace-member-invitation",
+  "/sign-up",
 ];
 
 const validateRouteCheck = (route: string): boolean => {

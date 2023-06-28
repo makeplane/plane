@@ -1,7 +1,7 @@
 import { IAnalyticsParams, IJiraMetadata } from "types";
 
 const paramsToKey = (params: any) => {
-  const { state, priority, assignees, created_by, labels, target_date } = params;
+  const { state, priority, assignees, created_by, labels, target_date, sub_issue } = params;
 
   let stateKey = state ? state.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
@@ -12,6 +12,7 @@ const paramsToKey = (params: any) => {
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const subIssue = sub_issue ? sub_issue.toUpperCase() : "NULL";
 
   // sorting each keys in ascending order
   stateKey = stateKey.sort().join("_");
@@ -20,7 +21,20 @@ const paramsToKey = (params: any) => {
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}_${subIssue}`;
+};
+
+const inboxParamsToKey = (params: any) => {
+  const { priority, inbox_status } = params;
+
+  let priorityKey = priority ? priority.split(",") : [];
+  let inboxStatusKey = inbox_status ? inbox_status.split(",") : [];
+
+  // sorting each keys in ascending order
+  priorityKey = priorityKey.sort().join("_");
+  inboxStatusKey = inboxStatusKey.sort().join("_");
+
+  return `${priorityKey}_${inboxStatusKey}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";
@@ -123,6 +137,19 @@ export const VIEW_ISSUES = (viewId: string, params: any) => {
 
   return `VIEW_ISSUES_${viewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
+
+// inbox
+export const INBOX_LIST = (projectId: string) => `INBOX_LIST_${projectId.toUpperCase()}`;
+export const INBOX_DETAILS = (inboxId: string) => `INBOX_DETAILS_${inboxId.toUpperCase()}`;
+export const INBOX_ISSUES = (inboxId: string, params?: any) => {
+  if (!params) return `INBOX_ISSUES_${inboxId.toUpperCase()}`;
+
+  const paramsKey = inboxParamsToKey(params);
+
+  return `INBOX_ISSUES_${inboxId.toUpperCase()}_${paramsKey.toUpperCase()}`;
+};
+export const INBOX_ISSUE_DETAILS = (inboxId: string, issueId: string) =>
+  `INBOX_ISSUE_DETAILS_${inboxId.toUpperCase()}_${issueId.toUpperCase()}`;
 
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;

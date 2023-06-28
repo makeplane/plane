@@ -44,14 +44,14 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
-    (formData: Partial<IIssue>, issueId: string) => {
+    (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug) return;
 
       mutate<IIssue[]>(
         USER_ISSUE(workspaceSlug as string),
         (prevData) =>
           prevData?.map((p) => {
-            if (p.id === issueId) return { ...p, ...formData };
+            if (p.id === issue.id) return { ...p, ...formData };
 
             return p;
           }),
@@ -59,7 +59,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
       );
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData, user)
+        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData, user)
         .then((res) => {
           mutate(USER_ISSUE(workspaceSlug as string));
         })
@@ -67,7 +67,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
           console.log(error);
         });
     },
-    [workspaceSlug, projectId]
+    [workspaceSlug, projectId, user]
   );
 
   const handleCopyText = () => {

@@ -53,7 +53,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
                 <LinkIcon className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h5 className="w-4/5 break-all">{link.title}</h5>
+                <h5 className="w-4/5 break-words">{link.title}</h5>
                 <p className="mt-0.5 text-brand-secondary">
                   Added {timeAgo(link.created_at)}
                   <br />

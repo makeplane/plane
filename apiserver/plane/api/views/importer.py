@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 # Django imports
-from django.db.models import Max
+from django.db.models import Max, Q
 
 # Module imports
 from plane.api.views import BaseAPIView
@@ -42,16 +42,34 @@ from plane.utils.html_processor import strip_tags
 
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
+
     def get(self, request, slug, service):
         try:
             if service == "github":
+                owner = request.GET.get("owner", False)
+                repo = request.GET.get("repo", False)
+
+                if not owner or not repo:
+                    return Response(
+                        {"error": "Owner and repo are required"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
                 workspace_integration = WorkspaceIntegration.objects.get(
                     integration__provider="github", workspace__slug=slug
                 )
 
-                access_tokens_url = workspace_integration.metadata["access_tokens_url"]
-                owner = request.GET.get("owner")
-                repo = request.GET.get("repo")
+                access_tokens_url = workspace_integration.metadata.get(
+                    "access_tokens_url", False
+                )
+
+                if not access_tokens_url:
+                    return Response(
+                        {
+                            "error": "There was an error during the installation of the GitHub app. To resolve this issue, we recommend reinstalling the GitHub app."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
                 issue_count, labels, collaborators = get_github_repo_details(
                     access_tokens_url, owner, repo
@@ -239,17 +257,19 @@ class ImportServiceEndpoint(BaseAPIView):
             importer = Importer.objects.get(
                 pk=pk, service=service, workspace__slug=slug
             )
-            # Delete all imported Issues
-            imported_issues = importer.imported_data.get("issues", [])
-            Issue.objects.filter(id__in=imported_issues).delete()
 
-            # Delete all imported Labels
-            imported_labels = importer.imported_data.get("labels", [])
-            Label.objects.filter(id__in=imported_labels).delete()
+            if importer.imported_data is not None:
+                # Delete all imported Issues
+                imported_issues = importer.imported_data.get("issues", [])
+                Issue.issue_objects.filter(id__in=imported_issues).delete()
 
-            if importer.service == "jira":
-                imported_modules = importer.imported_data.get("modules", [])
-                Module.objects.filter(id__in=imported_modules).delete()
+                # Delete all imported Labels
+                imported_labels = importer.imported_data.get("labels", [])
+                Label.objects.filter(id__in=imported_labels).delete()
+
+                if importer.service == "jira":
+                    imported_modules = importer.imported_data.get("modules", [])
+                    Module.objects.filter(id__in=imported_modules).delete()
             importer.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
@@ -307,11 +327,13 @@ class BulkImportIssuesEndpoint(BaseAPIView):
 
             # Get the default state
             default_state = State.objects.filter(
-                project_id=project_id, default=True
+                ~Q(name="Triage"), project_id=project_id, default=True
             ).first()
             # if there is no default state assign any random state
             if default_state is None:
-                default_state = State.objects.filter(project_id=project_id).first()
+                default_state = State.objects.filter(
+                    ~Q(name="Triage"), sproject_id=project_id
+                ).first()
 
             # Get the maximum sequence_id
             last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(

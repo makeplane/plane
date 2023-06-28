@@ -20,7 +20,6 @@ import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 type Props = {
   control: Control<IIssue, any>;
   submitChanges: (formData: Partial<IIssue>) => void;
-  issuesList: IIssue[];
   customDisplay: JSX.Element;
   watch: UseFormWatch<IIssue>;
   userAuth: UserAuth;
@@ -29,7 +28,6 @@ type Props = {
 export const SidebarParentSelect: React.FC<Props> = ({
   control,
   submitChanges,
-  issuesList,
   customDisplay,
   watch,
   userAuth,
@@ -37,7 +35,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
@@ -68,8 +66,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
                 submitChanges({ parent: val });
                 onChange(val);
               }}
-              issues={issuesList}
-              title="Select Parent"
+              issueId={issueId as string}
               value={value}
               customDisplay={customDisplay}
             />

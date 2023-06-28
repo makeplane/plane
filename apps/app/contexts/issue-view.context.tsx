@@ -168,7 +168,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         filters: {
           ...state.filters,
-          ...payload,
+          ...payload?.filters,
         },
       };
 
@@ -633,6 +633,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       mutateModuleDetails,
       viewId,
       mutateViewDetails,
+      user,
     ]
   );
 

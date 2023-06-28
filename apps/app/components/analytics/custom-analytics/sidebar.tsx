@@ -237,7 +237,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                               {project?.name.charAt(0)}
                             </span>
                           )}
-                          <h5 className="break-all">
+                          <h5 className="break-words">
                             {project.name}
                             <span className="text-brand-secondary text-xs ml-1">
                               ({project.identifier})
@@ -276,7 +276,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
             {projectId ? (
               cycleId && cycleDetails ? (
                 <div className="hidden md:block h-full overflow-y-auto">
-                  <h4 className="font-medium break-all">Analytics for {cycleDetails.name}</h4>
+                  <h4 className="font-medium break-words">Analytics for {cycleDetails.name}</h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-brand-secondary">Lead</h6>
@@ -304,7 +304,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                 </div>
               ) : moduleId && moduleDetails ? (
                 <div className="hidden md:block h-full overflow-y-auto">
-                  <h4 className="font-medium break-all">Analytics for {moduleDetails.name}</h4>
+                  <h4 className="font-medium break-words">Analytics for {moduleDetails.name}</h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-brand-secondary">Lead</h6>
@@ -352,7 +352,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                         {projectDetails?.name.charAt(0)}
                       </span>
                     )}
-                    <h4 className="font-medium break-all">{projectDetails?.name}</h4>
+                    <h4 className="font-medium break-words">{projectDetails?.name}</h4>
                   </div>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">

@@ -10,11 +10,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
+import inboxServices from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
+import useInboxView from "hooks/use-inbox-view";
+import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // components
 import { IssueForm } from "components/issues";
 // types
@@ -32,7 +35,10 @@ import {
   CYCLE_DETAILS,
   MODULE_DETAILS,
   VIEW_ISSUES,
+  INBOX_ISSUES,
 } from "constants/fetch-keys";
+// constants
+import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
 export interface IssuesModalProps {
   isOpen: boolean;
@@ -40,6 +46,19 @@ export interface IssuesModalProps {
   data?: IIssue | null;
   prePopulateData?: Partial<IIssue>;
   isUpdatingSingleIssue?: boolean;
+  fieldsToShow?: (
+    | "project"
+    | "name"
+    | "description"
+    | "state"
+    | "priority"
+    | "assignee"
+    | "label"
+    | "dueDate"
+    | "estimate"
+    | "parent"
+    | "all"
+  )[];
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
@@ -48,23 +67,31 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   data,
   prePopulateData,
   isUpdatingSingleIssue = false,
+  fieldsToShow = ["all"],
 }) => {
   // states
   const [createMore, setCreateMore] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, inboxId } = router.query;
 
   const { issueView, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
   const { order_by, group_by, ...viewGanttParams } = params;
-
-  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
-  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
+  const { params: inboxParams } = useInboxView();
+  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { user } = useUser();
   const { setToastAlert } = useToast();
+
+  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
+  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
+  if (router.asPath.includes("my-issues"))
+    prePopulateData = {
+      ...prePopulateData,
+      assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
+    };
 
   const { data: issues } = useSWR(
     workspaceSlug && activeProject
@@ -99,7 +126,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   }, [handleClose]);
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !activeProject) return;
 
     await issuesService
       .addIssueToCycle(
@@ -120,7 +147,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !activeProject) return;
 
     await modulesService
       .addIssuesToModule(
@@ -140,46 +167,39 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       });
   };
 
-  const calendarFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), calendarParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
+  const addIssueToInbox = async (formData: Partial<IIssue>) => {
+    if (!workspaceSlug || !activeProject || !inboxId) return;
 
-  const ganttFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
+    const payload = {
+      issue: {
+        name: formData.name,
+        description: formData.description,
+        description_html: formData.description_html,
+        priority: formData.priority,
+      },
+      source: INBOX_ISSUE_SOURCE,
+    };
 
-  const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug) return;
-
-    await issuesService
-      .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
-      .then(async (res) => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
-
-        if (issueView === "calendar") mutate(calendarFetchKey);
-        if (issueView === "gantt_chart") mutate(ganttFetchKey);
-
-        if (!createMore) handleClose();
-
+    await inboxServices
+      .createInboxIssue(
+        workspaceSlug.toString(),
+        activeProject.toString(),
+        inboxId.toString(),
+        payload,
+        user
+      )
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Issue created successfully.",
         });
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
+        router.push(
+          `/${workspaceSlug}/projects/${activeProject}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`
+        );
 
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        mutate(INBOX_ISSUES(inboxId.toString(), inboxParams));
       })
       .catch(() => {
         setToastAlert({
@@ -190,6 +210,69 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       });
   };
 
+  const calendarFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), calendarParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", calendarParams);
+
+  const spreadsheetFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", spreadsheetParams);
+
+  const ganttFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "");
+
+  const createIssue = async (payload: Partial<IIssue>) => {
+    if (!workspaceSlug || !activeProject) return;
+
+    if (inboxId) await addIssueToInbox(payload);
+    else
+      await issuesService
+        .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
+        .then(async (res) => {
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
+          if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
+          if (payload.module && payload.module !== "")
+            await addIssueToModule(res.id, payload.module);
+
+          if (issueView === "calendar") mutate(calendarFetchKey);
+          if (issueView === "gantt_chart") mutate(ganttFetchKey);
+          if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
+
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue created successfully.",
+          });
+
+          if (payload.assignees_list?.some((assignee) => assignee === user?.id))
+            mutate(USER_ISSUE(workspaceSlug as string));
+
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Issue could not be created. Please try again.",
+          });
+        });
+
+    if (!createMore) handleClose();
+  };
+
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
       .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
@@ -198,6 +281,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
           if (issueView === "calendar") mutate(calendarFetchKey);
+          if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
+          if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }
 
@@ -226,8 +311,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     const payload: Partial<IIssue> = {
       ...formData,
-      assignees_list: formData.assignees,
-      labels_list: formData.labels,
+      assignees_list: formData.assignees ?? [],
+      labels_list: formData.labels ?? [],
       description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };
@@ -266,7 +351,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                 <IssueForm
                   issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
-                  initialData={prePopulateData}
+                  initialData={data ?? prePopulateData}
                   createMore={createMore}
                   setCreateMore={setCreateMore}
                   handleClose={handleClose}
@@ -274,6 +359,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                   setActiveProject={setActiveProject}
                   status={data ? true : false}
                   user={user}
+                  fieldsToShow={fieldsToShow}
                 />
               </Dialog.Panel>
             </Transition.Child>

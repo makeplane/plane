@@ -41,10 +41,12 @@ from plane.db.models import (
     CycleFavorite,
     IssueLink,
     IssueAttachment,
+    Label,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
+from plane.utils.analytics_plot import burndown_plot
 
 
 class CycleViewSet(BaseViewSet):
@@ -148,6 +150,12 @@ class CycleViewSet(BaseViewSet):
                     queryset=User.objects.only("avatar", "first_name", "id").distinct(),
                 )
             )
+            .prefetch_related(
+                Prefetch(
+                    "issue_cycle__issue__labels",
+                    queryset=Label.objects.only("name", "color", "id").distinct(),
+                )
+            )
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -155,28 +163,90 @@ class CycleViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         try:
             queryset = self.get_queryset()
-            cycle_view = request.GET.get("cycle_view", False)
-            if not cycle_view:
-                return Response(
-                    {"error": "Cycle View parameter is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            cycle_view = request.GET.get("cycle_view", "all")
 
             # All Cycles
             if cycle_view == "all":
                 return Response(
                     CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
                 )
-            
+
             # Current Cycle
             if cycle_view == "current":
                 queryset = queryset.filter(
                     start_date__lte=timezone.now(),
                     end_date__gte=timezone.now(),
                 )
-                return Response(
-                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-                )
+
+                data = CycleSerializer(queryset, many=True).data
+
+                if len(data):
+                    assignee_distribution = (
+                        Issue.objects.filter(
+                            issue_cycle__cycle_id=data[0]["id"],
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .annotate(first_name=F("assignees__first_name"))
+                        .annotate(last_name=F("assignees__last_name"))
+                        .annotate(assignee_id=F("assignees__id"))
+                        .annotate(avatar=F("assignees__avatar"))
+                        .values("first_name", "last_name", "assignee_id", "avatar")
+                        .annotate(total_issues=Count("assignee_id"))
+                        .annotate(
+                            completed_issues=Count(
+                                "assignee_id",
+                                filter=Q(completed_at__isnull=False),
+                            )
+                        )
+                        .annotate(
+                            pending_issues=Count(
+                                "assignee_id",
+                                filter=Q(completed_at__isnull=True),
+                            )
+                        )
+                        .order_by("first_name", "last_name")
+                    )
+
+                    label_distribution = (
+                        Issue.objects.filter(
+                            issue_cycle__cycle_id=data[0]["id"],
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+                        .annotate(label_name=F("labels__name"))
+                        .annotate(color=F("labels__color"))
+                        .annotate(label_id=F("labels__id"))
+                        .values("label_name", "color", "label_id")
+                        .annotate(total_issues=Count("label_id"))
+                        .annotate(
+                            completed_issues=Count(
+                                "label_id",
+                                filter=Q(completed_at__isnull=False),
+                            )
+                        )
+                        .annotate(
+                            pending_issues=Count(
+                                "label_id",
+                                filter=Q(completed_at__isnull=True),
+                            )
+                        )
+                        .order_by("label_name")
+                    )
+                    data[0]["distribution"] = {
+                        "assignees": assignee_distribution,
+                        "labels": label_distribution,
+                        "completion_chart": {},
+                    }
+                    if data[0]["start_date"] and data[0]["end_date"]:
+                        data[0]["distribution"]["completion_chart"] = burndown_plot(
+                            queryset=queryset.first(),
+                            slug=slug,
+                            project_id=project_id,
+                            cycle_id=data[0]["id"],
+                        )
+
+                return Response(data, status=status.HTTP_200_OK)
 
             # Upcoming Cycles
             if cycle_view == "upcoming":
@@ -198,6 +268,7 @@ class CycleViewSet(BaseViewSet):
                     end_date=None,
                     start_date=None,
                 )
+
                 return Response(
                     CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
                 )
@@ -214,6 +285,7 @@ class CycleViewSet(BaseViewSet):
             return Response(
                 {"error": "No matching view found"}, status=status.HTTP_400_BAD_REQUEST
             )
+
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -282,6 +354,92 @@ class CycleViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    def retrieve(self, request, slug, project_id, pk):
+        try:
+            queryset = self.get_queryset().get(pk=pk)
+
+            # Assignee Distribution
+            assignee_distribution = (
+                Issue.objects.filter(
+                    issue_cycle__cycle_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(first_name=F("assignees__first_name"))
+                .annotate(last_name=F("assignees__last_name"))
+                .annotate(assignee_id=F("assignees__id"))
+                .annotate(avatar=F("assignees__avatar"))
+                .values("first_name", "last_name", "assignee_id", "avatar")
+                .annotate(total_issues=Count("assignee_id"))
+                .annotate(
+                    completed_issues=Count(
+                        "assignee_id",
+                        filter=Q(completed_at__isnull=False),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "assignee_id",
+                        filter=Q(completed_at__isnull=True),
+                    )
+                )
+                .order_by("first_name", "last_name")
+            )
+
+            # Label Distribution
+            label_distribution = (
+                Issue.objects.filter(
+                    issue_cycle__cycle_id=pk,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(label_name=F("labels__name"))
+                .annotate(color=F("labels__color"))
+                .annotate(label_id=F("labels__id"))
+                .values("label_name", "color", "label_id")
+                .annotate(total_issues=Count("label_id"))
+                .annotate(
+                    completed_issues=Count(
+                        "label_id",
+                        filter=Q(completed_at__isnull=False),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "label_id",
+                        filter=Q(completed_at__isnull=True),
+                    )
+                )
+                .order_by("label_name")
+            )
+
+            data = CycleSerializer(queryset).data
+            data["distribution"] = {
+                "assignees": assignee_distribution,
+                "labels": label_distribution,
+                "completion_chart": {},
+            }
+
+            if queryset.start_date and queryset.end_date:
+                data["distribution"]["completion_chart"] = burndown_plot(
+                    queryset=queryset, slug=slug, project_id=project_id, cycle_id=pk
+                )
+
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
+            )
+        except Cycle.DoesNotExist:
+            return Response(
+                {"error": "Cycle Does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
@@ -323,7 +481,7 @@ class CycleIssueViewSet(BaseViewSet):
             super()
             .get_queryset()
             .annotate(
-                sub_issues_count=Issue.objects.filter(parent=OuterRef("issue_id"))
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -347,9 +505,9 @@ class CycleIssueViewSet(BaseViewSet):
             group_by = request.GET.get("group_by", False)
             filters = issue_filters(request.query_params, "GET")
             issues = (
-                Issue.objects.filter(issue_cycle__cycle_id=cycle_id)
+                Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
                 .annotate(
-                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
