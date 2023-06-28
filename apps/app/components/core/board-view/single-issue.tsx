@@ -368,7 +368,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
-                tooltipPosition="left"
                 user={user}
                 selfPositioned
               />
@@ -378,7 +377,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
-                tooltipPosition="left"
                 user={user}
                 selfPositioned
               />

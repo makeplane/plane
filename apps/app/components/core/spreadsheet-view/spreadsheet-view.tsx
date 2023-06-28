@@ -70,6 +70,7 @@ export const SpreadsheetView: React.FC<Props> = ({
           {spreadsheetIssues.map((issue: IIssue, index) => (
             <SpreadsheetIssues
               key={`${issue.id}_${index}`}
+              index={index}
               issue={issue}
               expandedIssues={expandedIssues}
               setExpandedIssues={setExpandedIssues}
