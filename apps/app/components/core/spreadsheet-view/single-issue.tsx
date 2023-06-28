@@ -30,7 +30,9 @@ import useToast from "hooks/use-toast";
 import issuesService from "services/issues.service";
 // constant
 import {
+  CYCLE_DETAILS,
   CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   SUB_ISSUES,
@@ -142,6 +144,9 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             mutate(SUB_ISSUES(issue.parent as string));
           } else {
             mutate(fetchKey);
+
+            if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
+            if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
           }
         })
         .catch((error) => {
