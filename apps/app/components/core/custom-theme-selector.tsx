@@ -139,7 +139,9 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-base text-brand-secondary">Background</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">
+                Primary background color
+              </h3>
               <ColorPickerInput
                 name="bgBase"
                 error={errors.bgBase}
@@ -150,7 +152,9 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-base text-brand-secondary">Background surface 1</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">
+                Secondary background color
+              </h3>
               <ColorPickerInput
                 name="bgSurface1"
                 error={errors.bgSurface1}
@@ -161,7 +165,9 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-base text-brand-secondary">Background surface 2</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">
+                Tertiary background color
+              </h3>
               <ColorPickerInput
                 name="bgSurface2"
                 error={errors.bgSurface2}
@@ -172,7 +178,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-base text-brand-secondary">Border</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">Border color</h3>
               <ColorPickerInput
                 name="border"
                 error={errors.border}
@@ -183,7 +189,9 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-base text-brand-secondary">Sidebar</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">
+                Sidebar background color
+              </h3>
               <ColorPickerInput
                 name="sidebar"
                 error={errors.sidebar}
@@ -194,7 +202,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-base text-brand-secondary">Accent</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">Accent color</h3>
               <ColorPickerInput
                 name="accent-500"
                 error={errors["accent-500"]}
@@ -205,7 +213,9 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-base text-brand-secondary">Text primary</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">
+                Primary text color
+              </h3>
               <ColorPickerInput
                 name="textBase"
                 error={errors.textBase}
@@ -216,7 +226,9 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-base text-brand-secondary">Text secondary</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">
+                Secondary text color
+              </h3>
               <ColorPickerInput
                 name="textSecondary"
                 error={errors.textSecondary}
