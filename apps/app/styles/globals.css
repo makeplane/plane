@@ -228,5 +228,5 @@ body {
 
 /* popover2 styling */
 .bp4-popover2-transition-container {
-  z-index: 20 !important;
+  z-index: 1 !important;
 }
