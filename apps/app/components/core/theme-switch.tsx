@@ -83,10 +83,20 @@ export const ThemeSwitch: React.FC<Props> = ({
               "--color-bg-base",
               "--color-bg-surface-1",
               "--color-bg-surface-2",
+              "--color-bg-sidebar",
 
               "--color-border",
-              "--color-bg-sidebar",
-              "--color-accent",
+
+              "--color-accent-50",
+              "--color-accent-100",
+              "--color-accent-200",
+              "--color-accent-300",
+              "--color-accent-400",
+              "--color-accent-500",
+              "--color-accent-600",
+              "--color-accent-700",
+              "--color-accent-800",
+              "--color-accent-900",
 
               "--color-text-base",
               "--color-text-secondary",

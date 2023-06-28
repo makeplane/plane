@@ -6,9 +6,7 @@ function withOpacity(variableName) {
   };
 }
 
-function convertToRGB(variableName) {
-  return `rgb(var(${variableName}))`;
-}
+const convertToRGB = (variableName) => `rgb(var(${variableName}))`;
 
 module.exports = {
   darkMode: "class",
@@ -17,7 +15,19 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          accent: withOpacity("--color-accent"),
+          accent: {
+            50: convertToRGB("--color-accent-50"),
+            100: convertToRGB("--color-accent-100"),
+            200: convertToRGB("--color-accent-200"),
+            300: convertToRGB("--color-accent-300"),
+            400: convertToRGB("--color-accent-400"),
+            500: convertToRGB("--color-accent-500"),
+            600: convertToRGB("--color-accent-600"),
+            700: convertToRGB("--color-accent-700"),
+            800: convertToRGB("--color-accent-800"),
+            900: convertToRGB("--color-accent-900"),
+            DEFAULT: convertToRGB("--color-accent-500"),
+          },
           base: withOpacity("--color-bg-base"),
         },
       },

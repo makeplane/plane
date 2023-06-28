@@ -23,7 +23,16 @@
 
     --color-border: 229, 231, 235;
     --color-bg-sidebar: 255, 255, 255;
-    --color-accent: 63, 118, 255;
+    --color-accent-50: 63, 118, 255;
+    --color-accent-100: 63, 118, 255;
+    --color-accent-200: 63, 118, 255;
+    --color-accent-300: 63, 118, 255;
+    --color-accent-400: 63, 118, 255;
+    --color-accent-500: 63, 118, 255;
+    --color-accent-600: 63, 118, 255;
+    --color-accent-700: 63, 118, 255;
+    --color-accent-800: 63, 118, 255;
+    --color-accent-900: 63, 118, 255;
 
     --color-text-base: 3, 7, 18;
     --color-text-secondary: 55, 65, 81;
