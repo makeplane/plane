@@ -120,14 +120,14 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                   <span>
                     <p className="text-sm leading-7 text-brand-secondary">
                       Are you sure you want to delete workspace{" "}
-                      <span className="break-all font-semibold">{data?.name}</span>? All of the data
-                      related to the workspace will be permanently removed. This action cannot be
-                      undone.
+                      <span className="break-words font-semibold">{data?.name}</span>? All of the
+                      data related to the workspace will be permanently removed. This action cannot
+                      be undone.
                     </p>
                   </span>
 
                   <div className="text-brand-secondary">
-                    <p className="break-all text-sm ">
+                    <p className="break-words text-sm ">
                       Enter the workspace name{" "}
                       <span className="font-medium text-brand-base">{selectedWorkspace?.name}</span>{" "}
                       to continue:

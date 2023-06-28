@@ -37,5 +37,8 @@ def forgot_password(first_name, email, uidb64, token, current_site):
         msg.send()
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

@@ -2,13 +2,12 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 // icons
 import { ArrowLeftIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // services
 import modulesService from "services/modules.service";
-import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
@@ -21,20 +20,14 @@ import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "component
 import { ModuleDetailsSidebar } from "components/modules";
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu, EmptySpace, EmptySpaceItem, SecondaryButton, Spinner } from "components/ui";
+import { CustomMenu, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IModule } from "types";
-
+import { ISearchIssueResponse } from "types";
 // fetch-keys
-import {
-  MODULE_DETAILS,
-  MODULE_ISSUES,
-  MODULE_LIST,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
+import { MODULE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
 
 const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
@@ -47,15 +40,6 @@ const SingleModule: React.FC = () => {
   const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
-
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
@@ -76,7 +60,7 @@ const SingleModule: React.FC = () => {
       : null
   );
 
-  const { data: moduleDetails } = useSWR<IModule>(
+  const { data: moduleDetails } = useSWR(
     moduleId ? MODULE_DETAILS(moduleId as string) : null,
     workspaceSlug && projectId
       ? () =>
@@ -88,18 +72,21 @@ const SingleModule: React.FC = () => {
       : null
   );
 
-  const handleAddIssuesToModule = async (data: { issues: string[] }) => {
+  const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
+
+    const payload = {
+      issues: data.map((i) => i.id),
+    };
 
     await modulesService
       .addIssuesToModule(
         workspaceSlug as string,
         projectId as string,
         moduleId as string,
-        data,
+        payload,
         user
       )
-      .then(() => mutate(MODULE_ISSUES(moduleId as string)))
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -118,7 +105,7 @@ const SingleModule: React.FC = () => {
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
-        issues={issues?.filter((i) => !i.module_id) ?? []}
+        searchParams={{ module: true }}
         handleOnSubmit={handleAddIssuesToModule}
       />
       <ProjectAuthorizationWrapper

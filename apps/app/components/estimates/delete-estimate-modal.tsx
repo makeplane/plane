@@ -74,9 +74,9 @@ export const DeleteEstimateModal: React.FC<Props> = ({
                     </span>
                   </div>
                   <span>
-                    <p className="break-all text-sm leading-7 text-brand-secondary">
+                    <p className="break-words text-sm leading-7 text-brand-secondary">
                       Are you sure you want to delete estimate-{" "}
-                      <span className="break-all font-medium text-brand-base">{data.name}</span>
+                      <span className="break-words font-medium text-brand-base">{data.name}</span>
                       {""}? All of the data related to the estiamte will be permanently removed.
                       This action cannot be undone.
                     </p>

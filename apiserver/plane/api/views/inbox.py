@@ -22,7 +22,7 @@ from plane.db.models import (
     State,
     IssueLink,
     IssueAttachment,
-    IssueActivity,
+    ProjectMember,
 )
 from plane.api.serializers import (
     IssueSerializer,
@@ -68,13 +68,12 @@ class InboxViewSet(BaseViewSet):
             inbox = Inbox.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
-
+            # Handle default inbox delete
             if inbox.is_default:
                 return Response(
                     {"error": "You cannot delete the default inbox"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             inbox.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
@@ -112,7 +111,6 @@ class InboxIssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, inbox_id):
         try:
-            order_by = request.GET.get("order_by", "created_at")
             filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.objects.filter(
@@ -120,23 +118,17 @@ class InboxIssueViewSet(BaseViewSet):
                     workspace__slug=slug,
                     project_id=project_id,
                 )
+                .filter(**filters)
+                .annotate(bridge_id=F("issue_inbox__id"))
+                .select_related("workspace", "project", "state", "parent")
+                .prefetch_related("assignees", "labels")
+                .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
                 .annotate(
                     sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
-                .annotate(bridge_id=F("issue_inbox__id"))
-                .filter(project_id=project_id)
-                .filter(workspace__slug=slug)
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("state")
-                .select_related("parent")
-                .prefetch_related("assignees")
-                .prefetch_related("labels")
-                .order_by(order_by)
-                .filter(**filters)
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                     .order_by()
@@ -180,7 +172,8 @@ class InboxIssueViewSet(BaseViewSet):
                     {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            if not request.data.get("issue", {}).get("priority", "low") in [
+            # Check for valid priority
+            if not request.data.get("issue", {}).get("priority", None) in [
                 "low",
                 "medium",
                 "high",
@@ -213,7 +206,6 @@ class InboxIssueViewSet(BaseViewSet):
             )
 
             # Create an Issue Activity
-            # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
@@ -231,9 +223,7 @@ class InboxIssueViewSet(BaseViewSet):
             )
 
             serializer = IssueStateInboxSerializer(issue)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
-
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -246,13 +236,28 @@ class InboxIssueViewSet(BaseViewSet):
             inbox_issue = InboxIssue.objects.get(
                 pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
             )
+            # Get the project member
+            project_member = ProjectMember.objects.get(workspace__slug=slug, project_id=project_id, member=request.user)
+            # Only project members admins and created_by users can access this endpoint
+            if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(request.user.id):
+                return Response({"error": "You cannot edit inbox issues"}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Get issue data
             issue_data = request.data.pop("issue", False)
 
             if bool(issue_data):
                 issue = Issue.objects.get(
                     pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
                 )
+                # Only allow guests and viewers to edit name and description
+                if project_member.role <= 10:
+                    # viewers and guests since only viewers and guests 
+                    issue_data = {
+                        "name": issue_data.get("name", issue.name),
+                        "description_html": issue_data.get("description_html", issue.description_html),
+                        "description": issue_data.get("description", issue.description)
+                    }
+
                 issue_serializer = IssueCreateSerializer(
                     issue, data=issue_data, partial=True
                 )
@@ -279,46 +284,50 @@ class InboxIssueViewSet(BaseViewSet):
                         issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                     )
 
-            serializer = InboxIssueSerializer(
-                inbox_issue, data=request.data, partial=True
-            )
+            # Only project admins and members can edit inbox issue attributes
+            if project_member.role > 10:
+                serializer = InboxIssueSerializer(
+                    inbox_issue, data=request.data, partial=True
+                )
 
-            if serializer.is_valid():
-                serializer.save()
-                # Update the issue state if the issue is rejected or marked as duplicate
-                if serializer.data["status"] in [-1, 2]:
-                    issue = Issue.objects.get(
-                        pk=inbox_issue.issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-                    state = State.objects.filter(
-                        group="cancelled", workspace__slug=slug, project_id=project_id
-                    ).first()
-                    if state is not None:
-                        issue.state = state
-                        issue.save()
-
-                # Update the issue state if it is accepted
-                if serializer.data["status"] in [1]:
-                    issue = Issue.objects.get(
-                        pk=inbox_issue.issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-
-                    # Update the issue state only if it is in triage state
-                    if issue.state.name == "Triage":
-                        # Move to default state
+                if serializer.is_valid():
+                    serializer.save()
+                    # Update the issue state if the issue is rejected or marked as duplicate
+                    if serializer.data["status"] in [-1, 2]:
+                        issue = Issue.objects.get(
+                            pk=inbox_issue.issue_id,
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
                         state = State.objects.filter(
-                            workspace__slug=slug, project_id=project_id, default=True
+                            group="cancelled", workspace__slug=slug, project_id=project_id
                         ).first()
                         if state is not None:
                             issue.state = state
                             issue.save()
 
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    # Update the issue state if it is accepted
+                    if serializer.data["status"] in [1]:
+                        issue = Issue.objects.get(
+                            pk=inbox_issue.issue_id,
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        )
+
+                        # Update the issue state only if it is in triage state
+                        if issue.state.name == "Triage":
+                            # Move to default state
+                            state = State.objects.filter(
+                                workspace__slug=slug, project_id=project_id, default=True
+                            ).first()
+                            if state is not None:
+                                issue.state = state
+                                issue.save()
+
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK)
         except InboxIssue.DoesNotExist:
             return Response(
                 {"error": "Inbox Issue does not exist"},
@@ -341,6 +350,28 @@ class InboxIssueViewSet(BaseViewSet):
             )
             serializer = IssueStateInboxSerializer(issue)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, project_id, inbox_id, pk):
+        try:
+            inbox_issue = InboxIssue.objects.get(
+                pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+            )
+            # Get the project member
+            project_member = ProjectMember.objects.get(workspace__slug=slug, project_id=project_id, member=request.user)
+
+            if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(request.user.id):
+                return Response({"error": "You cannot delete inbox issue"}, status=status.HTTP_400_BAD_REQUEST)
+
+            inbox_issue.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except InboxIssue.DoesNotExist:
+            return Response({"error": "Inbox Issue does not exists"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             capture_exception(e)
             return Response(

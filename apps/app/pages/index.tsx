@@ -46,14 +46,12 @@ const HomePage: NextPage = () => {
       } else {
         throw Error("Cant find credentials");
       }
-    } catch (error: any) {
-      console.log(error);
+    } catch (err: any) {
       setToastAlert({
         title: "Error signing in!",
         type: "error",
         message:
-          error?.error ||
-          "Something went wrong. Please try again later or contact the support team.",
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
@@ -71,13 +69,12 @@ const HomePage: NextPage = () => {
       } else {
         throw Error("Cant find credentials");
       }
-    } catch (error: any) {
+    } catch (err: any) {
       setToastAlert({
         title: "Error signing in!",
         type: "error",
         message:
-          error?.error ||
-          "Something went wrong. Please try again later or contact the support team.",
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
@@ -88,22 +85,23 @@ const HomePage: NextPage = () => {
       .then((response) => {
         try {
           if (response) mutateUser();
-        } catch (error: any) {
-          console.log(error);
+        } catch (err: any) {
           setToastAlert({
-            title: "Error signing in!",
             type: "error",
+            title: "Error!",
             message:
-              error?.error ||
+              err?.error ||
               "Something went wrong. Please try again later or contact the support team.",
           });
         }
       })
-      .catch(() =>
+      .catch((err) =>
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: "Enter the correct email address and password to sign in",
+          title: "Error!",
+          message:
+            err?.error ||
+            "Something went wrong. Please try again later or contact the support team.",
         })
       );
   };
@@ -111,14 +109,12 @@ const HomePage: NextPage = () => {
   const handleEmailCodeSignIn = async (response: any) => {
     try {
       if (response) mutateUser();
-    } catch (error: any) {
-      console.log(error);
+    } catch (err: any) {
       setToastAlert({
-        title: "Error signing in!",
         type: "error",
+        title: "Error!",
         message:
-          error?.error ||
-          "Something went wrong. Please try again later or contact the support team.",
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };

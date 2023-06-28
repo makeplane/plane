@@ -25,7 +25,7 @@ const ProfilePreferences = () => {
       if (myProfile?.theme.palette) setPreLoadedData(myProfile.theme);
       if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
     }
-  }, [myProfile, theme]);
+  }, [myProfile, theme, customThemeSelectorOptions]);
 
   return (
     <WorkspaceAuthorizationLayout
@@ -36,8 +36,8 @@ const ProfilePreferences = () => {
       }
     >
       {myProfile ? (
-        <div className="px-24 py-8">
-          <div className="mb-12 space-y-6">
+        <div className="p-8">
+          <div className="mb-8 space-y-6">
             <div>
               <h3 className="text-3xl font-semibold">Profile Settings</h3>
               <p className="mt-1 text-brand-secondary">
