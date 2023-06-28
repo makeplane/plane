@@ -43,6 +43,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 
 type Props = {
   issue: IIssue;
+  index: number;
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
   properties: Properties;
@@ -57,6 +58,7 @@ type Props = {
 
 export const SingleSpreadsheetIssue: React.FC<Props> = ({
   issue,
+  index,
   expanded,
   handleToggleExpand,
   properties,
@@ -165,6 +167,8 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   const paddingLeft = `${nestingLevel * 68}px`;
 
+  const tooltipPosition = index === 0 ? "bottom" : "top";
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -241,16 +245,16 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             )}
           </div>
 
-          <div className="h-6 w-6 flex justify-center items-center">
-            {issue.sub_issues_count > 0 && (
+          {issue.sub_issues_count > 0 && (
+            <div className="h-6 w-6 flex justify-center items-center">
               <button
                 className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm cursor-pointer"
                 onClick={() => handleToggleExpand(issue.id)}
               >
                 <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
@@ -265,6 +269,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="left"
+            tooltipPosition={tooltipPosition}
             customButton
             user={user}
             isNotAllowed={isNotAllowed}
@@ -277,6 +282,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="left"
+            tooltipPosition={tooltipPosition}
             noBorder
             user={user}
             isNotAllowed={isNotAllowed}
@@ -289,6 +295,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="left"
+            tooltipPosition={tooltipPosition}
             customButton
             user={user}
             isNotAllowed={isNotAllowed}
@@ -301,6 +308,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="left"
+            tooltipPosition={tooltipPosition}
             customButton
             user={user}
             isNotAllowed={isNotAllowed}
@@ -313,6 +321,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <ViewDueDateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
+            tooltipPosition={tooltipPosition}
             noBorder
             user={user}
             isNotAllowed={isNotAllowed}
@@ -325,6 +334,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="left"
+            tooltipPosition={tooltipPosition}
             user={user}
             isNotAllowed={isNotAllowed}
           />
