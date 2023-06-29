@@ -10,7 +10,10 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.conf import settings
+from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
+from django_auth_ldap.backend import LDAPBackend
+
 
 # Third party imports
 from rest_framework.response import Response
@@ -154,7 +157,8 @@ class SignInEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            user = User.objects.filter(email=email).first()
+            # Authenticate the user with the provided credentials using all Django's authentication backends.
+            user = authenticate(request, username=email, password=password)
 
             if user is None:
                 return Response(
@@ -165,13 +169,18 @@ class SignInEndpoint(BaseAPIView):
                 )
 
             # Sign up Process
-            if not user.check_password(password):
-                return Response(
-                    {
-                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                    },
-                    status=status.HTTP_403_FORBIDDEN,
-                )
+            # Check if the user already exists in your database.
+            if not User.objects.filter(email=email).exists():
+                # If the user does not exist, we create them.
+                ldap_backend = LDAPBackend()
+                ldap_user = ldap_backend.populate_user(email)
+                ldap_backend.get_or_create_user(username=email, ldap_user=ldap_user)
+
+                # Filling in the first name and last name from the LDAP result.
+                user.first_name = ldap_user.attrs['givenName'][0]
+                user.last_name = ldap_user.attrs['sn'][0]  # 'sn' is typically used for surname
+                user.save()
+
             if not user.is_active:
                 return Response(
                     {

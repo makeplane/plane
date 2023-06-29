@@ -1,13 +1,18 @@
 import os
 import datetime
 from datetime import timedelta
+import ldap
 from django.core.management.utils import get_random_secret_key
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
+LDAP_ENABLED = os.environ.get("LDAP_ENABLED", "0") == "1"
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -59,10 +64,17 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
-AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",  # default
-    # "guardian.backends.ObjectPermissionBackend",
-)
+if LDAP_ENABLED:
+    AUTHENTICATION_BACKENDS = (
+        'django_auth_ldap.backend.LDAPBackend',
+        "django.contrib.auth.backends.ModelBackend",  # default
+        # "guardian.backends.ObjectPermissionBackend",
+    )
+else:
+    AUTHENTICATION_BACKENDS = (
+        "django.contrib.auth.backends.ModelBackend",  # default
+        # "guardian.backends.ObjectPermissionBackend",
+    )
 
 ROOT_URLCONF = "plane.urls"
 
@@ -144,6 +156,48 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+# LDAP Auth Settings
+if LDAP_ENABLED:
+    # Define the LDAP server details
+    AUTH_LDAP_SERVER_URI = os.environ.get("AUTH_LDAP_SERVER_URI", "ldap://localhost:389")
+
+    # Use Start TLS
+    AUTH_LDAP_START_TLS = os.environ.get("AUTH_LDAP_START_TLS", "0") == "1"
+
+    # Bind DN and Password
+    AUTH_LDAP_BIND_DN = os.environ.get("AUTH_LDAP_BIND_DN", "")
+    AUTH_LDAP_BIND_PASSWORD = os.environ.get("AUTH_LDAP_BIND_PASSWORD", "")
+
+    # User and group search bases and filters
+    AUTH_LDAP_USER_SEARCH_BASE = os.environ.get("AUTH_LDAP_USER_SEARCH_BASE", "")
+    AUTH_LDAP_USER_SEARCH_FILTER = os.environ.get("AUTH_LDAP_USER_SEARCH_FILTER", "")
+    AUTH_LDAP_GROUP_SEARCH_BASE = os.environ.get("AUTH_LDAP_GROUP_SEARCH_BASE", "")
+    AUTH_LDAP_GROUP_SEARCH_FILTER = os.environ.get("AUTH_LDAP_GROUP_SEARCH_FILTER", "")
+
+    # User attribute mapping
+    AUTH_LDAP_USER_ATTR_MAP = {
+        "username": os.environ.get("AUTH_LDAP_USER_ATTR_MAP_USERNAME", "uid"),
+        "email": os.environ.get("AUTH_LDAP_USER_ATTR_MAP_EMAIL", "mail"),
+        "first_name": os.environ.get("AUTH_LDAP_USER_ATTR_MAP_FIRST_NAME", "givenName"),
+        "last_name": os.environ.get("AUTH_LDAP_USER_ATTR_MAP_LAST_NAME", "sn"),
+    }
+
+    # Required group
+    AUTH_LDAP_REQUIRE_GROUP = os.environ.get("AUTH_LDAP_REQUIRE_GROUP", "")
+
+    # Configure LDAP backend
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        AUTH_LDAP_USER_SEARCH_BASE,
+        ldap.SCOPE_SUBTREE,
+        AUTH_LDAP_USER_SEARCH_FILTER
+    )
+    AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+        AUTH_LDAP_GROUP_SEARCH_BASE,
+        ldap.SCOPE_SUBTREE,
+        AUTH_LDAP_GROUP_SEARCH_FILTER,
+    )
+    AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 
 # Static files (CSS, JavaScript, Images)
 

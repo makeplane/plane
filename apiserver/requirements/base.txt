@@ -5,6 +5,7 @@ django-braces==1.15.0
 django-taggit==3.1.0
 psycopg2==2.9.5
 django-oauth-toolkit==2.2.0
+django-auth-ldap==4.3.0
 mistune==2.0.4
 djangorestframework==3.14.0
 redis==4.5.4

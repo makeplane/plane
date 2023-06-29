@@ -64,11 +64,31 @@ if os.environ.get("SENTRY_DSN", False):
         environment="local",
         traces_sample_rate=0.7,
     )
+else:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'loggers': {
+            '*': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
+        },
+    }
 
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_URL = os.environ.get("REDIS_URL")
-
 
 MEDIA_URL = "/uploads/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
