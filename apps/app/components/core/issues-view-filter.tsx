@@ -263,7 +263,8 @@ export const IssuesFilterView: React.FC = () => {
 
                         if (
                           (issueView === "spreadsheet" && key === "attachment_count") ||
-                          (issueView === "spreadsheet" && key === "link")
+                          (issueView === "spreadsheet" && key === "link") ||
+                          (issueView === "spreadsheet" && key === "sub_issue_count")
                         )
                           return null;
 
