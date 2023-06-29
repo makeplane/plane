@@ -4,6 +4,7 @@ export * from "./filters";
 export * from "./gantt-chart-view";
 export * from "./list-view";
 export * from "./modals";
+export * from "./spreadsheet-view";
 export * from "./sidebar";
 export * from "./issues-view";
 export * from "./modals/link-modal";

@@ -2,21 +2,15 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 // icons
-import {
-  ArrowLeftIcon,
-  ListBulletIcon,
-  PlusIcon,
-  RectangleGroupIcon,
-  RectangleStackIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // services
 import modulesService from "services/modules.service";
-import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
@@ -26,20 +20,14 @@ import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "component
 import { ModuleDetailsSidebar } from "components/modules";
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu, EmptySpace, EmptySpaceItem, SecondaryButton, Spinner } from "components/ui";
+import { CustomMenu, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IModule } from "types";
-
+import { ISearchIssueResponse } from "types";
 // fetch-keys
-import {
-  MODULE_DETAILS,
-  MODULE_ISSUES,
-  MODULE_LIST,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
+import { MODULE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
 
 const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
@@ -49,16 +37,9 @@ const SingleModule: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { setToastAlert } = useToast();
+  const { user } = useUserAuth();
 
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { setToastAlert } = useToast();
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
@@ -79,7 +60,7 @@ const SingleModule: React.FC = () => {
       : null
   );
 
-  const { data: moduleDetails } = useSWR<IModule>(
+  const { data: moduleDetails } = useSWR(
     moduleId ? MODULE_DETAILS(moduleId as string) : null,
     workspaceSlug && projectId
       ? () =>
@@ -91,12 +72,21 @@ const SingleModule: React.FC = () => {
       : null
   );
 
-  const handleAddIssuesToModule = async (data: { issues: string[] }) => {
+  const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
 
+    const payload = {
+      issues: data.map((i) => i.id),
+    };
+
     await modulesService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-      .then(() => mutate(MODULE_ISSUES(moduleId as string)))
+      .addIssuesToModule(
+        workspaceSlug as string,
+        projectId as string,
+        moduleId as string,
+        payload,
+        user
+      )
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -115,7 +105,7 @@ const SingleModule: React.FC = () => {
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
-        issues={issues?.filter((i) => !i.module_id) ?? []}
+        searchParams={{ module: true }}
         handleOnSubmit={handleAddIssuesToModule}
       />
       <ProjectAuthorizationWrapper
@@ -172,52 +162,20 @@ const SingleModule: React.FC = () => {
         }
       >
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
-        {moduleIssues ? (
-          moduleIssues.length > 0 ? (
-            <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              <IssuesView type="module" openIssuesListModal={openIssuesListModal} />
-            </div>
-          ) : (
-            <div
-              className={`flex h-full flex-col items-center justify-center px-4 ${
-                moduleSidebar ? "mr-[24rem]" : ""
-              } duration-300`}
-            >
-              <EmptySpace
-                title="You don't have any issue yet."
-                description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
-                Icon={RectangleStackIcon}
-              >
-                <EmptySpaceItem
-                  title="Create a new issue"
-                  description="Click to create a new issue inside the module."
-                  Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "c",
-                    });
-                    document.dispatchEvent(e);
-                  }}
-                />
-                <EmptySpaceItem
-                  title="Add an existing issue"
-                  description="Open list"
-                  Icon={ListBulletIcon}
-                  action={openIssuesListModal}
-                />
-              </EmptySpace>
-            </div>
-          )
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
+
+        <div
+          className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} ${
+            analyticsModal ? "mr-[50%]" : ""
+          } duration-300`}
+        >
+          <IssuesView type="module" openIssuesListModal={openIssuesListModal} />
+        </div>
+
         <ModuleDetailsSidebar
-          issues={moduleIssues ?? []}
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
+          user={user}
         />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

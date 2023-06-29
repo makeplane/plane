@@ -21,9 +21,11 @@ export const CompletedCyclesList: React.FC<Props> = ({ viewType }) => {
     workspaceSlug && projectId ? COMPLETED_CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () =>
-          cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), {
-            cycle_view: "completed",
-          })
+          cyclesService.getCyclesWithParams(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            "completed"
+          )
       : null
   );
 

@@ -3,12 +3,12 @@ from itertools import groupby
 
 # Django imports
 from django.db import IntegrityError
+from django.db.models import Q
 
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
 from sentry_sdk import capture_exception
-
 
 # Module imports
 from . import BaseViewSet, BaseAPIView
@@ -34,6 +34,7 @@ class StateViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(project__project_projectmember__member=self.request.user)
+            .filter(~Q(name="Triage"))
             .select_related("project")
             .select_related("workspace")
             .distinct()
@@ -80,7 +81,8 @@ class StateViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, pk):
         try:
             state = State.objects.get(
-                pk=pk, project_id=project_id, workspace__slug=slug
+                ~Q(name="Triage"),
+                pk=pk, project_id=project_id, workspace__slug=slug,
             )
 
             if state.default:
@@ -89,7 +91,7 @@ class StateViewSet(BaseViewSet):
                 )
 
             # Check for any issues in the state
-            issue_exist = Issue.objects.filter(state=pk).exists()
+            issue_exist = Issue.issue_objects.filter(state=pk).exists()
 
             if issue_exist:
                 return Response(

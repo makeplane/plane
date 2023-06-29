@@ -17,7 +17,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssue, IState, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, IState, UserAuth } from "types";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -31,6 +31,7 @@ type Props = {
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -46,6 +47,7 @@ export const SingleBoard: React.FC<Props> = ({
   handleTrashBox,
   removeIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   // collapse/expand
@@ -129,6 +131,7 @@ export const SingleBoard: React.FC<Props> = ({
                             removeIssue(issue.bridge_id, issue.id);
                         }}
                         isCompleted={isCompleted}
+                        user={user}
                         userAuth={userAuth}
                       />
                     )}
@@ -142,43 +145,45 @@ export const SingleBoard: React.FC<Props> = ({
                   {provided.placeholder}
                 </span>
               </div>
-              <div>
-                {type === "issue" ? (
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 font-medium text-brand-accent outline-none p-1"
-                    onClick={addIssueToState}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    Add Issue
-                  </button>
-                ) : (
-                  !isCompleted && (
-                    <CustomMenu
-                      customButton={
-                        <button
-                          type="button"
-                          className="flex items-center gap-2 font-medium text-brand-accent outline-none"
-                        >
-                          <PlusIcon className="h-4 w-4" />
-                          Add Issue
-                        </button>
-                      }
-                      position="left"
-                      noBorder
+              {selectedGroup !== "created_by" && (
+                <div>
+                  {type === "issue" ? (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 font-medium text-brand-accent outline-none p-1"
+                      onClick={addIssueToState}
                     >
-                      <CustomMenu.MenuItem onClick={addIssueToState}>
-                        Create new
-                      </CustomMenu.MenuItem>
-                      {openIssuesListModal && (
-                        <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                          Add an existing issue
+                      <PlusIcon className="h-4 w-4" />
+                      Add Issue
+                    </button>
+                  ) : (
+                    !isCompleted && (
+                      <CustomMenu
+                        customButton={
+                          <button
+                            type="button"
+                            className="flex items-center gap-2 font-medium text-brand-accent outline-none"
+                          >
+                            <PlusIcon className="h-4 w-4" />
+                            Add Issue
+                          </button>
+                        }
+                        position="left"
+                        noBorder
+                      >
+                        <CustomMenu.MenuItem onClick={addIssueToState}>
+                          Create new
                         </CustomMenu.MenuItem>
-                      )}
-                    </CustomMenu>
-                  )
-                )}
-              </div>
+                        {openIssuesListModal && (
+                          <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                            Add an existing issue
+                          </CustomMenu.MenuItem>
+                        )}
+                      </CustomMenu>
+                    )
+                  )}
+                </div>
+              )}
             </div>
           )}
         </StrictModeDroppable>

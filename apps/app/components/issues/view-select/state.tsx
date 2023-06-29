@@ -13,15 +13,18 @@ import { getStateGroupIcon } from "components/icons";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
+  customButton?: boolean;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -29,7 +32,10 @@ export const ViewStateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   position = "left",
+  tooltipPosition = "top",
   selfPositioned = false,
+  customButton = false,
+  user,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -56,6 +62,20 @@ export const ViewStateSelect: React.FC<Props> = ({
 
   const selectedOption = states?.find((s) => s.id === issue.state);
 
+  const stateLabel = (
+    <Tooltip
+      tooltipHeading="State"
+      tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
+      position={tooltipPosition}
+    >
+      <div className="flex items-center cursor-pointer gap-2 text-brand-secondary">
+        {selectedOption &&
+          getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
+        {selectedOption?.name ?? "State"}
+      </div>
+    </Tooltip>
+  );
+
   return (
     <CustomSearchSelect
       value={issue.state}
@@ -66,7 +86,7 @@ export const ViewStateSelect: React.FC<Props> = ({
             priority: issue.priority,
             target_date: issue.target_date,
           },
-          issue.id
+          issue
         );
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
@@ -77,36 +97,29 @@ export const ViewStateSelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PROPERTY_UPDATE_STATE"
+          "ISSUE_PROPERTY_UPDATE_STATE",
+          user
         );
 
         const oldState = states.find((s) => s.id === issue.state);
         const newState = states.find((s) => s.id === data);
 
         if (oldState?.group !== "completed" && newState?.group !== "completed") {
-          trackEventServices.trackIssueMarkedAsDoneEvent({
-            workspaceSlug: issue.workspace_detail.slug,
-            workspaceId: issue.workspace_detail.id,
-            projectId: issue.project_detail.id,
-            projectIdentifier: issue.project_detail.identifier,
-            projectName: issue.project_detail.name,
-            issueId: issue.id,
-          });
+          trackEventServices.trackIssueMarkedAsDoneEvent(
+            {
+              workspaceSlug: issue.workspace_detail.slug,
+              workspaceId: issue.workspace_detail.id,
+              projectId: issue.project_detail.id,
+              projectIdentifier: issue.project_detail.identifier,
+              projectName: issue.project_detail.name,
+              issueId: issue.id,
+            },
+            user
+          );
         }
       }}
       options={options}
-      label={
-        <Tooltip
-          tooltipHeading="State"
-          tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
-        >
-          <div className="flex items-center gap-2 text-brand-secondary">
-            {selectedOption &&
-              getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
-            {selectedOption?.name ?? "State"}
-          </div>
-        </Tooltip>
-      }
+      {...(customButton ? { customButton: stateLabel } : { label: stateLabel })}
       position={position}
       disabled={isNotAllowed}
       noChevron

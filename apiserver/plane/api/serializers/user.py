@@ -25,6 +25,10 @@ class UserSerializer(BaseSerializer):
         ]
         extra_kwargs = {"password": {"write_only": True}}
 
+        # If the user has already filled first name or last name then he is onboarded
+        def get_is_onboarded(self, obj):
+            return bool(obj.first_name) or bool(obj.last_name)
+
 
 class UserLiteSerializer(BaseSerializer):
     class Meta:

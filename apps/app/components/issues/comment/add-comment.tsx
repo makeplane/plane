@@ -14,7 +14,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Loader, SecondaryButton } from "components/ui";
 // types
-import type { IIssueComment } from "types";
+import type { ICurrentUserResponse, IIssueComment } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
@@ -40,7 +40,12 @@ const defaultValues: Partial<IIssueComment> = {
   comment_html: "",
 };
 
-export const AddComment: React.FC = () => {
+type Props = {
+  issueId: string;
+  user: ICurrentUserResponse | undefined;
+};
+
+export const AddComment: React.FC<Props> = ({ issueId, user }) => {
   const {
     handleSubmit,
     control,
@@ -52,7 +57,7 @@ export const AddComment: React.FC = () => {
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -67,7 +72,13 @@ export const AddComment: React.FC = () => {
     )
       return;
     await issuesServices
-      .createIssueComment(workspaceSlug as string, projectId as string, issueId as string, formData)
+      .createIssueComment(
+        workspaceSlug as string,
+        projectId as string,
+        issueId as string,
+        formData,
+        user
+      )
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         reset(defaultValues);

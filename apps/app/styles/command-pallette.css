@@ -31,9 +31,9 @@
 }
 
 [cmdk-item]:hover {
-  background-color: rgba(var(--color-bg-base));
+  background-color: rgba(var(--color-bg-surface-2));
 }
 
 [cmdk-item][aria-selected="true"] {
-  background-color: rgba(var(--color-bg-base));
+  background-color: rgba(var(--color-bg-surface-2));
 }

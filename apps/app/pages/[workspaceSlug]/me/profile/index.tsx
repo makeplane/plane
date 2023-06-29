@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 
-import Image from "next/image";
-
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
 import fileService from "services/file.service";
 import userService from "services/user.service";
 // hooks
-import useUser from "hooks/use-user";
+import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImageUploadModal } from "components/core";
 // ui
@@ -24,7 +23,6 @@ import type { NextPage } from "next";
 import type { IUser } from "types";
 // constants
 import { USER_ROLES } from "constants/workspace";
-import SettingsNavbar from "layouts/settings-navbar";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -50,7 +48,7 @@ const Profile: NextPage = () => {
   } = useForm<IUser>({ defaultValues });
 
   const { setToastAlert } = useToast();
-  const { user: myProfile, mutateUser } = useUser();
+  const { user: myProfile, mutateUser } = useUserAuth();
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -69,7 +67,7 @@ const Profile: NextPage = () => {
       .then((res) => {
         mutateUser((prevData) => {
           if (!prevData) return prevData;
-          return { ...prevData, user: { ...payload, ...res } };
+          return { ...prevData, ...res };
         }, false);
         setIsEditing(false);
         setToastAlert({
@@ -92,14 +90,11 @@ const Profile: NextPage = () => {
 
     setIsRemoving(true);
 
-    const index = url.indexOf(".com");
-    const asset = url.substring(index + 5);
-
-    fileService.deleteUserFile(asset).then(() => {
+    fileService.deleteUserFile(url).then(() => {
       if (updateUser)
         userService
           .updateUser({ avatar: "" })
-          .then((res) => {
+          .then(() => {
             setToastAlert({
               type: "success",
               title: "Success!",
@@ -107,7 +102,7 @@ const Profile: NextPage = () => {
             });
             mutateUser((prevData) => {
               if (!prevData) return prevData;
-              return { ...prevData, user: res };
+              return { ...prevData, avatar: "" };
             }, false);
           })
           .catch(() => {
@@ -141,8 +136,8 @@ const Profile: NextPage = () => {
         userImage
       />
       {myProfile ? (
-        <div className="px-24 py-8">
-          <div className="mb-12 space-y-6">
+        <div className="p-8">
+          <div className="mb-8 space-y-6">
             <div>
               <h3 className="text-3xl font-semibold">Profile Settings</h3>
               <p className="mt-1 text-brand-secondary">
@@ -168,14 +163,11 @@ const Profile: NextPage = () => {
                       </div>
                     ) : (
                       <div className="relative h-12 w-12 overflow-hidden">
-                        <Image
+                        <img
                           src={watch("avatar")}
-                          alt={myProfile.first_name}
-                          layout="fill"
-                          objectFit="cover"
-                          className="rounded-md"
+                          className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
                           onClick={() => setIsImageUploadModalOpen(true)}
-                          priority
+                          alt={myProfile.first_name}
                         />
                       </div>
                     )}

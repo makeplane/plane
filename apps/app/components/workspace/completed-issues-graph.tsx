@@ -1,15 +1,5 @@
-// recharts
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, LineGraph } from "components/ui";
 // constants
 import { MONTHS } from "constants/project";
 
@@ -36,13 +26,6 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
     });
   }
 
-  const CustomTooltip = ({ payload, label }: any) => (
-    <div className="space-y-1 rounded bg-brand-surface-1 p-3 text-sm shadow-md">
-      <h4 className="text-brand-secondary">{label}</h4>
-      <h5>Completed issues: {payload[0]?.value}</h5>
-    </div>
-  );
-
   return (
     <div>
       <div className="mb-0.5 flex justify-between">
@@ -56,25 +39,45 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
         </CustomMenu>
       </div>
       <div className="rounded-[10px] border border-brand-base bg-brand-base p-8 pl-4">
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={data}>
-            <CartesianGrid stroke="#858e9660" />
-            <XAxis dataKey="week_in_month" padding={{ left: 48, right: 48 }} />
-            <YAxis dataKey="completed_count" allowDecimals={false} />
-            <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="completed_count"
-              stroke="#d687ff"
-              strokeWidth={3}
-              fill="#8e2de2"
+        {data.every((item) => item.completed_count === 0) ? (
+          <div className="flex items-center justify-center h-72">
+            <h4 className="text-[#d687ff]">No issues closed this month</h4>
+          </div>
+        ) : (
+          <>
+            <LineGraph
+              height="250px"
+              data={[
+                {
+                  id: "completed_issues",
+                  color: "#d687ff",
+                  data: data.map((item) => ({
+                    x: item.week_in_month,
+                    y: item.completed_count,
+                  })),
+                },
+              ]}
+              margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+              customYAxisTickValues={data.map((item) => item.completed_count)}
+              colors={(datum) => datum.color}
+              enableSlices="x"
+              sliceTooltip={(datum) => (
+                <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+                  {datum.slice.points[0].data.yFormatted}
+                  <span className="text-brand-secondary"> issues closed in </span>
+                  {datum.slice.points[0].data.xFormatted}
+                </div>
+              )}
+              theme={{
+                background: "rgb(var(--color-bg-base))",
+              }}
             />
-          </LineChart>
-        </ResponsiveContainer>
-        <h4 className="mt-4 flex items-center justify-center gap-2 text-[#d687ff]">
-          <span className="h-2 w-2 bg-[#d687ff]" />
-          Completed Issues
-        </h4>
+            <h4 className="mt-4 flex items-center justify-center gap-2 text-[#d687ff]">
+              <span className="h-2 w-2 bg-[#d687ff]" />
+              Completed Issues
+            </h4>
+          </>
+        )}
       </div>
     </div>
   );

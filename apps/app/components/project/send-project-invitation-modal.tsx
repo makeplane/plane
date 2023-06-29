@@ -9,13 +9,15 @@ import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { CustomSelect, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-// hooks
-import useToast from "hooks/use-toast";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
+// hooks
+import useToast from "hooks/use-toast";
 // types
-import { IProjectMemberInvitation } from "types";
+import { ICurrentUserResponse, IProjectMemberInvitation } from "types";
 // fetch-keys
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -25,6 +27,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   members: any[];
+  user: ICurrentUserResponse | undefined;
 };
 
 type ProjectMember = IProjectMemberInvitation & {
@@ -40,11 +43,12 @@ const defaultValues: Partial<ProjectMember> = {
   user_id: "",
 };
 
-const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, members }) => {
+const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, members, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
+  const { memberDetails } = useProjectMyMembership();
 
   const { data: people } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
@@ -70,12 +74,15 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
   const onSubmit = async (formData: ProjectMember) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
     await projectService
-      .inviteProject(workspaceSlug as string, projectId as string, formData)
+      .inviteProject(workspaceSlug as string, projectId as string, formData, user)
       .then((response) => {
         setIsOpen(false);
-        mutate(
+        mutate<any[]>(
           PROJECT_INVITATIONS,
-          (prevData: any[]) => [{ ...formData, ...response }, ...(prevData ?? [])],
+          (prevData) => {
+            if (!prevData) return prevData;
+            return [{ ...formData, ...response }, ...(prevData ?? [])];
+          },
           false
         );
         setToastAlert({
@@ -198,11 +205,15 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                               input
                               width="w-full"
                             >
-                              {Object.entries(ROLE).map(([key, label]) => (
-                                <CustomSelect.Option key={key} value={key}>
-                                  {label}
-                                </CustomSelect.Option>
-                              ))}
+                              {Object.entries(ROLE).map(([key, label]) => {
+                                if (parseInt(key) > (memberDetails?.role ?? 5)) return null;
+
+                                return (
+                                  <CustomSelect.Option key={key} value={key}>
+                                    {label}
+                                  </CustomSelect.Option>
+                                );
+                              })}
                             </CustomSelect>
                           )}
                         />

@@ -21,7 +21,6 @@ export const IssueParentSelect: React.FC<Props> = ({ control, isOpen, setIsOpen,
         isOpen={isOpen}
         handleClose={() => setIsOpen(false)}
         onChange={onChange}
-        issues={issues}
       />
     )}
   />

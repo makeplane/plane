@@ -19,7 +19,9 @@ type Props = {
   noChevron?: boolean;
   position?: "left" | "right";
   verticalPosition?: "top" | "bottom";
+  menuItemsClassName?: string;
   customButton?: JSX.Element;
+  menuItemsWhiteBg?: boolean;
 };
 
 type MenuItemProps = {
@@ -43,7 +45,9 @@ const CustomMenu = ({
   noChevron = false,
   position = "right",
   verticalPosition = "bottom",
+  menuItemsClassName = "",
   customButton,
+  menuItemsWhiteBg = false,
 }: Props) => (
   <Menu as="div" className={`relative w-min whitespace-nowrap text-left ${className}`}>
     {({ open }) => (
@@ -105,7 +109,7 @@ const CustomMenu = ({
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items
-            className={`absolute z-20 overflow-y-scroll whitespace-nowrap rounded-md border border-brand-base bg-brand-surface-1 p-1 text-xs shadow-lg focus:outline-none ${
+            className={`absolute z-20 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none ${
               position === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
             } ${verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"} ${
               height === "sm"
@@ -127,7 +131,11 @@ const CustomMenu = ({
                 : width === "xl"
                 ? "w-48"
                 : "min-w-full"
-            }`}
+            } ${
+              menuItemsWhiteBg
+                ? "border-brand-surface-1 bg-brand-base"
+                : "border-brand-base bg-brand-surface-1"
+            } ${menuItemsClassName}`}
           >
             <div className="py-1">{children}</div>
           </Menu.Items>

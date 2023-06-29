@@ -2,11 +2,12 @@
 import useProjectIssuesView from "hooks/use-issues-view";
 // components
 import { SingleBoard } from "components/core/board-view/single-board";
+// icons
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IState, UserAuth } from "types";
-import { getStateGroupIcon } from "components/icons";
+import { ICurrentUserResponse, IIssue, IState, UserAuth } from "types";
 
 type Props = {
   type: "issue" | "cycle" | "module";
@@ -19,6 +20,7 @@ type Props = {
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -33,6 +35,7 @@ export const AllBoards: React.FC<Props> = ({
   handleTrashBox,
   removeIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   const {
@@ -65,6 +68,7 @@ export const AllBoards: React.FC<Props> = ({
                 handleTrashBox={handleTrashBox}
                 removeIssue={removeIssue}
                 isCompleted={isCompleted}
+                user={user}
                 userAuth={userAuth}
               />
             );

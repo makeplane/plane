@@ -14,11 +14,12 @@ import { DangerButton, SecondaryButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICycle } from "types";
+import type { ICurrentUserResponse, ICycle } from "types";
 type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: ICycle | null;
+  user: ICurrentUserResponse | undefined;
 };
 // fetch-keys
 import {
@@ -34,6 +35,7 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
   isOpen,
   setIsOpen,
   data,
+  user,
 }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -53,7 +55,7 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
     setIsDeleteLoading(true);
 
     await cycleService
-      .deleteCycle(workspaceSlug as string, data.project, data.id)
+      .deleteCycle(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         const cycleType = getDateRangeStatus(data.start_date, data.end_date);
         const fetchKey =
@@ -141,7 +143,7 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
                       <div className="mt-2">
                         <p className="text-sm text-brand-secondary">
                           Are you sure you want to delete cycle-{" "}
-                          <span className="break-all font-medium text-brand-base">
+                          <span className="break-words font-medium text-brand-base">
                             {data?.name}
                           </span>
                           ? All of the data related to the cycle will be permanently removed. This

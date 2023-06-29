@@ -11,13 +11,16 @@ import { CustomSelect, Tooltip } from "components/ui";
 // icons
 import { PlayIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
+  customButton?: boolean;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
@@ -25,7 +28,10 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   position = "left",
+  tooltipPosition = "top",
   selfPositioned = false,
+  customButton = false,
+  user,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -35,13 +41,22 @@ export const ViewEstimateSelect: React.FC<Props> = ({
 
   const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
 
+  const estimateLabels = (
+    <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue} position={tooltipPosition}>
+      <div className="flex items-center gap-1 text-brand-secondary">
+        <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
+        {estimateValue ?? "None"}
+      </div>
+    </Tooltip>
+  );
+
   if (!isEstimateActive) return null;
 
   return (
     <CustomSelect
       value={issue.estimate_point}
       onChange={(val: number) => {
-        partialUpdateIssue({ estimate_point: val }, issue.id);
+        partialUpdateIssue({ estimate_point: val }, issue);
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,
@@ -51,17 +66,11 @@ export const ViewEstimateSelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PROPERTY_UPDATE_ESTIMATE"
+          "ISSUE_PROPERTY_UPDATE_ESTIMATE",
+          user
         );
       }}
-      label={
-        <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue}>
-          <div className="flex items-center gap-1 text-brand-secondary">
-            <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
-            {estimateValue ?? "Estimate"}
-          </div>
-        </Tooltip>
-      }
+      {...(customButton ? { customButton: estimateLabels } : { label: estimateLabels })}
       maxHeight="md"
       noChevron
       disabled={isNotAllowed}

@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // services
 import IntegrationService from "services/integration";
 // components
@@ -35,6 +37,8 @@ const IntegrationGuide = () => {
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
 
+  const { user } = useUserAuth();
+
   const { data: importerServices } = useSWR(
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
     workspaceSlug ? () => IntegrationService.getImporterServicesList(workspaceSlug as string) : null
@@ -51,6 +55,7 @@ const IntegrationGuide = () => {
         isOpen={deleteImportModal}
         handleClose={() => setDeleteImportModal(false)}
         data={importToDelete}
+        user={user}
       />
       <div className="h-full space-y-2">
         {!provider && (
@@ -156,8 +161,8 @@ const IntegrationGuide = () => {
           </>
         )}
 
-        {provider && provider === "github" && <GithubImporterRoot />}
-        {provider && provider === "jira" && <JiraImporterRoot />}
+        {provider && provider === "github" && <GithubImporterRoot user={user} />}
+        {provider && provider === "jira" && <JiraImporterRoot user={user} />}
       </div>
     </>
   );

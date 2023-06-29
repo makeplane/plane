@@ -1,7 +1,6 @@
 import React from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // headless ui
@@ -151,8 +150,8 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       }`}
                     />
                   </span>
-                  <Tooltip tooltipContent={cycle.name} className="break-all" position="top-left">
-                    <h3 className="break-all text-lg font-semibold">
+                  <Tooltip tooltipContent={cycle.name} className="break-words" position="top-left">
+                    <h3 className="break-words text-lg font-semibold">
                       {truncateText(cycle.name, 15)}
                     </h3>
                   </Tooltip>
@@ -246,7 +245,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     <div className="w-16">Creator:</div>
                     <div className="flex items-center gap-2.5 text-brand-secondary">
                       {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                        <Image
+                        <img
                           src={cycle.owned_by.avatar}
                           height={16}
                           width={16}

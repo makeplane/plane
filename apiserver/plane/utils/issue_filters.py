@@ -1,7 +1,6 @@
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 
-
 def filter_state(params, filter, method):
     if method == "GET":
         states = params.get("state").split(",")
@@ -26,12 +25,27 @@ def filter_estimate_point(params, filter, method):
 
 def filter_priority(params, filter, method):
     if method == "GET":
-        priorties = params.get("priority").split(",")
-        if len(priorties) and "" not in priorties:
-            filter["priority__in"] = priorties
+        priorities = params.get("priority").split(",")
+        if len(priorities) and "" not in priorities:
+            if len(priorities) == 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+            elif len(priorities) > 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+            else:
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+
     else:
         if params.get("priority", None) and len(params.get("priority")):
-            filter["priority__in"] = params.get("priority")
+            priorities = params.get("priority")
+            if len(priorities) == 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+            elif len(priorities) > 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+            else:
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+
     return filter
 
 
@@ -231,6 +245,29 @@ def filter_module(params, filter, method):
     return filter
 
 
+def filter_inbox_status(params, filter, method):
+    if method == "GET":
+        status = params.get("inbox_status").split(",")
+        if len(status) and "" not in status:
+            filter["issue_inbox__status__in"] = status
+    else:
+        if params.get("inbox_status", None) and len(params.get("inbox_status")):
+            filter["issue_inbox__status__in"] = params.get("inbox_status")
+    return filter
+
+
+def filter_sub_issue_toggle(params, filter, method):
+    if method == "GET":
+        sub_issue = params.get("sub_issue", "false")
+        if sub_issue == "false":
+            filter["parent__isnull"] = True
+    else:
+        sub_issue = params.get("sub_issue", "false")
+        if sub_issue == "false":
+            filter["parent__isnull"] = True
+    return filter
+
+
 def issue_filters(query_params, method):
     filter = dict()
 
@@ -252,6 +289,8 @@ def issue_filters(query_params, method):
         "project": filter_project,
         "cycle": filter_cycle,
         "module": filter_module,
+        "inbox_status": filter_inbox_status,
+        "sub_issue": filter_sub_issue_toggle,
     }
 
     for key, value in ISSUE_FILTER.items():

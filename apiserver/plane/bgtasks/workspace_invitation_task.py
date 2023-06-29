@@ -23,7 +23,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         )
 
         realtivelink = (
-            f"/workspace-member-invitation/{workspace_member_invite.id}?email={email}"
+            f"/workspace-member-invitation/?invitation_id={workspace_member_invite.id}&email={email}"
         )
         abs_url = current_site + realtivelink
 
@@ -66,5 +66,8 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
     except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

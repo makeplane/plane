@@ -13,7 +13,7 @@ import { IUser, IUserLite } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type AvatarProps = {
-  user?: Partial<IUser> | Partial<IUserLite> | IUser | IUserLite | undefined | null;
+  user?: Partial<IUser> | Partial<IUserLite> | null;
   index?: number;
   height?: string;
   width?: string;
@@ -44,11 +44,9 @@ export const Avatar: React.FC<AvatarProps> = ({
           width: width,
         }}
       >
-        <Image
+        <img
           src={user.avatar}
-          height="100%"
-          width="100%"
-          className="rounded-full"
+          className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
           alt={user.first_name}
         />
       </div>

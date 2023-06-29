@@ -45,11 +45,11 @@ The easiest way to get started with Plane is by creating a [Plane Cloud](https:/
 
 ### Docker Compose Setup
 
-- Download the docker-compose.yml and setup.sh file
+- Clone the repository
 
 ```bash
-curl https://raw.githubusercontent.com/makeplane/plane/develop/docker-compose-hub.yml --output docker-compose.yml
-curl https://raw.githubusercontent.com/makeplane/plane/develop/setup.sh --output setup.sh
+git clone https://github.com/makeplane/plane
+cd plane
 chmod +x setup.sh
 ```
 
@@ -60,14 +60,6 @@ chmod +x setup.sh
 ```
 
 > If running in a cloud env replace localhost with public facing IP address of the VM
-
-- Export Environment Variables
-
-```bash
-set -a
-source .env
-set +a
-```
 
 - Run Docker compose up
 
@@ -165,4 +157,4 @@ Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CON
 
 ## ⛓️ Security
 
-If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email security@plane.so to disclose any security vulnerabilities.
+If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email engineering@plane.so to disclose any security vulnerabilities.

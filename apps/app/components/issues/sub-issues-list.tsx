@@ -21,15 +21,16 @@ import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outli
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, ISubIssueResponse } from "types";
+import { ICurrentUserResponse, IIssue, ISearchIssueResponse, ISubIssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   parentIssue: IIssue;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -57,14 +58,16 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
       : null
   );
 
-  const addAsSubIssue = async (data: { issues: string[] }) => {
+  const addAsSubIssue = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
 
+    const payload = {
+      sub_issue_ids: data.map((i) => i.id),
+    };
+
     await issuesService
-      .addSubIssues(workspaceSlug as string, projectId as string, parentIssue?.id ?? "", {
-        sub_issue_ids: data.issues,
-      })
-      .then((res) => {
+      .addSubIssues(workspaceSlug as string, projectId as string, parentIssue?.id ?? "", payload)
+      .then(() => {
         mutate<ISubIssueResponse>(
           SUB_ISSUES(parentIssue?.id ?? ""),
           (prevData) => {
@@ -73,10 +76,12 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
 
             const stateDistribution = { ...prevData.state_distribution };
 
-            data.issues.forEach((issueId: string) => {
+            payload.sub_issue_ids.forEach((issueId: string) => {
               const issue = issues?.find((i) => i.id === issueId);
+
               if (issue) {
                 newSubIssues.push(issue);
+
                 const issueGroup = issue.state_detail.group;
                 stateDistribution[issueGroup] = stateDistribution[issueGroup] + 1;
               }
@@ -95,7 +100,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
           (prevData) =>
             (prevData ?? []).map((p) => {
-              if (data.issues.includes(p.id))
+              if (payload.sub_issue_ids.includes(p.id))
                 return {
                   ...p,
                   parent: parentIssue.id,
@@ -134,7 +139,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
     );
 
     issuesService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null })
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null }, user)
       .then((res) => {
         mutate(SUB_ISSUES(parentIssue.id ?? ""));
 
@@ -187,14 +192,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
       <ExistingIssuesListModal
         isOpen={subIssuesListModal}
         handleClose={() => setSubIssuesListModal(false)}
-        issues={
-          issues?.filter(
-            (i) =>
-              (i.parent === "" || i.parent === null) &&
-              i.id !== parentIssue?.id &&
-              i.id !== parentIssue?.parent
-          ) ?? []
-        }
+        searchParams={{ sub_issue: true, issue_id: parentIssue?.id }}
         handleOnSubmit={addAsSubIssue}
       />
       {subIssuesResponse &&
@@ -284,7 +282,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                           <span className="flex-shrink-0 text-brand-secondary">
                             {issue.project_detail.identifier}-{issue.sequence_id}
                           </span>
-                          <span className="max-w-sm break-all font-medium">{issue.name}</span>
+                          <span className="max-w-sm break-words font-medium">{issue.name}</span>
                         </div>
 
                         {!isNotAllowed && (

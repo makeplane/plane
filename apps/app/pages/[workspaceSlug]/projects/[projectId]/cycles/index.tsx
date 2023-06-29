@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
@@ -31,7 +32,7 @@ import { ListBulletIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/24/ou
 import { SelectCycleType } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { CURRENT_CYCLE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
 
@@ -62,20 +63,12 @@ const ProjectCycles: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: currentCycle } = useSWR(
-    workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () =>
-          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, {
-            cycle_view: "current",
-          })
       : null
   );
 
@@ -112,6 +105,7 @@ const ProjectCycles: NextPage = () => {
         isOpen={createUpdateCycleModal}
         handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycle}
+        user={user}
       />
       <div className="space-y-5 p-8 h-full flex flex-col overflow-hidden">
         <div className="flex gap-4 justify-between">
@@ -198,16 +192,8 @@ const ProjectCycles: NextPage = () => {
               <AllCyclesList viewType={cyclesView} />
             </Tab.Panel>
             {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="mt-7 space-y-5">
-                {currentCycle?.[0] ? (
-                  <ActiveCycleDetails cycle={currentCycle?.[0]} />
-                ) : (
-                  <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
-                    <h3 className="text-base font-medium text-brand-base ">
-                      No active cycle is present.
-                    </h3>
-                  </div>
-                )}
+              <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
+                <ActiveCycleDetails />
               </Tab.Panel>
             )}
             <Tab.Panel as="div" className="h-full overflow-y-auto">

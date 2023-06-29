@@ -2,7 +2,7 @@
 import jwt
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
-
+from uuid import uuid4
 # Django imports
 from django.db import IntegrityError
 from django.db.models import Prefetch
@@ -80,9 +80,22 @@ class WorkSpaceViewSet(BaseViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
+        member_count = (
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
+
+        issue_count = (
+            Issue.objects.filter(workspace=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        )
         return self.filter_queryset(
             super().get_queryset().select_related("owner")
-        ).order_by("name")
+        ).order_by("name").filter(workspace_member__member=self.request.user).annotate(total_members=member_count).annotate(total_issues=issue_count)
 
     def create(self, request):
         try:
@@ -139,6 +152,13 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                 .values("count")
             )
 
+            issue_count = (
+                Issue.objects.filter(workspace=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+
             workspace = (
                 Workspace.objects.prefetch_related(
                     Prefetch("workspace_member", queryset=WorkspaceMember.objects.all())
@@ -147,7 +167,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                     workspace_member__member=request.user,
                 )
                 .select_related("owner")
-            ).annotate(total_members=member_count)
+            ).annotate(total_members=member_count).annotate(total_issues=issue_count)
 
             serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -194,6 +214,11 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 return Response(
                     {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
                 )
+
+            # check for role level
+            requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
+            if len([email for email in emails if int(email.get("role", 10)) > requesting_user.role]):
+                return Response({"error": "You cannot invite a user with higher role"}, status=status.HTTP_400_BAD_REQUEST)
 
             workspace = Workspace.objects.get(slug=slug)
 
@@ -248,6 +273,17 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             workspace_invitations = WorkspaceMemberInvite.objects.filter(
                 email__in=[email.get("email") for email in emails]
             ).select_related("workspace")
+
+            # create the user if signup is disabled
+            if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
+                _ = User.objects.bulk_create([
+                    User(
+                        email=email.get("email"),
+                        password=str(uuid4().hex),
+                        is_password_autoset=True
+                    )
+                     for email in emails
+                ], batch_size=100)
 
             for invitation in workspace_invitations:
                 workspace_invitation.delay(
@@ -361,7 +397,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner")
+            .select_related("workspace", "workspace__owner", "created_by")
         )
 
 
@@ -374,7 +410,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
             super()
             .get_queryset()
             .filter(email=self.request.user.email)
-            .select_related("workspace", "workspace__owner")
+            .select_related("workspace", "workspace__owner", "created_by")
             .annotate(total_members=Count("workspace__workspace_member"))
         )
 
@@ -442,10 +478,16 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 )
 
             # Get the requested user role
-            requested_workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
+            requested_workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
             # Check if role is being updated
             # One cannot update role higher than his own role
-            if "role" in request.data and request.data.get("role", workspace_member.role) > requested_workspace_member.role:
+            if (
+                "role" in request.data
+                and int(request.data.get("role", workspace_member.role))
+                > requested_workspace_member.role
+            ):
                 return Response(
                     {
                         "error": "You cannot update a role that is higher than your own role"
@@ -475,26 +517,52 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
     def destroy(self, request, slug, pk):
         try:
+            # Check the user role who is deleting the user
             workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, pk=pk)
+
+            # check requesting user role
+            requesting_workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+            if requesting_workspace_member.role < workspace_member.role:
+                return Response(
+                    {"error": "You cannot remove a user having role higher than you"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Delete the user also from all the projects
             ProjectMember.objects.filter(
                 workspace__slug=slug, member=workspace_member.member
             ).delete()
             # Remove all favorites
-            ProjectFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
-            CycleFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
-            ModuleFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
-            PageFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
-            IssueViewFavorite.objects.filter(workspace__slug=slug, user=workspace_member.member).delete()
+            ProjectFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
+            CycleFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
+            ModuleFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
+            PageFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
+            IssueViewFavorite.objects.filter(
+                workspace__slug=slug, user=workspace_member.member
+            ).delete()
             # Also remove issue from issue assigned
             IssueAssignee.objects.filter(
                 workspace__slug=slug, assignee=workspace_member.member
             ).delete()
 
             # Remove if module member
-            ModuleMember.objects.filter(workspace__slug=slug, member=workspace_member.member).delete()
+            ModuleMember.objects.filter(
+                workspace__slug=slug, member=workspace_member.member
+            ).delete()
             # Delete owned Pages
-            Page.objects.filter(workspace__slug=slug, owned_by=workspace_member.member).delete()
+            Page.objects.filter(
+                workspace__slug=slug, owned_by=workspace_member.member
+            ).delete()
 
             workspace_member.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -712,7 +780,7 @@ class UserIssueCompletedGraphEndpoint(BaseAPIView):
             month = request.GET.get("month", 1)
 
             issues = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     assignees__in=[request.user],
                     workspace__slug=slug,
                     completed_at__month=month,
@@ -757,7 +825,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             month = request.GET.get("month", 1)
 
             completed_issues = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     assignees__in=[request.user],
                     workspace__slug=slug,
                     completed_at__month=month,
@@ -770,24 +838,24 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 .order_by("week_in_month")
             )
 
-            assigned_issues = Issue.objects.filter(
+            assigned_issues = Issue.issue_objects.filter(
                 workspace__slug=slug, assignees__in=[request.user]
             ).count()
 
-            pending_issues_count = Issue.objects.filter(
+            pending_issues_count = Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 workspace__slug=slug,
                 assignees__in=[request.user],
             ).count()
 
-            completed_issues_count = Issue.objects.filter(
+            completed_issues_count = Issue.issue_objects.filter(
                 workspace__slug=slug,
                 assignees__in=[request.user],
                 state__group="completed",
             ).count()
 
             issues_due_week = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     workspace__slug=slug,
                     assignees__in=[request.user],
                 )
@@ -797,14 +865,14 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                Issue.objects.filter(workspace__slug=slug, assignees__in=[request.user])
+                Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
                 .annotate(state_group=F("state__group"))
                 .values("state_group")
                 .annotate(state_count=Count("state_group"))
                 .order_by("state_group")
             )
 
-            overdue_issues = Issue.objects.filter(
+            overdue_issues = Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 workspace__slug=slug,
                 assignees__in=[request.user],
@@ -812,7 +880,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 completed_at__isnull=True,
             ).values("id", "name", "workspace__slug", "project_id", "target_date")
 
-            upcoming_issues = Issue.objects.filter(
+            upcoming_issues = Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 target_date__gte=timezone.now(),
                 workspace__slug=slug,

@@ -3,6 +3,7 @@ from django.db.models import (
     Count,
     Sum,
     F,
+    Q
 )
 from django.db.models.functions import ExtractMonth
 
@@ -40,7 +41,7 @@ class AnalyticsEndpoint(BaseAPIView):
             segment = request.GET.get("segment", False)
             filters = issue_filters(request.GET, "GET")
 
-            queryset = Issue.objects.filter(workspace__slug=slug, **filters)
+            queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
 
             total_issues = queryset.count()
             distribution = build_graph_plot(
@@ -59,10 +60,11 @@ class AnalyticsEndpoint(BaseAPIView):
 
                 colors = (
                     State.objects.filter(
+                        ~Q(name="Triage"),
                         workspace__slug=slug, project_id__in=filters.get("project__in")
                     ).values(key, "color")
                     if filters.get("project__in", False)
-                    else State.objects.filter(workspace__slug=slug).values(key, "color")
+                    else State.objects.filter(~Q(name="Triage"), workspace__slug=slug).values(key, "color")
                 )
 
             if x_axis in ["labels__name"] or segment in ["labels__name"]:
@@ -79,7 +81,7 @@ class AnalyticsEndpoint(BaseAPIView):
             assignee_details = {}
             if x_axis in ["assignees__email"] or segment in ["assignees__email"]:
                 assignee_details = (
-                    Issue.objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
+                    Issue.issue_objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
                     .order_by("assignees__id")
                     .distinct("assignees__id")
                     .values("assignees__avatar", "assignees__email", "assignees__first_name", "assignees__last_name")
@@ -132,7 +134,7 @@ class SavedAnalyticEndpoint(BaseAPIView):
             )
 
             filter = analytic_view.query
-            queryset = Issue.objects.filter(**filter)
+            queryset = Issue.issue_objects.filter(**filter)
 
             x_axis = analytic_view.query_dict.get("x_axis", False)
             y_axis = analytic_view.query_dict.get("y_axis", False)
@@ -209,7 +211,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
         try:
             filters = issue_filters(request.GET, "GET")
 
-            queryset = Issue.objects.filter(workspace__slug=slug, **filters)
+            queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
 
             total_issues = queryset.count()
 

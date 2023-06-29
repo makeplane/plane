@@ -8,6 +8,7 @@ import useSWR from "swr";
 import stateService from "services/state.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -38,6 +39,8 @@ const StatesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { projectDetails } = useProjectDetails();
 
   const { data: states } = useSWR(
@@ -55,6 +58,7 @@ const StatesSettings: NextPage = () => {
         isOpen={!!selectDeleteState}
         data={statesList?.find((s) => s.id === selectDeleteState) ?? null}
         onClose={() => setSelectDeleteState(null)}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -94,12 +98,14 @@ const StatesSettings: NextPage = () => {
                         <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
                           {key === activeGroup && (
                             <CreateUpdateStateInline
+                              groupLength={orderedStateGroups[key].length}
                               onClose={() => {
                                 setActiveGroup(null);
                                 setSelectedState(null);
                               }}
                               data={null}
                               selectedGroup={key as keyof StateGroup}
+                              user={user}
                             />
                           )}
                           {orderedStateGroups[key].map((state, index) =>
@@ -111,6 +117,7 @@ const StatesSettings: NextPage = () => {
                                 statesList={statesList}
                                 handleEditState={() => setSelectedState(state.id)}
                                 handleDeleteState={() => setSelectDeleteState(state.id)}
+                                user={user}
                               />
                             ) : (
                               <div
@@ -122,10 +129,12 @@ const StatesSettings: NextPage = () => {
                                     setActiveGroup(null);
                                     setSelectedState(null);
                                   }}
+                                  groupLength={orderedStateGroups[key].length}
                                   data={
                                     statesList?.find((state) => state.id === selectedState) ?? null
                                   }
                                   selectedGroup={key as keyof StateGroup}
+                                  user={user}
                                 />
                               </div>
                             )

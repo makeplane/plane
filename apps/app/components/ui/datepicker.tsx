@@ -11,6 +11,7 @@ type Props = {
   placeholder?: string;
   displayShortForm?: boolean;
   error?: boolean;
+  noBorder?: boolean;
   className?: string;
   isClearable?: boolean;
   disabled?: boolean;
@@ -23,6 +24,7 @@ export const CustomDatePicker: React.FC<Props> = ({
   placeholder = "Select date",
   displayShortForm = false,
   error = false,
+  noBorder = false,
   className = "",
   isClearable = true,
   disabled = false,
@@ -44,7 +46,9 @@ export const CustomDatePicker: React.FC<Props> = ({
         : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${
       disabled ? "cursor-not-allowed" : "cursor-pointer"
-    } w-full rounded-md border border-brand-base bg-transparent caret-transparent ${className}`}
+    } ${
+      noBorder ? "" : "border border-brand-base"
+    } w-full rounded-md bg-transparent caret-transparent ${className}`}
     dateFormat="dd-MM-yyyy"
     isClearable={isClearable}
     disabled={disabled}

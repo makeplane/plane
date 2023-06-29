@@ -15,7 +15,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { DangerButton, Input, SecondaryButton } from "components/ui";
 // types
-import type { IWorkspace } from "types";
+import type { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 
@@ -23,9 +23,10 @@ type Props = {
   isOpen: boolean;
   data: IWorkspace | null;
   onClose: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose }) => {
+export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const [confirmWorkspaceName, setConfirmWorkspaceName] = useState("");
@@ -57,7 +58,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
     setIsDeleteLoading(true);
     if (!data || !canDelete) return;
     await workspaceService
-      .deleteWorkspace(data.slug)
+      .deleteWorkspace(data.slug, user)
       .then(() => {
         handleClose();
         router.push("/");
@@ -119,14 +120,14 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
                   <span>
                     <p className="text-sm leading-7 text-brand-secondary">
                       Are you sure you want to delete workspace{" "}
-                      <span className="break-all font-semibold">{data?.name}</span>? All of the data
-                      related to the workspace will be permanently removed. This action cannot be
-                      undone.
+                      <span className="break-words font-semibold">{data?.name}</span>? All of the
+                      data related to the workspace will be permanently removed. This action cannot
+                      be undone.
                     </p>
                   </span>
 
                   <div className="text-brand-secondary">
-                    <p className="break-all text-sm ">
+                    <p className="break-words text-sm ">
                       Enter the workspace name{" "}
                       <span className="font-medium text-brand-base">{selectedWorkspace?.name}</span>{" "}
                       to continue:

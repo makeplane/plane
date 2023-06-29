@@ -15,9 +15,9 @@ import stateService from "services/state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { CustomSelect, Input, PrimaryButton, SecondaryButton, Tooltip } from "components/ui";
 // types
-import type { IState, IStateResponse } from "types";
+import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
@@ -27,6 +27,8 @@ type Props = {
   data: IState | null;
   onClose: () => void;
   selectedGroup: StateGroup | null;
+  user: ICurrentUserResponse | undefined;
+  groupLength: number;
 };
 
 export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled" | null;
@@ -37,7 +39,13 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, selectedGroup }) => {
+export const CreateUpdateStateInline: React.FC<Props> = ({
+  data,
+  onClose,
+  selectedGroup,
+  user,
+  groupLength,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -83,7 +91,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
 
     if (!data) {
       await stateService
-        .createState(workspaceSlug.toString(), projectId.toString(), { ...payload })
+        .createState(workspaceSlug.toString(), projectId.toString(), { ...payload }, user)
         .then((res) => {
           mutate<IStateResponse>(
             STATES_LIST(projectId.toString()),
@@ -121,9 +129,15 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
         });
     } else {
       await stateService
-        .updateState(workspaceSlug.toString(), projectId.toString(), data.id, {
-          ...payload,
-        })
+        .updateState(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          data.id,
+          {
+            ...payload,
+          },
+          user
+        )
         .then(() => {
           mutate(STATES_LIST(projectId.toString()));
           handleClose();
@@ -162,9 +176,8 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-brand-base" : "text-brand-secondary"
-                }`}
+                className={`group inline-flex items-center text-base font-medium focus:outline-none ${open ? "text-brand-base" : "text-brand-secondary"
+                  }`}
               >
                 {watch("color") && watch("color") !== "" && (
                   <span
@@ -216,22 +229,27 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
           name="group"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <CustomSelect
-              value={value}
-              onChange={onChange}
-              label={
-                Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
-                  ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
-                  : "Select group"
-              }
-              input
-            >
-              {Object.keys(GROUP_CHOICES).map((key) => (
-                <CustomSelect.Option key={key} value={key}>
-                  {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+            <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}  >
+              <div>
+                <CustomSelect
+                  disabled={groupLength === 1}
+                  value={value}
+                  onChange={onChange}
+                  label={
+                    Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
+                      ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
+                      : "Select group"
+                  }
+                  input
+                >
+                  {Object.keys(GROUP_CHOICES).map((key) => (
+                    <CustomSelect.Option key={key} value={key}>
+                      {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
+                    </CustomSelect.Option>
+                  ))}
+                </CustomSelect>
+              </div>
+            </Tooltip>
           )}
         />
       )}

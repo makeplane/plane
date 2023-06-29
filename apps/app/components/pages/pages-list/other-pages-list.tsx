@@ -19,9 +19,11 @@ export const OtherPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
     workspaceSlug && projectId ? OTHER_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, {
-            page_view: "created_by_other",
-          })
+          pagesService.getPagesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            "created_by_other"
+          )
       : null
   );
 

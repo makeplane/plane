@@ -21,9 +21,7 @@ export const DraftCyclesList: React.FC<Props> = ({ viewType }) => {
     workspaceSlug && projectId ? DRAFT_CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () =>
-          cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), {
-            cycle_view: "draft",
-          })
+          cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), "draft")
       : null
   );
 

@@ -2,7 +2,12 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
 // types
-import { IAppIntegration, IImporterService, IWorkspaceIntegration } from "types";
+import {
+  IAppIntegration,
+  ICurrentUserResponse,
+  IImporterService,
+  IWorkspaceIntegration,
+} from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -51,13 +56,14 @@ class IntegrationService extends APIService {
   async deleteImporterService(
     workspaceSlug: string,
     service: string,
-    importerId: string
+    importerId: string,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/importers/${service}/${importerId}/`)
       .then((response) => {
         const eventName = service === "github" ? "GITHUB_IMPORTER_DELETE" : "JIRA_IMPORTER_DELETE";
 
-        if (trackEvent) trackEventServices.trackImporterEvent(response?.data, eventName);
+        if (trackEvent) trackEventServices.trackImporterEvent(response?.data, eventName, user);
         return response?.data;
       })
       .catch((error) => {

@@ -18,10 +18,7 @@ export const AllPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
   const { data: pages } = useSWR(
     workspaceSlug && projectId ? ALL_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, {
-            page_view: "all",
-          })
+      ? () => pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, "all")
       : null
   );
 

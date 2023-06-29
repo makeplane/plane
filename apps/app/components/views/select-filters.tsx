@@ -22,7 +22,7 @@ import { PRIORITIES } from "constants/project";
 import { DUE_DATES } from "constants/due-dates";
 
 type Props = {
-  filters: IIssueFilterOptions | IQuery;
+  filters: Partial<IIssueFilterOptions> | IQuery;
   onSelect: (option: any) => void;
   direction?: "left" | "right";
   height?: "sm" | "md" | "rg" | "lg";
@@ -72,7 +72,7 @@ export const SelectFilters: React.FC<Props> = ({
           value: PRIORITIES,
           children: [
             ...PRIORITIES.map((priority) => ({
-              id: priority ?? "none",
+              id: priority === null ? "null" : priority,
               label: (
                 <div className="flex items-center gap-2">
                   {getPriorityIcon(priority)} {priority ?? "None"}
@@ -80,9 +80,9 @@ export const SelectFilters: React.FC<Props> = ({
               ),
               value: {
                 key: "priority",
-                value: priority,
+                value: priority === null ? "null" : priority,
               },
-              selected: filters?.priority?.includes(priority ?? "none"),
+              selected: filters?.priority?.includes(priority === null ? "null" : priority),
             })),
           ],
         },

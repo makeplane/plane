@@ -15,7 +15,7 @@ import { DangerButton, SecondaryButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { IView } from "types";
+import type { ICurrentUserResponse, IView } from "types";
 // fetch-keys
 import { VIEWS_LIST } from "constants/fetch-keys";
 
@@ -23,9 +23,10 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data: IView | null;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen }) => {
+export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -43,7 +44,7 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen }) =>
     if (!workspaceSlug || !data || !projectId) return;
 
     await viewsService
-      .deleteView(workspaceSlug as string, projectId as string, data.id)
+      .deleteView(workspaceSlug as string, projectId as string, data.id, user)
       .then(() => {
         mutate<IView[]>(VIEWS_LIST(projectId as string), (views) =>
           views?.filter((view) => view.id !== data.id)
@@ -114,7 +115,7 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen }) =>
                       <div className="mt-2">
                         <p className="text-sm text-brand-secondary">
                           Are you sure you want to delete view-{" "}
-                          <span className="break-all font-medium text-brand-base">
+                          <span className="break-words font-medium text-brand-base">
                             {data?.name}
                           </span>
                           ? All of the data related to the view will be permanently removed. This

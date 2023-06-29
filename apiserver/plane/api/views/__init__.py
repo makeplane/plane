@@ -43,7 +43,6 @@ from .workspace import (
     WorkspaceThemeViewSet,
 )
 from .state import StateViewSet
-from .shortcut import ShortCutViewSet
 from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
@@ -58,7 +57,6 @@ from .issue import (
     WorkSpaceIssuesEndpoint,
     IssueActivityEndpoint,
     IssueCommentViewSet,
-    TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
     BulkDeleteIssuesEndpoint,
@@ -79,6 +77,7 @@ from .auth_extended import (
 
 
 from .authentication import (
+    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
@@ -133,6 +132,7 @@ from .estimate import (
 
 from .release import ReleaseNotesEndpoint
 
+from .inbox import InboxViewSet, InboxIssueViewSet
 from .analytic import (
     AnalyticsEndpoint,
     AnalyticViewViewset,

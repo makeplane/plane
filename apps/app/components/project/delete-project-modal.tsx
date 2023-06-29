@@ -13,7 +13,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { DangerButton, Input, SecondaryButton } from "components/ui";
 // types
-import type { IProject, IWorkspace } from "types";
+import type { ICurrentUserResponse, IProject, IWorkspace } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
@@ -22,6 +22,7 @@ type TConfirmProjectDeletionProps = {
   onClose: () => void;
   onSuccess?: () => void;
   data: IProject | null;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
@@ -29,6 +30,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   data,
   onClose,
   onSuccess,
+  user,
 }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmProjectName, setConfirmProjectName] = useState("");
@@ -65,7 +67,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
     setIsDeleteLoading(true);
     if (!data || !workspaceSlug || !canDelete) return;
     await projectService
-      .deleteProject(workspaceSlug, data.id)
+      .deleteProject(workspaceSlug, data.id, user)
       .then(() => {
         handleClose();
         mutate<IProject[]>(PROJECTS_LIST(workspaceSlug), (prevData) =>
@@ -126,13 +128,13 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                   <span>
                     <p className="text-sm leading-7 text-brand-secondary">
                       Are you sure you want to delete project{" "}
-                      <span className="break-all font-semibold">{selectedProject?.name}</span>? All
-                      of the data related to the project will be permanently removed. This action
-                      cannot be undone
+                      <span className="break-words font-semibold">{selectedProject?.name}</span>?
+                      All of the data related to the project will be permanently removed. This
+                      action cannot be undone
                     </p>
                   </span>
                   <div className="text-brand-secondary">
-                    <p className="break-all text-sm ">
+                    <p className="break-words text-sm ">
                       Enter the project name{" "}
                       <span className="font-medium text-brand-base">{selectedProject?.name}</span>{" "}
                       to continue:

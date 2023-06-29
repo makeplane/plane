@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import Image from "next/image";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
+// headless ui
 import { Disclosure, Popover, Transition } from "@headlessui/react";
+// services
+import cyclesService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
+// components
+import { SidebarProgressStats } from "components/core";
+import ProgressChart from "components/core/sidebar/progress-chart";
+import { DeleteCycleModal } from "components/cycles";
+// ui
+import { CustomMenu, CustomRangeDatePicker, Loader, ProgressBar } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -19,17 +29,6 @@ import {
   DocumentIcon,
   LinkIcon,
 } from "@heroicons/react/24/outline";
-// ui
-import { CustomMenu, CustomRangeDatePicker, Loader, ProgressBar } from "components/ui";
-// hooks
-import useToast from "hooks/use-toast";
-// services
-import cyclesService from "services/cycles.service";
-// components
-import { SidebarProgressStats } from "components/core";
-import ProgressChart from "components/core/sidebar/progress-chart";
-import { DeleteCycleModal } from "components/cycles";
-// icons
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
@@ -39,15 +38,16 @@ import {
   renderShortDate,
 } from "helpers/date-time.helper";
 // types
-import { ICycle, IIssue } from "types";
+import { ICurrentUserResponse, ICycle } from "types";
 // fetch-keys
-import { CYCLE_DETAILS, CYCLE_ISSUES } from "constants/fetch-keys";
+import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleStatus: string;
   isCompleted: boolean;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const CycleDetailsSidebar: React.FC<Props> = ({
@@ -55,6 +55,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   isOpen,
   cycleStatus,
   isCompleted,
+  user,
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
@@ -67,18 +68,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     start_date: new Date().toString(),
     end_date: new Date().toString(),
   };
-
-  const { data: issues } = useSWR<IIssue[]>(
-    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
-    workspaceSlug && projectId && cycleId
-      ? () =>
-          cyclesService.getCycleIssues(
-            workspaceSlug as string,
-            projectId as string,
-            cycleId as string
-          )
-      : null
-  );
 
   const { setValue, reset, watch } = useForm({
     defaultValues,
@@ -94,7 +83,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     );
 
     cyclesService
-      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
+      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data, user)
       .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
       .catch((e) => console.log(e));
   };
@@ -294,7 +283,12 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
   return (
     <>
-      <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} />
+      <DeleteCycleModal
+        isOpen={cycleDeleteModal}
+        setIsOpen={setCycleDeleteModal}
+        data={cycle}
+        user={user}
+      />
       <div
         className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
@@ -447,7 +441,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
                     <div className="flex items-center gap-2.5">
                       {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
-                        <Image
+                        <img
                           src={cycle.owned_by.avatar}
                           height={12}
                           width={12}
@@ -479,7 +473,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
             </div>
-
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
@@ -546,11 +539,12 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-80">
+                            <div className="relative">
                               <ProgressChart
-                                issues={issues ?? []}
-                                start={cycle?.start_date ?? ""}
-                                end={cycle?.end_date ?? ""}
+                                distribution={cycle.distribution.completion_chart}
+                                startDate={cycle.start_date ?? ""}
+                                endDate={cycle.end_date ?? ""}
+                                totalIssues={cycle.total_issues}
                               />
                             </div>
                           </div>
@@ -563,7 +557,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 )}
               </Disclosure>
             </div>
-
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-brand-base p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
@@ -598,9 +591,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <Transition show={open}>
                       <Disclosure.Panel>
                         {cycle.total_issues > 0 ? (
-                          <div className=" h-full w-full py-4">
+                          <div className="h-full w-full py-4">
                             <SidebarProgressStats
-                              issues={issues ?? []}
+                              distribution={cycle.distribution}
                               groupedIssues={{
                                 backlog: cycle.backlog_issues,
                                 unstarted: cycle.unstarted_issues,
@@ -608,6 +601,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 completed: cycle.completed_issues,
                                 cancelled: cycle.cancelled_issues,
                               }}
+                              totalIssues={cycle.total_issues}
                             />
                           </div>
                         ) : (
