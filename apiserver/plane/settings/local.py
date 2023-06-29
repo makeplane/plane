@@ -63,6 +63,7 @@ if os.environ.get("SENTRY_DSN", False):
         send_default_pii=True,
         environment="local",
         traces_sample_rate=0.7,
+        profiles_sample_rate=1.0,
     )
 
 REDIS_HOST = "localhost"
