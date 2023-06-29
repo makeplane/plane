@@ -190,7 +190,7 @@ export const SelectFilters: React.FC<Props> = ({
                 key: "target_date",
                 value: option.value,
               },
-              selected: checkIfArraysHaveSameElements(filters?.target_date, option.value),
+              selected: checkIfArraysHaveSameElements(filters?.target_date ?? [], option.value),
             })) ?? []),
           ],
         },
