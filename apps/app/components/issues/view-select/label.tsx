@@ -22,7 +22,7 @@ type Props = {
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
   selfPositioned?: boolean;
-  tooltipPosition?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   customButton?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
@@ -33,7 +33,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
   partialUpdateIssue,
   position = "left",
   selfPositioned = false,
-  tooltipPosition = "right",
+  tooltipPosition = "top",
   user,
   isNotAllowed,
   customButton = false,
@@ -68,7 +68,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
 
   const labelsLabel = (
     <Tooltip
-      position={`top-${tooltipPosition}`}
+      position={tooltipPosition}
       tooltipHeading="Labels"
       tooltipContent={
         issue.label_details.length > 0

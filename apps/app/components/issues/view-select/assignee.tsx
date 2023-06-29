@@ -20,8 +20,8 @@ type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
-  tooltipPosition?: "left" | "right";
   customButton?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
@@ -32,7 +32,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
   partialUpdateIssue,
   position = "left",
   selfPositioned = false,
-  tooltipPosition = "right",
+  tooltipPosition = "top",
   user,
   isNotAllowed,
   customButton = false,
@@ -69,7 +69,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
 
   const assigneeLabel = (
     <Tooltip
-      position={`top-${tooltipPosition}`}
+      position={tooltipPosition}
       tooltipHeading="Assignees"
       tooltipContent={
         issue.assignee_details.length > 0
