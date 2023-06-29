@@ -183,10 +183,6 @@ if LDAP_ENABLED:
         "last_name": os.environ.get("AUTH_LDAP_USER_ATTR_MAP_LAST_NAME", "sn"),
     }
 
-    # Required group (only when LDAP_RESTRICT_GROUPS is enabled)
-    if os.environ.get("LDAP_RESTRICT_GROUPS", "0") == "1":
-        AUTH_LDAP_REQUIRE_GROUP = os.environ.get("AUTH_LDAP_REQUIRE_GROUP", "")
-
     # Configure LDAP backend
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
         AUTH_LDAP_USER_SEARCH_BASE,
@@ -199,6 +195,10 @@ if LDAP_ENABLED:
         AUTH_LDAP_GROUP_SEARCH_FILTER,
     )
     AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
+
+    # Required group (only when LDAP_RESTRICT_GROUPS is enabled)
+    if os.environ.get("LDAP_RESTRICT_GROUP", "0") == "1":
+        AUTH_LDAP_REQUIRE_GROUP = os.environ.get("AUTH_LDAP_REQUIRE_GROUP", "")
 
 # Static files (CSS, JavaScript, Images)
 
