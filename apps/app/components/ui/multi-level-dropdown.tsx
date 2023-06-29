@@ -93,7 +93,6 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                         <>
                           <div
                             className={`${
-<<<<<<< HEAD
                               active || option.selected ? "bg-brand-surface-2" : ""
                             } flex items-center gap-1 rounded px-1 py-1.5 text-brand-secondary ${
                               direction === "right" ? "justify-between" : ""
@@ -142,25 +141,17 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                               }}
                               className={`${
                                 child.selected ? "bg-brand-surface-2" : ""
-                              } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-2`}
+                              } flex w-full items-center justify-between break-all rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-2`}
                             >
-                              {child.label}
+                              {child.label}{" "}
+                              <CheckIcon
+                                className={`h-3.5 w-3.5 opacity-0 ${
+                                  child.selected ? "opacity-100" : ""
+                                }`}
+                              />
                             </button>
                           ))}
                         </div>
-=======
-                              child.selected ? "bg-brand-surface-2" : ""
-                            } flex w-full items-center justify-between whitespace-nowrap break-words rounded px-1 py-1.5 text-left capitalize text-brand-secondary hover:bg-brand-surface-2`}
-                          >
-                            {child.label}
-                            <CheckIcon
-                              className={`h-3.5 w-3.5 opacity-0 ${
-                                child.selected ? "opacity-100" : ""
-                              }`}
-                            />
-                          </button>
-                        ))}
->>>>>>> 1ed7935bf0cb56b244cc26d8a4063573da1e93bc
                       </div>
                     )}
                   </div>
