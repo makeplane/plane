@@ -905,3 +905,42 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class IssueArchiveViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    serializer_class = IssueSerializer
+    model = Issue
+
+    def list(self, request, slug, project_id):
+        try:
+            issue = Issue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                archived_at__isnull=False,
+            ).order_by("-archived_at")
+            return Response(
+                IssueLiteSerializer(issue, many=True).data, status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def retrieve(self, request, slug, project_id, pk=None):
+        try:
+            issue = Issue.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                archived_at__isnull=False,
+                pk=pk,
+            )
+            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )

@@ -5,6 +5,7 @@ import requests
 # Django imports
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 
 # Third Party imports
 from celery import shared_task
@@ -958,6 +959,11 @@ def issue_activity(
         actor = User.objects.get(pk=actor_id)
         project = Project.objects.get(pk=project_id)
 
+        issue = Issue.objects.filter(pk=issue_id).first()
+        if issue is not None:
+            issue.updated_at = timezone.now()
+            issue.save()
+            
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
             "issue.activity.updated": update_issue_activity,

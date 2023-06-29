@@ -28,6 +28,7 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__status=2)
                 | models.Q(issue_inbox__isnull=True)
             )
+            .exclude(archived_at__isnull=False)
         )
 
 
