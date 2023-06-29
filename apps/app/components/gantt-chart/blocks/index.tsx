@@ -18,7 +18,7 @@ export const GanttChartBlocks: FC<{
 
   return (
     <div
-      className="relative z-10 mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto"
+      className="relative z-[5] mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
     >
       <div className="w-full">
