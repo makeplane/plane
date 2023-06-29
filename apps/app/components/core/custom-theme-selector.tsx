@@ -129,6 +129,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
     reset({
       ...defaultValues,
       ...preLoadedData,
+      "accent-500": preLoadedData?.accent?.[500] || "#FE5050",
     });
   }, [preLoadedData, reset]);
 
