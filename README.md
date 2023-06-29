@@ -61,14 +61,6 @@ chmod +x setup.sh
 
 > If running in a cloud env replace localhost with public facing IP address of the VM
 
-- Export Environment Variables
-
-```bash
-set -a
-source .env
-set +a
-```
-
 - Run Docker compose up
 
 ```bash
