@@ -10,14 +10,14 @@ export const DUE_DATES = [
     ],
   },
   {
-    name: "2 Weeks from now",
+    name: "2 weeks from now",
     value: [
       `${renderDateFormat(new Date())};after`,
       `${renderDateFormat(new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000))};before`,
     ],
   },
   {
-    name: "1 Month from now",
+    name: "1 month from now",
     value: [
       `${renderDateFormat(new Date())};after`,
       `${renderDateFormat(
@@ -26,7 +26,7 @@ export const DUE_DATES = [
     ],
   },
   {
-    name: "2 Months from now",
+    name: "2 months from now",
     value: [
       `${renderDateFormat(new Date())};after`,
       `${renderDateFormat(

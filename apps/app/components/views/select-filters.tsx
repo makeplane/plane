@@ -131,7 +131,7 @@ export const SelectFilters: React.FC<Props> = ({
         },
         {
           id: "created_by",
-          label: "Created By",
+          label: "Created by",
           value: members,
           children: [
             ...(members?.map((member) => ({
@@ -180,7 +180,7 @@ export const SelectFilters: React.FC<Props> = ({
         },
         {
           id: "target_date",
-          label: "Due Date",
+          label: "Due date",
           value: DUE_DATES,
           children: [
             ...(DUE_DATES?.map((option) => ({

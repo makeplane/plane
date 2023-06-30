@@ -2,28 +2,35 @@ import { Fragment } from "react";
 
 import { useRouter } from "next/router";
 
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-
+// react-datepicker
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 // components
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { XMarkIcon } from "@heroicons/react/20/solid";
-// helper
-import { renderDateFormat } from "helpers/date-time.helper";
-// types
 import { DueDateFilterSelect } from "./due-date-filter-select";
+// ui
+import { PrimaryButton, SecondaryButton } from "components/ui";
+// icons
+import { XMarkIcon } from "@heroicons/react/20/solid";
+// helpers
+import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
 };
 
-const defaultValues = {
+type TFormValues = {
+  range: "before" | "after" | "range";
+  date1: Date;
+  date2: Date;
+};
+
+const defaultValues: TFormValues = {
   range: "before",
   date1: new Date(),
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
@@ -35,11 +42,11 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
   const router = useRouter();
   const { viewId } = router.query;
 
-  const { handleSubmit, watch, control, setValue } = useForm<any>({
+  const { handleSubmit, watch, control } = useForm<TFormValues>({
     defaultValues,
   });
 
-  const handleFormSubmit = (formData: any) => {
+  const handleFormSubmit = (formData: TFormValues) => {
     const { range, date1, date2 } = formData;
 
     if (range === "range") {
@@ -75,6 +82,12 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
     }
     handleClose();
   };
+
+  const isInvalid =
+    watch("range") === "range" ? new Date(watch("date1")) > new Date(watch("date2")) : false;
+
+  const nextDay = new Date(watch("date1"));
+  nextDay.setDate(nextDay.getDate() + 1);
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -119,33 +132,53 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
                     />
                   </div>
                   <div className="flex w-full justify-between gap-4">
-                    <DatePicker
-                      selected={watch("date1")}
-                      onChange={(val) => {
-                        setValue("date1", val);
-                      }}
-                      dateFormat="dd-MM-yyyy"
-                      inline
-                      value={watch("date1")}
+                    <Controller
+                      control={control}
+                      name="date1"
+                      render={({ field: { value, onChange } }) => (
+                        <DatePicker
+                          selected={value}
+                          onChange={(val) => onChange(val)}
+                          dateFormat="dd-MM-yyyy"
+                          calendarClassName="h-full"
+                          inline
+                        />
+                      )}
                     />
                     {watch("range") === "range" && (
-                      <DatePicker
-                        selected={watch("date2")}
-                        onChange={(val) => {
-                          setValue("date2", val);
-                        }}
-                        dateFormat="dd-MM-yyyy"
-                        inline
-                        shouldCloseOnSelect={false}
-                        value={watch("date2")}
+                      <Controller
+                        control={control}
+                        name="date2"
+                        render={({ field: { value, onChange } }) => (
+                          <DatePicker
+                            selected={value}
+                            onChange={onChange}
+                            dateFormat="dd-MM-yyyy"
+                            calendarClassName="h-full"
+                            minDate={nextDay}
+                            inline
+                          />
+                        )}
                       />
                     )}
                   </div>
-                  <div className="mt-4 flex justify-end gap-4">
+                  {watch("range") === "range" && (
+                    <h6 className="my-4 text-xs flex items-center gap-1">
+                      <span className="text-brand-secondary">From:</span>
+                      <span>{renderShortDateWithYearFormat(watch("date1"))}</span>
+                      <span className="text-brand-secondary ml-1">To:</span>
+                      {!isInvalid && <span>{renderShortDateWithYearFormat(watch("date2"))}</span>}
+                    </h6>
+                  )}
+                  <div className="flex justify-end gap-4">
                     <SecondaryButton className="flex items-center gap-2" onClick={handleClose}>
                       Cancel
                     </SecondaryButton>
-                    <PrimaryButton type="submit" className="flex items-center gap-2">
+                    <PrimaryButton
+                      type="submit"
+                      className="flex items-center gap-2"
+                      disabled={isInvalid}
+                    >
                       Apply
                     </PrimaryButton>
                   </div>

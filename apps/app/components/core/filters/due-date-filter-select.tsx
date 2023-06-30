@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 // ui
 import { CustomSelect } from "components/ui";
@@ -19,17 +19,17 @@ type DueDate = {
 
 const dueDateRange: DueDate[] = [
   {
-    name: "Due Date Before",
+    name: "Due date before",
     value: "before",
     icon: <CalendarBeforeIcon className="h-4 w-4 " />,
   },
   {
-    name: "Due Date After",
+    name: "Due date after",
     value: "after",
     icon: <CalendarAfterIcon className="h-4 w-4 " />,
   },
   {
-    name: "Due Date Range",
+    name: "Due date range",
     value: "range",
     icon: <CalendarMonthIcon className="h-4 w-4 " />,
   },
@@ -48,7 +48,7 @@ export const DueDateFilterSelect: React.FC<Props> = ({ value, onChange }) => (
     }
     onChange={onChange}
     position="right"
-    width="w-full min-w-[8rem]"
+    width="w-full"
     noChevron
   >
     {dueDateRange.map((option, index) => (
