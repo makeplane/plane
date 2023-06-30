@@ -944,3 +944,9 @@ class IssueArchiveViewSet(BaseViewSet):
             return Response(
                 {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
