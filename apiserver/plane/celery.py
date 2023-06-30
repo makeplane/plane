@@ -24,3 +24,5 @@ app.conf.beat_schedule = {
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
+
+app.conf.beat_scheduler = 'django_celery_beat.schedulers.DatabaseScheduler'
