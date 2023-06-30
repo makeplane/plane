@@ -23,6 +23,7 @@ type CustomSearchSelectProps = {
   verticalPosition?: "top" | "bottom";
   noChevron?: boolean;
   customButton?: JSX.Element;
+  className?: string;
   optionsClassName?: string;
   input?: boolean;
   disabled?: boolean;
@@ -42,6 +43,7 @@ export const CustomSearchSelect = ({
   verticalPosition = "bottom",
   noChevron = false,
   customButton,
+  className = "",
   optionsClassName = "",
   input = false,
   disabled = false,
@@ -68,7 +70,7 @@ export const CustomSearchSelect = ({
   return (
     <Combobox
       as="div"
-      className={`${!selfPositioned ? "relative" : ""} flex-shrink-0 text-left`}
+      className={`${!selfPositioned ? "relative" : ""} flex-shrink-0 text-left ${className}`}
       {...props}
     >
       {({ open }: any) => (
