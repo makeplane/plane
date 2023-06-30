@@ -14,7 +14,7 @@ import DefaultLayout from "layouts/default-layout";
 // ui
 import { Input, SecondaryButton } from "components/ui";
 // icons
-import Logo from "public/logo.png";
+import Logo from "public/plane-logos/blue-without-text.png";
 // types
 import type { NextPage } from "next";
 
@@ -85,7 +85,7 @@ const ResetPasswordPage: NextPage = () => {
                 Reset your password
               </h2>
             </div>
-            <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
+            <div className="flex flex-col rounded-[10px] bg-brand-surface-1 shadow-md">
               <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
                 <div>
                   <Input

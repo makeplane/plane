@@ -8,6 +8,8 @@ import useSWR, { mutate } from "swr";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // services
 import userService from "services/user.service";
+// hooks
+import useUser from "hooks/use-user";
 // components
 import {
   CompletedIssuesGraph,
@@ -15,11 +17,13 @@ import {
   IssuesPieChart,
   IssuesStats,
 } from "components/workspace";
+import { TourRoot } from "components/onboarding";
 import { ProductUpdatesModal } from "components/ui";
 // types
+import { ICurrentUserResponse } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
+import { CURRENT_USER, USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 
 const WorkspacePage: NextPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -27,6 +31,8 @@ const WorkspacePage: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { user } = useUser();
 
   const { data: workspaceDashboardData } = useSWR(
     workspaceSlug ? USER_WORKSPACE_DASHBOARD(workspaceSlug as string) : null,
@@ -46,6 +52,28 @@ const WorkspacePage: NextPage = () => {
           isOpen={isProductUpdatesModalOpen}
           setIsOpen={setIsProductUpdatesModalOpen}
         />
+      )}
+      {user && !user.is_onboarded && (
+        <div className="fixed top-0 left-0 h-full w-full bg-brand-backdrop bg-opacity-50 transition-opacity z-20 grid place-items-center">
+          <TourRoot
+            onComplete={() => {
+              userService.updateUserOnBoard({ userRole: user.role }, user).then(async () => {
+                mutate<ICurrentUserResponse>(
+                  CURRENT_USER,
+                  (prevData) => {
+                    if (!prevData) return prevData;
+
+                    return {
+                      ...prevData,
+                      is_onboarded: true,
+                    };
+                  },
+                  false
+                );
+              });
+            }}
+          />
+        </div>
       )}
       <div className="p-8">
         <div className="flex flex-col gap-8">

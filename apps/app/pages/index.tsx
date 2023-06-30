@@ -20,7 +20,7 @@ import {
 // ui
 import { Spinner } from "components/ui";
 // icons
-import Logo from "public/logo.png";
+import Logo from "public/plane-logos/blue-without-text.png";
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -138,7 +138,7 @@ const HomePage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
+              <div className="flex flex-col rounded-[10px] bg-brand-surface-1 shadow-md">
                 {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                   <>
                     <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />

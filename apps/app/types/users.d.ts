@@ -43,9 +43,15 @@ export interface ICustomTheme {
 
 export interface ICurrentUserResponse extends IUser {
   assigned_issues: number;
-  // user: IUser;
+  last_workspace_id: string | null;
   workspace_invites: number;
-  is_onboarded: boolean;
+  workspace: {
+    fallback_workspace_id: string | null;
+    fallback_workspace_slug: string | null;
+    invites: number;
+    last_workspace_id: string | null;
+    last_workspace_slug: string | null;
+  };
 }
 
 export interface IUserLite {

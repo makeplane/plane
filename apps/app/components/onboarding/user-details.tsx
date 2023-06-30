@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 
-import { Controller, useForm } from "react-hook-form";
+import { mutate } from "swr";
 
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -9,8 +11,10 @@ import userService from "services/user.service";
 // ui
 import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
-import { IUser } from "types";
-// constant
+import { ICurrentUserResponse, IUser } from "types";
+// fetch-keys
+import { CURRENT_USER } from "constants/fetch-keys";
+// constants
 import { USER_ROLES } from "constants/workspace";
 
 const defaultValues: Partial<IUser> = {
@@ -22,10 +26,9 @@ const defaultValues: Partial<IUser> = {
 type Props = {
   user?: IUser;
   setStep: React.Dispatch<React.SetStateAction<number | null>>;
-  setUserRole: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => {
+export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -42,6 +45,19 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
     await userService
       .updateUser(formData)
       .then(() => {
+        mutate<ICurrentUserResponse>(
+          CURRENT_USER,
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              ...formData,
+            };
+          },
+          false
+        );
+
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -61,18 +77,17 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
         last_name: user.last_name,
         role: user.role,
       });
-      setUserRole(user.role);
     }
-  }, [user, reset, setUserRole]);
+  }, [user, reset]);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-      <div className="space-y-9">
-        <div className="space-y-5 relative">
-          <div className="text-brand-accent text-xl absolute -top-1 -left-3">{'"'}</div>
-          <h5 className="text-sm">Hey there 👋🏻</h5>
-          <h5 className="text-sm">Let{"'"}s get started.</h5>
-          <h4 className="text-xl font-semibold">Set up your Plane profile.</h4>
+      <div className="space-y-10">
+        <div className="relative text-lg">
+          <div className="text-brand-accent absolute -top-1 -left-3">{'"'}</div>
+          <h5>Hey there 👋🏻</h5>
+          <h5 className="mt-5 mb-6">Let{"'"}s get started.</h5>
+          <h4 className="text-2xl font-semibold">Set up your Plane profile.</h4>
         </div>
 
         <div className="space-y-7 md:w-1/3">
@@ -105,7 +120,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
             />
           </div>
           <div className="space-y-1 text-sm">
-            <span>What is your role?</span>
+            <span>What{"'"}s your role?</span>
             <div className="w-full">
               <Controller
                 name="role"
@@ -114,10 +129,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
                 render={({ field: { value, onChange } }) => (
                   <CustomSelect
                     value={value}
-                    onChange={(value: any) => {
-                      onChange(value);
-                      setUserRole(value ?? null);
-                    }}
+                    onChange={(val: any) => onChange(val)}
                     label={
                       value ? (
                         value.toString()

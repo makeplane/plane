@@ -34,6 +34,10 @@ export interface IWorkspaceMemberInvitation {
   workspace: IWorkspace;
 }
 
+export interface IWorkspaceBulkInviteFormData {
+  emails: { email: string; role: 5 | 10 | 15 | 20 }[];
+}
+
 export type Properties = {
   assignee: boolean;
   due_date: boolean;

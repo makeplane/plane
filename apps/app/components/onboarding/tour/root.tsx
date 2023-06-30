@@ -15,6 +15,8 @@ import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
 import IssuesTour from "public/onboarding/issues.svg";
 import CyclesTour from "public/onboarding/cycles.svg";
 import ModulesTour from "public/onboarding/modules.svg";
+import ViewsTour from "public/onboarding/views.svg";
+import PagesTour from "public/onboarding/pages.svg";
 
 type Props = {
   onComplete: () => void;
@@ -32,7 +34,7 @@ const TOUR_STEPS: {
 }[] = [
   {
     key: "issues",
-    title: "Plan with Issues",
+    title: "Plan with issues",
     description:
       "The issue is the building block of the Plane. Most concepts in Plane are either associated with issues and their properties.",
     image: IssuesTour,
@@ -40,7 +42,7 @@ const TOUR_STEPS: {
   },
   {
     key: "cycles",
-    title: "Move with Cycles",
+    title: "Move with cycles",
     description:
       "Cycles help you and your team to progress faster, similar to the sprints commonly used in agile development.",
     image: CyclesTour,
@@ -49,7 +51,7 @@ const TOUR_STEPS: {
   },
   {
     key: "modules",
-    title: "Break into Modules",
+    title: "Break into modules",
     description:
       "Modules break your big think into Projects or Features,  to help you organize better.",
     image: ModulesTour,
@@ -61,16 +63,16 @@ const TOUR_STEPS: {
     title: "Views",
     description:
       "Modules break your big think into Projects or Features,  to help you organize better.",
-    image: ModulesTour,
+    image: ViewsTour,
     prevStep: "modules",
     nextStep: "pages",
   },
   {
     key: "pages",
-    title: "Pages",
+    title: "Document with pages",
     description:
       "Modules break your big think into Projects or Features,  to help you organize better.",
-    image: ModulesTour,
+    image: PagesTour,
     prevStep: "views",
   },
 ];
@@ -83,7 +85,7 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
   const currentStep = TOUR_STEPS.find((tourStep) => tourStep.key === step);
 
   return (
-    <div className="relative h-full w-full grid place-items-center">
+    <>
       {step === "welcome" ? (
         <div className="w-2/5 h-3/4 bg-brand-base rounded-[10px] overflow-hidden">
           <div className="h-full overflow-hidden">
@@ -156,6 +158,6 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 };

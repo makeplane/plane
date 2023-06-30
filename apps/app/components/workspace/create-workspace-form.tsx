@@ -14,7 +14,7 @@ import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
-import { USER_WORKSPACES } from "constants/fetch-keys";
+import { CURRENT_USER, USER_WORKSPACES } from "constants/fetch-keys";
 // constants
 import { COMPANY_SIZE } from "constants/workspace";
 
@@ -78,11 +78,15 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                 message: "Workspace created successfully.",
               });
               mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
-              updateLastWorkspaceIdUnderUSer(res);
+              onSubmit(res);
             })
-            .catch((err) => {
-              console.error(err);
-            });
+            .catch(() =>
+              setToastAlert({
+                type: "error",
+                title: "Error!",
+                message: "Workspace could not be created. Please try again.",
+              })
+            );
         } else setSlugError(true);
       })
       .catch(() => {
@@ -91,18 +95,6 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });
-      });
-  };
-
-  // update last_workspace_id
-  const updateLastWorkspaceIdUnderUSer = (workspace: any) => {
-    userService
-      .updateUser({ last_workspace_id: workspace.id })
-      .then((res) => {
-        onSubmit(workspace);
-      })
-      .catch((err) => {
-        console.log(err);
       });
   };
 
@@ -118,7 +110,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
     <form className="space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
       <div className="space-y-7">
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceName">Workspace name</label>
+          <label htmlFor="workspaceName">Workspace Name</label>
           <Input
             id="workspaceName"
             name="name"
@@ -169,7 +161,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <span>How large is your company?</span>
+          <span>What size is your organization?</span>
           <div className="w-full">
             <Controller
               name="company_size"

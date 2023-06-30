@@ -11,6 +11,10 @@ import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-
 import type { NextPage } from "next";
 // constants
 import { CreateWorkspaceForm } from "components/workspace";
+import { ICurrentUserResponse, IWorkspace } from "types";
+import { mutate } from "swr";
+import { CURRENT_USER } from "constants/fetch-keys";
+import userService from "services/user.service";
 
 const CreateWorkspace: NextPage = () => {
   const router = useRouter();
@@ -21,6 +25,33 @@ const CreateWorkspace: NextPage = () => {
   };
 
   const { user } = useUser();
+
+  const onSubmit = (workspace: IWorkspace) => {
+    mutate<ICurrentUserResponse>(
+      CURRENT_USER,
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          last_workspace_id: workspace.id,
+          workspace: {
+            ...prevData.workspace,
+            fallback_workspace_id: workspace.id,
+            fallback_workspace_slug: workspace.slug,
+            last_workspace_id: workspace.id,
+            last_workspace_slug: workspace.slug,
+          },
+        };
+      },
+      false
+    );
+
+    userService
+      .updateUser({ last_workspace_id: workspace.id })
+      .then(() => router.push(`/${workspace.slug}`));
+  };
+
   return (
     <UserAuthorizationLayout>
       <DefaultLayout>
@@ -42,7 +73,7 @@ const CreateWorkspace: NextPage = () => {
               <CreateWorkspaceForm
                 defaultValues={defaultValues}
                 setDefaultValues={() => {}}
-                onSubmit={(res) => router.push(`/${res.slug}`)}
+                onSubmit={onSubmit}
                 user={user}
               />
             </div>
