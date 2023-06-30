@@ -38,8 +38,6 @@ import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
 import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-// constants
-import { INBOX_STATUS } from "constants/inbox";
 
 const defaultValues = {
   name: "",
@@ -192,7 +190,6 @@ export const InboxMainContent: React.FC = () => {
   }, [issueDetails, reset, inboxIssueId]);
 
   const issueStatus = issueDetails?.issue_inbox[0].status;
-  const inboxStatusDetails = INBOX_STATUS.find((s) => s.value === issueStatus);
 
   if (!inboxIssueId)
     return (
@@ -224,11 +221,18 @@ export const InboxMainContent: React.FC = () => {
           <div className="basis-2/3 h-full overflow-auto p-5 space-y-3">
             <div
               className={`flex items-center gap-2 p-3 text-sm border rounded-md ${
-                issueStatus === 0 &&
-                new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
+                issueStatus === -2
+                  ? "text-yellow-500 border-yellow-500 bg-yellow-500/10"
+                  : issueStatus === -1
                   ? "text-red-500 border-red-500 bg-red-500/10"
-                  : inboxStatusDetails
-                  ? `${inboxStatusDetails.textColor} ${inboxStatusDetails.bgColor} ${inboxStatusDetails.borderColor}`
+                  : issueStatus === 0
+                  ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
+                    ? "text-red-500 border-red-500 bg-red-500/10"
+                    : "text-brand-secondary border-gray-500 bg-gray-500/10"
+                  : issueStatus === 1
+                  ? "text-green-500 border-green-500 bg-green-500/10"
+                  : issueStatus === 2
+                  ? "text-brand-secondary border-gray-500 bg-gray-500/10"
                   : ""
               }`}
             >
