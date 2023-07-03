@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useRef } from "react";
 // helpers
 import { ChartDraggable } from "../helpers/draggable";
 // data
@@ -34,14 +34,22 @@ export const GanttChartBlocks: FC<{
     // );
   };
 
+  const dragBlockElement = useRef<HTMLDivElement>(null);
+  const slideBlockLeftElement = useRef<HTMLDivElement>(null);
+  const slideBlockRightElement = useRef<HTMLDivElement>(null);
+
+  // useHandleRightDrag(block, handleBlock, refRight);
+  // useHandleLeftDrag(block, handleBlock, refLeft);
+
   return (
     <div
+      id="block-items-container"
       className="relative z-10 mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
       onScroll={(e) => {
-        const blockSidebar = document.getElementById("blocks-sidebar");
-        if (!blockSidebar) return;
-        blockSidebar.scrollTop = e.currentTarget.scrollTop;
+        const blockScroll = document.getElementById("block-sidebar-container");
+        if (!blockScroll) return;
+        blockScroll.scrollTop = e.currentTarget.scrollTop;
       }}
     >
       <div id="blocks-container" className="w-full">
@@ -69,34 +77,32 @@ export const GanttChartBlocks: FC<{
                         style={{ marginLeft: `${block?.position?.marginLeft}px` }}
                       >
                         <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                          <div className="absolute right-0 mr-[10px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
+                          <div className="absolute right-0 mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
                             {block?.start_date ? datePreview(block?.start_date) : "-"}
                           </div>
                         </div>
 
-                        <div className="flex-shrink-0 relative w-0 h-0 flex items-center">
-                          <div className="absolute right-0 mr-[2px] w-[5px] h-[26px] bg-brand-backdrop rounded cursor-col-resize" />
-                        </div>
-
                         <div
                           id={`block-${block?.data?.id}`}
-                          className="cursor-pointer rounded shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
+                          className="cursor-pointer rounded shadow-sm bg-brand-base overflow-hidden relative flex items-center w-full h-[34px] border border-brand-base"
                           style={{
                             width: `${block?.position?.width}px`,
                           }}
                         >
-                          {blockRender({
-                            ...block?.data,
-                            infoToggle: block?.infoToggle ? true : false,
-                          })}
-                        </div>
+                          <div className="flex-shrink-0 w-[3px] h-[20px] bg-red-500 rounded cursor-col-resize invisible group-hover:visible" />
 
-                        <div className="flex-shrink-0 relative w-0 h-0 flex items-center">
-                          <div className="absolute left-0 ml-[2px] w-[5px] h-[26px] bg-brand-backdrop rounded cursor-col-resize" />
+                          <div className="w-full h-full relative overflow-hidden">
+                            {blockRender({
+                              ...block?.data,
+                              infoToggle: block?.infoToggle ? true : false,
+                            })}
+                          </div>
+
+                          <div className="flex-shrink-0 w-[3px] h-[20px] bg-red-500 rounded cursor-col-resize invisible group-hover:visible" />
                         </div>
 
                         <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                          <div className="absolute left-0 ml-[10px] mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
+                          <div className="absolute left-0 ml-[5px] mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
                             {block?.target_date ? datePreview(block?.target_date) : "-"}
                           </div>
                         </div>

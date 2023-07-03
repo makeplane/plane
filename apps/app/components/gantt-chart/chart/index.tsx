@@ -1,11 +1,4 @@
 import { FC, useEffect, useState } from "react";
-// icons
-import {
-  Bars4Icon,
-  XMarkIcon,
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-} from "@heroicons/react/20/solid";
 // components
 import { ChartHeader, ChartSidebar } from "../helpers";
 import { GanttChartBlocks } from "../blocks";
@@ -33,7 +26,7 @@ import {
 // types
 import { ChartDataType } from "../types";
 // data
-import { datePreview, currentViewDataWithView } from "../data";
+import { currentViewDataWithView } from "../data";
 // hooks
 import { useChart } from "../hooks";
 

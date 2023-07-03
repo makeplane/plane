@@ -16,7 +16,15 @@ export const ChartSidebar = ({
       </h3>
     </div>
 
-    <div className={`w-full h-full overflow-hidden overflow-y-auto`}>
+    <div
+      id="block-sidebar-container"
+      className={`w-full h-full overflow-hidden overflow-y-auto`}
+      onScroll={(e) => {
+        const blockScroll = document.getElementById("block-items-container");
+        if (!blockScroll) return;
+        blockScroll.scrollTop = e.currentTarget.scrollTop;
+      }}
+    >
       {blocks.map((block: any, _idx: number) => (
         <div
           key={`sidebar-block-${_idx}`}
