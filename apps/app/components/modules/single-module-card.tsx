@@ -138,7 +138,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
               <Tooltip tooltipContent={module.name} position="top-left">
                 <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
                   <a className="w-auto max-w-[calc(100%-9rem)]">
-                    <h3 className="truncate break-all text-lg font-semibold text-brand-base">
+                    <h3 className="truncate break-words text-lg font-semibold text-brand-base">
                       {truncateText(module.name, 75)}
                     </h3>
                   </a>

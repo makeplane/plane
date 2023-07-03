@@ -27,7 +27,7 @@ type Props = {
 
 export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
@@ -50,15 +50,24 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
       <div className="sm:basis-1/2">
         <CustomSelect
           label={
-            <div className="flex items-center gap-2 text-left text-brand-base">
-              {getStateGroupIcon(
-                selectedState?.group ?? "backlog",
-                "16",
-                "16",
-                selectedState?.color ?? ""
-              )}
-              {addSpaceIfCamelCase(selectedState?.name ?? "")}
-            </div>
+            selectedState ? (
+              <div className="flex items-center gap-2 text-left text-brand-base">
+                {getStateGroupIcon(
+                  selectedState?.group ?? "backlog",
+                  "16",
+                  "16",
+                  selectedState?.color ?? ""
+                )}
+                {addSpaceIfCamelCase(selectedState?.name ?? "")}
+              </div>
+            ) : inboxIssueId ? (
+              <div className="flex items-center gap-2 text-left text-brand-base">
+                {getStateGroupIcon("backlog", "16", "16", "#ff7700")}
+                Triage
+              </div>
+            ) : (
+              "None"
+            )
           }
           value={value}
           onChange={onChange}

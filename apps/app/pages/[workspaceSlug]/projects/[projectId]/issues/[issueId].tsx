@@ -31,8 +31,6 @@ const defaultValues = {
   state: "",
   assignees_list: [],
   priority: "low",
-  blockers_list: [],
-  blocked_list: [],
   target_date: new Date().toString(),
   issue_cycle: null,
   issue_module: null,
@@ -65,6 +63,7 @@ const IssueDetailsPage: NextPage = () => {
         ISSUE_DETAILS(issueId as string),
         (prevData) => {
           if (!prevData) return prevData;
+
           return {
             ...prevData,
             ...formData,
@@ -73,10 +72,13 @@ const IssueDetailsPage: NextPage = () => {
         false
       );
 
-      const payload = { ...formData };
+      const payload: Partial<IIssue> = {
+        ...formData,
+      };
+
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
-        .then((res) => {
+        .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
@@ -93,12 +95,6 @@ const IssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
-      blockers_list:
-        issueDetails.blockers_list ??
-        issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
-      blocked_list:
-        issueDetails.blocks_list ??
-        issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
       assignees_list:
         issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,
@@ -124,10 +120,10 @@ const IssueDetailsPage: NextPage = () => {
     >
       {issueDetails && projectId ? (
         <div className="flex h-full">
-          <div className="basis-2/3 space-y-5 divide-y-2 divide-brand-base p-5">
+          <div className="w-2/3 space-y-5 divide-y-2 divide-brand-base p-5">
             <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
           </div>
-          <div className="basis-1/3 space-y-5 border-l border-brand-base p-5">
+          <div className="w-1/3 space-y-5 border-l border-brand-base p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

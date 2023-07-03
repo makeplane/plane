@@ -25,8 +25,12 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
           })) ?? []
         }
         height="320px"
-        innerRadius={0.5}
-        arcLinkLabel={(cell) => `${capitalizeFirstLetter(cell.label.toString())} (${cell.value})`}
+        innerRadius={0.6}
+        cornerRadius={5}
+        padAngle={2}
+        enableArcLabels
+        arcLabelsTextColor="#000000"
+        enableArcLinkLabels={false}
         legends={[
           {
             anchor: "right",
@@ -53,8 +57,14 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
         ]}
         activeInnerRadiusOffset={5}
         colors={(datum) => datum.data.color}
+        tooltip={(datum) => (
+          <div className="flex items-center gap-2 rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+            <span className="text-brand-secondary capitalize">{datum.datum.label} issues:</span>{" "}
+            {datum.datum.value}
+          </div>
+        )}
         theme={{
-          background: "rgb(var(--color-bg-base))",
+          background: "transparent",
         }}
       />
     </div>

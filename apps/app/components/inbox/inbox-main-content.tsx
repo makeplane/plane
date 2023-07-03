@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
@@ -29,6 +29,7 @@ import {
   ClockIcon,
   DocumentDuplicateIcon,
   ExclamationTriangleIcon,
+  InboxIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 // helpers
@@ -55,7 +56,7 @@ export const InboxMainContent: React.FC = () => {
 
   const { user } = useUserAuth();
   const { memberRole } = useProjectMyMembership();
-  const { params } = useInboxView();
+  const { params, issues: inboxIssues } = useInboxView();
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
@@ -75,17 +76,6 @@ export const InboxMainContent: React.FC = () => {
           )
       : null
   );
-
-  useEffect(() => {
-    if (!issueDetails || !inboxIssueId) return;
-
-    reset({
-      ...issueDetails,
-      assignees_list:
-        issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
-    });
-  }, [issueDetails, reset, inboxIssueId]);
 
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
@@ -144,7 +134,85 @@ export const InboxMainContent: React.FC = () => {
     ]
   );
 
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (!inboxIssues || !inboxIssueId) return;
+
+      const currentIssueIndex = inboxIssues.findIndex((issue) => issue.bridge_id === inboxIssueId);
+
+      switch (e.key) {
+        case "ArrowUp":
+          Router.push({
+            pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+            query: {
+              inboxIssueId:
+                currentIssueIndex === 0
+                  ? inboxIssues[inboxIssues.length - 1].bridge_id
+                  : inboxIssues[currentIssueIndex - 1].bridge_id,
+            },
+          });
+          break;
+        case "ArrowDown":
+          Router.push({
+            pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+            query: {
+              inboxIssueId:
+                currentIssueIndex === inboxIssues.length - 1
+                  ? inboxIssues[0].bridge_id
+                  : inboxIssues[currentIssueIndex + 1].bridge_id,
+            },
+          });
+          break;
+        default:
+          break;
+      }
+    },
+    [workspaceSlug, projectId, inboxIssueId, inboxId, inboxIssues]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown]);
+
+  useEffect(() => {
+    if (!issueDetails || !inboxIssueId) return;
+
+    reset({
+      ...issueDetails,
+      assignees_list:
+        issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
+      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+    });
+  }, [issueDetails, reset, inboxIssueId]);
+
   const issueStatus = issueDetails?.issue_inbox[0].status;
+
+  if (!inboxIssueId)
+    return (
+      <div className="h-full p-4 grid place-items-center text-brand-secondary">
+        <div className="grid h-full place-items-center">
+          <div className="my-5 flex flex-col items-center gap-4">
+            <InboxIcon height={60} width={60} />
+            {inboxIssues && inboxIssues.length > 0 ? (
+              <span className="text-brand-secondary">
+                {inboxIssues?.length} issues found. Select an issue from the sidebar to view its
+                details.
+              </span>
+            ) : (
+              <span className="text-brand-secondary">
+                No issues found. Use{" "}
+                <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre> shortcut to
+                create a new issue
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>
@@ -154,17 +222,17 @@ export const InboxMainContent: React.FC = () => {
             <div
               className={`flex items-center gap-2 p-3 text-sm border rounded-md ${
                 issueStatus === -2
-                  ? "text-orange-500 border-orange-500 bg-orange-500/10"
+                  ? "text-yellow-500 border-yellow-500 bg-yellow-500/10"
                   : issueStatus === -1
                   ? "text-red-500 border-red-500 bg-red-500/10"
                   : issueStatus === 0
                   ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
                     ? "text-red-500 border-red-500 bg-red-500/10"
-                    : "text-blue-500 border-blue-500 bg-blue-500/10"
+                    : "text-brand-secondary border-gray-500 bg-gray-500/10"
                   : issueStatus === 1
                   ? "text-green-500 border-green-500 bg-green-500/10"
                   : issueStatus === 2
-                  ? "text-yellow-500 border-yellow-500 bg-yellow-500/10"
+                  ? "text-brand-secondary border-gray-500 bg-gray-500/10"
                   : ""
               }`}
             >
@@ -266,6 +334,4 @@ export const InboxMainContent: React.FC = () => {
       )}
     </>
   );
-
-  return null;
 };

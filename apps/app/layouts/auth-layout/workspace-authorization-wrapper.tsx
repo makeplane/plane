@@ -107,14 +107,13 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   : "bg-brand-base"
               }`}
             >
-              {!noHeader && (
-                <AppHeader
-                  breadcrumbs={breadcrumbs}
-                  left={left}
-                  right={right}
-                  setToggleSidebar={setToggleSidebar}
-                />
-              )}
+              <AppHeader
+                breadcrumbs={breadcrumbs}
+                left={left}
+                right={right}
+                setToggleSidebar={setToggleSidebar}
+                noHeader={noHeader}
+              />
               <div className="h-full w-full overflow-hidden">
                 <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
                   {children}

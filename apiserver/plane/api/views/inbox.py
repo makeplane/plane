@@ -68,13 +68,12 @@ class InboxViewSet(BaseViewSet):
             inbox = Inbox.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
-
+            # Handle default inbox delete
             if inbox.is_default:
                 return Response(
                     {"error": "You cannot delete the default inbox"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             inbox.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
@@ -112,7 +111,6 @@ class InboxIssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, inbox_id):
         try:
-            order_by = request.GET.get("order_by", "created_at")
             filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.objects.filter(
@@ -120,23 +118,17 @@ class InboxIssueViewSet(BaseViewSet):
                     workspace__slug=slug,
                     project_id=project_id,
                 )
+                .filter(**filters)
+                .annotate(bridge_id=F("issue_inbox__id"))
+                .select_related("workspace", "project", "state", "parent")
+                .prefetch_related("assignees", "labels")
+                .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
                 .annotate(
                     sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
-                .annotate(bridge_id=F("issue_inbox__id"))
-                .filter(project_id=project_id)
-                .filter(workspace__slug=slug)
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("state")
-                .select_related("parent")
-                .prefetch_related("assignees")
-                .prefetch_related("labels")
-                .order_by(order_by)
-                .filter(**filters)
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                     .order_by()
@@ -180,7 +172,8 @@ class InboxIssueViewSet(BaseViewSet):
                     {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            if not request.data.get("issue", {}).get("priority", "low") in [
+            # Check for valid priority
+            if not request.data.get("issue", {}).get("priority", None) in [
                 "low",
                 "medium",
                 "high",
@@ -213,7 +206,6 @@ class InboxIssueViewSet(BaseViewSet):
             )
 
             # Create an Issue Activity
-            # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
@@ -231,9 +223,7 @@ class InboxIssueViewSet(BaseViewSet):
             )
 
             serializer = IssueStateInboxSerializer(issue)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
-
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -260,7 +250,7 @@ class InboxIssueViewSet(BaseViewSet):
                     pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
                 )
                 # Only allow guests and viewers to edit name and description
-                if project_member <= 10:
+                if project_member.role <= 10:
                     # viewers and guests since only viewers and guests 
                     issue_data = {
                         "name": issue_data.get("name", issue.name),

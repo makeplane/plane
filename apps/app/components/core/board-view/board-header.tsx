@@ -166,7 +166,7 @@ export const BoardHeader: React.FC<Props> = ({
             <ArrowsPointingOutIcon className="h-4 w-4" />
           )}
         </button>
-        {!isCompleted && (
+        {!isCompleted && selectedGroup !== "created_by" && (
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 text-brand-secondary outline-none duration-300 hover:bg-brand-surface-2"

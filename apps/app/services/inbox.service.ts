@@ -162,7 +162,7 @@ class InboxServices extends APIService {
     inboxId: string,
     data: any,
     user: ICurrentUserResponse | undefined
-  ): Promise<IInboxIssue> {
+  ): Promise<IInboxIssueDetail> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`,
       data

@@ -150,8 +150,8 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       }`}
                     />
                   </span>
-                  <Tooltip tooltipContent={cycle.name} className="break-all" position="top-left">
-                    <h3 className="break-all text-lg font-semibold">
+                  <Tooltip tooltipContent={cycle.name} className="break-words" position="top-left">
+                    <h3 className="break-words text-lg font-semibold">
                       {truncateText(cycle.name, 15)}
                     </h3>
                   </Tooltip>

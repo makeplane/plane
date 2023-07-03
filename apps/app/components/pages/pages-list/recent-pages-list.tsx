@@ -41,7 +41,7 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
             if (pages[key].length === 0) return null;
 
             return (
-              <div key={key}>
+              <div key={key} className="h-full overflow-hidden">
                 <h2 className="text-xl font-semibold capitalize mb-2">
                   {replaceUnderscoreIfSnakeCase(key)}
                 </h2>

@@ -72,7 +72,7 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                   <span>
                     <p className="text-sm text-brand-secondary">
                       Are you sure you want to decline issue{" "}
-                      <span className="break-all font-medium text-brand-base">
+                      <span className="break-words font-medium text-brand-base">
                         {data?.project_detail?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? This action cannot be undone.
