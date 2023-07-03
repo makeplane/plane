@@ -22,6 +22,7 @@ from plane.db.models import (
     Module,
     IssueSubscriber,
     Notification,
+    IssueAssignee,
 )
 from plane.api.serializers import IssueActivitySerializer, IssueFlatSerializer
 
@@ -960,6 +961,12 @@ def issue_activity(
         actor = User.objects.get(pk=actor_id)
         project = Project.objects.get(pk=project_id)
 
+        # add the user to issue subscriber
+        try:
+            _ = IssueSubscriber.objects.create(issue_id=issue_id, subscriber=actor)
+        except Exception as e:
+            pass
+
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
             "issue.activity.updated": update_issue_activity,
@@ -1013,11 +1020,19 @@ def issue_activity(
         # Create Notifications
         bulk_notifications = []
 
-        issue_subscribers = (
+        issue_subscribers = list(
             IssueSubscriber.objects.filter(project=project, issue_id=issue_id)
             .exclude(subscriber_id=actor_id)
             .values_list("subscriber", flat=True)
         )
+
+        issue_assignees = list(
+            IssueAssignee.objects.filter(project=project, issue_id=issue_id)
+            .exclude(assignee_id=actor_id)
+            .values_list("assignee", flat=True)
+        )
+
+        issue_subscribers = issue_subscribers + issue_assignees
 
         issue = Issue.objects.get(project=project, pk=issue_id)
         for subscriber in issue_subscribers:
