@@ -408,7 +408,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
               <div className="flex w-full flex-col gap-6 px-6 py-6">
                 <div className="flex w-full flex-col items-start justify-start gap-2">
                   <div className="flex w-full items-start justify-between gap-2">
-                    <h4 className="text-xl font-semibold text-brand-base">{cycle.name}</h4>
+                    <div className="max-w-[300px]">
+                      <h4 className="text-xl font-semibold text-brand-base break-words w-full">
+                        {cycle.name}
+                      </h4>
+                    </div>
                     <CustomMenu width="lg" ellipsis>
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
@@ -427,7 +431,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     </CustomMenu>
                   </div>
 
-                  <span className="whitespace-normal text-sm leading-5 text-brand-secondary">
+                  <span className="whitespace-normal text-sm leading-5 text-brand-secondary break-words w-full">
                     {cycle.description}
                   </span>
                 </div>

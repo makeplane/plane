@@ -19,6 +19,7 @@ type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
   noBorder?: boolean;
   user: ICurrentUserResponse | undefined;
@@ -29,6 +30,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   position = "left",
+  tooltipPosition = "top",
   selfPositioned = false,
   noBorder = false,
   user,
@@ -75,7 +77,11 @@ export const ViewPrioritySelect: React.FC<Props> = ({
               : "border-brand-base"
           } items-center`}
         >
-          <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"}>
+          <Tooltip
+            tooltipHeading="Priority"
+            tooltipContent={issue.priority ?? "None"}
+            position={tooltipPosition}
+          >
             <span className="flex gap-1 items-center text-brand-secondary text-xs">
               {getPriorityIcon(
                 issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",

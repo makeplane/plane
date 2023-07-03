@@ -66,6 +66,7 @@ sentry_sdk.init(
     traces_sample_rate=1,
     send_default_pii=True,
     environment="staging",
+    profiles_sample_rate=1.0,
 )
 
 # The AWS region to connect to.
