@@ -42,6 +42,7 @@ import {
 import { ICurrentUserResponse, IIssue, ISubIssueResponse, Properties, UserAuth } from "types";
 // helper
 import { copyTextToClipboard } from "helpers/string.helper";
+import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 
 type Props = {
   issue: IIssue;
@@ -343,6 +344,16 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             user={user}
             isNotAllowed={isNotAllowed}
           />
+        </div>
+      )}
+      {properties.created_on && (
+        <div className="flex items-center text-xs cursor-default text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+          {renderLongDetailDateFormat(issue.created_at)}
+        </div>
+      )}
+      {properties.updated_on && (
+        <div className="flex items-center text-xs cursor-default text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+          {renderLongDetailDateFormat(issue.updated_at)}
         </div>
       )}
     </div>

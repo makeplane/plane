@@ -123,7 +123,9 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                             <Icon iconName="east" className="text-sm" />
                             <span>Z</span>
                           </>
-                        ) : col.propertyName === "due_date" ? (
+                        ) : col.propertyName === "due_date" ||
+                          col.propertyName === "created_on" ||
+                          col.propertyName === "updated_on" ? (
                           <>
                             <span className="relative flex items-center h-6 w-6">
                               <Icon

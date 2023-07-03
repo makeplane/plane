@@ -268,6 +268,12 @@ export const IssuesFilterView: React.FC = () => {
                         )
                           return null;
 
+                        if (
+                          (issueView !== "spreadsheet" && key === "created_on") ||
+                          (issueView !== "spreadsheet" && key === "updated_on")
+                        )
+                          return null;
+
                         return (
                           <button
                             key={key}
