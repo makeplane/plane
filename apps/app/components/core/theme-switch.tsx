@@ -6,8 +6,6 @@ import { useTheme } from "next-themes";
 import { THEMES_OBJ } from "constants/themes";
 // ui
 import { CustomSelect } from "components/ui";
-// helper
-import { applyTheme } from "helpers/theme.helper";
 // types
 import { ICustomTheme, IUser } from "types";
 
@@ -80,9 +78,17 @@ export const ThemeSwitch: React.FC<Props> = ({
           } else {
             if (customThemeSelectorOptions) setCustomThemeSelectorOptions(false);
             const cssVars = [
-              "--color-bg-base",
-              "--color-bg-surface-1",
-              "--color-bg-surface-2",
+              "--color-bg-50",
+              "--color-bg-100",
+              "--color-bg-200",
+              "--color-bg-300",
+              "--color-bg-400",
+              "--color-bg-500",
+              "--color-bg-600",
+              "--color-bg-700",
+              "--color-bg-800",
+              "--color-bg-900",
+
               "--color-bg-sidebar",
 
               "--color-border",
