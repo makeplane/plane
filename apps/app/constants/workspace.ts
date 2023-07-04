@@ -23,11 +23,15 @@ export const COMPANY_SIZE = [
 ];
 
 export const USER_ROLES = [
-  { value: "Founder or leadership team", label: "Founder or leadership team" },
-  { value: "Product manager", label: "Product manager" },
-  { value: "Designer", label: "Designer" },
-  { value: "Software developer", label: "Software developer" },
-  { value: "Freelancer", label: "Freelancer" },
+  { value: "Product / Project Manager", label: "Product / Project Manager" },
+  { value: "Development / Engineering", label: "Development / Engineering" },
+  { value: "Founder / Executive", label: "Founder / Executive" },
+  { value: "Freelancer / Consultant", label: "Freelancer / Consultant" },
+  { value: "Marketing / Growth", label: "Marketing / Growth" },
+  { value: "Sales / Business Development", label: "Sales / Business Development" },
+  { value: "Support / Operations", label: "Support / Operations" },
+  { value: "Student / Professor", label: "Student / Professor" },
+  { value: "Human Resources", label: "Human Resources" },
   { value: "Other", label: "Other" },
 ];
 

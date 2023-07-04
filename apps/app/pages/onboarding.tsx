@@ -97,21 +97,21 @@ const Onboarding: NextPage = () => {
 
   return (
     <DefaultLayout>
-      <div className="flex h-full flex-col md:flex-row overflow-hidden">
-        <div className="relative h-1/6 flex-shrink-0 md:basis-2/12">
-          <div className="absolute bg-gray-600 h-[0.5px] w-full top-16 left-0 md:h-screen md:w-[0.5px] md:top-0 md:left-24" />
-          <div className="absolute bg-brand-base p-5 left-16 top-7 md:top-8">
+      <div className="flex h-full flex-col gap-y-2 sm:gap-y-0 sm:gap-x-2 sm:flex-row overflow-hidden">
+        <div className="relative h-1/6 flex-shrink-0 sm:w-2/12">
+          <div className="absolute bg-gray-600 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 sm:-translate-x-1/2 sm:translate-y-0" />
+          <div className="absolute bg-brand-base p-5 left-16 top-7 sm:top-8">
             {step === 1 ? (
               <Image src={BluePlaneLogoWithoutText} alt="Plane logo" width={30} height={30} />
             ) : (
               <Image src={BlackHorizontalLogo} alt="Plane logo" width={133} height={30} />
             )}
           </div>
-          <div className="text-brand-base text-sm fixed right-4 top-6 md:right-16 md:top-16">
+          <div className="text-brand-base text-sm fixed right-4 top-6 sm:right-16 sm:top-16">
             {user?.email}
           </div>
         </div>
-        <div className="relative flex justify-center h-full overflow-y-auto px-8 pb-8 md:p-0 md:items-center md:basis-10/12">
+        <div className="relative flex justify-center sm:justify-start sm:items-center h-full overflow-y-auto px-8 pb-8 sm:p-0 sm:w-10/12">
           {step === 1 ? (
             <UserDetails user={user} setStep={setStep} />
           ) : step === 2 ? (
