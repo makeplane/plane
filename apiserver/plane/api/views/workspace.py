@@ -22,6 +22,7 @@ from django.db.models import (
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
+from django.contrib.auth.hashers import make_password
 
 # Third party modules
 from rest_framework import status
@@ -318,11 +319,12 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 _ = User.objects.bulk_create(
                     [
                         User(
-                            email=email.get("email"),
-                            password=str(uuid4().hex),
+                            username=str(uuid4().hex),
+                            email=invitation.email,
+                            password=make_password(uuid4().hex),
                             is_password_autoset=True,
                         )
-                        for email in emails
+                        for invitation in workspace_invitations
                     ],
                     batch_size=100,
                 )
