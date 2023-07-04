@@ -25,13 +25,13 @@ type Props = {
 };
 
 type TFormValues = {
-  range: "before" | "after" | "range";
+  filterType: "before" | "after" | "range";
   date1: Date;
   date2: Date;
 };
 
 const defaultValues: TFormValues = {
-  range: "before",
+  filterType: "before",
   date1: new Date(),
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
 };
@@ -47,35 +47,30 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
   });
 
   const handleFormSubmit = (formData: TFormValues) => {
-    const { range, date1, date2 } = formData;
+    const { filterType, date1, date2 } = formData;
 
-    if (range === "range") {
+    if (filterType === "range") {
       setFilters(
-        {
-          ...(filters ?? {}),
-          target_date: [`${renderDateFormat(date2)};before`, `${renderDateFormat(date1)};after`],
-        },
+        { target_date: [`${renderDateFormat(date1)};after`, `${renderDateFormat(date2)};before`] },
         !Boolean(viewId)
       );
     } else {
       const filteredArray = filters?.target_date?.filter((item) => {
-        if (item?.includes(range)) return false;
+        if (item?.includes(filterType)) return false;
 
         return true;
       });
 
       const filterOne = filteredArray && filteredArray?.length > 0 ? filteredArray[0] : null;
-      if (filterOne !== null)
+      if (filterOne)
         setFilters(
-          {
-            target_date: [filterOne, `${renderDateFormat(date1)};${range}`],
-          },
+          { target_date: [filterOne, `${renderDateFormat(date1)};${filterType}`] },
           !Boolean(viewId)
         );
       else
         setFilters(
           {
-            target_date: [`${renderDateFormat(date1)};${range}`],
+            target_date: [`${renderDateFormat(date1)};${filterType}`],
           },
           !Boolean(viewId)
         );
@@ -84,7 +79,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
   };
 
   const isInvalid =
-    watch("range") === "range" ? new Date(watch("date1")) > new Date(watch("date2")) : false;
+    watch("filterType") === "range" ? new Date(watch("date1")) > new Date(watch("date2")) : false;
 
   const nextDay = new Date(watch("date1"));
   nextDay.setDate(nextDay.getDate() + 1);
@@ -120,7 +115,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
                     <div className="mb-4 w-48">
                       <Controller
                         control={control}
-                        name="range"
+                        name="filterType"
                         render={({ field: { value, onChange } }) => (
                           <DueDateFilterSelect value={value} onChange={onChange} />
                         )}
@@ -145,7 +140,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
                         />
                       )}
                     />
-                    {watch("range") === "range" && (
+                    {watch("filterType") === "range" && (
                       <Controller
                         control={control}
                         name="date2"
@@ -162,7 +157,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
                       />
                     )}
                   </div>
-                  {watch("range") === "range" && (
+                  {watch("filterType") === "range" && (
                     <h6 className="my-4 text-xs flex items-center gap-1">
                       <span className="text-brand-secondary">From:</span>
                       <span>{renderShortDateWithYearFormat(watch("date1"))}</span>
