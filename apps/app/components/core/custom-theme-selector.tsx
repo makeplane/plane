@@ -21,14 +21,12 @@ type Props = {
 };
 
 const defaultValues = {
-  accent: "#fe5050",
   background: "#fff7f7",
-  border: "#ffc9c9",
+  text: "#ffc9c9",
+  accent: "#fe5050",
+  sidebar: "#ffffff",
   darkPalette: false,
   palette: "",
-  sidebar: "#ffffff",
-  textBase: "#430000",
-  textSecondary: "#323232",
 };
 
 export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
@@ -50,14 +48,12 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
 
   const handleFormSubmit = async (formData: ICustomTheme) => {
     const payload: ICustomTheme = {
-      accent: formData.accent,
       background: formData.background,
-      border: formData.border,
-      darkPalette: darkPalette,
-      palette: `${formData.background},${formData.border},${formData.sidebar},${formData.accent},${formData.textBase},${formData.textSecondary}`,
+      text: formData.text,
+      accent: formData.accent,
       sidebar: formData.sidebar,
-      textBase: formData.textBase,
-      textSecondary: formData.textSecondary,
+      darkPalette: darkPalette,
+      palette: `${formData.background},${formData.text},${formData.accent},${formData.sidebar}`,
     };
 
     await userService
@@ -93,7 +89,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
       <div className="space-y-5">
         <h3 className="text-lg font-semibold text-brand-base">Customize your theme</h3>
         <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 md:grid-cols-4">
             <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-sm font-medium text-brand-secondary">
                 Background color
@@ -108,23 +104,10 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">Border color</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">Text color</h3>
               <ColorPickerInput
-                name="border"
-                error={errors.border}
-                watch={watch}
-                setValue={setValue}
-                register={register}
-              />
-            </div>
-
-            <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">
-                Sidebar background color
-              </h3>
-              <ColorPickerInput
-                name="sidebar"
-                error={errors.sidebar}
+                name="text"
+                error={errors.text}
                 watch={watch}
                 setValue={setValue}
                 register={register}
@@ -144,24 +127,11 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
 
             <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-sm font-medium text-brand-secondary">
-                Primary text color
+                Sidebar background color
               </h3>
               <ColorPickerInput
-                name="textBase"
-                error={errors.textBase}
-                watch={watch}
-                setValue={setValue}
-                register={register}
-              />
-            </div>
-
-            <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">
-                Secondary text color
-              </h3>
-              <ColorPickerInput
-                name="textSecondary"
-                error={errors.textSecondary}
+                name="sidebar"
+                error={errors.sidebar}
                 watch={watch}
                 setValue={setValue}
                 register={register}

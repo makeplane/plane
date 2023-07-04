@@ -1,56 +1,15 @@
 import { TRgb, hexToRgb } from "helpers/color.helper";
 
-export const applyTheme = (palette: string, isDarkPalette: boolean) => {
-  // palette: [bg, border, sidebarBg, accent, textBase, textSecondary, scheme]
-  const values: string[] = palette.split(",");
-  values.push(isDarkPalette ? "dark" : "light");
-
-  for (let i = 0; i < 10; i++) {
-    const bgShades = calculateShades(values[0]);
-    const accentShades = calculateShades(values[3]);
-
-    const shade = (i === 0 ? 50 : i * 100) as keyof TShades;
-
-    const bgRgbValues = `${bgShades[shade].r}, ${bgShades[shade].g}, ${bgShades[shade].b}`;
-    const accentRgbValues = `${accentShades[shade].r}, ${accentShades[shade].g}, ${accentShades[shade].b}`;
-
-    document
-      .querySelector<HTMLElement>("[data-theme='custom']")
-      ?.style.setProperty(`--color-bg-${shade}`, bgRgbValues);
-    document
-      .querySelector<HTMLElement>("[data-theme='custom']")
-      ?.style.setProperty(`--color-accent-${shade}`, accentRgbValues);
-  }
-
-  const border = hexToRgb(values[1]);
-  document
-    .querySelector<HTMLElement>("[data-theme='custom']")
-    ?.style.setProperty("--color-border", `${border.r}, ${border.g}, ${border.b}`);
-
-  const sidebarBg = hexToRgb(values[2]);
-  document
-    .querySelector<HTMLElement>("[data-theme='custom']")
-    ?.style.setProperty("--color-bg-sidebar", `${sidebarBg.r}, ${sidebarBg.g}, ${sidebarBg.b}`);
-
-  const textBase = hexToRgb(values[4]);
-  document
-    .querySelector<HTMLElement>("[data-theme='custom']")
-    ?.style.setProperty("--color-text-base", `${textBase.r}, ${textBase.g}, ${textBase.b}`);
-
-  const textSecondary = hexToRgb(values[5]);
-  document
-    .querySelector<HTMLElement>("[data-theme='custom']")
-    ?.style.setProperty(
-      "--color-text-secondary",
-      `${textSecondary.r}, ${textSecondary.g}, ${textSecondary.b}`
-    );
-  document
-    .querySelector<HTMLElement>("[data-theme='custom']")
-    ?.style.setProperty("--color-scheme", values[6]);
-};
-
 type TShades = {
+  10: TRgb;
+  20: TRgb;
+  30: TRgb;
+  40: TRgb;
   50: TRgb;
+  60: TRgb;
+  70: TRgb;
+  80: TRgb;
+  90: TRgb;
   100: TRgb;
   200: TRgb;
   300: TRgb;
@@ -60,33 +19,16 @@ type TShades = {
   700: TRgb;
   800: TRgb;
   900: TRgb;
+  950: TRgb;
 };
 
 const calculateShades = (hexValue: string): TShades => {
   const shades: Partial<TShades> = {};
+  const { r, g, b } = hexToRgb(hexValue);
 
   const convertHexToSpecificShade = (shade: number): TRgb => {
-    const { r, g, b } = hexToRgb(hexValue);
-
-    if (shade > 500) {
-      let decimalValue = 0.1;
-
-      if (shade === 600) decimalValue = 0.9;
-      else if (shade === 700) decimalValue = 0.8;
-      else if (shade === 800) decimalValue = 0.7;
-      else if (shade === 900) decimalValue = 0.6;
-
-      const newR = Math.ceil(r * decimalValue);
-      const newG = Math.ceil(g * decimalValue);
-      const newB = Math.ceil(b * decimalValue);
-
-      return {
-        r: newR,
-        g: newG,
-        b: newB,
-      };
-    } else {
-      const decimalValue = 1 - (shade * 2) / 1000;
+    if (shade <= 100) {
+      const decimalValue = (100 - shade) / 100;
 
       const newR = Math.floor(r + (255 - r) * decimalValue);
       const newG = Math.floor(g + (255 - g) * decimalValue);
@@ -97,11 +39,101 @@ const calculateShades = (hexValue: string): TShades => {
         g: newG,
         b: newB,
       };
+    } else {
+      const decimalValue = 1 - Math.ceil((shade - 100) / 100) / 10;
+
+      const newR = Math.ceil(r * decimalValue);
+      const newG = Math.ceil(g * decimalValue);
+      const newB = Math.ceil(b * decimalValue);
+
+      return {
+        r: newR,
+        g: newG,
+        b: newB,
+      };
     }
   };
 
-  shades[50] = convertHexToSpecificShade(50);
+  for (let i = 10; i <= 90; i += 10) shades[i as keyof TShades] = convertHexToSpecificShade(i);
   for (let i = 100; i <= 900; i += 100) shades[i as keyof TShades] = convertHexToSpecificShade(i);
 
+  shades[950 as keyof TShades] = convertHexToSpecificShade(950);
+
   return shades as TShades;
+};
+
+export const applyTheme = (palette: string, isDarkPalette: boolean) => {
+  // palette: [bg, text, accent, sidebarBg]
+  const values: string[] = palette.split(",");
+  values.push(isDarkPalette ? "dark" : "light");
+
+  const bgShades = calculateShades(values[0]);
+  const textShades = calculateShades(values[1]);
+  const accentShades = calculateShades(values[2]);
+  const sidebarShades = calculateShades(values[3]);
+
+  for (let i = 10; i <= 90; i += 10) {
+    const shade = i as keyof TShades;
+
+    const bgRgbValues = `${bgShades[shade].r}, ${bgShades[shade].g}, ${bgShades[shade].b}`;
+    const textRgbValues = `${textShades[shade].r}, ${textShades[shade].g}, ${textShades[shade].b}`;
+    const accentRgbValues = `${accentShades[shade].r}, ${accentShades[shade].g}, ${accentShades[shade].b}`;
+    const sidebarRgbValues = `${sidebarShades[shade].r}, ${sidebarShades[shade].g}, ${sidebarShades[shade].b}`;
+
+    document
+      .querySelector<HTMLElement>("[data-theme='custom']")
+      ?.style.setProperty(`--color-bg-${shade}`, bgRgbValues);
+    document
+      .querySelector<HTMLElement>("[data-theme='custom']")
+      ?.style.setProperty(`--color-text-${shade}`, textRgbValues);
+    document
+      .querySelector<HTMLElement>("[data-theme='custom']")
+      ?.style.setProperty(`--color-accent-${shade}`, accentRgbValues);
+    document
+      .querySelector<HTMLElement>("[data-theme='custom']")
+      ?.style.setProperty(`--color-sidebar-${shade}`, sidebarRgbValues);
+  }
+  for (let i = 100; i <= 900; i += 100) {
+    const shade = i as keyof TShades;
+
+    const bgRgbValues = `${bgShades[shade].r}, ${bgShades[shade].g}, ${bgShades[shade].b}`;
+    const textRgbValues = `${textShades[shade].r}, ${textShades[shade].g}, ${textShades[shade].b}`;
+    const accentRgbValues = `${accentShades[shade].r}, ${accentShades[shade].g}, ${accentShades[shade].b}`;
+    const sidebarRgbValues = `${sidebarShades[shade].r}, ${sidebarShades[shade].g}, ${sidebarShades[shade].b}`;
+
+    document
+      .querySelector<HTMLElement>("[data-theme='custom']")
+      ?.style.setProperty(`--color-bg-${shade}`, bgRgbValues);
+    document
+      .querySelector<HTMLElement>("[data-theme='custom']")
+      ?.style.setProperty(`--color-text-${shade}`, textRgbValues);
+    document
+      .querySelector<HTMLElement>("[data-theme='custom']")
+      ?.style.setProperty(`--color-accent-${shade}`, accentRgbValues);
+    document
+      .querySelector<HTMLElement>("[data-theme='custom']")
+      ?.style.setProperty(`--color-sidebar-${shade}`, sidebarRgbValues);
+  }
+
+  const bgRgbValues = `${bgShades[950].r}, ${bgShades[950].g}, ${bgShades[950].b}`;
+  const textRgbValues = `${textShades[950].r}, ${textShades[950].g}, ${textShades[950].b}`;
+  const accentRgbValues = `${accentShades[950].r}, ${accentShades[950].g}, ${accentShades[950].b}`;
+  const sidebarRgbValues = `${sidebarShades[950].r}, ${sidebarShades[950].g}, ${sidebarShades[950].b}`;
+
+  document
+    .querySelector<HTMLElement>("[data-theme='custom']")
+    ?.style.setProperty(`--color-bg-${950}`, bgRgbValues);
+  document
+    .querySelector<HTMLElement>("[data-theme='custom']")
+    ?.style.setProperty(`--color-text-${950}`, textRgbValues);
+  document
+    .querySelector<HTMLElement>("[data-theme='custom']")
+    ?.style.setProperty(`--color-accent-${950}`, accentRgbValues);
+  document
+    .querySelector<HTMLElement>("[data-theme='custom']")
+    ?.style.setProperty(`--color-sidebar-${950}`, sidebarRgbValues);
+
+  document
+    .querySelector<HTMLElement>("[data-theme='custom']")
+    ?.style.setProperty("--color-scheme", values[4]);
 };

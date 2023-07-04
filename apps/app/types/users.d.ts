@@ -29,14 +29,12 @@ export interface IUser {
 }
 
 export interface ICustomTheme {
-  accent: string;
   background: string;
-  border: string;
+  text: string;
+  accent: string;
+  sidebar: string;
   darkPalette: boolean;
   palette: string;
-  sidebar: string;
-  textBase: string;
-  textSecondary: string;
 }
 
 export interface ICurrentUserResponse extends IUser {
