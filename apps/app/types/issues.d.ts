@@ -239,6 +239,7 @@ export interface IIssueLite {
 export interface IIssueFilterOptions {
   type: "active" | "backlog" | null;
   assignees: string[] | null;
+  target_date: string[] | null;
   state: string[] | null;
   labels: string[] | null;
   issue__assignees__id: string[] | null;
