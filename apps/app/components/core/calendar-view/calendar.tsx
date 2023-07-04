@@ -170,7 +170,7 @@ export const CalendarView: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return calendarIssues ? (
-    <div className="h-full">
+    <div className="h-full overflow-y-auto">
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="h-full rounded-lg p-8 text-brand-secondary">
           <CalendarHeader
