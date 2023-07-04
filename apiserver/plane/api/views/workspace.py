@@ -107,6 +107,23 @@ class WorkSpaceViewSet(BaseViewSet):
         try:
             serializer = WorkSpaceSerializer(data=request.data)
 
+            slug = request.data.get("slug", False)
+            name = request.data.get("name", False)
+
+            if not name or not slug:
+                return Response(
+                    {"error": "Both name and slug are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if len(name) > 80 or len(slug) > 48:
+                return Response(
+                    {
+                        "error": "The maximum length for name is 80 and for slug is 48"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             if serializer.is_valid():
                 serializer.save(owner=request.user)
                 # Create Workspace member
