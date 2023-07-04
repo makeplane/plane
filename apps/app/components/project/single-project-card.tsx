@@ -22,7 +22,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import type { IFavoriteProject, IProject } from "types";
@@ -202,13 +202,13 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
             </Link>
             <div className="flex h-full items-end justify-between">
               <Tooltip
-                tooltipContent={`Created at ${renderShortNumericDateFormat(project.created_at)}`}
+                tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
                 position="bottom"
                 theme="dark"
               >
                 <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
-                  {renderShortNumericDateFormat(project.created_at)}
+                  {renderShortDateWithYearFormat(project.created_at)}
                 </div>
               </Tooltip>
               {hasJoined ? (

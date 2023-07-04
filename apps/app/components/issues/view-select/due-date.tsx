@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // ui
 import { CustomDatePicker, Tooltip } from "components/ui";
 // helpers
-import { findHowManyDaysLeft } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // services
 import trackEventServices from "services/track-event.service";
 // types
@@ -32,7 +32,9 @@ export const ViewDueDateSelect: React.FC<Props> = ({
   return (
     <Tooltip
       tooltipHeading="Due Date"
-      tooltipContent={issue.target_date ?? "N/A"}
+      tooltipContent={
+        issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"
+      }
       position={tooltipPosition}
     >
       <div
