@@ -173,6 +173,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData, user)
         .then(() => {
           mutate(fetchKey);
+
+          if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
+          if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
         });
     },
     [
@@ -368,7 +371,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
-                tooltipPosition="left"
                 user={user}
                 selfPositioned
               />
@@ -378,7 +380,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
-                tooltipPosition="left"
                 user={user}
                 selfPositioned
               />

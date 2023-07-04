@@ -40,7 +40,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
           return (
             <div
               className={`bg-brand-surface-1 w-full ${
-                col.propertyName === "title" ? "sticky left-0 z-[2] bg-brand-surface-1 pl-24" : ""
+                col.propertyName === "title" ? "sticky left-0 z-20 bg-brand-surface-1 pl-24" : ""
               }`}
             >
               {col.propertyName === "title" ? (

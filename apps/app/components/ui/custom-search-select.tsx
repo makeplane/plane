@@ -29,6 +29,7 @@ type CustomSearchSelectProps = {
   selfPositioned?: boolean;
   multiple?: boolean;
   footerOption?: JSX.Element;
+  noResultIcon?: JSX.Element;
   dropdownWidth?: string;
 };
 export const CustomSearchSelect = ({
@@ -47,6 +48,7 @@ export const CustomSearchSelect = ({
   disabled = false,
   selfPositioned = false,
   multiple = false,
+  noResultIcon,
   footerOption,
   dropdownWidth,
 }: CustomSearchSelectProps) => {
@@ -171,7 +173,10 @@ export const CustomSearchSelect = ({
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-center text-brand-secondary">No matching results</p>
+                    <span className="flex items-center gap-2 p-1">
+                      {noResultIcon && noResultIcon}
+                      <p className="text-left text-brand-secondary ">No matching results</p>
+                    </span>
                   )
                 ) : (
                   <p className="text-center text-brand-secondary">Loading...</p>
