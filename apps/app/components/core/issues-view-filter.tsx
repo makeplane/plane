@@ -10,7 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu, Icon, ToggleSwitch } from "components/ui";
+import { CustomMenu, Icon, ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import {
   ChevronDownIcon,
@@ -26,6 +26,7 @@ import { Properties } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
 import useEstimateOption from "hooks/use-estimate-option";
+import { renderShortNumericDateFormat } from "../../helpers/date-time.helper";
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
@@ -56,53 +57,63 @@ export const IssuesFilterView: React.FC = () => {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-x-1">
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "list" ? "bg-brand-surface-2" : ""
-          }`}
-          onClick={() => setIssueView("list")}
-        >
-          <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "kanban" ? "bg-brand-surface-2" : ""
-          }`}
-          onClick={() => setIssueView("kanban")}
-        >
-          <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "calendar" ? "bg-brand-surface-2" : ""
-          }`}
-          onClick={() => setIssueView("calendar")}
-        >
-          <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "spreadsheet" ? "bg-brand-surface-2" : ""
-          }`}
-          onClick={() => setIssueView("spreadsheet")}
-        >
-          <Icon iconName="table_chart" className="text-brand-secondary" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "gantt_chart" ? "bg-brand-surface-2" : ""
-          }`}
-          onClick={() => setIssueView("gantt_chart")}
-        >
-          <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
-            waterfall_chart
-          </span>
-        </button>
+        <Tooltip tooltipContent="List View" position="bottom" theme="dark" hoverOpenDelay={500}>
+          <button
+            type="button"
+            className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+              issueView === "list" ? "bg-brand-surface-2" : ""
+            }`}
+            onClick={() => setIssueView("list")}
+          >
+            <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
+          </button>
+        </Tooltip>
+        <Tooltip tooltipContent="Kanban View" position="bottom" theme="dark" hoverOpenDelay={500}>
+          <button
+            type="button"
+            className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+              issueView === "kanban" ? "bg-brand-surface-2" : ""
+            }`}
+            onClick={() => setIssueView("kanban")}
+          >
+            <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
+          </button>
+        </Tooltip>
+        <Tooltip tooltipContent="Calendar View" position="bottom" theme="dark" hoverOpenDelay={500}>
+          <button
+            type="button"
+            className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+              issueView === "calendar" ? "bg-brand-surface-2" : ""
+            }`}
+            onClick={() => setIssueView("calendar")}
+          >
+            <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
+          </button>
+        </Tooltip>
+        <Tooltip tooltipContent="Spreadsheet View" position="bottom" theme="dark" hoverOpenDelay={500}>
+          <button
+            type="button"
+            className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+              issueView === "spreadsheet" ? "bg-brand-surface-2" : ""
+            }`}
+            onClick={() => setIssueView("spreadsheet")}
+          >
+            <Icon iconName="table_chart" className="text-brand-secondary" />
+          </button>
+        </Tooltip>
+        <Tooltip tooltipContent="Gant Chart View" position="bottom" theme="dark" hoverOpenDelay={500}>
+          <button
+            type="button"
+            className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
+              issueView === "gantt_chart" ? "bg-brand-surface-2" : ""
+            }`}
+            onClick={() => setIssueView("gantt_chart")}
+          >
+            <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
+              waterfall_chart
+            </span>
+          </button>
+        </Tooltip>
       </div>
       <SelectFilters
         filters={filters}
