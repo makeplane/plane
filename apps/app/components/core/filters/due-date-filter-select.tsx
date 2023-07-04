@@ -37,19 +37,14 @@ const dueDateRange: DueDate[] = [
 
 export const DueDateFilterSelect: React.FC<Props> = ({ value, onChange }) => (
   <CustomSelect
-    value={value ?? "before"}
+    value={value}
     label={
       <div className="flex items-center gap-2 text-xs">
         {dueDateRange.find((item) => item.value === value)?.icon}
-        <span className={value !== null ? "text-brand-base" : "text-brand-secondary"}>
-          {dueDateRange.find((item) => item.value === value)?.name}
-        </span>
+        <span>{dueDateRange.find((item) => item.value === value)?.name}</span>
       </div>
     }
     onChange={onChange}
-    position="right"
-    width="w-full"
-    noChevron
   >
     {dueDateRange.map((option, index) => (
       <CustomSelect.Option key={index} value={option.value}>

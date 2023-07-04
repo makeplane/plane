@@ -31,7 +31,7 @@ type TFormValues = {
 };
 
 const defaultValues: TFormValues = {
-  filterType: "before",
+  filterType: "range",
   date1: new Date(),
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
 };
@@ -110,17 +110,15 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative flex transform rounded-lg border border-brand-base bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
+                <form className="space-y-4" onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="flex w-full justify-between">
-                    <div className="mb-4 w-48">
-                      <Controller
-                        control={control}
-                        name="filterType"
-                        render={({ field: { value, onChange } }) => (
-                          <DueDateFilterSelect value={value} onChange={onChange} />
-                        )}
-                      />
-                    </div>
+                    <Controller
+                      control={control}
+                      name="filterType"
+                      render={({ field: { value, onChange } }) => (
+                        <DueDateFilterSelect value={value} onChange={onChange} />
+                      )}
+                    />
                     <XMarkIcon
                       className="border-base h-4 w-4 cursor-pointer"
                       onClick={handleClose}
@@ -158,10 +156,10 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
                     )}
                   </div>
                   {watch("filterType") === "range" && (
-                    <h6 className="my-4 text-xs flex items-center gap-1">
-                      <span className="text-brand-secondary">From:</span>
+                    <h6 className="text-xs flex items-center gap-1">
+                      <span className="text-brand-secondary">After:</span>
                       <span>{renderShortDateWithYearFormat(watch("date1"))}</span>
-                      <span className="text-brand-secondary ml-1">To:</span>
+                      <span className="text-brand-secondary ml-1">Before:</span>
                       {!isInvalid && <span>{renderShortDateWithYearFormat(watch("date2"))}</span>}
                     </h6>
                   )}
