@@ -19,7 +19,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
 // helpers
-import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import RemirrorRichTextEditor from "components/rich-text-editor";
@@ -187,7 +187,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
             activity.new_value && activity.new_value !== ""
               ? activity.new_value
               : activity.old_value;
-          value = renderShortNumericDateFormat(date as string);
+          value = renderShortDateWithYearFormat(date as string);
         } else if (activity.field === "description") {
           value = "description";
         } else if (activity.field === "attachment") {

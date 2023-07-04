@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 // ui
 import { Tooltip } from "components/ui";
 // helpers
-import { renderDateFormat, renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IUserActivity } from "types";
 // constants
@@ -109,7 +109,7 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
                   key={`${date}-${index}`}
                   tooltipContent={`${
                     isActive ? isActive.activity_count : 0
-                  } activities on ${renderShortNumericDateFormat(date)}`}
+                  } activities on ${renderShortDateWithYearFormat(date)}`}
                   theme="dark"
                 >
                   <div
