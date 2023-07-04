@@ -34,7 +34,7 @@ import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
 import { ExclamationIcon } from "components/icons";
 import { LinkIcon } from "@heroicons/react/20/solid";
 // helpers
-import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssue, IModule, ModuleLink } from "types";
@@ -228,7 +228,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
                           <span>
-                            {renderShortDate(new Date(`${module.start_date}`), "Start date")}
+                            {renderShortDateWithYearFormat(
+                              new Date(`${module.start_date}`),
+                              "Start date"
+                            )}
                           </span>
                         </Popover.Button>
 
@@ -279,7 +282,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                           <CalendarDaysIcon className="h-3 w-3 " />
 
                           <span>
-                            {renderShortDate(new Date(`${module?.target_date}`), "End date")}
+                            {renderShortDateWithYearFormat(
+                              new Date(`${module?.target_date}`),
+                              "End date"
+                            )}
                           </span>
                         </Popover.Button>
 
