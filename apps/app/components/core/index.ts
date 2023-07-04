@@ -7,7 +7,6 @@ export * from "./modals";
 export * from "./spreadsheet-view";
 export * from "./sidebar";
 export * from "./issues-view";
-export * from "./modals/link-modal";
 export * from "./image-picker-popover";
 export * from "./feeds";
 export * from "./theme-switch";

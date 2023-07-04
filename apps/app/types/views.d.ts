@@ -35,7 +35,6 @@ export interface IQuery {
   updated_at: string[] | null;
   start_date: string[] | null;
   target_date: string[] | null;
-  due_date: string[] | null;
   completed_at: string[] | null;
   type: string;
 }

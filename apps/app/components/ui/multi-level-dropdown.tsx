@@ -1,7 +1,5 @@
 import { Fragment, useState } from "react";
 
-// components
-import { DueDateFilterModal } from "components/core/filters/due-date-filter-modal";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // icons
@@ -20,6 +18,7 @@ type MultiLevelDropdownProps = {
       label: string | JSX.Element;
       value: any;
       selected?: boolean;
+      element?: JSX.Element;
     }[];
   }[];
   onSelect: (value: any) => void;
@@ -35,16 +34,9 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
   height = "md",
 }) => {
   const [openChildFor, setOpenChildFor] = useState<string | null>(null);
-  const [isDueDateFilterModalOpen, setIsDueDateFilterModalOpen] = useState<boolean>(false);
 
   return (
     <>
-      {isDueDateFilterModalOpen && (
-        <DueDateFilterModal
-          isOpen={isDueDateFilterModalOpen}
-          handleClose={() => setIsDueDateFilterModalOpen(false)}
-        />
-      )}
       <Menu as="div" className="relative z-10 inline-block text-left">
         {({ open }) => (
           <>
@@ -128,29 +120,27 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                         }`}
                       >
                         <div className="space-y-1 p-1">
-                          {option.children.map((child) => (
-                            <button
-                              key={child.id}
-                              type="button"
-                              onClick={() => {
-                                if (option.id === "target_date" && child.id === "Custom") {
-                                  setIsDueDateFilterModalOpen(true);
-                                } else {
-                                  onSelect(child.value);
-                                }
-                              }}
-                              className={`${
-                                child.selected ? "bg-brand-surface-2" : ""
-                              } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2`}
-                            >
-                              {child.label}{" "}
-                              <CheckIcon
-                                className={`h-3.5 w-3.5 opacity-0 ${
-                                  child.selected ? "opacity-100" : ""
-                                }`}
-                              />
-                            </button>
-                          ))}
+                          {option.children.map((child) => {
+                            if (child.element) return child.element;
+                            else
+                              return (
+                                <button
+                                  key={child.id}
+                                  type="button"
+                                  onClick={() => onSelect(child.value)}
+                                  className={`${
+                                    child.selected ? "bg-brand-surface-2" : ""
+                                  } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2`}
+                                >
+                                  {child.label}{" "}
+                                  <CheckIcon
+                                    className={`h-3.5 w-3.5 opacity-0 ${
+                                      child.selected ? "opacity-100" : ""
+                                    }`}
+                                  />
+                                </button>
+                              );
+                          })}
                         </div>
                       </div>
                     )}

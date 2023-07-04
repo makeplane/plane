@@ -34,8 +34,4 @@ export const DUE_DATES = [
       )};before`,
     ],
   },
-  {
-    name: "Custom",
-    value: null,
-  },
 ];
