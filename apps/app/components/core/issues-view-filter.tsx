@@ -17,7 +17,6 @@ import {
   ListBulletIcon,
   Squares2X2Icon,
   CalendarDaysIcon,
-  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -26,7 +25,6 @@ import { Properties } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
 import useEstimateOption from "hooks/use-estimate-option";
-import { renderShortNumericDateFormat } from "../../helpers/date-time.helper";
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
