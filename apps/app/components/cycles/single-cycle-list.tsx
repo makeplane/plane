@@ -172,17 +172,19 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         : ""
                     }`}
                   />
-                  <div>
+                  <div className="max-w-2xl">
                     <Tooltip
                       tooltipContent={cycle.name}
                       className="break-words"
                       position="top-left"
                     >
-                      <h3 className="break-words text-base font-semibold">
+                      <h3 className="break-words w-full text-base font-semibold">
                         {truncateText(cycle.name, 70)}
                       </h3>
                     </Tooltip>
-                    <p className="mt-2 text-brand-secondary">{cycle.description}</p>
+                    <p className="mt-2 text-brand-secondary break-words w-full">
+                      {cycle.description}
+                    </p>
                   </div>
                 </span>
                 <span className="flex items-center gap-4 capitalize">
