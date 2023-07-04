@@ -57,18 +57,6 @@ export const BoardHeader: React.FC<Props> = ({
       : null
   );
 
-  let bgColor = "#000000";
-  if (selectedGroup === "state") bgColor = currentState?.color ?? "#000000";
-
-  if (selectedGroup === "priority")
-    groupTitle === "high"
-      ? (bgColor = "#dc2626")
-      : groupTitle === "medium"
-      ? (bgColor = "#f97316")
-      : groupTitle === "low"
-      ? (bgColor = "#22c55e")
-      : (bgColor = "#ff0000");
-
   const getGroupTitle = () => {
     let title = addSpaceIfCamelCase(groupTitle);
 
@@ -96,7 +84,8 @@ export const BoardHeader: React.FC<Props> = ({
 
     switch (selectedGroup) {
       case "state":
-        icon = currentState && getStateGroupIcon(currentState.group, "16", "16", bgColor);
+        icon =
+          currentState && getStateGroupIcon(currentState.group, "16", "16", currentState.color);
         break;
       case "priority":
         icon = getPriorityIcon(groupTitle, "text-lg");
