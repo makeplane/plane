@@ -950,3 +950,34 @@ class IssueArchiveViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    def partial_update(self, request, slug, project_id, pk=None):
+        try:
+            issue = Issue.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                archived_at__isnull=False,
+                pk=pk,
+            )
+            issue.archived_at = None
+            issue.save()
+            issue_activity.delay(
+                type="archival.activity.updated",
+                requested_data=None,
+                actor_id=str(request.user.id),
+                issue_id=str(issue.id),
+                project_id=str(project_id),
+                current_instance=None,
+            )
+
+            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

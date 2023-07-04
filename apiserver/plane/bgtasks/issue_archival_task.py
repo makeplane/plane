@@ -1,4 +1,5 @@
 from celery import shared_task
+from datetime import timedelta
 
 # Django imports
 from django.utils import timezone
@@ -22,7 +23,7 @@ def archive_old_issues():
             | (
                 Q(
                     issue_cycle__cycle__end_date__lt=timezone.now()
-                    - timezone.timedelta(days=archive_in * 30)
+                    - timedelta(days=archive_in * 30)
                 )
                 & Q(issue_cycle__isnull=False)
             ),
@@ -30,7 +31,7 @@ def archive_old_issues():
             | (
                 Q(
                     issue_module__module__target_date__lt=timezone.now()
-                    - timezone.timedelta(days=archive_in * 30)
+                    - timedelta(days=archive_in * 30)
                 )
                 & Q(issue_module__isnull=False)
             ),
@@ -42,7 +43,7 @@ def archive_old_issues():
             issue_updated_at = issue.updated_at.replace(tzinfo=timezone.utc)
 
             if issue_updated_at < (
-                timezone.now() - timezone.timedelta(days=archive_in * 30)
+                timezone.now() - timedelta(days=archive_in * 30)
             ):
                 issue.archived_at = timezone.now()
                 issues_to_update.append(issue)
