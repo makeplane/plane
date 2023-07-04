@@ -262,9 +262,9 @@ export const IssuesFilterView: React.FC = () => {
                         if (key === "estimate" && !isEstimateActive) return null;
 
                         if (
-                          (issueView === "spreadsheet" && key === "sub_issue_count") ||
-                          key === "attachment_count" ||
-                          key === "link"
+                          (issueView === "spreadsheet" && key === "attachment_count") ||
+                          (issueView === "spreadsheet" && key === "link") ||
+                          (issueView === "spreadsheet" && key === "sub_issue_count")
                         )
                           return null;
 

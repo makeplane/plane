@@ -21,6 +21,7 @@ type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
   customButton?: boolean;
   user: ICurrentUserResponse | undefined;
@@ -31,6 +32,7 @@ export const ViewStateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   position = "left",
+  tooltipPosition = "top",
   selfPositioned = false,
   customButton = false,
   user,
@@ -64,6 +66,7 @@ export const ViewStateSelect: React.FC<Props> = ({
     <Tooltip
       tooltipHeading="State"
       tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
+      position={tooltipPosition}
     >
       <div className="flex items-center cursor-pointer gap-2 text-brand-secondary">
         {selectedOption &&

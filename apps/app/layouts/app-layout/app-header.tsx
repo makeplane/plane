@@ -11,7 +11,7 @@ type Props = {
 
 const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar, noHeader }) => (
   <div
-    className={`relative flex w-full flex-shrink-0 flex-row items-center justify-between gap-y-4 border-b border-brand-base bg-brand-sidebar px-5 py-4 ${
+    className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-y-4 border-b border-brand-base bg-brand-sidebar px-5 py-4 ${
       noHeader ? "md:hidden" : ""
     }`}
   >

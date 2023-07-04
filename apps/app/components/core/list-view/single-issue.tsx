@@ -147,6 +147,9 @@ export const SingleListIssue: React.FC<Props> = ({
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData, user)
         .then(() => {
           mutate(fetchKey);
+
+          if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
+          if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
         });
     },
     [
