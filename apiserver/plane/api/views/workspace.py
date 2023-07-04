@@ -3,6 +3,7 @@ import jwt
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from uuid import uuid4
+
 # Django imports
 from django.db import IntegrityError
 from django.db.models import Prefetch
@@ -93,13 +94,34 @@ class WorkSpaceViewSet(BaseViewSet):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
-        return self.filter_queryset(
-            super().get_queryset().select_related("owner")
-        ).order_by("name").filter(workspace_member__member=self.request.user).annotate(total_members=member_count).annotate(total_issues=issue_count)
+        return (
+            self.filter_queryset(super().get_queryset().select_related("owner"))
+            .order_by("name")
+            .filter(workspace_member__member=self.request.user)
+            .annotate(total_members=member_count)
+            .annotate(total_issues=issue_count)
+        )
 
     def create(self, request):
         try:
             serializer = WorkSpaceSerializer(data=request.data)
+
+            slug = request.data.get("slug", False)
+            name = request.data.get("name", False)
+
+            if not name or not slug:
+                return Response(
+                    {"error": "Both name and slug are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if len(name) > 80 or len(slug) > 48:
+                return Response(
+                    {
+                        "error": "The maximum length for name is 80 and for slug is 48"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             if serializer.is_valid():
                 serializer.save(owner=request.user)
@@ -160,14 +182,20 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             )
 
             workspace = (
-                Workspace.objects.prefetch_related(
-                    Prefetch("workspace_member", queryset=WorkspaceMember.objects.all())
+                (
+                    Workspace.objects.prefetch_related(
+                        Prefetch(
+                            "workspace_member", queryset=WorkspaceMember.objects.all()
+                        )
+                    )
+                    .filter(
+                        workspace_member__member=request.user,
+                    )
+                    .select_related("owner")
                 )
-                .filter(
-                    workspace_member__member=request.user,
-                )
-                .select_related("owner")
-            ).annotate(total_members=member_count).annotate(total_issues=issue_count)
+                .annotate(total_members=member_count)
+                .annotate(total_issues=issue_count)
+            )
 
             serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -216,9 +244,20 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 )
 
             # check for role level
-            requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
-            if len([email for email in emails if int(email.get("role", 10)) > requesting_user.role]):
-                return Response({"error": "You cannot invite a user with higher role"}, status=status.HTTP_400_BAD_REQUEST)
+            requesting_user = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+            if len(
+                [
+                    email
+                    for email in emails
+                    if int(email.get("role", 10)) > requesting_user.role
+                ]
+            ):
+                return Response(
+                    {"error": "You cannot invite a user with higher role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             workspace = Workspace.objects.get(slug=slug)
 
@@ -276,14 +315,17 @@ class InviteWorkspaceEndpoint(BaseAPIView):
 
             # create the user if signup is disabled
             if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
-                _ = User.objects.bulk_create([
-                    User(
-                        email=email.get("email"),
-                        password=str(uuid4().hex),
-                        is_password_autoset=True
-                    )
-                     for email in emails
-                ], batch_size=100)
+                _ = User.objects.bulk_create(
+                    [
+                        User(
+                            email=email.get("email"),
+                            password=str(uuid4().hex),
+                            is_password_autoset=True,
+                        )
+                        for email in emails
+                    ],
+                    batch_size=100,
+                )
 
             for invitation in workspace_invitations:
                 workspace_invitation.delay(
@@ -865,7 +907,9 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
+                Issue.issue_objects.filter(
+                    workspace__slug=slug, assignees__in=[request.user]
+                )
                 .annotate(state_group=F("state__group"))
                 .values("state_group")
                 .annotate(state_count=Count("state_group"))
