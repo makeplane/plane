@@ -78,6 +78,9 @@ class Project(BaseModel):
     archive_in = models.IntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
     )
+    close_in = models.IntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
+    )
 
     def __str__(self):
         """Return name of the project"""
