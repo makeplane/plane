@@ -68,30 +68,35 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
     <div className="relative">
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a className="block p-4">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <p className="mr-2 truncate text-sm">{truncateText(page.name, 75)}</p>
-              {page.label_details.length > 0 &&
-                page.label_details.map((label) => (
-                  <div
-                    key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
-                    style={{
-                      backgroundColor: `${
-                        label?.color && label.color !== "" ? label.color : "#000000"
-                      }20`,
-                    }}
-                  >
-                    <span
-                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+          <div className="flex items-center justify-between gap-2 w-full">
+            <div className="flex items-center gap-2 md:w-full w-6/12">
+              <p className="mr-2 text-sm truncate overflow-ellipsis ">
+                {truncateText(page.name, 70)}
+              </p>
+
+              <div className="hidden md:flex flex-wrap gap-2">
+                {page.label_details.length > 0 &&
+                  page.label_details.map((label) => (
+                    <div
+                      key={label.id}
+                      className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
                       style={{
-                        backgroundColor:
-                          label?.color && label.color !== "" ? label.color : "#000000",
+                        backgroundColor: `${
+                          label?.color && label.color !== "" ? label.color : "#000000"
+                        }20`,
                       }}
-                    />
-                    {label.name}
-                  </div>
-                ))}
+                    >
+                      <span
+                        className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                        style={{
+                          backgroundColor:
+                            label?.color && label.color !== "" ? label.color : "#000000",
+                        }}
+                      />
+                      {label.name}
+                    </div>
+                  ))}
+              </div>
             </div>
 
             <div className="flex items-center gap-2">
@@ -205,11 +210,38 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
               </CustomMenu>
             </div>
           </div>
-          <div className="relative mt-2 space-y-2 text-sm text-brand-secondary">
-            {page.blocks.length > 0
-              ? page.blocks.slice(0, 3).map((block) => <h4>{block.name}</h4>)
-              : null}
-          </div>
+
+          {page.label_details.length > 0 && (
+            <div className="flex flex-wrap gap-2 md:hidden mt-2">
+              {page.label_details.map((label) => (
+                <div
+                  key={label.id}
+                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
+                  style={{
+                    backgroundColor: `${
+                      label?.color && label.color !== "" ? label.color : "#000000"
+                    }20`,
+                  }}
+                >
+                  <span
+                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
+                    }}
+                  />
+                  {label.name}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {page.blocks.length > 0 && (
+            <div className="relative mt-2 space-y-2 text-sm text-brand-secondary">
+              {page.blocks.slice(0, 3).map((block) => (
+                <h4>{block.name}</h4>
+              ))}
+            </div>
+          )}
         </a>
       </Link>
     </div>

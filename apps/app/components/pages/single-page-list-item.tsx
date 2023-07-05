@@ -70,31 +70,35 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a>
           <div className="relative rounded p-4 text-brand-secondary hover:bg-brand-surface-2">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-wrap items-center gap-2">
-                <DocumentTextIcon className="h-4 w-4" />
-                <p className="mr-2 truncate text-sm text-brand-base">
+            <div className="flex items-center justify-between gap-2 w-full">
+              <div className="flex items-center gap-2 md:w-full w-6/12">
+                <DocumentTextIcon className="h-4 w-4 flex-shrink-0" />
+                <p className="mr-2 text-sm text-brand-base truncate overflow-ellipsis">
                   {truncateText(page.name, 75)}
                 </p>
-                {page.label_details.length > 0 &&
-                  page.label_details.map((label) => (
-                    <div
-                      key={label.id}
-                      className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
-                      style={{
-                        backgroundColor: `${label?.color}20`,
-                      }}
-                    >
-                      <span
-                        className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+
+                <div className="hidden md:flex flex-wrap gap-2">
+                  {page.label_details.length > 0 &&
+                    page.label_details.map((label) => (
+                      <div
+                        key={label.id}
+                        className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
                         style={{
-                          backgroundColor: label?.color,
+                          backgroundColor: `${label?.color}20`,
                         }}
-                      />
-                      {label.name}
-                    </div>
-                  ))}
+                      >
+                        <span
+                          className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                          style={{
+                            backgroundColor: label?.color,
+                          }}
+                        />
+                        {label.name}
+                      </div>
+                    ))}
+                </div>
               </div>
+
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <Tooltip
@@ -206,6 +210,28 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                 </div>
               </div>
             </div>
+
+            {page.label_details.length > 0 && (
+              <div className="flex flex-wrap gap-2 md:hidden mt-2">
+                {page.label_details.map((label) => (
+                  <div
+                    key={label.id}
+                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
+                    style={{
+                      backgroundColor: `${label?.color}20`,
+                    }}
+                  >
+                    <span
+                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                      style={{
+                        backgroundColor: label?.color,
+                      }}
+                    />
+                    {label.name}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </a>
       </Link>
