@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // ui
 import { CustomDatePicker, Tooltip } from "components/ui";
 // helpers
-import { findHowManyDaysLeft } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // services
 import trackEventServices from "services/track-event.service";
 // types
@@ -12,6 +12,7 @@ import { ICurrentUserResponse, IIssue } from "types";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  tooltipPosition?: "top" | "bottom";
   noBorder?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
@@ -20,6 +21,7 @@ type Props = {
 export const ViewDueDateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
+  tooltipPosition = "top",
   noBorder = false,
   user,
   isNotAllowed,
@@ -28,7 +30,13 @@ export const ViewDueDateSelect: React.FC<Props> = ({
   const { workspaceSlug } = router.query;
 
   return (
-    <Tooltip tooltipHeading="Due Date" tooltipContent={issue.target_date ?? "N/A"}>
+    <Tooltip
+      tooltipHeading="Due Date"
+      tooltipContent={
+        issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"
+      }
+      position={tooltipPosition}
+    >
       <div
         className={`group relative max-w-[6.5rem] ${
           issue.target_date === null

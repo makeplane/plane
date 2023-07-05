@@ -84,6 +84,7 @@ if bool(os.environ.get("SENTRY_DSN", False)):
         traces_sample_rate=1,
         send_default_pii=True,
         environment="production",
+        profiles_sample_rate=1.0,
     )
 
 if DOCKERIZED and USE_MINIO:

@@ -52,7 +52,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
     const maxDates = 4;
     const totalDates = dates.length;
 
-    if (totalDates <= maxDates) return dates;
+    if (totalDates <= maxDates) return dates.map((d) => renderShortNumericDateFormat(d));
     else {
       const interval = Math.ceil(totalDates / maxDates);
       const limitedDates = [];

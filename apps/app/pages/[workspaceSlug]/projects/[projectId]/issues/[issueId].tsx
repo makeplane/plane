@@ -120,10 +120,10 @@ const IssueDetailsPage: NextPage = () => {
     >
       {issueDetails && projectId ? (
         <div className="flex h-full">
-          <div className="basis-2/3 space-y-5 divide-y-2 divide-brand-base p-5">
+          <div className="w-2/3 space-y-5 divide-y-2 divide-brand-base p-5">
             <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
           </div>
-          <div className="basis-1/3 space-y-5 border-l border-brand-base p-5">
+          <div className="w-1/3 space-y-5 border-l border-brand-base p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

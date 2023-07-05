@@ -10,12 +10,14 @@ import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
 type Props = {
   key: string;
   issue: IIssue;
+  index: number;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: Properties;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   gridTemplateColumns: string;
+  isCompleted?: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   nestingLevel?: number;
@@ -23,6 +25,7 @@ type Props = {
 
 export const SpreadsheetIssues: React.FC<Props> = ({
   key,
+  index,
   issue,
   expandedIssues,
   setExpandedIssues,
@@ -30,6 +33,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
   properties,
   handleEditIssue,
   handleDeleteIssue,
+  isCompleted = false,
   user,
   userAuth,
   nestingLevel = 0,
@@ -55,12 +59,14 @@ export const SpreadsheetIssues: React.FC<Props> = ({
     <div>
       <SingleSpreadsheetIssue
         issue={issue}
+        index={index}
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
         gridTemplateColumns={gridTemplateColumns}
         properties={properties}
         handleEditIssue={handleEditIssue}
         handleDeleteIssue={handleDeleteIssue}
+        isCompleted={isCompleted}
         user={user}
         userAuth={userAuth}
         nestingLevel={nestingLevel}
@@ -74,12 +80,14 @@ export const SpreadsheetIssues: React.FC<Props> = ({
           <SpreadsheetIssues
             key={subIssue.id}
             issue={subIssue}
+            index={index}
             expandedIssues={expandedIssues}
             setExpandedIssues={setExpandedIssues}
             gridTemplateColumns={gridTemplateColumns}
             properties={properties}
             handleEditIssue={handleEditIssue}
             handleDeleteIssue={handleDeleteIssue}
+            isCompleted={isCompleted}
             user={user}
             userAuth={userAuth}
             nestingLevel={nestingLevel + 1}
