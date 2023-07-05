@@ -33,7 +33,6 @@ import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 type Props = {
   type?: "issue" | "cycle" | "module";
   currentState?: IState | null;
-  bgColor?: string;
   groupTitle: string;
   groupedByIssues: {
     [key: string]: IIssue[];
@@ -53,7 +52,6 @@ type Props = {
 export const SingleList: React.FC<Props> = ({
   type,
   currentState,
-  bgColor,
   groupTitle,
   groupedByIssues,
   selectedGroup,
@@ -113,7 +111,8 @@ export const SingleList: React.FC<Props> = ({
 
     switch (selectedGroup) {
       case "state":
-        icon = currentState && getStateGroupIcon(currentState.group, "16", "16", bgColor);
+        icon =
+          currentState && getStateGroupIcon(currentState.group, "16", "16", currentState.color);
         break;
       case "priority":
         icon = getPriorityIcon(groupTitle, "text-lg");

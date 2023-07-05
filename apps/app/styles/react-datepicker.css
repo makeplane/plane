@@ -81,7 +81,7 @@
 }
 
 .react-datepicker__day-name {
-  color: rgba(var(--color-text-base)) !important;
+  color: rgba(var(--color-text-secondary)) !important;
 }
 
 .react-datepicker__week {

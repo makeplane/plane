@@ -26,7 +26,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
 // helpers
-import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssueComment, IIssueLabels } from "types";
@@ -299,7 +299,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
               activityItem.new_value && activityItem.new_value !== ""
                 ? activityItem.new_value
                 : activityItem.old_value;
-            value = renderShortNumericDateFormat(date as string);
+            value = renderShortDateWithYearFormat(date as string);
           } else if (activityItem.field === "description") {
             value = "description";
           } else if (activityItem.field === "attachment") {
