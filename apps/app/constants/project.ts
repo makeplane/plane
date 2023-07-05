@@ -1,3 +1,4 @@
+
 export const NETWORK_CHOICES = { "0": "Secret", "2": "Public" };
 
 export const GROUP_CHOICES = {

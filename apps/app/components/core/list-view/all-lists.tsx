@@ -38,7 +38,7 @@ export const AllLists: React.FC<Props> = ({
   return (
     <>
       {groupedByIssues && (
-        <div>
+        <div className="h-full overflow-y-auto">
           {Object.keys(groupedByIssues).map((singleGroup) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
