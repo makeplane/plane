@@ -21,6 +21,7 @@ from django.db.models import (
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
+from django.contrib.auth.hashers import make_password
 
 # Third party modules
 from rest_framework import status
@@ -276,14 +277,18 @@ class InviteWorkspaceEndpoint(BaseAPIView):
 
             # create the user if signup is disabled
             if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
-                _ = User.objects.bulk_create([
-                    User(
-                        email=email.get("email"),
-                        password=str(uuid4().hex),
-                        is_password_autoset=True
-                    )
-                     for email in emails
-                ], batch_size=100)
+                _ = User.objects.bulk_create(
+                    [
+                        User(
+                            username=str(uuid4().hex),
+                            email=invitation.email,
+                            password=make_password(uuid4().hex),
+                            is_password_autoset=True,
+                        )
+                        for invitation in workspace_invitations
+                    ],
+                    batch_size=100,
+                )
 
             for invitation in workspace_invitations:
                 workspace_invitation.delay(
