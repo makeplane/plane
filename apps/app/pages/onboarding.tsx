@@ -27,7 +27,7 @@ import type { NextPage } from "next";
 import { CURRENT_USER } from "constants/fetch-keys";
 
 const Onboarding: NextPage = () => {
-  const [step, setStep] = useState<number | null>(2);
+  const [step, setStep] = useState<number | null>(null);
 
   const [workspace, setWorkspace] = useState<IWorkspace | null>(null);
 
@@ -64,33 +64,33 @@ const Onboarding: NextPage = () => {
     await userService.updateUser({ last_workspace_id: workspace.id });
   };
 
-  // useEffect(() => {
-  //   const handleStateChange = async () => {
-  //     if (!user) return;
+  useEffect(() => {
+    const handleStateChange = async () => {
+      if (!user) return;
 
-  //     if (!user.role)
-  //       await Router.push({
-  //         pathname: `/onboarding`,
-  //         query: {
-  //           state: "profile-creation",
-  //         },
-  //       });
+      if (!user.role)
+        await Router.push({
+          pathname: `/onboarding`,
+          query: {
+            state: "profile-creation",
+          },
+        });
 
-  //     if (user.role && !user.last_workspace_id)
-  //       await Router.push({
-  //         pathname: `/onboarding`,
-  //         query: {
-  //           state: "workspace-creation",
-  //         },
-  //       });
-  //   };
+      if (user.role && !user.last_workspace_id)
+        await Router.push({
+          pathname: `/onboarding`,
+          query: {
+            state: "workspace-creation",
+          },
+        });
+    };
 
-  //   if (user)
-  //     handleStateChange().then(() => {
-  //       if (state === "profile-creation" && !user.role) setStep(1);
-  //       else if (state === "workspace-creation" && user.role) setStep(2);
-  //     });
-  // }, [state, user]);
+    if (user)
+      handleStateChange().then(() => {
+        if (state === "profile-creation" && !user.role) setStep(1);
+        else if (state === "workspace-creation" && user.role) setStep(2);
+      });
+  }, [state, user]);
 
   if (userLoading || step === null)
     return (
