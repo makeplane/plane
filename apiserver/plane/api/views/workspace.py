@@ -21,6 +21,7 @@ from django.db.models import (
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
+from django.contrib.auth.hashers import make_password
 
 # Third party modules
 from rest_framework import status
@@ -276,14 +277,18 @@ class InviteWorkspaceEndpoint(BaseAPIView):
 
             # create the user if signup is disabled
             if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
-                _ = User.objects.bulk_create([
-                    User(
-                        email=email.get("email"),
-                        password=str(uuid4().hex),
-                        is_password_autoset=True
-                    )
-                     for email in emails
-                ], batch_size=100)
+                _ = User.objects.bulk_create(
+                    [
+                        User(
+                            username=str(uuid4().hex),
+                            email=invitation.email,
+                            password=make_password(uuid4().hex),
+                            is_password_autoset=True,
+                        )
+                        for invitation in workspace_invitations
+                    ],
+                    batch_size=100,
+                )
 
             for invitation in workspace_invitations:
                 workspace_invitation.delay(
@@ -399,6 +404,30 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "workspace__owner", "created_by")
         )
+
+    def destroy(self, request, slug, pk):
+        try:
+            workspace_member_invite = WorkspaceMemberInvite.objects.get(
+                pk=pk, workspace__slug=slug
+            )
+            # delete the user if signup is disabled
+            if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
+                user = User.objects.filter(email=workspace_member_invite.email).first()
+                if user is not None:
+                    user.delete()
+            workspace_member_invite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except WorkspaceMemberInvite.DoesNotExist:
+            return Response(
+                {"error": "Workspace member invite does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class UserWorkspaceInvitationsEndpoint(BaseViewSet):
