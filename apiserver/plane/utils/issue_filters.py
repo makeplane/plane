@@ -166,16 +166,16 @@ def filter_target_date(params, filter, method):
             for query in target_dates:
                 target_date_query = query.split(";")
                 if len(target_date_query) == 2 and "after" in target_date_query:
-                    filter["target_date__gte"] = target_date_query[0]
+                    filter["target_date__gt"] = target_date_query[0]
                 else:
-                    filter["target_date__lte"] = target_date_query[0]
+                    filter["target_date__lt"] = target_date_query[0]
     else:
         if params.get("target_date", None) and len(params.get("target_date")):
             for query in params.get("target_date"):
                 if query.get("timeline", "after") == "after":
-                    filter["target_date__gte"] = query.get("datetime")
+                    filter["target_date__gt"] = query.get("datetime")
                 else:
-                    filter["target_date__lte"] = query.get("datetime")
+                    filter["target_date__lt"] = query.get("datetime")
 
     return filter
 

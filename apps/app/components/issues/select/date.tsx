@@ -5,7 +5,7 @@ import { CalendarDaysIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // react-datepicker
 import DatePicker from "react-datepicker";
 // import "react-datepicker/dist/react-datepicker.css";
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
 type Props = {
   value: string | null;
@@ -20,7 +20,7 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
           <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-brand-secondary">
             {value ? (
               <>
-                <span className="text-brand-base">{value}</span>
+                <span className="text-brand-base">{renderShortDateWithYearFormat(value)}</span>
                 <button onClick={() => onChange(null)}>
                   <XMarkIcon className="h-3 w-3" />
                 </button>

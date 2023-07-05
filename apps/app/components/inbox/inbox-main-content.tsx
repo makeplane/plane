@@ -33,7 +33,7 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
@@ -252,13 +252,17 @@ export const InboxMainContent: React.FC = () => {
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
                       This issue was snoozed till{" "}
-                      {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}
+                      {renderShortDateWithYearFormat(
+                        issueDetails.issue_inbox[0].snoozed_till ?? ""
+                      )}
                       .
                     </p>
                   ) : (
                     <p>
                       This issue has been snoozed till{" "}
-                      {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}
+                      {renderShortDateWithYearFormat(
+                        issueDetails.issue_inbox[0].snoozed_till ?? ""
+                      )}
                       .
                     </p>
                   )}
