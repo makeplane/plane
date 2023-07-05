@@ -159,7 +159,7 @@ const SingleCycle: React.FC = () => {
       >
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <div
-          className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} ${
+          className={`h-full flex flex-col ${cycleSidebar ? "mr-[24rem]" : ""} ${
             analyticsModal ? "mr-[50%]" : ""
           } duration-300`}
         >

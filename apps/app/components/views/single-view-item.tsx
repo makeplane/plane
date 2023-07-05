@@ -18,7 +18,7 @@ import { VIEWS_LIST } from "constants/fetch-keys";
 import useToast from "hooks/use-toast";
 // helpers
 import { truncateText } from "helpers/string.helper";
-import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat, renderShortTime } from "helpers/date-time.helper";
 
 type Props = {
   view: IView;
@@ -107,7 +107,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
                   <Tooltip
                     tooltipContent={`Last updated at ${renderShortTime(
                       view.updated_at
-                    )} ${renderShortDate(view.updated_at)}`}
+                    )} ${renderShortDateWithYearFormat(view.updated_at)}`}
                   >
                     <p className="text-sm text-brand-secondary">
                       {renderShortTime(view.updated_at)}

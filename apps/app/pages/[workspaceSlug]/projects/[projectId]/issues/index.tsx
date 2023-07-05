@@ -99,7 +99,9 @@ const ProjectIssues: NextPage = () => {
         }
       >
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
-        <IssuesView />
+        <div className="h-full w-full flex flex-col">
+          <IssuesView />
+        </div>
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );
