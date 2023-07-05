@@ -8,9 +8,15 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { CustomSelect, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import {
+  Avatar,
+  CustomSearchSelect,
+  CustomSelect,
+  PrimaryButton,
+  SecondaryButton,
+} from "components/ui";
 //icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -127,6 +133,30 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
     }
   }, [fields, append]);
 
+  const options =
+    uninvitedPeople && uninvitedPeople.length > 0
+      ? uninvitedPeople?.map((person) => ({
+          value: person.member.id,
+          query: person.member.email,
+          content: (
+            <div className="flex items-center gap-2">
+              <Avatar user={person.member} />
+              {person.member.email}
+            </div>
+          ),
+        }))
+      : [
+          {
+            value: "",
+            query: "",
+            content: (
+              <div className="flex items-center text-xs break-words">
+                Invite members to workspace first, then add to project.
+              </div>
+            ),
+          },
+        ];
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
@@ -179,42 +209,35 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                               name={`members.${index}.member_id`}
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => (
-                                <CustomSelect
+                                <CustomSearchSelect
                                   value={value}
-                                  label={
-                                    value && value !== "" ? (
-                                      <div>
-                                        {people?.find((p) => p.member.id === value)?.member.email}
-                                      </div>
-                                    ) : (
-                                      <div className="text-brand-secondary">
-                                        Enter co-worker&rsquo;s email
-                                      </div>
-                                    )
+                                  customButton={
+                                    <button className="flex w-full items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 focus:outline-none  px-3 py-2 text-sm text-left">
+                                      {value && value !== "" ? (
+                                        <div className="flex items-center gap-2">
+                                          <Avatar
+                                            user={
+                                              people?.find((p) => p.member.id === value)?.member
+                                            }
+                                          />
+                                          {people?.find((p) => p.member.id === value)?.member.email}
+                                        </div>
+                                      ) : (
+                                        <div className="text-brand-secondary">
+                                          Select co-worker&rsquo;s email
+                                        </div>
+                                      )}
+                                      <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                                    </button>
                                   }
                                   onChange={(val: string) => {
                                     onChange(val);
                                   }}
-                                  input
-                                  width="w-full"
-                                >
-                                  {uninvitedPeople && uninvitedPeople.length > 0 ? (
-                                    <>
-                                      {uninvitedPeople?.map((person) => (
-                                        <CustomSelect.Option
-                                          key={person.member.id}
-                                          value={person.member.id}
-                                        >
-                                          {person.member.email}
-                                        </CustomSelect.Option>
-                                      ))}
-                                    </>
-                                  ) : (
-                                    <div className="text-center text-sm py-5">
-                                      Invite members to workspace before adding them to a project.
-                                    </div>
-                                  )}
-                                </CustomSelect>
+                                  options={options}
+                                  noChevron
+                                  position="left"
+                                  dropdownWidth="w-full min-w-[12rem]"
+                                />
                               )}
                             />
                           </div>
