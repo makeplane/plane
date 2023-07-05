@@ -259,7 +259,7 @@ class ProjectViewSet(BaseViewSet):
                         group="backlog",
                         description="Default state for managing all Inbox Issues",
                         project_id=pk,
-                        color="#ff7700"
+                        color="#ff7700",
                     )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -550,45 +550,47 @@ class AddMemberToProjectEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         try:
-            member_id = request.data.get("member_id", False)
-            role = request.data.get("role", False)
+            members = request.data.get("members", [])
 
-            if not member_id or not role:
+            # get the project
+            project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+            if not len(members):
                 return Response(
-                    {"error": "Member ID and role is required"},
+                    {"error": "Atleast one member is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Check if the user is a member in the workspace
-            if not WorkspaceMember.objects.filter(
-                workspace__slug=slug, member_id=member_id
-            ).exists():
-                # TODO: Update this error message - nk
-                return Response(
-                    {
-                        "error": "User is not a member of the workspace. Invite the user to the workspace to add him to project"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Check if the user is already member of project
-            if ProjectMember.objects.filter(
-                project=project_id, member_id=member_id
-            ).exists():
-                return Response(
-                    {"error": "User is already a member of the project"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Add the user to project
-            project_member = ProjectMember.objects.create(
-                project_id=project_id, member_id=member_id, role=role
+            project_members = ProjectMember.objects.bulk_create(
+                [
+                    ProjectMember(
+                        member_id=member.get("member_id"),
+                        role=member.get("role", 10),
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                    )
+                    for member in members
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
             )
 
-            serializer = ProjectMemberSerializer(project_member)
+            serializer = ProjectMemberSerializer(project_members, many=True)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        except KeyError:
+            return Response(
+                {"error": "Incorrect data sent"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except IntegrityError:
+            return Response(
+                {"error": "User not member of the workspace"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
