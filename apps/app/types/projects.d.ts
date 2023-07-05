@@ -80,8 +80,8 @@ type ProjectViewTheme = {
 export interface IProjectMember {
   id: string;
   member: IUserLite;
-  project: IProject;
-  workspace: IWorkspace;
+  project: IProjectLite;
+  workspace: IWorkspaceLite;
   comment: string;
   role: 5 | 10 | 15 | 20;
 

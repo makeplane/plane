@@ -35,7 +35,7 @@ import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helpe
 import {
   isDateGreaterThanToday,
   renderDateFormat,
-  renderShortDate,
+  renderShortDateWithYearFormat,
 } from "helpers/date-time.helper";
 // types
 import { ICurrentUserResponse, ICycle } from "types";
@@ -315,7 +315,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
                           <span>
-                            {renderShortDate(
+                            {renderShortDateWithYearFormat(
                               new Date(
                                 `${watch("start_date") ? watch("start_date") : cycle?.start_date}`
                               ),
@@ -366,7 +366,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           <CalendarDaysIcon className="h-3 w-3" />
 
                           <span>
-                            {renderShortDate(
+                            {renderShortDateWithYearFormat(
                               new Date(
                                 `${watch("end_date") ? watch("end_date") : cycle?.end_date}`
                               ),

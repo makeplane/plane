@@ -77,6 +77,13 @@ class ProjectSerializer(BaseSerializer):
         raise serializers.ValidationError(detail="Project Identifier is already taken")
 
 
+class ProjectLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Project
+        fields = ["id", "identifier", "name"]
+        read_only_fields = fields
+
+
 class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
@@ -94,7 +101,7 @@ class ProjectDetailSerializer(BaseSerializer):
 
 class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
-    project = ProjectSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
     member = UserLiteSerializer(read_only=True)
 
     class Meta:
@@ -127,10 +134,3 @@ class ProjectFavoriteSerializer(BaseSerializer):
             "workspace",
             "user",
         ]
-
-
-class ProjectLiteSerializer(BaseSerializer):
-    class Meta:
-        model = Project
-        fields = ["id", "identifier", "name"]
-        read_only_fields = fields
