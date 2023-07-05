@@ -15,24 +15,22 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     slug: "",
-    company_size: null,
+    organization_size: "",
   });
 
   return (
-    <div className="w-full mt-6">
-      <div className="space-y-10">
-        <h4 className="text-2xl font-semibold">Create your workspace</h4>
-        <div className="md:w-1/3">
-          <CreateWorkspaceForm
-            onSubmit={(res) => {
-              setWorkspace(res);
-              setStep(3);
-            }}
-            defaultValues={defaultValues}
-            setDefaultValues={setDefaultValues}
-            user={user}
-          />
-        </div>
+    <div className="w-full space-y-10">
+      <h4 className="text-2xl font-semibold">Create your workspace</h4>
+      <div className="sm:w-3/4 md:w-2/5">
+        <CreateWorkspaceForm
+          onSubmit={(res) => {
+            setWorkspace(res);
+            setStep(3);
+          }}
+          defaultValues={defaultValues}
+          setDefaultValues={setDefaultValues}
+          user={user}
+        />
       </div>
     </div>
   );

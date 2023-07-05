@@ -81,82 +81,81 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   }, [user, reset]);
 
   return (
-    <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-      <div className="space-y-10">
-        <div className="relative text-lg">
-          <div className="text-brand-accent absolute -top-1 -left-3">{'"'}</div>
-          <h5>Hey there 👋🏻</h5>
-          <h5 className="mt-5 mb-6">Let{"'"}s get started.</h5>
-          <h4 className="text-2xl font-semibold">Set up your Plane profile.</h4>
-        </div>
-
-        <div className="space-y-7 md:w-1/3">
-          <div className="space-y-1 text-sm">
-            <label htmlFor="firstName">First Name</label>
-            <Input
-              id="firstName"
-              name="first_name"
-              autoComplete="off"
-              placeholder="Enter your first name..."
-              register={register}
-              validations={{
-                required: "First name is required",
-              }}
-              error={errors.first_name}
-            />
-          </div>
-          <div className="space-y-1 text-sm">
-            <label htmlFor="lastName">Last Name</label>
-            <Input
-              id="lastName"
-              name="last_name"
-              autoComplete="off"
-              register={register}
-              placeholder="Enter your last name..."
-              validations={{
-                required: "Last name is required",
-              }}
-              error={errors.last_name}
-            />
-          </div>
-          <div className="space-y-1 text-sm">
-            <span>What{"'"}s your role?</span>
-            <div className="w-full">
-              <Controller
-                name="role"
-                control={control}
-                rules={{ required: "This field is required" }}
-                render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    onChange={(val: any) => onChange(val)}
-                    label={
-                      value ? (
-                        value.toString()
-                      ) : (
-                        <span className="text-gray-400">Select your role...</span>
-                      )
-                    }
-                    input
-                    width="w-full"
-                  >
-                    {USER_ROLES.map((item) => (
-                      <CustomSelect.Option key={item.value} value={item.value}>
-                        {item.label}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                )}
-              />
-              {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
-            </div>
-          </div>
-        </div>
-
-        <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
-          {isSubmitting ? "Updating..." : "Continue"}
-        </PrimaryButton>
+    <form className="w-full space-y-10" onSubmit={handleSubmit(onSubmit)}>
+      <div className="relative text-lg">
+        <div className="text-brand-accent absolute -top-1 -left-3">{'"'}</div>
+        <h5>Hey there 👋🏻</h5>
+        <h5 className="mt-5 mb-6">Let{"'"}s get you onboard!</h5>
+        <h4 className="text-2xl font-semibold">Set up your Plane profile.</h4>
       </div>
+
+      <div className="space-y-7 sm:w-3/4 md:w-2/5">
+        <div className="space-y-1 text-sm">
+          <label htmlFor="firstName">First Name</label>
+          <Input
+            id="firstName"
+            name="first_name"
+            autoComplete="off"
+            placeholder="Enter your first name..."
+            register={register}
+            validations={{
+              required: "First name is required",
+            }}
+            error={errors.first_name}
+          />
+        </div>
+        <div className="space-y-1 text-sm">
+          <label htmlFor="lastName">Last Name</label>
+          <Input
+            id="lastName"
+            name="last_name"
+            autoComplete="off"
+            register={register}
+            placeholder="Enter your last name..."
+            validations={{
+              required: "Last name is required",
+            }}
+            error={errors.last_name}
+          />
+        </div>
+        <div className="space-y-1 text-sm">
+          <span>What{"'"}s your role?</span>
+          <div className="w-full">
+            <Controller
+              name="role"
+              control={control}
+              rules={{ required: "This field is required" }}
+              render={({ field: { value, onChange } }) => (
+                <CustomSelect
+                  value={value}
+                  onChange={(val: any) => onChange(val)}
+                  label={
+                    value ? (
+                      value.toString()
+                    ) : (
+                      <span className="text-gray-400">Select your role...</span>
+                    )
+                  }
+                  input
+                  width="w-full"
+                  verticalPosition="top"
+                >
+                  {USER_ROLES.map((item) => (
+                    <CustomSelect.Option key={item.value} value={item.value}>
+                      {item.label}
+                    </CustomSelect.Option>
+                  ))}
+                </CustomSelect>
+              )}
+            />
+            {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
+          </div>
+        </div>
+      </div>
+
+      <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
+        {isSubmitting ? "Updating..." : "Continue"}
+      </PrimaryButton>
     </form>
   );
 };

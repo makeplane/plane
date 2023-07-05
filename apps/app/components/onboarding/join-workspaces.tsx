@@ -60,72 +60,68 @@ export const JoinWorkspaces: React.FC<Props> = ({ updateLastWorkspace }) => {
   };
 
   return (
-    <div className="w-full mt-6">
-      <div className="space-y-10">
-        <h5 className="text-lg">We see that someone has invited you to </h5>
-        <h4 className="text-2xl font-semibold">Join a workspace</h4>
-        <div className="md:w-1/3 space-y-4">
-          {invitations &&
-            invitations.map((invitation) => {
-              const isSelected = invitationsRespond.includes(invitation.id);
+    <div className="w-full space-y-10">
+      <h5 className="text-lg">We see that someone has invited you to</h5>
+      <h4 className="text-2xl font-semibold">Join a workspace</h4>
+      <div className="md:w-3/5 space-y-4">
+        {invitations &&
+          invitations.map((invitation) => {
+            const isSelected = invitationsRespond.includes(invitation.id);
 
-              return (
-                <div
-                  key={invitation.id}
-                  className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
-                    isSelected
-                      ? "border-brand-accent"
-                      : "border-brand-base hover:bg-brand-surface-2"
-                  }`}
-                  onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
-                >
-                  <div className="flex-shrink-0">
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded">
-                      {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
-                        <img
-                          src={invitation.workspace.logo}
-                          height="100%"
-                          width="100%"
-                          className="rounded"
-                          alt={invitation.workspace.name}
-                        />
-                      ) : (
-                        <span className="grid place-items-center h-9 w-9 py-1.5 px-3 rounded bg-gray-700 uppercase text-white">
-                          {invitation.workspace.name[0]}
-                        </span>
-                      )}
-                    </span>
+            return (
+              <div
+                key={invitation.id}
+                className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
+                  isSelected ? "border-brand-accent" : "border-brand-base hover:bg-brand-surface-2"
+                }`}
+                onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
+              >
+                <div className="flex-shrink-0">
+                  <div className="grid place-items-center h-9 w-9 rounded">
+                    {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
+                      <img
+                        src={invitation.workspace.logo}
+                        height="100%"
+                        width="100%"
+                        className="rounded"
+                        alt={invitation.workspace.name}
+                      />
+                    ) : (
+                      <span className="grid place-items-center h-9 w-9 py-1.5 px-3 rounded bg-gray-700 uppercase text-white">
+                        {invitation.workspace.name[0]}
+                      </span>
+                    )}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">
-                      {truncateText(invitation.workspace.name, 30)}
-                    </div>
-                    <p className="text-xs text-brand-secondary">{ROLE[invitation.role]}</p>
-                  </div>
-                  <span
-                    className={`flex-shrink-0 ${
-                      isSelected ? "text-brand-accent" : "text-brand-secondary"
-                    }`}
-                  >
-                    <CheckCircleIcon className="h-5 w-5" />
-                  </span>
                 </div>
-              );
-            })}
-        </div>
-        <div className="flex items-center gap-3">
-          <PrimaryButton
-            type="submit"
-            size="md"
-            onClick={submitInvitations}
-            disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
-          >
-            Accept & Join
-          </PrimaryButton>
-          <SecondaryButton size="md" onClick={updateLastWorkspace} outline>
-            Skip for now
-          </SecondaryButton>
-        </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium">
+                    {truncateText(invitation.workspace.name, 30)}
+                  </div>
+                  <p className="text-xs text-brand-secondary">{ROLE[invitation.role]}</p>
+                </div>
+                <span
+                  className={`flex-shrink-0 ${
+                    isSelected ? "text-brand-accent" : "text-brand-secondary"
+                  }`}
+                >
+                  <CheckCircleIcon className="h-5 w-5" />
+                </span>
+              </div>
+            );
+          })}
+      </div>
+      <div className="flex items-center gap-3">
+        <PrimaryButton
+          type="submit"
+          size="md"
+          onClick={submitInvitations}
+          disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
+        >
+          Accept & Join
+        </PrimaryButton>
+        <SecondaryButton size="md" onClick={updateLastWorkspace} outline>
+          Skip for now
+        </SecondaryButton>
       </div>
     </div>
   );

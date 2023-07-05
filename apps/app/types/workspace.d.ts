@@ -13,7 +13,7 @@ export interface IWorkspace {
   readonly slug: string;
   readonly created_by: string;
   readonly updated_by: string;
-  company_size: number | null;
+  organization_size: string;
 }
 
 export interface IWorkspaceLite {

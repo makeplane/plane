@@ -21,7 +21,7 @@ const CreateWorkspace: NextPage = () => {
   const defaultValues = {
     name: "",
     slug: "",
-    company_size: null,
+    organization_size: "2-10",
   };
 
   const { user } = useUser();

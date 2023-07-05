@@ -6,7 +6,6 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
 import workspaceService from "services/workspace.service";
-import userService from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -14,16 +13,16 @@ import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
-import { CURRENT_USER, USER_WORKSPACES } from "constants/fetch-keys";
+import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
-import { COMPANY_SIZE } from "constants/workspace";
+import { ORGANIZATION_SIZE } from "constants/workspace";
 
 type Props = {
   onSubmit: (res: IWorkspace) => void;
   defaultValues: {
     name: string;
     slug: string;
-    company_size: number | null;
+    organization_size: string;
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
   user: ICurrentUserResponse | undefined;
@@ -164,7 +163,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           <span>What size is your organization?</span>
           <div className="w-full">
             <Controller
-              name="company_size"
+              name="organization_size"
               control={control}
               rules={{ required: "This field is required" }}
               render={({ field: { value, onChange } }) => (
@@ -172,25 +171,23 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                   value={value}
                   onChange={onChange}
                   label={
-                    value ? (
-                      value.toString()
-                    ) : (
+                    ORGANIZATION_SIZE.find((c) => c === value) ?? (
                       <span className="text-brand-secondary">Select company size</span>
                     )
                   }
                   input
                   width="w-full"
                 >
-                  {COMPANY_SIZE?.map((item) => (
-                    <CustomSelect.Option key={item.value} value={item.value}>
-                      {item.label}
+                  {ORGANIZATION_SIZE.map((item) => (
+                    <CustomSelect.Option key={item} value={item}>
+                      {item}
                     </CustomSelect.Option>
                   ))}
                 </CustomSelect>
               )}
             />
-            {errors.company_size && (
-              <span className="text-sm text-red-500">{errors.company_size.message}</span>
+            {errors.organization_size && (
+              <span className="text-sm text-red-500">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

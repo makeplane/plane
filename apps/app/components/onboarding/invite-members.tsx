@@ -96,96 +96,94 @@ export const InviteMembers: React.FC<Props> = ({
 
   return (
     <form
-      className="w-full mt-6"
+      className="w-full space-y-10"
       onSubmit={handleSubmit(onSubmit)}
       onKeyDown={(e) => {
         if (e.code === "Enter") e.preventDefault();
       }}
     >
-      <div className="space-y-10">
-        <h2 className="text-2xl font-semibold">Invite people to collaborate</h2>
-        <div className="md:w-2/5 text-sm">
-          <div className="grid grid-cols-11 gap-x-4 mb-1 text-sm">
-            <h6 className="col-span-7">Co-workers Email</h6>
-            <h6 className="col-span-4">Role</h6>
-          </div>
-          <div className="space-y-4 mb-3">
-            {fields.map((field, index) => (
-              <div key={field.id} className="group relative grid grid-cols-11 gap-4">
-                <div className="col-span-7">
-                  <Controller
-                    control={control}
-                    name={`emails.${index}.email`}
-                    rules={{
-                      required: "Email ID is required",
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "Invalid Email ID",
-                      },
-                    }}
-                    render={({ field }) => (
-                      <>
-                        <Input {...field} placeholder="Enter their email..." />
-                        {errors.emails?.[index]?.email && (
-                          <span className="text-red-500 text-xs">
-                            {errors.emails?.[index]?.email?.message}
-                          </span>
-                        )}
-                      </>
-                    )}
-                  />
-                </div>
-                <div className="col-span-3">
-                  <Controller
-                    control={control}
-                    name={`emails.${index}.role`}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <CustomSelect
-                        value={value}
-                        label={ROLE[value]}
-                        onChange={onChange}
-                        width="w-full"
-                        input
-                      >
-                        {Object.entries(ROLE).map(([key, value]) => (
-                          <CustomSelect.Option key={key} value={parseInt(key)}>
-                            {value}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
-                    )}
-                  />
-                </div>
-                {fields.length > 1 && (
-                  <button
-                    type="button"
-                    className="hidden group-hover:grid self-center place-items-center rounded -ml-3"
-                    onClick={() => remove(index)}
-                  >
-                    <XMarkIcon className="h-3.5 w-3.5 text-brand-secondary" />
-                  </button>
-                )}
+      <h2 className="text-2xl font-semibold">Invite people to collaborate</h2>
+      <div className="md:w-3/5 text-sm">
+        <div className="grid grid-cols-11 gap-x-4 mb-1 text-sm">
+          <h6 className="col-span-7">Co-workers Email</h6>
+          <h6 className="col-span-4">Role</h6>
+        </div>
+        <div className="space-y-4 mb-3">
+          {fields.map((field, index) => (
+            <div key={field.id} className="group relative grid grid-cols-11 gap-4">
+              <div className="col-span-7">
+                <Controller
+                  control={control}
+                  name={`emails.${index}.email`}
+                  rules={{
+                    required: "Email ID is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid Email ID",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <>
+                      <Input {...field} placeholder="Enter their email..." />
+                      {errors.emails?.[index]?.email && (
+                        <span className="text-red-500 text-xs">
+                          {errors.emails?.[index]?.email?.message}
+                        </span>
+                      )}
+                    </>
+                  )}
+                />
               </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="flex items-center gap-2 outline-brand-accent bg-transparent text-brand-accent text-xs font-medium py-2 pr-3"
-            onClick={appendField}
-          >
-            <PlusIcon className="h-3 w-3" />
-            Add more
-          </button>
+              <div className="col-span-3">
+                <Controller
+                  control={control}
+                  name={`emails.${index}.role`}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <CustomSelect
+                      value={value}
+                      label={ROLE[value]}
+                      onChange={onChange}
+                      width="w-full"
+                      input
+                    >
+                      {Object.entries(ROLE).map(([key, value]) => (
+                        <CustomSelect.Option key={key} value={parseInt(key)}>
+                          {value}
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  )}
+                />
+              </div>
+              {fields.length > 1 && (
+                <button
+                  type="button"
+                  className="hidden group-hover:grid self-center place-items-center rounded -ml-3"
+                  onClick={() => remove(index)}
+                >
+                  <XMarkIcon className="h-3.5 w-3.5 text-brand-secondary" />
+                </button>
+              )}
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-4">
-          <PrimaryButton type="submit" loading={isSubmitting} size="md">
-            {isSubmitting ? "Sending..." : "Send Invite"}
-          </PrimaryButton>
-          <SecondaryButton size="md" onClick={goToNextStep} outline>
-            Skip this step
-          </SecondaryButton>
-        </div>
+        <button
+          type="button"
+          className="flex items-center gap-2 outline-brand-accent bg-transparent text-brand-accent text-xs font-medium py-2 pr-3"
+          onClick={appendField}
+        >
+          <PlusIcon className="h-3 w-3" />
+          Add more
+        </button>
+      </div>
+      <div className="flex items-center gap-4">
+        <PrimaryButton type="submit" loading={isSubmitting} size="md">
+          {isSubmitting ? "Sending..." : "Send Invite"}
+        </PrimaryButton>
+        <SecondaryButton size="md" onClick={goToNextStep} outline>
+          Skip this step
+        </SecondaryButton>
       </div>
     </form>
   );

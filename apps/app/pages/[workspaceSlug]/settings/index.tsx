@@ -31,12 +31,12 @@ import type { NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // constants
-import { COMPANY_SIZE } from "constants/workspace";
+import { ORGANIZATION_SIZE } from "constants/workspace";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
   url: "",
-  company_size: null,
+  organization_size: "2-10",
   logo: null,
 };
 
@@ -80,7 +80,7 @@ const WorkspaceSettings: NextPage = () => {
     const payload: Partial<IWorkspace> = {
       logo: formData.logo,
       name: formData.name,
-      company_size: formData.company_size,
+      organization_size: formData.organization_size,
     };
 
     await workspaceService
@@ -281,18 +281,18 @@ const WorkspaceSettings: NextPage = () => {
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <Controller
-                  name="company_size"
+                  name="organization_size"
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <CustomSelect
                       value={value}
                       onChange={onChange}
-                      label={value ? value.toString() : "Select company size"}
+                      label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select company size"}
                       input
                     >
-                      {COMPANY_SIZE?.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
-                          {item.label}
+                      {ORGANIZATION_SIZE?.map((item) => (
+                        <CustomSelect.Option key={item} value={item}>
+                          {item}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
