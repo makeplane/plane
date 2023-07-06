@@ -301,31 +301,29 @@ const SinglePage: NextPage = () => {
       {pageDetails ? (
         <div className="flex h-full flex-col justify-between space-y-4 overflow-hidden p-4">
           <div className="h-full w-full overflow-y-auto">
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex w-full md:items-center items-start gap-2">
+              <button
+                type="button"
+                className="flex items-center gap-2 text-sm text-brand-secondary md:mt-0 mt-3"
+                onClick={() => router.back()}
+              >
+                <ArrowLeftIcon className="h-4 w-4" />
+              </button>
+              <TextArea
+                id="name"
+                name="name"
+                placeholder="Page Title"
+                value={watch("name")}
+                onBlur={handleSubmit(updatePage)}
+                onChange={(e) => setValue("name", e.target.value)}
+                required={true}
+                className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
+                role="textbox"
+                noPadding
+              />
+            </div>
+            <div className="flex items-start justify-between gap-2 mt-2">
               <div className="flex w-full flex-col gap-2">
-                <div className="flex w-full items-center gap-2">
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 text-sm text-brand-secondary"
-                    onClick={() => router.back()}
-                  >
-                    <ArrowLeftIcon className="h-4 w-4" />
-                  </button>
-
-                  <TextArea
-                    id="name"
-                    name="name"
-                    placeholder="Page Title"
-                    value={watch("name")}
-                    onBlur={handleSubmit(updatePage)}
-                    onChange={(e) => setValue("name", e.target.value)}
-                    required={true}
-                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
-                    role="textbox"
-                    noPadding
-                  />
-                </div>
-
                 <div className="flex w-full flex-wrap gap-1">
                   {pageDetails.labels.length > 0 && (
                     <>
@@ -440,10 +438,13 @@ const SinglePage: NextPage = () => {
                             <Popover.Panel className="absolute top-full right-0 z-20 mt-1 max-w-xs px-2 sm:px-0">
                               <TwitterPicker
                                 color={pageDetails.color}
+                                triangle="top-right"
                                 styles={{
                                   default: {
                                     card: {
                                       backgroundColor: `rgba(var(--color-bg-surface-2))`,
+                                      marginTop: "0.7em",
+                                      marginLeft: "3.5em",
                                     },
                                     triangle: {
                                       position: "absolute",
