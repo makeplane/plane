@@ -10,7 +10,7 @@ import emojis from "./emojis.json";
 import icons from "./icons.json";
 // helpers
 import { getRecentEmojis, saveRecentEmoji } from "./helpers";
-import { getRandomEmoji } from "helpers/common.helper";
+import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
@@ -101,7 +101,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                               setIsOpen(false);
                             }}
                           >
-                            {String.fromCodePoint(parseInt(emoji))}
+                            {renderEmoji(emoji)}
                           </button>
                         ))}
                       </div>
@@ -121,7 +121,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                             setIsOpen(false);
                           }}
                         >
-                          {String.fromCodePoint(parseInt(emoji))}
+                          {renderEmoji(emoji)}
                         </button>
                       ))}
                     </div>
