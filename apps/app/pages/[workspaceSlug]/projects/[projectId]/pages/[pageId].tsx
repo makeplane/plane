@@ -385,7 +385,9 @@ const SinglePage: NextPage = () => {
                         </span>
                       </button>
                     }
-                    onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                    onChange={(val: string[]) => {
+                      partialUpdatePage({ labels_list: val });
+                    }}
                     options={options}
                     multiple
                     noChevron
@@ -555,6 +557,9 @@ const SinglePage: NextPage = () => {
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
                       user={user}
+                      onSave={(label) =>
+                        partialUpdatePage({ labels_list: [...pageDetails.labels, label.id] })
+                      }
                     />
                   )}
                 </>

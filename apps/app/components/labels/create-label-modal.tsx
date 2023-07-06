@@ -26,6 +26,7 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
+  onSave?: (issueLabel: IIssueLabels) => void;
   user: ICurrentUserResponse | undefined;
 };
 
@@ -34,7 +35,13 @@ const defaultValues: Partial<IState> = {
   color: "#858E96",
 };
 
-export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
+export const CreateLabelModal: React.FC<Props> = ({
+  isOpen,
+  projectId,
+  handleClose,
+  user,
+  onSave,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -65,6 +72,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
           (prevData) => [res, ...(prevData ?? [])],
           false
         );
+        if (onSave) onSave(res);
         onClose();
       })
       .catch((error) => {
