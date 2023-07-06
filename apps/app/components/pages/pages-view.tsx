@@ -205,7 +205,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         user={user}
       />
       {pages ? (
-        <div className="space-y-4 h-full overflow-y-auto">
+        <div className="space-y-4 h-full">
           {pages.length > 0 ? (
             viewType === "list" ? (
               <ul role="list" className="divide-y divide-brand-base">
