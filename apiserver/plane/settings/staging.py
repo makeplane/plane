@@ -48,8 +48,12 @@ ALLOWED_HOSTS = ["*"]
 # TODO: Make it FALSE and LIST DOMAINS IN FULL PROD.
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Simplified static file serving.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 
 # Make true if running in a docker environment
 DOCKERIZED = int(os.environ.get(
@@ -151,7 +155,9 @@ AWS_S3_SIGNATURE_VERSION = None
 AWS_S3_FILE_OVERWRITE = False
 
 # AWS Settings End
-
+STORAGES["default"] = {
+        "BACKEND": "django_s3_storage.storage.S3Storage",
+}
 
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
@@ -163,11 +169,6 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 ALLOWED_HOSTS = [
     "*",
 ]
-
-
-DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"
-# Simplified static file serving.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
