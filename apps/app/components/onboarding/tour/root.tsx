@@ -53,7 +53,7 @@ const TOUR_STEPS: {
     key: "modules",
     title: "Break into modules",
     description:
-      "Modules break your big think into Projects or Features,  to help you organize better.",
+      "Modules break your big think into Projects or Features, to help you organize better.",
     image: ModulesTour,
     prevStep: "cycles",
     nextStep: "views",
@@ -62,7 +62,7 @@ const TOUR_STEPS: {
     key: "views",
     title: "Views",
     description:
-      "Modules break your big think into Projects or Features,  to help you organize better.",
+      "Create custom filters to display only the issues that matter to you. Save and share your filters in just a few clicks.",
     image: ViewsTour,
     prevStep: "modules",
     nextStep: "pages",
@@ -87,7 +87,7 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
   return (
     <>
       {step === "welcome" ? (
-        <div className="w-2/5 h-3/4 bg-brand-base rounded-[10px] overflow-hidden">
+        <div className="w-4/5 md:w-1/2 lg:w-2/5 h-3/4 bg-brand-base rounded-[10px] overflow-hidden">
           <div className="h-full overflow-hidden">
             <div className="h-3/5 bg-brand-accent grid place-items-center">
               <Image src={PlaneWhiteLogo} alt="Plane White Logo" />
@@ -114,49 +114,43 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
           </div>
         </div>
       ) : (
-        <>
+        <div className="relative w-4/5 md:w-1/2 lg:w-3/5 h-3/4 bg-brand-base rounded-[10px] grid grid-cols-10 overflow-hidden">
           <button
             type="button"
-            className="absolute top-[11.5%] right-[19%] border border-brand-secondary rounded-full p-1 translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
+            className="fixed top-[11.5%] right-[9%] md:right-[24%] lg:right-[19%] border border-brand-secondary rounded-full p-1 translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
             onClick={onComplete}
           >
             <XMarkIcon className="h-3 w-3 text-brand-base" />
           </button>
-          <div className="w-3/5 h-3/4 bg-brand-base rounded-[10px] grid grid-cols-10 overflow-hidden">
-            <TourSidebar step={step} setStep={setStep} />
-            <div className="col-span-7 h-full overflow-hidden">
-              <div className="relative h-3/5 grid place-items-center overflow-hidden bg-brand-accent">
-                <Image
-                  src={currentStep?.image}
-                  className="absolute h-full w-full"
-                  alt="Issues tour"
-                />
-              </div>
-              <div className="flex flex-col h-2/5 overflow-y-auto p-4">
-                <h3 className="font-medium text-lg">{currentStep?.title}</h3>
-                <p className="text-brand-secondary text-sm mt-3">{currentStep?.description}</p>
-                <div className="h-full flex items-end justify-between gap-4 mt-3">
-                  <div className="flex items-center gap-4">
-                    {currentStep?.prevStep && (
-                      <SecondaryButton onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
-                        Back
-                      </SecondaryButton>
-                    )}
-                    {currentStep?.nextStep && (
-                      <PrimaryButton onClick={() => setStep(currentStep.nextStep ?? "issues")}>
-                        Next
-                      </PrimaryButton>
-                    )}
-                  </div>
-                  {TOUR_STEPS.findIndex((tourStep) => tourStep.key === step) ===
-                    TOUR_STEPS.length - 1 && (
-                    <PrimaryButton onClick={onComplete}>Create my first project</PrimaryButton>
+          <TourSidebar step={step} setStep={setStep} />
+          <div className="col-span-10 lg:col-span-7 h-full overflow-hidden">
+            <div className="flex justify-end items-end h-3/5 overflow-hidden bg-brand-accent">
+              <Image src={currentStep?.image} alt={currentStep?.title} />
+            </div>
+            <div className="flex flex-col h-2/5 p-4 overflow-y-auto">
+              <h3 className="font-medium text-lg">{currentStep?.title}</h3>
+              <p className="text-brand-secondary text-sm mt-3">{currentStep?.description}</p>
+              <div className="h-full flex items-end justify-between gap-4 mt-3">
+                <div className="flex items-center gap-4">
+                  {currentStep?.prevStep && (
+                    <SecondaryButton onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
+                      Back
+                    </SecondaryButton>
+                  )}
+                  {currentStep?.nextStep && (
+                    <PrimaryButton onClick={() => setStep(currentStep.nextStep ?? "issues")}>
+                      Next
+                    </PrimaryButton>
                   )}
                 </div>
+                {TOUR_STEPS.findIndex((tourStep) => tourStep.key === step) ===
+                  TOUR_STEPS.length - 1 && (
+                  <PrimaryButton onClick={onComplete}>Create my first project</PrimaryButton>
+                )}
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );

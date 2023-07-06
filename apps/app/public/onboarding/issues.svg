@@ -1,6 +1,5 @@
 <svg width="640" height="360" viewBox="0 0 640 360" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g clip-path="url(#clip0_408_5964)">
-<path d="M640 8C640 3.58172 636.418 0 632 0H-8.34465e-07V360H640V8Z" fill="#3F76FF"/>
 <g filter="url(#filter0_d_408_5964)">
 <path d="M711.298 156H76.7023C75.2099 156 74 157.436 74 159.208V566.792C74 568.564 75.2099 570 76.7023 570H711.298C712.79 570 714 568.564 714 566.792V159.208C714 157.436 712.79 156 711.298 156Z" fill="url(#pattern0)" shape-rendering="crispEdges"/>
 </g>
