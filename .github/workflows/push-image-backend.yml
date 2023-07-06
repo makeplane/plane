@@ -50,6 +50,16 @@ jobs:
         uses: docker/metadata-action@v4.3.0
         with:
           images: ghcr.io/${{ github.repository }}-backend
+      
+      - name: Get latest release tag
+        id: get-latest-tag
+        run: |
+          if [[ ${{ github.ref }} == 'refs/heads/master' ]]; then
+            export "RELEASE_TAG=$(curl --silent --header 'Accept: application/vnd.github.v3+json' "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)"
+          else
+            export "RELEASE_TAG=development"
+          fi
+          echo "RELEASE_TAG=${RELEASE_TAG#v}" >> $GITHUB_ENV
 
       - name: Build and Push to GitHub Container Registry
         uses: docker/build-push-action@v4.0.0
@@ -60,10 +70,11 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha
-          tags: ${{ steps.ghmeta.outputs.tags }}
+          tags: ${{ github.repository }}:${{ env.RELEASE_TAG }}
           labels: ${{ steps.ghmeta.outputs.labels }}
 
       - name: Build and Push to Docker Hub
+        id: build-and-push-image
         uses: docker/build-push-action@v4.0.0
         with:
           context: ./apiserver
@@ -72,6 +83,7 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha
-          tags: ${{ steps.dkrmeta.outputs.tags }}
+          tags: ${{ github.repository }}:${{ env.RELEASE_TAG }}
           labels: ${{ steps.dkrmeta.outputs.labels }}
+
 
