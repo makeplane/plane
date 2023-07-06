@@ -16,7 +16,8 @@ import {
   SecondaryButton,
 } from "components/ui";
 //icons
-import { ChevronDownIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -69,7 +70,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
   );
 
   const {
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
     reset,
     handleSubmit,
     control,
@@ -133,29 +134,16 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
     }
   }, [fields, append]);
 
-  const options =
-    uninvitedPeople && uninvitedPeople.length > 0
-      ? uninvitedPeople?.map((person) => ({
-          value: person.member.id,
-          query: person.member.email,
-          content: (
-            <div className="flex items-center gap-2">
-              <Avatar user={person.member} />
-              {person.member.email}
-            </div>
-          ),
-        }))
-      : [
-          {
-            value: "",
-            query: "",
-            content: (
-              <div className="flex items-center text-xs break-words">
-                Invite members to workspace first, then add to project.
-              </div>
-            ),
-          },
-        ];
+  const options = uninvitedPeople?.map((person) => ({
+    value: person.member.id,
+    query: person.member.email,
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={person.member} />
+        {person.member.email}
+      </div>
+    ),
+  }));
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -201,9 +189,9 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                       {fields.map((field, index) => (
                         <div
                           key={field.id}
-                          className="group grid grid-cols-12 gap-x-4 mb-1 text-sm"
+                          className="group grid grid-cols-12 gap-x-4 mb-1 text-sm items-start"
                         >
-                          <div className="col-span-7">
+                          <div className="flex flex-col gap-1 col-span-7">
                             <Controller
                               control={control}
                               name={`members.${index}.member_id`}
@@ -212,7 +200,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                 <CustomSearchSelect
                                   value={value}
                                   customButton={
-                                    <button className="flex w-full items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 focus:outline-none  px-3 py-2 text-sm text-left">
+                                    <button className="flex w-full items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 focus:outline-none px-3 py-2 text-sm text-left">
                                       {value && value !== "" ? (
                                         <div className="flex items-center gap-2">
                                           <Avatar
@@ -223,9 +211,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                           {people?.find((p) => p.member.id === value)?.member.email}
                                         </div>
                                       ) : (
-                                        <div className="text-brand-secondary">
-                                          Select co-worker&rsquo;s email
-                                        </div>
+                                        <div>Select co-worker&rsquo;s email</div>
                                       )}
                                       <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                                     </button>
@@ -234,16 +220,20 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                     onChange(val);
                                   }}
                                   options={options}
-                                  noChevron
                                   position="left"
                                   dropdownWidth="w-full min-w-[12rem]"
                                 />
                               )}
                             />
+                            {errors.members && errors.members[index]?.member_id && (
+                              <span className="text-sm px-1 text-red-500">
+                                {errors.members[index]?.member_id?.message}
+                              </span>
+                            )}
                           </div>
 
                           <div className="flex items-center justify-between gap-2 col-span-5">
-                            <div className="w-full">
+                            <div className="flex flex-col gap-1 w-full">
                               <Controller
                                 name={`members.${index}.role`}
                                 control={control}
@@ -271,12 +261,17 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                   </CustomSelect>
                                 )}
                               />
+                              {errors.members && errors.members[index]?.role && (
+                                <span className="text-sm px-1 text-red-500">
+                                  {errors.members[index]?.role?.message}
+                                </span>
+                              )}
                             </div>
                             <div className="flex flex-item w-6">
                               {fields.length > 1 && (
                                 <button
                                   type="button"
-                                  className="hidden group-hover:grid self-center place-items-center rounded"
+                                  className="self-center place-items-center rounded"
                                   onClick={() => remove(index)}
                                 >
                                   <XMarkIcon className="h-4 w-4 text-brand-secondary" />
