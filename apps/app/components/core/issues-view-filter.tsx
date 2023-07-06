@@ -55,7 +55,7 @@ export const IssuesFilterView: React.FC = () => {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-x-1">
-        <Tooltip tooltipContent="List View" position="bottom" theme="dark" hoverOpenDelay={500}>
+        <Tooltip tooltipContent="List View" position="bottom" theme="dark" openDelay={500}>
           <button
             type="button"
             className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
@@ -66,7 +66,7 @@ export const IssuesFilterView: React.FC = () => {
             <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
           </button>
         </Tooltip>
-        <Tooltip tooltipContent="Kanban View" position="bottom" theme="dark" hoverOpenDelay={500}>
+        <Tooltip tooltipContent="Kanban View" position="bottom" theme="dark" openDelay={500}>
           <button
             type="button"
             className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
@@ -77,7 +77,7 @@ export const IssuesFilterView: React.FC = () => {
             <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
           </button>
         </Tooltip>
-        <Tooltip tooltipContent="Calendar View" position="bottom" theme="dark" hoverOpenDelay={500}>
+        <Tooltip tooltipContent="Calendar View" position="bottom" theme="dark" openDelay={500}>
           <button
             type="button"
             className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
@@ -88,7 +88,7 @@ export const IssuesFilterView: React.FC = () => {
             <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
           </button>
         </Tooltip>
-        <Tooltip tooltipContent="Spreadsheet View" position="bottom" theme="dark" hoverOpenDelay={500}>
+        <Tooltip tooltipContent="Spreadsheet View" position="bottom" theme="dark" openDelay={500}>
           <button
             type="button"
             className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
@@ -99,7 +99,7 @@ export const IssuesFilterView: React.FC = () => {
             <Icon iconName="table_chart" className="text-brand-secondary" />
           </button>
         </Tooltip>
-        <Tooltip tooltipContent="Gant Chart View" position="bottom" theme="dark" hoverOpenDelay={500}>
+        <Tooltip tooltipContent="Gant Chart View" position="bottom" theme="dark" openDelay={500}>
           <button
             type="button"
             className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${

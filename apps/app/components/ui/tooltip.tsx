@@ -5,7 +5,7 @@ import { Tooltip2 } from "@blueprintjs/popover2";
 type Props = {
   tooltipHeading?: string;
   tooltipContent: string | JSX.Element;
-  hoverOpenDelay?: number;
+  openDelay?: number;
   position?:
     | "top"
     | "right"
@@ -36,11 +36,11 @@ export const Tooltip: React.FC<Props> = ({
   disabled = false,
   className = "",
   theme = "light",
-  hoverOpenDelay,
+  openDelay,
 }) => (
   <Tooltip2
     disabled={disabled}
-    hoverOpenDelay={hoverOpenDelay}
+    hoverOpenDelay={openDelay}
     content={
       <div
         className={`${className} relative z-50 flex max-w-[600px] flex-col items-start justify-center gap-1 rounded-md p-2 text-left text-xs shadow-md ${
