@@ -22,8 +22,12 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
       value={value}
       label={
         <div className="flex items-center gap-2 text-xs">
-          <PlayIcon className={`h-3.5 w-3.5 -rotate-90 ${value !== null ? "text-brand-base" : "text-brand-secondary"}`} />
-          <span className={value !== null ? "text-brand-base" : "text-brand-secondary"}>
+          <PlayIcon
+            className={`h-3.5 w-3.5 -rotate-90 ${
+              value !== null ? "text-custom-text-100" : "text-custom-text-200"
+            }`}
+          />
+          <span className={value !== null ? "text-custom-text-100" : "text-custom-text-200"}>
             {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate"}
           </span>
         </div>

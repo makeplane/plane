@@ -130,14 +130,17 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-custom-text-100"
+                    >
                       Invite Members
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-brand-secondary">
+                      <p className="text-sm text-custom-text-200">
                         Invite members to work on your project.
                       </p>
                     </div>
@@ -190,7 +193,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                         />
                       </div>
                       <div>
-                        <h6 className="text-brand-secondary">Role</h6>
+                        <h6 className="text-custom-text-200">Role</h6>
                         <Controller
                           name="role"
                           control={control}

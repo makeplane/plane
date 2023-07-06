@@ -59,7 +59,7 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
   return (
     <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-brand-base">
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
           {status ? "Update" : "Create"} Page
         </h3>
         <div className="space-y-3">

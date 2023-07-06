@@ -144,14 +144,14 @@ const SingleModule: React.FC = () => {
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 font-normal rounded-md text-brand-secondary"
+              className="!py-1.5 font-normal rounded-md text-custom-text-200"
               outline
             >
               Analytics
             </SecondaryButton>
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
                 moduleSidebar ? "rotate-180" : ""
               }`}
               onClick={() => setModuleSidebar((prevData) => !prevData)}
