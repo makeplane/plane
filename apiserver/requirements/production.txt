@@ -2,11 +2,10 @@
 
 dj-database-url==2.0.0
 gunicorn==20.1.0
-whitenoise==6.3.0
+whitenoise==6.5.0
 django-storages==1.13.2
-boto3==1.26.163
+boto3==1.27.0
 django-anymail==10.0
-twilio==7.16.2
-django-debug-toolbar==3.8.1
+django-debug-toolbar==4.1.0
 gevent==22.10.2
 psycogreen==1.0.2
