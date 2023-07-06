@@ -70,8 +70,12 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-# Simplified static file serving.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 if bool(os.environ.get("SENTRY_DSN", False)):
     sentry_sdk.init(
@@ -87,7 +91,7 @@ if bool(os.environ.get("SENTRY_DSN", False)):
 
 if DOCKERIZED and USE_MINIO:
     INSTALLED_APPS += ("storages",)
-    STORAGES = {"default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}}
+    STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
     # The AWS access key to use.
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
     # The AWS secret access key to use.
@@ -188,7 +192,10 @@ else:
     # extra characters appended.
     AWS_S3_FILE_OVERWRITE = False
 
-    DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"
+    STORAGES["default"] = {
+        "BACKEND": "django_s3_storage.storage.S3Storage",
+    }
+
 # AWS Settings End
 
 # Enable Connection Pooling (if desired)
@@ -202,9 +209,6 @@ ALLOWED_HOSTS = [
     "*",
 ]
 
-
-# Simplified static file serving.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
