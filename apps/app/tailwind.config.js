@@ -8,6 +8,7 @@ module.exports = {
       borderColor: {
         brand: {
           base: convertToRGB("--color-background-80"),
+          secondary: convertToRGB("--color-background-90"),
         },
       },
       backgroundColor: {

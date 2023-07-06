@@ -82,8 +82,8 @@ export const ThemeSwitch: React.FC<Props> = ({
               document.documentElement.style.removeProperty(`--color-background-${i}`);
               document.documentElement.style.removeProperty(`--color-text-${i}`);
               document.documentElement.style.removeProperty(`--color-primary-${i}`);
-              document.documentElement.style.removeProperty(`--color-sidebarBackground-${i}`);
-              document.documentElement.style.removeProperty(`--color-sidebarText-${i}`);
+              document.documentElement.style.removeProperty(`--color-sidebar-background-${i}`);
+              document.documentElement.style.removeProperty(`--color-sidebar-text-${i}`);
             }
           }
           setTheme(value);
