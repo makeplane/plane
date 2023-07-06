@@ -118,9 +118,7 @@ class WorkSpaceViewSet(BaseViewSet):
 
             if len(name) > 80 or len(slug) > 48:
                 return Response(
-                    {
-                        "error": "The maximum length for name is 80 and for slug is 48"
-                    },
+                    {"error": "The maximum length for name is 80 and for slug is 48"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -443,6 +441,30 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "workspace__owner", "created_by")
         )
+
+    def destroy(self, request, slug, pk):
+        try:
+            workspace_member_invite = WorkspaceMemberInvite.objects.get(
+                pk=pk, workspace__slug=slug
+            )
+            # delete the user if signup is disabled
+            if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
+                user = User.objects.filter(email=workspace_member_invite.email).first()
+                if user is not None:
+                    user.delete()
+            workspace_member_invite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except WorkspaceMemberInvite.DoesNotExist:
+            return Response(
+                {"error": "Workspace member invite does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class UserWorkspaceInvitationsEndpoint(BaseViewSet):

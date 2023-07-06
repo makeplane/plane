@@ -179,25 +179,6 @@ body {
   outline: none;
 }
 
-/* react datepicker styling */
-.react-datepicker-wrapper input::placeholder {
-  color: rgba(var(--color-text-secondary));
-  opacity: 1;
-}
-
-.react-datepicker-wrapper input:-ms-input-placeholder {
-  color: rgba(var(--color-text-secondary));
-}
-
-.react-datepicker-wrapper .react-datepicker__close-icon::after {
-  background: transparent;
-  color: rgba(var(--color-text-secondary));
-}
-
-.react-datepicker-popper {
-  z-index: 30 !important;
-}
-
 .conical-gradient {
   background: conic-gradient(
     from 180deg at 50% 50%,

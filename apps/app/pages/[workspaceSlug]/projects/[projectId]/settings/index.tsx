@@ -27,6 +27,8 @@ import {
   DangerButton,
 } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// helpers
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -186,7 +188,7 @@ const GeneralSettings: NextPage = () => {
                                 {value.name}
                               </span>
                             ) : (
-                              String.fromCodePoint(parseInt(value))
+                              renderEmoji(value)
                             )
                           ) : (
                             "Icon"

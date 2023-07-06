@@ -17,6 +17,7 @@ import stateService from "services/state.service";
 // types
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 import { IIssueFilterOptions } from "types";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
 export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
   const router = useRouter();
@@ -60,7 +61,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
               className="flex items-center gap-x-2 rounded-full border border-brand-base bg-brand-surface-2 px-2 py-1"
             >
               <span className="capitalize text-brand-secondary">
-                {replaceUnderscoreIfSnakeCase(key)}:
+                {key === "target_date" ? "Due Date" : replaceUnderscoreIfSnakeCase(key)}:
               </span>
               {filters[key as keyof IIssueFilterOptions] === null ||
               (filters[key as keyof IIssueFilterOptions]?.length ?? 0) <= 0 ? (
@@ -299,6 +300,51 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         <XMarkIcon className="h-3 w-3" />
                       </button>
                     </div>
+                  ) : key === "target_date" ? (
+                    <div className="flex flex-wrap items-center gap-1">
+                      {filters.target_date?.map((date: string) => {
+                        if (filters.target_date.length <= 0) return null;
+
+                        const splitDate = date.split(";");
+
+                        return (
+                          <div
+                            key={date}
+                            className="inline-flex items-center gap-x-1 rounded-full border border-brand-base bg-brand-base px-1 py-0.5"
+                          >
+                            <div className="h-1.5 w-1.5 rounded-full" />
+                            <span className="capitalize">
+                              {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
+                            </span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setFilters(
+                                  {
+                                    target_date: filters.target_date?.filter(
+                                      (d: any) => d !== date
+                                    ),
+                                  },
+                                  !Boolean(viewId)
+                                )
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3" />
+                            </span>
+                          </div>
+                        );
+                      })}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFilters({
+                            target_date: null,
+                          })
+                        }
+                      >
+                        <XMarkIcon className="h-3 w-3" />
+                      </button>
+                    </div>
                   ) : (
                     (filters[key as keyof IIssueFilterOptions] as any)?.join(", ")
                   )}
@@ -332,6 +378,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
               assignees: null,
               labels: null,
               created_by: null,
+              target_date: null,
             })
           }
           className="flex items-center gap-x-1 rounded-full border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-xs"
