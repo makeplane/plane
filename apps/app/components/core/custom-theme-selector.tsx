@@ -20,11 +20,12 @@ type Props = {
   preLoadedData?: Partial<ICustomTheme> | null;
 };
 
-const defaultValues = {
+const defaultValues: ICustomTheme = {
   background: "#fff7f7",
   text: "#ffc9c9",
-  accent: "#fe5050",
-  sidebar: "#ffffff",
+  primary: "#fe5050",
+  sidebarBackground: "#ffffff",
+  sidebarText: "#000000",
   darkPalette: false,
   palette: "",
 };
@@ -50,10 +51,11 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
     const payload: ICustomTheme = {
       background: formData.background,
       text: formData.text,
-      accent: formData.accent,
-      sidebar: formData.sidebar,
+      primary: formData.primary,
+      sidebarBackground: formData.sidebarBackground,
+      sidebarText: formData.sidebarText,
       darkPalette: darkPalette,
-      palette: `${formData.background},${formData.text},${formData.accent},${formData.sidebar}`,
+      palette: `${formData.background},${formData.text},${formData.primary},${formData.sidebarBackground},${formData.sidebarText}`,
     };
 
     await userService
@@ -89,7 +91,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
       <div className="space-y-5">
         <h3 className="text-lg font-semibold text-brand-base">Customize your theme</h3>
         <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="flex flex-col items-start gap-2">
               <h3 className="text-left text-sm font-medium text-brand-secondary">
                 Background color
@@ -115,10 +117,12 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">Accent color</h3>
+              <h3 className="text-left text-sm font-medium text-brand-secondary">
+                Primary(Theme) color
+              </h3>
               <ColorPickerInput
-                name="accent"
-                error={errors.accent}
+                name="primary"
+                error={errors.primary}
                 watch={watch}
                 setValue={setValue}
                 register={register}
@@ -130,8 +134,21 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
                 Sidebar background color
               </h3>
               <ColorPickerInput
-                name="sidebar"
-                error={errors.sidebar}
+                name="sidebarBackground"
+                error={errors.sidebarBackground}
+                watch={watch}
+                setValue={setValue}
+                register={register}
+              />
+            </div>
+
+            <div className="flex flex-col items-start gap-2">
+              <h3 className="text-left text-sm font-medium text-brand-secondary">
+                Sidebar text color
+              </h3>
+              <ColorPickerInput
+                name="sidebarText"
+                error={errors.sidebarText}
                 watch={watch}
                 setValue={setValue}
                 register={register}

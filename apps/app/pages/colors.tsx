@@ -11,75 +11,128 @@ const Colors: NextPage = () => (
     <DefaultLayout>
       <div className="space-y-8 p-8">
         <div>
-          Accent:
+          Primary:
           <div className="flex flex-wrap">
-            <div className="h-12 w-12 bg-custom-accent-10" />
-            <div className="h-12 w-12 bg-custom-accent-20" />
-            <div className="h-12 w-12 bg-custom-accent-30" />
-            <div className="h-12 w-12 bg-custom-accent-40" />
-            <div className="h-12 w-12 bg-custom-accent-50" />
-            <div className="h-12 w-12 bg-custom-accent-60" />
-            <div className="h-12 w-12 bg-custom-accent-70" />
-            <div className="h-12 w-12 bg-custom-accent-80" />
-            <div className="h-12 w-12 bg-custom-accent-90" />
-            <div className="h-12 w-12 bg-custom-accent-100" />
-            <div className="h-12 w-12 bg-custom-accent-200" />
-            <div className="h-12 w-12 bg-custom-accent-300" />
-            <div className="h-12 w-12 bg-custom-accent-400" />
-            <div className="h-12 w-12 bg-custom-accent-500" />
-            <div className="h-12 w-12 bg-custom-accent-600" />
-            <div className="h-12 w-12 bg-custom-accent-700" />
-            <div className="h-12 w-12 bg-custom-accent-800" />
-            <div className="h-12 w-12 bg-custom-accent-900" />
-            <div className="h-12 w-12 bg-custom-accent-950" />
+            <div className="h-12 w-12 bg-custom-primary-0" />
+            <div className="h-12 w-12 bg-custom-primary-10" />
+            <div className="h-12 w-12 bg-custom-primary-20" />
+            <div className="h-12 w-12 bg-custom-primary-30" />
+            <div className="h-12 w-12 bg-custom-primary-40" />
+            <div className="h-12 w-12 bg-custom-primary-50" />
+            <div className="h-12 w-12 bg-custom-primary-60" />
+            <div className="h-12 w-12 bg-custom-primary-70" />
+            <div className="h-12 w-12 bg-custom-primary-80" />
+            <div className="h-12 w-12 bg-custom-primary-90" />
+            <div className="h-12 w-12 bg-custom-primary-100" />
+            <div className="h-12 w-12 bg-custom-primary-200" />
+            <div className="h-12 w-12 bg-custom-primary-300" />
+            <div className="h-12 w-12 bg-custom-primary-400" />
+            <div className="h-12 w-12 bg-custom-primary-500" />
+            <div className="h-12 w-12 bg-custom-primary-600" />
+            <div className="h-12 w-12 bg-custom-primary-700" />
+            <div className="h-12 w-12 bg-custom-primary-800" />
+            <div className="h-12 w-12 bg-custom-primary-900" />
+            <div className="h-12 w-12 bg-custom-primary-1000" />
           </div>
         </div>
         <div>
           Background:
           <div className="flex flex-wrap">
-            <div className="h-12 w-12 bg-custom-bg-10" />
-            <div className="h-12 w-12 bg-custom-bg-20" />
-            <div className="h-12 w-12 bg-custom-bg-30" />
-            <div className="h-12 w-12 bg-custom-bg-40" />
-            <div className="h-12 w-12 bg-custom-bg-50" />
-            <div className="h-12 w-12 bg-custom-bg-60" />
-            <div className="h-12 w-12 bg-custom-bg-70" />
-            <div className="h-12 w-12 bg-custom-bg-80" />
-            <div className="h-12 w-12 bg-custom-bg-90" />
-            <div className="h-12 w-12 bg-custom-bg-100" />
-            <div className="h-12 w-12 bg-custom-bg-200" />
-            <div className="h-12 w-12 bg-custom-bg-300" />
-            <div className="h-12 w-12 bg-custom-bg-400" />
-            <div className="h-12 w-12 bg-custom-bg-500" />
-            <div className="h-12 w-12 bg-custom-bg-600" />
-            <div className="h-12 w-12 bg-custom-bg-700" />
-            <div className="h-12 w-12 bg-custom-bg-800" />
-            <div className="h-12 w-12 bg-custom-bg-900" />
-            <div className="h-12 w-12 bg-custom-bg-950" />
+            <div className="h-12 w-12 bg-custom-background-0" />
+            <div className="h-12 w-12 bg-custom-background-10" />
+            <div className="h-12 w-12 bg-custom-background-20" />
+            <div className="h-12 w-12 bg-custom-background-30" />
+            <div className="h-12 w-12 bg-custom-background-40" />
+            <div className="h-12 w-12 bg-custom-background-50" />
+            <div className="h-12 w-12 bg-custom-background-60" />
+            <div className="h-12 w-12 bg-custom-background-70" />
+            <div className="h-12 w-12 bg-custom-background-80" />
+            <div className="h-12 w-12 bg-custom-background-90" />
+            <div className="h-12 w-12 bg-custom-background-100" />
+            <div className="h-12 w-12 bg-custom-background-200" />
+            <div className="h-12 w-12 bg-custom-background-300" />
+            <div className="h-12 w-12 bg-custom-background-400" />
+            <div className="h-12 w-12 bg-custom-background-500" />
+            <div className="h-12 w-12 bg-custom-background-600" />
+            <div className="h-12 w-12 bg-custom-background-700" />
+            <div className="h-12 w-12 bg-custom-background-800" />
+            <div className="h-12 w-12 bg-custom-background-900" />
+            <div className="h-12 w-12 bg-custom-background-1000" />
           </div>
         </div>
         <div>
-          Sidebar background:
+          Text:
           <div className="flex flex-wrap">
-            <div className="h-12 w-12 bg-custom-sidebar-10" />
-            <div className="h-12 w-12 bg-custom-sidebar-20" />
-            <div className="h-12 w-12 bg-custom-sidebar-30" />
-            <div className="h-12 w-12 bg-custom-sidebar-40" />
-            <div className="h-12 w-12 bg-custom-sidebar-50" />
-            <div className="h-12 w-12 bg-custom-sidebar-60" />
-            <div className="h-12 w-12 bg-custom-sidebar-70" />
-            <div className="h-12 w-12 bg-custom-sidebar-80" />
-            <div className="h-12 w-12 bg-custom-sidebar-90" />
-            <div className="h-12 w-12 bg-custom-sidebar-100" />
-            <div className="h-12 w-12 bg-custom-sidebar-200" />
-            <div className="h-12 w-12 bg-custom-sidebar-300" />
-            <div className="h-12 w-12 bg-custom-sidebar-400" />
-            <div className="h-12 w-12 bg-custom-sidebar-500" />
-            <div className="h-12 w-12 bg-custom-sidebar-600" />
-            <div className="h-12 w-12 bg-custom-sidebar-700" />
-            <div className="h-12 w-12 bg-custom-sidebar-800" />
-            <div className="h-12 w-12 bg-custom-sidebar-900" />
-            <div className="h-12 w-12 bg-custom-sidebar-950" />
+            <div className="h-12 w-12 bg-custom-text-0" />
+            <div className="h-12 w-12 bg-custom-text-10" />
+            <div className="h-12 w-12 bg-custom-text-20" />
+            <div className="h-12 w-12 bg-custom-text-30" />
+            <div className="h-12 w-12 bg-custom-text-40" />
+            <div className="h-12 w-12 bg-custom-text-50" />
+            <div className="h-12 w-12 bg-custom-text-60" />
+            <div className="h-12 w-12 bg-custom-text-70" />
+            <div className="h-12 w-12 bg-custom-text-80" />
+            <div className="h-12 w-12 bg-custom-text-90" />
+            <div className="h-12 w-12 bg-custom-text-100" />
+            <div className="h-12 w-12 bg-custom-text-200" />
+            <div className="h-12 w-12 bg-custom-text-300" />
+            <div className="h-12 w-12 bg-custom-text-400" />
+            <div className="h-12 w-12 bg-custom-text-500" />
+            <div className="h-12 w-12 bg-custom-text-600" />
+            <div className="h-12 w-12 bg-custom-text-700" />
+            <div className="h-12 w-12 bg-custom-text-800" />
+            <div className="h-12 w-12 bg-custom-text-900" />
+            <div className="h-12 w-12 bg-custom-text-1000" />
+          </div>
+        </div>
+        <div>
+          Sidebar Background:
+          <div className="flex flex-wrap">
+            <div className="h-12 w-12 bg-custom-sidebar-background-0" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-10" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-20" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-30" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-40" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-50" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-60" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-70" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-80" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-90" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-100" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-200" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-300" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-400" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-500" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-600" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-700" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-800" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-900" />
+            <div className="h-12 w-12 bg-custom-sidebar-background-1000" />
+          </div>
+        </div>
+        <div>
+          Sidebar Text:
+          <div className="flex flex-wrap">
+            <div className="h-12 w-12 bg-custom-sidebar-text-0" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-10" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-20" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-30" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-40" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-50" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-60" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-70" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-80" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-90" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-100" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-200" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-300" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-400" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-500" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-600" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-700" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-800" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-900" />
+            <div className="h-12 w-12 bg-custom-sidebar-text-1000" />
           </div>
         </div>
       </div>

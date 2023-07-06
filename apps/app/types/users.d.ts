@@ -31,8 +31,9 @@ export interface IUser {
 export interface ICustomTheme {
   background: string;
   text: string;
-  accent: string;
-  sidebar: string;
+  primary: string;
+  sidebarBackground: string;
+  sidebarText: string;
   darkPalette: boolean;
   palette: string;
 }

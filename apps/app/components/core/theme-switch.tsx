@@ -77,37 +77,14 @@ export const ThemeSwitch: React.FC<Props> = ({
             if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
           } else {
             if (customThemeSelectorOptions) setCustomThemeSelectorOptions(false);
-            const cssVars = [
-              "--color-bg-50",
-              "--color-bg-100",
-              "--color-bg-200",
-              "--color-bg-300",
-              "--color-bg-400",
-              "--color-bg-500",
-              "--color-bg-600",
-              "--color-bg-700",
-              "--color-bg-800",
-              "--color-bg-900",
 
-              "--color-bg-sidebar",
-
-              "--color-border",
-
-              "--color-accent-50",
-              "--color-accent-100",
-              "--color-accent-200",
-              "--color-accent-300",
-              "--color-accent-400",
-              "--color-accent-500",
-              "--color-accent-600",
-              "--color-accent-700",
-              "--color-accent-800",
-              "--color-accent-900",
-
-              "--color-text-base",
-              "--color-text-secondary",
-            ];
-            cssVars.forEach((cssVar) => document.documentElement.style.removeProperty(cssVar));
+            for (let i = 10; i <= 900; i >= 100 ? (i += 100) : (i += 10)) {
+              document.documentElement.style.removeProperty(`--color-background-${i}`);
+              document.documentElement.style.removeProperty(`--color-text-${i}`);
+              document.documentElement.style.removeProperty(`--color-primary-${i}`);
+              document.documentElement.style.removeProperty(`--color-sidebarBackground-${i}`);
+              document.documentElement.style.removeProperty(`--color-sidebarText-${i}`);
+            }
           }
           setTheme(value);
           document.documentElement.style.setProperty("color-scheme", type);
