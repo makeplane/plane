@@ -34,7 +34,7 @@ import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
 import { ExclamationIcon } from "components/icons";
 import { LinkIcon } from "@heroicons/react/20/solid";
 // helpers
-import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssue, IModule, ModuleLink } from "types";
@@ -228,7 +228,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
                           <span>
-                            {renderShortDate(new Date(`${module.start_date}`), "Start date")}
+                            {renderShortDateWithYearFormat(
+                              new Date(`${module.start_date}`),
+                              "Start date"
+                            )}
                           </span>
                         </Popover.Button>
 
@@ -279,7 +282,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                           <CalendarDaysIcon className="h-3 w-3 " />
 
                           <span>
-                            {renderShortDate(new Date(`${module?.target_date}`), "End date")}
+                            {renderShortDateWithYearFormat(
+                              new Date(`${module?.target_date}`),
+                              "End date"
+                            )}
                           </span>
                         </Popover.Button>
 
@@ -322,7 +328,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
               <div className="flex w-full flex-col gap-6 px-6 py-6">
                 <div className="flex w-full flex-col items-start justify-start gap-2">
                   <div className="flex w-full items-start justify-between gap-2  ">
-                    <h4 className="text-xl font-semibold text-brand-base">{module.name}</h4>
+                    <div className="max-w-[300px]">
+                      <h4 className="text-xl font-semibold break-words w-full text-brand-base">
+                        {module.name}
+                      </h4>
+                    </div>
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
                         <span className="flex items-center justify-start gap-2">
@@ -339,7 +349,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     </CustomMenu>
                   </div>
 
-                  <span className="whitespace-normal text-sm leading-5 text-brand-secondary">
+                  <span className="whitespace-normal text-sm leading-5 text-brand-secondary break-words w-full">
                     {module.description}
                   </span>
                 </div>

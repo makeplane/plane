@@ -15,15 +15,15 @@ ROLE_CHOICES = (
 
 
 class Workspace(BaseModel):
-    name = models.CharField(max_length=255, verbose_name="Workspace Name")
+    name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.URLField(verbose_name="Logo", blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="owner_workspace",
     )
-    slug = models.SlugField(max_length=100, db_index=True, unique=True)
-    company_size = models.PositiveIntegerField(default=10)
+    slug = models.SlugField(max_length=48, db_index=True, unique=True)
+    organization_size = models.CharField(max_length=20)
 
     def __str__(self):
         """Return name of the Workspace"""
