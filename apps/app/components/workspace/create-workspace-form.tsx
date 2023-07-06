@@ -133,7 +133,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           <label htmlFor="workspaceUrl">Workspace URL</label>
           <div className="flex w-full items-center rounded-md border border-brand-base px-3">
             <span className="whitespace-nowrap text-sm text-brand-secondary">
-              {typeof window !== "undefined" && window.location.origin}/
+              {window && window.location.host}/
             </span>
             <Input
               id="workspaceUrl"
