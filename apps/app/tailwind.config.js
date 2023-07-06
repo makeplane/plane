@@ -5,7 +5,32 @@ module.exports = {
   content: ["./pages/**/*.tsx", "./components/**/*.tsx", "./layouts/**/*.tsx", "./ui/**/*.tsx"],
   theme: {
     extend: {
+      borderColor: {
+        brand: {
+          base: convertToRGB("--color-background-80"),
+        },
+      },
+      backgroundColor: {
+        brand: {
+          base: convertToRGB("--color-background-100"),
+          "surface-1": convertToRGB("--color-background-90"),
+          "surface-2": convertToRGB("--color-background-80"),
+          sidebar: convertToRGB("--color-sidebar-background-100"),
+          backdrop: "#131313",
+        },
+      },
+      textColor: {
+        brand: {
+          base: convertToRGB("--color-text-100"),
+          secondary: convertToRGB("--color-text-200"),
+        },
+      },
       colors: {
+        brand: {
+          base: convertToRGB("--color-background-100"),
+          accent: convertToRGB("--color-primary-100"),
+          backdrop: "#131313",
+        },
         custom: {
           primary: {
             0: "rgb(255, 255, 255)",
