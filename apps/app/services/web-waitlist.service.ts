@@ -6,7 +6,8 @@ import { IWebWaitListResponse } from "types";
 
 class WebWailtListServices extends APIService {
   constructor() {
-    super(`${window?.location?.origin || ``}/`);
+    const origin = typeof window !== "undefined" ? window.location.origin || "" : "";
+    super(origin);
   }
 
   async create({ email }: { email: string }): Promise<IWebWaitListResponse> {

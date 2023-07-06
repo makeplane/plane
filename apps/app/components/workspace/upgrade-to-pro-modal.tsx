@@ -114,6 +114,12 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
                           {((issueNumber / 1024) * 100).toFixed(2)}%).
                         </div>
                       </div>
+                      <div
+                        onClick={handleClose}
+                        className="w-5 h-5 text-brand-secondary cursor-pointer mt-1.5 md:hidden block ml-auto"
+                      >
+                        <XCircleIcon />
+                      </div>
                     </div>
                     <div className="flex gap-2 pt-6">
                       <div
@@ -146,7 +152,7 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
                       <div className="font-semibold text-lg">Summary</div>
                       <div
                         onClick={handleClose}
-                        className="w-5 h-5 text-brand-secondary cursor-pointer mt-1.5"
+                        className="w-5 h-5 text-brand-secondary cursor-pointer mt-1.5 hidden md:block"
                       >
                         <XCircleIcon />
                       </div>

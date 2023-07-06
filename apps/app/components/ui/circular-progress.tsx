@@ -10,7 +10,6 @@ export const CircularProgress = ({ progress }: { progress: number }) => {
   }, []);
 
   const progressAngle = (progress / 100) * 360 >= 360 ? 359.9 : (progress / 100) * 360;
-  console.log("progressAngle", progressAngle);
   const progressX = 50 + Math.cos((progressAngle - 90) * (Math.PI / 180)) * 40;
   const progressY = 50 + Math.sin((progressAngle - 90) * (Math.PI / 180)) * 40;
 
