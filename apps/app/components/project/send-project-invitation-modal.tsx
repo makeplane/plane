@@ -71,7 +71,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
 
   const {
     formState: { errors, isSubmitting },
-    watch,
+
     reset,
     handleSubmit,
     control,
@@ -299,15 +299,9 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                       <PrimaryButton type="submit" loading={isSubmitting}>
                         {isSubmitting
                           ? `${
-                              watch("members") && watch("members").length > 1
-                                ? "Adding Members..."
-                                : "Adding Member..."
+                              fields && fields.length > 1 ? "Adding Members..." : "Adding Member..."
                             }`
-                          : `${
-                              watch("members") && watch("members").length > 1
-                                ? "Add Members"
-                                : "Add Member"
-                            }`}
+                          : `${fields && fields.length > 1 ? "Add Members" : "Add Member"}`}
                       </PrimaryButton>
                     </div>
                   </div>
