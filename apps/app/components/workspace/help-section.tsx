@@ -28,6 +28,7 @@ import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 import { CircularProgress } from "components/ui";
 // components
 import UpgradeToProModal from "./upgrade-to-pto-modal";
+import useUser from "hooks/use-user";
 
 const helpOptions = [
   {
@@ -75,13 +76,13 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
   // hooks
   useOutsideClickDetector(helpOptionsRef, () => setIsNeedHelpOpen(false));
 
+  const { user } = useUser();
+
   const helpOptionMode = sidebarCollapse ? "left-full" : "left-[-75px]";
 
   const [alert, setAlert] = useState(false);
 
   const [upgradeModal, setUpgradeModal] = useState(false);
-
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
 
   const { data: workspaceDetails } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
@@ -93,9 +94,8 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
     <>
       <UpgradeToProModal
         isOpen={upgradeModal}
-        data={null}
         onClose={() => setUpgradeModal(false)}
-        user={undefined}
+        user={user}
         issueNumber={issueNumber}
       />
       {!sidebarCollapse && (alert || (issueNumber && issueNumber >= 750)) ? (

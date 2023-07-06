@@ -10,16 +10,17 @@ import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CircularProgress } from "components/ui";
 // types
 import type { ICurrentUserResponse, IWorkspace } from "types";
+//service
+import WebWailtListServices from "services/web-waitlist.service";
 
 type Props = {
   isOpen: boolean;
-  data: IWorkspace | null;
   onClose: () => void;
   user: ICurrentUserResponse | undefined;
   issueNumber: number;
 };
 
-const UpgradeToPro: React.FC<Props> = ({ isOpen, data, onClose, user, issueNumber }) => {
+const UpgradeToPro: React.FC<Props> = ({ isOpen, onClose, user, issueNumber }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => {
@@ -36,6 +37,29 @@ const UpgradeToPro: React.FC<Props> = ({ isOpen, data, onClose, user, issueNumbe
     "Access to Roadmap",
     "Plane AI (GPT unlimited)",
   ];
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loader, setLoader] = useState(false);
+  const submitEmail = () => {
+    setLoader(true);
+    const payload = { email: user?.email || "" };
+    WebWailtListServices.create(payload)
+      .then((response: any) => {
+        console.log("response", response);
+        if (response.status === "success") {
+          setErrorMessage("Successfully registered.");
+        }
+        if (response.status === "email_already_exists") {
+          setErrorMessage("This email is already registered.");
+        }
+        setLoader(false);
+      })
+      .catch((error: any) => {
+        console.log("Error", error);
+        setErrorMessage("Something went wrong please try again.");
+        setLoader(false);
+      });
+  };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -64,8 +88,8 @@ const UpgradeToPro: React.FC<Props> = ({ isOpen, data, onClose, user, issueNumbe
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
-                <div className="flex gap-6">
-                  <div className="w-3/5 p-6 flex flex-col gap-y-6">
+                <div className="flex flex-wrap">
+                  <div className="w-full md:w-3/5 p-6 flex flex-col gap-y-6">
                     <div className="flex gap-2">
                       <div
                         className={`font-semibold outline-none text-sm mt-1.5 ${
@@ -117,7 +141,7 @@ const UpgradeToPro: React.FC<Props> = ({ isOpen, data, onClose, user, issueNumbe
                       </div>
                     </div>
                   </div>
-                  <div className="w-2/5 bg-brand-surface-1 p-6 flex flex-col">
+                  <div className="w-full md:w-2/5 bg-brand-surface-1 p-6 flex flex-col">
                     <div className="flex justify-between items-center">
                       <div className="font-semibold text-lg">Summary</div>
                       <div
@@ -136,11 +160,24 @@ const UpgradeToPro: React.FC<Props> = ({ isOpen, data, onClose, user, issueNumbe
                       plan for you.
                     </div>
                     <button
+                      disabled={loader}
+                      onClick={() => submitEmail()}
                       type="button"
-                      className="mt-auto whitespace-nowrap max-w-min items-center gap-x-1 rounded-md px-3 py-2 font-medium outline-none text-sm bg-brand-accent text-white"
+                      className="mt-5 md:mt-auto whitespace-nowrap max-w-min items-center gap-x-1 rounded-md px-3 py-2 font-medium outline-none text-sm bg-brand-accent text-white"
                     >
-                      Join waitlist
+                      {loader ? "Loading.." : " Join waitlist"}
                     </button>
+                    {errorMessage && (
+                      <div
+                        className={`mt-1 text-sm ${
+                          errorMessage === "Successfully registered."
+                            ? "text-green-500"
+                            : " text-red-500"
+                        }`}
+                      >
+                        {errorMessage}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Dialog.Panel>
