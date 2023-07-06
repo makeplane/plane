@@ -27,7 +27,7 @@ import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 // ui
 import { CircularProgress } from "components/ui";
 // components
-import UpgradeToProModal from "./upgrade-to-pto-modal";
+import UpgradeToProModal from "./upgrade-to-pro-modal";
 import useUser from "hooks/use-user";
 
 const helpOptions = [

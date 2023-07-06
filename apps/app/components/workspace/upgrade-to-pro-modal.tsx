@@ -20,7 +20,7 @@ type Props = {
   issueNumber: number;
 };
 
-const UpgradeToPro: React.FC<Props> = ({ isOpen, onClose, user, issueNumber }) => {
+const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => {
@@ -189,4 +189,4 @@ const UpgradeToPro: React.FC<Props> = ({ isOpen, onClose, user, issueNumber }) =
   );
 };
 
-export default UpgradeToPro;
+export default UpgradeToProModal;
