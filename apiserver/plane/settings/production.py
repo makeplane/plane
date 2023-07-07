@@ -13,9 +13,7 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from .common import *  # noqa
 
 # Database
-DEBUG = int(os.environ.get(
-    "DEBUG", 0
-))  == 1
+DEBUG = int(os.environ.get("DEBUG", 0)) == 1
 
 DATABASES = {
     "default": {
@@ -89,7 +87,7 @@ if bool(os.environ.get("SENTRY_DSN", False)):
 
 if DOCKERIZED and USE_MINIO:
     INSTALLED_APPS += ("storages",)
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    STORAGES = {"default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}}
     # The AWS access key to use.
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
     # The AWS secret access key to use.
@@ -97,7 +95,9 @@ if DOCKERIZED and USE_MINIO:
     # The name of the bucket to store files in.
     AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
     # The full URL to the S3 endpoint. Leave blank to use the default region URL.
-    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL",  "http://plane-minio:9000")
+    AWS_S3_ENDPOINT_URL = os.environ.get(
+        "AWS_S3_ENDPOINT_URL", "http://plane-minio:9000"
+    )
     # Default permissions
     AWS_DEFAULT_ACL = "public-read"
     AWS_QUERYSTRING_AUTH = False

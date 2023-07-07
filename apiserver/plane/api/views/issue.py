@@ -256,7 +256,7 @@ class IssueViewSet(BaseViewSet):
             return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -914,42 +914,17 @@ class IssueArchiveViewSet(BaseViewSet):
     serializer_class = IssueSerializer
     model = Issue
 
-    def list(self, request, slug, project_id):
-        try:
-            issue = Issue.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                archived_at__isnull=False,
-            ).order_by("-archived_at")
-            return Response(
-                IssueLiteSerializer(issue, many=True).data, status=status.HTTP_200_OK
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def retrieve(self, request, slug, project_id, pk=None):
-        try:
-            issue = Issue.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                archived_at__isnull=False,
-                pk=pk,
-            )
-            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
-        except Issue.DoesNotExist:
-            return Response(
-                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .filter(archived_at__isnull=False)
+            .order_by("-archived_at")
+            .distinct()
+        )
 
     def partial_update(self, request, slug, project_id, pk=None):
         try:
