@@ -113,6 +113,10 @@ export interface IProjectMemberInvitation {
   updated_by: string;
 }
 
+export interface IProjectBulkInviteFormData {
+  members: { role: 5 | 10 | 15 | 20; member_id: string }[];
+}
+
 export interface IGithubRepository {
   id: string;
   full_name: string;
