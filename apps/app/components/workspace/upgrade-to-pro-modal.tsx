@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-
 // icons
 import { XCircleIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
@@ -10,8 +8,12 @@ import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CircularProgress } from "components/ui";
 // types
 import type { ICurrentUserResponse, IWorkspace } from "types";
-//service
-import WebWailtListServices from "services/web-waitlist.service";
+
+declare global {
+  interface Window {
+    supabase: any;
+  }
+}
 
 type Props = {
   isOpen: boolean;
@@ -21,6 +23,29 @@ type Props = {
 };
 
 const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber }) => {
+  const [supabaseClient, setSupabaseClient] = useState<any>(null);
+
+  useEffect(() => {
+    // Create a Supabase client
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      const { createClient } = window.supabase;
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+          },
+        }
+      );
+
+      if (supabase) {
+        setSupabaseClient(supabase);
+      }
+    }
+  }, []);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => {
@@ -40,25 +65,39 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
 
   const [errorMessage, setErrorMessage] = useState("");
   const [loader, setLoader] = useState(false);
-  const submitEmail = () => {
+  const submitEmail = async () => {
     setLoader(true);
     const payload = { email: user?.email || "" };
-    WebWailtListServices.create(payload)
-      .then((response: any) => {
-        console.log("response", response);
-        if (response.status === "success") {
-          setErrorMessage("Successfully registered.");
+
+    if (supabaseClient) {
+      if (payload?.email) {
+        const emailExists = await supabaseClient
+          .from("web-waitlist")
+          .select("id,email,count")
+          .eq("email", payload?.email);
+        if (emailExists.data.length === 0) {
+          const emailCreation = await supabaseClient
+            .from("web-waitlist")
+            .insert([{ email: payload?.email, count: 1, last_visited: new Date() }])
+            .select("id,email,count");
+          if (emailCreation.status === 201) setErrorMessage("success");
+          else setErrorMessage("insert_error");
+        } else {
+          const emailCountUpdate = await supabaseClient
+            .from("web-waitlist")
+            .upsert({
+              id: emailExists.data[0]?.id,
+              count: emailExists.data[0]?.count + 1,
+              last_visited: new Date(),
+            })
+            .select("id,email,count");
+          if (emailCountUpdate.status === 201) setErrorMessage("email_already_exists");
+          else setErrorMessage("update_error");
         }
-        if (response.status === "email_already_exists") {
-          setErrorMessage("This email is already registered.");
-        }
-        setLoader(false);
-      })
-      .catch((error: any) => {
-        console.log("Error", error);
-        setErrorMessage("Something went wrong please try again.");
-        setLoader(false);
-      });
+      } else setErrorMessage("email_required");
+    } else setErrorMessage("supabase_error");
+
+    setLoader(false);
   };
 
   return (
