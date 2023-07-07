@@ -59,4 +59,20 @@ export const SPREADSHEET_COLUMN = [
     ascendingOrder: "estimate_point",
     descendingOrder: "-estimate_point",
   },
+  {
+    propertyName: "created_on",
+    colName: "Created On",
+    colSize: "144px",
+    icon: CalendarDaysIcon,
+    ascendingOrder: "-created_at",
+    descendingOrder: "created_at",
+  },
+  {
+    propertyName: "updated_on",
+    colName: "Updated On",
+    colSize: "144px",
+    icon: CalendarDaysIcon,
+    ascendingOrder: "-updated_at",
+    descendingOrder: "updated_at",
+  },
 ];
