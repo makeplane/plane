@@ -26,7 +26,6 @@
     "@remirror/pm": "^2.0.3",
     "@remirror/react": "^2.0.24",
     "@sentry/nextjs": "^7.36.0",
-    "@supabase/supabase-js": "^2.26.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash.debounce": "^4.0.7",
     "@types/react-datepicker": "^4.8.0",

@@ -1,8 +1,9 @@
 declare global {
+  var supabase: any;
   var supabaseClient: any;
 }
 // supabase
-import { createClient } from "@supabase/supabase-js";
+const { createClient } = window.supabase;
 
 let supabaseClient: any;
 
