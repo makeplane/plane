@@ -190,16 +190,16 @@ const ProjectPages: NextPage = () => {
               <Tab.Panel as="div" className="h-full overflow-y-auto space-y-5">
                 <RecentPagesList viewType={viewType} />
               </Tab.Panel>
-              <Tab.Panel as="div" className="h-full overflow-hidden">
+              <Tab.Panel as="div" className="h-full overflow-y-auto">
                 <AllPagesList viewType={viewType} />
               </Tab.Panel>
-              <Tab.Panel as="div" className="h-full overflow-hidden">
+              <Tab.Panel as="div" className="h-full overflow-y-auto">
                 <FavoritePagesList viewType={viewType} />
               </Tab.Panel>
-              <Tab.Panel as="div" className="h-full overflow-hidden">
+              <Tab.Panel as="div" className="h-full overflow-y-auto">
                 <MyPagesList viewType={viewType} />
               </Tab.Panel>
-              <Tab.Panel as="div" className="h-full overflow-hidden">
+              <Tab.Panel as="div" className="h-full overflow-y-auto">
                 <OtherPagesList viewType={viewType} />
               </Tab.Panel>
             </Tab.Panels>
