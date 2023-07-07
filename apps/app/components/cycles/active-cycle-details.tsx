@@ -227,7 +227,7 @@ export const ActiveCycleDetails: React.FC = () => {
                           : cycleStatus === "completed"
                           ? "#3F76FF"
                           : cycleStatus === "draft"
-                          ? "#858E96"
+                          ? "rgb(var(--color-text-200))"
                           : ""
                       }`}
                     />
@@ -300,7 +300,7 @@ export const ActiveCycleDetails: React.FC = () => {
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="#858E96" />
+                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                 </span>
@@ -329,7 +329,7 @@ export const ActiveCycleDetails: React.FC = () => {
                       alt={cycle.owned_by.first_name}
                     />
                   ) : (
-                    <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100  capitalize">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
                       {cycle.owned_by.first_name.charAt(0)}
                     </span>
                   )}
@@ -399,7 +399,7 @@ export const ActiveCycleDetails: React.FC = () => {
       <div className="grid grid-cols-1 divide-y border-custom-border-80 lg:divide-y-0 lg:divide-x lg:grid-cols-2">
         <div className="flex flex-col justify-between p-4">
           <div>
-            <div className="text-brand-primary">High Priority Issues</div>
+            <div className="text-custom-primary">High Priority Issues</div>
             <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
               {issues ? (
                 issues.length > 0 ? (

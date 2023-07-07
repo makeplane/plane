@@ -45,7 +45,7 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, 
       {shortcutKey(type) && (
         <span>
           Use shortcut{" "}
-          <span className="text-brand-muted-1 mx-1 rounded-sm border border-custom-border-80 bg-custom-background-90 px-2 py-1 text-sm font-medium">
+          <span className="text-custom-text-200 mx-1 rounded-sm border border-custom-border-80 bg-custom-background-90 px-2 py-1 text-sm font-medium">
             {shortcutKey(type)}
           </span>{" "}
           to create {type} from anywhere.

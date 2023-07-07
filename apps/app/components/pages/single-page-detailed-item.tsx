@@ -101,7 +101,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   ` ${new Date(page.updated_at).getHours() < 12 ? "am" : "pm"}`
                 } on ${renderShortDate(page.updated_at)}`}
               >
-                <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
+                <p className="text-sm text-custom-text-200">{renderShortTime(page.updated_at)}</p>
               </Tooltip>
               {page.is_favorite ? (
                 <button
@@ -125,7 +125,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                   className="z-10 grid place-items-center"
                 >
-                  <StarIcon className="h-4 w-4 " color="#858E96" />
+                  <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                 </button>
               )}
               {page.created_by === user?.id && (
@@ -146,9 +146,9 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                     }}
                   >
                     {page.access ? (
-                      <LockClosedIcon className="h-4 w-4" color="#858e96" />
+                      <LockClosedIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
                     ) : (
-                      <LockOpenIcon className="h-4 w-4" color="#858e96" />
+                      <LockOpenIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
                     )}
                   </button>
                 </Tooltip>

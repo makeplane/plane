@@ -168,7 +168,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         : cycleStatus === "completed"
                         ? "#3F76FF"
                         : cycleStatus === "draft"
-                        ? "#858E96"
+                        ? "rgb(var(--color-text-200))"
                         : ""
                     }`}
                   />
@@ -258,7 +258,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         alt={cycle.owned_by.first_name}
                       />
                     ) : (
-                      <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 capitalize  text-white">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 capitalize text-white">
                         {cycle.owned_by.first_name.charAt(0)}
                       </span>
                     )}
@@ -336,7 +336,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="#858E96" />
+                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                   <div className="flex items-center">

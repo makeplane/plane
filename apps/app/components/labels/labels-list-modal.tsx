@@ -104,62 +104,57 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
                     aria-hidden="true"
                   />
                   <Combobox.Input
-                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
                     placeholder="Search..."
                     onChange={(e) => setQuery(e.target.value)}
                   />
                 </div>
 
-                <Combobox.Options
-                  static
-                  className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
-                >
+                <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
                   {filteredLabels.length > 0 && (
-                    <>
-                      <li className="p-2">
-                        {query === "" && (
-                          <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
-                            Labels
-                          </h2>
-                        )}
-                        <ul className="text-sm text-gray-700">
-                          {filteredLabels.map((label) => {
-                            const children = issueLabels?.filter((l) => l.parent === label.id);
+                    <li className="p-2">
+                      {query === "" && (
+                        <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
+                          Labels
+                        </h2>
+                      )}
+                      <ul className="text-sm text-gray-700">
+                        {filteredLabels.map((label) => {
+                          const children = issueLabels?.filter((l) => l.parent === label.id);
 
-                            if (
-                              (label.parent === "" || label.parent === null) && // issue does not have any other parent
-                              label.id !== parent?.id && // issue is not itself
-                              children?.length === 0 // issue doesn't have any othe children
-                            )
-                              return (
-                                <Combobox.Option
-                                  key={label.id}
-                                  value={{
-                                    name: label.name,
+                          if (
+                            (label.parent === "" || label.parent === null) && // issue does not have any other parent
+                            label.id !== parent?.id && // issue is not itself
+                            children?.length === 0 // issue doesn't have any othe children
+                          )
+                            return (
+                              <Combobox.Option
+                                key={label.id}
+                                value={{
+                                  name: label.name,
+                                }}
+                                className={({ active }) =>
+                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
+                                  }`
+                                }
+                                onClick={() => {
+                                  addChildLabel(label);
+                                  handleClose();
+                                }}
+                              >
+                                <span
+                                  className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                  style={{
+                                    backgroundColor: label.color !== "" ? label.color : "#000000",
                                   }}
-                                  className={({ active }) =>
-                                    `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                      active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                    }`
-                                  }
-                                  onClick={() => {
-                                    addChildLabel(label);
-                                    handleClose();
-                                  }}
-                                >
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: label.color !== "" ? label.color : "#000000",
-                                    }}
-                                  />
-                                  {label.name}
-                                </Combobox.Option>
-                              );
-                          })}
-                        </ul>
-                      </li>
-                    </>
+                                />
+                                {label.name}
+                              </Combobox.Option>
+                            );
+                        })}
+                      </ul>
+                    </li>
                   )}
                 </Combobox.Options>
 

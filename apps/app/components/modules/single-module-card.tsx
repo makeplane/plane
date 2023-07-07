@@ -155,7 +155,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
                   </button>
                 ) : (
                   <button type="button" onClick={handleAddToFavorites}>
-                    <StarIcon className="h-4 w-4 " color="#858E96" />
+                    <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                   </button>
                 )}
 

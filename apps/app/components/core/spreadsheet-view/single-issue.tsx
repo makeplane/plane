@@ -201,7 +201,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                     >
                       <button
                         type="button"
-                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleEditIssue(issue);
                           setIsOpen(false);
@@ -215,7 +215,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
                       <button
                         type="button"
-                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleDeleteIssue(issue);
                           setIsOpen(false);
@@ -229,7 +229,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
                       <button
                         type="button"
-                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleCopyText();
                           setIsOpen(false);

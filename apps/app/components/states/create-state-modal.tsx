@@ -36,7 +36,7 @@ type Props = {
 const defaultValues: Partial<IState> = {
   name: "",
   description: "",
-  color: "#858e96",
+  color: "rgb(var(--color-text-200))",
   group: "backlog",
 };
 

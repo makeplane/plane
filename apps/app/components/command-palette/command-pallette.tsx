@@ -456,7 +456,7 @@ export const CommandPalette: React.FC = () => {
                       aria-hidden="true"
                     />
                     <Command.Input
-                      className="w-full border-0 border-b border-custom-border-80 bg-transparent p-4 pl-11 text-custom-text-100 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                      className="w-full border-0 border-b border-custom-border-80 bg-transparent p-4 pl-11 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
                       placeholder={placeholder}
                       value={searchTerm}
                       onValueChange={(e) => {

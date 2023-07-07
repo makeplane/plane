@@ -31,7 +31,7 @@ type Props = {
 
 const defaultValues: Partial<IState> = {
   name: "",
-  color: "#858E96",
+  color: "rgb(var(--color-text-200))",
 };
 
 export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {

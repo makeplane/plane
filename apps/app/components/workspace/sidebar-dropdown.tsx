@@ -95,7 +95,7 @@ export const WorkspaceSidebarDropdown = () => {
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
-              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white dark:bg-custom-sidebar-background-80 dark:text-gray-800">
+              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white">
                 {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                   <img
                     src={activeWorkspace.logo}

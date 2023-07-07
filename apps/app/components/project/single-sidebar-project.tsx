@@ -191,7 +191,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                           className={`h-5 w-5 flex-shrink-0 text-custom-sidebar-text-200 ${
                             !sidebarCollapse ? "mr-3" : ""
                           }`}
-                          color="#858e96"
+                          color="rgb(var(--color-text-200))"
                           aria-hidden="true"
                         />
                       </div>

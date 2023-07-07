@@ -159,7 +159,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
           <a
             className={`${className} ${
               active ? "bg-custom-background-80" : ""
-            } hover:text-brand-muted-1 inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
+            } hover:text-custom-text-200 inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
             onClick={close}
           >
             {children}
@@ -170,7 +170,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
           type="button"
           className={`${className} ${
             active ? "bg-custom-background-80" : ""
-          } hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
+          } hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
           onClick={onClick}
         >
           {children}

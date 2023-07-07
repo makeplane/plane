@@ -173,7 +173,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 rounded-xl border border-custom-border-80 bg-custom-background-100 shadow-2xl transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-80 bg-custom-background-100 shadow-2xl transition-all">
               <form>
                 <Combobox
                   onChange={(val: string) => {
@@ -193,7 +193,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                     />
                     <input
                       type="text"
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
                       placeholder="Search..."
                       onChange={(event) => setQuery(event.target.value)}
                     />

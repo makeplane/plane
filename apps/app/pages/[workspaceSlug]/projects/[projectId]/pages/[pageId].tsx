@@ -320,7 +320,7 @@ const SinglePage: NextPage = () => {
                     onBlur={handleSubmit(updatePage)}
                     onChange={(e) => setValue("name", e.target.value)}
                     required={true}
-                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
+                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0"
                     role="textbox"
                     noPadding
                   />

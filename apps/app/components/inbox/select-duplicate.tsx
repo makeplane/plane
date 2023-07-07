@@ -115,7 +115,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                       />
                       <input
                         type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
                         placeholder="Search..."
                         onChange={(e) => setQuery(e.target.value)}
                       />
@@ -160,7 +160,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                                     }
                                     -{issue.sequence_id}
                                   </span>
-                                  <span className="text-brand-muted-1">{issue.name}</span>
+                                  <span className="text-custom-text-200">{issue.name}</span>
                                 </div>
                               </Combobox.Option>
                             ))}

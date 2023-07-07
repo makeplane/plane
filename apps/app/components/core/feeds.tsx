@@ -95,15 +95,15 @@ const activityDetails: {
   },
   estimate: {
     message: "updated the estimate",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-gray-500" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-custom-text-200" aria-hidden="true" />,
   },
   link: {
     message: "updated the link",
-    icon: <LinkIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <LinkIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
   },
   attachment: {
     message: "updated the attachment",
-    icon: <PaperClipIcon className="h-3 w-3 text-gray-500 " aria-hidden="true" />,
+    icon: <PaperClipIcon className="h-3 w-3 text-custom-text-200 " aria-hidden="true" />,
   },
 };
 

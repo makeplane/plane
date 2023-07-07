@@ -13,7 +13,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
   <div className="space-y-3 rounded-[10px] border border-custom-border-80 p-3">
     <h5 className="text-xs text-red-500">DEMAND</h5>
     <div>
-      <h4 className="text-brand-bas text-base font-medium">Total open tasks</h4>
+      <h4 className="text-custom-text-100 text-base font-medium">Total open tasks</h4>
       <h3 className="mt-1 text-xl font-semibold">{defaultAnalytics.open_issues}</h3>
     </div>
     <div className="space-y-6">

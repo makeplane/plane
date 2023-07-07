@@ -133,7 +133,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="#858e96" />
+                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                   <CustomMenu width="auto" verticalEllipsis>

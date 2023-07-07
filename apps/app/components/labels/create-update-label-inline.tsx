@@ -32,7 +32,7 @@ type Props = {
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
-  color: "#858E96",
+  color: "rgb(var(--color-text-200))",
 };
 
 type Ref = HTMLDivElement;

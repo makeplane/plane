@@ -154,7 +154,7 @@ export const SingleList: React.FC<Props> = ({
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
-                <span className="text-brand-2 min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs">
+                <span className="text-custom-text-200 min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs">
                   {groupedByIssues[groupTitle as keyof IIssue].length}
                 </span>
               </div>

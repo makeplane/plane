@@ -97,7 +97,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         <span>
                           <button type="button" onClick={() => setIsOpen(false)}>
                             <XMarkIcon
-                              className="h-6 w-6 text-gray-400 hover:text-custom-text-200"
+                              className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100"
                               aria-hidden="true"
                             />
                           </button>

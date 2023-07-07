@@ -52,7 +52,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
             >
               <span className="block truncate">{selected?.label ?? label}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <ChevronUpDownIcon className="h-5 w-5 text-custom-text-200" aria-hidden="true" />
               </span>
             </Listbox.Button>
             <Transition
@@ -113,7 +113,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                                       {child.label}
                                     </span>
                                     {selected ? (
-                                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-600">
+                                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-custom-text-200">
                                         <CheckIcon className="h-5 w-5" aria-hidden="true" />
                                       </span>
                                     ) : null}
@@ -137,7 +137,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                           {option.label}
                         </span>
                         {selected ? (
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-600">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-custom-text-200">
                             <CheckIcon className="h-5 w-5" aria-hidden="true" />
                           </span>
                         ) : null}

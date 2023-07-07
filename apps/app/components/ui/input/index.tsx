@@ -21,7 +21,7 @@ export const Input: React.FC<Props> = ({
 }) => (
   <>
     {label && (
-      <label htmlFor={id} className="text-brand-muted-1 mb-2">
+      <label htmlFor={id} className="text-custom-text-200 mb-2">
         {label}
       </label>
     )}
