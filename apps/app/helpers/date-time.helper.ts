@@ -18,6 +18,13 @@ export const renderShortNumericDateFormat = (date: string | Date) =>
     month: "short",
   });
 
+export const renderLongDetailDateFormat = (date: string | Date) =>
+  new Date(date).toLocaleDateString("en-UK", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
 export const findHowManyDaysLeft = (date: string | Date) => {
   const today = new Date();
   const eventDate = new Date(date);
