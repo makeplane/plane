@@ -15,6 +15,10 @@ from plane.db.models import Issue, Project, IssueActivity, State
 
 
 @shared_task
+def archive_and_close_old_issues():
+    archive_old_issues()
+    close_old_issues()
+
 def archive_old_issues():
     try:
         # Get all the projects whose archive_in is greater than 0
@@ -29,7 +33,7 @@ def archive_old_issues():
                 Q(
                     project=project_id,
                     archived_at__isnull=True,
-                    updated_at__lte=(timezone.now() - timedelta(month=archive_in)),
+                    updated_at__lte=(timezone.now() - timedelta(days=archive_in * 30)),
                     state__group__in=["completed", "cancelled"],
                 ),
                 Q(issue_cycle__isnull=True)
@@ -75,22 +79,21 @@ def archive_old_issues():
         capture_exception(e)
         return
 
-@shared_task
 def close_old_issues():
     try:
-        # Get all the projects whose archive_in is greater than 0
+        # Get all the projects whose close_in is greater than 0
         projects = Project.objects.filter(close_in__gt=0)
 
         for project in projects:
             project_id = project.id
             close_in = project.close_in
 
-            # Get all the issues whose updated_at in less that the archive_in month
+            # Get all the issues whose updated_at in less that the close_in month
             issues = Issue.objects.filter(
                 Q(
                     project=project_id,
                     archived_at__isnull=True,
-                    updated_at__lte=(timezone.now() - timedelta(month=close_in)),
+                    updated_at__lte=(timezone.now() - timedelta(days=close_in * 30)),
                     state__group__in=["backlog", "unstarted", "started"],
                 ),
                 Q(issue_cycle__isnull=True)

@@ -214,4 +214,4 @@ SIMPLE_JWT = {
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_IMPORTS = ("plane.bgtasks.issue_archival_task",)
+CELERY_IMPORTS = ("plane.bgtasks.issue_automation_task",)
