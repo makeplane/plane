@@ -24,7 +24,7 @@ from plane.db.models import (
     Notification,
     IssueAssignee,
 )
-from plane.api.serializers import IssueActivitySerializer, IssueFlatSerializer
+from plane.api.serializers import IssueActivitySerializer
 
 
 # Track Chnages in name
