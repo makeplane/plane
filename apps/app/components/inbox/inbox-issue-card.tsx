@@ -14,7 +14,7 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue } from "types";
 // constants
@@ -72,12 +72,12 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               </div>
             </Tooltip>
             <Tooltip
-              tooltipHeading="Created at"
-              tooltipContent={`${renderShortNumericDateFormat(issue.created_at ?? "")}`}
+              tooltipHeading="Created on"
+              tooltipContent={`${renderShortDateWithYearFormat(issue.created_at ?? "")}`}
             >
               <div className="flex items-center gap-1 rounded border border-brand-base shadow-sm text-xs px-2 py-[0.19rem] text-brand-secondary">
                 <CalendarDaysIcon className="h-3.5 w-3.5" />
-                <span>{renderShortNumericDateFormat(issue.created_at ?? "")}</span>
+                <span>{renderShortDateWithYearFormat(issue.created_at ?? "")}</span>
               </div>
             </Tooltip>
           </div>

@@ -22,8 +22,9 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IFavoriteProject, IProject } from "types";
 // fetch-keys
@@ -184,7 +185,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   <h3 className="text-1.5xl font-medium text-brand-base">{project.name}</h3>
                   {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {String.fromCodePoint(parseInt(project.emoji))}
+                      {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
                     <span
@@ -202,13 +203,13 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
             </Link>
             <div className="flex h-full items-end justify-between">
               <Tooltip
-                tooltipContent={`Created at ${renderShortNumericDateFormat(project.created_at)}`}
+                tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
                 position="bottom"
                 theme="dark"
               >
                 <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
-                  {renderShortNumericDateFormat(project.created_at)}
+                  {renderShortDateWithYearFormat(project.created_at)}
                 </div>
               </Tooltip>
               {hasJoined ? (

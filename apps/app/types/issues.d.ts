@@ -188,6 +188,8 @@ export type Properties = {
   link: boolean;
   attachment_count: boolean;
   estimate: boolean;
+  created_on: boolean;
+  updated_on: boolean;
 };
 
 export interface IIssueLabels {
@@ -239,6 +241,7 @@ export interface IIssueLite {
 export interface IIssueFilterOptions {
   type: "active" | "backlog" | null;
   assignees: string[] | null;
+  target_date: string[] | null;
   state: string[] | null;
   labels: string[] | null;
   issue__assignees__id: string[] | null;

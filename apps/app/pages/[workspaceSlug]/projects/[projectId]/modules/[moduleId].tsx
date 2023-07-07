@@ -164,7 +164,7 @@ const SingleModule: React.FC = () => {
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
 
         <div
-          className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} ${
+          className={`h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
             analyticsModal ? "mr-[50%]" : ""
           } duration-300`}
         >

@@ -23,6 +23,7 @@ import {
 import { ContrastIcon, LayerDiagonalIcon } from "components/icons";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import {
   IAnalyticsParams,
@@ -221,7 +222,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                         <div className="text-sm flex items-center gap-1">
                           {project.emoji ? (
                             <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                              {String.fromCodePoint(parseInt(project.emoji))}
+                              {renderEmoji(project.emoji)}
                             </span>
                           ) : project.icon_prop ? (
                             <div className="h-6 w-6 grid place-items-center flex-shrink-0">
@@ -336,7 +337,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                   <div className="flex items-center gap-1">
                     {projectDetails?.emoji ? (
                       <div className="grid h-6 w-6 flex-shrink-0 place-items-center">
-                        {String.fromCodePoint(parseInt(projectDetails.emoji))}
+                        {renderEmoji(projectDetails.emoji)}
                       </div>
                     ) : projectDetails?.icon_prop ? (
                       <div className="h-6 w-6 grid place-items-center flex-shrink-0">

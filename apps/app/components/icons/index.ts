@@ -4,6 +4,8 @@ export * from "./backlog-state-icon";
 export * from "./blocked-icon";
 export * from "./blocker-icon";
 export * from "./bolt-icon";
+export * from "./calendar-before-icon";
+export * from "./calendar-after-icon";
 export * from "./calendar-month-icon";
 export * from "./cancel-icon";
 export * from "./cancelled-state-icon";

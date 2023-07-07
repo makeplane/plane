@@ -57,18 +57,6 @@ export const BoardHeader: React.FC<Props> = ({
       : null
   );
 
-  let bgColor = "#000000";
-  if (selectedGroup === "state") bgColor = currentState?.color ?? "#000000";
-
-  if (selectedGroup === "priority")
-    groupTitle === "high"
-      ? (bgColor = "#dc2626")
-      : groupTitle === "medium"
-      ? (bgColor = "#f97316")
-      : groupTitle === "low"
-      ? (bgColor = "#22c55e")
-      : (bgColor = "#ff0000");
-
   const getGroupTitle = () => {
     let title = addSpaceIfCamelCase(groupTitle);
 
@@ -96,7 +84,8 @@ export const BoardHeader: React.FC<Props> = ({
 
     switch (selectedGroup) {
       case "state":
-        icon = currentState && getStateGroupIcon(currentState.group, "16", "16", bgColor);
+        icon =
+          currentState && getStateGroupIcon(currentState.group, "16", "16", currentState.color);
         break;
       case "priority":
         icon = getPriorityIcon(groupTitle, "text-lg");
@@ -129,13 +118,13 @@ export const BoardHeader: React.FC<Props> = ({
     >
       <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
         <div
-          className={`flex cursor-pointer items-center gap-x-3 ${
+          className={`flex cursor-pointer items-center gap-x-3 max-w-[316px] ${
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
           }`}
         >
           <span className="flex items-center">{getGroupIcon()}</span>
           <h2
-            className="text-lg font-semibold capitalize"
+            className="text-lg font-semibold capitalize truncate"
             style={{
               writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
             }}
