@@ -89,11 +89,11 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-semibold text-brand-base">Customize your theme</h3>
+        <h3 className="text-lg font-semibold text-custom-text-100">Customize your theme</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">
+              <h3 className="text-left text-sm font-medium text-custom-text-200">
                 Background color
               </h3>
               <ColorPickerInput
@@ -106,7 +106,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">Text color</h3>
+              <h3 className="text-left text-sm font-medium text-custom-text-200">Text color</h3>
               <ColorPickerInput
                 name="text"
                 error={errors.text}
@@ -117,7 +117,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">
+              <h3 className="text-left text-sm font-medium text-custom-text-200">
                 Primary(Theme) color
               </h3>
               <ColorPickerInput
@@ -130,7 +130,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">
+              <h3 className="text-left text-sm font-medium text-custom-text-200">
                 Sidebar background color
               </h3>
               <ColorPickerInput
@@ -143,7 +143,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-brand-secondary">
+              <h3 className="text-left text-sm font-medium text-custom-text-200">
                 Sidebar text color
               </h3>
               <ColorPickerInput

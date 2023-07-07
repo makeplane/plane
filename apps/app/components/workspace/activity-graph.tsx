@@ -117,8 +117,8 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
                       date === "" ? "pointer-events-none opacity-0" : ""
                     } h-4 w-4 rounded ${
                       isActive
-                        ? `bg-brand-accent ${activitiesIntensity(isActive.activity_count)}`
-                        : "bg-brand-surface-2"
+                        ? `bg-custom-primary ${activitiesIntensity(isActive.activity_count)}`
+                        : "bg-custom-background-80"
                     }`}
                   />
                 </Tooltip>
@@ -127,11 +127,11 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
           </div>
           <div className="mt-8 flex items-center gap-2 text-xs">
             <span>Less</span>
-            <span className="h-4 w-4 rounded bg-brand-surface-2" />
-            <span className="h-4 w-4 rounded bg-brand-accent opacity-20" />
-            <span className="h-4 w-4 rounded bg-brand-accent opacity-40" />
-            <span className="h-4 w-4 rounded bg-brand-accent opacity-80" />
-            <span className="h-4 w-4 rounded bg-brand-accent" />
+            <span className="h-4 w-4 rounded bg-custom-background-80" />
+            <span className="h-4 w-4 rounded bg-custom-primary opacity-20" />
+            <span className="h-4 w-4 rounded bg-custom-primary opacity-40" />
+            <span className="h-4 w-4 rounded bg-custom-primary opacity-80" />
+            <span className="h-4 w-4 rounded bg-custom-primary" />
             <span>More</span>
           </div>
         </div>

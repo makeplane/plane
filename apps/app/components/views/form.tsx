@@ -67,7 +67,7 @@ export const ViewForm: React.FC<Props> = ({
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-brand-base">
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
           {status ? "Update" : "Create"} View
         </h3>
         <div className="space-y-3">

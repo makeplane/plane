@@ -213,7 +213,7 @@ export const SelectFilters: React.FC<Props> = ({
                 element: (
                   <button
                     onClick={() => setIsDueDateFilterModalOpen(true)}
-                    className="w-full rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2"
+                    className="w-full rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                   >
                     Custom
                   </button>

@@ -43,7 +43,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
         <p>State</p>
       </div>
@@ -51,7 +51,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
         <CustomSelect
           label={
             selectedState ? (
-              <div className="flex items-center gap-2 text-left text-brand-base">
+              <div className="flex items-center gap-2 text-left text-custom-text-100">
                 {getStateGroupIcon(
                   selectedState?.group ?? "backlog",
                   "16",
@@ -61,7 +61,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
                 {addSpaceIfCamelCase(selectedState?.name ?? "")}
               </div>
             ) : inboxIssueId ? (
-              <div className="flex items-center gap-2 text-left text-brand-base">
+              <div className="flex items-center gap-2 text-left text-custom-text-100">
                 {getStateGroupIcon("backlog", "16", "16", "#ff7700")}
                 Triage
               </div>
