@@ -9,7 +9,7 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import Notification
+from plane.db.models import Notification, IssueAssignee, IssueSubscriber, Issue
 from plane.api.serializers import NotificationSerializer
 
 
@@ -30,11 +30,36 @@ class NotificationViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            order_by = request.GET.get("ordeer_by", "-created_at")
+            order_by = request.GET.get("order_by", "-created_at")
             snoozed = request.GET.get("snoozed", "false")
+
+            # Filter type
+            type = request.GET.get("type", "all")
+
             notifications = Notification.objects.filter(
-                workspace__slug=slug, receiver=request.user
+                workspace__slug=slug, receiver_id=request.user.id
             ).order_by(order_by)
+
+            # Subscribed issues
+            if type == "watching":
+                issue_ids = IssueSubscriber.objects.filter(
+                    workspace__slug=slug, subsriber_id=request.user.id
+                ).values_list("issue_id", flat=True)
+                notifications = notifications.filter(entity_id__in=issue_ids)
+
+            # Assigned Issues
+            if type == "assigned":
+                issue_ids = IssueAssignee.objects.filter(
+                    workspace__slug=slug, assignee_id=request.user.id
+                ).values_list("issue_id", flat=True)
+                notifications = notifications.filter(entity_id__in=issue_ids)
+
+            # Created issues
+            if type == "created":
+                issue_ids = Issue.objects.filter(
+                    workspace__slug=slug, created_by=request.user
+                ).values_list("pk", flat=True)
+                notifications = notifications.filter(entity_id__in=issue_ids)
 
             if snoozed == "false":
                 notifications = notifications.filter(

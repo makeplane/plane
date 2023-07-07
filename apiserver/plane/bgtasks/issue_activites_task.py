@@ -1034,6 +1034,9 @@ def issue_activity(
 
         issue_subscribers = issue_subscribers + issue_assignees
 
+        if issue.created_by_id:
+            issue_subscribers = issue_subscribers + [issue.created_by_id]
+
         issue = Issue.objects.get(project=project, pk=issue_id)
         for subscriber in issue_subscribers:
             for issue_activity in issue_activities_created:
