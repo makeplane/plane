@@ -82,7 +82,7 @@ def archive_old_issues():
 def close_old_issues():
     try:
         # Get all the projects whose close_in is greater than 0
-        projects = Project.objects.filter(close_in__gt=0)
+        projects = Project.objects.filter(close_in__gt=0).select_related("default_state")
 
         for project in projects:
             project_id = project.id
@@ -110,11 +110,15 @@ def close_old_issues():
 
             # Check if Issues
             if issues:
-                cancelled_state = State.objects.filter(group="cancelled", project_id=project_id).first()
+                if project.default_state is None:
+                    close_state = project.default_state
+                else:
+                    close_state = State.objects.filter(group="cancelled").first()
+
 
                 issues_to_update = []
                 for issue in issues:
-                    issue.state = cancelled_state
+                    issue.state = close_state
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
