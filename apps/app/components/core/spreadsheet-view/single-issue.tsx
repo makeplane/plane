@@ -275,6 +275,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             position="left"
+            className="max-w-full"
             tooltipPosition={tooltipPosition}
             customButton
             user={user}
