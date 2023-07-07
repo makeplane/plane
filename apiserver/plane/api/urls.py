@@ -843,7 +843,7 @@ urlpatterns = [
         name="project-issue-archive",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/unarchive/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/unarchive/<uuid:pk>/",
         IssueArchiveViewSet.as_view(
             {
                 "post": "unarchive",
