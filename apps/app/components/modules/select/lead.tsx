@@ -59,7 +59,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
           {selectedOption ? (
             <Avatar user={selectedOption} />
           ) : (
-            <UserCircleIcon className="h-4 w-4 text-custom-text-200" />
+            <UserCircleIcon className="h-4 w-4 text-brand-secondary" />
           )}
           {selectedOption ? (
             selectedOption?.first_name && selectedOption.first_name !== "" ? (
@@ -68,7 +68,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
               selectedOption?.email
             )
           ) : (
-            <span className="text-custom-text-200">Lead</span>
+            <span className="text-brand-secondary">Lead</span>
           )}
         </div>
       }

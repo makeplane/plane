@@ -68,7 +68,7 @@ export const ViewStateSelect: React.FC<Props> = ({
       tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
       position={tooltipPosition}
     >
-      <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
+      <div className="flex items-center cursor-pointer gap-2 text-brand-secondary">
         {selectedOption &&
           getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
         {selectedOption?.name ?? "State"}

@@ -2,7 +2,7 @@
 import { Theme } from "@nivo/core";
 
 export const CHARTS_THEME: Theme = {
-  background: "transparent",
+  background: "rgb(var(--color-background-90))",
   textColor: "rgb(var(--color-text-200))",
   axis: {
     domain: {

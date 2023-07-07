@@ -7,18 +7,18 @@ export const BiWeekChartView: FC<any> = () => {
 
   return (
     <>
-      <div className="absolute flex h-full flex-grow divide-x divide-custom-border-80">
+      <div className="absolute flex h-full flex-grow divide-x divide-brand-base">
         {renderView &&
           renderView.length > 0 &&
           renderView.map((_itemRoot: any, _idxRoot: any) => (
             <div key={`title-${_idxRoot}`} className="relative flex flex-col">
-              <div className="relative border-b border-custom-border-80">
+              <div className="relative border-b border-brand-base">
                 <div className="sticky left-0 inline-flex whitespace-nowrap px-2 py-1 text-sm font-medium capitalize">
                   {_itemRoot?.title}
                 </div>
               </div>
 
-              <div className="flex h-full w-full divide-x divide-custom-border-80">
+              <div className="flex h-full w-full divide-x divide-brand-base">
                 {_itemRoot.children &&
                   _itemRoot.children.length > 0 &&
                   _itemRoot.children.map((_item: any, _idx: any) => (
@@ -29,7 +29,7 @@ export const BiWeekChartView: FC<any> = () => {
                     >
                       <div
                         className={`flex-shrink-0 border-b py-1 text-center text-sm capitalize font-medium ${
-                          _item?.today ? `text-red-500 border-red-500` : `border-custom-border-80`
+                          _item?.today ? `text-red-500 border-red-500` : `border-brand-base`
                         }`}
                       >
                         <div>{_item.title}</div>
@@ -37,7 +37,7 @@ export const BiWeekChartView: FC<any> = () => {
                       <div
                         className={`relative h-full w-full flex-1 flex justify-center ${
                           ["sat", "sun"].includes(_item?.dayData?.shortTitle || "")
-                            ? `bg-custom-background-80`
+                            ? `bg-brand-surface-2`
                             : ``
                         }`}
                       >

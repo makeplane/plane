@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="space-y-3 rounded-[10px] border border-custom-border-80 p-3">
+  <div className="space-y-3 rounded-[10px] border border-brand-base p-3">
     <h5 className="text-xs text-red-500">DEMAND</h5>
     <div>
       <h4 className="text-brand-bas text-base font-medium">Total open tasks</h4>
@@ -31,13 +31,13 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
                   }}
                 />
                 <h6 className="capitalize">{group.state_group}</h6>
-                <span className="ml-1 rounded-3xl bg-custom-background-80 px-2 py-0.5 text-[0.65rem] text-custom-text-200">
+                <span className="ml-1 rounded-3xl bg-brand-surface-2 px-2 py-0.5 text-[0.65rem] text-brand-secondary">
                   {group.state_count}
                 </span>
               </div>
-              <p className="text-custom-text-200">{percentage}%</p>
+              <p className="text-brand-secondary">{percentage}%</p>
             </div>
-            <div className="bar relative h-1 w-full rounded bg-custom-background-80">
+            <div className="bar relative h-1 w-full rounded bg-brand-surface-2">
               <div
                 className="absolute top-0 left-0 h-1 rounded duration-300"
                 style={{
@@ -50,8 +50,8 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
         );
       })}
     </div>
-    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-custom-border-80 bg-custom-background-80 p-2 text-xs">
-      <p className="flex items-center gap-1 text-custom-text-200">
+    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+      <p className="flex items-center gap-1 text-brand-secondary">
         <PlayIcon className="h-4 w-4 -rotate-90" aria-hidden="true" />
         <span>Estimate Demand:</span>
       </p>

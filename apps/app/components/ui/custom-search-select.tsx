@@ -79,8 +79,8 @@ export const CustomSearchSelect = ({
             <Combobox.Button as="div">{customButton}</Combobox.Button>
           ) : (
             <Combobox.Button
-              className={`flex w-full border border-custom-border-80 ${
-                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
+              className={`flex w-full border border-brand-base ${
+                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
               } ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
               } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-brand-base ${
@@ -108,18 +108,18 @@ export const CustomSearchSelect = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Combobox.Options
-              className={`${optionsClassName} absolute min-w-[10rem] border border-custom-border-80 p-2 ${
+              className={`${optionsClassName} absolute min-w-[10rem] border border-brand-base p-2 ${
                 position === "right" ? "right-0" : "left-0"
               } ${
                 verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"
-              } z-10 origin-top-right rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
+              } z-10 origin-top-right rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none ${
                 dropdownWidth ? dropdownWidth : ``
               } `}
             >
-              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-80 bg-custom-background-90 px-2">
-                <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
+              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-brand-base bg-brand-surface-1 px-2">
+                <MagnifyingGlassIcon className="h-3 w-3 text-brand-secondary" />
                 <Combobox.Input
-                  className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
+                  className="w-full bg-transparent py-1 px-2 text-xs text-brand-secondary focus:outline-none"
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Type to search..."
                   displayValue={(assigned: any) => assigned?.name}
@@ -145,9 +145,9 @@ export const CustomSearchSelect = ({
                         key={option.value}
                         value={option.value}
                         className={({ active, selected }) =>
-                          `${active || selected ? "bg-custom-background-80" : ""} ${
+                          `${active || selected ? "bg-brand-surface-2" : ""} ${
                             selected ? "font-medium" : ""
-                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-brand-secondary`
                         }
                       >
                         {({ active, selected }) => (
@@ -175,11 +175,11 @@ export const CustomSearchSelect = ({
                   ) : (
                     <span className="flex items-center gap-2 p-1">
                       {noResultIcon && noResultIcon}
-                      <p className="text-left text-custom-text-200 ">No matching results</p>
+                      <p className="text-left text-brand-secondary ">No matching results</p>
                     </span>
                   )
                 ) : (
-                  <p className="text-center text-custom-text-200">Loading...</p>
+                  <p className="text-center text-brand-secondary">Loading...</p>
                 )}
               </div>
               {footerOption}

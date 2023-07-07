@@ -74,7 +74,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
               ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
               : issue.priority === "low"
               ? "border-green-500/20 bg-green-500/20 text-green-500"
-              : "border-custom-border-80"
+              : "border-brand-base"
           } items-center`}
         >
           <Tooltip
@@ -82,7 +82,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             tooltipContent={issue.priority ?? "None"}
             position={tooltipPosition}
           >
-            <span className="flex gap-1 items-center text-custom-text-200 text-xs">
+            <span className="flex gap-1 items-center text-brand-secondary text-xs">
               {getPriorityIcon(
                 issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
                 "text-sm"

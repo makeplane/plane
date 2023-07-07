@@ -55,15 +55,15 @@ export const WorkspaceSidebarMenu = () => {
                   ? router.asPath.includes(link.href)
                   : router.asPath === link.href
               )
-                ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
-                : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90"
+                ? "bg-brand-surface-2 text-brand-base"
+                : "text-brand-secondary hover:bg-brand-surface-2 focus:bg-brand-surface-2"
             } group flex w-full items-center gap-3 rounded-md p-2 text-sm font-medium outline-none ${
               sidebarCollapse ? "justify-center" : ""
             }`}
           >
             <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
               <link.icon
-                className="text-custom-sidebar-text-200"
+                className="text-brand-secondary"
                 aria-hidden="true"
                 height="20"
                 width="20"

@@ -76,12 +76,12 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
               <Popover.Button
                 type="button"
                 className={`group inline-flex items-center outline-none ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
+                  open ? "text-brand-base" : "text-brand-secondary"
                 }`}
               >
                 {watch(name) && watch(name) !== "" ? (
                   <span
-                    className="h-4 w-4 rounded border border-custom-border-80"
+                    className="h-4 w-4 rounded border border-brand-base"
                     style={{
                       backgroundColor: `${watch(name)}`,
                     }}
@@ -90,7 +90,7 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
                   <ColorPickerIcon
                     height={14}
                     width={14}
-                    className="fill-current text-custom-text-100"
+                    className="fill-current text-brand-base"
                   />
                 )}
               </Popover.Button>

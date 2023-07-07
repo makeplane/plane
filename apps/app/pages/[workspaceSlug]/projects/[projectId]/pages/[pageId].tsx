@@ -306,7 +306,7 @@ const SinglePage: NextPage = () => {
                 <div className="flex w-full items-center gap-2">
                   <button
                     type="button"
-                    className="flex items-center gap-2 text-sm text-custom-text-200"
+                    className="flex items-center gap-2 text-sm text-brand-secondary"
                     onClick={() => router.back()}
                   >
                     <ArrowLeftIcon className="h-4 w-4" />
@@ -337,7 +337,7 @@ const SinglePage: NextPage = () => {
                         return (
                           <div
                             key={label.id}
-                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-80 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                             onClick={() => {
                               const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
                               partialUpdatePage({ labels_list: updatedLabels });
@@ -366,7 +366,7 @@ const SinglePage: NextPage = () => {
                     customButton={
                       <button
                         type="button"
-                        className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs"
+                        className="flex items-center gap-1 rounded-sm bg-brand-surface-2 p-1.5 text-xs"
                       >
                         <PlusIcon className="h-3.5 w-3.5" />
                         {pageDetails.labels.length <= 0 && <span>Add Label</span>}
@@ -376,12 +376,12 @@ const SinglePage: NextPage = () => {
                     footerOption={
                       <button
                         type="button"
-                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
+                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
                         onClick={() => {
                           setLabelModal(true);
                         }}
                       >
-                        <span className="flex items-center justify-start gap-1 text-custom-text-200">
+                        <span className="flex items-center justify-start gap-1 text-brand-secondary">
                           <PlusIcon className="h-4 w-4" aria-hidden="true" />
                           <span>Create New Label</span>
                         </span>
@@ -395,7 +395,7 @@ const SinglePage: NextPage = () => {
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="flex items-center gap-6 text-custom-text-200">
+                <div className="flex items-center gap-6 text-brand-secondary">
                   <Tooltip
                     tooltipContent={`Last updated at ${renderShortTime(
                       pageDetails.updated_at
@@ -413,7 +413,7 @@ const SinglePage: NextPage = () => {
                           <Popover.Button
                             type="button"
                             className={`group inline-flex items-center outline-none ${
-                              open ? "text-custom-text-100" : "text-custom-text-200"
+                              open ? "text-brand-base" : "text-brand-secondary"
                             }`}
                           >
                             {watch("color") && watch("color") !== "" ? (
@@ -443,12 +443,12 @@ const SinglePage: NextPage = () => {
                                 styles={{
                                   default: {
                                     card: {
-                                      backgroundColor: `rgba(var(--color-background-80))`,
+                                      backgroundColor: `rgba(var(--color-bg-surface-2))`,
                                     },
                                     triangle: {
                                       position: "absolute",
                                       borderColor:
-                                        "transparent transparent rgba(var(--color-background-80)) transparent",
+                                        "transparent transparent rgba(var(--color-bg-surface-2)) transparent",
                                     },
                                     input: {
                                       border: "none",
@@ -457,13 +457,13 @@ const SinglePage: NextPage = () => {
                                       paddingLeft: "0.25rem",
                                       color: `rgba(var(--color-text-secondary))`,
                                       boxShadow: "none",
-                                      backgroundColor: `rgba(var(--color-background-90))`,
-                                      borderLeft: `1px solid rgba(var(--color-background-80))`,
+                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
+                                      borderLeft: `1px solid rgba(var(--color-bg-surface-2))`,
                                     },
                                     hash: {
                                       color: `rgba(var(--color-text-secondary))`,
                                       boxShadow: "none",
-                                      backgroundColor: `rgba(var(--color-background-90))`,
+                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
                                     },
                                   },
                                 }}

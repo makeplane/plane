@@ -171,10 +171,10 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
       {cycles ? (
         cycles.length > 0 ? (
           viewType === "list" ? (
-            <div className="divide-y divide-custom-border-80">
+            <div className="divide-y divide-brand-base">
               {cycles.map((cycle) => (
-                <div className="hover:bg-custom-background-80">
-                  <div className="flex flex-col border-custom-border-80">
+                <div className="hover:bg-brand-surface-2">
+                  <div className="flex flex-col border-brand-base">
                     <SingleCycleList
                       key={cycle.id}
                       cycle={cycle}

@@ -39,15 +39,13 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
         if (col.isActive) {
           return (
             <div
-              className={`bg-custom-background-90 w-full ${
-                col.propertyName === "title"
-                  ? "sticky left-0 z-20 bg-custom-background-90 pl-24"
-                  : ""
+              className={`bg-brand-surface-1 w-full ${
+                col.propertyName === "title" ? "sticky left-0 z-20 bg-brand-surface-1 pl-24" : ""
               }`}
             >
               {col.propertyName === "title" ? (
                 <div
-                  className={`flex items-center justify-start gap-1.5 cursor-default text-sm text-custom-text-200 text-current w-full py-2.5 px-2`}
+                  className={`flex items-center justify-start gap-1.5 cursor-default text-sm text-brand-secondary text-current w-full py-2.5 px-2`}
                 >
                   {col.colName}
                 </div>
@@ -56,22 +54,22 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                   className="!w-full"
                   customButton={
                     <div
-                      className={`relative group flex items-center justify-start gap-1.5 cursor-pointer text-sm text-custom-text-200 text-current hover:text-custom-text-100 w-full py-3 px-2 ${
-                        activeSortingProperty === col.propertyName ? "bg-custom-background-80" : ""
+                      className={`relative group flex items-center justify-start gap-1.5 cursor-pointer text-sm text-brand-secondary text-current hover:text-brand-base w-full py-3 px-2 ${
+                        activeSortingProperty === col.propertyName ? "bg-brand-surface-2" : ""
                       }`}
                     >
                       {activeSortingProperty === col.propertyName && (
                         <div className="absolute top-1 right-1.5">
                           <Icon
                             iconName="filter_list"
-                            className="flex items-center justify-center h-3.5 w-3.5 rounded-full bg-custom-primary text-xs text-white"
+                            className="flex items-center justify-center h-3.5 w-3.5 rounded-full bg-brand-accent text-xs text-white"
                           />
                         </div>
                       )}
 
                       {col.icon ? (
                         <col.icon
-                          className={`text-custom-text-200 group-hover:text-custom-text-100 ${
+                          className={`text-brand-secondary group-hover:text-brand-base ${
                             col.propertyName === "estimate" ? "-rotate-90" : ""
                           }`}
                           aria-hidden="true"
@@ -79,7 +77,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                           width="14"
                         />
                       ) : col.propertyName === "priority" ? (
-                        <span className="text-sm material-symbols-rounded text-custom-text-200">
+                        <span className="text-sm material-symbols-rounded text-brand-secondary">
                           signal_cellular_alt
                         </span>
                       ) : (
@@ -96,7 +94,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                   <CustomMenu.MenuItem
                     className={`${
                       selectedMenuItem === `${col.ascendingOrder}_${col.propertyName}`
-                        ? "bg-custom-background-80"
+                        ? "bg-brand-surface-2"
                         : ""
                     }`}
                     key={col.propertyName}
@@ -107,8 +105,8 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                     <div
                       className={`group flex gap-1.5 px-1 items-center justify-between ${
                         selectedMenuItem === `${col.ascendingOrder}_${col.propertyName}`
-                          ? "text-custom-text-100"
-                          : "text-custom-text-200 hover:text-custom-text-100"
+                          ? "text-brand-base"
+                          : "text-brand-secondary hover:text-brand-base"
                       }`}
                     >
                       <div className="flex gap-2 items-center">
@@ -166,7 +164,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                   <CustomMenu.MenuItem
                     className={`mt-0.5 ${
                       selectedMenuItem === `${col.descendingOrder}_${col.propertyName}`
-                        ? "bg-custom-background-80"
+                        ? "bg-brand-surface-2"
                         : ""
                     }`}
                     key={col.property}
@@ -177,8 +175,8 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                     <div
                       className={`group flex gap-1.5 px-1 items-center justify-between ${
                         selectedMenuItem === `${col.descendingOrder}_${col.propertyName}`
-                          ? "text-custom-text-100"
-                          : "text-custom-text-200 hover:text-custom-text-100"
+                          ? "text-brand-base"
+                          : "text-brand-secondary hover:text-brand-base"
                       }`}
                     >
                       <div className="flex gap-2 items-center">
@@ -249,7 +247,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                       <CustomMenu.MenuItem
                         className={`mt-0.5${
                           selectedMenuItem === `-created_at_${col.propertyName}`
-                            ? "bg-custom-background-80"
+                            ? "bg-brand-surface-2"
                             : ""
                         }`}
                         key={col.property}

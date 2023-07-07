@@ -83,7 +83,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
   };
 
   return (
-    <div className="first:rounded-t-[10px] last:rounded-b-[10px] hover:bg-custom-background-90">
+    <div className="first:rounded-t-[10px] last:rounded-b-[10px] hover:bg-brand-surface-2">
       <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
         <a>
           <div className="relative rounded p-4">
@@ -94,7 +94,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
-                  <p className="rounded-full bg-custom-background-80 py-0.5 px-2 text-xs text-custom-text-200">
+                  <p className="rounded-full bg-brand-surface-2 py-0.5 px-2 text-xs text-brand-secondary">
                     {Object.keys(view.query_data)
                       .map((key: string) =>
                         view.query_data[key as keyof typeof view.query_data] !== null
@@ -109,7 +109,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
                       view.updated_at
                     )} ${renderShortDateWithYearFormat(view.updated_at)}`}
                   >
-                    <p className="text-sm text-custom-text-200">
+                    <p className="text-sm text-brand-secondary">
                       {renderShortTime(view.updated_at)}
                     </p>
                   </Tooltip>
@@ -166,7 +166,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
               </div>
             </div>
             {view?.description && (
-              <p className="px-[27px] text-sm font-normal leading-5 text-custom-text-200">
+              <p className="px-[27px] text-sm font-normal leading-5 text-brand-secondary">
                 {view.description}
               </p>
             )}

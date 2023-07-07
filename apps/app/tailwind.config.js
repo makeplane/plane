@@ -5,7 +5,33 @@ module.exports = {
   content: ["./pages/**/*.tsx", "./components/**/*.tsx", "./layouts/**/*.tsx", "./ui/**/*.tsx"],
   theme: {
     extend: {
+      borderColor: {
+        brand: {
+          base: convertToRGB("--color-background-80"),
+          secondary: convertToRGB("--color-background-90"),
+        },
+      },
+      backgroundColor: {
+        brand: {
+          base: convertToRGB("--color-background-100"),
+          "surface-1": convertToRGB("--color-background-90"),
+          "surface-2": convertToRGB("--color-background-80"),
+          sidebar: convertToRGB("--color-sidebar-background-100"),
+          backdrop: "#131313",
+        },
+      },
+      textColor: {
+        brand: {
+          base: convertToRGB("--color-text-100"),
+          secondary: convertToRGB("--color-text-200"),
+        },
+      },
       colors: {
+        brand: {
+          base: convertToRGB("--color-background-100"),
+          accent: convertToRGB("--color-primary-100"),
+          backdrop: "#131313",
+        },
         custom: {
           primary: {
             0: "rgb(255, 255, 255)",
@@ -76,29 +102,6 @@ module.exports = {
             1000: "rgb(0, 0, 0)",
             DEFAULT: convertToRGB("--color-text-100"),
           },
-          border: {
-            0: "rgb(255, 255, 255)",
-            10: convertToRGB("--color-background-10"),
-            20: convertToRGB("--color-background-20"),
-            30: convertToRGB("--color-background-30"),
-            40: convertToRGB("--color-background-40"),
-            50: convertToRGB("--color-background-50"),
-            60: convertToRGB("--color-background-60"),
-            70: convertToRGB("--color-background-70"),
-            80: convertToRGB("--color-background-80"),
-            90: convertToRGB("--color-background-90"),
-            100: convertToRGB("--color-background-100"),
-            200: convertToRGB("--color-background-200"),
-            300: convertToRGB("--color-background-300"),
-            400: convertToRGB("--color-background-400"),
-            500: convertToRGB("--color-background-500"),
-            600: convertToRGB("--color-background-600"),
-            700: convertToRGB("--color-background-700"),
-            800: convertToRGB("--color-background-800"),
-            900: convertToRGB("--color-background-900"),
-            1000: "rgb(0, 0, 0)",
-            DEFAULT: convertToRGB("--color-background-100"),
-          },
           sidebar: {
             background: {
               0: "rgb(255, 255, 255)",
@@ -146,31 +149,7 @@ module.exports = {
               1000: "rgb(0, 0, 0)",
               DEFAULT: convertToRGB("--color-sidebar-text-100"),
             },
-            border: {
-              0: "rgb(255, 255, 255)",
-              10: convertToRGB("--color-sidebar-background-10"),
-              20: convertToRGB("--color-sidebar-background-20"),
-              30: convertToRGB("--color-sidebar-background-30"),
-              40: convertToRGB("--color-sidebar-background-40"),
-              50: convertToRGB("--color-sidebar-background-50"),
-              60: convertToRGB("--color-sidebar-background-60"),
-              70: convertToRGB("--color-sidebar-background-70"),
-              80: convertToRGB("--color-sidebar-background-80"),
-              90: convertToRGB("--color-sidebar-background-90"),
-              100: convertToRGB("--color-sidebar-background-100"),
-              200: convertToRGB("--color-sidebar-background-200"),
-              300: convertToRGB("--color-sidebar-background-300"),
-              400: convertToRGB("--color-sidebar-background-400"),
-              500: convertToRGB("--color-sidebar-background-500"),
-              600: convertToRGB("--color-sidebar-background-600"),
-              700: convertToRGB("--color-sidebar-background-700"),
-              800: convertToRGB("--color-sidebar-background-800"),
-              900: convertToRGB("--color-sidebar-background-900"),
-              1000: "rgb(0, 0, 0)",
-              DEFAULT: convertToRGB("--color-sidebar-background-100"),
-            },
           },
-          backdrop: "#131313",
         },
       },
       keyframes: {

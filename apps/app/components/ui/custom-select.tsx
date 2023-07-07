@@ -54,11 +54,9 @@ const CustomSelect = ({
       ) : (
         <Listbox.Button
           className={`flex w-full ${
-            disabled
-              ? "cursor-not-allowed text-custom-text-200"
-              : "cursor-pointer hover:bg-custom-background-80"
-          } items-center justify-between gap-1 rounded-md border border-custom-border-80 shadow-sm duration-300 focus:outline-none ${
-            input ? "border-custom-border-80 px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+            disabled ? "cursor-not-allowed text-brand-secondary" : "cursor-pointer hover:bg-brand-surface-2"
+          } items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 focus:outline-none ${
+            input ? "border-brand-base px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
           } ${
             textAlignment === "right"
               ? "text-right"
@@ -83,11 +81,11 @@ const CustomSelect = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Listbox.Options
-        className={`${optionsClassName} absolute border border-custom-border-80 ${
+        className={`${optionsClassName} absolute border border-brand-base ${
           position === "right" ? "right-0" : "left-0"
         } ${
           verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"
-        } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
+        } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none ${
           width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
         } ${input ? "max-h-48" : ""} ${
           maxHeight === "lg"
@@ -117,9 +115,9 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
   <Listbox.Option
     value={value}
     className={({ active, selected }) =>
-      `${className} ${active || selected ? "bg-custom-background-80" : ""} ${
+      `${className} ${active || selected ? "bg-brand-surface-2" : ""} ${
         selected ? "font-medium" : ""
-      } cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200`
+      } cursor-pointer select-none truncate rounded px-1 py-1.5 text-brand-secondary`
     }
   >
     {({ selected }) => (
