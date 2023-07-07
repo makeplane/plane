@@ -21,7 +21,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
-import { getRandomEmoji } from "helpers/common.helper";
+import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // types
 import { ICurrentUserResponse, IProject } from "types";
 // fetch-keys
@@ -232,7 +232,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                       {value.name}
                                     </span>
                                   ) : (
-                                    String.fromCodePoint(parseInt(value))
+                                    renderEmoji(value)
                                   )
                                 ) : (
                                   "Icon"
