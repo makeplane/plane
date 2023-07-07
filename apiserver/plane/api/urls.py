@@ -838,15 +838,16 @@ urlpatterns = [
         IssueArchiveViewSet.as_view(
             {
                 "get": "retrieve",
+                "delete": "destroy",
             }
         ),
         name="project-issue-archive",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/unarchive/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/unarchive/",
         IssueArchiveViewSet.as_view(
             {
-                "patch": "partial_update",
+                "post": "unarchive",
             }
         ),
         name="project-issue-archive",
