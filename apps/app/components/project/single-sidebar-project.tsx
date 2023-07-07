@@ -22,6 +22,7 @@ import {
 } from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject } from "types";
 
@@ -92,7 +93,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
               <div className="flex items-center gap-x-2">
                 {project.emoji ? (
                   <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                    {String.fromCodePoint(parseInt(project.emoji))}
+                    {renderEmoji(project.emoji)}
                   </span>
                 ) : project.icon_prop ? (
                   <div className="h-7 w-7 grid place-items-center">

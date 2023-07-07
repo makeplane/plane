@@ -296,7 +296,6 @@ urlpatterns = [
             {
                 "delete": "destroy",
                 "get": "retrieve",
-                "get": "retrieve",
             }
         ),
         name="workspace",

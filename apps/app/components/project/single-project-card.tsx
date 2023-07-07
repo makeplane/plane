@@ -24,6 +24,7 @@ import {
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IFavoriteProject, IProject } from "types";
 // fetch-keys
@@ -184,7 +185,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   <h3 className="text-1.5xl font-medium text-brand-base">{project.name}</h3>
                   {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {String.fromCodePoint(parseInt(project.emoji))}
+                      {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
                     <span
