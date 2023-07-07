@@ -28,6 +28,7 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__status=2)
                 | models.Q(issue_inbox__isnull=True)
             )
+            .filter(archived_at__isnull=True)
             .exclude(archived_at__isnull=False)
         )
 
@@ -82,7 +83,7 @@ class Issue(ProjectBaseModel):
     )
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
-    archived_at = models.DateField(null=True, blank=True)
+    archived_at = models.DateField(null=True)
 
     objects = models.Manager()
     issue_objects = IssueManager()
