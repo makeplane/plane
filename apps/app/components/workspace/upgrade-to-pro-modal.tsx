@@ -63,7 +63,9 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
     "Plane AI (GPT unlimited)",
   ];
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<null | { status: String; message: string }>(
+    null
+  );
   const [loader, setLoader] = useState(false);
   const submitEmail = async () => {
     setLoader(true);
@@ -80,8 +82,9 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
             .from("web-waitlist")
             .insert([{ email: payload?.email, count: 1, last_visited: new Date() }])
             .select("id,email,count");
-          if (emailCreation.status === 201) setErrorMessage("success");
-          else setErrorMessage("insert_error");
+          if (emailCreation.status === 201)
+            setErrorMessage({ status: "success", message: "Successfully registered." });
+          else setErrorMessage({ status: "insert_error", message: "Insertion Error." });
         } else {
           const emailCountUpdate = await supabaseClient
             .from("web-waitlist")
@@ -91,11 +94,19 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
               last_visited: new Date(),
             })
             .select("id,email,count");
-          if (emailCountUpdate.status === 201) setErrorMessage("email_already_exists");
-          else setErrorMessage("update_error");
+          if (emailCountUpdate.status === 201)
+            setErrorMessage({
+              status: "email_already_exists",
+              message: "Email already exists.",
+            });
+          else setErrorMessage({ status: "update_error", message: "Update Error." });
         }
-      } else setErrorMessage("email_required");
-    } else setErrorMessage("supabase_error");
+      } else setErrorMessage({ status: "email_required", message: "Please provide email." });
+    } else
+      setErrorMessage({
+        status: "supabase_error",
+        message: "Network error. Please try again later.",
+      });
 
     setLoader(false);
   };
@@ -215,12 +226,12 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
                     {errorMessage && (
                       <div
                         className={`mt-1 text-sm ${
-                          errorMessage === "Successfully registered."
+                          errorMessage && errorMessage?.status === "success"
                             ? "text-green-500"
                             : " text-red-500"
                         }`}
                       >
-                        {errorMessage}
+                        {errorMessage?.message}
                       </div>
                     )}
                   </div>
