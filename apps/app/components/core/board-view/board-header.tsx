@@ -118,13 +118,13 @@ export const BoardHeader: React.FC<Props> = ({
     >
       <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
         <div
-          className={`flex cursor-pointer items-center gap-x-3 ${
+          className={`flex cursor-pointer items-center gap-x-3 max-w-[316px] ${
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
           }`}
         >
           <span className="flex items-center">{getGroupIcon()}</span>
           <h2
-            className="text-lg font-semibold capitalize"
+            className="text-lg font-semibold capitalize truncate"
             style={{
               writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
             }}
