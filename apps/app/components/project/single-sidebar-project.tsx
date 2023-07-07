@@ -186,12 +186,14 @@ export const SingleSidebarProject: React.FC<Props> = ({
                           : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90"
                       } ${sidebarCollapse ? "justify-center" : ""}`}
                     >
-                      <div className="grid place-items-center text-custom-sidebar-text-100">
+                      <div className="grid place-items-center">
                         <item.icon
-                          className={`h-5 w-5 flex-shrink-0 text-custom-sidebar-text-200 ${
-                            !sidebarCollapse ? "mr-3" : ""
-                          }`}
-                          color="rgb(var(--color-text-200))"
+                          className={`h-5 w-5 flex-shrink-0 ${!sidebarCollapse ? "mr-3" : ""}`}
+                          color={
+                            router.asPath.includes(item.href)
+                              ? "rgb(var(--color-sidebar-text-100))"
+                              : "rgb(var(--color-sidebar-text-200))"
+                          }
                           aria-hidden="true"
                         />
                       </div>

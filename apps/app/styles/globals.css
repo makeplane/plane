@@ -91,8 +91,8 @@
     --color-sidebar-background-80: 23, 23, 23; /* tertiary sidebar bg */
 
     --color-sidebar-text-100: 255, 255, 255; /* primary sidebar text */
-    --color-sidebar-text-200: 242, 242, 242; /* secondary sidebar text */
-    --color-sidebar-text-300: 229, 229, 229; /* tertiary sidebar text */
+    --color-sidebar-text-200: 82, 82, 82; /* secondary sidebar text */
+    --color-sidebar-text-300: 115, 115, 115; /* tertiary sidebar text */
   }
 
   [data-theme="light-contrast"] {
