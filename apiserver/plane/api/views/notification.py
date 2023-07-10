@@ -45,21 +45,21 @@ class NotificationViewSet(BaseViewSet):
                 issue_ids = IssueSubscriber.objects.filter(
                     workspace__slug=slug, subsriber_id=request.user.id
                 ).values_list("issue_id", flat=True)
-                notifications = notifications.filter(entity_id__in=issue_ids)
+                notifications = notifications.filter(entity_identifier__in=issue_ids)
 
             # Assigned Issues
             if type == "assigned":
                 issue_ids = IssueAssignee.objects.filter(
                     workspace__slug=slug, assignee_id=request.user.id
                 ).values_list("issue_id", flat=True)
-                notifications = notifications.filter(entity_id__in=issue_ids)
+                notifications = notifications.filter(entity_identifier__in=issue_ids)
 
             # Created issues
             if type == "created":
                 issue_ids = Issue.objects.filter(
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True)
-                notifications = notifications.filter(entity_id__in=issue_ids)
+                notifications = notifications.filter(entity_identifier__in=issue_ids)
 
             if snoozed == "false":
                 notifications = notifications.filter(
@@ -69,7 +69,7 @@ class NotificationViewSet(BaseViewSet):
             serializer = NotificationSerializer(notifications, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
