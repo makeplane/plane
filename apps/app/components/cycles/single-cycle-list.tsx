@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // hooks
@@ -157,7 +156,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
-                <span className="flex items-start gap-2">
+                <div className="flex items-start gap-2">
                   <ContrastIcon
                     className="mt-1 h-5 w-5"
                     color={`${
@@ -179,15 +178,15 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       position="top-left"
                     >
                       <h3 className="break-words w-full text-base font-semibold">
-                        {truncateText(cycle.name, 70)}
+                        {truncateText(cycle.name, 60)}
                       </h3>
                     </Tooltip>
                     <p className="mt-2 text-custom-text-200 break-words w-full">
                       {cycle.description}
                     </p>
                   </div>
-                </span>
-                <span className="flex items-center gap-4 capitalize">
+                </div>
+                <div className="flex-shrink-0 flex items-center gap-4">
                   <span
                     className={`rounded-full px-1.5 py-0.5
                     ${
@@ -203,14 +202,14 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     }`}
                   >
                     {cycleStatus === "current" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         <PersonRunningIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(cycle.end_date ?? new Date())} days left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1">
                         <AlarmClockIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(cycle.start_date ?? new Date())} days left
                       </span>
                     ) : cycleStatus === "completed" ? (
                       <span className="flex items-center gap-1">
@@ -236,12 +235,12 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
 
                   {cycleStatus !== "draft" && (
                     <div className="flex items-center justify-start gap-2 text-custom-text-200">
-                      <div className="flex items-start gap-1 ">
+                      <div className="flex items-start gap-1 whitespace-nowrap">
                         <CalendarDaysIcon className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(startDate)}</span>
                       </div>
                       <ArrowRightIcon className="h-4 w-4" />
-                      <div className="flex items-start gap-1 ">
+                      <div className="flex items-start gap-1 whitespace-nowrap">
                         <TargetIcon className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(endDate)}</span>
                       </div>
@@ -287,7 +286,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     }`}
                     >
                       {cycleStatus === "current" ? (
-                        <span className="flex gap-1">
+                        <span className="flex gap-1 whitespace-nowrap">
                           {cycle.total_issues > 0 ? (
                             <>
                               <RadialProgressBar
@@ -380,7 +379,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       </CustomMenu.MenuItem>
                     </CustomMenu>
                   </div>
-                </span>
+                </div>
               </div>
             </div>
           </a>

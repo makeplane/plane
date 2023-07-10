@@ -72,7 +72,7 @@ export const SingleEstimate: React.FC<Props> = ({
             <h6 className="flex w-[40vw] items-center gap-2 truncate text-sm font-medium">
               {estimate.name}
               {projectDetails?.estimate && projectDetails?.estimate === estimate.id && (
-                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs capitalize text-green-500">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-500">
                   In use
                 </span>
               )}
@@ -83,7 +83,10 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
           <div className="flex items-center gap-2">
             {projectDetails?.estimate !== estimate.id && estimate.points.length > 0 && (
-              <SecondaryButton onClick={handleUseEstimate} className="py-1">
+              <SecondaryButton
+                onClick={handleUseEstimate}
+                className="!py-1 text-custom-text-200 hover:text-custom-text-100"
+              >
                 Use
               </SecondaryButton>
             )}

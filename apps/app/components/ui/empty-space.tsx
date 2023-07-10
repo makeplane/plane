@@ -64,13 +64,13 @@ const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({ title, description, Ico
             <Icon className="h-6 w-6 text-white" aria-hidden="true" />
           </span>
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="text-sm font-medium text-custom-text-100">{title}</div>
-          {description ? <div className="text-sm text-custom-text-200">{description}</div> : null}
+        <div className="min-w-0 flex-1 text-custom-text-200">
+          <div className="text-sm font-medium group-hover:text-custom-text-100">{title}</div>
+          {description ? <div className="text-sm">{description}</div> : null}
         </div>
         <div className="flex-shrink-0 self-center">
           <ChevronRightIcon
-            className="h-5 w-5 text-custom-text-100 group-hover:text-custom-text-200"
+            className="h-5 w-5 text-custom-text-200 group-hover:text-custom-text-100"
             aria-hidden="true"
           />
         </div>
