@@ -10,7 +10,6 @@ import { CustomSearchSelect, Tooltip } from "components/ui";
 // icons
 import { getStateGroupIcon } from "components/icons";
 // helpers
-import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
@@ -67,7 +66,7 @@ export const ViewStateSelect: React.FC<Props> = ({
   const stateLabel = (
     <Tooltip
       tooltipHeading="State"
-      tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
+      tooltipContent={selectedOption?.name ?? ""}
       position={tooltipPosition}
     >
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">

@@ -118,8 +118,8 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
     value={value}
     className={({ active, selected }) =>
       `${className} ${active || selected ? "bg-custom-background-80" : ""} ${
-        selected ? "font-medium" : ""
-      } cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200`
+        selected ? "text-custom-text-100" : "text-custom-text-200"
+      } cursor-pointer select-none truncate rounded px-1 py-1.5`
     }
   >
     {({ selected }) => (
