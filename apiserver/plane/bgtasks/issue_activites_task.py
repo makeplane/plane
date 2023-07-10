@@ -1053,6 +1053,7 @@ def issue_activity(
                         data={
                             "issue": {
                                 "id": str(issue_id),
+                                "name": str(issue.name),
                                 "identifier": str(project.identifier),
                                 "sequence_id": issue.sequence_id,
                                 "state_name": issue.state.name,
