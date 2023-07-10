@@ -43,7 +43,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             <div>
               <Menu.Button
                 onClick={() => setOpenChildFor(null)}
-                className={`group flex items-center justify-between gap-2 rounded-md border border-custom-border-80 px-3 py-1.5 text-xs shadow-sm duration-300 focus:outline-none ${
+                className={`group flex items-center justify-between gap-2 rounded-md border border-custom-border-100 px-3 py-1.5 text-xs shadow-sm duration-300 focus:outline-none ${
                   open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
                 }`}
               >

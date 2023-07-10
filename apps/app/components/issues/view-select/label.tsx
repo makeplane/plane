@@ -86,7 +86,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
             {issue.label_details.slice(0, 4).map((label, index) => (
               <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
                 <span
-                  className={`h-4 w-4 flex-shrink-0 rounded-full border group-hover:bg-custom-background-80 border-custom-border-80
+                  className={`h-4 w-4 flex-shrink-0 rounded-full border group-hover:bg-custom-background-80 border-custom-border-100
                           `}
                   style={{
                     backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",

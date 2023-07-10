@@ -394,7 +394,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               />
             )}
             {properties.sub_issue_count && (
-              <div className="flex cursor-default items-center rounded-md border border-custom-border-80 px-2.5 py-1 text-xs shadow-sm">
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <LayerDiagonalIcon className="h-3.5 w-3.5" />
@@ -404,7 +404,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               </div>
             )}
             {properties.link && (
-              <div className="flex cursor-default items-center rounded-md border border-custom-border-80 px-2.5 py-1 text-xs shadow-sm">
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <LinkIcon className="h-3.5 w-3.5" />
@@ -414,7 +414,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               </div>
             )}
             {properties.attachment_count && (
-              <div className="flex cursor-default items-center rounded-md border border-custom-border-80 px-2.5 py-1 text-xs shadow-sm">
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />

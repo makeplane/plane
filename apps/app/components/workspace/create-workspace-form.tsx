@@ -140,7 +140,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           </div>
           <div className="flex flex-col items-start justify-center gap-1">
             <span className="mb-1.5 text-sm">Workspace URL</span>
-            <div className="flex w-full items-center rounded-md border border-custom-border-80 px-3">
+            <div className="flex w-full items-center rounded-md border border-custom-border-100 px-3">
               <span className="whitespace-nowrap text-sm text-custom-text-200">
                 {typeof window !== "undefined" && window.location.origin}/
               </span>
@@ -169,7 +169,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className="flex flex-col items-start justify-center gap-1 border-t border-custom-border-80 px-7 pt-3.5 ">
+        <div className="flex flex-col items-start justify-center gap-1 border-t border-custom-border-100 px-7 pt-3.5 ">
           <span className="mb-1.5 text-sm">How large is your company?</span>
           <div className="w-full">
             <Controller

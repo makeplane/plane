@@ -95,7 +95,7 @@ const StatesSettings: NextPage = () => {
                             Add
                           </button>
                         </div>
-                        <div className="divide-y divide-custom-border-80 rounded-[10px] border border-custom-border-80">
+                        <div className="divide-y divide-custom-border-100 rounded-[10px] border border-custom-border-100">
                           {key === activeGroup && (
                             <CreateUpdateStateInline
                               groupLength={orderedStateGroups[key].length}
@@ -121,7 +121,7 @@ const StatesSettings: NextPage = () => {
                               />
                             ) : (
                               <div
-                                className="border-b border-custom-border-80 last:border-b-0"
+                                className="border-b border-custom-border-100 last:border-b-0"
                                 key={state.id}
                               >
                                 <CreateUpdateStateInline

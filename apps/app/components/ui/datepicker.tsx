@@ -47,7 +47,7 @@ export const CustomDatePicker: React.FC<Props> = ({
     } ${error ? "border-red-500 bg-red-100" : ""} ${
       disabled ? "cursor-not-allowed" : "cursor-pointer"
     } ${
-      noBorder ? "" : "border border-custom-border-80"
+      noBorder ? "" : "border border-custom-border-100"
     } w-full rounded-md bg-transparent caret-transparent ${className}`}
     dateFormat="MMM dd, yyyy"
     isClearable={isClearable}

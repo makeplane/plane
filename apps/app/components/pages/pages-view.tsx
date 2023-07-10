@@ -208,7 +208,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         <div className="space-y-4 h-full overflow-y-auto">
           {pages.length > 0 ? (
             viewType === "list" ? (
-              <ul role="list" className="divide-y divide-custom-border-80">
+              <ul role="list" className="divide-y divide-custom-border-100">
                 {pages.map((page) => (
                   <SinglePageListItem
                     key={page.id}
@@ -223,7 +223,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                 ))}
               </ul>
             ) : viewType === "detailed" ? (
-              <div className="divide-y divide-custom-border-80 rounded-[10px] border border-custom-border-80 bg-custom-background-100">
+              <div className="divide-y divide-custom-border-100 rounded-[10px] border border-custom-border-100 bg-custom-background-100">
                 {pages.map((page) => (
                   <SinglePageDetailedItem
                     key={page.id}
@@ -238,7 +238,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                 ))}
               </div>
             ) : (
-              <div className="rounded-[10px] border border-custom-border-80">
+              <div className="rounded-[10px] border border-custom-border-100">
                 {pages.map((page) => (
                   <SinglePageDetailedItem
                     key={page.id}

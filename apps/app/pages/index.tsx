@@ -142,7 +142,7 @@ const HomePage: NextPage = () => {
                 {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                   <>
                     <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
-                    <div className="flex flex-col items-center justify-center gap-3 border-t border-custom-border-80 py-5 px-5">
+                    <div className="flex flex-col items-center justify-center gap-3 border-t border-custom-border-100 py-5 px-5">
                       <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
                       <GithubLoginButton handleSignIn={handleGithubSignIn} />
                     </div>

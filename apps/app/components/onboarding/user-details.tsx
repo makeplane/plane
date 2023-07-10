@@ -102,7 +102,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
             </div>
           </div>
 
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-custom-border-80 px-7 pt-3.5 pb-7">
+          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-custom-border-100 px-7 pt-3.5 pb-7">
             <span>What is your role?</span>
             <div className="w-full">
               <Controller

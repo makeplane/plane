@@ -108,7 +108,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
                 `rounded-3xl border px-4 py-2 outline-none ${
                   selected
                     ? "border-custom-primary bg-custom-primary text-white font-medium"
-                    : "border-custom-border-80 bg-custom-background-100 hover:bg-custom-background-80"
+                    : "border-custom-border-100 bg-custom-background-100 hover:bg-custom-background-80"
                 }`
               }
             >
@@ -119,7 +119,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
                 `rounded-3xl border px-4 py-2 outline-none ${
                   selected
                     ? "border-custom-primary bg-custom-primary text-white font-medium"
-                    : "border-custom-border-80 bg-custom-background-100 hover:bg-custom-background-80"
+                    : "border-custom-border-100 bg-custom-background-100 hover:bg-custom-background-80"
                 }`
               }
             >
@@ -172,7 +172,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
                               invitationsRespond.includes(invitation.id)
                                 ? "bg-custom-background-80 text-custom-text-200"
                                 : "bg-custom-primary text-white"
-                            } text-sm px-4 py-2 border border-custom-border-80 rounded-3xl`}
+                            } text-sm px-4 py-2 border border-custom-border-100 rounded-3xl`}
                             onClick={(e) => {
                               handleInvitation(
                                 invitation,
@@ -204,9 +204,9 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
                               invitationsRespond.includes(invitation.id)
                                 ? "bg-custom-background-80 text-custom-text-200"
                                 : "bg-custom-primary text-white"
-                            } text-sm px-4 py-2 border border-custom-border-80 rounded-3xl`}
+                            } text-sm px-4 py-2 border border-custom-border-100 rounded-3xl`}
 
-                            // className="h-4 w-4 rounded border-custom-border-80 text-custom-primary focus:ring-custom-primary"
+                            // className="h-4 w-4 rounded border-custom-border-100 text-custom-primary focus:ring-custom-primary"
                           /> */}
                         </div>
                       </label>

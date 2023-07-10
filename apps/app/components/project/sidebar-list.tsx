@@ -151,7 +151,7 @@ export const ProjectSidebarList: FC = () => {
         data={projectToDelete}
         user={user}
       />
-      <div className="mt-2.5 h-full overflow-y-auto border-t border-custom-sidebar-border-80 bg-custom-sidebar-background-100 pt-2.5">
+      <div className="mt-2.5 h-full overflow-y-auto border-t border-custom-sidebar-border-100 bg-custom-sidebar-background-100 pt-2.5">
         {favoriteProjects && favoriteProjects.length > 0 && (
           <div className="mt-3 flex flex-col space-y-2 px-3">
             {!sidebarCollapse && (

@@ -247,7 +247,7 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                       }
                       editable={false}
                       noBorder
-                      customClassName="text-xs border border-custom-border-80 bg-custom-background-100"
+                      customClassName="text-xs border border-custom-border-100 bg-custom-background-100"
                     />
                   </div>
                 </div>

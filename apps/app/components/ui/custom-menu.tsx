@@ -79,7 +79,7 @@ const CustomMenu = ({
                 } ${
                   noBorder
                     ? "rounded-md"
-                    : "rounded-md border border-custom-border-80 shadow-sm focus:outline-none"
+                    : "rounded-md border border-custom-border-100 shadow-sm focus:outline-none"
                 } ${
                   width === "sm"
                     ? "w-10"
@@ -133,8 +133,8 @@ const CustomMenu = ({
                 : "min-w-full"
             } ${
               menuItemsWhiteBg
-                ? "border-custom-border-90 bg-custom-background-100"
-                : "border-custom-border-80 bg-custom-background-90"
+                ? "border-custom-border-200 bg-custom-background-100"
+                : "border-custom-border-100 bg-custom-background-90"
             } ${menuItemsClassName}`}
           >
             <div className="py-1">{children}</div>

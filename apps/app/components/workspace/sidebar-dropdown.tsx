@@ -137,7 +137,7 @@ export const WorkspaceSidebarDropdown = () => {
         >
           <Menu.Items
             className="fixed left-2 z-20 mt-1 flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
-          border border-custom-sidebar-border-80 bg-custom-sidebar-background-90 shadow-lg focus:outline-none"
+          border border-custom-sidebar-border-100 bg-custom-sidebar-background-90 shadow-lg focus:outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
               <div className="text-sm text-custom-sidebar-text-200">{user?.email}</div>
@@ -205,7 +205,7 @@ export const WorkspaceSidebarDropdown = () => {
                 </div>
               )}
             </div>
-            <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-custom-sidebar-border-80 px-3 py-2 text-sm">
+            <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-custom-sidebar-border-100 px-3 py-2 text-sm">
               {userLinks(workspaceSlug as string).map((link, index) => (
                 <Menu.Item
                   key={index}
@@ -218,7 +218,7 @@ export const WorkspaceSidebarDropdown = () => {
                 </Menu.Item>
               ))}
             </div>
-            <div className="w-full border-t border-t-custom-sidebar-border-80 px-3 py-2">
+            <div className="w-full border-t border-t-custom-sidebar-border-100 px-3 py-2">
               <Menu.Item
                 as="button"
                 type="button"
