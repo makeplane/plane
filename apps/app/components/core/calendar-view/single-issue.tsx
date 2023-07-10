@@ -210,7 +210,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
           </a>
         </Link>
         {displayProperties && (
-          <div className="relative mt-1.5 flex flex-wrap items-center gap-2 text-xs">
+          <div className="relative mt-1.5 w-full flex flex-wrap items-center gap-2 text-xs">
             {properties.priority && (
               <ViewPrioritySelect
                 issue={issue}
@@ -225,6 +225,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
+                className="max-w-full"
                 isNotAllowed={isNotAllowed}
                 user={user}
               />
