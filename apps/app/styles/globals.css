@@ -232,3 +232,9 @@ body {
 .bp4-popover2-transition-container {
   z-index: 1 !important;
 }
+
+::-webkit-input-placeholder,
+::placeholder,
+:-ms-input-placeholder {
+  color: rgb(var(--color-text-300));
+}
