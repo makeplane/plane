@@ -94,10 +94,10 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
           <main
             className={`relative flex h-full w-full flex-col overflow-hidden ${
               bg === "primary"
-                ? "bg-brand-base"
+                ? "bg-custom-background-100"
                 : bg === "secondary"
-                ? "bg-brand-surface-1"
-                : "bg-brand-surface-2"
+                ? "bg-custom-background-90"
+                : "bg-custom-background-80"
             }`}
           >
             <AppHeader

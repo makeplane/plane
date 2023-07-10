@@ -82,7 +82,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
     <div className="grid w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex h-[442px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-brand-base shadow-md"
+        className="flex h-[442px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-custom-background-100 shadow-md"
         defaultIndex={currentTabValue(currentTab)}
         onChange={(i) => {
           switch (i) {
@@ -97,8 +97,8 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
       >
         <Tab.List as="div" className="flex flex-col gap-3 px-7 pt-7 pb-3.5">
           <div className="flex flex-col gap-2 justify-center">
-            <h3 className="text-base font-semibold text-brand-base">Workspace</h3>
-            <p className="text-sm text-brand-secondary">
+            <h3 className="text-base font-semibold text-custom-text-100">Workspace</h3>
+            <p className="text-sm text-custom-text-200">
               Create or join the workspace to get started with Plane.
             </p>
           </div>
@@ -107,8 +107,8 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
               className={({ selected }) =>
                 `rounded-3xl border px-4 py-2 outline-none ${
                   selected
-                    ? "border-brand-accent bg-brand-accent text-white font-medium"
-                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
+                    ? "border-custom-primary bg-custom-primary text-white font-medium"
+                    : "border-custom-border-100 bg-custom-background-100 hover:bg-custom-background-80"
                 }`
               }
             >
@@ -118,8 +118,8 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
               className={({ selected }) =>
                 `rounded-3xl border px-4 py-2 outline-none ${
                   selected
-                    ? "border-brand-accent bg-brand-accent text-white font-medium"
-                    : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
+                    ? "border-custom-primary bg-custom-primary text-white font-medium"
+                    : "border-custom-border-100 bg-custom-background-100 hover:bg-custom-background-80"
                 }`
               }
             >
@@ -159,7 +159,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
                           <div className="text-sm font-medium">
                             {truncateText(invitation.workspace.name, 30)}
                           </div>
-                          <p className="text-sm text-brand-secondary">
+                          <p className="text-sm text-custom-text-200">
                             Invited by{" "}
                             {invitation.created_by_detail
                               ? invitation.created_by_detail.first_name
@@ -170,9 +170,9 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
                           <button
                             className={`${
                               invitationsRespond.includes(invitation.id)
-                                ? "bg-brand-surface-2 text-brand-secondary"
-                                : "bg-brand-accent text-white"
-                            } text-sm px-4 py-2 border border-brand-base rounded-3xl`}
+                                ? "bg-custom-background-80 text-custom-text-200"
+                                : "bg-custom-primary text-white"
+                            } text-sm px-4 py-2 border border-custom-border-100 rounded-3xl`}
                             onClick={(e) => {
                               handleInvitation(
                                 invitation,
@@ -202,11 +202,11 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
                             type="button"
                             className={`${
                               invitationsRespond.includes(invitation.id)
-                                ? "bg-brand-surface-2 text-brand-secondary"
-                                : "bg-brand-accent text-white"
-                            } text-sm px-4 py-2 border border-brand-base rounded-3xl`}
+                                ? "bg-custom-background-80 text-custom-text-200"
+                                : "bg-custom-primary text-white"
+                            } text-sm px-4 py-2 border border-custom-border-100 rounded-3xl`}
 
-                            // className="h-4 w-4 rounded border-brand-base text-brand-accent focus:ring-brand-accent"
+                            // className="h-4 w-4 rounded border-custom-border-100 text-custom-primary focus:ring-custom-primary"
                           /> */}
                         </div>
                       </label>
@@ -214,7 +214,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace, user }) => {
                   ))
                 ) : (
                   <div className="text-center">
-                    <h3 className="text-brand-secondary">{`You don't have any invitations yet.`}</h3>
+                    <h3 className="text-custom-text-200">{`You don't have any invitations yet.`}</h3>
                   </div>
                 )}
               </div>

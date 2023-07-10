@@ -185,17 +185,17 @@ export const AnalyticsSidebar: React.FC<Props> = ({
     <div
       className={`px-5 py-2.5 flex items-center justify-between space-y-2 ${
         fullScreen
-          ? "border-l border-brand-base md:h-full md:border-l md:border-brand-base md:space-y-4 overflow-hidden md:flex-col md:items-start md:py-5"
+          ? "border-l border-custom-border-100 md:h-full md:border-l md:border-custom-border-100 md:space-y-4 overflow-hidden md:flex-col md:items-start md:py-5"
           : ""
       }`}
     >
       <div className="flex items-center gap-2 flex-wrap">
-        <div className="flex items-center gap-1 bg-brand-surface-2 rounded-md px-3 py-1 text-brand-secondary text-xs">
+        <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
           <LayerDiagonalIcon height={14} width={14} />
           {analytics ? analytics.total : "..."} Issues
         </div>
         {isProjectLevel && (
-          <div className="flex items-center gap-1 bg-brand-surface-2 rounded-md px-3 py-1 text-brand-secondary text-xs">
+          <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
             <CalendarDaysIcon className="h-3.5 w-3.5" />
             {renderShortDate(
               (cycleId
@@ -240,7 +240,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                           )}
                           <h5 className="break-words">
                             {project.name}
-                            <span className="text-brand-secondary text-xs ml-1">
+                            <span className="text-custom-text-200 text-xs ml-1">
                               ({project.identifier})
                             </span>
                           </h5>
@@ -248,24 +248,24 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                         <div className="mt-4 space-y-3 pl-2">
                           <div className="flex items-center justify-between gap-2 text-xs">
                             <div className="flex items-center gap-2">
-                              <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+                              <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
                               <h6>Total members</h6>
                             </div>
-                            <span className="text-brand-secondary">{project.total_members}</span>
+                            <span className="text-custom-text-200">{project.total_members}</span>
                           </div>
                           <div className="flex items-center justify-between gap-2 text-xs">
                             <div className="flex items-center gap-2">
                               <ContrastIcon height={16} width={16} />
                               <h6>Total cycles</h6>
                             </div>
-                            <span className="text-brand-secondary">{project.total_cycles}</span>
+                            <span className="text-custom-text-200">{project.total_cycles}</span>
                           </div>
                           <div className="flex items-center justify-between gap-2 text-xs">
                             <div className="flex items-center gap-2">
-                              <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+                              <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
                               <h6>Total modules</h6>
                             </div>
-                            <span className="text-brand-secondary">{project.total_modules}</span>
+                            <span className="text-custom-text-200">{project.total_modules}</span>
                           </div>
                         </div>
                       </div>
@@ -280,13 +280,13 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                   <h4 className="font-medium break-words">Analytics for {cycleDetails.name}</h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-brand-secondary">Lead</h6>
+                      <h6 className="text-custom-text-200">Lead</h6>
                       <span>
                         {cycleDetails.owned_by?.first_name} {cycleDetails.owned_by?.last_name}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-brand-secondary">Start Date</h6>
+                      <h6 className="text-custom-text-200">Start Date</h6>
                       <span>
                         {cycleDetails.start_date && cycleDetails.start_date !== ""
                           ? renderShortDate(cycleDetails.start_date)
@@ -294,7 +294,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-brand-secondary">Target Date</h6>
+                      <h6 className="text-custom-text-200">Target Date</h6>
                       <span>
                         {cycleDetails.end_date && cycleDetails.end_date !== ""
                           ? renderShortDate(cycleDetails.end_date)
@@ -308,14 +308,14 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                   <h4 className="font-medium break-words">Analytics for {moduleDetails.name}</h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-brand-secondary">Lead</h6>
+                      <h6 className="text-custom-text-200">Lead</h6>
                       <span>
                         {moduleDetails.lead_detail?.first_name}{" "}
                         {moduleDetails.lead_detail?.last_name}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-brand-secondary">Start Date</h6>
+                      <h6 className="text-custom-text-200">Start Date</h6>
                       <span>
                         {moduleDetails.start_date && moduleDetails.start_date !== ""
                           ? renderShortDate(moduleDetails.start_date)
@@ -323,7 +323,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-brand-secondary">Target Date</h6>
+                      <h6 className="text-custom-text-200">Target Date</h6>
                       <span>
                         {moduleDetails.target_date && moduleDetails.target_date !== ""
                           ? renderShortDate(moduleDetails.target_date)
@@ -357,7 +357,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                   </div>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-brand-secondary">Network</h6>
+                      <h6 className="text-custom-text-200">Network</h6>
                       <span>
                         {
                           NETWORK_CHOICES[

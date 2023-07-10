@@ -88,7 +88,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
         )
       ) : (
         <div className="grid h-full place-items-center p-5">
-          <div className="space-y-4 text-brand-secondary">
+          <div className="space-y-4 text-custom-text-200">
             <p className="text-sm">There was some error in fetching the data.</p>
             <div className="flex items-center justify-center gap-2">
               <PrimaryButton onClick={() => mutateDefaultAnalytics()}>Refresh</PrimaryButton>

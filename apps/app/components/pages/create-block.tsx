@@ -96,7 +96,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
   return (
     <div className="relative">
       <form
-        className="flex flex-col items-center justify-between rounded border-2 border-brand-base p-2"
+        className="flex flex-col items-center justify-between rounded border-2 border-custom-border-100 p-2"
         onSubmit={handleSubmit(createPageBlock)}
       >
         <div className="flex min-h-[75px] w-full">
@@ -115,7 +115,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
 
         <div className="flex w-full items-center justify-end gap-2 p-1">
           <button type="submit">
-            <PaperAirplaneIcon className="h-5 w-5 text-brand-base" />
+            <PaperAirplaneIcon className="h-5 w-5 text-custom-text-100" />
           </button>
         </div>
       </form>

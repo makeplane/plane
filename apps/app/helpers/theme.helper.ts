@@ -94,6 +94,23 @@ export const applyTheme = (palette: string, isDarkPalette: boolean) => {
     document
       .querySelector<HTMLElement>("[data-theme='custom']")
       ?.style.setProperty(`--color-sidebar-text-${shade}`, sidebarTextRgbValues);
+
+    if (i >= 100 && i <= 400) {
+      const borderShade = (shade + 100) as keyof TShades;
+
+      document
+        .querySelector<HTMLElement>("[data-theme='custom']")
+        ?.style.setProperty(
+          `--color-border-${shade}`,
+          `${bgShades[borderShade].r}, ${bgShades[borderShade].g}, ${bgShades[borderShade].b}`
+        );
+      document
+        .querySelector<HTMLElement>("[data-theme='custom']")
+        ?.style.setProperty(
+          `--color-sidebar-border-${shade}`,
+          `${sidebarBackgroundShades[borderShade].r}, ${sidebarBackgroundShades[borderShade].g}, ${sidebarBackgroundShades[borderShade].b}`
+        );
+    }
   }
 
   document

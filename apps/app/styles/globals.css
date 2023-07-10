@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -36,206 +37,89 @@
     --color-primary-800: 19, 35, 76;
     --color-primary-900: 13, 24, 51;
 
-    --color-background-10: 250, 250, 250;
-    --color-background-20: 245, 245, 245;
-    --color-background-30: 241, 241, 241;
-    --color-background-40: 229, 229, 229;
-    --color-background-50: 212, 212, 212;
-    --color-background-60: 185, 185, 185;
-    --color-background-70: 163, 163, 163;
-    --color-background-80: 157, 157, 157;
-    --color-background-90: 129, 129, 129;
-    --color-background-100: 115, 115, 115;
-    --color-background-200: 104, 104, 104;
-    --color-background-300: 82, 82, 82;
-    --color-background-400: 64, 64, 64;
-    --color-background-500: 58, 58, 58;
-    --color-background-600: 46, 46, 46;
-    --color-background-700: 38, 38, 38;
-    --color-background-800: 34, 34, 34;
-    --color-background-900: 23, 23, 23;
+    /* default theme- light */
+    --color-background-100: 255, 255, 255; /* primary bg */
+    --color-background-90: 250, 250, 250; /* secondary bg */
+    --color-background-80: 245, 245, 245; /* tertiary bg */
 
-    --color-text-10: 250, 250, 250;
-    --color-text-20: 245, 245, 245;
-    --color-text-30: 241, 241, 241;
-    --color-text-40: 229, 229, 229;
-    --color-text-50: 212, 212, 212;
-    --color-text-60: 185, 185, 185;
-    --color-text-70: 163, 163, 163;
-    --color-text-80: 157, 157, 157;
-    --color-text-90: 129, 129, 129;
-    --color-text-100: 115, 115, 115;
-    --color-text-200: 104, 104, 104;
-    --color-text-300: 82, 82, 82;
-    --color-text-400: 64, 64, 64;
-    --color-text-500: 58, 58, 58;
-    --color-text-600: 46, 46, 46;
-    --color-text-700: 38, 38, 38;
-    --color-text-800: 34, 34, 34;
-    --color-text-900: 23, 23, 23;
+    --color-text-100: 23, 23, 23; /* primary text */
+    --color-text-200: 82, 82, 82; /* secondary text */
+    --color-text-300: 115, 115, 115; /* tertiary text */
 
-    --color-sidebar-background-10: 250, 250, 250;
-    --color-sidebar-background-20: 245, 245, 245;
-    --color-sidebar-background-30: 241, 241, 241;
-    --color-sidebar-background-40: 229, 229, 229;
-    --color-sidebar-background-50: 212, 212, 212;
-    --color-sidebar-background-60: 185, 185, 185;
-    --color-sidebar-background-70: 163, 163, 163;
-    --color-sidebar-background-80: 157, 157, 157;
-    --color-sidebar-background-90: 129, 129, 129;
-    --color-sidebar-background-100: 115, 115, 115;
-    --color-sidebar-background-200: 104, 104, 104;
-    --color-sidebar-background-300: 82, 82, 82;
-    --color-sidebar-background-400: 64, 64, 64;
-    --color-sidebar-background-500: 58, 58, 58;
-    --color-sidebar-background-600: 46, 46, 46;
-    --color-sidebar-background-700: 38, 38, 38;
-    --color-sidebar-background-800: 34, 34, 34;
-    --color-sidebar-background-900: 23, 23, 23;
+    --color-sidebar-background-100: 255, 255, 255; /* primary sidebar bg */
+    --color-sidebar-background-90: 250, 250, 250; /* secondary sidebar bg */
+    --color-sidebar-background-80: 245, 245, 245; /* tertiary sidebar bg */
 
-    --color-sidebar-text-10: 250, 250, 250;
-    --color-sidebar-text-20: 245, 245, 245;
-    --color-sidebar-text-30: 241, 241, 241;
-    --color-sidebar-text-40: 229, 229, 229;
-    --color-sidebar-text-50: 212, 212, 212;
-    --color-sidebar-text-60: 185, 185, 185;
-    --color-sidebar-text-70: 163, 163, 163;
-    --color-sidebar-text-80: 157, 157, 157;
-    --color-sidebar-text-90: 129, 129, 129;
-    --color-sidebar-text-100: 115, 115, 115;
-    --color-sidebar-text-200: 104, 104, 104;
-    --color-sidebar-text-300: 82, 82, 82;
-    --color-sidebar-text-400: 64, 64, 64;
-    --color-sidebar-text-500: 58, 58, 58;
-    --color-sidebar-text-600: 46, 46, 46;
-    --color-sidebar-text-700: 38, 38, 38;
-    --color-sidebar-text-800: 34, 34, 34;
-    --color-sidebar-text-900: 23, 23, 23;
+    --color-sidebar-text-100: 23, 23, 23; /* primary sidebar text */
+    --color-sidebar-text-200: 82, 82, 82; /* secondary sidebar text */
+    --color-sidebar-text-300: 115, 115, 115; /* tertiary sidebar text */
   }
 
   [data-theme="light"] {
-    --color-background-10: 250, 250, 250;
-    --color-background-20: 245, 245, 245;
-    --color-background-30: 241, 241, 241;
-    --color-background-40: 229, 229, 229;
-    --color-background-50: 212, 212, 212;
-    --color-background-60: 185, 185, 185;
-    --color-background-70: 163, 163, 163;
-    --color-background-80: 157, 157, 157;
-    --color-background-90: 129, 129, 129;
-    --color-background-100: 255, 255, 255;
-    --color-background-200: 104, 104, 104;
-    --color-background-300: 82, 82, 82;
-    --color-background-400: 64, 64, 64;
-    --color-background-500: 58, 58, 58;
-    --color-background-600: 46, 46, 46;
-    --color-background-700: 38, 38, 38;
-    --color-background-800: 34, 34, 34;
-    --color-background-900: 23, 23, 23;
+    color-scheme: light !important;
+
+    --color-background-100: 255, 255, 255; /* primary bg */
+    --color-background-90: 250, 250, 250; /* secondary bg */
+    --color-background-80: 245, 245, 245; /* tertiary bg */
+
+    --color-text-100: 23, 23, 23; /* primary text */
+    --color-text-200: 82, 82, 82; /* secondary text */
+    --color-text-300: 115, 115, 115; /* tertiary text */
+
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    --color-sidebar-background-100: 255, 255, 255; /* primary sidebar bg */
+    --color-sidebar-background-90: 250, 250, 250; /* secondary sidebar bg */
+    --color-sidebar-background-80: 245, 245, 245; /* tertiary sidebar bg */
+
+    --color-sidebar-text-100: 23, 23, 23; /* primary sidebar text */
+    --color-sidebar-text-200: 82, 82, 82; /* secondary sidebar text */
+    --color-sidebar-text-300: 115, 115, 115; /* tertiary sidebar text */
+
+    --color-sidebar-border-100: 245, 245, 245; /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: 229, 229, 229; /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: 212, 212, 212; /* strong sidebar border- 1 */
+    --color-sidebar-border-400: 185, 185, 185; /* strong sidebar border- 2 */
   }
 
   [data-theme="dark"] {
-    --color-background-10: 250, 250, 250;
-    --color-background-20: 245, 245, 245;
-    --color-background-30: 241, 241, 241;
-    --color-background-40: 229, 229, 229;
-    --color-background-50: 212, 212, 212;
-    --color-background-60: 185, 185, 185;
-    --color-background-70: 163, 163, 163;
-    --color-background-80: 157, 157, 157;
-    --color-background-90: 129, 129, 129;
-    --color-background-100: 115, 115, 115;
-    --color-background-200: 104, 104, 104;
-    --color-background-300: 82, 82, 82;
-    --color-background-400: 64, 64, 64;
-    --color-background-500: 58, 58, 58;
-    --color-background-600: 46, 46, 46;
-    --color-background-700: 38, 38, 38;
-    --color-background-800: 34, 34, 34;
-    --color-background-900: 23, 23, 23;
+    color-scheme: dark !important;
 
-    --color-text-10: 250, 250, 250;
-    --color-text-20: 245, 245, 245;
-    --color-text-30: 241, 241, 241;
-    --color-text-40: 229, 229, 229;
-    --color-text-50: 212, 212, 212;
-    --color-text-60: 185, 185, 185;
-    --color-text-70: 163, 163, 163;
-    --color-text-80: 157, 157, 157;
-    --color-text-90: 129, 129, 129;
-    --color-text-100: 115, 115, 115;
-    --color-text-200: 104, 104, 104;
-    --color-text-300: 82, 82, 82;
-    --color-text-400: 64, 64, 64;
-    --color-text-500: 58, 58, 58;
-    --color-text-600: 46, 46, 46;
-    --color-text-700: 38, 38, 38;
-    --color-text-800: 34, 34, 34;
-    --color-text-900: 23, 23, 23;
+    --color-background-100: 0, 0, 0; /* primary bg */
+    --color-background-90: 11, 11, 11; /* secondary bg */
+    --color-background-80: 23, 23, 23; /* tertiary bg */
 
-    --color-sidebar-background-10: 250, 250, 250;
-    --color-sidebar-background-20: 245, 245, 245;
-    --color-sidebar-background-30: 241, 241, 241;
-    --color-sidebar-background-40: 229, 229, 229;
-    --color-sidebar-background-50: 212, 212, 212;
-    --color-sidebar-background-60: 185, 185, 185;
-    --color-sidebar-background-70: 163, 163, 163;
-    --color-sidebar-background-80: 157, 157, 157;
-    --color-sidebar-background-90: 129, 129, 129;
-    --color-sidebar-background-100: 115, 115, 115;
-    --color-sidebar-background-200: 104, 104, 104;
-    --color-sidebar-background-300: 82, 82, 82;
-    --color-sidebar-background-400: 64, 64, 64;
-    --color-sidebar-background-500: 58, 58, 58;
-    --color-sidebar-background-600: 46, 46, 46;
-    --color-sidebar-background-700: 38, 38, 38;
-    --color-sidebar-background-800: 34, 34, 34;
-    --color-sidebar-background-900: 23, 23, 23;
+    --color-text-100: 255, 255, 255; /* primary text */
+    --color-text-200: 82, 82, 82; /* secondary text */
+    --color-text-300: 115, 115, 115; /* tertiary text */
 
-    --color-sidebar-text-10: 250, 250, 250;
-    --color-sidebar-text-20: 245, 245, 245;
-    --color-sidebar-text-30: 241, 241, 241;
-    --color-sidebar-text-40: 229, 229, 229;
-    --color-sidebar-text-50: 212, 212, 212;
-    --color-sidebar-text-60: 185, 185, 185;
-    --color-sidebar-text-70: 163, 163, 163;
-    --color-sidebar-text-80: 157, 157, 157;
-    --color-sidebar-text-90: 129, 129, 129;
-    --color-sidebar-text-100: 115, 115, 115;
-    --color-sidebar-text-200: 104, 104, 104;
-    --color-sidebar-text-300: 82, 82, 82;
-    --color-sidebar-text-400: 64, 64, 64;
-    --color-sidebar-text-500: 58, 58, 58;
-    --color-sidebar-text-600: 46, 46, 46;
-    --color-sidebar-text-700: 38, 38, 38;
-    --color-sidebar-text-800: 34, 34, 34;
-    --color-sidebar-text-900: 23, 23, 23;
+    --color-border-100: 34, 34, 34; /* subtle border= 1 */
+    --color-border-200: 38, 38, 38; /* subtle border- 2 */
+    --color-border-300: 46, 46, 46; /* strong border- 1 */
+    --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+    --color-sidebar-background-100: 0, 0, 0; /* primary sidebar bg */
+    --color-sidebar-background-90: 11, 11, 11; /* secondary sidebar bg */
+    --color-sidebar-background-80: 23, 23, 23; /* tertiary sidebar bg */
+
+    --color-sidebar-text-100: 255, 255, 255; /* primary sidebar text */
+    --color-sidebar-text-200: 82, 82, 82; /* secondary sidebar text */
+    --color-sidebar-text-300: 115, 115, 115; /* tertiary sidebar text */
+
+    --color-sidebar-border-100: 34, 34, 34; /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: 38, 38, 38; /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: 46, 46, 46; /* strong sidebar border- 1 */
+    --color-sidebar-border-400: 58, 58, 58; /* strong sidebar border- 2 */
   }
 
   [data-theme="light-contrast"] {
-    --color-bg-base: 250, 250, 250;
-    --color-bg-surface-1: 250, 250, 250;
-    --color-bg-surface-2: 206, 212, 218;
-
-    --color-border: 0, 0, 0;
-    --color-bg-sidebar: 255, 255, 255;
-    --color-accent: 63, 118, 255;
-
-    --color-text-base: 0, 0, 0;
-    --color-text-secondary: 0, 0, 0;
+    color-scheme: light !important;
   }
 
   [data-theme="dark-contrast"] {
-    --color-bg-base: 25, 27, 27;
-    --color-bg-surface-1: 31, 32, 35;
-    --color-bg-surface-2: 39, 42, 45;
-
-    --color-border: 255, 255, 255;
-    --color-bg-sidebar: 19, 20, 22;
-    --color-accent: 60, 133, 217;
-
-    --color-text-base: 255, 255, 255;
-    --color-text-secondary: 142, 148, 146;
     color-scheme: dark !important;
   }
 }
@@ -274,12 +158,12 @@ body {
 
 .horizontal-scroll-enable::-webkit-scrollbar-track {
   height: 7px;
-  background-color: rgba(var(--color-bg-base));
+  background-color: rgba(var(--color-background-100));
 }
 
 .horizontal-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: rgba(var(--color-bg-surface-2));
+  background-color: rgba(var(--color-background-80));
 }
 
 .vertical-scroll-enable::-webkit-scrollbar {
@@ -293,7 +177,7 @@ body {
 
 .vertical-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: rgba(var(--color-bg-surface-1));
+  background-color: rgba(var(--color-background-90));
 }
 /* end scrollbar style */
 
@@ -351,7 +235,7 @@ body {
 
 .progress-bar {
   fill: currentColor;
-  color: rgba(var(--color-bg-sidebar));
+  color: rgba(var(--color-sidebar-background-100));
 }
 
 /* end react datepicker styling */
@@ -367,4 +251,10 @@ body {
 /* popover2 styling */
 .bp4-popover2-transition-container {
   z-index: 1 !important;
+}
+
+::-webkit-input-placeholder,
+::placeholder,
+:-ms-input-placeholder {
+  color: rgb(var(--color-text-300));
 }

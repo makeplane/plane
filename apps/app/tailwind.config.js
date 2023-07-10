@@ -5,33 +5,7 @@ module.exports = {
   content: ["./pages/**/*.tsx", "./components/**/*.tsx", "./layouts/**/*.tsx", "./ui/**/*.tsx"],
   theme: {
     extend: {
-      borderColor: {
-        brand: {
-          base: convertToRGB("--color-background-80"),
-          secondary: convertToRGB("--color-background-90"),
-        },
-      },
-      backgroundColor: {
-        brand: {
-          base: convertToRGB("--color-background-100"),
-          "surface-1": convertToRGB("--color-background-90"),
-          "surface-2": convertToRGB("--color-background-80"),
-          sidebar: convertToRGB("--color-sidebar-background-100"),
-          backdrop: "#131313",
-        },
-      },
-      textColor: {
-        brand: {
-          base: convertToRGB("--color-text-100"),
-          secondary: convertToRGB("--color-text-200"),
-        },
-      },
       colors: {
-        brand: {
-          base: convertToRGB("--color-background-100"),
-          accent: convertToRGB("--color-primary-100"),
-          backdrop: "#131313",
-        },
         custom: {
           primary: {
             0: "rgb(255, 255, 255)",
@@ -102,6 +76,15 @@ module.exports = {
             1000: "rgb(0, 0, 0)",
             DEFAULT: convertToRGB("--color-text-100"),
           },
+          border: {
+            0: "rgb(255, 255, 255)",
+            100: convertToRGB("--color-border-100"),
+            200: convertToRGB("--color-border-200"),
+            300: convertToRGB("--color-border-300"),
+            400: convertToRGB("--color-border-400"),
+            1000: "rgb(0, 0, 0)",
+            DEFAULT: convertToRGB("--color-border-100"),
+          },
           sidebar: {
             background: {
               0: "rgb(255, 255, 255)",
@@ -149,7 +132,17 @@ module.exports = {
               1000: "rgb(0, 0, 0)",
               DEFAULT: convertToRGB("--color-sidebar-text-100"),
             },
+            border: {
+              0: "rgb(255, 255, 255)",
+              100: convertToRGB("--color-sidebar-border-100"),
+              200: convertToRGB("--color-sidebar-border-200"),
+              300: convertToRGB("--color-sidebar-border-300"),
+              400: convertToRGB("--color-sidebar-border-400"),
+              1000: "rgb(0, 0, 0)",
+              DEFAULT: convertToRGB("--color-sidebar-border-100"),
+            },
           },
+          backdrop: "#131313",
         },
       },
       keyframes: {
@@ -165,22 +158,22 @@ module.exports = {
       typography: ({ theme }) => ({
         brand: {
           css: {
-            "--tw-prose-body": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-p": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-headings": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-lead": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-links": `${convertToRGB("--color-primary-100")}`,
-            "--tw-prose-bold": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-counters": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-bullets": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-hr": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-quotes": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-quote-borders": `${convertToRGB("--color-border")}`,
-            "--tw-prose-code": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-pre-code": `${convertToRGB("--color-text-base")}`,
-            "--tw-prose-pre-bg": `${convertToRGB("--color-bg-base")}`,
-            "--tw-prose-th-borders": `${convertToRGB("--color-border")}`,
-            "--tw-prose-td-borders": `${convertToRGB("--color-border")}`,
+            "--tw-prose-body": convertToRGB("--color-text-100"),
+            "--tw-prose-p": convertToRGB("--color-text-100"),
+            "--tw-prose-headings": convertToRGB("--color-text-100"),
+            "--tw-prose-lead": convertToRGB("--color-text-100"),
+            "--tw-prose-links": convertToRGB("--color-primary-100"),
+            "--tw-prose-bold": convertToRGB("--color-text-100"),
+            "--tw-prose-counters": convertToRGB("--color-text-100"),
+            "--tw-prose-bullets": convertToRGB("--color-text-100"),
+            "--tw-prose-hr": convertToRGB("--color-text-100"),
+            "--tw-prose-quotes": convertToRGB("--color-text-100"),
+            "--tw-prose-quote-borders": convertToRGB("--color-border"),
+            "--tw-prose-code": convertToRGB("--color-text-100"),
+            "--tw-prose-pre-code": convertToRGB("--color-text-100"),
+            "--tw-prose-pre-bg": convertToRGB("--color-background-100"),
+            "--tw-prose-th-borders": convertToRGB("--color-border"),
+            "--tw-prose-td-borders": convertToRGB("--color-border"),
           },
         },
       }),

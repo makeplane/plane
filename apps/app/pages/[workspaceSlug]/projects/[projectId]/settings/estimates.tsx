@@ -146,7 +146,7 @@ const EstimatesSettings: NextPage = () => {
           </section>
           {estimatesList ? (
             estimatesList.length > 0 ? (
-              <section className="mt-5 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
+              <section className="mt-5 divide-y divide-custom-border-100 rounded-xl border border-custom-border-100 bg-custom-background-100 px-6">
                 {estimatesList.map((estimate) => (
                   <SingleEstimate
                     key={estimate.id}
