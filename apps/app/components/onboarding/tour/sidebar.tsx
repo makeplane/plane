@@ -48,17 +48,17 @@ export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
           key={option.key}
           className={`pr-2 py-0.5 pl-3 flex items-center gap-2 capitalize font-medium text-sm border-l-[3px] cursor-pointer ${
             step === option.key
-              ? "text-brand-accent border-brand-accent"
-              : "text-brand-secondary border-transparent"
+              ? "text-custom-primary-100 border-custom-primary-100"
+              : "text-custom-text-200 border-transparent"
           }`}
           onClick={() => setStep(option.key)}
         >
           <option.icon
             className={`h-5 w-5 flex-shrink-0 ${
-              step === option.key ? "text-brand-accent" : "text-brand-secondary"
+              step === option.key ? "text-custom-primary-100" : "text-custom-text-200"
             }`}
             color={`${
-              step === option.key ? "rgb(var(--color-accent))" : "rgb(var(--color-text-secondary))"
+              step === option.key ? "rgb(var(--color-primary-100))" : "rgb(var(--color-text-200))"
             }`}
             aria-hidden="true"
           />

@@ -85,7 +85,7 @@ export const CustomSearchSelect = ({
                 disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
               } ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
-              } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-brand-base ${
+              } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-custom-border-100 ${
                 textAlignment === "right"
                   ? "text-right"
                   : textAlignment === "center"

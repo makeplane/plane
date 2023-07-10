@@ -54,7 +54,7 @@ const WorkspacePage: NextPage = () => {
         />
       )}
       {user && !user.is_onboarded && (
-        <div className="fixed top-0 left-0 h-full w-full bg-brand-backdrop bg-opacity-50 transition-opacity z-20 grid place-items-center">
+        <div className="fixed top-0 left-0 h-full w-full bg-custom-backdrop bg-opacity-50 transition-opacity z-20 grid place-items-center">
           <TourRoot
             onComplete={() => {
               userService.updateUserOnBoard({ userRole: user.role }, user).then(async () => {

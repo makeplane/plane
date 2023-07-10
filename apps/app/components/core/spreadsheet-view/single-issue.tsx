@@ -348,12 +348,12 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.created_on && (
-        <div className="flex items-center text-xs cursor-default text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs cursor-default text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-100">
           {renderLongDetailDateFormat(issue.created_at)}
         </div>
       )}
       {properties.updated_on && (
-        <div className="flex items-center text-xs cursor-default text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs cursor-default text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-100">
           {renderLongDetailDateFormat(issue.updated_at)}
         </div>
       )}

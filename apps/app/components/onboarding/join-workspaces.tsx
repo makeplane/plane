@@ -6,14 +6,16 @@ import useSWR from "swr";
 import workspaceService from "services/workspace.service";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
+// icons
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
 import { IWorkspaceMemberInvitation } from "types";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+// constants
 import { ROLE } from "constants/workspace";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   updateLastWorkspace: () => Promise<void>;
@@ -72,7 +74,9 @@ export const JoinWorkspaces: React.FC<Props> = ({ updateLastWorkspace }) => {
               <div
                 key={invitation.id}
                 className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
-                  isSelected ? "border-brand-accent" : "border-brand-base hover:bg-brand-surface-2"
+                  isSelected
+                    ? "border-custom-primary-100"
+                    : "border-custom-border-100 hover:bg-custom-background-80"
                 }`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
@@ -97,11 +101,11 @@ export const JoinWorkspaces: React.FC<Props> = ({ updateLastWorkspace }) => {
                   <div className="text-sm font-medium">
                     {truncateText(invitation.workspace.name, 30)}
                   </div>
-                  <p className="text-xs text-brand-secondary">{ROLE[invitation.role]}</p>
+                  <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
                 </div>
                 <span
                   className={`flex-shrink-0 ${
-                    isSelected ? "text-brand-accent" : "text-brand-secondary"
+                    isSelected ? "text-custom-primary-100" : "text-custom-text-200"
                   }`}
                 >
                   <CheckCircleIcon className="h-5 w-5" />

@@ -162,7 +162,7 @@ export const InviteMembers: React.FC<Props> = ({
                   className="hidden group-hover:grid self-center place-items-center rounded -ml-3"
                   onClick={() => remove(index)}
                 >
-                  <XMarkIcon className="h-3.5 w-3.5 text-brand-secondary" />
+                  <XMarkIcon className="h-3.5 w-3.5 text-custom-text-200" />
                 </button>
               )}
             </div>
@@ -170,7 +170,7 @@ export const InviteMembers: React.FC<Props> = ({
         </div>
         <button
           type="button"
-          className="flex items-center gap-2 outline-brand-accent bg-transparent text-brand-accent text-xs font-medium py-2 pr-3"
+          className="flex items-center gap-2 outline-custom-primary-100 bg-transparent text-custom-primary-100 text-xs font-medium py-2 pr-3"
           onClick={appendField}
         >
           <PlusIcon className="h-3 w-3" />

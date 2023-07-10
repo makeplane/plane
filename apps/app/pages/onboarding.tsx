@@ -103,15 +103,15 @@ const Onboarding: NextPage = () => {
     <DefaultLayout>
       <div className="flex h-full flex-col gap-y-2 sm:gap-y-0 sm:flex-row overflow-hidden">
         <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
-          <div className="absolute sm:border-r-[0.5px] border-custom-border-100 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:translate-y-0" />
+          <div className="absolute border-b-[0.5px] sm:border-r-[0.5px] border-custom-border-100 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:translate-y-0" />
           {step === 1 ? (
-            <div className="absolute grid place-items-center bg-custom-background-100 py-5 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:top-12">
+            <div className="absolute grid place-items-center bg-custom-background-100 px-3 sm:px-0 py-5 left-2 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 sm:translate-y-0 sm:top-12">
               <div className="h-[30px] w-[30px]">
                 <Image src={BluePlaneLogoWithoutText} alt="Plane logo" />
               </div>
             </div>
           ) : (
-            <div className="absolute grid place-items-center bg-custom-background-100 py-5 sm:left-1/2 md:left-1/3 sm:-translate-x-[15px] sm:top-12">
+            <div className="absolute grid place-items-center bg-custom-background-100 px-3 sm:px-0 sm:py-5 left-5 sm:left-1/2 md:left-1/3 sm:-translate-x-[15px] top-1/2 -translate-y-1/2 sm:translate-y-0 sm:top-12">
               <div className="h-[30px] w-[133px]">
                 {theme === "light" ? (
                   <Image src={BlackHorizontalLogo} alt="Plane black logo" />
@@ -121,7 +121,7 @@ const Onboarding: NextPage = () => {
               </div>
             </div>
           )}
-          <div className="text-custom-text-100 text-sm fixed right-4 top-6 sm:right-16 sm:top-12 py-5">
+          <div className="absolute sm:fixed text-custom-text-100 text-sm right-4 top-1/4 sm:top-12 -translate-y-1/2 sm:translate-y-0 sm:right-16 sm:py-5">
             {user?.email}
           </div>
           <div className="fixed w-[200px] md:w-1/5 right-4 bottom-6 sm:right-16 sm:bottom-12 py-5 space-y-1">
