@@ -6,8 +6,6 @@ import { useTheme } from "next-themes";
 import { THEMES_OBJ } from "constants/themes";
 // ui
 import { CustomSelect } from "components/ui";
-// helper
-import { applyTheme } from "helpers/theme.helper";
 // types
 import { ICustomTheme, IUser } from "types";
 
@@ -79,19 +77,14 @@ export const ThemeSwitch: React.FC<Props> = ({
             if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
           } else {
             if (customThemeSelectorOptions) setCustomThemeSelectorOptions(false);
-            const cssVars = [
-              "--color-bg-base",
-              "--color-bg-surface-1",
-              "--color-bg-surface-2",
 
-              "--color-border",
-              "--color-bg-sidebar",
-              "--color-accent",
-
-              "--color-text-base",
-              "--color-text-secondary",
-            ];
-            cssVars.forEach((cssVar) => document.documentElement.style.removeProperty(cssVar));
+            for (let i = 10; i <= 900; i >= 100 ? (i += 100) : (i += 10)) {
+              document.documentElement.style.removeProperty(`--color-background-${i}`);
+              document.documentElement.style.removeProperty(`--color-text-${i}`);
+              document.documentElement.style.removeProperty(`--color-primary-${i}`);
+              document.documentElement.style.removeProperty(`--color-sidebar-background-${i}`);
+              document.documentElement.style.removeProperty(`--color-sidebar-text-${i}`);
+            }
           }
           setTheme(value);
           document.documentElement.style.setProperty("color-scheme", type);
