@@ -184,7 +184,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="transform rounded-lg bg-custom-background-80 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <div className="relative h-36 w-full rounded-t-lg bg-custom-background-80">
                   {watch("cover_image") !== null && (
                     <img

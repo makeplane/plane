@@ -92,9 +92,9 @@
     --color-background-90: 11, 11, 11; /* secondary bg */
     --color-background-80: 23, 23, 23; /* tertiary bg */
 
-    --color-text-100: 255, 255, 255; /* primary text */
-    --color-text-200: 82, 82, 82; /* secondary text */
-    --color-text-300: 115, 115, 115; /* tertiary text */
+    --color-text-100: 241, 241, 241; /* primary text */
+    --color-text-200: 115, 115, 115; /* secondary text */
+    --color-text-300: 163, 163, 163; /* tertiary text */
 
     --color-border-100: 34, 34, 34; /* subtle border= 1 */
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
@@ -105,9 +105,9 @@
     --color-sidebar-background-90: 11, 11, 11; /* secondary sidebar bg */
     --color-sidebar-background-80: 23, 23, 23; /* tertiary sidebar bg */
 
-    --color-sidebar-text-100: 255, 255, 255; /* primary sidebar text */
-    --color-sidebar-text-200: 82, 82, 82; /* secondary sidebar text */
-    --color-sidebar-text-300: 115, 115, 115; /* tertiary sidebar text */
+    --color-sidebar-text-100: 241, 241, 241; /* primary sidebar text */
+    --color-sidebar-text-200: 115, 115, 115; /* secondary sidebar text */
+    --color-sidebar-text-300: 163, 163, 163; /* tertiary sidebar text */
 
     --color-sidebar-border-100: 34, 34, 34; /* subtle sidebar border= 1 */
     --color-sidebar-border-200: 38, 38, 38; /* subtle sidebar border- 2 */
