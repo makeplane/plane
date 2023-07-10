@@ -21,6 +21,8 @@ type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
+  className?: string;
   selfPositioned?: boolean;
   customButton?: boolean;
   user: ICurrentUserResponse | undefined;
@@ -31,6 +33,8 @@ export const ViewStateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   position = "left",
+  tooltipPosition = "top",
+  className = "",
   selfPositioned = false,
   customButton = false,
   user,
@@ -64,17 +68,21 @@ export const ViewStateSelect: React.FC<Props> = ({
     <Tooltip
       tooltipHeading="State"
       tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
+      position={tooltipPosition}
     >
-      <div className="flex items-center cursor-pointer gap-2 text-brand-secondary">
-        {selectedOption &&
-          getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
-        {selectedOption?.name ?? "State"}
+      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+        <span className="h-4 w-4">
+          {selectedOption &&
+            getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
+        </span>
+        <span className="truncate">{selectedOption?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
 
   return (
     <CustomSearchSelect
+      className={className}
       value={issue.state}
       onChange={(data: string) => {
         partialUpdateIssue(

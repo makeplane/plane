@@ -83,7 +83,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   return (
     <form className="w-full space-y-10" onSubmit={handleSubmit(onSubmit)}>
       <div className="relative text-lg">
-        <div className="text-brand-accent absolute -top-1 -left-3">{'"'}</div>
+        <div className="text-custom-primary-100 absolute -top-1 -left-3">{'"'}</div>
         <h5>Hey there 👋🏻</h5>
         <h5 className="mt-5 mb-6">Let{"'"}s get you onboard!</h5>
         <h4 className="text-2xl font-semibold">Set up your Plane profile.</h4>

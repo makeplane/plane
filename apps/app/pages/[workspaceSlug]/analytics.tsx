@@ -97,15 +97,15 @@ const Analytics = () => {
       //   </PrimaryButton>
       // }
     >
-      <div className="h-full flex flex-col overflow-hidden bg-brand-base">
+      <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
         <Tab.Group as={Fragment}>
-          <Tab.List as="div" className="space-x-2 border-b border-brand-base px-5 py-3">
+          <Tab.List as="div" className="space-x-2 border-b border-custom-border-100 px-5 py-3">
             {tabsList.map((tab) => (
               <Tab
                 key={tab}
                 className={({ selected }) =>
-                  `rounded-3xl border border-brand-base px-4 py-2 text-xs hover:bg-brand-surface-2 ${
-                    selected ? "bg-brand-surface-2" : ""
+                  `rounded-3xl border border-custom-border-100 px-4 py-2 text-xs hover:bg-custom-background-80 ${
+                    selected ? "bg-custom-background-80" : ""
                   }`
                 }
                 onClick={() => trackAnalyticsEvent(tab)}

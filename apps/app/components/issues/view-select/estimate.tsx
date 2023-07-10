@@ -17,6 +17,7 @@ type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
   customButton?: boolean;
   user: ICurrentUserResponse | undefined;
@@ -27,6 +28,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   position = "left",
+  tooltipPosition = "top",
   selfPositioned = false,
   customButton = false,
   user,
@@ -40,8 +42,8 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
 
   const estimateLabels = (
-    <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue}>
-      <div className="flex items-center gap-1 text-brand-secondary">
+    <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue} position={tooltipPosition}>
+      <div className="flex items-center gap-1 text-custom-text-200">
         <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
         {estimateValue ?? "None"}
       </div>

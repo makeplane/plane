@@ -184,13 +184,13 @@ const FeaturesSettings: NextPage = () => {
             {featuresList.map((feature) => (
               <div
                 key={feature.property}
-                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-brand-base bg-brand-base p-5"
+                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-5"
               >
                 <div className="flex items-start gap-3">
                   {feature.icon}
                   <div>
                     <h4 className="text-lg font-semibold">{feature.title}</h4>
-                    <p className="text-sm text-brand-secondary">{feature.description}</p>
+                    <p className="text-sm text-custom-text-200">{feature.description}</p>
                   </div>
                 </div>
                 <ToggleSwitch

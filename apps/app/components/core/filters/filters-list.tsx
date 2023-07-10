@@ -17,6 +17,7 @@ import stateService from "services/state.service";
 // types
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 import { IIssueFilterOptions } from "types";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
 export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
   const router = useRouter();
@@ -57,10 +58,10 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
           return (
             <div
               key={key}
-              className="flex items-center gap-x-2 rounded-full border border-brand-base bg-brand-surface-2 px-2 py-1"
+              className="flex items-center gap-x-2 rounded-full border border-custom-border-100 bg-custom-background-80 px-2 py-1"
             >
-              <span className="capitalize text-brand-secondary">
-                {replaceUnderscoreIfSnakeCase(key)}:
+              <span className="capitalize text-custom-text-200">
+                {key === "target_date" ? "Due Date" : replaceUnderscoreIfSnakeCase(key)}:
               </span>
               {filters[key as keyof IIssueFilterOptions] === null ||
               (filters[key as keyof IIssueFilterOptions]?.length ?? 0) <= 0 ? (
@@ -131,7 +132,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                               ? "bg-yellow-500/20 text-yellow-500"
                               : priority === "low"
                               ? "bg-green-500/20 text-green-500"
-                              : "bg-brand-surface-1 text-brand-secondary"
+                              : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
                           <span>{getPriorityIcon(priority)}</span>
@@ -170,7 +171,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         return (
                           <div
                             key={memberId}
-                            className="inline-flex items-center gap-x-1 rounded-full bg-brand-surface-1 px-1 capitalize"
+                            className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1 capitalize"
                           >
                             <Avatar user={member} />
                             <span>{member?.first_name}</span>
@@ -211,7 +212,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         return (
                           <div
                             key={`${memberId}-${key}`}
-                            className="inline-flex items-center gap-x-1 rounded-full bg-brand-surface-1 px-1 capitalize"
+                            className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1 capitalize"
                           >
                             <Avatar user={member} />
                             <span>{member?.first_name}</span>
@@ -299,6 +300,51 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                         <XMarkIcon className="h-3 w-3" />
                       </button>
                     </div>
+                  ) : key === "target_date" ? (
+                    <div className="flex flex-wrap items-center gap-1">
+                      {filters.target_date?.map((date: string) => {
+                        if (filters.target_date.length <= 0) return null;
+
+                        const splitDate = date.split(";");
+
+                        return (
+                          <div
+                            key={date}
+                            className="inline-flex items-center gap-x-1 rounded-full border border-custom-border-100 bg-custom-background-100 px-1 py-0.5"
+                          >
+                            <div className="h-1.5 w-1.5 rounded-full" />
+                            <span className="capitalize">
+                              {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
+                            </span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setFilters(
+                                  {
+                                    target_date: filters.target_date?.filter(
+                                      (d: any) => d !== date
+                                    ),
+                                  },
+                                  !Boolean(viewId)
+                                )
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3" />
+                            </span>
+                          </div>
+                        );
+                      })}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFilters({
+                            target_date: null,
+                          })
+                        }
+                      >
+                        <XMarkIcon className="h-3 w-3" />
+                      </button>
+                    </div>
                   ) : (
                     (filters[key as keyof IIssueFilterOptions] as any)?.join(", ")
                   )}
@@ -332,9 +378,10 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
               assignees: null,
               labels: null,
               created_by: null,
+              target_date: null,
             })
           }
-          className="flex items-center gap-x-1 rounded-full border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-xs"
+          className="flex items-center gap-x-1 rounded-full border border-custom-border-100 bg-custom-background-80 px-3 py-1.5 text-xs"
         >
           <span>Clear all filters</span>
           <XMarkIcon className="h-3 w-3" />

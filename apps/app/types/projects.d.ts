@@ -80,8 +80,8 @@ type ProjectViewTheme = {
 export interface IProjectMember {
   id: string;
   member: IUserLite;
-  project: IProject;
-  workspace: IWorkspace;
+  project: IProjectLite;
+  workspace: IWorkspaceLite;
   comment: string;
   role: 5 | 10 | 15 | 20;
 
@@ -111,6 +111,10 @@ export interface IProjectMemberInvitation {
   updated_at: Date;
   created_by: string;
   updated_by: string;
+}
+
+export interface IProjectBulkInviteFormData {
+  members: { role: 5 | 10 | 15 | 20; member_id: string }[];
 }
 
 export interface IGithubRepository {

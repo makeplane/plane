@@ -101,7 +101,9 @@ const SingleView: React.FC = () => {
           </div>
         }
       >
-        <IssuesView />
+        <div className="h-full w-full flex flex-col">
+          <IssuesView />
+        </div>
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );

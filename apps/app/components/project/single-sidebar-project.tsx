@@ -22,6 +22,7 @@ import {
 } from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject } from "types";
 
@@ -82,7 +83,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
     <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
       {({ open }) => (
         <>
-          <div className="flex items-center gap-x-1">
+          <div className="flex items-center gap-x-1 text-custom-sidebar-text-100">
             <Disclosure.Button
               as="div"
               className={`flex w-full cursor-pointer select-none items-center rounded-md py-2 text-left text-sm font-medium ${
@@ -92,7 +93,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
               <div className="flex items-center gap-x-2">
                 {project.emoji ? (
                   <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                    {String.fromCodePoint(parseInt(project.emoji))}
+                    {renderEmoji(project.emoji)}
                   </span>
                 ) : project.icon_prop ? (
                   <div className="h-7 w-7 grid place-items-center">
@@ -181,16 +182,18 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     <a
                       className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
                         router.asPath.includes(item.href)
-                          ? "bg-brand-surface-2 text-brand-base"
-                          : "text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-secondary focus:bg-brand-surface-2 focus:text-brand-secondary"
+                          ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
+                          : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90"
                       } ${sidebarCollapse ? "justify-center" : ""}`}
                     >
                       <div className="grid place-items-center">
                         <item.icon
-                          className={`h-5 w-5 flex-shrink-0 text-brand-secondary ${
-                            !sidebarCollapse ? "mr-3" : ""
-                          }`}
-                          color="#858e96"
+                          className={`h-5 w-5 flex-shrink-0 ${!sidebarCollapse ? "mr-3" : ""}`}
+                          color={
+                            router.asPath.includes(item.href)
+                              ? "rgb(var(--color-sidebar-text-100))"
+                              : "rgb(var(--color-sidebar-text-200))"
+                          }
                           aria-hidden="true"
                         />
                       </div>

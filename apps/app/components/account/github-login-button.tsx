@@ -39,7 +39,7 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
       <Link
         href={`https://github.com/login/oauth/authorize?client_id=${NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
       >
-        <button className="flex w-full items-center justify-center gap-3 rounded border border-brand-base p-2 text-sm font-medium text-brand-secondary duration-300 hover:bg-brand-surface-2">
+        <button className="flex w-full items-center justify-center gap-3 rounded border border-custom-border-100 p-2 text-sm font-medium text-custom-text-200 duration-300 hover:bg-custom-background-80">
           <Image src={githubImage} height={20} width={20} color="#000" alt="GitHub Logo" />
           <span>Sign In with Github</span>
         </button>

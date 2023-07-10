@@ -31,7 +31,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -45,19 +45,19 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="max-h-[600px] overflow-y-auto bg-brand-surface-2 p-5">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="max-h-[600px] overflow-y-auto bg-custom-background-80 p-5">
                   <div className="sm:flex sm:items-start">
                     <div className="flex w-full flex-col gap-y-4 text-center sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="flex justify-between text-lg font-medium leading-6 text-brand-base"
+                        className="flex justify-between text-lg font-medium leading-6 text-custom-text-100"
                       >
                         <span>Product Updates</span>
                         <span>
                           <button type="button" onClick={() => setIsOpen(false)}>
                             <XMarkIcon
-                              className="h-6 w-6 text-gray-400 hover:text-brand-secondary"
+                              className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100"
                               aria-hidden="true"
                             />
                           </button>
@@ -66,13 +66,13 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       {updates && updates.length > 0 ? (
                         updates.map((item, index) => (
                           <React.Fragment key={item.id}>
-                            <div className="flex items-center gap-3 text-xs text-brand-secondary">
-                              <span className="flex items-center rounded-full border border-brand-base bg-brand-surface-1 px-3 py-1.5 text-xs">
+                            <div className="flex items-center gap-3 text-xs text-custom-text-200">
+                              <span className="flex items-center rounded-full border border-custom-border-100 bg-custom-background-90 px-3 py-1.5 text-xs">
                                 {item.tag_name}
                               </span>
                               <span>{renderLongDateFormat(item.published_at)}</span>
                               {index === 0 && (
-                                <span className="flex items-center rounded-full border border-brand-base bg-brand-accent px-3 py-1.5 text-xs text-white">
+                                <span className="flex items-center rounded-full border border-custom-border-100 bg-custom-primary px-3 py-1.5 text-xs text-white">
                                   New
                                 </span>
                               )}

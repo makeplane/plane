@@ -14,7 +14,7 @@ type Props = {
 export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
   <div>
     <h3 className="mb-2 font-semibold">Issues by States</h3>
-    <div className="rounded-[10px] border border-brand-base bg-brand-base p-4">
+    <div className="rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-4">
       <PieGraph
         data={
           groupedIssues?.map((cell) => ({
@@ -25,8 +25,12 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
           })) ?? []
         }
         height="320px"
-        innerRadius={0.5}
-        arcLinkLabel={(cell) => `${capitalizeFirstLetter(cell.label.toString())} (${cell.value})`}
+        innerRadius={0.6}
+        cornerRadius={5}
+        padAngle={2}
+        enableArcLabels
+        arcLabelsTextColor="#000000"
+        enableArcLinkLabels={false}
         legends={[
           {
             anchor: "right",
@@ -53,8 +57,14 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
         ]}
         activeInnerRadiusOffset={5}
         colors={(datum) => datum.data.color}
+        tooltip={(datum) => (
+          <div className="flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 p-2 text-xs">
+            <span className="text-custom-text-200 capitalize">{datum.datum.label} issues:</span>{" "}
+            {datum.datum.value}
+          </div>
+        )}
         theme={{
-          background: "rgb(var(--color-bg-base))",
+          background: "transparent",
         }}
       />
     </div>

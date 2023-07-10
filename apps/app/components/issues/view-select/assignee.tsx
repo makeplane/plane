@@ -20,8 +20,8 @@ type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
-  tooltipPosition?: "left" | "right";
   customButton?: boolean;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
@@ -32,7 +32,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
   partialUpdateIssue,
   position = "left",
   selfPositioned = false,
-  tooltipPosition = "right",
+  tooltipPosition = "top",
   user,
   isNotAllowed,
   customButton = false,
@@ -69,7 +69,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
 
   const assigneeLabel = (
     <Tooltip
-      position={`top-${tooltipPosition}`}
+      position={tooltipPosition}
       tooltipHeading="Assignees"
       tooltipContent={
         issue.assignee_details.length > 0
@@ -84,7 +84,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       <div
         className={`flex ${
           isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-        } items-center gap-2 text-brand-secondary`}
+        } items-center gap-2 text-custom-text-200`}
       >
         {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
           <div className="-my-0.5 flex items-center justify-center gap-2">
@@ -92,7 +92,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
           </div>
         ) : (
           <div className="flex items-center justify-center gap-2">
-            <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+            <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
           </div>
         )}
       </div>

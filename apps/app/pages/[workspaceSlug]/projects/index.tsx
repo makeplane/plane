@@ -87,24 +87,28 @@ const ProjectsPage: NextPage = () => {
         user={user}
       />
       {projects ? (
-        <div className="p-8">
+        <div className="h-full w-full overflow-hidden">
           {projects.length === 0 ? (
-            <EmptyState
-              type="project"
-              title="Create New Project"
-              description="Projects are a collection of issues. They can be used to represent the development work for a product, project, or service."
-              imgURL={emptyProject}
-            />
+            <div className="h-full w-full grid place-items-center p-8">
+              <EmptyState
+                type="project"
+                title="Create New Project"
+                description="Projects are a collection of issues. They can be used to represent the development work for a product, project, or service."
+                imgURL={emptyProject}
+              />
+            </div>
           ) : (
-            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project) => (
-                <SingleProjectCard
-                  key={project.id}
-                  project={project}
-                  setToJoinProject={setSelectedProjectToJoin}
-                  setDeleteProject={setDeleteProject}
-                />
-              ))}
+            <div className="h-full p-8 overflow-y-auto">
+              <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+                {projects.map((project) => (
+                  <SingleProjectCard
+                    key={project.id}
+                    project={project}
+                    setToJoinProject={setSelectedProjectToJoin}
+                    setDeleteProject={setDeleteProject}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>

@@ -110,8 +110,8 @@ export const ActiveCycleDetails: React.FC = () => {
 
   if (!cycle)
     return (
-      <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
-        <h3 className="text-base font-medium text-brand-base ">No active cycle is present.</h3>
+      <div className="flex w-full items-center justify-start rounded-[10px] bg-custom-background-80 px-6 py-4">
+        <h3 className="text-base font-medium text-custom-text-100 ">No active cycle is present.</h3>
       </div>
     );
 
@@ -209,8 +209,8 @@ export const ActiveCycleDetails: React.FC = () => {
   }));
 
   return (
-    <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-brand-base border border-brand-base">
-      <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-y-0 lg:divide-x lg:grid-cols-3">
+    <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-custom-background-100 border border-custom-border-100">
+      <div className="grid grid-cols-1 divide-y border-custom-border-100 lg:divide-y-0 lg:divide-x lg:grid-cols-3">
         <div className="flex flex-col text-xs">
           <div className="h-full w-full">
             <div className="flex h-60 flex-col gap-5 justify-between rounded-b-[10px] p-4">
@@ -227,7 +227,7 @@ export const ActiveCycleDetails: React.FC = () => {
                           : cycleStatus === "completed"
                           ? "#3F76FF"
                           : cycleStatus === "draft"
-                          ? "#858E96"
+                          ? "rgb(var(--color-text-200))"
                           : ""
                       }`}
                     />
@@ -300,18 +300,18 @@ export const ActiveCycleDetails: React.FC = () => {
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="#858E96" />
+                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                 </span>
               </div>
 
-              <div className="flex items-center justify-start gap-5 text-brand-secondary">
+              <div className="flex items-center justify-start gap-5 text-custom-text-200">
                 <div className="flex items-start gap-1">
                   <CalendarDaysIcon className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
-                <ArrowRightIcon className="h-4 w-4 text-brand-secondary" />
+                <ArrowRightIcon className="h-4 w-4 text-custom-text-200" />
                 <div className="flex items-start gap-1">
                   <TargetIcon className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
@@ -319,7 +319,7 @@ export const ActiveCycleDetails: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2.5 text-brand-secondary">
+                <div className="flex items-center gap-2.5 text-custom-text-200">
                   {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                     <img
                       src={cycle.owned_by.avatar}
@@ -329,21 +329,21 @@ export const ActiveCycleDetails: React.FC = () => {
                       alt={cycle.owned_by.first_name}
                     />
                   ) : (
-                    <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-brand-base  capitalize">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
                       {cycle.owned_by.first_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-brand-secondary">{cycle.owned_by.first_name}</span>
+                  <span className="text-custom-text-200">{cycle.owned_by.first_name}</span>
                 </div>
 
                 {cycle.assignees.length > 0 && (
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <AssigneesList users={cycle.assignees} length={4} />
                   </div>
                 )}
               </div>
 
-              <div className="flex items-center gap-4 text-brand-secondary">
+              <div className="flex items-center gap-4 text-custom-text-200">
                 <div className="flex gap-2">
                   <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0" />
                   {cycle.total_issues} issues
@@ -355,16 +355,16 @@ export const ActiveCycleDetails: React.FC = () => {
               </div>
 
               <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-                <a className="bg-brand-accent text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-brand-accent/90">
+                <a className="bg-custom-primary text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-custom-primary/90">
                   View Cycle
                 </a>
               </Link>
             </div>
           </div>
         </div>
-        <div className="grid col-span-2 grid-cols-1 divide-y border-brand-base md:divide-y-0 md:divide-x md:grid-cols-2">
-          <div className="flex h-60 flex-col border-brand-base">
-            <div className="flex h-full w-full flex-col text-brand-secondary p-4">
+        <div className="grid col-span-2 grid-cols-1 divide-y border-custom-border-100 md:divide-y-0 md:divide-x md:grid-cols-2">
+          <div className="flex h-60 flex-col border-custom-border-100">
+            <div className="flex h-full w-full flex-col text-custom-text-200 p-4">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
                 <LinearProgressIndicator data={progressIndicatorData} />
@@ -391,22 +391,22 @@ export const ActiveCycleDetails: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="border-brand-base h-60 overflow-y-scroll">
+          <div className="border-custom-border-100 h-60 overflow-y-scroll">
             <ActiveCycleProgressStats cycle={cycle} />
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 divide-y border-brand-base lg:divide-y-0 lg:divide-x lg:grid-cols-2">
+      <div className="grid grid-cols-1 divide-y border-custom-border-100 lg:divide-y-0 lg:divide-x lg:grid-cols-2">
         <div className="flex flex-col justify-between p-4">
           <div>
-            <div className="text-brand-primary">High Priority Issues</div>
+            <div className="text-custom-primary">High Priority Issues</div>
             <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
               {issues ? (
                 issues.length > 0 ? (
                   issues.map((issue) => (
                     <div
                       key={issue.id}
-                      className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-brand-base bg-brand-surface-1 px-3 py-1.5"
+                      className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-custom-border-100 bg-custom-background-90 px-3 py-1.5"
                     >
                       <div className="flex flex-col gap-1">
                         <div>
@@ -414,7 +414,7 @@ export const ActiveCycleDetails: React.FC = () => {
                             tooltipHeading="Issue ID"
                             tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
                           >
-                            <span className="flex-shrink-0 text-xs text-brand-secondary">
+                            <span className="flex-shrink-0 text-xs text-custom-text-200">
                               {issue.project_detail?.identifier}-{issue.sequence_id}
                             </span>
                           </Tooltip>
@@ -424,7 +424,7 @@ export const ActiveCycleDetails: React.FC = () => {
                           tooltipHeading="Title"
                           tooltipContent={issue.name}
                         >
-                          <span className="text-[0.825rem] text-brand-base">
+                          <span className="text-[0.825rem] text-custom-text-100">
                             {truncateText(issue.name, 30)}
                           </span>
                         </Tooltip>
@@ -444,7 +444,7 @@ export const ActiveCycleDetails: React.FC = () => {
                             {issue.label_details.map((label) => (
                               <span
                                 key={label.id}
-                                className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
+                                className="group flex items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200"
                               >
                                 <span
                                   className="h-1.5 w-1.5  rounded-full"
@@ -460,7 +460,7 @@ export const ActiveCycleDetails: React.FC = () => {
                         ) : (
                           ""
                         )}
-                        <div className={`flex items-center gap-2 text-brand-secondary`}>
+                        <div className={`flex items-center gap-2 text-custom-text-200`}>
                           {issue.assignees &&
                           issue.assignees.length > 0 &&
                           Array.isArray(issue.assignees) ? (
@@ -479,7 +479,7 @@ export const ActiveCycleDetails: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="grid place-items-center text-brand-secondary text-sm text-center">
+                  <div className="grid place-items-center text-custom-text-200 text-sm text-center">
                     No issues present in the cycle.
                   </div>
                 )
@@ -495,7 +495,7 @@ export const ActiveCycleDetails: React.FC = () => {
 
           {issues && issues.length > 0 && (
             <div className="flex items-center justify-between gap-2">
-              <div className="h-1 w-full rounded-full bg-brand-surface-2">
+              <div className="h-1 w-full rounded-full bg-custom-background-80">
                 <div
                   className="h-1 rounded-full bg-green-600"
                   style={{
@@ -510,16 +510,16 @@ export const ActiveCycleDetails: React.FC = () => {
                   }}
                 />
               </div>
-              <div className="w-16 text-end text-xs text-brand-secondary">
+              <div className="w-16 text-end text-xs text-custom-text-200">
                 {issues?.filter((issue) => issue?.state_detail?.group === "completed")?.length} of{" "}
                 {issues?.length}
               </div>
             </div>
           )}
         </div>
-        <div className="flex flex-col justify-between border-brand-base p-4">
+        <div className="flex flex-col justify-between border-custom-border-100 p-4">
           <div className="flex items-start justify-between gap-4 py-1.5 text-xs">
-            <div className="flex items-center gap-3 text-brand-base">
+            <div className="flex items-center gap-3 text-custom-text-100">
               <div className="flex items-center justify-center gap-1">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#a9bbd0]" />
                 <span>Ideal</span>
@@ -531,7 +531,7 @@ export const ActiveCycleDetails: React.FC = () => {
             </div>
             <div className="flex items-center gap-1">
               <span>
-                <LayerDiagonalIcon className="h-5 w-5 flex-shrink-0 text-brand-secondary" />
+                <LayerDiagonalIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
               </span>
               <span>
                 Pending Issues -{" "}

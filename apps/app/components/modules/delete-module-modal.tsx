@@ -78,7 +78,7 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -92,7 +92,7 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-100 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-500/20 sm:mx-0 sm:h-10 sm:w-10">
@@ -104,14 +104,14 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg font-medium leading-6 text-brand-base"
+                        className="text-lg font-medium leading-6 text-custom-text-100"
                       >
                         Delete Module
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-brand-secondary">
+                        <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete module-{" "}
-                          <span className="break-words font-medium text-brand-base">
+                          <span className="break-words font-medium text-custom-text-100">
                             {data?.name}
                           </span>
                           ? All of the data related to the module will be permanently removed. This

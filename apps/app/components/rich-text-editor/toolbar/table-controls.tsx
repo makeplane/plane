@@ -8,7 +8,7 @@ export const TableControls = () => {
       <button
         type="button"
         onClick={() => createTable({ rowsCount: 3, columnsCount: 3, withHeaderRow: false })}
-        className="rounded p-1 hover:bg-brand-surface-1"
+        className="rounded p-1 hover:bg-custom-background-90"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +28,7 @@ export const TableControls = () => {
       <button
         type="button"
         onClick={() => commands.deleteTable()}
-        className="rounded p-1 hover:bg-brand-surface-1"
+        className="rounded p-1 hover:bg-custom-background-90"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

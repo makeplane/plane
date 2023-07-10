@@ -22,9 +22,9 @@ export const InboxFiltersList = () => {
           return (
             <div
               key={key}
-              className="flex items-center gap-x-2 rounded-full border border-brand-base bg-brand-surface-2 px-2 py-1"
+              className="flex items-center gap-x-2 rounded-full border border-custom-border-100 bg-custom-background-80 px-2 py-1"
             >
-              <span className="capitalize text-brand-secondary">
+              <span className="capitalize text-custom-text-200">
                 {replaceUnderscoreIfSnakeCase(key)}:
               </span>
               {filters[filterKey] === null || (filters[filterKey]?.length ?? 0) <= 0 ? (
@@ -45,7 +45,7 @@ export const InboxFiltersList = () => {
                               ? "bg-yellow-500/20 text-yellow-500"
                               : priority === "low"
                               ? "bg-green-500/20 text-green-500"
-                              : "bg-brand-surface-1 text-brand-secondary"
+                              : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
                           <span>{getPriorityIcon(priority)}</span>
@@ -78,7 +78,7 @@ export const InboxFiltersList = () => {
                       {filters.inbox_status?.map((status) => (
                         <div
                           key={status}
-                          className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize bg-brand-surface-1 text-brand-secondary"
+                          className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize bg-custom-background-90 text-custom-text-200"
                         >
                           <span>{INBOX_STATUS.find((s) => s.value === status)?.label}</span>
                           <button
@@ -116,7 +116,7 @@ export const InboxFiltersList = () => {
       <button
         type="button"
         onClick={clearAllFilters}
-        className="flex items-center gap-x-1 rounded-full border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-brand-secondary hover:text-brand-base"
+        className="flex items-center gap-x-1 rounded-full border border-custom-border-100 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
       >
         <span>Clear all</span>
         <XMarkIcon className="h-3 w-3" />

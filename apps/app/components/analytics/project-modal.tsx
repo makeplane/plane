@@ -150,16 +150,16 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className={`absolute top-0 z-30 h-full bg-brand-surface-1 ${
+      className={`absolute top-0 z-30 h-full bg-custom-background-90 ${
         fullScreen ? "p-2 w-full" : "w-1/2"
       } ${isOpen ? "right-0" : "-right-full"} duration-300 transition-all`}
     >
       <div
-        className={`flex h-full flex-col overflow-hidden border-brand-base bg-brand-base text-left ${
+        className={`flex h-full flex-col overflow-hidden border-custom-border-100 bg-custom-background-100 text-left ${
           fullScreen ? "rounded-lg border" : "border-l"
         }`}
       >
-        <div className="flex items-center justify-between gap-4 bg-brand-base px-5 py-4 text-sm">
+        <div className="flex items-center justify-between gap-4 bg-custom-background-100 px-5 py-4 text-sm">
           <h3 className="break-words">
             Analytics for{" "}
             {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
@@ -167,7 +167,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="grid place-items-center p-1 text-brand-secondary hover:text-brand-base"
+              className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
               onClick={() => setFullScreen((prevData) => !prevData)}
             >
               {fullScreen ? (
@@ -178,7 +178,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </button>
             <button
               type="button"
-              className="grid place-items-center p-1 text-brand-secondary hover:text-brand-base"
+              className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
               onClick={handleClose}
             >
               <XMarkIcon className="h-4 w-4" />
@@ -186,13 +186,13 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
         </div>
         <Tab.Group as={Fragment}>
-          <Tab.List as="div" className="space-x-2 border-b border-brand-base p-5 pt-0">
+          <Tab.List as="div" className="space-x-2 border-b border-custom-border-100 p-5 pt-0">
             {tabsList.map((tab) => (
               <Tab
                 key={tab}
                 className={({ selected }) =>
-                  `rounded-3xl border border-brand-base px-4 py-2 text-xs hover:bg-brand-surface-2 ${
-                    selected ? "bg-brand-surface-2" : ""
+                  `rounded-3xl border border-custom-border-100 px-4 py-2 text-xs hover:bg-custom-background-80 ${
+                    selected ? "bg-custom-background-80" : ""
                   }`
                 }
                 onClick={() => trackAnalyticsEvent(tab)}

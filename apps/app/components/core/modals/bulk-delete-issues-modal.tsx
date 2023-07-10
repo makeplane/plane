@@ -173,7 +173,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 rounded-xl border border-brand-base bg-brand-base shadow-2xl transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-100 bg-custom-background-100 shadow-2xl transition-all">
               <form>
                 <Combobox
                   onChange={(val: string) => {
@@ -188,12 +188,12 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                 >
                   <div className="relative m-1">
                     <MagnifyingGlassIcon
-                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
+                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />
                     <input
                       type="text"
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
                       placeholder="Search..."
                       onChange={(event) => setQuery(event.target.value)}
                     />
@@ -201,16 +201,16 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
 
                   <Combobox.Options
                     static
-                    className="max-h-80 scroll-py-2 divide-y divide-brand-base overflow-y-auto"
+                    className="max-h-80 scroll-py-2 divide-y divide-custom-border-100 overflow-y-auto"
                   >
                     {filteredIssues.length > 0 ? (
                       <li className="p-2">
                         {query === "" && (
-                          <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-brand-base">
+                          <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
                             Select issues to delete
                           </h2>
                         )}
-                        <ul className="text-sm text-brand-secondary">
+                        <ul className="text-sm text-custom-text-200">
                           {filteredIssues.map((issue) => (
                             <Combobox.Option
                               key={issue.id}
@@ -218,7 +218,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                               value={issue.id}
                               className={({ active, selected }) =>
                                 `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                  active ? "bg-brand-surface-2 text-brand-base" : ""
+                                  active ? "bg-custom-background-80 text-custom-text-100" : ""
                                 }`
                               }
                             >
@@ -246,9 +246,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                     ) : (
                       <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                         <LayerDiagonalIcon height="56" width="56" />
-                        <h3 className="text-brand-secondary">
+                        <h3 className="text-custom-text-200">
                           No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre>.
+                          <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
                         </h3>
                       </div>
                     )}

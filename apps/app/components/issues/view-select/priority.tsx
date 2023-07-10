@@ -19,6 +19,7 @@ type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   position?: "left" | "right";
+  tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
   noBorder?: boolean;
   user: ICurrentUserResponse | undefined;
@@ -29,6 +30,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   position = "left",
+  tooltipPosition = "top",
   selfPositioned = false,
   noBorder = false,
   user,
@@ -65,21 +67,35 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             noBorder
               ? ""
               : issue.priority === "urgent"
-              ? "border-red-500/20 bg-red-500/20 text-red-500"
+              ? "border-red-500/20 bg-red-500/20"
               : issue.priority === "high"
-              ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+              ? "border-orange-500/20 bg-orange-500/20"
               : issue.priority === "medium"
-              ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+              ? "border-yellow-500/20 bg-yellow-500/20"
               : issue.priority === "low"
-              ? "border-green-500/20 bg-green-500/20 text-green-500"
-              : "border-brand-base"
+              ? "border-green-500/20 bg-green-500/20"
+              : "border-custom-border-100 bg-custom-background-80"
           } items-center`}
         >
-          <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"}>
-            <span className="flex gap-1 items-center text-brand-secondary text-xs">
+          <Tooltip
+            tooltipHeading="Priority"
+            tooltipContent={issue.priority ?? "None"}
+            position={tooltipPosition}
+          >
+            <span className="flex gap-1 items-center text-custom-text-200 text-xs">
               {getPriorityIcon(
                 issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
-                "text-sm"
+                `text-sm ${
+                  issue.priority === "urgent"
+                    ? "text-red-500"
+                    : issue.priority === "high"
+                    ? "text-orange-500"
+                    : issue.priority === "medium"
+                    ? "text-yellow-500"
+                    : issue.priority === "low"
+                    ? "text-green-500"
+                    : "text-custom-text-200"
+                }`
               )}
               {noBorder
                 ? issue.priority && issue.priority !== ""

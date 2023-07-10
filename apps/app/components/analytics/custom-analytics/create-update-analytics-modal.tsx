@@ -97,7 +97,7 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -111,10 +111,13 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-brand-base bg-brand-base px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-100 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-custom-text-100"
+                    >
                       Save Analytics
                     </Dialog.Title>
                     <div className="mt-5">

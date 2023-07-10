@@ -8,6 +8,7 @@ import type {
   ICurrentUserResponse,
   IFavoriteProject,
   IProject,
+  IProjectBulkInviteFormData,
   IProjectMember,
   IProjectMemberInvitation,
   ISearchIssueResponse,
@@ -102,7 +103,7 @@ class ProjectServices extends APIService {
   async inviteProject(
     workspaceSlug: string,
     projectId: string,
-    data: any,
+    data: IProjectBulkInviteFormData,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
