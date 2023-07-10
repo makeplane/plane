@@ -88,7 +88,7 @@
   [data-theme="dark"] {
     color-scheme: dark !important;
 
-    --color-background-100: 0, 0, 0; /* primary bg */
+    --color-background-100: 7, 7, 7; /* primary bg */
     --color-background-90: 11, 11, 11; /* secondary bg */
     --color-background-80: 23, 23, 23; /* tertiary bg */
 
@@ -101,7 +101,7 @@
     --color-border-300: 46, 46, 46; /* strong border- 1 */
     --color-border-400: 58, 58, 58; /* strong border- 2 */
 
-    --color-sidebar-background-100: 0, 0, 0; /* primary sidebar bg */
+    --color-sidebar-background-100: 7, 7, 7; /* primary sidebar bg */
     --color-sidebar-background-90: 11, 11, 11; /* secondary sidebar bg */
     --color-sidebar-background-80: 23, 23, 23; /* tertiary sidebar bg */
 
