@@ -28,7 +28,7 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
         className="rounded-sm flex-shrink-0 w-[10px] h-[10px] flex justify-center items-center"
         style={{ backgroundColor: data?.state_detail?.color || "#858e96" }}
       />
-      <div className="text-brand-base text-sm">{data?.name}</div>
+      <div className="text-custom-text-100 text-sm">{data?.name}</div>
     </div>
   );
 
@@ -41,7 +41,7 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
           style={{ backgroundColor: data?.state_detail?.color || "#858e96" }}
         />
         <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
-          <div className="text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
+          <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
             {data?.name}
           </div>
         </Tooltip>
@@ -51,7 +51,7 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
             className={`z-[999999]`}
           >
             <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center">
-              <span className="material-symbols-rounded text-brand-secondary text-[18px]">
+              <span className="material-symbols-rounded text-custom-text-200 text-[18px]">
                 info
               </span>
             </div>

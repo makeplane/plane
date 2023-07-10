@@ -170,7 +170,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -184,8 +184,8 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="transform rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
-                <div className="relative h-36 w-full rounded-t-lg bg-brand-surface-2">
+              <Dialog.Panel className="transform rounded-lg bg-custom-background-80 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <div className="relative h-36 w-full rounded-t-lg bg-custom-background-80">
                   {watch("cover_image") !== null && (
                     <img
                       src={watch("cover_image")!}
@@ -328,7 +328,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex justify-end gap-2 border-t-2 border-brand-base px-4 py-3">
+                  <div className="mt-5 flex justify-end gap-2 border-t-2 border-custom-border-100 px-4 py-3">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                     <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
                       {isSubmitting ? "Adding project..." : "Add Project"}

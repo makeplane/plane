@@ -75,7 +75,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 page.label_details.map((label) => (
                   <div
                     key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
+                    className="group flex items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs"
                     style={{
                       backgroundColor: `${
                         label?.color && label.color !== "" ? label.color : "#000000"
@@ -101,7 +101,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   ` ${new Date(page.updated_at).getHours() < 12 ? "am" : "pm"}`
                 } on ${renderShortDate(page.updated_at)}`}
               >
-                <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
+                <p className="text-sm text-custom-text-200">{renderShortTime(page.updated_at)}</p>
               </Tooltip>
               {page.is_favorite ? (
                 <button
@@ -125,7 +125,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                   className="z-10 grid place-items-center"
                 >
-                  <StarIcon className="h-4 w-4 " color="#858E96" />
+                  <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                 </button>
               )}
               {page.created_by === user?.id && (
@@ -146,9 +146,9 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                     }}
                   >
                     {page.access ? (
-                      <LockClosedIcon className="h-4 w-4" color="#858e96" />
+                      <LockClosedIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
                     ) : (
-                      <LockOpenIcon className="h-4 w-4" color="#858e96" />
+                      <LockOpenIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
                     )}
                   </button>
                 </Tooltip>
@@ -162,7 +162,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 } on ${renderLongDateFormat(`${page.created_at}`)}`}
               >
                 <span>
-                  <ExclamationIcon className="h-4 w-4 fill-current text-brand-secondary" />
+                  <ExclamationIcon className="h-4 w-4 fill-current text-custom-text-200" />
                 </span>
               </Tooltip>
               <CustomMenu verticalEllipsis>
@@ -205,7 +205,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
               </CustomMenu>
             </div>
           </div>
-          <div className="relative mt-2 space-y-2 text-sm text-brand-secondary">
+          <div className="relative mt-2 space-y-2 text-sm text-custom-text-200">
             {page.blocks.length > 0
               ? page.blocks.slice(0, 3).map((block) => <h4>{block.name}</h4>)
               : null}

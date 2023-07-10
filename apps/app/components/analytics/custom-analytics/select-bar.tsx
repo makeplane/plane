@@ -29,7 +29,7 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
   >
     {!isProjectLevel && (
       <div>
-        <h6 className="text-xs text-brand-secondary">Project</h6>
+        <h6 className="text-xs text-custom-text-200">Project</h6>
         <Controller
           name="project"
           control={control}
@@ -40,7 +40,7 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
       </div>
     )}
     <div>
-      <h6 className="text-xs text-brand-secondary">Measure (y-axis)</h6>
+      <h6 className="text-xs text-custom-text-200">Measure (y-axis)</h6>
       <Controller
         name="y_axis"
         control={control}
@@ -50,7 +50,7 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
       />
     </div>
     <div>
-      <h6 className="text-xs text-brand-secondary">Dimension (x-axis)</h6>
+      <h6 className="text-xs text-custom-text-200">Dimension (x-axis)</h6>
       <Controller
         name="x_axis"
         control={control}
@@ -67,7 +67,7 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
       />
     </div>
     <div>
-      <h6 className="text-xs text-brand-secondary">Group</h6>
+      <h6 className="text-xs text-custom-text-200">Group</h6>
       <Controller
         name="segment"
         control={control}

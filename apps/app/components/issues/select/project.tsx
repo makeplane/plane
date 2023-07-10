@@ -59,7 +59,7 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({
           <p className="text-gray-400">No projects found!</p>
         )
       ) : (
-        <div className="px-2 text-sm text-brand-secondary">Loading...</div>
+        <div className="px-2 text-sm text-custom-text-200">Loading...</div>
       )}
     </CustomSelect>
   );

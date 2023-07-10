@@ -63,7 +63,7 @@ const ProjectIssues: NextPage = () => {
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 rounded-md font-normal text-brand-secondary"
+              className="!py-1.5 rounded-md font-normal text-custom-sidebar-text-200 border-custom-sidebar-border-100 hover:bg-custom-sidebar-background-90"
               outline
             >
               Analytics
@@ -72,12 +72,12 @@ const ProjectIssues: NextPage = () => {
               <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxList?.[0]?.id}`}>
                 <a>
                   <SecondaryButton
-                    className="relative !py-1.5 rounded-md font-normal text-brand-secondary"
+                    className="relative !py-1.5 rounded-md font-normal text-custom-sidebar-text-200 border-custom-sidebar-border-100 hover:bg-custom-sidebar-background-90"
                     outline
                   >
                     <span>Inbox</span>
                     {inboxList && inboxList?.[0]?.pending_issue_count !== 0 && (
-                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full text-brand-base bg-brand-surface-2 border border-brand-base">
+                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full text-custom-text-100 bg-custom-sidebar-background-80 border border-custom-sidebar-border-100">
                         {inboxList?.[0]?.pending_issue_count}
                       </span>
                     )}

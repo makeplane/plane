@@ -81,11 +81,11 @@ const ResetPasswordPage: NextPage = () => {
           <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="flex flex-col items-center justify-center gap-10">
               <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
-              <h2 className="text-center text-xl font-medium text-brand-base">
+              <h2 className="text-center text-xl font-medium text-custom-text-100">
                 Reset your password
               </h2>
             </div>
-            <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
+            <div className="flex flex-col rounded-[10px] bg-custom-background-100 shadow-md">
               <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
                 <div>
                   <Input

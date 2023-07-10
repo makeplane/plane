@@ -58,48 +58,48 @@ export const IssuesFilterView: React.FC = () => {
       <div className="flex items-center gap-x-1">
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "list" ? "bg-brand-surface-2" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+            issueView === "list" ? "bg-custom-sidebar-background-80" : ""
           }`}
           onClick={() => setIssueView("list")}
         >
-          <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
+          <ListBulletIcon className="h-4 w-4 text-custom-sidebar-text-200" />
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "kanban" ? "bg-brand-surface-2" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+            issueView === "kanban" ? "bg-custom-sidebar-background-80" : ""
           }`}
           onClick={() => setIssueView("kanban")}
         >
-          <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
+          <Squares2X2Icon className="h-4 w-4 text-custom-sidebar-text-200" />
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "calendar" ? "bg-brand-surface-2" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+            issueView === "calendar" ? "bg-custom-sidebar-background-80" : ""
           }`}
           onClick={() => setIssueView("calendar")}
         >
-          <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
+          <CalendarDaysIcon className="h-4 w-4 text-custom-sidebar-text-200" />
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "spreadsheet" ? "bg-brand-surface-2" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+            issueView === "spreadsheet" ? "bg-custom-sidebar-background-80" : ""
           }`}
           onClick={() => setIssueView("spreadsheet")}
         >
-          <Icon iconName="table_chart" className="text-brand-secondary" />
+          <Icon iconName="table_chart" className="text-custom-sidebar-text-200" />
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
-            issueView === "gantt_chart" ? "bg-brand-surface-2" : ""
+          className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+            issueView === "gantt_chart" ? "bg-custom-sidebar-background-80" : ""
           }`}
           onClick={() => setIssueView("gantt_chart")}
         >
-          <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
+          <span className="material-symbols-rounded text-custom-sidebar-text-200 text-[18px] rotate-90">
             waterfall_chart
           </span>
         </button>
@@ -146,8 +146,10 @@ export const IssuesFilterView: React.FC = () => {
         {({ open }) => (
           <>
             <Popover.Button
-              className={`group flex items-center gap-2 rounded-md border border-brand-base bg-transparent px-3 py-1.5 text-xs hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none ${
-                open ? "bg-brand-surface-1 text-brand-base" : "text-brand-secondary"
+              className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-100 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none ${
+                open
+                  ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
+                  : "text-custom-sidebar-text-200"
               }`}
             >
               View
@@ -163,13 +165,13 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-brand-base bg-brand-surface-1 p-3 shadow-lg">
-                <div className="relative divide-y-2 divide-brand-base">
+              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-100 bg-custom-background-90 p-3 shadow-lg">
+                <div className="relative divide-y-2 divide-custom-border-100">
                   <div className="space-y-4 pb-3 text-xs">
                     {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
                         <div className="flex items-center justify-between">
-                          <h4 className="text-brand-secondary">Group by</h4>
+                          <h4 className="text-custom-text-200">Group by</h4>
                           <CustomMenu
                             label={
                               GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
@@ -190,7 +192,7 @@ export const IssuesFilterView: React.FC = () => {
                           </CustomMenu>
                         </div>
                         <div className="flex items-center justify-between">
-                          <h4 className="text-brand-secondary">Order by</h4>
+                          <h4 className="text-custom-text-200">Order by</h4>
                           <CustomMenu
                             label={
                               ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
@@ -215,7 +217,7 @@ export const IssuesFilterView: React.FC = () => {
                       </>
                     )}
                     <div className="flex items-center justify-between">
-                      <h4 className="text-brand-secondary">Issue type</h4>
+                      <h4 className="text-custom-text-200">Issue type</h4>
                       <CustomMenu
                         label={
                           FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
@@ -241,7 +243,7 @@ export const IssuesFilterView: React.FC = () => {
                     {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
                         <div className="flex items-center justify-between">
-                          <h4 className="text-brand-secondary">Show empty states</h4>
+                          <h4 className="text-custom-text-200">Show empty states</h4>
                           <ToggleSwitch
                             value={showEmptyGroups}
                             onChange={() => setShowEmptyGroups(!showEmptyGroups)}
@@ -253,7 +255,7 @@ export const IssuesFilterView: React.FC = () => {
                           </button>
                           <button
                             type="button"
-                            className="font-medium text-brand-accent"
+                            className="font-medium text-custom-primary"
                             onClick={() => setNewFilterDefaultView()}
                           >
                             Set as default
@@ -264,7 +266,7 @@ export const IssuesFilterView: React.FC = () => {
                   </div>
 
                   <div className="space-y-2 py-3">
-                    <h4 className="text-sm text-brand-secondary">Display Properties</h4>
+                    <h4 className="text-sm text-custom-text-200">Display Properties</h4>
                     <div className="flex flex-wrap items-center gap-2">
                       {Object.keys(properties).map((key) => {
                         if (key === "estimate" && !isEstimateActive) return null;
@@ -289,8 +291,8 @@ export const IssuesFilterView: React.FC = () => {
                             type="button"
                             className={`rounded border px-2 py-1 text-xs capitalize ${
                               properties[key as keyof Properties]
-                                ? "border-brand-accent bg-brand-accent text-white"
-                                : "border-brand-base"
+                                ? "border-custom-primary bg-custom-primary text-white"
+                                : "border-custom-border-100"
                             }`}
                             onClick={() => setProperties(key as keyof Properties)}
                           >

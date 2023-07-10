@@ -77,7 +77,7 @@ export const SingleEstimate: React.FC<Props> = ({
                 </span>
               )}
             </h6>
-            <p className="font-sm w-[40vw] truncate text-[14px] font-normal text-brand-secondary">
+            <p className="font-sm w-[40vw] truncate text-[14px] font-normal text-custom-text-200">
               {estimate.description}
             </p>
           </div>
@@ -114,11 +114,11 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
         </div>
         {estimate.points.length > 0 ? (
-          <div className="flex text-xs text-brand-secondary">
+          <div className="flex text-xs text-custom-text-200">
             Estimate points (
             <span className="flex gap-1">
               {orderArrayBy(estimate.points, "key").map((point, index) => (
-                <h6 key={point.id} className="text-brand-secondary">
+                <h6 key={point.id} className="text-custom-text-200">
                   {point.value}
                   {index !== estimate.points.length - 1 && ","}{" "}
                 </h6>
@@ -128,7 +128,7 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
         ) : (
           <div>
-            <p className="text-xs text-brand-secondary">No estimate points</p>
+            <p className="text-xs text-custom-text-200">No estimate points</p>
           </div>
         )}
       </div>

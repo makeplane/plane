@@ -164,8 +164,8 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               type="button"
               className={`mt-5 flex w-full justify-end text-xs outline-none ${
                 isResendDisabled
-                  ? "cursor-default text-brand-secondary"
-                  : "cursor-pointer text-brand-accent"
+                  ? "cursor-default text-custom-text-200"
+                  : "cursor-pointer text-custom-primary"
               } `}
               onClick={() => {
                 setIsCodeResending(true);

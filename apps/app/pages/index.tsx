@@ -133,16 +133,16 @@ const HomePage: NextPage = () => {
             <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
               <div className="flex flex-col items-center justify-center gap-10">
                 <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
-                <div className="text-center text-xl font-medium text-brand-base">
+                <div className="text-center text-xl font-medium text-custom-text-100">
                   Sign In to your Plane Account
                 </div>
               </div>
 
-              <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
+              <div className="flex flex-col rounded-[10px] bg-custom-background-100 shadow-md">
                 {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                   <>
                     <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
-                    <div className="flex flex-col items-center justify-center gap-3 border-t border-brand-base py-5 px-5">
+                    <div className="flex flex-col items-center justify-center gap-3 border-t border-custom-border-100 py-5 px-5">
                       <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
                       <GithubLoginButton handleSignIn={handleGithubSignIn} />
                     </div>

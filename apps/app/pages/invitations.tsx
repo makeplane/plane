@@ -85,18 +85,18 @@ const OnBoard: NextPage = () => {
         <div className="relative grid h-full place-items-center p-5">
           <div className="h-full flex flex-col items-center justify-center w-full py-4">
             <div className="mb-7 flex items-center justify-center text-center">
-              <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
+              <OnboardingLogo className="h-12 w-48 fill-current text-custom-text-100" />
             </div>
 
-            <div className="flex h-[436px] w-full max-w-xl rounded-[10px] p-7 bg-brand-base shadow-md">
+            <div className="flex h-[436px] w-full max-w-xl rounded-[10px] p-7 bg-custom-background-100 shadow-md">
               {invitations && workspaces ? (
                 invitations.length > 0 ? (
                   <div className="flex w-full flex-col gap-3 justify-between">
                     <div className="flex flex-col gap-2 justify-center ">
-                      <h3 className="text-base font-semibold text-brand-base">
+                      <h3 className="text-base font-semibold text-custom-text-100">
                         Workspace Invitations
                       </h3>
-                      <p className="text-sm text-brand-secondary">
+                      <p className="text-sm text-custom-text-200">
                         Create or join the workspace to get started with Plane.
                       </p>
                     </div>
@@ -129,12 +129,12 @@ const OnBoard: NextPage = () => {
                     {workspaces.map((workspace) => (
                       <Link key={workspace.id} href={workspace.slug}>
                         <a>
-                          <div className="mb-2 flex items-center justify-between rounded border border-brand-base px-4 py-2">
+                          <div className="mb-2 flex items-center justify-between rounded border border-custom-border-100 px-4 py-2">
                             <div className="flex items-center gap-x-2 text-sm">
-                              <CubeIcon className="h-5 w-5 text-brand-secondary" />
+                              <CubeIcon className="h-5 w-5 text-custom-text-200" />
                               {workspace.name}
                             </div>
-                            <div className="flex items-center gap-x-2 text-xs text-brand-secondary">
+                            <div className="flex items-center gap-x-2 text-xs text-custom-text-200">
                               {workspace.owner.first_name}
                             </div>
                           </div>
@@ -167,8 +167,8 @@ const OnBoard: NextPage = () => {
             </div>
           </div>
           <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
-            <span className="text-xs text-brand-secondary">Logged in:</span>
-            <span className="text-sm text-brand-base">{user?.email}</span>
+            <span className="text-xs text-custom-text-200">Logged in:</span>
+            <span className="text-sm text-custom-text-100">{user?.email}</span>
           </div>
         </div>
       </DefaultLayout>
