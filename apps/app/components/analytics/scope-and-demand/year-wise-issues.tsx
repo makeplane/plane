@@ -22,7 +22,7 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
           data={[
             {
               id: "issues_closed",
-              color: "rgb(var(--color-accent))",
+              color: "rgb(var(--color-primary-100))",
               data: MONTHS_LIST.map((month) => ({
                 x: month.label.substring(0, 3),
                 y:
@@ -50,7 +50,7 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
             </div>
           )}
           theme={{
-            background: "rgb(var(--color-bg-base))",
+            background: "rgb(var(--color-background-100))",
           }}
           enableArea
         />
