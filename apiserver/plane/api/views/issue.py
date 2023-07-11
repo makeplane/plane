@@ -916,13 +916,21 @@ class IssueArchiveViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
+            Issue.objects.annotate(
+                sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .filter(archived_at__isnull=False)
-            .filter(project__project_projectmember__member=self.request.user)
-            .order_by("-archived_at")
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
         )
 
     @method_decorator(gzip_page)
