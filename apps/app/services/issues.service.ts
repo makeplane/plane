@@ -526,8 +526,10 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getArchivedIssues(workspaceSlug: string, projectId: string): Promise<IIssue[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/`)
+  async getArchivedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
