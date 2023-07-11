@@ -9,8 +9,8 @@ import type {
 } from "./";
 
 export interface IProject {
-  archive_in: 0;
-  close_in: 0;
+  archive_in: number;
+  close_in: number;
   created_at: Date;
   created_by: string;
   cover_image: string | null;
@@ -20,7 +20,7 @@ export interface IProject {
   page_view: boolean;
   inbox_view: boolean;
   default_assignee: IUser | string | null;
-  default_state: string;
+  default_state: string | null;
   description: string;
   emoji: string | null;
   emoji_and_icon:
