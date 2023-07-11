@@ -31,7 +31,6 @@ x-api-and-worker-env: &api-and-worker-env
         USE_MINIO: ${USE_MINIO}
         ENABLE_SIGNUP: ${ENABLE_SIGNUP}
 
-
 services:
         plane-web:
                 container_name: planefrontend
@@ -42,12 +41,14 @@ services:
                         - .env
                 environment:
                         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-                        NEXT_PUBLIC_GOOGLE_CLIENTID: 0
-                        NEXT_PUBLIC_GITHUB_APP_NAME: 0
-                        NEXT_PUBLIC_GITHUB_ID: 0
-                        NEXT_PUBLIC_SENTRY_DSN: 0
-                        NEXT_PUBLIC_ENABLE_OAUTH: 0
-                        NEXT_PUBLIC_ENABLE_SENTRY: 0
+                        NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
+                        NEXT_PUBLIC_GITHUB_APP_NAME: "0"
+                        NEXT_PUBLIC_GITHUB_ID: "0"
+                        NEXT_PUBLIC_SENTRY_DSN: "0"
+                        NEXT_PUBLIC_ENABLE_OAUTH: "0"
+                        NEXT_PUBLIC_ENABLE_SENTRY: "0"
+                        NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
+                        NEXT_PUBLIC_TRACK_EVENTS: "0"
                 depends_on:
                         - plane-api
                         - plane-worker
@@ -66,7 +67,7 @@ services:
                         - plane-redis
 
         plane-worker:
-                container_name: planerqworker
+                container_name: planebgworker
                 image: makeplane/plane-worker:latest
                 restart: always
                 command: ./bin/worker
@@ -84,14 +85,15 @@ services:
                 image: postgres:15.2-alpine
                 restart: always
                 command: postgres -c 'max_connections=1000'
+                volumes:
+                        - pgdata:/var/lib/postgresql/data
                 env_file:
                         - .env
                 environment:
                         POSTGRES_USER: ${PGUSER}
                         POSTGRES_DB: ${PGDATABASE}
                         POSTGRES_PASSWORD: ${PGPASSWORD}
-                volumes:
-                        - pgdata:/var/lib/postgresql/data
+                        PGDATA: /var/lib/postgresql/data
 
         plane-redis:
                 container_name: plane-redis
@@ -103,9 +105,10 @@ services:
         plane-minio:
                 container_name: plane-minio
                 image: minio/minio
+                restart: always
+                command: server /export --console-address ":9090"
                 volumes:
                         - uploads:/export
-                command: server /export --console-address ":9090"
                 env_file:
                         - .env
                 environment:
@@ -115,23 +118,20 @@ services:
         createbuckets:
                 image: minio/mc
                 entrypoint: >
-                  /bin/sh -c "
-                  /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
-                  /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME;
-                  /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME;
-                  exit 0;
-                  "
+                        /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; 
+                        /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; 
+                        /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
                 env_file:
                         - .env
                 depends_on:
                         - plane-minio
 
-# Comment this if you already have a reverse proxy running
+        # Comment this if you already have a reverse proxy running
         plane-proxy:
                 container_name: planeproxy
                 image: makeplane/plane-proxy:latest
                 ports:
-                - ${NGINX_PORT}:80
+                        - ${NGINX_PORT}:80
                 env_file:
                         - .env
                 environment:
@@ -140,7 +140,6 @@ services:
                 depends_on:
                         - plane-web
                         - plane-api
-
 
 volumes:
         pgdata:
