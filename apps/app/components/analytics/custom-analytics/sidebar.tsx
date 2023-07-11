@@ -24,13 +24,13 @@ import { ContrastIcon, LayerDiagonalIcon } from "components/icons";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
+import { truncateText } from "helpers/string.helper";
 // types
 import {
   IAnalyticsParams,
   IAnalyticsResponse,
   ICurrentUserResponse,
   IExportAnalyticsFormData,
-  IProject,
   IWorkspace,
 } from "types";
 // fetch-keys
@@ -207,7 +207,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
           </div>
         )}
       </div>
-      <div className="h-full overflow-hidden">
+      <div className="h-full w-full overflow-hidden">
         {fullScreen ? (
           <>
             {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
@@ -219,7 +219,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
 
                     if (project)
                       return (
-                        <div key={project.id}>
+                        <div key={project.id} className="w-full">
                           <div className="text-sm flex items-center gap-1">
                             {project.emoji ? (
                               <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
@@ -240,13 +240,13 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                               </span>
                             )}
                             <h5 className="flex items-center gap-1">
-                              <p className="break-words">{project.name}</p>
+                              <p className="break-words">{truncateText(project.name, 20)}</p>
                               <span className="text-custom-text-200 text-xs ml-1">
                                 ({project.identifier})
                               </span>
                             </h5>
                           </div>
-                          <div className="mt-4 space-y-3 pl-2">
+                          <div className="mt-4 space-y-3 pl-2 w-full">
                             <div className="flex items-center justify-between gap-2 text-xs">
                               <div className="flex items-center gap-2">
                                 <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
