@@ -122,14 +122,14 @@ const EstimatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8">
+        <div className="h-full flex flex-col p-8 overflow-hidden">
           <SettingsHeader />
           <section className="flex items-center justify-between">
             <h3 className="text-2xl font-semibold">Estimates</h3>
             <div className="col-span-12 space-y-5 sm:col-span-7">
               <div className="flex items-center gap-2">
-                <span
-                  className="flex cursor-pointer items-center gap-2 text-theme"
+                <div
+                  className="flex cursor-pointer items-center gap-2 text-custom-primary-100 hover:text-custom-primary-200"
                   onClick={() => {
                     setEstimateToUpdate(undefined);
                     setEstimateFormOpen(true);
@@ -137,7 +137,7 @@ const EstimatesSettings: NextPage = () => {
                 >
                   <PlusIcon className="h-4 w-4" />
                   Create New Estimate
-                </span>
+                </div>
                 {projectDetails?.estimate && (
                   <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
                 )}
@@ -146,7 +146,7 @@ const EstimatesSettings: NextPage = () => {
           </section>
           {estimatesList ? (
             estimatesList.length > 0 ? (
-              <section className="mt-5 divide-y divide-custom-border-100 rounded-xl border border-custom-border-100 bg-custom-background-100 px-6">
+              <section className="h-full mt-5 divide-y divide-custom-border-100 rounded-xl border border-custom-border-100 bg-custom-background-100 px-6 overflow-y-auto">
                 {estimatesList.map((estimate) => (
                   <SingleEstimate
                     key={estimate.id}
@@ -158,7 +158,7 @@ const EstimatesSettings: NextPage = () => {
                 ))}
               </section>
             ) : (
-              <div className="mt-5">
+              <div className="grid h-full w-full place-items-center">
                 <EmptyState
                   type="estimate"
                   title="Create New Estimate"

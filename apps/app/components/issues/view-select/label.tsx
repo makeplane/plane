@@ -71,9 +71,15 @@ export const ViewLabelSelect: React.FC<Props> = ({
       position={tooltipPosition}
       tooltipHeading="Labels"
       tooltipContent={
-        issue.label_details.length > 0
-          ? issue.label_details.map((label) => label.name ?? "").join(", ")
-          : "No Label"
+        issue.labels.length > 0
+          ? issue.labels
+              .map((labelId) => {
+                const label = issueLabels?.find((l) => l.id === labelId);
+
+                return label?.name ?? "";
+              })
+              .join(", ")
+          : "No label"
       }
     >
       <div
@@ -81,20 +87,23 @@ export const ViewLabelSelect: React.FC<Props> = ({
           isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
         } items-center gap-2 text-custom-text-200`}
       >
-        {issue.label_details.length > 0 ? (
+        {issue.labels.length > 0 ? (
           <>
-            {issue.label_details.slice(0, 4).map((label, index) => (
-              <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
-                <span
-                  className={`h-4 w-4 flex-shrink-0 rounded-full border group-hover:bg-custom-background-80 border-custom-border-100
-                          `}
-                  style={{
-                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
-                  }}
-                />
-              </div>
-            ))}
-            {issue.label_details.length > 4 ? <span>+{issue.label_details.length - 4}</span> : null}
+            {issue.labels.slice(0, 4).map((labelId, index) => {
+              const label = issueLabels?.find((l) => l.id === labelId);
+
+              return (
+                <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
+                  <span
+                    className={`h-4 w-4 flex-shrink-0 rounded-full border group-hover:bg-custom-background-80 border-custom-border-100`}
+                    style={{
+                      backgroundColor: label?.color ?? "#000000",
+                    }}
+                  />
+                </div>
+              );
+            })}
+            {issue.labels.length > 4 ? <span>+{issue.labels.length - 4}</span> : null}
           </>
         ) : (
           <>

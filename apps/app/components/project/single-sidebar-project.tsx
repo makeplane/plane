@@ -111,9 +111,9 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 )}
 
                 {!sidebarCollapse && (
-                  <p className="overflow-hidden text-ellipsis text-[0.875rem]">
+                  <h5 className={`overflow-hidden text-sm ${open ? "" : "text-custom-text-200"}`}>
                     {truncateText(project?.name, 20)}
-                  </p>
+                  </h5>
                 )}
               </div>
               {!sidebarCollapse && (

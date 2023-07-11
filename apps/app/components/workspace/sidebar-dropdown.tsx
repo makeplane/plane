@@ -108,9 +108,9 @@ export const WorkspaceSidebarDropdown = () => {
               </div>
 
               {!sidebarCollapse && (
-                <p>
+                <h4 className="text-custom-text-100">
                   {activeWorkspace?.name ? truncateText(activeWorkspace.name, 14) : "Loading..."}
-                </p>
+                </h4>
               )}
             </div>
           </Menu.Button>
@@ -166,7 +166,13 @@ export const WorkspaceSidebarDropdown = () => {
                                 )}
                               </span>
 
-                              <h5 className="text-sm">{truncateText(workspace.name, 18)}</h5>
+                              <h5
+                                className={`text-sm ${
+                                  workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
+                                }`}
+                              >
+                                {truncateText(workspace.name, 18)}
+                              </h5>
                             </div>
                             <span className="p-1">
                               <CheckIcon

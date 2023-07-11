@@ -85,10 +85,10 @@ const StatesSettings: NextPage = () => {
                     return (
                       <div key={key}>
                         <div className="mb-2 flex w-full justify-between">
-                          <h4 className="font-medium capitalize">{key}</h4>
+                          <h4 className="text-custom-text-200 capitalize">{key}</h4>
                           <button
                             type="button"
-                            className="flex items-center gap-2 text-custom-primary outline-none"
+                            className="flex items-center gap-2 text-custom-primary-100 hover:text-custom-primary-200 outline-none"
                             onClick={() => setActiveGroup(key as keyof StateGroup)}
                           >
                             <PlusIcon className="h-4 w-4" />

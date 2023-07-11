@@ -279,11 +279,9 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                         e.preventDefault();
                         handleEditCycle();
                       }}
-                      className="flex cursor-pointer items-center rounded p-1 text-custom-text-200 duration-300 hover:bg-custom-background-90"
+                      className="cursor-pointer rounded p-1 text-custom-text-200 duration-300 hover:bg-custom-background-80"
                     >
-                      <span>
-                        <PencilIcon className="h-4 w-4" />
-                      </span>
+                      <PencilIcon className="h-4 w-4" />
                     </button>
                   )}
 

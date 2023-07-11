@@ -58,11 +58,11 @@ const ProjectIntegrations: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8">
+      <div className="h-full flex flex-col p-8 overflow-hidden">
         <SettingsHeader />
         {workspaceIntegrations ? (
           workspaceIntegrations.length > 0 ? (
-            <section className="space-y-8">
+            <section className="space-y-8 overflow-y-auto">
               <IntegrationAndImportExportBanner bannerName="Integrations" />
               <div className="space-y-5">
                 {workspaceIntegrations.map((integration) => (
