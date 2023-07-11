@@ -18,6 +18,13 @@ from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+def get_default_onboarding():
+    return {
+        "profile_complete": False,
+        "workspace_create": False,
+        "workspace_invite": False,
+        "workspace_join": False,
+    }
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
@@ -74,6 +81,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_bot = models.BooleanField(default=False)
     theme = models.JSONField(default=dict)
     is_tour_completed = models.BooleanField(default=False)
+    onboarding_step = models.JSONField(default=get_default_onboarding)
 
     USERNAME_FIELD = "email"
 
