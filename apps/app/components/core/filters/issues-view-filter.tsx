@@ -30,6 +30,7 @@ import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "consta
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const {
     issueView,
@@ -65,44 +66,48 @@ export const IssuesFilterView: React.FC = () => {
         >
           <ListBulletIcon className="h-4 w-4 text-custom-sidebar-text-200" />
         </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "kanban" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("kanban")}
-        >
-          <Squares2X2Icon className="h-4 w-4 text-custom-sidebar-text-200" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "calendar" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("calendar")}
-        >
-          <CalendarDaysIcon className="h-4 w-4 text-custom-sidebar-text-200" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "spreadsheet" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("spreadsheet")}
-        >
-          <Icon iconName="table_chart" className="text-custom-sidebar-text-200" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "gantt_chart" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("gantt_chart")}
-        >
-          <span className="material-symbols-rounded text-custom-sidebar-text-200 text-[18px] rotate-90">
-            waterfall_chart
-          </span>
-        </button>
+        {!isArchivedIssues && (
+          <>
+            <button
+              type="button"
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+                issueView === "kanban" ? "bg-custom-sidebar-background-80" : ""
+              }`}
+              onClick={() => setIssueView("kanban")}
+            >
+              <Squares2X2Icon className="h-4 w-4 text-custom-sidebar-text-200" />
+            </button>
+            <button
+              type="button"
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+                issueView === "calendar" ? "bg-custom-sidebar-background-80" : ""
+              }`}
+              onClick={() => setIssueView("calendar")}
+            >
+              <CalendarDaysIcon className="h-4 w-4 text-custom-sidebar-text-200" />
+            </button>
+            <button
+              type="button"
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+                issueView === "spreadsheet" ? "bg-custom-sidebar-background-80" : ""
+              }`}
+              onClick={() => setIssueView("spreadsheet")}
+            >
+              <Icon iconName="table_chart" className="text-custom-sidebar-text-200" />
+            </button>
+            <button
+              type="button"
+              className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+                issueView === "gantt_chart" ? "bg-custom-sidebar-background-80" : ""
+              }`}
+              onClick={() => setIssueView("gantt_chart")}
+            >
+              <span className="material-symbols-rounded text-custom-sidebar-text-200 text-[18px] rotate-90">
+                waterfall_chart
+              </span>
+            </button>
+          </>
+        )}
       </div>
       <SelectFilters
         filters={filters}
