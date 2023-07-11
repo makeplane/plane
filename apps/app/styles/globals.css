@@ -63,8 +63,9 @@
     --color-background-80: 245, 245, 245; /* tertiary bg */
 
     --color-text-100: 23, 23, 23; /* primary text */
-    --color-text-200: 82, 82, 82; /* secondary text */
-    --color-text-300: 115, 115, 115; /* tertiary text */
+    --color-text-200: 58, 58, 58; /* secondary text */
+    --color-text-300: 82, 82, 82; /* tertiary text */
+    --color-text-400: 163, 163, 163; /* placeholder text */
 
     --color-border-100: 245, 245, 245; /* subtle border= 1 */
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
@@ -76,8 +77,9 @@
     --color-sidebar-background-80: 245, 245, 245; /* tertiary sidebar bg */
 
     --color-sidebar-text-100: 23, 23, 23; /* primary sidebar text */
-    --color-sidebar-text-200: 82, 82, 82; /* secondary sidebar text */
-    --color-sidebar-text-300: 115, 115, 115; /* tertiary sidebar text */
+    --color-sidebar-text-200: 58, 58, 58; /* secondary sidebar text */
+    --color-sidebar-text-300: 82, 82, 82; /* tertiary sidebar text */
+    --color-sidebar-text-400: 163, 163, 163; /* sidebar placeholder text */
 
     --color-sidebar-border-100: 245, 245, 245; /* subtle sidebar border= 1 */
     --color-sidebar-border-200: 229, 229, 229; /* subtle sidebar border- 2 */
@@ -95,6 +97,7 @@
     --color-text-100: 241, 241, 241; /* primary text */
     --color-text-200: 115, 115, 115; /* secondary text */
     --color-text-300: 163, 163, 163; /* tertiary text */
+    --color-text-400: 82, 82, 82; /* placeholder text */
 
     --color-border-100: 34, 34, 34; /* subtle border= 1 */
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
@@ -108,6 +111,7 @@
     --color-sidebar-text-100: 241, 241, 241; /* primary sidebar text */
     --color-sidebar-text-200: 115, 115, 115; /* secondary sidebar text */
     --color-sidebar-text-300: 163, 163, 163; /* tertiary sidebar text */
+    --color-sidebar-text-400: 82, 82, 82; /* sidebar placeholder text */
 
     --color-sidebar-border-100: 34, 34, 34; /* subtle sidebar border= 1 */
     --color-sidebar-border-200: 38, 38, 38; /* subtle sidebar border- 2 */
@@ -256,5 +260,5 @@ body {
 ::-webkit-input-placeholder,
 ::placeholder,
 :-ms-input-placeholder {
-  color: rgb(var(--color-text-300));
+  color: rgb(var(--color-text-400));
 }

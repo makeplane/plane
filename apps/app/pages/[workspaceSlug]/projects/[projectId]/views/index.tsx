@@ -16,7 +16,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 //icons
 import { PlusIcon } from "components/icons";
 // images
-import emptyView from "public/empty-state/empty-view.svg";
+import emptyView from "public/empty-state/view.svg";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
@@ -115,10 +115,17 @@ const ProjectViews: NextPage = () => {
           </div>
         ) : (
           <EmptyState
-            type="view"
-            title="Create New View"
+            title="Get focused with views"
             description="Views aid in saving your issues by applying various filters and grouping options."
-            imgURL={emptyView}
+            image={emptyView}
+            buttonText="New View"
+            buttonIcon={<PlusIcon className="h-4 w-4" />}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "v",
+              });
+              document.dispatchEvent(e);
+            }}
           />
         )
       ) : (
