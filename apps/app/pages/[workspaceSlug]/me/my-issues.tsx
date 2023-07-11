@@ -152,11 +152,17 @@ const MyIssuesPage: NextPage = () => {
               </Disclosure>
             ) : (
               <EmptyState
-                title="Issues assigned to you will appear here"
+                title={
+                  projects
+                    ? projects.length > 0
+                      ? "You don't have any issue assigned to you yet"
+                      : "Issues assigned to you will appear here"
+                    : ""
+                }
                 description={
                   projects
                     ? projects.length > 0
-                      ? "There's no issue assigned to you across the workspace."
+                      ? "Keep track of your work in a single place."
                       : "Let's create your first project and add issues that you want to accomplish."
                     : ""
                 }
