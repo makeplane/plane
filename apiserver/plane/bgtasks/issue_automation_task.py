@@ -1,0 +1,146 @@
+# Python improts
+from datetime import timedelta
+
+# Django imports
+from django.utils import timezone
+from django.db.models import Q
+from django.conf import settings
+
+# Third party imports
+from celery import shared_task
+from sentry_sdk import capture_exception
+
+# Module imports
+from plane.db.models import Issue, Project, IssueActivity, State
+
+
+@shared_task
+def archive_and_close_old_issues():
+    archive_old_issues()
+    close_old_issues()
+
+def archive_old_issues():
+    try:
+        # Get all the projects whose archive_in is greater than 0
+        projects = Project.objects.filter(archive_in__gt=0)
+
+        for project in projects:
+            project_id = project.id
+            archive_in = project.archive_in
+
+            # Get all the issues whose updated_at in less that the archive_in month
+            issues = Issue.objects.filter(
+                Q(
+                    project=project_id,
+                    archived_at__isnull=True,
+                    updated_at__lte=(timezone.now() - timedelta(days=archive_in * 30)),
+                    state__group__in=["completed", "cancelled"],
+                ),
+                Q(issue_cycle__isnull=True)
+                | (
+                    Q(issue_cycle__cycle__end_date__lt=timezone.now().date())
+                    & Q(issue_cycle__isnull=False)
+                ),
+                Q(issue_module__isnull=True)
+                | (
+                    Q(issue_module__module__target_date__lt=timezone.now().date())
+                    & Q(issue_module__isnull=False)
+                ),
+            )
+
+            # Check if Issues
+            if issues:
+                issues_to_update = []
+                for issue in issues:
+                    issue.archived_at = timezone.now()
+                    issues_to_update.append(issue)
+
+                # Bulk Update the issues and log the activity
+                Issue.objects.bulk_update(issues_to_update, ["archived_at"], batch_size=100)
+                IssueActivity.objects.bulk_create(
+                    [
+                        IssueActivity(
+                            issue_id=issue.id,
+                            actor=project.created_by,
+                            verb="updated",
+                            field="archived_at",
+                            project=project,
+                            workspace=project.workspace,
+                            comment="Plane archived the issue",
+                        )
+                        for issue in issues_to_update
+                    ],
+                    batch_size=100,
+                )
+        return
+    except Exception as e:
+        if settings.DEBUG:
+            print(e)
+        capture_exception(e)
+        return
+
+def close_old_issues():
+    try:
+        # Get all the projects whose close_in is greater than 0
+        projects = Project.objects.filter(close_in__gt=0).select_related("default_state")
+
+        for project in projects:
+            project_id = project.id
+            close_in = project.close_in
+
+            # Get all the issues whose updated_at in less that the close_in month
+            issues = Issue.objects.filter(
+                Q(
+                    project=project_id,
+                    archived_at__isnull=True,
+                    updated_at__lte=(timezone.now() - timedelta(days=close_in * 30)),
+                    state__group__in=["backlog", "unstarted", "started"],
+                ),
+                Q(issue_cycle__isnull=True)
+                | (
+                    Q(issue_cycle__cycle__end_date__lt=timezone.now().date())
+                    & Q(issue_cycle__isnull=False)
+                ),
+                Q(issue_module__isnull=True)
+                | (
+                    Q(issue_module__module__target_date__lt=timezone.now().date())
+                    & Q(issue_module__isnull=False)
+                ),
+            )
+
+            # Check if Issues
+            if issues:
+                if project.default_state is None:
+                    close_state = project.default_state
+                else:
+                    close_state = State.objects.filter(group="cancelled").first()
+
+
+                issues_to_update = []
+                for issue in issues:
+                    issue.state = close_state
+                    issues_to_update.append(issue)
+
+                # Bulk Update the issues and log the activity
+                Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
+                IssueActivity.objects.bulk_create(
+                    [
+                        IssueActivity(
+                            issue_id=issue.id,
+                            actor=project.created_by,
+                            verb="updated",
+                            field="state",
+                            project=project,
+                            workspace=project.workspace,
+                            comment="Plane cancelled the issue",
+                        )
+                        for issue in issues_to_update
+                    ],
+                    batch_size=100,
+                )
+        return
+    except Exception as e:
+        if settings.DEBUG:
+            print(e)
+        capture_exception(e)
+        return
