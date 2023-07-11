@@ -15,6 +15,7 @@ from django.db.models import (
     Value,
     CharField,
     When,
+    Exists,
     Max,
 )
 from django.core.serializers.json import DjangoJSONEncoder
@@ -43,11 +44,15 @@ from plane.api.serializers import (
     IssueLinkSerializer,
     IssueLiteSerializer,
     IssueAttachmentSerializer,
+    IssueSubscriberSerializer,
+    ProjectMemberSerializer,
+    ProjectMemberLiteSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
     WorkSpaceAdminPermission,
     ProjectMemberPermission,
+    ProjectLitePermission,
 )
 from plane.db.models import (
     Project,
@@ -59,6 +64,8 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     State,
+    IssueSubscriber,
+    ProjectMember,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -903,5 +910,158 @@ class IssueAttachmentEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class IssueSubscriberViewSet(BaseViewSet):
+    serializer_class = IssueSubscriberSerializer
+    model = IssueSubscriber
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get_permissions(self):
+        if self.action in ["subscribe", "unsubscribe", "subscription_status"]:
+            self.permission_classes = [
+                ProjectLitePermission,
+            ]
+        else:
+            self.permission_classes = [
+                ProjectEntityPermission,
+            ]
+
+        return super(IssueSubscriberViewSet, self).get_permissions()
+
+    def perform_create(self, serializer):
+        serializer.save(
+            project_id=self.kwargs.get("project_id"),
+            issue_id=self.kwargs.get("issue_id"),
+        )
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
+            .distinct()
+        )
+
+    def list(self, request, slug, project_id, issue_id):
+        try:
+            members = ProjectMember.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=issue_id,
+                        subscriber=OuterRef("member"),
+                    )
+                )
+            ).select_related("member")
+            serializer = ProjectMemberLiteSerializer(members, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": e},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, project_id, issue_id, subscriber_id):
+        try:
+            issue_subscriber = IssueSubscriber.objects.get(
+                project=project_id,
+                subscriber=subscriber_id,
+                workspace__slug=slug,
+                issue=issue_id,
+            )
+            issue_subscriber.delete()
+            return Response(
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        except IssueSubscriber.DoesNotExist:
+            return Response(
+                {"error": "User is not subscribed to this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def subscribe(self, request, slug, project_id, issue_id):
+        try:
+            if IssueSubscriber.objects.filter(
+                issue_id=issue_id,
+                subscriber=request.user,
+                workspace__slug=slug,
+                project=project_id,
+            ).exists():
+                return Response(
+                    {"message": "User already subscribed to the issue."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            subscriber = IssueSubscriber.objects.create(
+                issue_id=issue_id,
+                subscriber_id=request.user.id,
+                project_id=project_id,
+            )
+            serilaizer = IssueSubscriberSerializer(subscriber)
+            return Response(serilaizer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong, please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def unsubscribe(self, request, slug, project_id, issue_id):
+        try:
+            issue_subscriber = IssueSubscriber.objects.get(
+                project=project_id,
+                subscriber=request.user,
+                workspace__slug=slug,
+                issue=issue_id,
+            )
+            issue_subscriber.delete()
+            return Response(
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        except IssueSubscriber.DoesNotExist:
+            return Response(
+                {"error": "User subscribed to this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def subscription_status(self, request, slug, project_id, issue_id):
+        try:
+            issue_subscriber = IssueSubscriber.objects.filter(
+                issue=issue_id,
+                subscriber=request.user,
+                workspace__slug=slug,
+                project=project_id,
+            ).exists()
+            return Response({"subscribed": issue_subscriber}, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong, please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
