@@ -73,7 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=300, null=True, blank=True)
     is_bot = models.BooleanField(default=False)
     theme = models.JSONField(default=dict)
-    is_tour_completed = models.JSONField(default=False)
+    is_tour_completed = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
 
