@@ -561,7 +561,6 @@ def track_estimate_points(
 def track_archive_at(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
-    
     if requested_data.get("archived_at") is None:
         issue_activities.append(
             IssueActivity(
@@ -572,6 +571,8 @@ def track_archive_at(
                 verb="updated",
                 actor=actor,
                 field="archvied_at",
+                old_value="archive",
+                new_value="restore",
             )
         )
     else:
@@ -584,6 +585,8 @@ def track_archive_at(
                 verb="updated",
                 actor=actor,
                 field="archvied_at",
+                old_value=None,
+                new_value="archive",
             )
         )
 
@@ -982,11 +985,16 @@ def delete_attachment_activity(
     )
 
 
-
 # Receive message from room group
 @shared_task
 def issue_activity(
-    type, requested_data, current_instance, issue_id, actor_id, project_id, subscriber=True
+    type,
+    requested_data,
+    current_instance,
+    issue_id,
+    actor_id,
+    project_id,
+    subscriber=True,
 ):
     try:
         issue_activities = []
@@ -998,12 +1006,13 @@ def issue_activity(
         if issue is not None:
             issue.updated_at = timezone.now()
             issue.save()
-        
 
         if subscriber:
             # add the user to issue subscriber
             try:
-                _ = IssueSubscriber.objects.get_or_create(issue_id=issue_id, subscriber=actor)
+                _ = IssueSubscriber.objects.get_or_create(
+                    issue_id=issue_id, subscriber=actor
+                )
             except Exception as e:
                 pass
 

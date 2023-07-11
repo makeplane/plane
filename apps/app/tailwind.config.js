@@ -1,4 +1,4 @@
-const convertToRGB = (variableName) => `rgb(var(${variableName}))`;
+const convertToRGB = (variableName) => `rgba(var(${variableName}))`;
 
 module.exports = {
   darkMode: "class",

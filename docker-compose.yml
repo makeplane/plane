@@ -1,6 +1,7 @@
 version: "3.8"
 
-x-api-and-worker-env: &api-and-worker-env
+x-api-and-worker-env:
+        &api-and-worker-env
         DEBUG: ${DEBUG}
         SENTRY_DSN: ${SENTRY_DSN}
         DJANGO_SETTINGS_MODULE: plane.settings.production
@@ -23,6 +24,7 @@ x-api-and-worker-env: &api-and-worker-env
         GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
         DISABLE_COLLECTSTATIC: 1
         DOCKERIZED: 1
+        OPENAI_API_BASE: ${OPENAI_API_BASE}
         OPENAI_API_KEY: ${OPENAI_API_KEY}
         GPT_ENGINE: ${GPT_ENGINE}
         SECRET_KEY: ${SECRET_KEY}
@@ -126,9 +128,7 @@ services:
         createbuckets:
                 image: minio/mc
                 entrypoint: >
-                        /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; 
-                        /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; 
-                        /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
+                        /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
                 env_file:
                         - .env
                 depends_on:
