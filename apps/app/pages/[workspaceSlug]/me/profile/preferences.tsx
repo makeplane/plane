@@ -40,7 +40,7 @@ const ProfilePreferences = () => {
           <div className="mb-8 space-y-6">
             <div>
               <h3 className="text-3xl font-semibold">Profile Settings</h3>
-              <p className="mt-1 text-brand-secondary">
+              <p className="mt-1 text-custom-text-200">
                 This information will be visible to only you.
               </p>
             </div>
@@ -49,8 +49,8 @@ const ProfilePreferences = () => {
           <div className="space-y-8 sm:space-y-12">
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Theme</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
+                <p className="text-sm text-custom-text-200">
                   Select or customize your interface color scheme.
                 </p>
               </div>

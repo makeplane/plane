@@ -34,8 +34,8 @@ export const ChangeInterfaceTheme: React.FC<Props> = ({ setIsPaletteOpen }) => {
           }}
           className="focus:outline-none"
         >
-          <div className="flex items-center gap-2 text-brand-secondary">
-            <SettingIcon className="h-4 w-4 text-brand-secondary" />
+          <div className="flex items-center gap-2 text-custom-text-200">
+            <SettingIcon className="h-4 w-4 text-custom-text-200" />
             {theme.label}
           </div>
         </Command.Item>

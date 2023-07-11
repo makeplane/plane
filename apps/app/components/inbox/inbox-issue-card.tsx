@@ -40,12 +40,12 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
       <a>
         <div
           id={issue.id}
-          className={`relative min-h-[5rem] cursor-pointer select-none space-y-3 py-2 px-4 border-b border-brand-base hover:bg-brand-accent hover:bg-opacity-10 ${
-            active ? "bg-brand-accent bg-opacity-5" : " "
+          className={`relative min-h-[5rem] cursor-pointer select-none space-y-3 py-2 px-4 border-b border-custom-border-100 hover:bg-custom-primary hover:bg-opacity-10 ${
+            active ? "bg-custom-primary bg-opacity-5" : " "
           } ${issue.issue_inbox[0].status !== -2 ? "opacity-60" : ""}`}
         >
           <div className="flex items-center gap-x-2">
-            <p className="flex-shrink-0 text-brand-secondary text-xs">
+            <p className="flex-shrink-0 text-custom-text-200 text-xs">
               {issue.project_detail?.identifier}-{issue.sequence_id}
             </p>
             <h5 className="truncate text-sm">{issue.name}</h5>
@@ -62,7 +62,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
                     ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
                     : issue.priority === "low"
                     ? "border-green-500/20 bg-green-500/20 text-green-500"
-                    : "border-brand-base"
+                    : "border-custom-border-100"
                 }`}
               >
                 {getPriorityIcon(
@@ -75,7 +75,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               tooltipHeading="Created on"
               tooltipContent={`${renderShortDateWithYearFormat(issue.created_at ?? "")}`}
             >
-              <div className="flex items-center gap-1 rounded border border-brand-base shadow-sm text-xs px-2 py-[0.19rem] text-brand-secondary">
+              <div className="flex items-center gap-1 rounded border border-custom-border-100 shadow-sm text-xs px-2 py-[0.19rem] text-custom-text-200">
                 <CalendarDaysIcon className="h-3.5 w-3.5" />
                 <span>{renderShortDateWithYearFormat(issue.created_at ?? "")}</span>
               </div>

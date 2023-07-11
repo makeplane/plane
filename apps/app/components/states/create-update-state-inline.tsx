@@ -35,7 +35,7 @@ export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "ca
 
 const defaultValues: Partial<IState> = {
   name: "",
-  color: "#858e96",
+  color: "rgb(var(--color-text-200))",
   group: "backlog",
 };
 
@@ -169,15 +169,16 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-brand-base p-5"
+      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 p-5"
     >
       <div className="flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center">
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none ${open ? "text-brand-base" : "text-brand-secondary"
-                  }`}
+                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
+                  open ? "text-custom-text-100" : "text-custom-text-200"
+                }`}
               >
                 {watch("color") && watch("color") !== "" && (
                   <span
@@ -229,7 +230,9 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           name="group"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}  >
+            <Tooltip
+              tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}
+            >
               <div>
                 <CustomSelect
                   disabled={groupLength === 1}

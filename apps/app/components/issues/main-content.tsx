@@ -53,9 +53,9 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges 
     <>
       <div className="rounded-lg">
         {issueDetails?.parent && issueDetails.parent !== "" ? (
-          <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs">
+          <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
             <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${issueDetails.parent}`}>
-              <a className="flex items-center gap-2 text-brand-secondary">
+              <a className="flex items-center gap-2 text-custom-text-200">
                 <span
                   className="block h-1.5 w-1.5 rounded-full"
                   style={{
@@ -85,7 +85,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges 
                   </CustomMenu.MenuItem>
                 ))
               ) : (
-                <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-brand-secondary">
+                <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-custom-text-200">
                   No other sibling issues
                 </CustomMenu.MenuItem>
               )}
@@ -109,7 +109,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges 
         </div>
       </div>
       <div className="space-y-5 pt-3">
-        <h3 className="text-lg text-brand-base">Comments/Activity</h3>
+        <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
         <IssueActivitySection issueId={issueId as string} user={user} />
         <AddComment issueId={issueId as string} user={user} />
       </div>

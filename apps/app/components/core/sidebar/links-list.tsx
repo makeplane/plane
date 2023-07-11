@@ -32,15 +32,15 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
             <div className="absolute top-1.5 right-1.5 z-[1] flex items-center gap-1">
               <Link href={link.url}>
                 <a
-                  className="grid h-7 w-7 place-items-center rounded bg-brand-surface-1 p-1 outline-none hover:bg-brand-surface-2"
+                  className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
                   target="_blank"
                 >
-                  <ArrowTopRightOnSquareIcon className="h-4 w-4 text-brand-secondary" />
+                  <ArrowTopRightOnSquareIcon className="h-4 w-4 text-custom-text-200" />
                 </a>
               </Link>
               <button
                 type="button"
-                className="grid h-7 w-7 place-items-center rounded bg-brand-surface-1 p-1 text-red-500 outline-none duration-300 hover:bg-red-500/20"
+                className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 text-red-500 outline-none duration-300 hover:bg-red-500/20"
                 onClick={() => handleDeleteLink(link.id)}
               >
                 <TrashIcon className="h-4 w-4" />
@@ -48,13 +48,16 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
             </div>
           )}
           <Link href={link.url}>
-            <a className="relative flex gap-2 rounded-md bg-brand-base p-2" target="_blank">
+            <a
+              className="relative flex gap-2 rounded-md bg-custom-background-100 p-2"
+              target="_blank"
+            >
               <div className="mt-0.5">
                 <LinkIcon className="h-3.5 w-3.5" />
               </div>
               <div>
                 <h5 className="w-4/5 break-words">{link.title}</h5>
-                <p className="mt-0.5 text-brand-secondary">
+                <p className="mt-0.5 text-custom-text-200">
                   Added {timeAgo(link.created_at)}
                   <br />
                   by{" "}

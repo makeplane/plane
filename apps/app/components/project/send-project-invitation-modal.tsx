@@ -172,18 +172,19 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-brand-base bg-brand-base p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-80 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                  <div className="space-y-5 mb-5">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                  <div className="space-y-5">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-custom-text-100"
+                    >
                       Invite Members
                     </Dialog.Title>
-                  </div>
-
-                  <div className="text-sm">
-                    <div className="grid grid-cols-12 gap-x-4 mb-3 text-sm">
-                      <h6 className="col-span-7 px-1">Email</h6>
-                      <h6 className="col-span-4 px-1">Role</h6>
+                    <div className="mt-2">
+                      <p className="text-sm text-custom-text-200">
+                        Invite members to work on your project.
+                      </p>
                     </div>
 
                     <div className="space-y-4 mb-3">
@@ -201,7 +202,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                 <CustomSearchSelect
                                   value={value}
                                   customButton={
-                                    <button className="flex w-full items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 focus:outline-none px-3 py-2 text-sm text-left">
+                                    <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-100 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2 text-sm text-left">
                                       {value && value !== "" ? (
                                         <div className="flex items-center gap-2">
                                           <Avatar
@@ -275,7 +276,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                   className="self-center place-items-center rounded"
                                   onClick={() => remove(index)}
                                 >
-                                  <XMarkIcon className="h-4 w-4 text-brand-secondary" />
+                                  <XMarkIcon className="h-4 w-4 text-custom-text-200" />
                                 </button>
                               )}
                             </div>
@@ -288,7 +289,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <button
                       type="button"
-                      className="flex items-center gap-2 outline-brand-accent bg-transparent text-brand-accent text-sm font-medium py-2 pr-3"
+                      className="flex items-center gap-2 outline-custom-primary bg-transparent text-custom-primary text-sm font-medium py-2 pr-3"
                       onClick={appendField}
                     >
                       <PlusIcon className="h-4 w-4" />

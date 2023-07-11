@@ -31,7 +31,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
   }
 
   return (
-    <div className="flex items-center gap-2 rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+    <div className="flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 p-2 text-xs">
       <span
         className="h-3 w-3 rounded"
         style={{
@@ -39,7 +39,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
         }}
       />
       <span
-        className={`font-medium text-brand-secondary ${
+        className={`font-medium text-custom-text-200 ${
           params.segment
             ? params.segment === "priority" || params.segment === "state__group"
               ? "capitalize"

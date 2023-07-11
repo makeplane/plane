@@ -113,7 +113,7 @@ export const BoardHeader: React.FC<Props> = ({
   return (
     <div
       className={`flex items-center justify-between px-1 ${
-        !isCollapsed ? "flex-col rounded-md bg-brand-surface-1" : ""
+        !isCollapsed ? "flex-col rounded-md bg-custom-background-90" : ""
       }`}
     >
       <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
@@ -134,7 +134,7 @@ export const BoardHeader: React.FC<Props> = ({
           <span
             className={`${
               isCollapsed ? "ml-0.5" : ""
-            } min-w-[2.5rem] rounded-full bg-brand-surface-2 py-1 text-center text-xs`}
+            } min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs`}
           >
             {groupedByIssues?.[groupTitle].length ?? 0}
           </span>
@@ -144,7 +144,7 @@ export const BoardHeader: React.FC<Props> = ({
       <div className={`flex items-center ${!isCollapsed ? "flex-col pb-2" : ""}`}>
         <button
           type="button"
-          className="grid h-7 w-7 place-items-center rounded p-1 text-brand-secondary outline-none duration-300 hover:bg-brand-surface-2"
+          className="grid h-7 w-7 place-items-center rounded p-1 text-custom-text-200 outline-none duration-300 hover:bg-custom-background-80"
           onClick={() => {
             setIsCollapsed((prevData) => !prevData);
           }}
@@ -158,7 +158,7 @@ export const BoardHeader: React.FC<Props> = ({
         {!isCompleted && selectedGroup !== "created_by" && (
           <button
             type="button"
-            className="grid h-7 w-7 place-items-center rounded p-1 text-brand-secondary outline-none duration-300 hover:bg-brand-surface-2"
+            className="grid h-7 w-7 place-items-center rounded p-1 text-custom-text-200 outline-none duration-300 hover:bg-custom-background-80"
             onClick={addIssueToState}
           >
             <PlusIcon className="h-4 w-4" />

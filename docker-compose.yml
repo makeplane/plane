@@ -40,7 +40,7 @@ services:
                         args:
                                 NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
                 restart: always
-                command: [ "/usr/local/bin/start.sh" ]
+                command: /usr/local/bin/start.sh
                 env_file:
                         - .env
                 environment:
@@ -56,7 +56,6 @@ services:
                 depends_on:
                         - plane-api
                         - plane-worker
-
 
         plane-api:
                 container_name: planebackend
@@ -135,6 +134,7 @@ services:
                 depends_on:
                         - plane-minio
 
+        # Comment this if you already have a reverse proxy running
         plane-proxy:
                 container_name: planeproxy
                 build:

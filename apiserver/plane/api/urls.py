@@ -77,6 +77,7 @@ from plane.api.views import (
     BulkCreateIssueLabelsEndpoint,
     IssueAttachmentEndpoint,
     IssueArchiveViewSet,
+    IssueSubscriberViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -149,6 +150,9 @@ from plane.api.views import (
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
     ## End Analytics
+    # Notification
+    NotificationViewSet,
+    ## End Notification
 )
 
 
@@ -798,6 +802,34 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     ## End IssueComments
+    # Issue Subscribers
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/",
+        IssueSubscriberViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-issue-subscribers",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/<uuid:subscriber_id>/",
+        IssueSubscriberViewSet.as_view({"delete": "destroy"}),
+        name="project-issue-subscribers",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribe/",
+        IssueSubscriberViewSet.as_view(
+            {
+                "get": "subscription_status",
+                "post": "subscribe",
+                "delete": "unsubscribe",
+            }
+        ),
+        name="project-issue-subscribers",
+    ),
+    ## End Issue Subscribers
     ## IssueProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",
@@ -1304,4 +1336,46 @@ urlpatterns = [
         name="default-analytics",
     ),
     ## End Analytics
+    # Notification
+    path(
+        "workspaces/<str:slug>/users/notifications/",
+        NotificationViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/",
+        NotificationViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/read/",
+        NotificationViewSet.as_view(
+            {
+                "post": "mark_read",
+                "delete": "mark_unread",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/archive/",
+        NotificationViewSet.as_view(
+            {
+                "post": "archive",
+                "delete": "unarchive",
+            }
+        ),
+        name="notifications",
+    ),
+    ## End Notification
 ]

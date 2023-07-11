@@ -111,7 +111,6 @@ export const AnalyticsGraph: React.FC<Props> = ({
             : undefined,
       }}
       theme={{
-        background: "rgb(var(--color-bg-base))",
         axis: {},
       }}
     />

@@ -22,7 +22,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
 
   return (
     <DefaultLayout>
-      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-brand-surface-1 text-center">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-90 text-center">
         <div className="h-44 w-72">
           <Image
             src={type === "project" ? ProjectNotAuthorizedImg : WorkspaceNotAuthorizedImg}
@@ -31,16 +31,16 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
             alt="ProjectSettingImg"
           />
         </div>
-        <h1 className="text-xl font-medium text-brand-base">
+        <h1 className="text-xl font-medium text-custom-text-100">
           Oops! You are not authorized to view this page
         </h1>
 
-        <div className="w-full max-w-md text-base text-brand-secondary">
+        <div className="w-full max-w-md text-base text-custom-text-200">
           {user ? (
             <p>
               You have signed in as {user.email}. <br />
               <Link href={`/?next=${currentPath}`}>
-                <a className="font-medium text-brand-base">Sign in</a>
+                <a className="font-medium text-custom-text-100">Sign in</a>
               </Link>{" "}
               with different account that has access to this page.
             </p>
@@ -48,7 +48,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
             <p>
               You need to{" "}
               <Link href={`/?next=${currentPath}`}>
-                <a className="font-medium text-brand-base">Sign in</a>
+                <a className="font-medium text-custom-text-100">Sign in</a>
               </Link>{" "}
               with an account that has access to this page.
             </p>
