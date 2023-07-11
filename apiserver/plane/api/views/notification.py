@@ -53,10 +53,10 @@ class NotificationViewSet(BaseViewSet):
                 )
 
             # Filter for archived or unarchive
-            if archived == "true":
+            if archived == "false":
                 notifications = notifications.filter(archived_at__isnull=True)
 
-            if archived == "false":
+            if archived == "true":
                 notifications = notifications.filter(archived_at__isnull=False)
 
             # Subscribed issues
