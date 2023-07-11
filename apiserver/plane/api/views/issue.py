@@ -1042,7 +1042,7 @@ class IssueArchiveViewSet(BaseViewSet):
             return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -1080,7 +1080,7 @@ class IssueArchiveViewSet(BaseViewSet):
             issue.save()
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=None,
+                requested_data=json.dumps({"archived_in": None}),
                 actor_id=str(request.user.id),
                 issue_id=str(issue.id),
                 project_id=str(project_id),
