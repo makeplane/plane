@@ -24,6 +24,7 @@ class Notification(BaseModel):
     receiver = models.ForeignKey("db.User", related_name="received_notifications", on_delete=models.CASCADE)
     read_at = models.DateTimeField(null=True)
     snoozed_till = models.DateTimeField(null=True)
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Notification"

@@ -1326,5 +1326,25 @@ urlpatterns = [
         ),
         name="notifications",
     ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/read/",
+        NotificationViewSet.as_view(
+            {
+                "post": "mark_read",
+                "delete": "mark_unread",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/archive/",
+        NotificationViewSet.as_view(
+            {
+                "post": "archive",
+                "delete": "unarchive",
+            }
+        ),
+        name="notifications",
+    ),
     ## End Notification
 ]

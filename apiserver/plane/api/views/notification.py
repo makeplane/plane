@@ -32,6 +32,7 @@ class NotificationViewSet(BaseViewSet):
         try:
             order_by = request.GET.get("order_by", "-created_at")
             snoozed = request.GET.get("snoozed", "false")
+            archived = request.GET.get("archived", "false")
 
             # Filter type
             type = request.GET.get("type", "all")
@@ -39,6 +40,24 @@ class NotificationViewSet(BaseViewSet):
             notifications = Notification.objects.filter(
                 workspace__slug=slug, receiver_id=request.user.id
             ).order_by(order_by)
+
+            # Filter for snoozed notifications
+            if snoozed == "false":
+                notifications = notifications.filter(
+                    Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+                )
+
+            if snoozed == "true":
+                notifications = notifications.filter(
+                    snoozed_till__lt=timezone.now(),
+                )
+
+            # Filter for archived or unarchive
+            if archived == "true":
+                notifications = notifications.filter(archived_at__isnull=True)
+
+            if archived == "false":
+                notifications = notifications.filter(archived_at__isnull=False)
 
             # Subscribed issues
             if type == "watching":
@@ -61,15 +80,10 @@ class NotificationViewSet(BaseViewSet):
                 ).values_list("pk", flat=True)
                 notifications = notifications.filter(entity_identifier__in=issue_ids)
 
-            if snoozed == "false":
-                notifications = notifications.filter(
-                    Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
-                )
-
             serializer = NotificationSerializer(notifications, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -82,7 +96,6 @@ class NotificationViewSet(BaseViewSet):
             )
             # Only read_at and snoozed_till can be updated
             notification_data = {
-                "read_at": request.data.get("read_at", None),
                 "snoozed_till": request.data.get("snoozed_till", None),
             }
             serializer = NotificationSerializer(
@@ -104,3 +117,89 @@ class NotificationViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+    def mark_read(self, request, slug, pk):
+        try:
+            notification = Notification.objects.get(
+                receiver=request.user, workspace__slug=slug, pk=pk
+            )
+            notification.read_at = timezone.now()
+            notification.save()
+            serializer = NotificationSerializer(notification)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Notification.DoesNotExist:
+            return Response(
+                {"error": "Notification does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def mark_unread(self, request, slug, pk):
+        try:
+            notification = Notification.objects.get(
+                receiver=request.user, workspace__slug=slug, pk=pk
+            )
+            notification.read_at = None
+            notification.save()
+            serializer = NotificationSerializer(notification)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Notification.DoesNotExist:
+            return Response(
+                {"error": "Notification does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+    def archive(self, request, slug, pk):
+        try:
+            notification = Notification.objects.get(
+                receiver=request.user, workspace__slug=slug, pk=pk
+            )
+            notification.archived_at = timezone.now()
+            notification.save()
+            serializer = NotificationSerializer(notification)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Notification.DoesNotExist:
+            return Response(
+                {"error": "Notification does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def unarchive(self, request, slug, pk):
+        try:
+            notification = Notification.objects.get(
+                receiver=request.user, workspace__slug=slug, pk=pk
+            )
+            notification.archived_at = None
+            notification.save()
+            serializer = NotificationSerializer(notification)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Notification.DoesNotExist:
+            return Response(
+                {"error": "Notification does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
