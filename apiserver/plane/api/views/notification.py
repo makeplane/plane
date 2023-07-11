@@ -33,6 +33,7 @@ class NotificationViewSet(BaseViewSet):
             order_by = request.GET.get("order_by", "-created_at")
             snoozed = request.GET.get("snoozed", "false")
             archived = request.GET.get("archived", "false")
+            read = request.GET.get("read", "false")
 
             # Filter type
             type = request.GET.get("type", "all")
@@ -51,6 +52,11 @@ class NotificationViewSet(BaseViewSet):
                 notifications = notifications.filter(
                     Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
                 )
+
+            if read == "true":
+                notifications = notifications.filter(read_at__isnull=False)
+            if read == "false":
+                notifications = notifications.filter(read_at__isnull=True)
 
             # Filter for archived or unarchive
             if archived == "false":
