@@ -11,7 +11,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { CommentCard } from "components/issues/comment";
 // ui
-import { Loader } from "components/ui";
+import { Icon, Loader } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -109,6 +109,10 @@ const activityDetails: {
   attachment: {
     message: "updated the attachment",
     icon: <PaperClipIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+  },
+  archived_at: {
+    message: "archived",
+    icon: <Icon iconName="archive" className="text-sm text-custom-text-200" aria-hidden="true" />,
   },
 };
 
@@ -253,6 +257,11 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
               activityItem.new_value && activityItem.new_value !== ""
                 ? "set the module to"
                 : "removed the module";
+          } else if (activityItem.field === "archived_at") {
+            action =
+              activityItem.new_value && activityItem.new_value === "restore"
+                ? "restored the issue"
+                : "archived the issue";
           }
           // for values that are after the action clause
           let value: any = activityItem.new_value ? activityItem.new_value : activityItem.old_value;
@@ -345,8 +354,16 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                           <div className="mt-1.5">
                             <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 ring-white">
                               {activityItem.field ? (
-                                activityDetails[activityItem.field as keyof typeof activityDetails]
-                                  ?.icon
+                                activityItem.new_value === "restore" ? (
+                                  <Icon
+                                    iconName="history"
+                                    className="text-sm text-custom-text-200"
+                                  />
+                                ) : (
+                                  activityDetails[
+                                    activityItem.field as keyof typeof activityDetails
+                                  ]?.icon
+                                )
                               ) : activityItem.actor_detail.avatar &&
                                 activityItem.actor_detail.avatar !== "" ? (
                                 <img
@@ -369,17 +386,24 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                       </div>
                       <div className="min-w-0 flex-1 py-3">
                         <div className="text-xs text-custom-text-200">
-                          <span className="text-gray font-medium">
-                            {activityItem.actor_detail.first_name}
-                            {activityItem.actor_detail.is_bot
-                              ? " Bot"
-                              : " " + activityItem.actor_detail.last_name}
-                          </span>
+                          {activityItem.field === "archived_at" &&
+                          activityItem.new_value !== "restore" ? (
+                            <span className="text-gray font-medium">Plane</span>
+                          ) : (
+                            <span className="text-gray font-medium">
+                              {activityItem.actor_detail.first_name}
+                              {activityItem.actor_detail.is_bot
+                                ? " Bot"
+                                : " " + activityItem.actor_detail.last_name}
+                            </span>
+                          )}
                           <span> {action} </span>
-                          <span className="text-xs font-medium text-custom-text-100">
-                            {" "}
-                            {value}{" "}
-                          </span>
+                          {activityItem.field !== "archived_at" && (
+                            <span className="text-xs font-medium text-custom-text-100">
+                              {" "}
+                              {value}{" "}
+                            </span>
+                          )}
                           <span className="whitespace-nowrap">
                             {timeAgo(activityItem.created_at)}
                           </span>
