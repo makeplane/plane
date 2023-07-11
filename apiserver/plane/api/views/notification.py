@@ -49,7 +49,7 @@ class NotificationViewSet(BaseViewSet):
 
             if snoozed == "true":
                 notifications = notifications.filter(
-                    snoozed_till__lt=timezone.now(),
+                    Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
                 )
 
             # Filter for archived or unarchive
