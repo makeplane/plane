@@ -140,7 +140,7 @@ const SingleCycle: React.FC = () => {
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 font-normal rounded-md text-custom-text-200"
+              className="!py-1.5 font-normal rounded-md text-custom-text-200 hover:text-custom-text-100"
               outline
             >
               Analytics

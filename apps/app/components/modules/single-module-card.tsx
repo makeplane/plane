@@ -185,12 +185,12 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
               <div className="flex items-start gap-1">
                 <CalendarDaysIcon className="h-4 w-4" />
                 <span>Start:</span>
-                <span>{renderShortDateWithYearFormat(startDate)}</span>
+                <span>{renderShortDateWithYearFormat(startDate, "Not set")}</span>
               </div>
               <div className="flex items-start gap-1">
                 <TargetIcon className="h-4 w-4" />
                 <span>End:</span>
-                <span>{renderShortDateWithYearFormat(endDate)}</span>
+                <span>{renderShortDateWithYearFormat(endDate, "Not set")}</span>
               </div>
             </div>
           </div>
