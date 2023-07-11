@@ -570,6 +570,8 @@ def track_archive_in(
             verb="updated",
             actor=actor,
             field="archvied_at",
+            old_value="archive",
+            new_value="restore",
         )
     )
 

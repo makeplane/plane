@@ -67,6 +67,8 @@ def archive_old_issues():
                             project=project,
                             workspace=project.workspace,
                             comment="Plane archived the issue",
+                            new_value="archive",
+                            old_value=""
                         )
                         for issue in issues_to_update
                     ],
