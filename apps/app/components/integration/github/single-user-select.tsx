@@ -62,7 +62,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
   }));
 
   return (
-    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-brand-surface-2 px-2 py-3">
+    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-custom-background-80 px-2 py-3">
       <div className="flex items-center gap-2">
         <div className="relative h-8 w-8 flex-shrink-0 rounded">
           <img

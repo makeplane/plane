@@ -105,14 +105,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
               });
           }}
           required={true}
-          className="min-h-10 block w-full resize-none
-      overflow-hidden rounded border-none bg-transparent
-      px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-theme"
+          className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
           role="textbox"
           disabled={!isAllowed}
         />
         {characterLimit && (
-          <div className="pointer-events-none absolute bottom-0 right-0 z-[2] rounded bg-brand-surface-2 p-1 text-xs">
+          <div className="pointer-events-none absolute bottom-0 right-0 z-[2] rounded bg-custom-background-80 p-1 text-xs">
             <span
               className={`${
                 watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
@@ -166,7 +164,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         }}
       />
       <div
-        className={`absolute -bottom-8 right-0 text-sm text-brand-secondary ${
+        className={`absolute -bottom-8 right-0 text-sm text-custom-text-200 ${
           isSubmitting ? "block" : "hidden"
         }`}
       >

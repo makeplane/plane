@@ -141,20 +141,20 @@ export const SingleList: React.FC<Props> = ({
     <Disclosure as="div" defaultOpen>
       {({ open }) => (
         <div>
-          <div className="flex items-center justify-between px-4 py-2.5">
+          <div className="flex items-center justify-between px-4 py-2.5 bg-custom-background-90">
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
                 {selectedGroup !== null && (
                   <div className="flex items-center">{getGroupIcon()}</div>
                 )}
                 {selectedGroup !== null ? (
-                  <h2 className="text-sm font-semibold capitalize leading-6 text-brand-base">
+                  <h2 className="text-sm font-semibold capitalize leading-6 text-custom-text-100">
                     {getGroupTitle()}
                   </h2>
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
-                <span className="text-brand-2 min-w-[2.5rem] rounded-full bg-brand-surface-2 py-1 text-center text-xs">
+                <span className="text-custom-text-200 min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs">
                   {groupedByIssues[groupTitle as keyof IIssue].length}
                 </span>
               </div>
@@ -162,7 +162,7 @@ export const SingleList: React.FC<Props> = ({
             {type === "issue" ? (
               <button
                 type="button"
-                className="p-1  text-brand-secondary hover:bg-brand-surface-2"
+                className="p-1  text-custom-text-200 hover:bg-custom-background-80"
                 onClick={addIssueToState}
               >
                 <PlusIcon className="h-4 w-4" />
@@ -221,7 +221,7 @@ export const SingleList: React.FC<Props> = ({
                     />
                   ))
                 ) : (
-                  <p className="bg-brand-base px-4 py-2.5 text-sm text-brand-secondary">
+                  <p className="bg-custom-background-100 px-4 py-2.5 text-sm text-custom-text-200">
                     No issues.
                   </p>
                 )

@@ -43,8 +43,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             <div>
               <Menu.Button
                 onClick={() => setOpenChildFor(null)}
-                className={`group flex items-center justify-between gap-2 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm duration-300 focus:outline-none ${
-                  open ? "bg-brand-surface-1 text-brand-base" : "text-brand-secondary"
+                className={`group flex items-center justify-between gap-2 rounded-md border border-custom-border-100 px-3 py-1.5 text-xs shadow-sm duration-300 focus:outline-none ${
+                  open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
                 {label}
@@ -62,7 +62,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             >
               <Menu.Items
                 static
-                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-brand-surface-1 text-xs shadow-lg focus:outline-none"
+                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none"
               >
                 {options.map((option) => (
                   <div className="relative p-1" key={option.id}>
@@ -85,8 +85,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                         <>
                           <div
                             className={`${
-                              active || option.selected ? "bg-brand-surface-2" : ""
-                            } flex items-center gap-1 rounded px-1 py-1.5 text-brand-secondary ${
+                              active || option.selected ? "bg-custom-background-80" : ""
+                            } flex items-center gap-1 rounded px-1 py-1.5 text-custom-text-200 ${
                               direction === "right" ? "justify-between" : ""
                             }`}
                           >
@@ -103,7 +103,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     </Menu.Item>
                     {option.children && option.id === openChildFor && (
                       <div
-                        className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-brand-surface-1 shadow-lg focus:outline-none ${
+                        className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 shadow-lg focus:outline-none ${
                           direction === "left"
                             ? "right-full -translate-x-1"
                             : "left-full translate-x-1"
@@ -129,8 +129,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                                   type="button"
                                   onClick={() => onSelect(child.value)}
                                   className={`${
-                                    child.selected ? "bg-brand-surface-2" : ""
-                                  } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2`}
+                                    child.selected ? "bg-custom-background-80" : ""
+                                  } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
                                 >
                                   {child.label}{" "}
                                   <CheckIcon

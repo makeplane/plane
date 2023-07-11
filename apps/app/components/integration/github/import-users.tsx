@@ -26,8 +26,8 @@ export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers
     <div className="mt-6">
       <div>
         <div className="mb-2 grid grid-cols-3 gap-2 text-sm font-medium">
-          <div className="text-brand-secondary">Name</div>
-          <div className="text-brand-secondary">Import as...</div>
+          <div className="text-custom-text-200">Name</div>
+          <div className="text-custom-text-200">Import as...</div>
           <div className="text-right">
             {users.filter((u) => u.import !== false).length} users selected
           </div>

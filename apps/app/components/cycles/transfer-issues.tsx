@@ -38,8 +38,8 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
     : 0;
   return (
     <div className="-mt-2 mb-4 flex items-center justify-between px-8 pt-6">
-      <div className="flex items-center gap-2 text-sm text-brand-secondary">
-        <ExclamationIcon height={14} width={14} className="fill-current text-brand-secondary" />
+      <div className="flex items-center gap-2 text-sm text-custom-text-200">
+        <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
         <span>Completed cycles are not editable.</span>
       </div>
 

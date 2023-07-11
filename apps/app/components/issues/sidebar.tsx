@@ -281,7 +281,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         data={issueDetail ?? null}
         user={user}
       />
-      <div className="sticky top-5 w-full divide-y-2 divide-brand-base">
+      <div className="sticky top-5 w-full divide-y-2 divide-custom-border-100">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
@@ -290,7 +290,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"
-                className="rounded-md border border-brand-base p-2 shadow-sm duration-300 hover:bg-brand-surface-1 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                className="rounded-md border border-custom-border-100 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
                 onClick={handleCopyText}
               >
                 <LinkIcon className="h-3.5 w-3.5" />
@@ -307,7 +307,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
         </div>
-        <div className="divide-y-2 divide-brand-base">
+        <div className="divide-y-2 divide-custom-border-100">
           {showFirstSection && (
             <div className="py-1">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
@@ -374,15 +374,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     issueDetail?.parent_detail ? (
                       <button
                         type="button"
-                        className="flex items-center gap-2 rounded bg-brand-surface-2 px-3 py-2 text-xs"
+                        className="flex items-center gap-2 rounded bg-custom-background-80 px-3 py-2 text-xs"
                         onClick={() => submitChanges({ parent: null })}
                       >
-                        <span className="text-brand-secondary">Selected:</span>{" "}
+                        <span className="text-custom-text-200">Selected:</span>{" "}
                         {issueDetail.parent_detail?.name}
                         <XMarkIcon className="h-3 w-3" />
                       </button>
                     ) : (
-                      <div className="inline-block rounded bg-brand-surface-1 px-3 py-2 text-xs text-brand-secondary">
+                      <div className="inline-block rounded bg-custom-background-90 px-3 py-2 text-xs text-custom-text-200">
                         No parent selected
                       </div>
                     )
@@ -409,7 +409,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                 <div className="flex flex-wrap items-center py-2">
-                  <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+                  <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                     <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
                     <p>Due date</p>
                   </div>
@@ -426,7 +426,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                               target_date: val,
                             })
                           }
-                          className="bg-brand-surface-1"
+                          className="bg-custom-background-90"
                           disabled={isNotAllowed}
                         />
                       )}
@@ -458,7 +458,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
           <div className="space-y-3 py-3">
             <div className="flex items-start justify-between">
-              <div className="flex basis-1/2 items-center gap-x-2 text-sm text-brand-secondary">
+              <div className="flex basis-1/2 items-center gap-x-2 text-sm text-custom-text-200">
                 <TagIcon className="h-4 w-4" />
                 <p>Label</p>
               </div>
@@ -471,7 +471,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       return (
                         <span
                           key={label.id}
-                          className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
+                          className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
                           onClick={() => {
                             const updatedLabels = watchIssue("labels_list")?.filter(
                               (l) => l !== labelId
@@ -511,8 +511,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                               className={`flex ${
                                 isNotAllowed
                                   ? "cursor-not-allowed"
-                                  : "cursor-pointer hover:bg-brand-surface-1"
-                              } items-center gap-2 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary`}
+                                  : "cursor-pointer hover:bg-custom-background-90"
+                              } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
                             >
                               Select Label
                             </Listbox.Button>
@@ -524,7 +524,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                               leaveFrom="opacity-100"
                               leaveTo="opacity-0"
                             >
-                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-brand-surface-2 py-1 text-xs shadow-lg border border-brand-base focus:outline-none">
+                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-custom-background-80 py-1 text-xs shadow-lg border border-custom-border-100 focus:outline-none">
                                 <div className="py-1">
                                   {issueLabels ? (
                                     issueLabels.length > 0 ? (
@@ -540,9 +540,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                                 key={label.id}
                                                 className={({ active, selected }) =>
                                                   `${
-                                                    active || selected ? "bg-brand-surface-1" : ""
+                                                    active || selected
+                                                      ? "bg-custom-background-90"
+                                                      : ""
                                                   } ${
-                                                    selected ? "" : "text-brand-secondary"
+                                                    selected ? "" : "text-custom-text-200"
                                                   } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                                 }
                                                 value={label.id}
@@ -561,8 +563,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                             );
                                         } else
                                           return (
-                                            <div className="border-y border-brand-base bg-brand-surface-1">
-                                              <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-brand-base">
+                                            <div className="border-y border-custom-border-100 bg-custom-background-90">
+                                              <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-custom-text-100">
                                                 <RectangleGroupIcon className="h-3 w-3" />
                                                 {label.name}
                                               </div>
@@ -572,9 +574,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                                     key={child.id}
                                                     className={({ active, selected }) =>
                                                       `${
-                                                        active || selected ? "bg-brand-base" : ""
+                                                        active || selected
+                                                          ? "bg-custom-background-100"
+                                                          : ""
                                                       } ${
-                                                        selected ? "" : "text-brand-secondary"
+                                                        selected ? "" : "text-custom-text-200"
                                                       } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                                     }
                                                     value={child.id}
@@ -612,8 +616,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       className={`flex ${
                         isNotAllowed
                           ? "cursor-not-allowed"
-                          : "cursor-pointer hover:bg-brand-surface-1"
-                      } items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary`}
+                          : "cursor-pointer hover:bg-custom-background-90"
+                      } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
                       onClick={() => setCreateLabelForm((prevData) => !prevData)}
                     >
                       {createLabelForm ? (
@@ -637,7 +641,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     {({ open }) => (
                       <>
                         <Popover.Button
-                          className={`flex items-center gap-1 rounded-md bg-brand-surface-2 p-1 outline-none focus:ring-2 focus:ring-brand-accent`}
+                          className={`flex items-center gap-1 rounded-md bg-custom-background-80 p-1 outline-none focus:ring-2 focus:ring-custom-primary`}
                         >
                           {watch("color") && watch("color") !== "" && (
                             <span
@@ -711,7 +715,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               {!isNotAllowed && (
                 <button
                   type="button"
-                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1"
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90"
                   onClick={() => setLinkModal(true)}
                 >
                   <PlusIcon className="h-4 w-4" />

@@ -62,7 +62,7 @@ export const CalendarHeader: React.FC<Props> = ({
           {({ open }) => (
             <>
               <Popover.Button>
-                <div className="flex items-center justify-center gap-2 text-2xl font-semibold text-brand-base">
+                <div className="flex items-center justify-center gap-2 text-2xl font-semibold text-custom-text-100">
                   <span>{formatDate(currentDate, "Month")}</span>{" "}
                   <span>{formatDate(currentDate, "yyyy")}</span>
                 </div>
@@ -77,30 +77,30 @@ export const CalendarHeader: React.FC<Props> = ({
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute top-10 left-0 z-20 flex w-full max-w-xs transform flex-col overflow-hidden rounded-[10px] bg-brand-surface-2 shadow-lg">
+                <Popover.Panel className="absolute top-10 left-0 z-20 flex w-full max-w-xs transform flex-col overflow-hidden rounded-[10px] bg-custom-background-80 shadow-lg">
                   <div className="flex items-center justify-center gap-5 px-2 py-2 text-sm">
                     {YEARS_LIST.map((year) => (
                       <button
                         onClick={() => updateDate(updateDateWithYear(year.label, currentDate))}
                         className={` ${
                           isSameYear(year.value, currentDate)
-                            ? "text-sm font-medium text-brand-base"
-                            : "text-xs text-brand-secondary "
-                        } hover:text-sm hover:font-medium hover:text-brand-base`}
+                            ? "text-sm font-medium text-custom-text-100"
+                            : "text-xs text-custom-text-200 "
+                        } hover:text-sm hover:font-medium hover:text-custom-text-100`}
                       >
                         {year.label}
                       </button>
                     ))}
                   </div>
-                  <div className="grid grid-cols-4  border-t border-brand-base px-2">
+                  <div className="grid grid-cols-4  border-t border-custom-border-100 px-2">
                     {MONTHS_LIST.map((month) => (
                       <button
                         onClick={() =>
                           updateDate(updateDateWithMonth(`${month.value}`, currentDate))
                         }
-                        className={`px-2 py-2 text-xs text-brand-secondary hover:font-medium hover:text-brand-base ${
+                        className={`px-2 py-2 text-xs text-custom-text-200 hover:font-medium hover:text-custom-text-100 ${
                           isSameMonth(`${month.value}`, currentDate)
-                            ? "font-medium text-brand-base"
+                            ? "font-medium text-custom-text-100"
                             : ""
                         }`}
                       >
@@ -152,7 +152,7 @@ export const CalendarHeader: React.FC<Props> = ({
 
       <div className="flex w-full items-center justify-end gap-2">
         <button
-          className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base px-3 py-1 text-sm hover:bg-brand-surface-2 hover:text-brand-base focus:outline-none"
+          className="group flex cursor-pointer items-center gap-2 rounded-md border border-custom-border-100 px-3 py-1 text-sm hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none"
           onClick={() => {
             if (isMonthlyView) {
               updateDate(new Date());
@@ -170,7 +170,7 @@ export const CalendarHeader: React.FC<Props> = ({
 
         <CustomMenu
           customButton={
-            <div className="group flex cursor-pointer items-center gap-2 rounded-md border border-brand-base px-3 py-1 text-sm hover:bg-brand-surface-2 hover:text-brand-base focus:outline-none ">
+            <div className="group flex cursor-pointer items-center gap-2 rounded-md border border-custom-border-100 px-3 py-1 text-sm hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none ">
               {isMonthlyView ? "Monthly" : "Weekly"}
               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
             </div>
@@ -181,7 +181,7 @@ export const CalendarHeader: React.FC<Props> = ({
               setIsMonthlyView(true);
               changeDateRange(startOfWeek(currentDate), lastDayOfWeek(currentDate));
             }}
-            className="w-52 text-sm text-brand-secondary"
+            className="w-52 text-sm text-custom-text-200"
           >
             <div className="flex w-full max-w-[260px] items-center justify-between gap-2">
               <span className="flex items-center gap-2">Monthly View</span>
@@ -198,7 +198,7 @@ export const CalendarHeader: React.FC<Props> = ({
                 getCurrentWeekEndDate(currentDate)
               );
             }}
-            className="w-52 text-sm text-brand-secondary"
+            className="w-52 text-sm text-custom-text-200"
           >
             <div className="flex w-full items-center justify-between gap-2">
               <span className="flex items-center gap-2">Weekly View</span>
@@ -207,7 +207,7 @@ export const CalendarHeader: React.FC<Props> = ({
               />
             </div>
           </CustomMenu.MenuItem>
-          <div className="mt-1 flex w-52 items-center justify-between border-t border-brand-base py-2 px-1  text-sm text-brand-secondary">
+          <div className="mt-1 flex w-52 items-center justify-between border-t border-custom-border-100 py-2 px-1  text-sm text-custom-text-200">
             <h4>Show weekends</h4>
             <ToggleSwitch value={showWeekEnds} onChange={() => setShowWeekEnds(!showWeekEnds)} />
           </div>

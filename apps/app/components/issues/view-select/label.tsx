@@ -79,14 +79,14 @@ export const ViewLabelSelect: React.FC<Props> = ({
       <div
         className={`flex ${
           isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-        } items-center gap-2 text-brand-secondary`}
+        } items-center gap-2 text-custom-text-200`}
       >
         {issue.label_details.length > 0 ? (
           <>
             {issue.label_details.slice(0, 4).map((label, index) => (
               <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
                 <span
-                  className={`h-4 w-4 flex-shrink-0 rounded-full border group-hover:bg-brand-surface-2 border-brand-base
+                  className={`h-4 w-4 flex-shrink-0 rounded-full border group-hover:bg-custom-background-80 border-custom-border-100
                           `}
                   style={{
                     backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
@@ -98,7 +98,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
           </>
         ) : (
           <>
-            <TagIcon className="h-3.5 w-3.5 text-brand-secondary" />
+            <TagIcon className="h-3.5 w-3.5 text-custom-text-200" />
           </>
         )}
       </div>
@@ -108,17 +108,17 @@ export const ViewLabelSelect: React.FC<Props> = ({
   const footerOption = (
     <button
       type="button"
-      className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
+      className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
       onClick={() => setLabelModal(true)}
     >
-      <span className="flex items-center justify-start gap-1 text-brand-secondary">
+      <span className="flex items-center justify-start gap-1 text-custom-text-200">
         <PlusIcon className="h-4 w-4" aria-hidden="true" />
         <span>Create New Label</span>
       </span>
     </button>
   );
 
-  const noResultIcon = <TagIcon className="h-3.5 w-3.5 text-brand-secondary" />;
+  const noResultIcon = <TagIcon className="h-3.5 w-3.5 text-custom-text-200" />;
 
   return (
     <>

@@ -19,6 +19,7 @@ from plane.db.models import (
     IssueProperty,
     IssueBlocker,
     IssueAssignee,
+    IssueSubscriber,
     IssueLabel,
     Label,
     IssueBlocker,
@@ -529,4 +530,15 @@ class IssueLiteSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+        ]
+
+
+class IssueSubscriberSerializer(BaseSerializer):
+    class Meta:
+        model = IssueSubscriber
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "issue",
         ]

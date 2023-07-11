@@ -47,8 +47,8 @@ const MyIssuesPage: NextPage = () => {
               {({ open }) => (
                 <>
                   <Popover.Button
-                    className={`group flex items-center gap-2 rounded-md border border-brand-base bg-transparent px-3 py-1.5 text-xs hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none ${
-                      open ? "bg-brand-surface-1 text-brand-base" : "text-brand-secondary"
+                    className={`group flex items-center gap-2 rounded-md border border-custom-border-100 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-background-90 hover:text-custom-text-100 focus:outline-none ${
+                      open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
                     }`}
                   >
                     <span>View</span>
@@ -64,9 +64,9 @@ const MyIssuesPage: NextPage = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-brand-base p-3 shadow-lg">
+                    <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-custom-background-100 p-3 shadow-lg">
                       <div className="space-y-2 py-3">
-                        <h4 className="text-sm text-brand-secondary">Properties</h4>
+                        <h4 className="text-sm text-custom-text-200">Properties</h4>
                         <div className="flex flex-wrap items-center gap-2">
                           {Object.keys(properties).map((key) => {
                             if (key === "estimate") return null;
@@ -77,8 +77,8 @@ const MyIssuesPage: NextPage = () => {
                                 type="button"
                                 className={`rounded border px-2 py-1 text-xs capitalize ${
                                   properties[key as keyof Properties]
-                                    ? "border-brand-accent bg-brand-accent text-white"
-                                    : "border-brand-base"
+                                    ? "border-custom-primary bg-custom-primary text-white"
+                                    : "border-custom-border-100"
                                 }`}
                                 onClick={() => setProperties(key as keyof Properties)}
                               >
@@ -114,11 +114,11 @@ const MyIssuesPage: NextPage = () => {
               <Disclosure as="div" defaultOpen>
                 {({ open }) => (
                   <div>
-                    <div className="flex items-center px-4 py-2.5">
+                    <div className="flex items-center px-4 py-2.5 bg-custom-background-90">
                       <Disclosure.Button>
                         <div className="flex items-center gap-x-2">
                           <h2 className="font-medium leading-5">My Issues</h2>
-                          <span className="rounded-full bg-brand-surface-2 py-0.5 px-3 text-sm text-brand-secondary">
+                          <span className="rounded-full bg-custom-background-80 py-0.5 px-3 text-sm text-custom-text-200">
                             {myIssues.length}
                           </span>
                         </div>

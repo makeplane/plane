@@ -101,10 +101,10 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
             <main
               className={`relative flex h-full w-full flex-col overflow-hidden ${
                 bg === "primary"
-                  ? "bg-brand-surface-1"
+                  ? "bg-custom-background-100"
                   : bg === "secondary"
-                  ? "bg-brand-sidebar"
-                  : "bg-brand-base"
+                  ? "bg-custom-background-90"
+                  : "bg-custom-background-80"
               }`}
             >
               <AppHeader

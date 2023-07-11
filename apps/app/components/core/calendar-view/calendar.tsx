@@ -172,7 +172,7 @@ export const CalendarView: React.FC<Props> = ({
   return calendarIssues ? (
     <div className="h-full overflow-y-auto">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="h-full rounded-lg p-8 text-brand-secondary">
+        <div className="h-full rounded-lg p-8 text-custom-text-200">
           <CalendarHeader
             isMonthlyView={isMonthlyView}
             setIsMonthlyView={setIsMonthlyView}
@@ -191,7 +191,7 @@ export const CalendarView: React.FC<Props> = ({
             {weeks.map((date, index) => (
               <div
                 key={index}
-                className={`flex  items-center justify-start gap-2 border-brand-base bg-brand-surface-1 p-1.5 text-base font-medium text-brand-secondary ${
+                className={`flex  items-center justify-start gap-2 border-custom-border-100 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200 ${
                   !isMonthlyView
                     ? showWeekEnds
                       ? (index + 1) % 7 === 0
