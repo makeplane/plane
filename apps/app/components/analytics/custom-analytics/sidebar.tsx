@@ -238,8 +238,8 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                               {project?.name.charAt(0)}
                             </span>
                           )}
-                          <h5 className="break-words">
-                            {project.name}
+                          <h5 className="flex items-center gap-1">
+                            <p className="break-words">{project.name}</p>
                             <span className="text-custom-text-200 text-xs ml-1">
                               ({project.identifier})
                             </span>

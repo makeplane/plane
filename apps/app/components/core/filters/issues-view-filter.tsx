@@ -23,9 +23,32 @@ import {
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { Properties } from "types";
+import { Properties, TIssueViewOptions } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
+
+const issueViewOptions: { type: TIssueViewOptions; icon: any }[] = [
+  {
+    type: "list",
+    icon: <ListBulletIcon className="h-4 w-4" />,
+  },
+  {
+    type: "kanban",
+    icon: <Squares2X2Icon className="h-4 w-4" />,
+  },
+  {
+    type: "calendar",
+    icon: <CalendarDaysIcon className="h-4 w-4" />,
+  },
+  {
+    type: "spreadsheet",
+    icon: <Icon iconName="table_chart" />,
+  },
+  {
+    type: "gantt_chart",
+    icon: <Icon iconName="waterfall_chart" className="rotate-90" />,
+  },
+];
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
@@ -56,53 +79,20 @@ export const IssuesFilterView: React.FC = () => {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-x-1">
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "list" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("list")}
-        >
-          <ListBulletIcon className="h-4 w-4 text-custom-sidebar-text-200" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "kanban" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("kanban")}
-        >
-          <Squares2X2Icon className="h-4 w-4 text-custom-sidebar-text-200" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "calendar" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("calendar")}
-        >
-          <CalendarDaysIcon className="h-4 w-4 text-custom-sidebar-text-200" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "spreadsheet" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("spreadsheet")}
-        >
-          <Icon iconName="table_chart" className="text-custom-sidebar-text-200" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-            issueView === "gantt_chart" ? "bg-custom-sidebar-background-80" : ""
-          }`}
-          onClick={() => setIssueView("gantt_chart")}
-        >
-          <span className="material-symbols-rounded text-custom-sidebar-text-200 text-[18px] rotate-90">
-            waterfall_chart
-          </span>
-        </button>
+        {issueViewOptions.map((option) => (
+          <button
+            key={option.type}
+            type="button"
+            className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+              issueView === option.type
+                ? "bg-custom-sidebar-background-80"
+                : "text-custom-sidebar-text-200"
+            }`}
+            onClick={() => setIssueView(option.type)}
+          >
+            {option.icon}
+          </button>
+        ))}
       </div>
       <SelectFilters
         filters={filters}
@@ -146,7 +136,7 @@ export const IssuesFilterView: React.FC = () => {
         {({ open }) => (
           <>
             <Popover.Button
-              className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-100 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none ${
+              className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-100 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
                 open
                   ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
                   : "text-custom-sidebar-text-200"
