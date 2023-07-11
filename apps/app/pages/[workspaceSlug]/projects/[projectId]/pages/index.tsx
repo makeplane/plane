@@ -125,12 +125,12 @@ const ProjectPages: NextPage = () => {
       >
         <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">
           <div className="flex gap-4 justify-between">
-            <h3 className="text-2xl font-semibold text-brand-base">Pages</h3>
+            <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
             <div className="flex gap-x-1">
               <button
                 type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-                  viewType === "list" ? "bg-brand-surface-2" : ""
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
+                  viewType === "list" ? "bg-custom-background-80" : ""
                 }`}
                 onClick={() => setViewType("list")}
               >
@@ -138,8 +138,8 @@ const ProjectPages: NextPage = () => {
               </button>
               <button
                 type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-                  viewType === "detailed" ? "bg-brand-surface-2" : ""
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
+                  viewType === "detailed" ? "bg-custom-background-80" : ""
                 }`}
                 onClick={() => setViewType("detailed")}
               >
@@ -176,8 +176,8 @@ const ProjectPages: NextPage = () => {
                     className={({ selected }) =>
                       `rounded-full border px-5 py-1.5 text-sm outline-none ${
                         selected
-                          ? "border-brand-accent bg-brand-accent text-white"
-                          : "border-brand-base bg-brand-base hover:bg-brand-surface-1"
+                          ? "border-custom-primary bg-custom-primary text-white"
+                          : "border-custom-border-100 bg-custom-background-100 hover:bg-custom-background-90"
                       }`
                     }
                   >

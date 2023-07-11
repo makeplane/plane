@@ -104,7 +104,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto">
@@ -118,18 +118,21 @@ export const ImageUploadModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-100 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-custom-text-100"
+                  >
                     Upload Image
                   </Dialog.Title>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative grid h-80 w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 ${
+                        className={`relative grid h-80 w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-brand-base hover:bg-brand-surface-1"
+                            ? "border-2 border-dashed border-custom-border-100 hover:bg-custom-background-90"
                             : ""
                         }`}
                       >
@@ -137,7 +140,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                           <>
                             <button
                               type="button"
-                              className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-brand-surface-1 px-2 py-0.5 text-xs font-medium text-brand-secondary"
+                              className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
                             >
                               Edit
                             </button>
@@ -151,8 +154,8 @@ export const ImageUploadModal: React.FC<Props> = ({
                           </>
                         ) : (
                           <div>
-                            <UserCircleIcon className="mx-auto h-16 w-16 text-brand-secondary" />
-                            <span className="mt-2 block text-sm font-medium text-brand-secondary">
+                            <UserCircleIcon className="mx-auto h-16 w-16 text-custom-text-200" />
+                            <span className="mt-2 block text-sm font-medium text-custom-text-200">
                               {isDragActive
                                 ? "Drop image here to upload"
                                 : "Drag & drop image here"}

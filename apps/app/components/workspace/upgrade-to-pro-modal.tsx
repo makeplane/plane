@@ -123,7 +123,7 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -137,7 +137,7 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-100 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
                 <div className="flex flex-wrap">
                   <div className="w-full md:w-3/5 p-6 flex flex-col gap-y-6">
                     <div className="flex gap-2">
@@ -159,14 +159,14 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
                       </div>
                       <div className="">
                         <div className="font-semibold text-lg">Upgrade to pro</div>
-                        <div className="text-brand-secondary text-sm">
+                        <div className="text-custom-text-200 text-sm">
                           This workspace has used {issueNumber} of its 1024 issues creation limit (
                           {((issueNumber / 1024) * 100).toFixed(2)}%).
                         </div>
                       </div>
                       <div
                         onClick={handleClose}
-                        className="w-5 h-5 text-brand-secondary cursor-pointer mt-1.5 md:hidden block ml-auto"
+                        className="w-5 h-5 text-custom-text-200 cursor-pointer mt-1.5 md:hidden block ml-auto"
                       >
                         <XCircleIcon />
                       </div>
@@ -180,7 +180,7 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
                       </div>
                       <div className="">
                         <div className="font-semibold text-lg">Order summary</div>
-                        <div className="text-brand-secondary text-sm">
+                        <div className="text-custom-text-200 text-sm">
                           Priority support, file uploads, and access to premium features.
                         </div>
 
@@ -197,17 +197,17 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
                       </div>
                     </div>
                   </div>
-                  <div className="w-full md:w-2/5 bg-brand-surface-1 p-6 flex flex-col">
+                  <div className="w-full md:w-2/5 bg-custom-background-90 p-6 flex flex-col">
                     <div className="flex justify-between items-center">
                       <div className="font-semibold text-lg">Summary</div>
                       <div
                         onClick={handleClose}
-                        className="w-5 h-5 text-brand-secondary cursor-pointer mt-1.5 hidden md:block"
+                        className="w-5 h-5 text-custom-text-200 cursor-pointer mt-1.5 hidden md:block"
                       >
                         <XCircleIcon />
                       </div>
                     </div>
-                    <div className="text-brand-secondary text-sm mt-4">
+                    <div className="text-custom-text-200 text-sm mt-4">
                       Plane application is currently in dev-mode. We will soon introduce Pro plans
                       once general availability has been established. Stay tuned for more updates.
                       In the meantime, Plane remains free and unrestricted.
@@ -219,7 +219,7 @@ const UpgradeToProModal: React.FC<Props> = ({ isOpen, onClose, user, issueNumber
                       disabled={loader}
                       onClick={() => submitEmail()}
                       type="button"
-                      className="mt-5 md:mt-auto whitespace-nowrap max-w-min items-center gap-x-1 rounded-md px-3 py-2 font-medium outline-none text-sm bg-brand-accent text-white"
+                      className="mt-5 md:mt-auto whitespace-nowrap max-w-min items-center gap-x-1 rounded-md px-3 py-2 font-medium outline-none text-sm bg-custom-primary-100 text-white"
                     >
                       {loader ? "Loading.." : " Join waitlist"}
                     </button>

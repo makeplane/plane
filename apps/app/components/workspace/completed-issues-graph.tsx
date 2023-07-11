@@ -38,7 +38,7 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
           ))}
         </CustomMenu>
       </div>
-      <div className="rounded-[10px] border border-brand-base bg-brand-base p-8 pl-4">
+      <div className="rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-8 pl-4">
         {data.every((item) => item.completed_count === 0) ? (
           <div className="flex items-center justify-center h-72">
             <h4 className="text-[#d687ff]">No issues closed this month</h4>
@@ -62,14 +62,14 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
               colors={(datum) => datum.color}
               enableSlices="x"
               sliceTooltip={(datum) => (
-                <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+                <div className="rounded-md border border-custom-border-100 bg-custom-background-80 p-2 text-xs">
                   {datum.slice.points[0].data.yFormatted}
-                  <span className="text-brand-secondary"> issues closed in </span>
+                  <span className="text-custom-text-200"> issues closed in </span>
                   {datum.slice.points[0].data.xFormatted}
                 </div>
               )}
               theme={{
-                background: "rgb(var(--color-bg-base))",
+                background: "rgb(var(--color-background-100))",
               }}
             />
             <h4 className="mt-4 flex items-center justify-center gap-2 text-[#d687ff]">

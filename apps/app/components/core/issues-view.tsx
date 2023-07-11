@@ -495,7 +495,7 @@ export const IssuesView: React.FC<Props> = ({
               {viewId ? "Update" : "Save"} view
             </PrimaryButton>
           </div>
-          {<div className="mt-3 border-t border-brand-base" />}
+          {<div className="mt-3 border-t border-custom-border-100" />}
         </>
       )}
 
@@ -505,7 +505,7 @@ export const IssuesView: React.FC<Props> = ({
             <div
               className={`${
                 trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-              } fixed top-4 left-1/2 -translate-x-1/2 z-40 w-72 flex items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-brand-base px-3 py-5 text-xs font-medium italic text-red-500 ${
+              } fixed top-4 left-1/2 -translate-x-1/2 z-40 w-72 flex items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
                 snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
               } transition duration-300`}
               ref={provided.innerRef}
@@ -602,7 +602,7 @@ export const IssuesView: React.FC<Props> = ({
                   title="Create a new issue"
                   description={
                     <span>
-                      Use <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre>{" "}
+                      Use <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>{" "}
                       shortcut to create a new issue
                     </span>
                   }

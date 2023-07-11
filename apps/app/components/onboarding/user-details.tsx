@@ -67,10 +67,10 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
   return (
     <form className="flex w-full items-center justify-center" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex w-full max-w-xl flex-col gap-7">
-        <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
+        <div className="flex flex-col rounded-[10px] bg-custom-background-100 shadow-md">
           <div className="flex flex-col gap-2 justify-center px-7 pt-7 pb-3.5">
-            <h3 className="text-base font-semibold text-brand-base">User Details</h3>
-            <p className="text-sm text-brand-secondary">
+            <h3 className="text-base font-semibold text-custom-text-100">User Details</h3>
+            <p className="text-sm text-custom-text-200">
               Enter your details as a first step to open your Plane account.
             </p>
           </div>
@@ -102,7 +102,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => 
             </div>
           </div>
 
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-brand-base px-7 pt-3.5 pb-7">
+          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-custom-border-100 px-7 pt-3.5 pb-7">
             <span>What is your role?</span>
             <div className="w-full">
               <Controller

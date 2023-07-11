@@ -38,13 +38,13 @@ export const GanttChartBlocks: FC<{
                     style={{ marginLeft: `${block?.position?.marginLeft}px` }}
                   >
                     <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                      <div className="absolute right-0 mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
+                      <div className="absolute right-0 mr-[5px] rounded-sm bg-custom-background-90 px-2 py-0.5 text-xs font-medium">
                         {block?.start_date ? datePreview(block?.start_date) : "-"}
                       </div>
                     </div>
 
                     <div
-                      className="rounded shadow-sm bg-brand-base overflow-hidden relative flex items-center h-[34px] border border-brand-base"
+                      className="rounded shadow-sm bg-custom-background-100 overflow-hidden relative flex items-center h-[34px] border border-custom-border-100"
                       style={{
                         width: `${block?.position?.width}px`,
                       }}
@@ -56,7 +56,7 @@ export const GanttChartBlocks: FC<{
                     </div>
 
                     <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                      <div className="absolute left-0 ml-[5px] mr-[5px] rounded-sm bg-brand-surface-1 px-2 py-0.5 text-xs font-medium">
+                      <div className="absolute left-0 ml-[5px] mr-[5px] rounded-sm bg-custom-background-90 px-2 py-0.5 text-xs font-medium">
                         {block?.target_date ? datePreview(block?.target_date) : "-"}
                       </div>
                     </div>
@@ -68,11 +68,11 @@ export const GanttChartBlocks: FC<{
       </div>
 
       {/* sidebar */}
-      {/* <div className="fixed top-0 bottom-0 w-[300px] flex-shrink-0 divide-y divide-brand-base border-r border-brand-base overflow-y-auto">
+      {/* <div className="fixed top-0 bottom-0 w-[300px] flex-shrink-0 divide-y divide-custom-border-100 border-r border-custom-border-100 overflow-y-auto">
         {blocks &&
           blocks.length > 0 &&
           blocks.map((block: any, _idx: number) => (
-            <div className="relative h-[40px] bg-brand-base" key={`sidebar-blocks-${_idx}`}>
+            <div className="relative h-[40px] bg-custom-background-100" key={`sidebar-blocks-${_idx}`}>
               {sidebarBlockRender(block?.data)}
             </div>
           ))}

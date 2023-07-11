@@ -151,10 +151,12 @@ export const ProjectSidebarList: FC = () => {
         data={projectToDelete}
         user={user}
       />
-      <div className="mt-2.5 h-full overflow-y-auto border-t border-brand-base bg-brand-sidebar pt-2.5">
+      <div className="mt-2.5 h-full overflow-y-auto border-t border-custom-sidebar-border-100 bg-custom-sidebar-background-100 pt-2.5">
         {favoriteProjects && favoriteProjects.length > 0 && (
           <div className="mt-3 flex flex-col space-y-2 px-3">
-            {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Favorites</h5>}
+            {!sidebarCollapse && (
+              <h5 className="text-sm font-semibold text-custom-sidebar-text-200">Favorites</h5>
+            )}
             {favoriteProjects.map((favoriteProject) => {
               const project = favoriteProject.project_detail;
 
@@ -172,7 +174,9 @@ export const ProjectSidebarList: FC = () => {
           </div>
         )}
         <div className="flex flex-col space-y-2 p-3">
-          {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Projects</h5>}
+          {!sidebarCollapse && (
+            <h5 className="text-sm font-semibold text-custom-sidebar-text-200">Projects</h5>
+          )}
           {projects ? (
             <>
               {normalProjects.length > 0 ? (
@@ -189,13 +193,13 @@ export const ProjectSidebarList: FC = () => {
               ) : (
                 <div className="space-y-3 text-center">
                   {!sidebarCollapse && (
-                    <h4 className="text-sm text-brand-secondary">
+                    <h4 className="text-sm text-custom-text-200">
                       You don{"'"}t have any project yet
                     </h4>
                   )}
                   <button
                     type="button"
-                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-brand-surface-2 p-2 text-xs text-brand-base"
+                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-custom-background-80 p-2 text-xs text-custom-text-100"
                     onClick={() => setCreateProjectModal(true)}
                   >
                     <PlusIcon className="h-4 w-4" />

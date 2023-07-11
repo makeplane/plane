@@ -8,9 +8,9 @@ type Props = {
 };
 
 export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="rounded-[10px] border border-brand-base">
+  <div className="rounded-[10px] border border-custom-border-100">
     <h5 className="p-3 text-xs text-green-500">SCOPE</h5>
-    <div className="divide-y divide-brand-base">
+    <div className="divide-y divide-custom-border-100">
       <div>
         <h6 className="px-3 text-base font-medium">Pending issues</h6>
         {defaultAnalytics.pending_issue_user.length > 0 ? (
@@ -27,8 +27,8 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
               );
 
               return (
-                <div className="rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
-                  <span className="font-medium text-brand-secondary">
+                <div className="rounded-md border border-custom-border-100 bg-custom-background-80 p-2 text-xs">
+                  <span className="font-medium text-custom-text-200">
                     {assignee
                       ? assignee.assignees__first_name + " " + assignee.assignees__last_name
                       : "No assignee"}
@@ -69,12 +69,11 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
             }}
             margin={{ top: 20 }}
             theme={{
-              background: "rgb(var(--color-bg-base))",
               axis: {},
             }}
           />
         ) : (
-          <div className="text-brand-secondary text-center text-sm py-8">
+          <div className="text-custom-text-200 text-center text-sm py-8">
             No matching data found.
           </div>
         )}

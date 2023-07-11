@@ -134,14 +134,14 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                   `Name can only contain (" "), ( - ), ( _ ) & Alphanumeric characters.`,
               }}
               placeholder="e.g. My Workspace"
-              className="placeholder:text-brand-secondary"
+              className="placeholder:text-custom-text-200"
               error={errors.name}
             />
           </div>
           <div className="flex flex-col items-start justify-center gap-1">
             <span className="mb-1.5 text-sm">Workspace URL</span>
-            <div className="flex w-full items-center rounded-md border border-brand-base px-3">
-              <span className="whitespace-nowrap text-sm text-brand-secondary">
+            <div className="flex w-full items-center rounded-md border border-custom-border-100 px-3">
+              <span className="whitespace-nowrap text-sm text-custom-text-200">
                 {typeof window !== "undefined" && window.location.origin}/
               </span>
               <Input
@@ -169,7 +169,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className="flex flex-col items-start justify-center gap-1 border-t border-brand-base px-7 pt-3.5 ">
+        <div className="flex flex-col items-start justify-center gap-1 border-t border-custom-border-100 px-7 pt-3.5 ">
           <span className="mb-1.5 text-sm">How large is your company?</span>
           <div className="w-full">
             <Controller
@@ -184,7 +184,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                     value ? (
                       value.toString()
                     ) : (
-                      <span className="text-brand-secondary">Select company size</span>
+                      <span className="text-custom-text-200">Select company size</span>
                     )
                   }
                   input

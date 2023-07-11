@@ -131,14 +131,14 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
         data={module}
         user={user}
       />
-      <div className="flex flex-col divide-y divide-brand-base overflow-hidden rounded-[10px] border border-brand-base bg-brand-base text-xs">
+      <div className="flex flex-col divide-y divide-custom-border-100 overflow-hidden rounded-[10px] border border-custom-border-100 bg-custom-background-100 text-xs">
         <div className="p-4">
           <div className="flex w-full flex-col gap-5">
             <div className="flex items-start justify-between gap-2">
               <Tooltip tooltipContent={module.name} position="top-left">
                 <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
                   <a className="w-auto max-w-[calc(100%-9rem)]">
-                    <h3 className="truncate break-words text-lg font-semibold text-brand-base">
+                    <h3 className="truncate break-words text-lg font-semibold text-custom-text-100">
                       {truncateText(module.name, 75)}
                     </h3>
                   </a>
@@ -146,7 +146,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
               </Tooltip>
 
               <div className="flex items-center gap-1">
-                <div className="mr-2 flex whitespace-nowrap rounded bg-brand-surface-1 px-2.5 py-2 text-brand-secondary">
+                <div className="mr-2 flex whitespace-nowrap rounded bg-custom-background-90 px-2.5 py-2 text-custom-text-200">
                   <span className="capitalize">{module?.status?.replace("-", " ")}</span>
                 </div>
                 {module.is_favorite ? (
@@ -155,7 +155,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
                   </button>
                 ) : (
                   <button type="button" onClick={handleAddToFavorites}>
-                    <StarIcon className="h-4 w-4 " color="#858E96" />
+                    <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                   </button>
                 )}
 
@@ -181,7 +181,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
                 </CustomMenu>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-brand-secondary">
+            <div className="grid grid-cols-2 gap-2 text-custom-text-200">
               <div className="flex items-start gap-1">
                 <CalendarDaysIcon className="h-4 w-4" />
                 <span>Start:</span>
@@ -195,10 +195,10 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
             </div>
           </div>
         </div>
-        <div className="flex h-20 flex-col items-end bg-brand-surface-2">
-          <div className="flex w-full items-center justify-between gap-2 justify-self-end p-4 text-brand-secondary">
+        <div className="flex h-20 flex-col items-end bg-custom-background-80">
+          <div className="flex w-full items-center justify-between gap-2 justify-self-end p-4 text-custom-text-200">
             <span>Progress</span>
-            <div className="bar relative h-1 w-full rounded bg-brand-surface-1">
+            <div className="bar relative h-1 w-full rounded bg-custom-background-90">
               <div
                 className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
                 style={{
@@ -208,7 +208,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
             </div>
             <span>{isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%</span>
           </div>
-          <div className="item-center flex h-full w-full justify-between px-4 pb-4 text-brand-secondary">
+          <div className="item-center flex h-full w-full justify-between px-4 pb-4 text-custom-text-200">
             <p>
               Last updated:
               <span className="font-medium">{renderShortDateWithYearFormat(lastUpdated)}</span>

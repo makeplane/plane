@@ -16,9 +16,11 @@ import { Popover, Transition } from "@headlessui/react";
 import { Input } from "components/ui";
 // icons
 import { ColorPickerIcon } from "components/icons";
+// types
+import { ICustomTheme } from "types";
 
 type Props = {
-  name: string;
+  name: keyof ICustomTheme;
   watch: UseFormWatch<any>;
   setValue: UseFormSetValue<any>;
   error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
@@ -31,31 +33,25 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
     setValue(name, hex);
   };
 
-  const getColorText = (colorName: string) => {
+  const getColorText = (colorName: keyof ICustomTheme) => {
     switch (colorName) {
-      case "accent":
-        return "Accent";
-      case "bgBase":
+      case "background":
         return "Background";
-      case "bgSurface1":
-        return "Background surface 1";
-      case "bgSurface2":
-        return "Background surface 2";
-      case "border":
-        return "Border";
-      case "sidebar":
-        return "Sidebar";
-      case "textBase":
-        return "Text primary";
-      case "textSecondary":
-        return "Text secondary";
+      case "text":
+        return "Text";
+      case "primary":
+        return "Primary(Theme)";
+      case "sidebarBackground":
+        return "Sidebar Background";
+      case "sidebarText":
+        return "Sidebar Text";
       default:
         return "Color";
     }
   };
 
   return (
-    <div className="relative ">
+    <div className="relative">
       <Input
         id={name}
         name={name}
@@ -80,12 +76,12 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
               <Popover.Button
                 type="button"
                 className={`group inline-flex items-center outline-none ${
-                  open ? "text-brand-base" : "text-brand-secondary"
+                  open ? "text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
                 {watch(name) && watch(name) !== "" ? (
                   <span
-                    className="h-4 w-4 rounded border border-brand-base"
+                    className="h-4 w-4 rounded border border-custom-border-100"
                     style={{
                       backgroundColor: `${watch(name)}`,
                     }}
@@ -94,7 +90,7 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
                   <ColorPickerIcon
                     height={14}
                     width={14}
-                    className="fill-current text-brand-base"
+                    className="fill-current text-custom-text-100"
                   />
                 )}
               </Popover.Button>

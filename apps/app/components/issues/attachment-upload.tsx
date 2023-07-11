@@ -85,8 +85,8 @@ export const IssueAttachmentUpload = () => {
   return (
     <div
       {...getRootProps()}
-      className={`flex items-center justify-center h-[60px] cursor-pointer border-2 border-dashed text-brand-accent bg-brand-accent/5 text-xs rounded-md px-4 ${
-        isDragActive ? "bg-brand-accent/10 border-brand-accent" : "border-brand-base"
+      className={`flex items-center justify-center h-[60px] cursor-pointer border-2 border-dashed text-custom-primary bg-custom-primary/5 text-xs rounded-md px-4 ${
+        isDragActive ? "bg-custom-primary/10 border-custom-primary" : "border-custom-border-100"
       } ${isDragReject ? "bg-red-100" : ""}`}
     >
       <input {...getInputProps()} />

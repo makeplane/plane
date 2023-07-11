@@ -65,7 +65,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <ContrastIcon className="h-4 w-4 flex-shrink-0" />
         <p>Cycle</p>
       </div>
@@ -77,7 +77,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
               tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}
             >
               <span className="w-full max-w-[125px] truncate text-left sm:block">
-                <span className={`${issueCycle ? "text-brand-base" : "text-brand-secondary"}`}>
+                <span className={`${issueCycle ? "text-custom-text-100" : "text-custom-text-200"}`}>
                   {issueCycle ? truncateText(issueCycle.cycle_detail.name, 15) : "No cycle"}
                 </span>
               </span>

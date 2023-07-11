@@ -80,16 +80,16 @@ export const SidebarProgressStats: React.FC<Props> = ({
       <Tab.List
         as="div"
         className={`flex w-full items-center gap-2 justify-between rounded-md ${
-          noBackground ? "" : "bg-brand-surface-1"
+          noBackground ? "" : "bg-custom-background-90"
         } px-1 py-1.5 
         ${module ? "text-xs" : "text-sm"} `}
       >
         <Tab
           className={({ selected }) =>
             `w-full  ${
-              roundedTab ? "rounded-3xl border border-brand-base" : "rounded"
-            } px-3 py-1 text-brand-base ${
-              selected ? " bg-brand-accent text-white" : "  hover:bg-brand-surface-2"
+              roundedTab ? "rounded-3xl border border-custom-border-100" : "rounded"
+            } px-3 py-1 text-custom-text-100 ${
+              selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
         >
@@ -98,9 +98,9 @@ export const SidebarProgressStats: React.FC<Props> = ({
         <Tab
           className={({ selected }) =>
             `w-full ${
-              roundedTab ? "rounded-3xl border border-brand-base" : "rounded"
-            } px-3 py-1 text-brand-base ${
-              selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
+              roundedTab ? "rounded-3xl border border-custom-border-100" : "rounded"
+            } px-3 py-1 text-custom-text-100 ${
+              selected ? " bg-custom-primary text-white" : " hover:bg-custom-background-80"
             }`
           }
         >
@@ -109,16 +109,16 @@ export const SidebarProgressStats: React.FC<Props> = ({
         <Tab
           className={({ selected }) =>
             `w-full ${
-              roundedTab ? "rounded-3xl border border-brand-base" : "rounded"
-            } px-3 py-1  text-brand-base ${
-              selected ? " bg-brand-accent text-white" : " hover:bg-brand-surface-2"
+              roundedTab ? "rounded-3xl border border-custom-border-100" : "rounded"
+            } px-3 py-1  text-custom-text-100 ${
+              selected ? " bg-custom-primary text-white" : " hover:bg-custom-background-80"
             }`
           }
         >
           States
         </Tab>
       </Tab.List>
-      <Tab.Panels className="flex w-full items-center justify-between pt-1 text-brand-secondary">
+      <Tab.Panels className="flex w-full items-center justify-between pt-1 text-custom-text-200">
         <Tab.Panel as="div" className="w-full space-y-1">
           {distribution.assignees.map((assignee, index) => {
             if (assignee.assignee_id)
@@ -159,7 +159,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   key={`unassigned-${index}`}
                   title={
                     <div className="flex items-center gap-2">
-                      <div className="h-5 w-5 rounded-full border-2 border-brand-base bg-brand-surface-2">
+                      <div className="h-5 w-5 rounded-full border-2 border-custom-border-100 bg-custom-background-80">
                         <img
                           src="/user.png"
                           height="100%"

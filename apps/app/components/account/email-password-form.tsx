@@ -80,7 +80,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
             <div className="ml-auto text-sm">
               {isSignUpPage ? (
                 <Link href="/">
-                  <a className="font-medium text-brand-accent hover:text-brand-accent">
+                  <a className="font-medium text-custom-primary hover:text-custom-primary">
                     Already have an account? Sign in.
                   </a>
                 </Link>
@@ -88,7 +88,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
                 <button
                   type="button"
                   onClick={() => setIsResettingPassword(true)}
-                  className="font-medium text-brand-accent hover:text-brand-accent"
+                  className="font-medium text-custom-primary hover:text-custom-primary"
                 >
                   Forgot your password?
                 </button>
@@ -112,7 +112,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
             </SecondaryButton>
             {!isSignUpPage && (
               <Link href="/sign-up">
-                <a className="block font-medium text-brand-accent hover:text-brand-accent text-sm mt-1">
+                <a className="block font-medium text-custom-primary hover:text-custom-primary text-sm mt-1">
                   Don{"'"}t have an account? Sign up.
                 </a>
               </Link>

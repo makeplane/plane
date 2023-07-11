@@ -19,11 +19,11 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
 
   return (
     <div
-      className={`z-20 h-full flex-shrink-0 border-r border-brand-base ${
+      className={`z-20 h-full flex-shrink-0 border-r border-custom-sidebar-border-100 ${
         sidebarCollapse ? "" : "w-auto md:w-[17rem]"
       } fixed inset-y-0 top-0 ${
         toggleSidebar ? "left-0" : "-left-full md:left-0"
-      } flex h-full flex-col bg-brand-sidebar duration-300 md:relative`}
+      } flex h-full flex-col bg-custom-sidebar-background-100 duration-300 md:relative`}
     >
       <div className="flex h-full flex-1 flex-col">
         <WorkspaceSidebarDropdown />

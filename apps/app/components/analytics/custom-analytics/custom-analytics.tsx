@@ -86,7 +86,7 @@ export const CustomAnalytics: React.FC<Props> = ({
               </div>
             ) : (
               <div className="grid h-full place-items-center p-5">
-                <div className="space-y-4 text-brand-secondary">
+                <div className="space-y-4 text-custom-text-200">
                   <p className="text-sm">No matching issues found. Try changing the parameters.</p>
                 </div>
               </div>
@@ -104,7 +104,7 @@ export const CustomAnalytics: React.FC<Props> = ({
           )
         ) : (
           <div className="grid h-full place-items-center p-5">
-            <div className="space-y-4 text-brand-secondary">
+            <div className="space-y-4 text-custom-text-200">
               <p className="text-sm">There was some error in fetching the data.</p>
               <div className="flex items-center justify-center gap-2">
                 <PrimaryButton

@@ -29,16 +29,13 @@ export interface IUser {
 }
 
 export interface ICustomTheme {
-  accent: string;
-  bgBase: string;
-  bgSurface1: string;
-  bgSurface2: string;
-  border: string;
+  background: string;
+  text: string;
+  primary: string;
+  sidebarBackground: string;
+  sidebarText: string;
   darkPalette: boolean;
   palette: string;
-  sidebar: string;
-  textBase: string;
-  textSecondary: string;
 }
 
 export interface ICurrentUserResponse extends IUser {

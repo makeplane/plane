@@ -179,13 +179,13 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="space-y-2">
         <Link href={`/${workspaceSlug}/settings/import-export`}>
-          <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-brand-secondary hover:text-brand-base">
+          <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
             <ArrowLeftIcon className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </div>
         </Link>
 
-        <div className="space-y-4 rounded-[10px] border border-brand-base bg-brand-base p-4">
+        <div className="space-y-4 rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
               <Image src={GithubLogo} alt="GithubLogo" />
@@ -196,12 +196,12 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
                   <div
                     className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
                       index <= activeIntegrationState()
-                        ? `border-brand-accent bg-brand-accent ${
+                        ? `border-custom-primary bg-custom-primary ${
                             index === activeIntegrationState()
                               ? "border-opacity-100 bg-opacity-100"
                               : "border-opacity-80 bg-opacity-80"
                           }`
-                        : "border-brand-base"
+                        : "border-custom-border-100"
                     }`}
                   >
                     <integration.icon
@@ -215,8 +215,8 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
                       key={index}
                       className={`border-b px-7 ${
                         index <= activeIntegrationState() - 1
-                          ? `border-brand-accent`
-                          : `border-brand-base`
+                          ? `border-custom-primary`
+                          : `border-custom-border-100`
                       }`}
                     >
                       {" "}

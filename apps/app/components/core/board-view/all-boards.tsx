@@ -85,7 +85,7 @@ export const AllBoards: React.FC<Props> = ({
                     return (
                       <div
                         key={index}
-                        className="flex items-center justify-between gap-2 rounded bg-brand-surface-1 p-2 shadow"
+                        className="flex items-center justify-between gap-2 rounded bg-custom-background-90 p-2 shadow"
                       >
                         <div className="flex items-center gap-2">
                           {currentState &&
@@ -96,7 +96,7 @@ export const AllBoards: React.FC<Props> = ({
                               : addSpaceIfCamelCase(singleGroup)}
                           </h4>
                         </div>
-                        <span className="text-xs text-brand-secondary">0</span>
+                        <span className="text-xs text-custom-text-200">0</span>
                       </div>
                     );
                 })}
