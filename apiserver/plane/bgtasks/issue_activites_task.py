@@ -591,6 +591,31 @@ def track_archive_at(
         )
 
 
+def track_closed_to(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    if requested_data.get("closed_to") is not None:
+        updated_state = State.objects.get(
+            pk=requested_data.get("closed_to"), project=project
+        )
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor=actor,
+                verb="updated",
+                old_value=None,
+                new_value=updated_state.name,
+                field="state",
+                project=project,
+                workspace=project.workspace,
+                comment=f"Plane updated the state to {updated_state.name}",
+                old_identifier=None,
+                new_identifier=updated_state.id,
+            )
+        )
+
+
 def update_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -608,6 +633,7 @@ def update_issue_activity(
         "blockers_list": track_blockings,
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
+        "closed_to": track_closed_to,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None

@@ -130,7 +130,7 @@ def close_old_issues():
                 [
                     issue_activity.delay(
                         type="issue.activity.updated",
-                        requested_data=json.dumps({"state": issue.state}),
+                        requested_data=json.dumps({"closed_to": issue.state_id}),
                         actor_id=str(project.created_by_id),
                         issue_id=issue.id,
                         project_id=project_id,
