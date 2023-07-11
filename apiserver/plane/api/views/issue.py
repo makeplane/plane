@@ -914,6 +914,197 @@ class IssueAttachmentEndpoint(BaseAPIView):
             )
 
 
+class IssueArchiveViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    serializer_class = IssueFlatSerializer
+    model = Issue
+
+    def get_queryset(self):
+        return (
+            Issue.objects.annotate(
+                sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(archived_at__isnull=False)
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+        )
+
+    @method_decorator(gzip_page)
+    def list(self, request, slug, project_id):
+        try:
+            filters = issue_filters(request.query_params, "GET")
+            show_sub_issues = request.GET.get("show_sub_issues", "true")
+
+            # Custom ordering for priority and state
+            priority_order = ["urgent", "high", "medium", "low", None]
+            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+            order_by_param = request.GET.get("order_by", "-created_at")
+
+            issue_queryset = (
+                self.get_queryset()
+                .filter(**filters)
+                .annotate(cycle_id=F("issue_cycle__id"))
+                .annotate(module_id=F("issue_module__id"))
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+            )
+
+            # Priority Ordering
+            if order_by_param == "priority" or order_by_param == "-priority":
+                priority_order = (
+                    priority_order
+                    if order_by_param == "priority"
+                    else priority_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    priority_order=Case(
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
+                        output_field=CharField(),
+                    )
+                ).order_by("priority_order")
+
+            # State Ordering
+            elif order_by_param in [
+                "state__name",
+                "state__group",
+                "-state__name",
+                "-state__group",
+            ]:
+                state_order = (
+                    state_order
+                    if order_by_param in ["state__name", "state__group"]
+                    else state_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    state_order=Case(
+                        *[
+                            When(state__group=state_group, then=Value(i))
+                            for i, state_group in enumerate(state_order)
+                        ],
+                        default=Value(len(state_order)),
+                        output_field=CharField(),
+                    )
+                ).order_by("state_order")
+            # assignee and label ordering
+            elif order_by_param in [
+                "labels__name",
+                "-labels__name",
+                "assignees__first_name",
+                "-assignees__first_name",
+            ]:
+                issue_queryset = issue_queryset.annotate(
+                    max_values=Max(
+                        order_by_param[1::]
+                        if order_by_param.startswith("-")
+                        else order_by_param
+                    )
+                ).order_by(
+                    "-max_values" if order_by_param.startswith("-") else "max_values"
+                )
+            else:
+                issue_queryset = issue_queryset.order_by(order_by_param)
+
+            issue_queryset = (
+                issue_queryset
+                if show_sub_issues == "true"
+                else issue_queryset.filter(parent__isnull=True)
+            )
+
+            issues = IssueLiteSerializer(issue_queryset, many=True).data
+
+            ## Grouping the results
+            group_by = request.GET.get("group_by", False)
+            if group_by:
+                return Response(
+                    group_results(issues, group_by), status=status.HTTP_200_OK
+                )
+
+            return Response(issues, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def retrieve(self, request, slug, project_id, pk=None):
+        try:
+            issue = Issue.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                archived_at__isnull=False,
+                pk=pk,
+            )
+            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def unarchive(self, request, slug, project_id, pk=None):
+        try:
+            issue = Issue.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                archived_at__isnull=False,
+                pk=pk,
+            )
+            issue.archived_at = None
+            issue.save()
+            issue_activity.delay(
+                type="issue.activity.updated",
+                requested_data=json.dumps({"archived_in": None}),
+                actor_id=str(request.user.id),
+                issue_id=str(issue.id),
+                project_id=str(project_id),
+                current_instance=None,
+            )
+
+            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong, please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 class IssueSubscriberViewSet(BaseViewSet):
     serializer_class = IssueSubscriberSerializer
     model = IssueSubscriber

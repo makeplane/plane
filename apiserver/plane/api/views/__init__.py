@@ -65,6 +65,7 @@ from .issue import (
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
     IssueAttachmentEndpoint,
+    IssueArchiveViewSet,
     IssueSubscriberViewSet,
 )
 

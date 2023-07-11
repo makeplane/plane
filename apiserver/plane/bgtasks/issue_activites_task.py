@@ -5,6 +5,7 @@ import requests
 # Django imports
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 
 # Third Party imports
 from celery import shared_task
@@ -557,6 +558,22 @@ def track_estimate_points(
             )
 
 
+def track_archive_in(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} has restored the issue",
+            verb="updated",
+            actor=actor,
+            field="archvied_at",
+        )
+    )
+
+
 def update_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -573,6 +590,7 @@ def update_issue_activity(
         "blocks_list": track_blocks,
         "blockers_list": track_blockings,
         "estimate_point": track_estimate_points,
+        "archived_in": track_archive_in,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
@@ -950,6 +968,7 @@ def delete_attachment_activity(
     )
 
 
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -961,6 +980,11 @@ def issue_activity(
         actor = User.objects.get(pk=actor_id)
         project = Project.objects.get(pk=project_id)
 
+        issue = Issue.objects.filter(pk=issue_id).first()
+        if issue is not None:
+            issue.updated_at = timezone.now()
+            issue.save()
+            
         # add the user to issue subscriber
         try:
             _ = IssueSubscriber.objects.create(issue_id=issue_id, subscriber=actor)
