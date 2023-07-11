@@ -62,7 +62,7 @@ class NotificationViewSet(BaseViewSet):
             # Subscribed issues
             if type == "watching":
                 issue_ids = IssueSubscriber.objects.filter(
-                    workspace__slug=slug, subsriber_id=request.user.id
+                    workspace__slug=slug, subscriber_id=request.user.id
                 ).values_list("issue_id", flat=True)
                 notifications = notifications.filter(entity_identifier__in=issue_ids)
 
