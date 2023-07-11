@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import workspaceService from "services/workspace.service";
+import userService from "services/user.service";
+// hooks
+import useUser from "hooks/use-user";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
@@ -11,19 +14,17 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceMemberInvitation } from "types";
+import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
 // fetch-keys
-import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
-type Props = {
-  updateLastWorkspace: () => Promise<void>;
-};
-
-export const JoinWorkspaces: React.FC<Props> = ({ updateLastWorkspace }) => {
+export const JoinWorkspaces: React.FC = () => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
+
+  const { user } = useUser();
 
   const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
@@ -42,6 +43,25 @@ export const JoinWorkspaces: React.FC<Props> = ({ updateLastWorkspace }) => {
     }
   };
 
+  // complete onboarding
+  const finishOnboarding = async () => {
+    if (!user) return;
+
+    mutate<ICurrentUserResponse>(
+      CURRENT_USER,
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          is_onboarded: true,
+        };
+      },
+      false
+    );
+    await userService.updateUserOnBoard({ userRole: user.role }, user);
+  };
+
   const submitInvitations = async () => {
     if (invitationsRespond.length <= 0) return;
 
@@ -51,14 +71,11 @@ export const JoinWorkspaces: React.FC<Props> = ({ updateLastWorkspace }) => {
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async () => {
         await mutateInvitations();
+        await finishOnboarding();
 
-        updateLastWorkspace();
         setIsJoiningWorkspaces(false);
       })
-      .catch((err) => {
-        console.error(err);
-        setIsJoiningWorkspaces(false);
-      });
+      .catch((err) => setIsJoiningWorkspaces(false));
   };
 
   return (
@@ -123,7 +140,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ updateLastWorkspace }) => {
         >
           Accept & Join
         </PrimaryButton>
-        <SecondaryButton size="md" onClick={updateLastWorkspace} outline>
+        <SecondaryButton size="md" onClick={finishOnboarding} outline>
           Skip for now
         </SecondaryButton>
       </div>

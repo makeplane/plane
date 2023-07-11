@@ -3,13 +3,16 @@ import { useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
 import Image from "next/image";
 
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
+// next-themes
+import { useTheme } from "next-themes";
 // services
 import userService from "services/user.service";
+import workspaceService from "services/workspace.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
-import { useTheme } from "next-themes";
+import useWorkspaces from "hooks/use-workspaces";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
@@ -21,15 +24,13 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { ICurrentUserResponse, IWorkspace } from "types";
+import { ICurrentUserResponse } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { CURRENT_USER } from "constants/fetch-keys";
+import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState<number | null>(null);
-
-  const [workspace, setWorkspace] = useState<IWorkspace | null>(null);
 
   const router = useRouter();
   const { state } = router.query;
@@ -38,8 +39,15 @@ const Onboarding: NextPage = () => {
 
   const { user, isLoading: userLoading } = useUserAuth("onboarding");
 
+  const { workspaces } = useWorkspaces();
+  const userWorkspaces = workspaces?.filter((w) => w.created_by === user?.id);
+
+  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+    workspaceService.userWorkspaceInvitations()
+  );
+
   const updateLastWorkspace = async () => {
-    if (!workspace) return;
+    if (!userWorkspaces) return;
 
     mutate<ICurrentUserResponse>(
       CURRENT_USER,
@@ -48,49 +56,93 @@ const Onboarding: NextPage = () => {
 
         return {
           ...prevData,
-          last_workspace_id: workspace.id,
+          last_workspace_id: userWorkspaces[0].id,
           workspace: {
             ...prevData.workspace,
-            fallback_workspace_id: workspace.id,
-            fallback_workspace_slug: workspace.slug,
-            last_workspace_id: workspace.id,
-            last_workspace_slug: workspace.slug,
+            fallback_workspace_id: userWorkspaces[0].id,
+            fallback_workspace_slug: userWorkspaces[0].slug,
+            last_workspace_id: userWorkspaces[0].id,
+            last_workspace_slug: userWorkspaces[0].slug,
           },
         };
       },
       false
     );
 
-    await userService.updateUser({ last_workspace_id: workspace.id });
+    await userService.updateUser({ last_workspace_id: userWorkspaces[0].id });
   };
 
   useEffect(() => {
     const handleStateChange = async () => {
-      if (!user) return;
+      if (!user || !userWorkspaces || !invitations) return;
 
-      if (!user.role)
+      if (!user.role && state !== "profile-creation")
         await Router.push({
-          pathname: `/onboarding`,
+          pathname: "/onboarding",
           query: {
             state: "profile-creation",
           },
         });
 
-      if (user.role && !user.last_workspace_id)
+      if (user.role && userWorkspaces?.length === 0 && state !== "workspace-creation")
         await Router.push({
-          pathname: `/onboarding`,
+          pathname: "/onboarding",
           query: {
             state: "workspace-creation",
           },
         });
+
+      if (
+        user.role &&
+        userWorkspaces.length > 0 &&
+        !user.last_workspace_id &&
+        state !== "invite-members"
+      )
+        await Router.push({
+          pathname: "/onboarding",
+          query: {
+            state: "invite-members",
+          },
+        });
+
+      if (
+        user.role &&
+        userWorkspaces.length > 0 &&
+        user.last_workspace_id &&
+        !user.is_onboarded &&
+        state !== "join-workspaces"
+      ) {
+        if (invitations.length > 0)
+          await Router.push({
+            pathname: "/onboarding",
+            query: {
+              state: "join-workspaces",
+            },
+          });
+        else await Router.push("/");
+      }
     };
 
-    if (user)
+    if (user && userWorkspaces)
       handleStateChange().then(() => {
         if (state === "profile-creation" && !user.role) setStep(1);
         else if (state === "workspace-creation" && user.role) setStep(2);
+        else if (
+          state === "invite-members" &&
+          user.role &&
+          userWorkspaces.length > 0 &&
+          !user.last_workspace_id
+        )
+          setStep(3);
+        else if (
+          state === "join-workspaces" &&
+          user.role &&
+          userWorkspaces.length > 0 &&
+          !user.is_onboarded
+        )
+          setStep(4);
       });
-  }, [state, user]);
+  }, [state, user, userWorkspaces, invitations]);
 
   if (userLoading || step === null)
     return (
@@ -103,7 +155,7 @@ const Onboarding: NextPage = () => {
     <DefaultLayout>
       <div className="flex h-full flex-col gap-y-2 sm:gap-y-0 sm:flex-row overflow-hidden">
         <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
-          <div className="absolute border-b-[0.5px] sm:border-r-[0.5px] border-custom-border-100 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:translate-y-0" />
+          <div className="absolute border-b-[0.5px] sm:border-r-[0.5px] border-custom-border-200 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:translate-y-0" />
           {step === 1 ? (
             <div className="absolute grid place-items-center bg-custom-background-100 px-3 sm:px-0 py-5 left-2 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 sm:translate-y-0 sm:top-12">
               <div className="h-[30px] w-[30px]">
@@ -138,18 +190,17 @@ const Onboarding: NextPage = () => {
         </div>
         <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
           {step === 1 ? (
-            <UserDetails user={user} setStep={setStep} />
+            <UserDetails user={user} />
           ) : step === 2 ? (
-            <Workspace setStep={setStep} setWorkspace={setWorkspace} user={user} />
+            <Workspace user={user} />
           ) : step === 3 ? (
             <InviteMembers
-              setStep={setStep}
-              workspace={workspace}
+              workspace={userWorkspaces?.[0]}
               updateLastWorkspace={updateLastWorkspace}
               user={user}
             />
           ) : (
-            step === 4 && <JoinWorkspaces updateLastWorkspace={updateLastWorkspace} />
+            step === 4 && <JoinWorkspaces />
           )}
         </div>
       </div>

@@ -16,6 +16,7 @@ export interface IUser {
   created_location: readonly string;
   is_email_verified: boolean;
   is_onboarded: boolean;
+  is_tour_completed: boolean;
   token: string;
   role: string;
   theme: ICustomTheme;

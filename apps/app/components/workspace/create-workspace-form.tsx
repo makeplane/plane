@@ -76,6 +76,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
+
               mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
               onSubmit(res);
             })

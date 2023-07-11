@@ -25,10 +25,9 @@ const defaultValues: Partial<IUser> = {
 
 type Props = {
   user?: IUser;
-  setStep: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
+export const UserDetails: React.FC<Props> = ({ user }) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -63,7 +62,6 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
           title: "Success!",
           message: "Details updated successfully.",
         });
-        setStep(2);
       })
       .catch((err) => {
         console.log(err);

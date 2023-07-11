@@ -55,25 +55,21 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     const handleUserRouteAuthentication = async () => {
       if (user && user.is_active) {
         if (routeAuth === "sign-in") {
-          if (user.role && user.last_workspace_id) handleWorkSpaceRedirection();
+          if (user.is_onboarded) handleWorkSpaceRedirection();
           else {
             router.push("/onboarding");
             return;
           }
         } else if (routeAuth === "onboarding") {
-          if (user.role && user.last_workspace_id) handleWorkSpaceRedirection();
+          if (user.is_onboarded) handleWorkSpaceRedirection();
           else {
             setIsRouteAccess(() => false);
             return;
           }
         } else {
           if (!user.is_onboarded) {
-            if (user.role && user.last_workspace_id) {
-              if (router.pathname !== "/[workspaceSlug]") handleWorkSpaceRedirection();
-            } else {
-              router.push("/onboarding");
-              return;
-            }
+            router.push("/onboarding");
+            return;
           } else {
             setIsRouteAccess(() => false);
             return;
