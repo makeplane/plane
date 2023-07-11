@@ -401,6 +401,27 @@ class IssueSequence(ProjectBaseModel):
         ordering = ("-created_at",)
 
 
+class IssueSubscriber(ProjectBaseModel):
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="issue_subscribers"
+    )
+    subscriber = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_subscribers",
+    )
+
+    class Meta:
+        unique_together = ["issue", "subscriber"]
+        verbose_name = "Issue Subscriber"
+        verbose_name_plural = "Issue Subscribers"
+        db_table = "issue_subscribers"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.subscriber.email}"
+
+
 # TODO: Find a better method to save the model
 @receiver(post_save, sender=Issue)
 def create_issue_sequence(sender, instance, created, **kwargs):
