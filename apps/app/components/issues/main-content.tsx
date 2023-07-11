@@ -32,7 +32,7 @@ type Props = {
 
 export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId, archivedIssueId } = router.query;
 
   const { user } = useUserAuth();
   const { memberRole } = useProjectMyMembership();
@@ -110,8 +110,11 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges 
       </div>
       <div className="space-y-5 pt-3">
         <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
-        <IssueActivitySection issueId={issueId as string} user={user} />
-        <AddComment issueId={issueId as string} user={user} />
+        <IssueActivitySection
+          issueId={(archivedIssueId as string) ?? (issueId as string)}
+          user={user}
+        />
+        <AddComment issueId={(archivedIssueId as string) ?? (issueId as string)} user={user} />
       </div>
     </>
   );
