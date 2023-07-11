@@ -21,7 +21,6 @@ export const Workspace: React.FC<Props> = ({ user }) => {
       <h4 className="text-2xl font-semibold">Create your workspace</h4>
       <div className="sm:w-3/4 md:w-2/5">
         <CreateWorkspaceForm
-          onSubmit={() => {}}
           defaultValues={defaultValues}
           setDefaultValues={setDefaultValues}
           user={user}

@@ -18,7 +18,7 @@ import { USER_WORKSPACES } from "constants/fetch-keys";
 import { ORGANIZATION_SIZE } from "constants/workspace";
 
 type Props = {
-  onSubmit: (res: IWorkspace) => void;
+  onSubmit?: (res: IWorkspace) => Promise<void>;
   defaultValues: {
     name: string;
     slug: string;
@@ -70,7 +70,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
           setSlugError(false);
           await workspaceService
             .createWorkspace(formData, user)
-            .then((res) => {
+            .then(async (res) => {
               setToastAlert({
                 type: "success",
                 title: "Success!",
@@ -78,7 +78,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
               });
 
               mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
-              onSubmit(res);
+              if (onSubmit) await onSubmit(res);
             })
             .catch(() =>
               setToastAlert({
