@@ -158,13 +158,14 @@ const EstimatesSettings: NextPage = () => {
                 ))}
               </section>
             ) : (
-              <div className="grid h-full w-full place-items-center">
+              <div className="h-full w-full overflow-y-auto">
                 <EmptyState
-                  type="estimate"
                   title="Create New Estimate"
                   description="Estimates help you communicate the complexity of an issue. You can create your own estimate and communicate with your team."
-                  imgURL={emptyEstimate}
-                  action={() => {
+                  image={emptyEstimate}
+                  buttonText="New Estimate"
+                  buttonIcon={<PlusIcon className="h-4 w-4" />}
+                  onClick={() => {
                     setEstimateToUpdate(undefined);
                     setEstimateFormOpen(true);
                   }}
