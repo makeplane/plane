@@ -75,7 +75,7 @@ export const JoinWorkspaces: React.FC = () => {
 
         setIsJoiningWorkspaces(false);
       })
-      .catch((err) => setIsJoiningWorkspaces(false));
+      .catch(() => setIsJoiningWorkspaces(false));
   };
 
   return (
