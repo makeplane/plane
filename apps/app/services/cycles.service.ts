@@ -3,7 +3,7 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
 // types
-import type { ICurrentUserResponse, ICycle, IIssue, IIssueViewOptions } from "types";
+import type { CycleDateCheckData, ICurrentUserResponse, ICycle, IIssue } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -148,10 +148,7 @@ class ProjectCycleServices extends APIService {
   async cycleDateCheck(
     workspaceSlug: string,
     projectId: string,
-    data: {
-      start_date: string;
-      end_date: string;
-    }
+    data: CycleDateCheckData
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/date-check/`,
