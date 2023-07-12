@@ -44,6 +44,9 @@ export const ImageUploadModal: React.FC<Props> = ({
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: {
+      "image/*": [".jpeg", ".png", ".jpg", ".webp"],
+    },
     onDrop,
   });
 
