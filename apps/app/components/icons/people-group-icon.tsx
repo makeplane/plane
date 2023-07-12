@@ -5,7 +5,7 @@ import type { Props } from "./types";
 export const PeopleGroupIcon: React.FC<Props> = ({
   width = "24",
   height = "16",
-  color = "#858E96",
+  color = "rgb(var(--color-text-200))",
   className,
 }) => (
   <svg

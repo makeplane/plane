@@ -179,12 +179,12 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   return (
     <div
-      className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-brand-surface-2 border-b border-brand-base w-full min-w-max"
+      className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-100 w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      <div className="flex gap-1.5 items-center px-4 sticky z-[1] left-0 text-brand-secondary bg-brand-base group-hover:text-brand-base group-hover:bg-brand-surface-2 border-brand-base w-full">
+      <div className="flex gap-1.5 items-center px-4 sticky z-[1] left-0 text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-100 w-full">
         <div className="flex gap-1.5 items-center" style={issue.parent ? { paddingLeft } : {}}>
-          <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-brand-base w-14">
+          <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100 w-14">
             {properties.key && (
               <span className="flex items-center justify-center opacity-100 group-hover:opacity-0">
                 {issue.project_detail?.identifier}-{issue.sequence_id}
@@ -198,11 +198,11 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                   onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
                   content={
                     <div
-                      className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-brand-base bg-brand-surface-1`}
+                      className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-custom-border-100 bg-custom-background-90`}
                     >
                       <button
                         type="button"
-                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleEditIssue(issue);
                           setIsOpen(false);
@@ -216,7 +216,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
                       <button
                         type="button"
-                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleDeleteIssue(issue);
                           setIsOpen(false);
@@ -230,7 +230,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
                       <button
                         type="button"
-                        className="hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleCopyText();
                           setIsOpen(false);
@@ -245,7 +245,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                   }
                   placement="bottom-start"
                 >
-                  <EllipsisHorizontalIcon className="h-5 w-5 text-brand-secondary" />
+                  <EllipsisHorizontalIcon className="h-5 w-5 text-custom-text-200" />
                 </Popover2>
               </div>
             )}
@@ -254,7 +254,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           {issue.sub_issues_count > 0 && (
             <div className="h-6 w-6 flex justify-center items-center">
               <button
-                className="h-5 w-5 hover:bg-brand-surface-1 hover:text-brand-base rounded-sm cursor-pointer"
+                className="h-5 w-5 hover:bg-custom-background-90 hover:text-custom-text-100 rounded-sm cursor-pointer"
                 onClick={() => handleToggleExpand(issue.id)}
               >
                 <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
@@ -264,13 +264,13 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
 
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
-          <a className="truncate text-brand-base cursor-pointer w-full text-[0.825rem]">
+          <a className="truncate text-custom-text-100 cursor-pointer w-full text-[0.825rem]">
             {issue.name}
           </a>
         </Link>
       </div>
       {properties.state && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-100">
           <ViewStateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -284,7 +284,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.priority && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-100">
           <ViewPrioritySelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -297,7 +297,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.assignee && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-100">
           <ViewAssigneeSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -310,7 +310,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.labels && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-100">
           <ViewLabelSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -324,7 +324,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       )}
 
       {properties.due_date && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-100">
           <ViewDueDateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -336,7 +336,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.estimate && (
-        <div className="flex items-center text-xs text-brand-secondary text-center p-2 group-hover:bg-brand-surface-2 border-brand-base">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-100">
           <ViewEstimateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}

@@ -12,8 +12,8 @@ type Props = {
 };
 
 export const IssuesStats: React.FC<Props> = ({ data }) => (
-  <div className="grid grid-cols-1 rounded-[10px] border border-brand-base bg-brand-base lg:grid-cols-3">
-    <div className="grid grid-cols-1 divide-y divide-brand-base border-b border-brand-base lg:border-r lg:border-b-0">
+  <div className="grid grid-cols-1 rounded-[10px] border border-custom-border-100 bg-custom-background-100 lg:grid-cols-3">
+    <div className="grid grid-cols-1 divide-y divide-custom-border-100 border-b border-custom-border-100 lg:border-r lg:border-b-0">
       <div className="flex">
         <div className="basis-1/2 p-4">
           <h4 className="text-sm">Issues assigned to you</h4>
@@ -27,7 +27,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => (
             )}
           </h5>
         </div>
-        <div className="basis-1/2 border-l border-brand-base p-4">
+        <div className="basis-1/2 border-l border-custom-border-100 p-4">
           <h4 className="text-sm">Pending issues</h4>
           <h5 className="mt-2 text-2xl font-semibold">
             {data ? (
@@ -53,7 +53,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => (
             )}
           </h5>
         </div>
-        <div className="basis-1/2 border-l border-brand-base p-4">
+        <div className="basis-1/2 border-l border-custom-border-100 p-4">
           <h4 className="text-sm">Issues due by this week</h4>
           <h5 className="mt-2 text-2xl font-semibold">
             {data ? (
@@ -72,7 +72,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => (
         Activity Graph
         <Tooltip
           tooltipContent="Your profile activity graph is a record of actions you've performed on issues across the workspace."
-          className="w-72 border border-brand-base"
+          className="w-72 border border-custom-border-100"
         >
           <InformationCircleIcon className="h-3 w-3" />
         </Tooltip>

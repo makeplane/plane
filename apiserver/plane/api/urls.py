@@ -77,6 +77,8 @@ from plane.api.views import (
     BulkCreateIssueLabelsEndpoint,
     IssueAttachmentEndpoint,
     IssueSubscriberViewSet,
+    IssueArchiveViewSet,
+    IssueSubscriberViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -853,6 +855,36 @@ urlpatterns = [
         name="project-issue-roadmap",
     ),
     ## IssueProperty Ebd
+    ## Issue Archives
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/",
+        IssueArchiveViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="project-issue-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/<uuid:pk>/",
+        IssueArchiveViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/unarchive/<uuid:pk>/",
+        IssueArchiveViewSet.as_view(
+            {
+                "post": "unarchive",
+            }
+        ),
+        name="project-issue-archive",
+    ),
+    ## End Issue Archives
     ## File Assets
     path(
         "workspaces/<str:slug>/file-assets/",

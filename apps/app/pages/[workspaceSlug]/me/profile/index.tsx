@@ -140,7 +140,7 @@ const Profile: NextPage = () => {
           <div className="mb-8 space-y-6">
             <div>
               <h3 className="text-3xl font-semibold">Profile Settings</h3>
-              <p className="mt-1 text-brand-secondary">
+              <p className="mt-1 text-custom-text-200">
                 This information will be visible to only you.
               </p>
             </div>
@@ -149,8 +149,8 @@ const Profile: NextPage = () => {
           <div className="space-y-8 sm:space-y-12">
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Profile Picture</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Profile Picture</h4>
+                <p className="text-sm text-custom-text-200">
                   Max file size is 5MB. Supported file types are .jpg and .png.
                 </p>
               </div>
@@ -158,8 +158,8 @@ const Profile: NextPage = () => {
                 <div className="flex items-center gap-4">
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                     {!watch("avatar") || watch("avatar") === "" ? (
-                      <div className="h-12 w-12 rounded-md bg-brand-surface-2 p-2">
-                        <UserIcon className="h-full w-full text-brand-secondary" />
+                      <div className="h-12 w-12 rounded-md bg-custom-background-80 p-2">
+                        <UserIcon className="h-full w-full text-custom-text-200" />
                       </div>
                     ) : (
                       <div className="relative h-12 w-12 overflow-hidden">
@@ -194,8 +194,8 @@ const Profile: NextPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Full Name</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Full Name</h4>
+                <p className="text-sm text-custom-text-200">
                   This name will be reflected on all the projects you are working on.
                 </p>
               </div>
@@ -223,8 +223,8 @@ const Profile: NextPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Email</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Email</h4>
+                <p className="text-sm text-custom-text-200">
                   The email address that you are using.
                 </p>
               </div>
@@ -242,8 +242,8 @@ const Profile: NextPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Role</h4>
-                <p className="text-sm text-brand-secondary">Add your role.</p>
+                <h4 className="text-lg font-semibold text-custom-text-100">Role</h4>
+                <p className="text-sm text-custom-text-200">Add your role.</p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <Controller

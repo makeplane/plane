@@ -61,54 +61,54 @@ const activityDetails: {
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-brand-secondary" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-custom-text-200" aria-hidden="true" />,
   },
   labels: {
     icon: <TagIcon height="12" width="12" color="#6b7280" />,
   },
   modules: {
     message: "set the module to",
-    icon: <RectangleGroupIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: <RectangleGroupIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
   },
   state: {
     message: "set the state to",
-    icon: <Squares2X2Icon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: <Squares2X2Icon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
   },
   priority: {
     message: "set the priority to",
-    icon: <ChartBarIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: <ChartBarIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
   },
   name: {
     message: "set the name to",
     icon: (
-      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />
+      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />
     ),
   },
   description: {
     message: "updated the description.",
     icon: (
-      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />
+      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />
     ),
   },
   target_date: {
     message: "set the due date to",
-    icon: <CalendarDaysIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: <CalendarDaysIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
   },
   parent: {
     message: "set the parent to",
-    icon: <UserIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: <UserIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
   },
   estimate: {
     message: "updated the estimate",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-brand-secondary" aria-hidden="true" />,
+    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-custom-text-200" aria-hidden="true" />,
   },
   link: {
     message: "updated the link",
-    icon: <LinkIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: <LinkIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
   },
   attachment: {
     message: "updated the attachment",
-    icon: <PaperClipIcon className="h-3 w-3 text-brand-secondary" aria-hidden="true" />,
+    icon: <PaperClipIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
   },
 };
 
@@ -264,7 +264,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
             activityItem.field !== "link" &&
             activityItem.field !== "estimate"
           ) {
-            value = <span className="text-brand-secondary">created this issue.</span>;
+            value = <span className="text-custom-text-200">created this issue.</span>;
           } else if (activityItem.field === "state") {
             value = activityItem.new_value ? addSpaceIfCamelCase(activityItem.new_value) : "None";
           } else if (activityItem.field === "labels") {
@@ -279,7 +279,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
             }
 
             value = (
-              <span className="relative inline-flex items-center rounded-full border border-brand-base px-2 py-0.5 text-xs">
+              <span className="relative inline-flex items-center rounded-full border border-custom-border-100 px-2 py-0.5 text-xs">
                 <span className="absolute flex flex-shrink-0 items-center justify-center">
                   <span
                     className="h-1.5 w-1.5 rounded-full"
@@ -289,7 +289,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                     aria-hidden="true"
                   />
                 </span>
-                <span className="ml-3 font-medium text-brand-base">{name}</span>
+                <span className="ml-3 font-medium text-custom-text-100">{name}</span>
               </span>
             );
           } else if (activityItem.field === "assignees") {
@@ -334,7 +334,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                 <div className="relative pb-1">
                   {issueActivities.length > 1 && activityItemIdx !== issueActivities.length - 1 ? (
                     <span
-                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-brand-surface-2"
+                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-custom-background-80"
                       aria-hidden="true"
                     />
                   ) : null}
@@ -343,7 +343,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                       <div>
                         <div className="relative px-1.5">
                           <div className="mt-1.5">
-                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-brand-surface-2 ring-white">
+                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 ring-white">
                               {activityItem.field ? (
                                 activityDetails[activityItem.field as keyof typeof activityDetails]
                                   ?.icon
@@ -368,7 +368,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                         </div>
                       </div>
                       <div className="min-w-0 flex-1 py-3">
-                        <div className="text-xs text-brand-secondary">
+                        <div className="text-xs text-custom-text-200">
                           <span className="text-gray font-medium">
                             {activityItem.actor_detail.first_name}
                             {activityItem.actor_detail.is_bot
@@ -376,7 +376,10 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                               : " " + activityItem.actor_detail.last_name}
                           </span>
                           <span> {action} </span>
-                          <span className="text-xs font-medium text-brand-base"> {value} </span>
+                          <span className="text-xs font-medium text-custom-text-100">
+                            {" "}
+                            {value}{" "}
+                          </span>
                           <span className="whitespace-nowrap">
                             {timeAgo(activityItem.created_at)}
                           </span>

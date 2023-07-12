@@ -6,6 +6,8 @@ import useSWR from "swr";
 import projectService from "services/project.service";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
+// types
+import { IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
@@ -24,7 +26,7 @@ const useProjects = () => {
     ?.slice(0, 3);
 
   return {
-    projects: orderArrayBy(projects ?? [], "is_favorite", "descending") || [],
+    projects: orderArrayBy(projects ?? [], "is_favorite", "descending") as IProject[] | undefined,
     recentProjects: recentProjects || [],
     mutateProjects,
   };

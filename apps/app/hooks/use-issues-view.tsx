@@ -186,7 +186,7 @@ const useIssuesView = () => {
     filters,
     setFilters,
     params,
-    isNotEmpty: !isEmpty,
+    isEmpty,
     resetFilterToDefault,
     setNewFilterDefaultView,
     setIssueView,

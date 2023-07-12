@@ -41,13 +41,15 @@ export const JoinProject: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-brand-surface-1 text-center">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-90 text-center">
       <div className="h-44 w-72">
         <Image src={JoinProjectImg} height="176" width="288" alt="JoinProject" />
       </div>
-      <h1 className="text-xl font-medium text-brand-base">You are not a member of this project</h1>
+      <h1 className="text-xl font-medium text-custom-text-100">
+        You are not a member of this project
+      </h1>
 
-      <div className="w-full max-w-md text-base text-brand-secondary">
+      <div className="w-full max-w-md text-base text-custom-text-200">
         <p className="mx-auto w-full text-sm md:w-3/4">
           You are not a member of this project, but you can join this project by clicking the button
           below.

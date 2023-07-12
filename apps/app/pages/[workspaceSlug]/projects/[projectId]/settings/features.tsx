@@ -184,13 +184,13 @@ const FeaturesSettings: NextPage = () => {
             {featuresList.map((feature) => (
               <div
                 key={feature.property}
-                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-brand-base bg-brand-base p-5"
+                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-5"
               >
                 <div className="flex items-start gap-3">
                   {feature.icon}
-                  <div>
+                  <div className="">
                     <h4 className="text-lg font-semibold">{feature.title}</h4>
-                    <p className="text-sm text-brand-secondary">{feature.description}</p>
+                    <p className="text-sm text-custom-text-200">{feature.description}</p>
                   </div>
                 </div>
                 <ToggleSwitch
@@ -219,11 +219,21 @@ const FeaturesSettings: NextPage = () => {
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <a href="https://plane.so/" target="_blank" rel="noreferrer">
+          <div className="flex items-center gap-2 text-custom-text-200">
+            <a
+              href="https://plane.so/"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-custom-text-100"
+            >
               <SecondaryButton outline>Plane is open-source, view Roadmap</SecondaryButton>
             </a>
-            <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
+            <a
+              href="https://github.com/makeplane/plane"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-custom-text-100"
+            >
               <SecondaryButton outline>Star us on GitHub</SecondaryButton>
             </a>
           </div>

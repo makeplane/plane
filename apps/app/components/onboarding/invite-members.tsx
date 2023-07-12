@@ -45,7 +45,7 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace, user }) => 
       }}
     >
       <div className="flex w-full max-w-xl flex-col gap-12">
-        <div className="flex flex-col gap-6 rounded-[10px] bg-brand-base p-7 shadow-md">
+        <div className="flex flex-col gap-6 rounded-[10px] bg-custom-background-100 p-7 shadow-md">
           <h2 className="text-xl font-medium">Invite co-workers to your team</h2>
           <div className="flex flex-col items-start justify-center gap-2.5">
             <span>Email</span>
