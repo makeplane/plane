@@ -98,7 +98,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
           <div className="flex flex-col gap-4 w-full">
             <div className="flex items-center justify-between gap-2 w-full">
               <div className="w-1/2 text-base font-medium">
-                Auto-archive issues that are closed for
+                Auto-close issues that are inactive for
               </div>
               <div className="w-1/2 ">
                 <CustomSelect

@@ -13,10 +13,16 @@ type Props = {
   value: number | null;
   onChange: (val: number | null) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+export const SidebarEstimateSelect: React.FC<Props> = ({
+  value,
+  onChange,
+  userAuth,
+  disabled = false,
+}) => {
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   const { isEstimateActive, estimatePoints } = useEstimateOption();
 
@@ -46,7 +52,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, userAu
           onChange={onChange}
           position="right"
           width="w-full"
-          disabled={isNotAllowed}
+          disabled={isNotAllowed || disabled}
         >
           <CustomSelect.Option value={null}>
             <>

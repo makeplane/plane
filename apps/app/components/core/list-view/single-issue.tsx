@@ -248,7 +248,11 @@ export const SingleListIssue: React.FC<Props> = ({
           </div>
         </Link>
 
-        <div className="flex w-full flex-shrink flex-wrap items-center gap-2 text-xs sm:w-auto">
+        <div
+          className={`flex w-full flex-shrink flex-wrap items-center gap-2 text-xs sm:w-auto ${
+            isArchivedIssues ? "opacity-60" : ""
+          }`}
+        >
           {properties.priority && (
             <ViewPrioritySelect
               issue={issue}

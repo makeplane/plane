@@ -154,7 +154,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     >
       {issueDetails && projectId ? (
         <div className="flex h-full">
-          <div className="w-2/3 space-y-5 divide-y-2 divide-custom-border-100 p-5">
+          <div className="w-2/3 space-y-2 p-5">
             {issueDetails.archived_at && (
               <div className="flex items-center justify-between gap-2 px-2.5 py-2 text-sm border rounded-md text-custom-text-200 border-custom-border-200 bg-custom-background-90">
                 <div className="flex gap-2 items-center">
@@ -170,7 +170,13 @@ const ArchivedIssueDetailsPage: NextPage = () => {
                 </button>
               </div>
             )}
-            <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
+            <div className="space-y-5 divide-y-2 divide-custom-border-100 opacity-60">
+              <IssueMainContent
+                issueDetails={issueDetails}
+                submitChanges={submitChanges}
+                nonEditable
+              />
+            </div>
           </div>
           <div className="w-1/3 space-y-5 border-l border-custom-border-100 p-5">
             <IssueDetailsSidebar
@@ -178,6 +184,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
               issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
+              nonEditable
             />
           </div>
         </div>

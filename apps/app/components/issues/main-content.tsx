@@ -28,9 +28,14 @@ import { SUB_ISSUES } from "constants/fetch-keys";
 type Props = {
   issueDetails: IIssue;
   submitChanges: (formData: Partial<IIssue>) => Promise<void>;
+  nonEditable?: boolean;
 };
 
-export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges }) => {
+export const IssueMainContent: React.FC<Props> = ({
+  issueDetails,
+  submitChanges,
+  nonEditable = false,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, archivedIssueId } = router.query;
 
@@ -95,16 +100,16 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges 
         <IssueDescriptionForm
           issue={issueDetails}
           handleFormSubmit={submitChanges}
-          isAllowed={memberRole.isMember || memberRole.isOwner}
+          isAllowed={memberRole.isMember || memberRole.isOwner || !nonEditable}
         />
         <div className="mt-2 space-y-2">
-          <SubIssuesList parentIssue={issueDetails} user={user} />
+          <SubIssuesList parentIssue={issueDetails} user={user} disabled={nonEditable} />
         </div>
       </div>
       <div className="flex flex-col gap-3 py-3">
         <h3 className="text-lg">Attachments</h3>
         <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          <IssueAttachmentUpload />
+          <IssueAttachmentUpload disabled={nonEditable} />
           <IssueAttachments />
         </div>
       </div>
@@ -114,7 +119,11 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges 
           issueId={(archivedIssueId as string) ?? (issueId as string)}
           user={user}
         />
-        <AddComment issueId={(archivedIssueId as string) ?? (issueId as string)} user={user} />
+        <AddComment
+          issueId={(archivedIssueId as string) ?? (issueId as string)}
+          user={user}
+          disabled={nonEditable}
+        />
       </div>
     </>
   );
