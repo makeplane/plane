@@ -12,7 +12,7 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import Issue, Project, IssueActivity, State
+from plane.db.models import Issue, Project, State
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
@@ -65,7 +65,7 @@ def archive_old_issues():
                 [
                     issue_activity.delay(
                         type="issue.activity.updated",
-                        requested_data=json.dumps({"archive_at": issue.archived_at}),
+                        requested_data=json.dumps({"archived_at": issue.archived_at}),
                         actor_id=str(project.created_by_id),
                         issue_id=issue.id,
                         project_id=project_id,
