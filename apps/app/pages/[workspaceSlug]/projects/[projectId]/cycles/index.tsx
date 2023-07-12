@@ -10,7 +10,6 @@ import { Tab } from "@headlessui/react";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // services
-import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";

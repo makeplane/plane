@@ -41,7 +41,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
-import { renderShortTime, renderShortDate } from "helpers/date-time.helper";
+import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
@@ -397,11 +397,11 @@ const SinglePage: NextPage = () => {
               <div className="flex items-center">
                 <div className="flex items-center gap-6 text-custom-text-200">
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderShortTime(
+                    tooltipContent={`Last updated at ${render24HourFormatTime(
                       pageDetails.updated_at
                     )} on ${renderShortDate(pageDetails.updated_at)}`}
                   >
-                    <p className="text-sm">{renderShortTime(pageDetails.updated_at)}</p>
+                    <p className="text-sm">{render24HourFormatTime(pageDetails.updated_at)}</p>
                   </Tooltip>
                   <button className="flex items-center gap-2" onClick={handleCopyText}>
                     <LinkIcon className="h-4 w-4" />
