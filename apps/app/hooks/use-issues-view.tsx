@@ -189,12 +189,12 @@ const useIssuesView = () => {
 
   return {
     groupedByIssues,
-    issueView,
+    issueView: isArchivedIssues ? "list" : issueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
     setOrderBy,
-    showEmptyGroups,
+    showEmptyGroups: isArchivedIssues ? false : showEmptyGroups,
     setShowEmptyGroups,
     calendarDateRange,
     setCalendarDateRange,
