@@ -116,9 +116,9 @@ def close_old_issues():
             # Check if Issues
             if issues:
                 if project.default_state is None:
-                    close_state = project.default_state
-                else:
                     close_state = State.objects.filter(group="cancelled").first()
+                else:
+                    close_state = project.default_state
 
                 issues_to_update = []
                 for issue in issues:
