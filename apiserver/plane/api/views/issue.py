@@ -1087,7 +1087,7 @@ class IssueArchiveViewSet(BaseViewSet):
             issue.save()
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=json.dumps({"archived_in": None}),
+                requested_data=json.dumps({"archived_at": None}),
                 actor_id=str(request.user.id),
                 issue_id=str(issue.id),
                 project_id=str(project_id),
