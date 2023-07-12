@@ -188,7 +188,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         payload,
         user
       )
-      .then((res) => {
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -323,7 +323,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => {}}>
+      <Dialog as="div" className="relative z-20" onClose={() => handleClose()}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
