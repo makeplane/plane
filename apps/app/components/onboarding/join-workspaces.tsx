@@ -14,13 +14,17 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
+import { ICurrentUserResponse, IUser, IWorkspaceMemberInvitation, OnboardingSteps } from "types";
 // fetch-keys
 import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
-export const JoinWorkspaces: React.FC = () => {
+type Props = {
+  stepChange: (steps: Partial<OnboardingSteps>) => Promise<void>;
+};
+
+export const JoinWorkspaces: React.FC<Props> = ({ stepChange }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
@@ -59,7 +63,9 @@ export const JoinWorkspaces: React.FC = () => {
       },
       false
     );
+
     await userService.updateUserOnBoard({ userRole: user.role }, user);
+    await stepChange({ workspace_join: true });
   };
 
   const submitInvitations = async () => {
@@ -79,9 +85,9 @@ export const JoinWorkspaces: React.FC = () => {
   };
 
   return (
-    <div className="w-full space-y-10">
-      <h5 className="text-lg">We see that someone has invited you to</h5>
-      <h4 className="text-2xl font-semibold">Join a workspace</h4>
+    <div className="w-full space-y-7 sm:space-y-10">
+      <h5 className="sm:text-lg">We see that someone has invited you to</h5>
+      <h4 className="text-xl sm:text-2xl font-semibold">Join a workspace</h4>
       <div className="md:w-3/5 space-y-4">
         {invitations &&
           invitations.map((invitation) => {

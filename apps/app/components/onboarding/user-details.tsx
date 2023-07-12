@@ -41,8 +41,18 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
   });
 
   const onSubmit = async (formData: IUser) => {
+    if (!user) return;
+
+    const payload: Partial<IUser> = {
+      ...formData,
+      onboarding_step: {
+        ...user.onboarding_step,
+        profile_complete: true,
+      },
+    };
+
     await userService
-      .updateUser(formData)
+      .updateUser(payload)
       .then(() => {
         mutate<ICurrentUserResponse>(
           CURRENT_USER,
@@ -51,7 +61,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
 
             return {
               ...prevData,
-              ...formData,
+              ...payload,
             };
           },
           false
@@ -64,7 +74,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        mutate(CURRENT_USER);
       });
   };
 
@@ -79,12 +89,15 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
   }, [user, reset]);
 
   return (
-    <form className="w-full space-y-10" onSubmit={handleSubmit(onSubmit)}>
-      <div className="relative text-lg">
+    <form
+      className="h-full w-full space-y-7 sm:space-y-10 overflow-y-auto sm:flex sm:flex-col sm:items-start sm:justify-center"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <div className="relative sm:text-lg">
         <div className="text-custom-primary-100 absolute -top-1 -left-3">{'"'}</div>
         <h5>Hey there 👋🏻</h5>
         <h5 className="mt-5 mb-6">Let{"'"}s get you onboard!</h5>
-        <h4 className="text-2xl font-semibold">Set up your Plane profile.</h4>
+        <h4 className="text-xl sm:text-2xl font-semibold">Set up your Plane profile.</h4>
       </div>
 
       <div className="space-y-7 sm:w-3/4 md:w-2/5">

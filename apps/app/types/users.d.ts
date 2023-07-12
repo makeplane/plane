@@ -1,30 +1,30 @@
 import { IIssue, IIssueLite, IWorkspace, NestedKeyOf, Properties } from "./";
 
 export interface IUser {
-  id: readonly string;
-  last_login: readonly Date;
   avatar: string;
-  username: string;
-  mobile_number: string;
+  created_at: readonly Date;
+  created_location: readonly string;
+  date_joined: readonly Date;
   email: string;
   first_name: string;
-  last_name: string;
-  date_joined: readonly Date;
-  created_at: readonly Date;
-  updated_at: readonly Date;
-  last_location: readonly string;
-  created_location: readonly string;
+  id: readonly string;
   is_email_verified: boolean;
   is_onboarded: boolean;
   is_tour_completed: boolean;
-  token: string;
-  role: string;
-  theme: ICustomTheme;
-
-  my_issues_prop?: {
+  last_location: readonly string;
+  last_login: readonly Date;
+  last_name: string;
+  mobile_number: string;
+  my_issues_prop: {
     properties: Properties;
     groupBy: NestedKeyOf<IIssue> | null;
-  };
+  } | null;
+  onboarding_step: OnboardingSteps;
+  role: string;
+  token: string;
+  theme: ICustomTheme;
+  updated_at: readonly Date;
+  username: string;
 
   [...rest: string]: any;
 }
@@ -125,4 +125,11 @@ export type UserAuth = {
   isOwner: boolean;
   isViewer: boolean;
   isGuest: boolean;
+};
+
+export type OnboardingSteps = {
+  profile_complete: boolean;
+  workspace_create: boolean;
+  workspace_invite: boolean;
+  workspace_join: boolean;
 };

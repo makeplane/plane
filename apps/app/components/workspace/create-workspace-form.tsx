@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { mutate } from "swr";
 
@@ -9,7 +9,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton } from "components/ui";
+import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
@@ -26,6 +26,7 @@ type Props = {
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
   user: ICurrentUserResponse | undefined;
+  secondaryButton?: React.ReactNode;
 };
 
 const restrictedUrls = [
@@ -47,6 +48,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   defaultValues,
   setDefaultValues,
   user,
+  secondaryButton,
 }) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
@@ -68,6 +70,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       .then(async (res) => {
         if (res.status === true && !restrictedUrls.includes(formData.slug)) {
           setSlugError(false);
+
           await workspaceService
             .createWorkspace(formData, user)
             .then(async (res) => {
@@ -77,7 +80,11 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                 message: "Workspace created successfully.",
               });
 
-              mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
+              mutate<IWorkspace[]>(
+                USER_WORKSPACES,
+                (prevData) => [res, ...(prevData ?? [])],
+                false
+              );
               if (onSubmit) await onSubmit(res);
             })
             .catch(() =>
@@ -107,8 +114,8 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   );
 
   return (
-    <form className="space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
-      <div className="space-y-7">
+    <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
+      <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceName">Workspace Name</label>
           <Input
@@ -193,9 +200,12 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
         </div>
       </div>
 
-      <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
-        {isSubmitting ? "Creating..." : "Create Workspace"}
-      </PrimaryButton>
+      <div className="flex items-center gap-4">
+        {secondaryButton}
+        <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : "Create Workspace"}
+        </PrimaryButton>
+      </div>
     </form>
   );
 };

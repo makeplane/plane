@@ -84,7 +84,7 @@ const CreateWorkspace: NextPage = () => {
             </div>
           </div>
           <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
-            <div className="w-full space-y-10">
+            <div className="w-full space-y-7 sm:space-y-10">
               <h4 className="text-2xl font-semibold">Create your workspace</h4>
               <div className="sm:w-3/4 md:w-2/5">
                 <CreateWorkspaceForm

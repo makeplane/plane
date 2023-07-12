@@ -14,16 +14,16 @@ import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IWorkspace } from "types";
+import { ICurrentUserResponse, IWorkspace, OnboardingSteps } from "types";
 // fetch-keys
 import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
 type Props = {
-  updateLastWorkspace: () => Promise<void>;
   workspace: IWorkspace | undefined;
   user: ICurrentUserResponse | undefined;
+  stepChange: (steps: Partial<OnboardingSteps>) => Promise<void>;
 };
 
 type EmailRole = {
@@ -35,7 +35,7 @@ type FormValues = {
   emails: EmailRole[];
 };
 
-export const InviteMembers: React.FC<Props> = ({ workspace, updateLastWorkspace, user }) => {
+export const InviteMembers: React.FC<Props> = ({ workspace, user, stepChange }) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -56,11 +56,14 @@ export const InviteMembers: React.FC<Props> = ({ workspace, updateLastWorkspace,
   const nextStep = async () => {
     if (!user || !invitations) return;
 
-    // update last workspace id
-    await updateLastWorkspace();
+    const payload: Partial<OnboardingSteps> = {
+      workspace_invite: true,
+    };
 
     // update onboarding status from this step if no invitations are present
     if (invitations.length === 0) {
+      payload.workspace_join = true;
+
       mutate<ICurrentUserResponse>(
         CURRENT_USER,
         (prevData) => {
@@ -76,6 +79,8 @@ export const InviteMembers: React.FC<Props> = ({ workspace, updateLastWorkspace,
 
       await userService.updateUserOnBoard({ userRole: user.role }, user);
     }
+
+    await stepChange(payload);
   };
 
   const onSubmit = async (formData: FormValues) => {
@@ -113,19 +118,19 @@ export const InviteMembers: React.FC<Props> = ({ workspace, updateLastWorkspace,
 
   return (
     <form
-      className="w-full space-y-10"
+      className="w-full space-y-7 sm:space-y-10 overflow-hidden flex flex-col"
       onSubmit={handleSubmit(onSubmit)}
       onKeyDown={(e) => {
         if (e.code === "Enter") e.preventDefault();
       }}
     >
-      <h2 className="text-2xl font-semibold">Invite people to collaborate</h2>
-      <div className="md:w-3/5 text-sm">
+      <h2 className="text-xl sm:text-2xl font-semibold">Invite people to collaborate</h2>
+      <div className="md:w-3/5 text-sm h-full max-h-[40vh] flex flex-col overflow-hidden">
         <div className="grid grid-cols-11 gap-x-4 mb-1 text-sm">
           <h6 className="col-span-7">Co-workers Email</h6>
           <h6 className="col-span-4">Role</h6>
         </div>
-        <div className="space-y-4 mb-3">
+        <div className="space-y-3 sm:space-y-4 mb-3 h-full overflow-y-auto">
           {fields.map((field, index) => (
             <div key={field.id} className="group relative grid grid-cols-11 gap-4">
               <div className="col-span-7">
@@ -141,7 +146,11 @@ export const InviteMembers: React.FC<Props> = ({ workspace, updateLastWorkspace,
                   }}
                   render={({ field }) => (
                     <>
-                      <Input {...field} placeholder="Enter their email..." />
+                      <Input
+                        {...field}
+                        className="text-xs sm:text-sm"
+                        placeholder="Enter their email..."
+                      />
                       {errors.emails?.[index]?.email && (
                         <span className="text-red-500 text-xs">
                           {errors.emails?.[index]?.email?.message}
@@ -159,7 +168,7 @@ export const InviteMembers: React.FC<Props> = ({ workspace, updateLastWorkspace,
                   render={({ field: { value, onChange } }) => (
                     <CustomSelect
                       value={value}
-                      label={ROLE[value]}
+                      label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
                       onChange={onChange}
                       width="w-full"
                       input
