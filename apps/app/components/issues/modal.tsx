@@ -188,7 +188,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         payload,
         user
       )
-      .then(() => {
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
