@@ -40,16 +40,20 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
 
   const states = getStatesList(stateGroups ?? {});
 
-  const options = states?.map((state) => ({
-    value: state.id,
-    query: state.name,
-    content: (
-      <div className="flex items-center gap-2">
-        {getStateGroupIcon(state.group, "16", "16", state.color)}
-        {state.name}
-      </div>
-    ),
-  }));
+  const options = states
+    ?.filter((state) => state.group === "cancelled")
+    .map((state) => ({
+      value: state.id,
+      query: state.name,
+      content: (
+        <div className="flex items-center gap-2">
+          {getStateGroupIcon(state.group, "16", "16", state.color)}
+          {state.name}
+        </div>
+      ),
+    }));
+
+  const multipleOptions = options.length > 1;
 
   const defaultState = stateGroups && stateGroups.cancelled ? stateGroups.cancelled[0].id : null;
 
@@ -143,7 +147,11 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                     projectDetails?.default_state ? projectDetails?.default_state : defaultState
                   }
                   customButton={
-                    <button className="flex w-full items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 focus:outline-none px-3 py-2 text-sm text-left">
+                    <button
+                      className={`flex w-full items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 focus:outline-none px-3 py-2 text-sm text-left ${
+                        !multipleOptions ? "opacity-60" : ""
+                      }`}
+                    >
                       <div className="flex items-center gap-2">
                         {selectedOption ? (
                           getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)
@@ -163,13 +171,17 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                               <span className="text-custom-text-200">State</span>
                             )}
                       </div>
-                      <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                      {multipleOptions && (
+                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                      )}
                     </button>
                   }
                   onChange={(val: string) => {
                     handleChange({ default_state: val });
                   }}
                   options={options}
+                  disabled={!multipleOptions}
+                  dropdownWidth="w-full"
                 />
               </div>
             </div>
