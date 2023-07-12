@@ -30,7 +30,7 @@ import type { NextPage } from "next";
 import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 const Onboarding: NextPage = () => {
-  const [step, setStep] = useState<number | null>(3);
+  const [step, setStep] = useState<number | null>(null);
 
   const { theme } = useTheme();
 
@@ -95,39 +95,39 @@ const Onboarding: NextPage = () => {
     await userService.updateUser(payload);
   };
 
-  // useEffect(() => {
-  //   const handleStepChange = async () => {
-  //     if (!user || !userWorkspaces || !invitations) return;
+  useEffect(() => {
+    const handleStepChange = async () => {
+      if (!user || !userWorkspaces || !invitations) return;
 
-  //     const onboardingStep = user.onboarding_step;
+      const onboardingStep = user.onboarding_step;
 
-  //     if (!onboardingStep.profile_complete && step !== 1) setStep(1);
+      if (!onboardingStep.profile_complete && step !== 1) setStep(1);
 
-  //     if (onboardingStep.profile_complete && !onboardingStep.workspace_create && step !== 2)
-  //       setStep(2);
+      if (onboardingStep.profile_complete && !onboardingStep.workspace_create && step !== 2)
+        setStep(2);
 
-  //     if (
-  //       onboardingStep.profile_complete &&
-  //       onboardingStep.workspace_create &&
-  //       !onboardingStep.workspace_invite &&
-  //       step !== 3
-  //     )
-  //       setStep(3);
+      if (
+        onboardingStep.profile_complete &&
+        onboardingStep.workspace_create &&
+        !onboardingStep.workspace_invite &&
+        step !== 3
+      )
+        setStep(3);
 
-  //     if (
-  //       onboardingStep.profile_complete &&
-  //       onboardingStep.workspace_create &&
-  //       onboardingStep.workspace_invite &&
-  //       !onboardingStep.workspace_join &&
-  //       step !== 4
-  //     ) {
-  //       if (invitations.length > 0) setStep(4);
-  //       else await Router.push("/");
-  //     }
-  //   };
+      if (
+        onboardingStep.profile_complete &&
+        onboardingStep.workspace_create &&
+        onboardingStep.workspace_invite &&
+        !onboardingStep.workspace_join &&
+        step !== 4
+      ) {
+        if (invitations.length > 0) setStep(4);
+        else await Router.push("/");
+      }
+    };
 
-  //   handleStepChange();
-  // }, [user, invitations, userWorkspaces, step]);
+    handleStepChange();
+  }, [user, invitations, userWorkspaces, step]);
 
   if (userLoading || step === null)
     return (
