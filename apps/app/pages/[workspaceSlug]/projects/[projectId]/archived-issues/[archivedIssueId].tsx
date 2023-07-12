@@ -125,7 +125,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
           title: "Success!",
           message: "Issue restored successfully.",
         });
-        router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues/`);
+        router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })
       .catch(() => {
         setToastAlert({
