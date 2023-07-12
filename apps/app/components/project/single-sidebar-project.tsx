@@ -156,7 +156,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 {project.archive_in > 0 && (
                   <CustomMenu.MenuItem
                     onClick={() =>
-                      router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues/`)
+                      router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)
                     }
                   >
                     <div className="flex items-center justify-start gap-2">
