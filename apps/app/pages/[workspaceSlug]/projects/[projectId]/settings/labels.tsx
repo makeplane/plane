@@ -21,10 +21,12 @@ import {
 } from "components/labels";
 import { SettingsHeader } from "components/project";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
+// images
+import emptyLabel from "public/empty-state/label.svg";
 // types
 import { IIssueLabels } from "types";
 import type { NextPage } from "next";
@@ -133,16 +135,33 @@ const LabelsSettings: NextPage = () => {
               )}
               <>
                 {issueLabels ? (
-                  issueLabels.map((label) => {
-                    const children = issueLabels?.filter((l) => l.parent === label.id);
+                  issueLabels.length > 0 ? (
+                    issueLabels.map((label) => {
+                      const children = issueLabels?.filter((l) => l.parent === label.id);
 
-                    if (children && children.length === 0) {
-                      if (!label.parent)
+                      if (children && children.length === 0) {
+                        if (!label.parent)
+                          return (
+                            <SingleLabel
+                              key={label.id}
+                              label={label}
+                              addLabelToGroup={() => addLabelToGroup(label)}
+                              editLabel={(label) => {
+                                editLabel(label);
+                                scrollToRef.current?.scrollIntoView({
+                                  behavior: "smooth",
+                                });
+                              }}
+                              handleLabelDelete={() => setSelectDeleteLabel(label)}
+                            />
+                          );
+                      } else
                         return (
-                          <SingleLabel
+                          <SingleLabelGroup
                             key={label.id}
                             label={label}
-                            addLabelToGroup={() => addLabelToGroup(label)}
+                            labelChildren={children}
+                            addLabelToGroup={addLabelToGroup}
                             editLabel={(label) => {
                               editLabel(label);
                               scrollToRef.current?.scrollIntoView({
@@ -150,26 +169,20 @@ const LabelsSettings: NextPage = () => {
                               });
                             }}
                             handleLabelDelete={() => setSelectDeleteLabel(label)}
+                            user={user}
                           />
                         );
-                    } else
-                      return (
-                        <SingleLabelGroup
-                          key={label.id}
-                          label={label}
-                          labelChildren={children}
-                          addLabelToGroup={addLabelToGroup}
-                          editLabel={(label) => {
-                            editLabel(label);
-                            scrollToRef.current?.scrollIntoView({
-                              behavior: "smooth",
-                            });
-                          }}
-                          handleLabelDelete={() => setSelectDeleteLabel(label)}
-                          user={user}
-                        />
-                      );
-                  })
+                    })
+                  ) : (
+                    <EmptyState
+                      title="No labels yet"
+                      description="Create labels to help organize and filter issues in you project"
+                      image={emptyLabel}
+                      buttonText="Add label"
+                      onClick={newLabel}
+                      isFullScreen={false}
+                    />
+                  )
                 ) : (
                   <Loader className="space-y-5">
                     <Loader.Item height="40px" />

@@ -29,19 +29,13 @@ import {
 } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
-import { CycleIssuesGanttChartView, TransferIssues, TransferIssuesModal } from "components/cycles";
-import { IssueGanttChartView } from "components/issues/gantt-chart";
+import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
-import { EmptySpace, EmptySpaceItem, EmptyState, PrimaryButton, Spinner } from "components/ui";
+import { EmptyState, PrimaryButton, Spinner } from "components/ui";
 // icons
-import {
-  ListBulletIcon,
-  PlusIcon,
-  RectangleStackIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // images
-import emptyIssue from "public/empty-state/empty-issue.svg";
+import emptyIssue from "public/empty-state/issue.svg";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
@@ -56,7 +50,6 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATES_LIST,
 } from "constants/fetch-keys";
-import { ModuleIssuesGanttChartView } from "components/modules";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -107,7 +100,7 @@ export const IssuesView: React.FC<Props> = ({
     groupByProperty: selectedGroup,
     orderBy,
     filters,
-    isNotEmpty,
+    isEmpty,
     setFilters,
     params,
   } = useIssuesView();
@@ -517,7 +510,7 @@ export const IssuesView: React.FC<Props> = ({
           )}
         </StrictModeDroppable>
         {groupedByIssues ? (
-          isNotEmpty ? (
+          !isEmpty || issueView === "kanban" || issueView === "calendar" ? (
             <>
               {isCompleted && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
               {issueView === "list" ? (
@@ -584,46 +577,20 @@ export const IssuesView: React.FC<Props> = ({
                 issueView === "gantt_chart" && <GanttChartView />
               )}
             </>
-          ) : type === "issue" ? (
-            <EmptyState
-              type="issue"
-              title="Create New Issue"
-              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-              imgURL={emptyIssue}
-            />
           ) : (
-            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-              <EmptySpace
-                title="You don't have any issue yet."
-                description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-                Icon={RectangleStackIcon}
-              >
-                <EmptySpaceItem
-                  title="Create a new issue"
-                  description={
-                    <span>
-                      Use <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>{" "}
-                      shortcut to create a new issue
-                    </span>
-                  }
-                  Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "c",
-                    });
-                    document.dispatchEvent(e);
-                  }}
-                />
-                {openIssuesListModal && (
-                  <EmptySpaceItem
-                    title="Add an existing issue"
-                    description="Open list"
-                    Icon={ListBulletIcon}
-                    action={openIssuesListModal}
-                  />
-                )}
-              </EmptySpace>
-            </div>
+            <EmptyState
+              title="Project issues will appear here"
+              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+              image={emptyIssue}
+              buttonText="New Issue"
+              buttonIcon={<PlusIcon className="h-4 w-4" />}
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "c",
+                });
+                document.dispatchEvent(e);
+              }}
+            />
           )
         ) : (
           <div className="flex h-full w-full items-center justify-center">

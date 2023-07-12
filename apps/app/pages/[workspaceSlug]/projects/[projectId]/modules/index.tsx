@@ -21,9 +21,9 @@ import {
 import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ChartBarIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 // images
-import emptyModule from "public/empty-state/empty-module.svg";
+import emptyModule from "public/empty-state/module.svg";
 // types
 import { IModule, SelectModuleType } from "types/modules";
 import type { NextPage } from "next";
@@ -141,10 +141,17 @@ const ProjectModules: NextPage = () => {
           </div>
         ) : (
           <EmptyState
-            type="module"
-            title="Create New Module"
-            description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
-            imgURL={emptyModule}
+            title="Manage your project with modules"
+            description="Modules are smaller, focused projects that help you group and organize issues."
+            image={emptyModule}
+            buttonText="New Module"
+            buttonIcon={<PlusIcon className="h-4 w-4" />}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "m",
+              });
+              document.dispatchEvent(e);
+            }}
           />
         )
       ) : (

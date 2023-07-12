@@ -23,7 +23,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // images
-import emptyEstimate from "public/empty-state/empty-estimate.svg";
+import emptyEstimate from "public/empty-state/estimate.svg";
 // types
 import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
@@ -158,13 +158,14 @@ const EstimatesSettings: NextPage = () => {
                 ))}
               </section>
             ) : (
-              <div className="grid h-full w-full place-items-center">
+              <div className="h-full w-full overflow-y-auto">
                 <EmptyState
-                  type="estimate"
-                  title="Create New Estimate"
-                  description="Estimates help you communicate the complexity of an issue. You can create your own estimate and communicate with your team."
-                  imgURL={emptyEstimate}
-                  action={() => {
+                  title="No estimates yet"
+                  description="Estimates help you communicate the complexity of an issue."
+                  image={emptyEstimate}
+                  buttonText="Add Estimate"
+                  buttonIcon={<PlusIcon className="h-4 w-4" />}
+                  onClick={() => {
                     setEstimateToUpdate(undefined);
                     setEstimateFormOpen(true);
                   }}

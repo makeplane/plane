@@ -5,13 +5,15 @@ import { useRouter } from "next/router";
 // headless ui
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 // icons
-import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+// images
+import emptyMyIssues from "public/empty-state/my-issues.svg";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // hooks
 import useIssues from "hooks/use-issues";
 // ui
-import { Spinner, EmptySpace, EmptySpaceItem, PrimaryButton } from "components/ui";
+import { Spinner, PrimaryButton, EmptyState } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // hooks
 import useMyIssuesProperties from "hooks/use-my-issues-filter";
@@ -23,13 +25,14 @@ import { MyIssuesListItem } from "components/issues";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
 import type { NextPage } from "next";
+import useProjects from "hooks/use-projects";
 
 const MyIssuesPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // fetching user issues
   const { myIssues } = useIssues(workspaceSlug as string);
+  const { projects } = useProjects();
 
   const [properties, setProperties] = useMyIssuesProperties(workspaceSlug as string);
 
@@ -148,30 +151,39 @@ const MyIssuesPage: NextPage = () => {
                 )}
               </Disclosure>
             ) : (
-              <div className="flex h-full w-full flex-col items-center justify-center px-4">
-                <EmptySpace
-                  title="You don't have any issue assigned to you yet."
-                  description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-                  Icon={RectangleStackIcon}
-                >
-                  <EmptySpaceItem
-                    title="Create a new issue"
-                    description={
-                      <span>
-                        Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut
-                        to create a new issue
-                      </span>
-                    }
-                    Icon={PlusIcon}
-                    action={() => {
-                      const e = new KeyboardEvent("keydown", {
-                        key: "c",
-                      });
-                      document.dispatchEvent(e);
-                    }}
-                  />
-                </EmptySpace>
-              </div>
+              <EmptyState
+                title={
+                  projects
+                    ? projects.length > 0
+                      ? "You don't have any issue assigned to you yet"
+                      : "Issues assigned to you will appear here"
+                    : ""
+                }
+                description={
+                  projects
+                    ? projects.length > 0
+                      ? "Keep track of your work in a single place."
+                      : "Let's create your first project and add issues that you want to accomplish."
+                    : ""
+                }
+                image={emptyMyIssues}
+                buttonText={projects ? (projects.length > 0 ? "New Issue" : "New Project") : ""}
+                buttonIcon={<PlusIcon className="h-4 w-4" />}
+                onClick={() => {
+                  let e: KeyboardEvent;
+
+                  if (projects && projects.length > 0)
+                    e = new KeyboardEvent("keydown", {
+                      key: "c",
+                    });
+                  else
+                    e = new KeyboardEvent("keydown", {
+                      key: "p",
+                    });
+
+                  document.dispatchEvent(e);
+                }}
+              />
             )}
           </>
         ) : (
