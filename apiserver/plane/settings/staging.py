@@ -11,10 +11,9 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 from .common import *  # noqa
+
 # Database
-DEBUG = int(os.environ.get(
-    "DEBUG", 1
-))  == 1
+DEBUG = int(os.environ.get("DEBUG", 1)) == 1
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -56,9 +55,7 @@ STORAGES = {
 
 
 # Make true if running in a docker environment
-DOCKERIZED = int(os.environ.get(
-    "DOCKERIZED", 0
-))  == 1
+DOCKERIZED = int(os.environ.get("DOCKERIZED", 0)) == 1
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
@@ -201,15 +198,19 @@ PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
+
+OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
-GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
+GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
 redis_url = os.environ.get("REDIS_URL")
-broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+broker_url = (
+    f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+)
 
 CELERY_RESULT_BACKEND = broker_url
 CELERY_BROKER_URL = broker_url

@@ -137,7 +137,7 @@ export const JiraGetImportDetail: React.FC = () => {
                 label={
                   <span>
                     {value && value !== "" ? (
-                      projects.find((p) => p.id === value)?.name
+                      projects?.find((p) => p.id === value)?.name
                     ) : (
                       <span className="text-custom-text-200">Select a project</span>
                     )}
@@ -145,7 +145,7 @@ export const JiraGetImportDetail: React.FC = () => {
                 }
                 verticalPosition="top"
               >
-                {projects.length > 0 ? (
+                {projects && projects.length > 0 ? (
                   projects.map((project) => (
                     <CustomSelect.Option key={project.id} value={project.id}>
                       {project.name}

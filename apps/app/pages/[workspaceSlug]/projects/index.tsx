@@ -16,12 +16,12 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { JoinProjectModal } from "components/project/join-project-modal";
 import { DeleteProjectModal, SingleProjectCard } from "components/project";
 // ui
-import { Loader, EmptyState, PrimaryButton } from "components/ui";
+import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // images
-import emptyProject from "public/empty-state/empty-project.svg";
+import emptyProject from "public/empty-state/project.svg";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -88,16 +88,7 @@ const ProjectsPage: NextPage = () => {
       />
       {projects ? (
         <div className="h-full w-full overflow-hidden">
-          {projects.length === 0 ? (
-            <div className="h-full w-full grid place-items-center p-8">
-              <EmptyState
-                type="project"
-                title="Create New Project"
-                description="Projects are a collection of issues. They can be used to represent the development work for a product, project, or service."
-                imgURL={emptyProject}
-              />
-            </div>
-          ) : (
+          {projects.length > 0 ? (
             <div className="h-full p-8 overflow-y-auto">
               <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
                 {projects.map((project) => (
@@ -110,6 +101,20 @@ const ProjectsPage: NextPage = () => {
                 ))}
               </div>
             </div>
+          ) : (
+            <EmptyState
+              image={emptyProject}
+              title="No projects yet"
+              description="Get started by creating your first project"
+              buttonText="New Project"
+              buttonIcon={<PlusIcon className="h-4 w-4" />}
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "p",
+                });
+                document.dispatchEvent(e);
+              }}
+            />
           )}
         </div>
       ) : (
