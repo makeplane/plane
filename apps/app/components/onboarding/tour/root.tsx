@@ -114,20 +114,20 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
           </div>
         </div>
       ) : (
-        <div className="relative w-4/5 md:w-1/2 lg:w-3/5 h-3/4 bg-custom-background-100 rounded-[10px] grid grid-cols-10 overflow-hidden">
+        <div className="relative w-4/5 md:w-1/2 lg:w-3/5 h-3/5 sm:h-3/4 bg-custom-background-100 rounded-[10px] grid grid-cols-10 overflow-hidden">
           <button
             type="button"
-            className="fixed top-[11.5%] right-[9%] md:right-[24%] lg:right-[19%] border border-custom-border-200 rounded-full p-1 translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
+            className="fixed top-[19%] sm:top-[11.5%] right-[9%] md:right-[24%] lg:right-[19%] border border-custom-text-100 rounded-full p-1 translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
             onClick={onComplete}
           >
             <XMarkIcon className="h-3 w-3 text-custom-text-100" />
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 lg:col-span-7 h-full overflow-hidden">
-            <div className="flex justify-end items-end h-3/5 overflow-hidden bg-custom-primary-100">
+            <div className="flex justify-end items-end h-1/2 sm:h-3/5 overflow-hidden bg-custom-primary-100">
               <Image src={currentStep?.image} alt={currentStep?.title} />
             </div>
-            <div className="flex flex-col h-2/5 p-4 overflow-y-auto">
+            <div className="flex flex-col h-1/2 sm:h-2/5 p-4 overflow-y-auto">
               <h3 className="font-medium text-lg">{currentStep?.title}</h3>
               <p className="text-custom-text-200 text-sm mt-3">{currentStep?.description}</p>
               <div className="h-full flex items-end justify-between gap-4 mt-3">

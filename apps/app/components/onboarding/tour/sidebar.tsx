@@ -36,7 +36,7 @@ type Props = {
 };
 
 export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
-  <div className="hidden lg:block col-span-3 p-8">
+  <div className="hidden lg:block col-span-3 p-8 bg-custom-background-90">
     <h3 className="font-medium text-lg">
       Let{"'"}s get started!
       <br />
