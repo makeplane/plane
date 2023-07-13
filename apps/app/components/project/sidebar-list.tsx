@@ -151,11 +151,11 @@ export const ProjectSidebarList: FC = () => {
         data={projectToDelete}
         user={user}
       />
-      <div className="mt-2.5 h-full overflow-y-auto border-t border-custom-sidebar-border-100 bg-custom-sidebar-background-100 pt-2.5">
+      <div className="h-full overflow-y-auto mt-5 px-4">
         {favoriteProjects && favoriteProjects.length > 0 && (
-          <div className="mt-3 flex flex-col space-y-2 px-3">
+          <div className="flex flex-col space-y-2">
             {!sidebarCollapse && (
-              <h5 className="text-sm font-semibold text-custom-sidebar-text-200">Favorites</h5>
+              <h5 className="text-sm font-medium text-custom-sidebar-text-200">Favorites</h5>
             )}
             {favoriteProjects.map((favoriteProject) => {
               const project = favoriteProject.project_detail;
@@ -173,9 +173,9 @@ export const ProjectSidebarList: FC = () => {
             })}
           </div>
         )}
-        <div className="flex flex-col space-y-2 p-3">
+        <div className="flex flex-col space-y-2 mt-5">
           {!sidebarCollapse && (
-            <h5 className="text-sm font-semibold text-custom-sidebar-text-200">Projects</h5>
+            <h5 className="text-sm font-medium text-custom-sidebar-text-200">Projects</h5>
           )}
           {projects ? (
             <>
