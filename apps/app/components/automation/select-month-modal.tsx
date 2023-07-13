@@ -65,7 +65,7 @@ export const SelectMonthModal: React.FC<Props> = ({
           min: 1,
           max: 12,
         }}
-        style={{ appearance: "none" }}
+        className="border-custom-border-200"
       />
       <span className="absolute text-sm text-custom-text-200 top-2.5 right-8">Months</span>
     </div>
