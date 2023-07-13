@@ -22,6 +22,7 @@ from plane.api.views import (
     # User
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
     ## End User
     # Workspaces
@@ -202,7 +203,12 @@ urlpatterns = [
     path(
         "users/me/onboard/",
         UpdateUserOnBoardedEndpoint.as_view(),
-        name="change-password",
+        name="user-onboard",
+    ),
+    path(
+        "users/me/tour-completed/",
+        UpdateUserTourCompletedEndpoint.as_view(),
+        name="user-tour",
     ),
     path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces

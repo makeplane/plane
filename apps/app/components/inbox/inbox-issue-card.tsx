@@ -40,8 +40,8 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
       <a>
         <div
           id={issue.id}
-          className={`relative min-h-[5rem] cursor-pointer select-none space-y-3 py-2 px-4 border-b border-custom-border-100 hover:bg-custom-primary hover:bg-opacity-10 ${
-            active ? "bg-custom-primary bg-opacity-5" : " "
+          className={`relative min-h-[5rem] cursor-pointer select-none space-y-3 py-2 px-4 border-b border-custom-border-100 hover:bg-custom-primary/5 ${
+            active ? "bg-custom-primary/5" : " "
           } ${issue.issue_inbox[0].status !== -2 ? "opacity-60" : ""}`}
         >
           <div className="flex items-center gap-x-2">

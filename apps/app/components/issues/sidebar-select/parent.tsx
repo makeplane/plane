@@ -23,6 +23,7 @@ type Props = {
   customDisplay: JSX.Element;
   watch: UseFormWatch<IIssue>;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarParentSelect: React.FC<Props> = ({
@@ -31,6 +32,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
   customDisplay,
   watch,
   userAuth,
+  disabled = false,
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
@@ -46,7 +48,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
       : null
   );
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">

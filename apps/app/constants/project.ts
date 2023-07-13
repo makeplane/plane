@@ -1,4 +1,3 @@
-
 export const NETWORK_CHOICES = { "0": "Secret", "2": "Public" };
 
 export const GROUP_CHOICES = {
@@ -27,3 +26,11 @@ export const MONTHS = [
 ];
 
 export const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+export const PROJECT_AUTOMATION_MONTHS = [
+  { label: "1 Months", value: 1 },
+  { label: "3 Months", value: 3 },
+  { label: "6 Months", value: 6 },
+  { label: "9 Months", value: 9 },
+  { label: "12 Months", value: 12 },
+];

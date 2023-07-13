@@ -70,6 +70,13 @@ export const PROJECT_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?: any)
 
   return `PROJECT_ISSUES_LIST_WITH_PARAMS_${projectId.toUpperCase()}_${paramsKey}`;
 };
+export const PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?: any) => {
+  if (!params) return `PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS${projectId.toUpperCase()}`;
+
+  const paramsKey = paramsToKey(params);
+
+  return `PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS${projectId.toUpperCase()}_${paramsKey}`;
+};
 export const PROJECT_ISSUES_DETAILS = (issueId: string) =>
   `PROJECT_ISSUES_DETAILS_${issueId.toUpperCase()}`;
 export const PROJECT_ISSUES_PROPERTIES = (projectId: string) =>
@@ -155,6 +162,8 @@ export const INBOX_ISSUE_DETAILS = (inboxId: string, issueId: string) =>
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase()}`;
 export const ISSUE_ATTACHMENTS = (issueId: string) => `ISSUE_ATTACHMENTS_${issueId.toUpperCase()}`;
+export const ARCHIVED_ISSUE_DETAILS = (issueId: string) =>
+  `ARCHIVED_ISSUE_DETAILS_${issueId.toUpperCase()}`;
 
 // integrations
 export const APP_INTEGRATIONS = "APP_INTEGRATIONS";

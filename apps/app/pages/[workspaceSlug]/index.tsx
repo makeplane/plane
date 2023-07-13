@@ -19,6 +19,7 @@ import {
   IssuesPieChart,
   IssuesStats,
 } from "components/workspace";
+import { TourRoot } from "components/onboarding";
 // ui
 import { PrimaryButton, ProductUpdatesModal } from "components/ui";
 // images
@@ -26,9 +27,10 @@ import emptyDashboard from "public/empty-state/dashboard.svg";
 // helpers
 import { render12HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 // types
+import { ICurrentUserResponse } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
+import { CURRENT_USER, USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 // constants
 import { DAYS } from "constants/project";
 
@@ -64,6 +66,28 @@ const WorkspacePage: NextPage = () => {
           isOpen={isProductUpdatesModalOpen}
           setIsOpen={setIsProductUpdatesModalOpen}
         />
+      )}
+      {user && !user.is_tour_completed && (
+        <div className="fixed top-0 left-0 h-full w-full bg-custom-backdrop bg-opacity-50 transition-opacity z-20 grid place-items-center">
+          <TourRoot
+            onComplete={() => {
+              mutate<ICurrentUserResponse>(
+                CURRENT_USER,
+                (prevData) => {
+                  if (!prevData) return prevData;
+
+                  return {
+                    ...prevData,
+                    is_tour_completed: true,
+                  };
+                },
+                false
+              );
+
+              userService.updateUserTourCompleted(user).catch(() => mutate(CURRENT_USER));
+            }}
+          />
+        </div>
       )}
       {projects ? (
         projects.length > 0 ? (

@@ -20,7 +20,7 @@ import {
 // ui
 import { Spinner } from "components/ui";
 // icons
-import Logo from "public/logo.png";
+import Logo from "public/plane-logos/blue-without-text.png";
 // types
 type EmailPasswordFormValues = {
   email: string;

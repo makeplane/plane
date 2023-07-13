@@ -3,7 +3,7 @@
 Django==4.2.3
 django-braces==1.15.0
 django-taggit==4.0.0
-psycopg2==2.9.6
+psycopg==3.1.9
 django-oauth-toolkit==2.3.0
 mistune==3.0.1
 djangorestframework==3.14.0

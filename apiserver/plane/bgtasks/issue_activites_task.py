@@ -570,7 +570,7 @@ def track_archive_at(
                 comment=f"{actor.email} has restored the issue",
                 verb="updated",
                 actor=actor,
-                field="archvied_at",
+                field="archived_at",
                 old_value="archive",
                 new_value="restore",
             )
@@ -584,7 +584,7 @@ def track_archive_at(
                 comment=f"Plane has archived the issue",
                 verb="updated",
                 actor=actor,
-                field="archvied_at",
+                field="archived_at",
                 old_value=None,
                 new_value="archive",
             )

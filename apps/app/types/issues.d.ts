@@ -64,6 +64,7 @@ export interface IIssueLink {
 }
 
 export interface IIssue {
+  archived_at: string;
   assignees: string[];
   assignee_details: IUser[];
   assignees_list: string[];

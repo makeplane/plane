@@ -16,6 +16,7 @@ from .project import (
 from .people import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
 )
 

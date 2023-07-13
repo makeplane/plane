@@ -41,7 +41,7 @@ export const FiltersDropdown: React.FC = () => {
               ...PRIORITIES.map((priority) => ({
                 id: priority === null ? "null" : priority,
                 label: (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 capitalize">
                     {getPriorityIcon(priority)} {priority ?? "None"}
                   </div>
                 ),

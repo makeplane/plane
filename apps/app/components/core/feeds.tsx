@@ -23,6 +23,7 @@ import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import RemirrorRichTextEditor from "components/rich-text-editor";
+import { Icon } from "components/ui";
 
 const activityDetails: {
   [key: string]: {
@@ -105,6 +106,10 @@ const activityDetails: {
     message: "updated the attachment",
     icon: <PaperClipIcon className="h-3 w-3 text-custom-text-200 " aria-hidden="true" />,
   },
+  archived_at: {
+    message: "archived",
+    icon: <Icon iconName="archive" className="text-sm text-custom-text-200" aria-hidden="true" />,
+  },
 };
 
 export const Feeds: React.FC<any> = ({ activities }) => (
@@ -144,6 +149,11 @@ export const Feeds: React.FC<any> = ({ activities }) => (
           action = `${activity.verb} the`;
         } else if (activity.field === "link") {
           action = `${activity.verb} the`;
+        } else if (activity.field === "archived_at") {
+          action =
+            activity.new_value && activity.new_value === "restore"
+              ? "restored the issue"
+              : "archived the issue";
         }
         // for values that are after the action clause
         let value: any = activity.new_value ? activity.new_value : activity.old_value;
@@ -205,7 +215,13 @@ export const Feeds: React.FC<any> = ({ activities }) => (
             <div key={activity.id} className="mt-2">
               <div className="relative flex items-start space-x-3">
                 <div className="relative px-1">
-                  {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
+                  {activity.field ? (
+                    activity.new_value === "restore" ? (
+                      <Icon iconName="history" className="text-sm text-custom-text-200" />
+                    ) : (
+                      activityDetails[activity.field as keyof typeof activityDetails]?.icon
+                    )
+                  ) : activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
                     <img
                       src={activity.actor_detail.avatar}
                       alt={activity.actor_detail.first_name}
@@ -296,14 +312,23 @@ export const Feeds: React.FC<any> = ({ activities }) => (
                     </div>
                     <div className="min-w-0 flex-1 py-3">
                       <div className="text-xs text-custom-text-200">
-                        <span className="text-gray font-medium">
-                          {activity.actor_detail.first_name}
-                          {activity.actor_detail.is_bot
-                            ? " Bot"
-                            : " " + activity.actor_detail.last_name}
-                        </span>
+                        {activity.field === "archived_at" && activity.new_value !== "restore" ? (
+                          <span className="text-gray font-medium">Plane</span>
+                        ) : (
+                          <span className="text-gray font-medium">
+                            {activity.actor_detail.first_name}
+                            {activity.actor_detail.is_bot
+                              ? " Bot"
+                              : " " + activity.actor_detail.last_name}
+                          </span>
+                        )}
                         <span> {action} </span>
-                        <span className="text-xs font-medium text-custom-text-100"> {value} </span>
+                        {activity.field !== "archived_at" && (
+                          <span className="text-xs font-medium text-custom-text-100">
+                            {" "}
+                            {value}{" "}
+                          </span>
+                        )}
                         <span className="whitespace-nowrap">{timeAgo(activity.created_at)}</span>
                       </div>
                     </div>
