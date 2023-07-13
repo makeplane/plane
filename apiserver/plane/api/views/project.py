@@ -96,7 +96,7 @@ class ProjectViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            is_favorite = request.get.GET("is_favorite", "all")
+            is_favorite = request.GET.get("is_favorite", "all")
             subquery = ProjectFavorite.objects.filter(
                 user=self.request.user,
                 project_id=OuterRef("pk"),
@@ -105,7 +105,6 @@ class ProjectViewSet(BaseViewSet):
             projects = (
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
-                .filter()
                 .order_by("-is_favorite", "name")
                 .annotate(
                     total_members=ProjectMember.objects.filter(
