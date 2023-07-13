@@ -1,13 +1,38 @@
 import React from "react";
 
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // hooks
 import useTheme from "hooks/use-theme";
 // icons
 import { ChartBarIcon } from "@heroicons/react/24/outline";
-import { GridViewIcon, AssignmentClipboardIcon, TickMarkIcon, SettingIcon } from "components/icons";
+import { GridViewIcon, AssignmentClipboardIcon, TickMarkIcon } from "components/icons";
+
+import { NotificationPopover } from "components/notifications";
+
+const workspaceLinks = (workspaceSlug: string) => [
+  {
+    icon: GridViewIcon,
+    name: "Dashboard",
+    href: `/${workspaceSlug}`,
+  },
+  {
+    icon: ChartBarIcon,
+    name: "Analytics",
+    href: `/${workspaceSlug}/analytics`,
+  },
+  {
+    icon: AssignmentClipboardIcon,
+    name: "Projects",
+    href: `/${workspaceSlug}/projects`,
+  },
+  {
+    icon: TickMarkIcon,
+    name: "My Issues",
+    href: `/${workspaceSlug}/me/my-issues`,
+  },
+];
 
 export const WorkspaceSidebarMenu = () => {
   const router = useRouter();
@@ -15,34 +40,6 @@ export const WorkspaceSidebarMenu = () => {
 
   // theme context
   const { collapsed: sidebarCollapse } = useTheme();
-
-  const workspaceLinks = (workspaceSlug: string) => [
-    {
-      icon: GridViewIcon,
-      name: "Dashboard",
-      href: `/${workspaceSlug}`,
-    },
-    {
-      icon: ChartBarIcon,
-      name: "Analytics",
-      href: `/${workspaceSlug}/analytics`,
-    },
-    {
-      icon: AssignmentClipboardIcon,
-      name: "Projects",
-      href: `/${workspaceSlug}/projects`,
-    },
-    {
-      icon: TickMarkIcon,
-      name: "My Issues",
-      href: `/${workspaceSlug}/me/my-issues`,
-    },
-    {
-      icon: SettingIcon,
-      name: "Settings",
-      href: `/${workspaceSlug}/settings`,
-    },
-  ];
 
   return (
     <div className="flex w-full flex-col items-start justify-start gap-2 px-3 py-1">
@@ -80,6 +77,8 @@ export const WorkspaceSidebarMenu = () => {
           </Link>
         );
       })}
+
+      <NotificationPopover />
     </div>
   );
 };

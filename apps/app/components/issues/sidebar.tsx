@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
-import { useForm, Controller, UseFormWatch, Control } from "react-hook-form";
+import { useForm, Controller, UseFormWatch } from "react-hook-form";
 // react-color
 import { TwitterPicker } from "react-color";
 // headless ui
@@ -13,6 +13,7 @@ import { Popover, Listbox, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
+import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 // services
 import issuesService from "services/issues.service";
 import modulesService from "services/modules.service";
@@ -95,6 +96,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { user } = useUserAuth();
+
+  const { loading, handleSubscribe, handleUnsubscribe, subscribed } =
+    useUserIssueNotificationSubscription(workspaceSlug, projectId, issueId);
 
   const { memberRole } = useProjectMyMembership();
 
@@ -287,6 +291,16 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
           </h4>
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              className="rounded-md border border-custom-primary-100 px-4 py-1 text-xs text-custom-primary-100 shadow-sm duration-300 focus:outline-none"
+              onClick={() => {
+                if (subscribed) handleUnsubscribe();
+                else handleSubscribe();
+              }}
+            >
+              {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
+            </button>
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"

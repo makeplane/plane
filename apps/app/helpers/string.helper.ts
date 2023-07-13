@@ -118,3 +118,19 @@ export const getFirstCharacters = (str: string) => {
     return words[0].charAt(0) + words[1].charAt(0);
   }
 };
+
+/**
+ * @description: This function will remove all the HTML tags from the string
+ * @param {string} html
+ * @return {string}
+ * @example:
+ * const html = "<p>Some text</p>";
+ * const text = stripHTML(html);
+ * console.log(text); // Some text
+ */
+
+export const stripHTML = (html: string) => {
+  const tmp = document.createElement("DIV");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
+};
