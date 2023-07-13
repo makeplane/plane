@@ -14,7 +14,7 @@ export interface IWorkspace {
   readonly created_by: string;
   readonly updated_by: string;
   organization_size: string;
-  total_issues: number | null;
+  total_issues: number;
 }
 
 export interface IWorkspaceLite {

@@ -22,17 +22,17 @@ export const WorkspaceSidebarMenu = () => {
       href: `/${workspaceSlug}`,
     },
     {
-      icon: "insights",
+      icon: "bar_chart",
       name: "Analytics",
       href: `/${workspaceSlug}/analytics`,
     },
     {
-      icon: "assignment",
+      icon: "work",
       name: "Projects",
       href: `/${workspaceSlug}/projects`,
     },
     {
-      icon: "check_circle",
+      icon: "task_alt",
       name: "My Issues",
       href: `/${workspaceSlug}/me/my-issues`,
     },
@@ -44,7 +44,7 @@ export const WorkspaceSidebarMenu = () => {
   ];
 
   return (
-    <div className="flex w-full flex-col items-start justify-start cursor-pointer gap-2 p-3.5">
+    <div className="w-full cursor-pointer space-y-2 px-4 mt-5">
       {workspaceLinks(workspaceSlug as string).map((link, index) => {
         const isActive =
           link.name === "Settings"
@@ -53,7 +53,7 @@ export const WorkspaceSidebarMenu = () => {
 
         return (
           <Link key={index} href={link.href}>
-            <a className="w-full">
+            <a className="block w-full">
               <Tooltip
                 tooltipContent={link.name}
                 position="right"
@@ -61,23 +61,13 @@ export const WorkspaceSidebarMenu = () => {
                 disabled={!sidebarCollapse}
               >
                 <div
-                  className={`${
+                  className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
-                      ? "bg-custom-sidebar-background-80 text-custom-sidebar-text-100 font-medium"
-                      : "text-custom-sidebar-text-200 hover:text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                  } group flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none ${
-                    sidebarCollapse ? "justify-center" : ""
-                  }`}
+                      ? "bg-custom-primary-100/10 text-custom-primary-100"
+                      : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+                  } ${sidebarCollapse ? "justify-center" : ""}`}
                 >
-                  <Icon
-                    iconName={`${link.icon}`}
-                    className={
-                      isActive
-                        ? "text-custom-sidebar-text-100"
-                        : "text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100"
-                    }
-                  />
-
+                  <Icon iconName={`${link.icon}`} />
                   {!sidebarCollapse && link.name}
                 </div>
               </Tooltip>

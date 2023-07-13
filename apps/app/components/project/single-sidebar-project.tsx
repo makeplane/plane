@@ -36,17 +36,17 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    icon: "groups",
+    icon: "dataset",
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
-    icon: "view_list",
+    icon: "photo_filter",
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    icon: "description",
+    icon: "article",
   },
   {
     name: "Settings",
@@ -104,7 +104,11 @@ export const SingleSidebarProject: React.FC<Props> = ({
                   )}
 
                   {!sidebarCollapse && (
-                    <p className="overflow-hidden text-ellipsis text-[0.875rem]">
+                    <p
+                      className={`overflow-hidden text-ellipsis ${
+                        open ? "" : "text-custom-sidebar-text-200"
+                      }`}
+                    >
                       {truncateText(project?.name, 14)}
                     </p>
                   )}
@@ -172,9 +176,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Disclosure.Panel
-              className={`${sidebarCollapse ? "" : "ml-[2.25rem]"} flex flex-col gap-y-1`}
-            >
+            <Disclosure.Panel className={`space-y-2 ${sidebarCollapse ? "" : "ml-[2.25rem]"}`}>
               {navigation(workspaceSlug as string, project?.id).map((item) => {
                 if (
                   (item.name === "Cycles" && !project.cycle_view) ||
@@ -186,7 +188,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
 
                 return (
                   <Link key={item.name} href={item.href}>
-                    <a className="w-full">
+                    <a className="block w-full">
                       <Tooltip
                         tooltipContent={`${project?.name}: ${item.name}`}
                         position="right"
@@ -194,20 +196,13 @@ export const SingleSidebarProject: React.FC<Props> = ({
                         disabled={!sidebarCollapse}
                       >
                         <div
-                          className={`group flex items-center rounded-sm px-2 py-1.5 gap-2 text-xs outline-none ${
+                          className={`group flex items-center rounded-md px-2 py-1.5 gap-2 text-xs font-medium outline-none ${
                             router.asPath.includes(item.href)
-                              ? "bg-custom-sidebar-background-80 text-custom-sidebar-text-100 font-medium"
-                              : "text-custom-sidebar-text-200 hover:text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 focus:text-custom-sidebar-text-100"
+                              ? "bg-custom-primary-100/10 text-custom-primary-100"
+                              : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                           } ${sidebarCollapse ? "justify-center" : ""}`}
                         >
-                          <Icon
-                            iconName={item.icon}
-                            className={`${
-                              router.asPath.includes(item.href)
-                                ? "text-custom-sidebar-text-100"
-                                : "text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100"
-                            } text-base`}
-                          />
+                          <Icon iconName={item.icon} />
                           {!sidebarCollapse && item.name}
                         </div>
                       </Tooltip>
