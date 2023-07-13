@@ -12,7 +12,9 @@ import useProjects from "hooks/use-projects";
 // services
 import projectService from "services/project.service";
 // components
-import { CreateProjectModal, DeleteProjectModal, SingleSidebarProject } from "components/project";
+import { DeleteProjectModal, SingleSidebarProject } from "components/project";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -30,11 +32,7 @@ export const ProjectSidebarList: FC = () => {
 
   const { user } = useUserAuth();
 
-  // states
-  const [isCreateProjectModal, setCreateProjectModal] = useState(false);
-  // theme
   const { collapsed: sidebarCollapse } = useTheme();
-  // toast handler
   const { setToastAlert } = useToast();
 
   const { projects: favoriteProjects } = useProjects(true);
@@ -109,20 +107,15 @@ export const ProjectSidebarList: FC = () => {
 
   return (
     <>
-      <CreateProjectModal
-        isOpen={isCreateProjectModal}
-        setIsOpen={setCreateProjectModal}
-        user={user}
-      />
       <DeleteProjectModal
         isOpen={deleteProjectModal}
         onClose={() => setDeleteProjectModal(false)}
         data={projectToDelete}
         user={user}
       />
-      <div className="h-full overflow-y-auto mt-5 px-4">
+      <div className="h-full overflow-y-auto px-4">
         {favoriteProjects && favoriteProjects.length > 0 && (
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-2 mt-5">
             {!sidebarCollapse && (
               <h5 className="text-sm font-medium text-custom-sidebar-text-200">Favorites</h5>
             )}
@@ -138,13 +131,12 @@ export const ProjectSidebarList: FC = () => {
             ))}
           </div>
         )}
-        <div className="flex flex-col space-y-2 mt-5">
-          {!sidebarCollapse && (
-            <h5 className="text-sm font-medium text-custom-sidebar-text-200">Projects</h5>
-          )}
-          {nonFavoriteProjects &&
-            nonFavoriteProjects.length > 0 &&
-            nonFavoriteProjects.map((project) => (
+        {nonFavoriteProjects && nonFavoriteProjects.length > 0 && (
+          <div className="flex flex-col space-y-2 mt-5">
+            {!sidebarCollapse && (
+              <h5 className="text-sm font-medium text-custom-sidebar-text-200">Projects</h5>
+            )}
+            {nonFavoriteProjects.map((project) => (
               <SingleSidebarProject
                 key={project.id}
                 project={project}
@@ -154,7 +146,26 @@ export const ProjectSidebarList: FC = () => {
                 handleAddToFavorites={() => handleAddToFavorites(project)}
               />
             ))}
-        </div>
+          </div>
+        )}
+        {favoriteProjects &&
+          favoriteProjects.length === 0 &&
+          nonFavoriteProjects &&
+          nonFavoriteProjects.length === 0 && (
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-custom-sidebar-text-200 mt-5"
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "p",
+                });
+                document.dispatchEvent(e);
+              }}
+            >
+              <PlusIcon className="h-5 w-5" />
+              {!sidebarCollapse && "Add Project"}
+            </button>
+          )}
       </div>
     </>
   );
