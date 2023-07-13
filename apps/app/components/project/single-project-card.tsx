@@ -203,7 +203,6 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               <Tooltip
                 tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
                 position="bottom"
-                theme="dark"
               >
                 <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
