@@ -121,6 +121,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
           type: "success",
           message: "Issue deleted successfully",
         });
+        router.back();
       })
       .catch((error) => {
         console.log(error);
@@ -142,13 +143,16 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
           type: "success",
           message: "Issue deleted successfully",
         });
-        router.push(`/${workspaceSlug}/projects/${projectId}/archived-issues/`);
+        router.back();
       })
       .catch((error) => {
         console.log(error);
         setIsDeleteLoading(false);
       });
   };
+
+  const handleIssueDelete = () =>
+    isArchivedIssues ? handleArchivedIssueDeletion() : handleDeletion();
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -201,13 +205,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
                   </span>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton
-                      onClick={() => {
-                        if (isArchivedIssues) handleArchivedIssueDeletion();
-                        else handleDeletion();
-                      }}
-                      loading={isDeleteLoading}
-                    >
+                    <DangerButton onClick={handleIssueDelete} loading={isDeleteLoading}>
                       {isDeleteLoading ? "Deleting..." : "Delete Issue"}
                     </DangerButton>
                   </div>
