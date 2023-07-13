@@ -109,7 +109,9 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                   value={projectDetails?.close_in}
                   customButton={
                     <button className="flex w-full items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 focus:outline-none px-3 py-2 text-sm text-left">
-                      {`${projectDetails?.close_in} Months`}
+                      {`${projectDetails?.close_in} ${
+                        projectDetails?.close_in === 1 ? "Month" : "Months"
+                      }`}
                       <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                     </button>
                   }
@@ -125,15 +127,12 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                         {month.label}
                       </CustomSelect.Option>
                     ))}
-
                     <button
                       type="button"
-                      className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
+                      className="flex w-full select-none items-center rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80"
                       onClick={() => setmonthModal(true)}
                     >
-                      <span className="flex items-center justify-start gap-1 text-custom-text-200">
-                        <span>Customize Time Range</span>
-                      </span>
+                      Customize Time Range
                     </button>
                   </>
                 </CustomSelect>

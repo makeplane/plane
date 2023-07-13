@@ -44,7 +44,7 @@ const useIssuesView = () => {
   } = useContext(issueViewContext);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, archivedIssueId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const params: any = {
@@ -76,10 +76,10 @@ const useIssuesView = () => {
   );
 
   const { data: projectArchivedIssues } = useSWR(
-    workspaceSlug && projectId
+    workspaceSlug && projectId && params && isArchivedIssues && !archivedIssueId
       ? PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
       : null,
-    workspaceSlug && projectId && params
+    workspaceSlug && projectId && params && isArchivedIssues && !archivedIssueId
       ? () => issuesService.getArchivedIssues(workspaceSlug as string, projectId as string, params)
       : null
   );

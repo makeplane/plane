@@ -118,12 +118,12 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     if (!workspaceSlug || !projectId || !archivedIssueId) return;
 
     await issuesService
-      .unArchivedIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
+      .unarchiveIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Issue restored successfully.",
+          title: "Success",
+          message: `${issueDetails?.project_detail?.identifier}-${issueDetails?.sequence_id} is restored successfully under the project ${issueDetails?.project_detail?.name}`,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })
@@ -174,7 +174,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
               <IssueMainContent
                 issueDetails={issueDetails}
                 submitChanges={submitChanges}
-                nonEditable
+                uneditable
               />
             </div>
           </div>
@@ -184,7 +184,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
               issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
-              nonEditable
+              uneditable
             />
           </div>
         </div>
