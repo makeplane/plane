@@ -83,13 +83,13 @@ export const IssuesFilterView: React.FC = () => {
         <div className="flex items-center gap-x-1">
           {issueViewOptions.map((option) => (
             <Tooltip
+              key={option.type}
               tooltipContent={
                 <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
               }
               position="bottom"
             >
               <button
-                key={option.type}
                 type="button"
                 className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
                   issueView === option.type
