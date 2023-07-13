@@ -122,8 +122,8 @@ const ArchivedIssueDetailsPage: NextPage = () => {
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Issue restored successfully.",
+          title: "Success",
+          message: `${issueDetails?.project_detail?.identifier}-${issueDetails?.sequence_id} is restored successfully under the project ${issueDetails?.project_detail?.name}`,
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/issues/${archivedIssueId}`);
       })
