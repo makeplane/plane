@@ -464,7 +464,7 @@ class IssueAttachmentSerializer(BaseSerializer):
 class IssueStateSerializer(BaseSerializer):
     state_detail = StateSerializer(read_only=True, source="state")
     project_detail = ProjectSerializer(read_only=True, source="project")
-    label_details = LabelSerializer(read_only=True, source="labels", many=True)
+    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
     bridge_id = serializers.UUIDField(read_only=True)
