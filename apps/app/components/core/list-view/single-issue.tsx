@@ -84,6 +84,7 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const { setToastAlert } = useToast();
 
@@ -181,7 +182,11 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
+  const singleIssuePath = isArchivedIssues
+    ? `/${workspaceSlug}/projects/${projectId}/archived-issues/${issue.id}`
+    : `/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`;
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted || isArchivedIssues;
 
   return (
     <>
@@ -207,11 +212,7 @@ export const SingleListIssue: React.FC<Props> = ({
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
-        <a
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
+        <a href={singleIssuePath} target="_blank" rel="noreferrer noopener">
           <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
             Open issue in new tab
           </ContextMenu.Item>
@@ -225,7 +226,7 @@ export const SingleListIssue: React.FC<Props> = ({
           setContextMenuPosition({ x: e.pageX, y: e.pageY });
         }}
       >
-        <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
+        <Link href={singleIssuePath}>
           <div className="flex-grow cursor-pointer">
             <a className="group relative flex items-center gap-2">
               {properties.key && (
@@ -247,7 +248,11 @@ export const SingleListIssue: React.FC<Props> = ({
           </div>
         </Link>
 
-        <div className="flex w-full flex-shrink flex-wrap items-center gap-2 text-xs sm:w-auto">
+        <div
+          className={`flex w-full flex-shrink flex-wrap items-center gap-2 text-xs sm:w-auto ${
+            isArchivedIssues ? "opacity-60" : ""
+          }`}
+        >
           {properties.priority && (
             <ViewPrioritySelect
               issue={issue}

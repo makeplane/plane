@@ -53,6 +53,7 @@ const issueViewOptions: { type: TIssueViewOptions; icon: any }[] = [
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const {
     issueView,
@@ -78,22 +79,24 @@ export const IssuesFilterView: React.FC = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center gap-x-1">
-        {issueViewOptions.map((option) => (
-          <button
-            key={option.type}
-            type="button"
-            className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
-              issueView === option.type
-                ? "bg-custom-sidebar-background-80"
-                : "text-custom-sidebar-text-200"
-            }`}
-            onClick={() => setIssueView(option.type)}
-          >
-            {option.icon}
-          </button>
-        ))}
-      </div>
+      {!isArchivedIssues && (
+        <div className="flex items-center gap-x-1">
+          {issueViewOptions.map((option) => (
+            <button
+              key={option.type}
+              type="button"
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                issueView === option.type
+                  ? "bg-custom-sidebar-background-80"
+                  : "text-custom-sidebar-text-200"
+              }`}
+              onClick={() => setIssueView(option.type)}
+            >
+              {option.icon}
+            </button>
+          ))}
+        </div>
+      )}
       <SelectFilters
         filters={filters}
         onSelect={(option) => {

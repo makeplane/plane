@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Icon } from "components/ui";
 // icons
 import {
   ChevronDownIcon,
@@ -153,6 +153,18 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     <span>Copy project link</span>
                   </span>
                 </CustomMenu.MenuItem>
+                {project.archive_in > 0 && (
+                  <CustomMenu.MenuItem
+                    onClick={() =>
+                      router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)
+                    }
+                  >
+                    <div className="flex items-center justify-start gap-2">
+                      <Icon iconName="archive" className="h-4 w-4" />
+                      <span>Archived Issues</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
               </CustomMenu>
             )}
           </div>
