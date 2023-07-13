@@ -25,7 +25,7 @@ class NotificationViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 receiver_id=self.request.user.id,
             )
-            .select_related("workspace")
+            .select_related("workspace", "project," "triggered_by", "receiver")
         )
 
     def list(self, request, slug):
@@ -123,7 +123,7 @@ class NotificationViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
     def mark_read(self, request, slug, pk):
         try:
             notification = Notification.objects.get(
@@ -166,7 +166,6 @@ class NotificationViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
     def archive(self, request, slug, pk):
         try:
             notification = Notification.objects.get(
@@ -208,4 +207,3 @@ class NotificationViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
