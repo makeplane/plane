@@ -123,7 +123,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
       .createProject(workspaceSlug as string, payload, user)
       .then((res) => {
         mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
+          PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
           (prevData) => [res, ...(prevData ?? [])],
           false
         );

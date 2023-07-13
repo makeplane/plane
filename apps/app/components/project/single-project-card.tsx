@@ -26,9 +26,9 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import type { IFavoriteProject, IProject } from "types";
+import type { IProject } from "types";
 // fetch-keys
-import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST } from "constants/fetch-keys";
+import { PROJECTS_LIST } from "constants/fetch-keys";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -55,22 +55,23 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
+      (prevData) => [...(prevData ?? []), { ...project, is_favorite: true }],
+      false
+    );
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
+      false
+    );
+
     projectService
       .addProjectToFavorites(workspaceSlug as string, {
         project: project.id,
       })
       .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => ({
-              ...p,
-              is_favorite: p.id === project.id ? true : p.is_favorite,
-            })),
-          false
-        );
-        mutate(FAVORITE_PROJECTS_LIST(workspaceSlug as string));
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -89,24 +90,21 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
+      (prevData) => (prevData ?? []).filter((p) => p.id !== project.id),
+      false
+    );
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
+      false
+    );
+
     projectService
       .removeProjectFromFavorites(workspaceSlug as string, project.id)
       .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => ({
-              ...p,
-              is_favorite: p.id === project.id ? false : p.is_favorite,
-            })),
-          false
-        );
-        mutate<IFavoriteProject[]>(
-          FAVORITE_PROJECTS_LIST(workspaceSlug as string),
-          (prevData) => (prevData ?? []).filter((p) => p.project !== project.id),
-          false
-        );
-
         setToastAlert({
           type: "success",
           title: "Success!",

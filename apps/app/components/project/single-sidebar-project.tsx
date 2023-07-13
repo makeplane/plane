@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { mutate } from "swr";
+
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+// services
+import projectService from "services/project.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Icon, Tooltip } from "components/ui";
 // icons
@@ -12,14 +18,15 @@ import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject } from "types";
+// fetch-keys
+import { PROJECTS_LIST } from "constants/fetch-keys";
 
 type Props = {
   project: IProject;
   sidebarCollapse: boolean;
   handleDeleteProject: () => void;
   handleCopyText: () => void;
-  handleAddToFavorites?: () => void;
-  handleRemoveFromFavorites?: () => void;
+  shortContextMenu?: boolean;
 };
 
 const navigation = (workspaceSlug: string, projectId: string) => [
@@ -60,11 +67,64 @@ export const SingleSidebarProject: React.FC<Props> = ({
   sidebarCollapse,
   handleDeleteProject,
   handleCopyText,
-  handleAddToFavorites,
-  handleRemoveFromFavorites,
+  shortContextMenu = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { setToastAlert } = useToast();
+
+  const handleAddToFavorites = () => {
+    if (!workspaceSlug) return;
+
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
+      (prevData) => [...(prevData ?? []), { ...project, is_favorite: true }],
+      false
+    );
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
+      false
+    );
+
+    projectService
+      .addProjectToFavorites(workspaceSlug as string, {
+        project: project.id,
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favorites. Please try again.",
+        })
+      );
+  };
+
+  const handleRemoveFromFavorites = () => {
+    if (!workspaceSlug) return;
+
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
+      (prevData) => (prevData ?? []).filter((p) => p.id !== project.id),
+      false
+    );
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
+      false
+    );
+
+    projectService.removeProjectFromFavorites(workspaceSlug as string, project.id).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the project from favorites. Please try again.",
+      })
+    );
+  };
 
   return (
     <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
@@ -124,13 +184,15 @@ export const SingleSidebarProject: React.FC<Props> = ({
 
             {!sidebarCollapse && (
               <CustomMenu ellipsis>
-                <CustomMenu.MenuItem onClick={handleDeleteProject}>
-                  <span className="flex items-center justify-start gap-2 ">
-                    <TrashIcon className="h-4 w-4" />
-                    <span>Delete project</span>
-                  </span>
-                </CustomMenu.MenuItem>
-                {handleAddToFavorites && (
+                {!shortContextMenu && (
+                  <CustomMenu.MenuItem onClick={handleDeleteProject}>
+                    <span className="flex items-center justify-start gap-2 ">
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Delete project</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
+                {!project.is_favorite && (
                   <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                     <span className="flex items-center justify-start gap-2">
                       <StarIcon className="h-4 w-4" />
@@ -138,7 +200,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     </span>
                   </CustomMenu.MenuItem>
                 )}
-                {handleRemoveFromFavorites && (
+                {project.is_favorite && (
                   <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                     <span className="flex items-center justify-start gap-2">
                       <StarIcon className="h-4 w-4" />

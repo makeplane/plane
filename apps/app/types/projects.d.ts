@@ -60,18 +60,6 @@ export interface IProjectLite {
   identifier: string;
 }
 
-export interface IFavoriteProject {
-  created_at: Date;
-  created_by: string;
-  id: string;
-  project: string;
-  project_detail: IProject;
-  updated_at: Date;
-  updated_by: string;
-  user: string;
-  workspace: string;
-}
-
 type ProjectViewTheme = {
   issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;

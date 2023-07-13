@@ -2,26 +2,19 @@ import React, { useState, FC } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
-
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // hooks
 import useToast from "hooks/use-toast";
 import useTheme from "hooks/use-theme";
 import useUserAuth from "hooks/use-user-auth";
-// services
-import projectService from "services/project.service";
+import useProjects from "hooks/use-projects";
 // components
-import { CreateProjectModal, DeleteProjectModal, SingleSidebarProject } from "components/project";
-// ui
-import { Loader } from "components/ui";
+import { DeleteProjectModal, SingleSidebarProject } from "components/project";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IFavoriteProject, IProject } from "types";
-// fetch-keys
-import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST } from "constants/fetch-keys";
+import { IProject } from "types";
 
 export const ProjectSidebarList: FC = () => {
   const [deleteProjectModal, setDeleteProjectModal] = useState(false);
@@ -33,93 +26,11 @@ export const ProjectSidebarList: FC = () => {
 
   const { user } = useUserAuth();
 
-  // states
-  const [isCreateProjectModal, setCreateProjectModal] = useState(false);
-  // theme
   const { collapsed: sidebarCollapse } = useTheme();
-  // toast handler
   const { setToastAlert } = useToast();
 
-  const { data: favoriteProjects } = useSWR(
-    workspaceSlug ? FAVORITE_PROJECTS_LIST(workspaceSlug.toString()) : null,
-    () => (workspaceSlug ? projectService.getFavoriteProjects(workspaceSlug.toString()) : null)
-  );
-
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
-  );
-  const normalProjects = projects?.filter((p) => !p.is_favorite) ?? [];
-
-  const handleAddToFavorites = (project: IProject) => {
-    if (!workspaceSlug) return;
-
-    projectService
-      .addProjectToFavorites(workspaceSlug as string, {
-        project: project.id,
-      })
-      .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => ({
-              ...p,
-              is_favorite: p.id === project.id ? true : p.is_favorite,
-            })),
-          false
-        );
-        mutate(FAVORITE_PROJECTS_LIST(workspaceSlug as string));
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully added the project to favorites.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
-        });
-      });
-  };
-
-  const handleRemoveFromFavorites = (project: IProject) => {
-    if (!workspaceSlug) return;
-
-    projectService
-      .removeProjectFromFavorites(workspaceSlug as string, project.id)
-      .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => ({
-              ...p,
-              is_favorite: p.id === project.id ? false : p.is_favorite,
-            })),
-          false
-        );
-        mutate<IFavoriteProject[]>(
-          FAVORITE_PROJECTS_LIST(workspaceSlug as string),
-          (prevData) => (prevData ?? []).filter((p) => p.project !== project.id),
-          false
-        );
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully removed the project from favorites.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
-        });
-      });
-  };
+  const { projects: favoriteProjects } = useProjects(true);
+  const { projects: allProjects } = useProjects();
 
   const handleDeleteProject = (project: IProject) => {
     setProjectToDelete(project);
@@ -140,93 +51,61 @@ export const ProjectSidebarList: FC = () => {
 
   return (
     <>
-      <CreateProjectModal
-        isOpen={isCreateProjectModal}
-        setIsOpen={setCreateProjectModal}
-        user={user}
-      />
       <DeleteProjectModal
         isOpen={deleteProjectModal}
         onClose={() => setDeleteProjectModal(false)}
         data={projectToDelete}
         user={user}
       />
-      <div className="h-full overflow-y-auto mt-5 px-4">
+      <div className="h-full overflow-y-auto px-4">
         {favoriteProjects && favoriteProjects.length > 0 && (
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-2 mt-5">
             {!sidebarCollapse && (
               <h5 className="text-sm font-medium text-custom-sidebar-text-200">Favorites</h5>
             )}
-            {favoriteProjects.map((favoriteProject) => {
-              const project = favoriteProject.project_detail;
-
-              return (
-                <SingleSidebarProject
-                  key={project.id}
-                  project={project}
-                  sidebarCollapse={sidebarCollapse}
-                  handleDeleteProject={() => handleDeleteProject(project)}
-                  handleCopyText={() => handleCopyText(project.id)}
-                  handleRemoveFromFavorites={() => handleRemoveFromFavorites(project)}
-                />
-              );
-            })}
+            {favoriteProjects.map((project) => (
+              <SingleSidebarProject
+                key={project.id}
+                project={project}
+                sidebarCollapse={sidebarCollapse}
+                handleDeleteProject={() => handleDeleteProject(project)}
+                handleCopyText={() => handleCopyText(project.id)}
+                shortContextMenu
+              />
+            ))}
           </div>
         )}
-        <div className="flex flex-col space-y-2 mt-5">
-          {!sidebarCollapse && (
-            <h5 className="text-sm font-medium text-custom-sidebar-text-200">Projects</h5>
-          )}
-          {projects ? (
-            <>
-              {normalProjects.length > 0 ? (
-                normalProjects.map((project) => (
-                  <SingleSidebarProject
-                    key={project.id}
-                    project={project}
-                    sidebarCollapse={sidebarCollapse}
-                    handleDeleteProject={() => handleDeleteProject(project)}
-                    handleCopyText={() => handleCopyText(project.id)}
-                    handleAddToFavorites={() => handleAddToFavorites(project)}
-                  />
-                ))
-              ) : (
-                <div className="space-y-3 text-center">
-                  {!sidebarCollapse && (
-                    <h4 className="text-sm text-custom-text-200">
-                      You don{"'"}t have any project yet
-                    </h4>
-                  )}
-                  <button
-                    type="button"
-                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-custom-background-80 p-2 text-xs text-custom-text-100"
-                    onClick={() => setCreateProjectModal(true)}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    {!sidebarCollapse && "Create Project"}
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="w-full">
-              <Loader className="space-y-5">
-                <div className="space-y-2">
-                  <Loader.Item height="30px" />
-                  <Loader.Item height="15px" width="80%" />
-                  <Loader.Item height="15px" width="80%" />
-                  <Loader.Item height="15px" width="80%" />
-                </div>
-                <div className="space-y-2">
-                  <Loader.Item height="30px" />
-                  <Loader.Item height="15px" width="80%" />
-                  <Loader.Item height="15px" width="80%" />
-                  <Loader.Item height="15px" width="80%" />
-                </div>
-              </Loader>
-            </div>
-          )}
-        </div>
+        {allProjects && allProjects.length > 0 && (
+          <div className="flex flex-col space-y-2 mt-5">
+            {!sidebarCollapse && (
+              <h5 className="text-sm font-medium text-custom-sidebar-text-200">Projects</h5>
+            )}
+            {allProjects.map((project) => (
+              <SingleSidebarProject
+                key={project.id}
+                project={project}
+                sidebarCollapse={sidebarCollapse}
+                handleDeleteProject={() => handleDeleteProject(project)}
+                handleCopyText={() => handleCopyText(project.id)}
+              />
+            ))}
+          </div>
+        )}
+        {allProjects && allProjects.length === 0 && (
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-custom-sidebar-text-200 mt-5"
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "p",
+              });
+              document.dispatchEvent(e);
+            }}
+          >
+            <PlusIcon className="h-5 w-5" />
+            {!sidebarCollapse && "Add Project"}
+          </button>
+        )}
       </div>
     </>
   );
