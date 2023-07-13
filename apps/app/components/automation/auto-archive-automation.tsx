@@ -39,13 +39,11 @@ export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleC
           </div>
           <ToggleSwitch
             value={projectDetails?.archive_in !== 0}
-            onChange={() => {
-              if (projectDetails?.archive_in === 0) {
-                handleChange({ archive_in: 1 });
-              } else {
-                handleChange({ archive_in: 0 });
-              }
-            }}
+            onChange={() =>
+              projectDetails?.archive_in === 0
+                ? handleChange({ archive_in: 1 })
+                : handleChange({ archive_in: 0 })
+            }
             size="sm"
           />
         </div>

@@ -88,13 +88,11 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
           </div>
           <ToggleSwitch
             value={projectDetails?.close_in !== 0}
-            onChange={() => {
-              if (projectDetails?.close_in === 0) {
-                handleChange({ close_in: 1, default_state: defaultState });
-              } else {
-                handleChange({ close_in: 0, default_state: null });
-              }
-            }}
+            onChange={() =>
+              projectDetails?.close_in === 0
+                ? handleChange({ close_in: 1, default_state: defaultState })
+                : handleChange({ close_in: 0, default_state: null })
+            }
             size="sm"
           />
         </div>
