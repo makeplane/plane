@@ -52,10 +52,18 @@ export const WORKSPACE_INVITATIONS = "WORKSPACE_INVITATIONS";
 export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
 export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "LAST_ACTIVE_WORKSPACE_AND_PROJECTS";
 
-export const PROJECTS_LIST = (workspaceSlug: string) =>
-  `PROJECTS_LIST_${workspaceSlug.toUpperCase()}`;
-export const FAVORITE_PROJECTS_LIST = (workspaceSlug: string) =>
-  `FAVORITE_PROJECTS_LIST_${workspaceSlug.toUpperCase()}`;
+export const PROJECTS_LIST = (
+  workspaceSlug: string,
+  params: {
+    is_favorite: "all" | boolean;
+  }
+) => {
+  if (!params) return `PROJECTS_LIST_${workspaceSlug.toUpperCase()}`;
+
+  return `PROJECTS_LIST_${workspaceSlug.toUpperCase()}_${params.is_favorite
+    .toString()
+    .toUpperCase()}`;
+};
 export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId.toUpperCase()}`;
 
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId.toUpperCase()}`;

@@ -7,7 +7,6 @@ import useSWR, { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
 import inboxServices from "services/inbox.service";
@@ -18,6 +17,7 @@ import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 import useInboxView from "hooks/use-inbox-view";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
+import useProjects from "hooks/use-projects";
 // components
 import { IssueForm } from "components/issues";
 // types
@@ -27,7 +27,6 @@ import {
   PROJECT_ISSUES_DETAILS,
   PROJECT_ISSUES_LIST,
   USER_ISSUE,
-  PROJECTS_LIST,
   SUB_ISSUES,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   CYCLE_ISSUES_WITH_PARAMS,
@@ -83,6 +82,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { user } = useUser();
+  const { projects } = useProjects();
+
   const { setToastAlert } = useToast();
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
@@ -100,11 +101,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     workspaceSlug && activeProject
       ? () => issuesService.getIssues(workspaceSlug as string, activeProject ?? "")
       : null
-  );
-
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
 
   useEffect(() => {

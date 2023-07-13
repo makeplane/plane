@@ -21,10 +21,10 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ContrastIcon, PeopleGroupIcon, ViewListIcon, InboxIcon } from "components/icons";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
-import { IFavoriteProject, IProject } from "types";
+import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const featuresList = [
   {
@@ -99,27 +99,8 @@ const FeaturesSettings: NextPage = () => {
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    if (projectDetails.is_favorite)
-      mutate<IFavoriteProject[]>(
-        FAVORITE_PROJECTS_LIST(workspaceSlug.toString()),
-        (prevData) =>
-          prevData?.map((p) => {
-            if (p.project === projectId)
-              return {
-                ...p,
-                project_detail: {
-                  ...p.project_detail,
-                  ...formData,
-                },
-              };
-
-            return p;
-          }),
-        false
-      );
-
     mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug.toString()),
+      PROJECTS_LIST(workspaceSlug.toString(), { is_favorite: projectDetails.is_favorite }),
       (prevData) =>
         prevData?.map((p) => {
           if (p.id === projectId)
@@ -149,19 +130,17 @@ const FeaturesSettings: NextPage = () => {
       .updateProject(workspaceSlug as string, projectId as string, formData, user)
       .then(() => {
         mutate(
-          projectDetails.is_favorite
-            ? FAVORITE_PROJECTS_LIST(workspaceSlug.toString())
-            : PROJECTS_LIST(workspaceSlug.toString())
+          PROJECTS_LIST(workspaceSlug.toString(), { is_favorite: projectDetails.is_favorite })
         );
         mutate(PROJECT_DETAILS(projectId as string));
       })
-      .catch((err) => {
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Project feature could not be updated. Please try again.",
-        });
-      });
+        })
+      );
   };
 
   return (

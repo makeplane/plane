@@ -11,14 +11,15 @@ import { IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
-const useProjects = () => {
-  // router
+const useProjects = (type?: "all" | boolean) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // api fetching
+
   const { data: projects, mutate: mutateProjects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string, { is_favorite: type ?? "all" }) : null,
+    workspaceSlug
+      ? () => projectService.getProjects(workspaceSlug as string, { is_favorite: type ?? "all" })
+      : null
   );
 
   const recentProjects = [...(projects ?? [])]
