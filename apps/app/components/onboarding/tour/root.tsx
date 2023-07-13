@@ -82,7 +82,8 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
 
   const { user } = useUser();
 
-  const currentStep = TOUR_STEPS.find((tourStep) => tourStep.key === step);
+  const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
+  const currentStep = TOUR_STEPS[currentStepIndex];
 
   return (
     <>
@@ -124,7 +125,11 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 lg:col-span-7 h-full overflow-hidden">
-            <div className="flex justify-end items-end h-1/2 sm:h-3/5 overflow-hidden bg-custom-primary-100">
+            <div
+              className={`flex items-end h-1/2 sm:h-3/5 overflow-hidden bg-custom-primary-100 ${
+                currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
+              }`}
+            >
               <Image src={currentStep?.image} alt={currentStep?.title} />
             </div>
             <div className="flex flex-col h-1/2 sm:h-2/5 p-4 overflow-y-auto">
