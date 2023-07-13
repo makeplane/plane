@@ -61,8 +61,9 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
       false
     );
     mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: false }),
-      (prevData) => (prevData ?? []).filter((p) => p.id !== project.id),
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
       false
     );
 
@@ -89,20 +90,21 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
+      (prevData) => (prevData ?? []).filter((p) => p.id !== project.id),
+      false
+    );
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
+      false
+    );
+
     projectService
       .removeProjectFromFavorites(workspaceSlug as string, project.id)
       .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string, { is_favorite: false }),
-          (prevData) => [...(prevData ?? []), { ...project, is_favorite: false }],
-          false
-        );
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
-          (prevData) => (prevData ?? []).filter((p) => p.id !== project.id),
-          false
-        );
-
         setToastAlert({
           type: "success",
           title: "Success!",
