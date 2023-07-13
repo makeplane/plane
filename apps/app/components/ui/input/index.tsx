@@ -34,7 +34,7 @@ export const Input: React.FC<Props> = ({
         register && register(name).onChange(e);
         onChange && onChange(e);
       }}
-      className={`block rounded-md bg-transparent text-sm focus:outline-none ${
+      className={`block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${
         mode === "primary"
           ? "rounded-md border border-custom-border-100"
           : mode === "transparent"

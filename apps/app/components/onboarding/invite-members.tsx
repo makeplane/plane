@@ -200,7 +200,7 @@ export const InviteMembers: React.FC<Props> = ({ workspace, user, stepChange }) 
           onClick={appendField}
         >
           <PlusIcon className="h-3 w-3" />
-          Add more
+          Add another
         </button>
       </div>
       <div className="flex items-center gap-4">

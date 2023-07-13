@@ -96,6 +96,7 @@ class ProjectViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
+            is_favorite = request.GET.get("is_favorite", "all")
             subquery = ProjectFavorite.objects.filter(
                 user=self.request.user,
                 project_id=OuterRef("pk"),
@@ -126,6 +127,12 @@ class ProjectViewSet(BaseViewSet):
                     .values("count")
                 )
             )
+
+            if is_favorite == "true":
+                projects = projects.filter(is_favorite=True)
+            if is_favorite == "false":
+                projects = projects.filter(is_favorite=False)
+
             return Response(ProjectDetailSerializer(projects, many=True).data)
         except Exception as e:
             capture_exception(e)

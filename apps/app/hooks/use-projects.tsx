@@ -26,7 +26,9 @@ const useProjects = () => {
     ?.slice(0, 3);
 
   return {
-    projects: orderArrayBy(projects ?? [], "is_favorite", "descending") as IProject[] | undefined,
+    projects: projects
+      ? (orderArrayBy(projects, "is_favorite", "descending") as IProject[])
+      : undefined,
     recentProjects: recentProjects || [],
     mutateProjects,
   };
