@@ -22,12 +22,14 @@ type Props = {
   issueDetail: IIssue | undefined;
   handleCycleChange: (cycle: ICycle) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarCycleSelect: React.FC<Props> = ({
   issueDetail,
   handleCycleChange,
   userAuth,
+  disabled = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -61,7 +63,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
 
   const issueCycle = issueDetail?.issue_cycle;
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">

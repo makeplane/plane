@@ -140,7 +140,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
             ${
               issueNumber >= 750
                 ? "bg-custom-primary-100 text-white"
-                : "bg-blue-50 text-custom-primary-100"
+                : "bg-blue-500/10 text-custom-primary-100"
             }
             ${sidebarCollapse ? "w-full justify-center" : ""}`}
             title="Shortcuts"
@@ -154,10 +154,10 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
             type="button"
             className={`flex items-center gap-x-1 rounded-md px-2 py-2 font-medium outline-none text-sm ${
               issueNumber >= 750
-                ? "bg-red-50 text-red-600"
+                ? "bg-red-500/10 text-red-600"
                 : issueNumber >= 500
-                ? "bg-yellow-50 text-yellow-600"
-                : "bg-green-50 text-green-600"
+                ? "bg-yellow-500/10 text-yellow-600"
+                : "bg-green-500/10 text-green-600"
             }
             ${sidebarCollapse ? "w-full justify-center" : ""}`}
             title="Shortcuts"
