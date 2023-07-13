@@ -33,6 +33,7 @@ class NotificationViewSet(BaseViewSet):
             order_by = request.GET.get("order_by", "-created_at")
             snoozed = request.GET.get("snoozed", "false")
             archived = request.GET.get("archived", "false")
+            read = request.GET.get("read", "false")
 
             # Filter type
             type = request.GET.get("type", "all")
@@ -49,20 +50,25 @@ class NotificationViewSet(BaseViewSet):
 
             if snoozed == "true":
                 notifications = notifications.filter(
-                    snoozed_till__lt=timezone.now(),
+                    Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
                 )
 
+            if read == "true":
+                notifications = notifications.filter(read_at__isnull=False)
+            if read == "false":
+                notifications = notifications.filter(read_at__isnull=True)
+
             # Filter for archived or unarchive
-            if archived == "true":
+            if archived == "false":
                 notifications = notifications.filter(archived_at__isnull=True)
 
-            if archived == "false":
+            if archived == "true":
                 notifications = notifications.filter(archived_at__isnull=False)
 
             # Subscribed issues
             if type == "watching":
                 issue_ids = IssueSubscriber.objects.filter(
-                    workspace__slug=slug, subsriber_id=request.user.id
+                    workspace__slug=slug, subscriber_id=request.user.id
                 ).values_list("issue_id", flat=True)
                 notifications = notifications.filter(entity_identifier__in=issue_ids)
 

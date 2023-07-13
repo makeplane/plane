@@ -1,4 +1,5 @@
-# Python improts
+# Python imports
+import json
 from datetime import timedelta
 
 # Django imports
@@ -11,13 +12,15 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import Issue, Project, IssueActivity, State
+from plane.db.models import Issue, Project, State
+from plane.bgtasks.issue_activites_task import issue_activity
 
 
 @shared_task
 def archive_and_close_old_issues():
     archive_old_issues()
     close_old_issues()
+
 
 def archive_old_issues():
     try:
@@ -56,24 +59,21 @@ def archive_old_issues():
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
-                Issue.objects.bulk_update(issues_to_update, ["archived_at"], batch_size=100)
-                IssueActivity.objects.bulk_create(
-                    [
-                        IssueActivity(
-                            issue_id=issue.id,
-                            actor=project.created_by,
-                            verb="updated",
-                            field="archived_at",
-                            project=project,
-                            workspace=project.workspace,
-                            comment="Plane archived the issue",
-                            new_value="archive",
-                            old_value=""
-                        )
-                        for issue in issues_to_update
-                    ],
-                    batch_size=100,
+                Issue.objects.bulk_update(
+                    issues_to_update, ["archived_at"], batch_size=100
                 )
+                [
+                    issue_activity.delay(
+                        type="issue.activity.updated",
+                        requested_data=json.dumps({"archived_at": issue.archived_at}),
+                        actor_id=str(project.created_by_id),
+                        issue_id=issue.id,
+                        project_id=project_id,
+                        current_instance=None,
+                        subscriber=False,
+                    )
+                    for issue in issues_to_update
+                ]
         return
     except Exception as e:
         if settings.DEBUG:
@@ -81,10 +81,13 @@ def archive_old_issues():
         capture_exception(e)
         return
 
+
 def close_old_issues():
     try:
         # Get all the projects whose close_in is greater than 0
-        projects = Project.objects.filter(close_in__gt=0).select_related("default_state")
+        projects = Project.objects.filter(close_in__gt=0).select_related(
+            "default_state"
+        )
 
         for project in projects:
             project_id = project.id
@@ -113,10 +116,9 @@ def close_old_issues():
             # Check if Issues
             if issues:
                 if project.default_state is None:
-                    close_state = project.default_state
-                else:
                     close_state = State.objects.filter(group="cancelled").first()
-
+                else:
+                    close_state = project.default_state
 
                 issues_to_update = []
                 for issue in issues:
@@ -125,21 +127,18 @@ def close_old_issues():
 
                 # Bulk Update the issues and log the activity
                 Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
-                IssueActivity.objects.bulk_create(
-                    [
-                        IssueActivity(
-                            issue_id=issue.id,
-                            actor=project.created_by,
-                            verb="updated",
-                            field="state",
-                            project=project,
-                            workspace=project.workspace,
-                            comment="Plane cancelled the issue",
-                        )
-                        for issue in issues_to_update
-                    ],
-                    batch_size=100,
-                )
+                [
+                    issue_activity.delay(
+                        type="issue.activity.updated",
+                        requested_data=json.dumps({"closed_to": issue.state_id}),
+                        actor_id=str(project.created_by_id),
+                        issue_id=issue.id,
+                        project_id=project_id,
+                        current_instance=None,
+                        subscriber=False,
+                    )
+                    for issue in issues_to_update
+                ]
         return
     except Exception as e:
         if settings.DEBUG:
