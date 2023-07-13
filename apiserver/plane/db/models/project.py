@@ -4,6 +4,7 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Modeule imports
 from plane.db.mixins import AuditModel
@@ -73,6 +74,15 @@ class Project(BaseModel):
     cover_image = models.URLField(blank=True, null=True, max_length=800)
     estimate = models.ForeignKey(
         "db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True
+    )
+    archive_in = models.IntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
+    )
+    close_in = models.IntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
+    )
+    default_state = models.ForeignKey(
+        "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
     )
 
     def __str__(self):

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "taggit",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -213,3 +214,4 @@ SIMPLE_JWT = {
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_IMPORTS = ("plane.bgtasks.issue_automation_task",)

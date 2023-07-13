@@ -59,7 +59,7 @@ const ControlSettings: NextPage = () => {
   } = useForm<IProject>({ defaultValues });
 
   const onSubmit = async (formData: IProject) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !projectDetails) return;
 
     const payload: Partial<IProject> = {
       default_assignee: formData.default_assignee,
@@ -70,7 +70,19 @@ const ControlSettings: NextPage = () => {
       .updateProject(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(PROJECT_DETAILS(projectId as string));
-        mutate(PROJECTS_LIST(workspaceSlug as string));
+
+        if (projectDetails.is_favorite)
+          mutate(
+            PROJECTS_LIST(workspaceSlug as string, {
+              is_favorite: true,
+            })
+          );
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
 
         setToastAlert({
           title: "Success",

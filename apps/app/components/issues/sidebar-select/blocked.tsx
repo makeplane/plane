@@ -21,6 +21,7 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   watch: UseFormWatch<IIssue>;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarBlockedSelect: React.FC<Props> = ({
@@ -28,6 +29,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
   submitChanges,
   watch,
   userAuth,
+  disabled = false,
 }) => {
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
@@ -69,7 +71,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
     handleClose();
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <>

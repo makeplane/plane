@@ -23,6 +23,7 @@ import type { IIssue, ICurrentUserResponse, ISubIssueResponse } from "types";
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   SUB_ISSUES,
   VIEW_ISSUES,
@@ -40,6 +41,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const { issueView, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
@@ -119,12 +121,38 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
           type: "success",
           message: "Issue deleted successfully",
         });
+        router.back();
       })
       .catch((error) => {
         console.log(error);
         setIsDeleteLoading(false);
       });
   };
+
+  const handleArchivedIssueDeletion = async () => {
+    setIsDeleteLoading(true);
+    if (!workspaceSlug || !projectId || !data) return;
+
+    await issueServices
+      .deleteArchivedIssue(workspaceSlug as string, projectId as string, data.id)
+      .then(() => {
+        mutate(PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+        handleClose();
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Issue deleted successfully",
+        });
+        router.back();
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsDeleteLoading(false);
+      });
+  };
+
+  const handleIssueDelete = () =>
+    isArchivedIssues ? handleArchivedIssueDeletion() : handleDeletion();
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -177,7 +205,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
                   </span>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                    <DangerButton onClick={handleIssueDelete} loading={isDeleteLoading}>
                       {isDeleteLoading ? "Deleting..." : "Delete Issue"}
                     </DangerButton>
                   </div>

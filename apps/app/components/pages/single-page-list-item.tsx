@@ -21,7 +21,11 @@ import {
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
-import { renderLongDateFormat, renderShortDate, renderShortTime } from "helpers/date-time.helper";
+import {
+  renderLongDateFormat,
+  renderShortDate,
+  render24HourFormatTime,
+} from "helpers/date-time.helper";
 // types
 import { IPage, IProjectMember } from "types";
 
@@ -98,12 +102,12 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderShortTime(
+                    tooltipContent={`Last updated at ${render24HourFormatTime(
                       page.updated_at
                     )} on ${renderShortDate(page.updated_at)}`}
                   >
                     <p className="text-sm text-custom-text-200">
-                      {renderShortTime(page.updated_at)}
+                      {render24HourFormatTime(page.updated_at)}
                     </p>
                   </Tooltip>
                   {page.is_favorite ? (

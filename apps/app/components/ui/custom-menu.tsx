@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
 // icons
 import { ChevronDownIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { Icon } from "./icon";
 
 type Props = {
   children: React.ReactNode;
@@ -59,10 +60,11 @@ const CustomMenu = ({
             {ellipsis || verticalEllipsis ? (
               <Menu.Button
                 type="button"
-                className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none"
+                className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:bg-custom-background-80 outline-none"
               >
-                <EllipsisHorizontalIcon
-                  className={`h-4 w-4 ${verticalEllipsis ? "rotate-90" : ""}`}
+                <Icon
+                  iconName="more_horiz"
+                  className={`${verticalEllipsis ? "rotate-90" : ""} text-brand-secondary`}
                 />
               </Menu.Button>
             ) : (

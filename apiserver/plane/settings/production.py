@@ -246,8 +246,9 @@ PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
+OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
-GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
+GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 

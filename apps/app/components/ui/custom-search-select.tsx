@@ -85,7 +85,7 @@ export const CustomSearchSelect = ({
                 disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
               } ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
-              } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-brand-base ${
+              } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-custom-border-100 ${
                 textAlignment === "right"
                   ? "text-right"
                   : textAlignment === "center"
@@ -148,8 +148,8 @@ export const CustomSearchSelect = ({
                         value={option.value}
                         className={({ active, selected }) =>
                           `${active || selected ? "bg-custom-background-80" : ""} ${
-                            selected ? "font-medium" : ""
-                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                            selected ? "text-custom-text-100" : "text-custom-text-200"
+                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5`
                         }
                       >
                         {({ active, selected }) => (
@@ -157,7 +157,7 @@ export const CustomSearchSelect = ({
                             {option.content}
                             {multiple ? (
                               <div
-                                className={`flex items-center justify-center rounded border border-gray-500 p-0.5 ${
+                                className={`flex items-center justify-center rounded border border-custom-border-400 p-0.5 ${
                                   active || selected ? "opacity-100" : "opacity-0"
                                 }`}
                               >

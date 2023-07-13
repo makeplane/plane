@@ -21,12 +21,14 @@ type Props = {
   issueDetail: IIssue | undefined;
   handleModuleChange: (module: IModule) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarModuleSelect: React.FC<Props> = ({
   issueDetail,
   handleModuleChange,
   userAuth,
+  disabled = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -55,7 +57,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
 
   const issueModule = issueDetail?.issue_module;
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">

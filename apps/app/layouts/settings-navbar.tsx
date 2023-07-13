@@ -71,6 +71,10 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
       label: "Estimates",
       href: `/${workspaceSlug}/projects/${projectId}/settings/estimates`,
     },
+    {
+      label: "Automations",
+      href: `/${workspaceSlug}/projects/${projectId}/settings/automations`,
+    },
   ];
 
   const profileLinks: Array<{

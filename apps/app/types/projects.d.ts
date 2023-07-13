@@ -9,6 +9,8 @@ import type {
 } from "./";
 
 export interface IProject {
+  archive_in: number;
+  close_in: number;
   created_at: Date;
   created_by: string;
   cover_image: string | null;
@@ -18,6 +20,7 @@ export interface IProject {
   page_view: boolean;
   inbox_view: boolean;
   default_assignee: IUser | string | null;
+  default_state: string | null;
   description: string;
   emoji: string | null;
   emoji_and_icon:
@@ -55,18 +58,6 @@ export interface IProjectLite {
   id: string;
   name: string;
   identifier: string;
-}
-
-export interface IFavoriteProject {
-  created_at: Date;
-  created_by: string;
-  id: string;
-  project: string;
-  project_detail: IProject;
-  updated_at: Date;
-  updated_by: string;
-  user: string;
-  workspace: string;
 }
 
 type ProjectViewTheme = {

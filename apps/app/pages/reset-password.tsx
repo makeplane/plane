@@ -14,7 +14,7 @@ import DefaultLayout from "layouts/default-layout";
 // ui
 import { Input, SecondaryButton } from "components/ui";
 // icons
-import Logo from "public/logo.png";
+import Logo from "public/plane-logos/blue-without-text.png";
 // types
 import type { NextPage } from "next";
 
