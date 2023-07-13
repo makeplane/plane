@@ -16,6 +16,7 @@ from .project import (
 from .people import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
 )
 
@@ -43,18 +44,13 @@ from .workspace import (
     WorkspaceThemeViewSet,
 )
 from .state import StateViewSet
-from .shortcut import ShortCutViewSet
 from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,
     CycleDateCheckEndpoint,
-    CurrentUpcomingCyclesEndpoint,
-    CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
-    DraftCyclesEndpoint,
     TransferCycleIssueEndpoint,
-    InCompleteCyclesEndpoint,
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint
 from .issue import (
@@ -62,7 +58,6 @@ from .issue import (
     WorkSpaceIssuesEndpoint,
     IssueActivityEndpoint,
     IssueCommentViewSet,
-    TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
     BulkDeleteIssuesEndpoint,
@@ -71,6 +66,8 @@ from .issue import (
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
     IssueAttachmentEndpoint,
+    IssueArchiveViewSet,
+    IssueSubscriberViewSet,
 )
 
 from .auth_extended import (
@@ -83,6 +80,7 @@ from .auth_extended import (
 
 
 from .authentication import (
+    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
@@ -122,10 +120,6 @@ from .page import (
     PageBlockViewSet,
     PageFavoriteViewSet,
     CreateIssueFromPageBlockEndpoint,
-    RecentPagesEndpoint,
-    FavoritePagesEndpoint,
-    MyPagesEndpoint,
-    CreatedbyOtherPagesEndpoint,
 )
 
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint
@@ -141,6 +135,8 @@ from .estimate import (
 
 from .release import ReleaseNotesEndpoint
 
+from .inbox import InboxViewSet, InboxIssueViewSet
+
 from .analytic import (
     AnalyticsEndpoint,
     AnalyticViewViewset,
@@ -148,3 +144,5 @@ from .analytic import (
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
 )
+
+from .notification import NotificationViewSet

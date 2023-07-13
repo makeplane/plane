@@ -2,7 +2,6 @@ import React from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Image from "next/image";
 
 import { mutate } from "swr";
 
@@ -23,8 +22,9 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IFavoriteProject, IProject } from "types";
 // fetch-keys
@@ -138,19 +138,17 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <>
       {members ? (
-        <div className="flex flex-col rounded-[10px] bg-brand-base shadow">
+        <div className="flex flex-col rounded-[10px] bg-custom-background-90 shadow">
           <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
             <a>
               <div className="relative h-32 w-full rounded-t-[10px]">
-                <Image
+                <img
                   src={
                     project.cover_image ??
                     "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                   }
                   alt={project.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-t-[10px]"
+                  className="absolute top-0 left-0 h-full w-full object-cover rounded-t-[10px]"
                 />
                 <div className="absolute left-7 bottom-4 flex items-center gap-3 text-white">
                   {!hasJoined ? (
@@ -180,14 +178,14 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               </div>
             </a>
           </Link>
-          <div className="flex h-full flex-col rounded-b-[10px] p-4 text-brand-secondary">
+          <div className="flex h-full flex-col rounded-b-[10px] p-4 text-custom-text-200">
             <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
               <a>
                 <div className="flex items-center gap-1">
-                  <h3 className="text-1.5xl font-medium text-brand-base">{project.name}</h3>
+                  <h3 className="text-1.5xl font-medium text-custom-text-100">{project.name}</h3>
                   {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {String.fromCodePoint(parseInt(project.emoji))}
+                      {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
                     <span
@@ -198,27 +196,27 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                     </span>
                   ) : null}
                 </div>
-                <p className="mt-3.5 mb-7 break-all">
+                <p className="mt-3.5 mb-7 break-words">
                   {truncateText(project.description ?? "", 100)}
                 </p>
               </a>
             </Link>
             <div className="flex h-full items-end justify-between">
               <Tooltip
-                tooltipContent={`Created at ${renderShortNumericDateFormat(project.created_at)}`}
+                tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
                 position="bottom"
                 theme="dark"
               >
                 <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
-                  {renderShortNumericDateFormat(project.created_at)}
+                  {renderShortDateWithYearFormat(project.created_at)}
                 </div>
               </Tooltip>
               {hasJoined ? (
                 <div className="flex items-center">
                   {(isOwner || isMember) && (
                     <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
-                      <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-brand-surface-1">
+                      <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-custom-background-90">
                         <PencilIcon className="h-4 w-4" />
                       </a>
                     </Link>

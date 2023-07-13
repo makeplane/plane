@@ -104,7 +104,7 @@ export const homePageRedirect = async (cookie?: string) => {
   if (!user)
     return {
       redirect: {
-        destination: "/signin",
+        destination: "/",
         permanent: false,
       },
     };

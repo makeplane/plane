@@ -19,14 +19,20 @@ import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IIssueLabels, IState, TIssueGroupByOptions, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  IIssueLabels,
+  IState,
+  TIssueGroupByOptions,
+  UserAuth,
+} from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
   currentState?: IState | null;
-  bgColor?: string;
   groupTitle: string;
   groupedByIssues: {
     [key: string]: IIssue[];
@@ -39,13 +45,13 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
 export const SingleList: React.FC<Props> = ({
   type,
   currentState,
-  bgColor,
   groupTitle,
   groupedByIssues,
   selectedGroup,
@@ -56,10 +62,12 @@ export const SingleList: React.FC<Props> = ({
   openIssuesListModal,
   removeIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
@@ -104,7 +112,8 @@ export const SingleList: React.FC<Props> = ({
 
     switch (selectedGroup) {
       case "state":
-        icon = currentState && getStateGroupIcon(currentState.group, "16", "16", bgColor);
+        icon =
+          currentState && getStateGroupIcon(currentState.group, "16", "16", currentState.color);
         break;
       case "priority":
         icon = getPriorityIcon(groupTitle, "text-lg");
@@ -133,28 +142,30 @@ export const SingleList: React.FC<Props> = ({
     <Disclosure as="div" defaultOpen>
       {({ open }) => (
         <div>
-          <div className="flex items-center justify-between px-4 py-2.5">
+          <div className="flex items-center justify-between px-4 py-2.5 bg-custom-background-90">
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
                 {selectedGroup !== null && (
                   <div className="flex items-center">{getGroupIcon()}</div>
                 )}
                 {selectedGroup !== null ? (
-                  <h2 className="text-sm font-semibold capitalize leading-6 text-brand-base">
+                  <h2 className="text-sm font-semibold capitalize leading-6 text-custom-text-100">
                     {getGroupTitle()}
                   </h2>
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
-                <span className="text-brand-2 min-w-[2.5rem] rounded-full bg-brand-surface-2 py-1 text-center text-xs">
+                <span className="text-custom-text-200 min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs">
                   {groupedByIssues[groupTitle as keyof IIssue].length}
                 </span>
               </div>
             </Disclosure.Button>
-            {type === "issue" ? (
+            {isArchivedIssues ? (
+              ""
+            ) : type === "issue" ? (
               <button
                 type="button"
-                className="p-1  text-brand-secondary hover:bg-brand-surface-2"
+                className="p-1  text-custom-text-200 hover:bg-custom-background-80"
                 onClick={addIssueToState}
               >
                 <PlusIcon className="h-4 w-4" />
@@ -208,11 +219,12 @@ export const SingleList: React.FC<Props> = ({
                           removeIssue(issue.bridge_id, issue.id);
                       }}
                       isCompleted={isCompleted}
+                      user={user}
                       userAuth={userAuth}
                     />
                   ))
                 ) : (
-                  <p className="bg-brand-base px-4 py-2.5 text-sm text-brand-secondary">
+                  <p className="bg-custom-background-100 px-4 py-2.5 text-sm text-custom-text-200">
                     No issues.
                   </p>
                 )

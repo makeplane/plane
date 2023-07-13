@@ -5,7 +5,6 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 from plane.db.models import WorkspaceMember
 
 
-
 # Permission Mappings
 Owner = 20
 Admin = 15
@@ -44,7 +43,6 @@ class WorkSpaceBasePermission(BasePermission):
 
 class WorkSpaceAdminPermission(BasePermission):
     def has_permission(self, request, view):
-
         if request.user.is_anonymous:
             return False
 
@@ -52,4 +50,14 @@ class WorkSpaceAdminPermission(BasePermission):
             member=request.user,
             workspace__slug=view.workspace_slug,
             role__in=[Owner, Admin],
+        ).exists()
+
+
+class WorkspaceEntityPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return False
+
+        return WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=view.workspace_slug
         ).exists()

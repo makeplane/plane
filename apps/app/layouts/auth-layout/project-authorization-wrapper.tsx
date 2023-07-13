@@ -5,10 +5,7 @@ import { useRouter } from "next/router";
 
 // contexts
 import { useProjectMyMembership, ProjectMemberProvider } from "contexts/project-member.context";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
 // layouts
-import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 // components
@@ -19,15 +16,7 @@ import { PrimaryButton, Spinner } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 
-type Meta = {
-  title?: string | null;
-  description?: string | null;
-  image?: string | null;
-  url?: string | null;
-};
-
 type Props = {
-  meta?: Meta;
   children: React.ReactNode;
   noHeader?: boolean;
   bg?: "primary" | "secondary";
@@ -43,7 +32,6 @@ export const ProjectAuthorizationWrapper: React.FC<Props> = (props) => (
 );
 
 const ProjectAuthorizationWrapped: React.FC<Props> = ({
-  meta,
   children,
   noHeader = false,
   bg = "primary",
@@ -61,7 +49,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   const settingsLayout = router.pathname.includes("/settings");
 
   return (
-    <Container meta={meta}>
+    <>
       <CommandPalette />
       <div className="relative flex h-screen w-full overflow-hidden">
         <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
@@ -106,26 +94,25 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
           <main
             className={`relative flex h-full w-full flex-col overflow-hidden ${
               bg === "primary"
-                ? "bg-brand-surface-1"
+                ? "bg-custom-background-100"
                 : bg === "secondary"
-                ? "bg-brand-sidebar"
-                : "bg-brand-base"
+                ? "bg-custom-background-90"
+                : "bg-custom-background-80"
             }`}
           >
-            {!noHeader && (
-              <AppHeader
-                breadcrumbs={breadcrumbs}
-                left={left}
-                right={right}
-                setToggleSidebar={setToggleSidebar}
-              />
-            )}
+            <AppHeader
+              breadcrumbs={breadcrumbs}
+              left={left}
+              right={right}
+              setToggleSidebar={setToggleSidebar}
+              noHeader={noHeader}
+            />
             <div className="h-full w-full overflow-hidden">
               <div className="h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
             </div>
           </main>
         )}
       </div>
-    </Container>
+    </>
   );
 };

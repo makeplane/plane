@@ -21,15 +21,17 @@ import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outli
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, ISubIssueResponse } from "types";
+import { ICurrentUserResponse, IIssue, ISearchIssueResponse, ISubIssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   parentIssue: IIssue;
+  user: ICurrentUserResponse | undefined;
+  disabled?: boolean;
 };
 
-export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -57,14 +59,16 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
       : null
   );
 
-  const addAsSubIssue = async (data: { issues: string[] }) => {
+  const addAsSubIssue = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
 
+    const payload = {
+      sub_issue_ids: data.map((i) => i.id),
+    };
+
     await issuesService
-      .addSubIssues(workspaceSlug as string, projectId as string, parentIssue?.id ?? "", {
-        sub_issue_ids: data.issues,
-      })
-      .then((res) => {
+      .addSubIssues(workspaceSlug as string, projectId as string, parentIssue?.id ?? "", payload)
+      .then(() => {
         mutate<ISubIssueResponse>(
           SUB_ISSUES(parentIssue?.id ?? ""),
           (prevData) => {
@@ -73,10 +77,12 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
 
             const stateDistribution = { ...prevData.state_distribution };
 
-            data.issues.forEach((issueId: string) => {
+            payload.sub_issue_ids.forEach((issueId: string) => {
               const issue = issues?.find((i) => i.id === issueId);
+
               if (issue) {
                 newSubIssues.push(issue);
+
                 const issueGroup = issue.state_detail.group;
                 stateDistribution[issueGroup] = stateDistribution[issueGroup] + 1;
               }
@@ -95,7 +101,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
           (prevData) =>
             (prevData ?? []).map((p) => {
-              if (data.issues.includes(p.id))
+              if (payload.sub_issue_ids.includes(p.id))
                 return {
                   ...p,
                   parent: parentIssue.id,
@@ -134,7 +140,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
     );
 
     issuesService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null })
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null }, user)
       .then((res) => {
         mutate(SUB_ISSUES(parentIssue.id ?? ""));
 
@@ -165,22 +171,17 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
     });
   };
 
-  const completedSubIssues =
-    subIssuesResponse && subIssuesResponse.state_distribution
-      ? (subIssuesResponse?.state_distribution.completed
-          ? subIssuesResponse?.state_distribution.completed
-          : 0) +
-        (subIssuesResponse?.state_distribution.cancelled
-          ? subIssuesResponse?.state_distribution.cancelled
-          : 0)
-      : 0;
+  const completedSubIssues = subIssuesResponse
+    ? subIssuesResponse?.state_distribution.completed +
+      subIssuesResponse?.state_distribution.cancelled
+    : 0;
 
   const totalSubIssues =
     subIssuesResponse && subIssuesResponse.sub_issues ? subIssuesResponse?.sub_issues.length : 0;
 
   const completionPercentage = (completedSubIssues / totalSubIssues) * 100;
 
-  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
+  const isNotAllowed = memberRole.isGuest || memberRole.isViewer || disabled;
 
   return (
     <>
@@ -192,14 +193,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
       <ExistingIssuesListModal
         isOpen={subIssuesListModal}
         handleClose={() => setSubIssuesListModal(false)}
-        issues={
-          issues?.filter(
-            (i) =>
-              (i.parent === "" || i.parent === null) &&
-              i.id !== parentIssue?.id &&
-              i.id !== parentIssue?.parent
-          ) ?? []
-        }
+        searchParams={{ sub_issue: true, issue_id: parentIssue?.id }}
         handleOnSubmit={addAsSubIssue}
       />
       {subIssuesResponse &&
@@ -210,16 +204,16 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
             <>
               <div className="flex items-center justify-between">
                 <div className="flex items-center justify-start gap-3">
-                  <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1">
+                  <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-custom-background-90">
                     <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
                     Sub-issues{" "}
-                    <span className="ml-1 text-brand-secondary">
+                    <span className="ml-1 text-custom-text-200">
                       {subIssuesResponse.sub_issues.length}
                     </span>
                   </Disclosure.Button>
                   {subIssuesResponse.state_distribution && (
-                    <div className="flex w-60 items-center gap-2 text-brand-base">
-                      <div className="bar relative h-1.5 w-full rounded bg-brand-surface-2">
+                    <div className="flex w-60 items-center gap-2 text-custom-text-100">
+                      <div className="bar relative h-1.5 w-full rounded bg-custom-background-80">
                         <div
                           className="absolute top-0 left-0 h-1.5 rounded bg-green-500 duration-300"
                           style={{
@@ -249,7 +243,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                   <div className="flex items-center">
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1"
+                      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-custom-background-90"
                       onClick={handleCreateIssueModal}
                     >
                       <PlusIcon className="h-3 w-3" />
@@ -278,7 +272,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                     >
-                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-brand-surface-1">
+                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-custom-background-100">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
                             className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -286,10 +280,10 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                               backgroundColor: issue.state_detail.color,
                             }}
                           />
-                          <span className="flex-shrink-0 text-brand-secondary">
+                          <span className="flex-shrink-0 text-custom-text-200">
                             {issue.project_detail.identifier}-{issue.sequence_id}
                           </span>
-                          <span className="max-w-sm break-all font-medium">{issue.name}</span>
+                          <span className="max-w-sm break-words font-medium">{issue.name}</span>
                         </div>
 
                         {!isNotAllowed && (
@@ -302,7 +296,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
                               handleSubIssueRemove(issue.id);
                             }}
                           >
-                            <XMarkIcon className="h-4 w-4 text-brand-secondary hover:text-brand-base" />
+                            <XMarkIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
                           </button>
                         )}
                       </a>

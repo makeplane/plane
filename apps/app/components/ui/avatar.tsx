@@ -13,7 +13,7 @@ import { IUser, IUserLite } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type AvatarProps = {
-  user?: Partial<IUser> | Partial<IUserLite> | IUser | IUserLite | undefined | null;
+  user?: Partial<IUser> | Partial<IUserLite> | null;
   index?: number;
   height?: string;
   width?: string;
@@ -37,24 +37,22 @@ export const Avatar: React.FC<AvatarProps> = ({
     {user && user.avatar && user.avatar !== "" ? (
       <div
         className={`rounded-full border-2 ${
-          index ? "border-brand-surface-1 bg-brand-surface-2" : "border-transparent"
+          index ? "border-custom-border-100 bg-custom-background-80" : "border-transparent"
         }`}
         style={{
           height: height,
           width: width,
         }}
       >
-        <Image
+        <img
           src={user.avatar}
-          height="100%"
-          width="100%"
-          className="rounded-full"
+          className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
           alt={user.first_name}
         />
       </div>
     ) : (
       <div
-        className="grid place-items-center rounded-full border-2 border-brand-surface-1 bg-gray-700 text-xs capitalize text-white"
+        className="grid place-items-center rounded-full border-2 border-custom-border-100 bg-gray-700 text-xs capitalize text-white"
         style={{
           height: height,
           width: width,
@@ -92,7 +90,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
 
   if ((users && users.length === 0) || (userIds && userIds.length === 0))
     return (
-      <div className="h-5 w-5 rounded-full border-2 border-white bg-brand-surface-2">
+      <div className="h-5 w-5 rounded-full border-2 border-white bg-custom-background-80">
         <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
       </div>
     );

@@ -9,6 +9,7 @@ import { CustomMenu, Icon, Tooltip } from "components/ui";
 import { LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject } from "types";
 
@@ -69,7 +70,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
     <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
       {({ open }) => (
         <>
-          <div className="flex items-center gap-x-1">
+          <div className="flex items-center gap-x-1 text-custom-sidebar-text-100">
             <Tooltip
               tooltipContent={`${project?.name}`}
               position="right"
@@ -85,7 +86,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 <div className="flex items-center gap-x-2">
                   {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {String.fromCodePoint(parseInt(project.emoji))}
+                      {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
                     <div className="h-7 w-7 grid place-items-center">
@@ -111,7 +112,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 {!sidebarCollapse && (
                   <Icon
                     iconName="expand_more"
-                    className={`${open ? "rotate-180" : ""} text-brand-secondary duration-300`}
+                    className={`${open ? "rotate-180" : ""} text-custom-text-200 duration-300`}
                   />
                 )}
               </Disclosure.Button>
@@ -147,6 +148,18 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     <span>Copy project link</span>
                   </span>
                 </CustomMenu.MenuItem>
+                {project.archive_in > 0 && (
+                  <CustomMenu.MenuItem
+                    onClick={() =>
+                      router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)
+                    }
+                  >
+                    <div className="flex items-center justify-start gap-2">
+                      <Icon iconName="archive" className="h-4 w-4" />
+                      <span>Archived Issues</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
               </CustomMenu>
             )}
           </div>
@@ -183,16 +196,16 @@ export const SingleSidebarProject: React.FC<Props> = ({
                         <div
                           className={`group flex items-center rounded-sm px-2 py-1.5 gap-2 text-xs outline-none ${
                             router.asPath.includes(item.href)
-                              ? "bg-brand-surface-2 text-brand-base font-medium"
-                              : "text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 focus:bg-brand-surface-2 focus:text-brand-base"
+                              ? "bg-custom-sidebar-background-80 text-custom-sidebar-text-100 font-medium"
+                              : "text-custom-sidebar-text-200 hover:text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 focus:text-custom-sidebar-text-100"
                           } ${sidebarCollapse ? "justify-center" : ""}`}
                         >
                           <Icon
                             iconName={item.icon}
                             className={`${
                               router.asPath.includes(item.href)
-                                ? "text-brand-base"
-                                : "text-brand-secondary group-hover:text-brand-base"
+                                ? "text-custom-sidebar-text-100"
+                                : "text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100"
                             } text-base`}
                           />
                           {!sidebarCollapse && item.name}

@@ -18,6 +18,11 @@ export interface IModule {
   description: string;
   description_text: any;
   description_html: any;
+  distribution: {
+    assignees: TAssigneesDistribution[];
+    completion_chart: TCompletionChartDistribution;
+    labels: TLabelsDistribution[];
+  };
   id: string;
   lead: string | null;
   lead_detail: IUserLite | null;

@@ -5,7 +5,7 @@ import useSWR from "swr";
 // components
 import ToastAlert from "components/toast-alert";
 // hooks
-import useUser from "hooks/use-user";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
 // fetch-keys
@@ -65,7 +65,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
 
 export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { user } = useUser();
+  const { user } = useUserAuth(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;

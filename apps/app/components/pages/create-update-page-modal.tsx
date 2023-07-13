@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { IPage } from "types";
+import { ICurrentUserResponse, IPage } from "types";
 // fetch-keys
 import {
   ALL_PAGES_LIST,
@@ -26,9 +26,10 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IPage | null;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -40,7 +41,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
 
   const createPage = async (payload: IPage) => {
     await pagesService
-      .createPage(workspaceSlug as string, projectId as string, payload)
+      .createPage(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(
@@ -82,7 +83,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
 
   const updatePage = async (payload: IPage) => {
     await pagesService
-      .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
+      .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(
@@ -151,7 +152,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -165,7 +166,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-brand-base bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <PageForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}

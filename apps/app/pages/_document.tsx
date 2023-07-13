@@ -13,6 +13,7 @@ class MyDocument extends Document {
           <link rel="apple-touch-icon" href="/icon.png" />
           <meta name="theme-color" content="#fff" />
           <script defer data-domain="app.plane.so" src="https://plausible.io/js/script.js" />
+          <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" />
           {isSessionRecorderEnabled && process.env.NEXT_PUBLIC_SESSION_RECORDER_KEY && (
             <script
               defer

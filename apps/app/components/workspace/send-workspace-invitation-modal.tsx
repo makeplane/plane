@@ -1,17 +1,22 @@
 import React from "react";
+
 import { mutate } from "swr";
+
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
-// ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+// contexts
+import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // hooks
 import useToast from "hooks/use-toast";
+// ui
+import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
-import { IWorkspaceMemberInvitation } from "types";
-// fetch keys
+import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
+// fetch-keys
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
@@ -21,6 +26,7 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workspace_slug: string;
   members: any[];
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues: Partial<IWorkspaceMemberInvitation> = {
@@ -33,8 +39,10 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
   setIsOpen,
   workspace_slug,
   members,
+  user,
 }) => {
   const { setToastAlert } = useToast();
+  const { memberDetails } = useWorkspaceMyMembership();
 
   const {
     control,
@@ -54,7 +62,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
 
   const onSubmit = async (formData: IWorkspaceMemberInvitation) => {
     await workspaceService
-      .inviteWorkspace(workspace_slug, { emails: [formData] })
+      .inviteWorkspace(workspace_slug, { emails: [formData] }, user)
       .then((res) => {
         setIsOpen(false);
         handleClose();
@@ -97,14 +105,17 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-brand-surface-1 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-90 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <div>
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-custom-text-100"
+                      >
                         Members
                       </Dialog.Title>
-                      <p className="text-sm text-brand-secondary">
+                      <p className="text-sm text-custom-text-200">
                         Invite members to work on your workspace.
                       </p>
                     </div>
@@ -140,11 +151,15 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                               width="w-full"
                               input
                             >
-                              {Object.entries(ROLE).map(([key, value]) => (
-                                <CustomSelect.Option key={key} value={key}>
-                                  {value}
-                                </CustomSelect.Option>
-                              ))}
+                              {Object.entries(ROLE).map(([key, value]) => {
+                                if (parseInt(key) > (memberDetails?.role ?? 5)) return null;
+
+                                return (
+                                  <CustomSelect.Option key={key} value={key}>
+                                    {value}
+                                  </CustomSelect.Option>
+                                );
+                              })}
                             </CustomSelect>
                           )}
                         />

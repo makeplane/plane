@@ -19,7 +19,7 @@ import { CustomSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "c
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import type { IState, IStateResponse } from "types";
+import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
@@ -30,16 +30,17 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues: Partial<IState> = {
   name: "",
   description: "",
-  color: "#858e96",
+  color: "rgb(var(--color-text-200))",
   group: "backlog",
 };
 
-export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose }) => {
+export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -69,7 +70,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
     };
 
     await stateService
-      .createState(workspaceSlug as string, projectId, payload)
+      .createState(workspaceSlug as string, projectId, payload, user)
       .then((res) => {
         mutate<IStateResponse>(
           STATES_LIST(projectId.toString()),
@@ -127,10 +128,13 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-custom-text-100"
+                    >
                       Create State
                     </Dialog.Title>
                     <div className="mt-2 space-y-3">
@@ -176,8 +180,8 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                           {({ open }) => (
                             <>
                               <Popover.Button
-                                className={`group inline-flex items-center rounded-md bg-brand-surface-2 text-base font-medium hover:text-brand-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                                  open ? "text-brand-base" : "text-brand-secondary"
+                                className={`group inline-flex items-center rounded-md bg-custom-background-80 text-base font-medium hover:text-custom-text-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                                  open ? "text-custom-text-100" : "text-custom-text-200"
                                 }`}
                               >
                                 <span>Color</span>
@@ -190,7 +194,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                   />
                                 )}
                                 <ChevronDownIcon
-                                  className={`ml-2 h-5 w-5 group-hover:text-brand-secondary ${
+                                  className={`ml-2 h-5 w-5 group-hover:text-custom-text-200 ${
                                     open ? "text-gray-600" : "text-gray-400"
                                   }`}
                                   aria-hidden="true"

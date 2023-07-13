@@ -13,12 +13,7 @@ import Image404 from "public/404.svg";
 import type { NextPage } from "next";
 
 const PageNotFound: NextPage = () => (
-  <DefaultLayout
-    meta={{
-      title: "Plane - Page Not Found",
-      description: "Page Not Found",
-    }}
-  >
+  <DefaultLayout>
     <div className="grid h-full place-items-center p-4">
       <div className="space-y-8 text-center">
         <div className="relative mx-auto h-60 w-60 lg:h-80 lg:w-80">
@@ -26,7 +21,7 @@ const PageNotFound: NextPage = () => (
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
-          <p className="text-sm text-brand-secondary">
+          <p className="text-sm text-custom-text-200">
             Sorry, the page you are looking for cannot be found. It may have been removed, had its
             name changed, or is temporarily unavailable.
           </p>

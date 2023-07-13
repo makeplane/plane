@@ -23,7 +23,6 @@ from .project import (
 from .issue import (
     Issue,
     IssueActivity,
-    TimelineIssue,
     IssueProperty,
     IssueComment,
     IssueBlocker,
@@ -34,6 +33,7 @@ from .issue import (
     IssueLink,
     IssueSequence,
     IssueAttachment,
+    IssueSubscriber,
 )
 
 from .asset import FileAsset
@@ -43,8 +43,6 @@ from .social_connection import SocialLoginConnection
 from .state import State
 
 from .cycle import Cycle, CycleIssue, CycleFavorite
-
-from .shortcut import Shortcut
 
 from .view import IssueView, IssueViewFavorite
 
@@ -68,4 +66,8 @@ from .page import Page, PageBlock, PageFavorite, PageLabel
 
 from .estimate import Estimate, EstimatePoint
 
+from .inbox import Inbox, InboxIssue
+
 from .analytic import AnalyticView
+
+from .notification import Notification

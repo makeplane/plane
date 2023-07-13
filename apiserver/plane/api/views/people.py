@@ -31,36 +31,71 @@ class UserEndpoint(BaseViewSet):
 
     def retrieve(self, request):
         try:
-            workspace = Workspace.objects.get(pk=request.user.last_workspace_id)
+            workspace = Workspace.objects.get(
+                pk=request.user.last_workspace_id, workspace_member__member=request.user
+            )
             workspace_invites = WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).count()
-            assigned_issues = Issue.objects.filter(assignees__in=[request.user]).count()
+            assigned_issues = Issue.issue_objects.filter(
+                assignees__in=[request.user]
+            ).count()
+
+            serialized_data = UserSerializer(request.user).data
+            serialized_data["workspace"] = {
+                "last_workspace_id": request.user.last_workspace_id,
+                "last_workspace_slug": workspace.slug,
+                "fallback_workspace_id": request.user.last_workspace_id,
+                "fallback_workspace_slug": workspace.slug,
+                "invites": workspace_invites,
+            }
+            serialized_data.setdefault("issues", {})[
+                "assigned_issues"
+            ] = assigned_issues
 
             return Response(
-                {
-                    "user": UserSerializer(request.user).data,
-                    "slug": workspace.slug,
-                    "workspace_invites": workspace_invites,
-                    "assigned_issues": assigned_issues,
-                },
+                serialized_data,
                 status=status.HTTP_200_OK,
             )
         except Workspace.DoesNotExist:
+            # This exception will be hit even when the `last_workspace_id` is None
+
             workspace_invites = WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).count()
-            assigned_issues = Issue.objects.filter(assignees__in=[request.user]).count()
+            assigned_issues = Issue.issue_objects.filter(
+                assignees__in=[request.user]
+            ).count()
+
+            fallback_workspace = (
+                Workspace.objects.filter(workspace_member__member=request.user)
+                .order_by("created_at")
+                .first()
+            )
+
+            serialized_data = UserSerializer(request.user).data
+
+            serialized_data["workspace"] = {
+                "last_workspace_id": None,
+                "last_workspace_slug": None,
+                "fallback_workspace_id": fallback_workspace.id
+                if fallback_workspace is not None
+                else None,
+                "fallback_workspace_slug": fallback_workspace.slug
+                if fallback_workspace is not None
+                else None,
+                "invites": workspace_invites,
+            }
+            serialized_data.setdefault("issues", {})[
+                "assigned_issues"
+            ] = assigned_issues
+
             return Response(
-                {
-                    "user": UserSerializer(request.user).data,
-                    "slug": None,
-                    "workspace_invites": workspace_invites,
-                    "assigned_issues": assigned_issues,
-                },
+                serialized_data,
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -73,20 +108,23 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
             user = User.objects.get(pk=request.user.id)
             user.is_onboarded = request.data.get("is_onboarded", False)
             user.save()
+            return Response(
+                {"message": "Updated successfully"}, status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-            if user.last_workspace_id is not None:
-                user_role = WorkspaceMember.objects.filter(
-                    workspace_id=user.last_workspace_id, member=request.user.id
-                ).first()
-                return Response(
-                    {
-                        "message": "Updated successfully",
-                        "role": user_role.company_role
-                        if user_role is not None
-                        else None,
-                    },
-                    status=status.HTTP_200_OK,
-                )
+
+class UpdateUserTourCompletedEndpoint(BaseAPIView):
+    def patch(self, request):
+        try:
+            user = User.objects.get(pk=request.user.id)
+            user.is_tour_completed = request.data.get("is_tour_completed", False)
+            user.save()
             return Response(
                 {"message": "Updated successfully"}, status=status.HTTP_200_OK
             )

@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 
-// next
-import Image from "next/image";
-
 // swr
 import useSWR from "swr";
 
@@ -65,7 +62,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
   return (
     <Popover className="relative z-[2]" ref={ref}>
       <Popover.Button
-        className="rounded-md border border-brand-base bg-brand-surface-2 px-2 py-1 text-xs text-brand-secondary"
+        className="rounded-md border border-custom-border-100 bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {label}
@@ -79,16 +76,16 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-brand-base bg-brand-surface-2 shadow-lg">
-          <div className="h-96 w-80 overflow-auto rounded border border-brand-base bg-brand-surface-2 p-5 shadow-2xl sm:max-w-2xl md:w-96 lg:w-[40rem]">
+        <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-100 bg-custom-background-80 shadow-lg">
+          <div className="h-96 w-80 overflow-auto rounded border border-custom-border-100 bg-custom-background-80 p-5 shadow-2xl sm:max-w-2xl md:w-96 lg:w-[40rem]">
             <Tab.Group>
-              <Tab.List as="span" className="inline-block rounded bg-brand-surface-2 p-1">
+              <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
                 {tabOptions.map((tab) => (
                   <Tab
                     key={tab.key}
                     className={({ selected }) =>
                       `rounded py-1 px-4 text-center text-sm outline-none transition-colors ${
-                        selected ? "bg-brand-accent text-white" : "text-brand-base"
+                        selected ? "bg-custom-primary text-white" : "text-custom-text-100"
                       }`
                     }
                   >
@@ -107,12 +104,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                       onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                       placeholder="Search for images"
                     />
-                    <PrimaryButton
-                      type="button"
-                      onClick={() => setSearchParams(formData.search)}
-                      className="bg-indigo-600"
-                      size="sm"
-                    >
+                    <PrimaryButton onClick={() => setSearchParams(formData.search)} size="sm">
                       Search
                     </PrimaryButton>
                   </div>
@@ -123,12 +115,10 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                           key={image.id}
                           className="relative col-span-2 aspect-video md:col-span-1"
                         >
-                          <Image
+                          <img
                             src={image.urls.small}
                             alt={image.alt_description}
-                            layout="fill"
-                            objectFit="cover"
-                            className="cursor-pointer rounded"
+                            className="cursor-pointer rounded absolute top-0 left-0 h-full w-full object-cover"
                             onClick={() => {
                               setIsOpen(false);
                               onChange(image.urls.regular);

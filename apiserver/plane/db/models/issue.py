@@ -17,6 +17,22 @@ from plane.utils.html_processor import strip_tags
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
+class IssueManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                models.Q(issue_inbox__status=1)
+                | models.Q(issue_inbox__status=-1)
+                | models.Q(issue_inbox__status=2)
+                | models.Q(issue_inbox__isnull=True)
+            )
+            .filter(archived_at__isnull=True)
+            .exclude(archived_at__isnull=False)
+        )
+
+
 class Issue(ProjectBaseModel):
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
@@ -67,6 +83,10 @@ class Issue(ProjectBaseModel):
     )
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
+    archived_at = models.DateField(null=True)
+
+    objects = models.Manager()
+    issue_objects = IssueManager()
 
     class Meta:
         verbose_name = "Issue"
@@ -81,11 +101,13 @@ class Issue(ProjectBaseModel):
                 from plane.db.models import State
 
                 default_state = State.objects.filter(
-                    project=self.project, default=True
+                    ~models.Q(name="Triage"), project=self.project, default=True
                 ).first()
                 # if there is no default state assign any random state
                 if default_state is None:
-                    random_state = State.objects.filter(project=self.project).first()
+                    random_state = State.objects.filter(
+                        ~models.Q(name="Triage"), project=self.project
+                    ).first()
                     self.state = random_state
                     if random_state.group == "started":
                         self.start_date = timezone.now().date()
@@ -210,8 +232,8 @@ def get_upload_path(instance, filename):
 
 
 def file_size(value):
-    limit = 5 * 1024 * 1024
-    if value.size > limit:
+    # File limit check is only for cloud hosted
+    if value.size > settings.FILE_SIZE_LIMIT:
         raise ValidationError("File too large. Size should not exceed 5 MB.")
 
 
@@ -273,24 +295,6 @@ class IssueActivity(ProjectBaseModel):
 
     def __str__(self):
         """Return issue of the comment"""
-        return str(self.issue)
-
-
-class TimelineIssue(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_timeline"
-    )
-    sequence_id = models.FloatField(default=1.0)
-    links = models.JSONField(default=dict, blank=True)
-
-    class Meta:
-        verbose_name = "Timeline Issue"
-        verbose_name_plural = "Timeline Issues"
-        db_table = "issue_timelines"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return project of the project member"""
         return str(self.issue)
 
 
@@ -398,6 +402,27 @@ class IssueSequence(ProjectBaseModel):
         verbose_name_plural = "Issue Sequences"
         db_table = "issue_sequences"
         ordering = ("-created_at",)
+
+
+class IssueSubscriber(ProjectBaseModel):
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="issue_subscribers"
+    )
+    subscriber = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_subscribers",
+    )
+
+    class Meta:
+        unique_together = ["issue", "subscriber"]
+        verbose_name = "Issue Subscriber"
+        verbose_name_plural = "Issue Subscribers"
+        db_table = "issue_subscribers"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.subscriber.email}"
 
 
 # TODO: Find a better method to save the model

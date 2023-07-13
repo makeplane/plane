@@ -64,22 +64,19 @@ export interface IIssueLink {
 }
 
 export interface IIssue {
+  archived_at: string;
   assignees: string[];
   assignee_details: IUser[];
   assignees_list: string[];
   attachment_count: number;
   attachments: any[];
-  blocked_by_issue_details: any[];
-  blocked_issue_details: any[];
   blocked_issues: BlockeIssue[];
-  blocked_list: string[];
   blocker_issues: BlockeIssue[];
-  blockers: any[];
   blockers_list: string[];
   blocks_list: string[];
   bridge_id?: string | null;
   completed_at: Date;
-  created_at: Date;
+  created_at: string;
   created_by: string;
   cycle: string | null;
   cycle_id: string | null;
@@ -100,7 +97,9 @@ export interface IIssue {
     url: string;
   }[];
   issue_module: IIssueModule | null;
+  labels: string[];
   label_details: any[];
+  labels_list: string[];
   links_list: IIssueLink[];
   link_count: number;
   module: string | null;
@@ -119,12 +118,10 @@ export interface IIssue {
   state_detail: IState;
   sub_issues_count: number;
   target_date: string | null;
-  updated_at: Date;
+  updated_at: string;
   updated_by: string;
   workspace: string;
   workspace_detail: IWorkspaceLite;
-  labels: any[];
-  labels_list: string[];
 }
 
 export interface ISubIssuesState {
@@ -141,26 +138,14 @@ export interface ISubIssueResponse {
 }
 
 export interface BlockeIssue {
-  id: string;
   blocked_issue_detail?: BlockeIssueDetail;
-  created_at: Date;
-  updated_at: Date;
-  created_by: string;
-  updated_by: string;
-  project: string;
-  workspace: string;
-  block: string;
-  blocked_by: string;
   blocker_issue_detail?: BlockeIssueDetail;
 }
 
 export interface BlockeIssueDetail {
   id: string;
   name: string;
-  description: string;
-  priority: null;
-  start_date: null;
-  target_date: null;
+  sequence_id: number;
 }
 
 export interface IIssueComment {
@@ -204,6 +189,8 @@ export type Properties = {
   link: boolean;
   attachment_count: boolean;
   estimate: boolean;
+  created_on: boolean;
+  updated_on: boolean;
 };
 
 export interface IIssueLabels {
@@ -255,6 +242,7 @@ export interface IIssueLite {
 export interface IIssueFilterOptions {
   type: "active" | "backlog" | null;
   assignees: string[] | null;
+  target_date: string[] | null;
   state: string[] | null;
   labels: string[] | null;
   issue__assignees__id: string[] | null;
@@ -263,11 +251,25 @@ export interface IIssueFilterOptions {
   created_by: string[] | null;
 }
 
-export type TIssueViewOptions = "list" | "kanban" | "calendar" | "gantt_chart";
+export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
 export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
 
-export type TIssueOrderByOptions = "-created_at" | "updated_at" | "priority" | "sort_order";
+export type TIssueOrderByOptions =
+  | "-created_at"
+  | "-updated_at"
+  | "priority"
+  | "sort_order"
+  | "state__name"
+  | "-state__name"
+  | "assignees__name"
+  | "-assignees__name"
+  | "labels__name"
+  | "-labels__name"
+  | "target_date"
+  | "-target_date"
+  | "estimate__point"
+  | "-estimate__point";
 
 export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;

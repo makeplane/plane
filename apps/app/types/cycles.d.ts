@@ -16,6 +16,11 @@ export interface ICycle {
   created_at: Date;
   created_by: string;
   description: string;
+  distribution: {
+    assignees: TAssigneesDistribution[];
+    completion_chart: TCompletionChartDistribution;
+    labels: TLabelsDistribution[];
+  };
   end_date: string | null;
   id: string;
   is_favorite: boolean;
@@ -38,18 +43,28 @@ export interface ICycle {
   workspace_detail: IWorkspaceLite;
 }
 
-export interface CurrentAndUpcomingCyclesResponse {
-  current_cycle: ICycle[];
-  upcoming_cycle: ICycle[];
-}
+export type TAssigneesDistribution = {
+  assignee_id: string | null;
+  avatar: string | null;
+  completed_issues: number;
+  first_name: string | null;
+  last_name: string | null;
+  pending_issues: number;
+  total_issues: number;
+};
 
-export interface DraftCyclesResponse {
-  draft_cycles: ICycle[];
-}
+export type TCompletionChartDistribution = {
+  [key: string]: number;
+};
 
-export interface CompletedCyclesResponse {
-  completed_cycles: ICycle[];
-}
+export type TLabelsDistribution = {
+  color: string | null;
+  completed_issues: number;
+  label_id: string | null;
+  label_name: string | null;
+  pending_issues: number;
+  total_issues: number;
+};
 
 export interface CycleIssueResponse {
   id: string;

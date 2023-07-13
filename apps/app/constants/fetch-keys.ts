@@ -1,7 +1,7 @@
 import { IAnalyticsParams, IJiraMetadata } from "types";
 
 const paramsToKey = (params: any) => {
-  const { state, priority, assignees, created_by, labels, target_date } = params;
+  const { state, priority, assignees, created_by, labels, target_date, sub_issue } = params;
 
   let stateKey = state ? state.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
@@ -12,6 +12,7 @@ const paramsToKey = (params: any) => {
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const subIssue = sub_issue ? sub_issue.toUpperCase() : "NULL";
 
   // sorting each keys in ascending order
   stateKey = stateKey.sort().join("_");
@@ -20,7 +21,20 @@ const paramsToKey = (params: any) => {
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}_${subIssue}`;
+};
+
+const inboxParamsToKey = (params: any) => {
+  const { priority, inbox_status } = params;
+
+  let priorityKey = priority ? priority.split(",") : [];
+  let inboxStatusKey = inbox_status ? inbox_status.split(",") : [];
+
+  // sorting each keys in ascending order
+  priorityKey = priorityKey.sort().join("_");
+  inboxStatusKey = inboxStatusKey.sort().join("_");
+
+  return `${priorityKey}_${inboxStatusKey}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";
@@ -56,6 +70,13 @@ export const PROJECT_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?: any)
 
   return `PROJECT_ISSUES_LIST_WITH_PARAMS_${projectId.toUpperCase()}_${paramsKey}`;
 };
+export const PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?: any) => {
+  if (!params) return `PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS${projectId.toUpperCase()}`;
+
+  const paramsKey = paramsToKey(params);
+
+  return `PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS${projectId.toUpperCase()}_${paramsKey}`;
+};
 export const PROJECT_ISSUES_DETAILS = (issueId: string) =>
   `PROJECT_ISSUES_DETAILS_${issueId.toUpperCase()}`;
 export const PROJECT_ISSUES_PROPERTIES = (projectId: string) =>
@@ -71,9 +92,18 @@ export const PROJECT_ISSUE_LABELS = (projectId: string) =>
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
   `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
-export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId.toUpperCase()}`;
-export const CYCLE_INCOMPLETE_LIST = (projectId: string) =>
-  `CYCLE_INCOMPLETE_LIST_${projectId.toUpperCase()}`;
+// cycles
+export const CYCLES_LIST = (projectId: string) => `CYCLE_LIST_${projectId.toUpperCase()}`;
+export const INCOMPLETE_CYCLES_LIST = (projectId: string) =>
+  `INCOMPLETE_CYCLES_LIST_${projectId.toUpperCase()}`;
+export const CURRENT_CYCLE_LIST = (projectId: string) =>
+  `CURRENT_CYCLE_LIST_${projectId.toUpperCase()}`;
+export const UPCOMING_CYCLES_LIST = (projectId: string) =>
+  `UPCOMING_CYCLES_LIST_${projectId.toUpperCase()}`;
+export const DRAFT_CYCLES_LIST = (projectId: string) =>
+  `DRAFT_CYCLES_LIST_${projectId.toUpperCase()}`;
+export const COMPLETED_CYCLES_LIST = (projectId: string) =>
+  `COMPLETED_CYCLES_LIST_${projectId.toUpperCase()}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId.toUpperCase()}`;
 export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
   if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}`;
@@ -83,12 +113,6 @@ export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
   return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAILS_${cycleId.toUpperCase()}`;
-export const CYCLE_CURRENT_AND_UPCOMING_LIST = (projectId: string) =>
-  `CYCLE_CURRENT_AND_UPCOMING_LIST_${projectId.toUpperCase()}`;
-export const CYCLE_DRAFT_LIST = (projectId: string) =>
-  `CYCLE_DRAFT_LIST_${projectId.toUpperCase()}`;
-export const CYCLE_COMPLETE_LIST = (projectId: string) =>
-  `CYCLE_COMPLETE_LIST_${projectId.toUpperCase()}`;
 
 export const STATES_LIST = (projectId: string) => `STATES_LIST_${projectId.toUpperCase()}`;
 export const STATE_DETAILS = "STATE_DETAILS";
@@ -121,10 +145,25 @@ export const VIEW_ISSUES = (viewId: string, params: any) => {
   return `VIEW_ISSUES_${viewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 
+// inbox
+export const INBOX_LIST = (projectId: string) => `INBOX_LIST_${projectId.toUpperCase()}`;
+export const INBOX_DETAILS = (inboxId: string) => `INBOX_DETAILS_${inboxId.toUpperCase()}`;
+export const INBOX_ISSUES = (inboxId: string, params?: any) => {
+  if (!params) return `INBOX_ISSUES_${inboxId.toUpperCase()}`;
+
+  const paramsKey = inboxParamsToKey(params);
+
+  return `INBOX_ISSUES_${inboxId.toUpperCase()}_${paramsKey.toUpperCase()}`;
+};
+export const INBOX_ISSUE_DETAILS = (inboxId: string, issueId: string) =>
+  `INBOX_ISSUE_DETAILS_${inboxId.toUpperCase()}_${issueId.toUpperCase()}`;
+
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase()}`;
 export const ISSUE_ATTACHMENTS = (issueId: string) => `ISSUE_ATTACHMENTS_${issueId.toUpperCase()}`;
+export const ARCHIVED_ISSUE_DETAILS = (issueId: string) =>
+  `ARCHIVED_ISSUE_DETAILS_${issueId.toUpperCase()}`;
 
 // integrations
 export const APP_INTEGRATIONS = "APP_INTEGRATIONS";

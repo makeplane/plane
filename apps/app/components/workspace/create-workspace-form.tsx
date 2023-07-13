@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { mutate } from "swr";
 
@@ -9,41 +9,46 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton } from "components/ui";
+import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
-import { IWorkspace } from "types";
+import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
-import { COMPANY_SIZE } from "constants/workspace";
+import { ORGANIZATION_SIZE } from "constants/workspace";
 
 type Props = {
-  onSubmit: (res: IWorkspace) => void;
+  onSubmit?: (res: IWorkspace) => Promise<void>;
   defaultValues: {
     name: string;
     slug: string;
-    company_size: number | null;
+    organization_size: string;
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
+  user: ICurrentUserResponse | undefined;
+  secondaryButton?: React.ReactNode;
 };
 
 const restrictedUrls = [
   "api",
+  "installations",
+  "404",
   "create-workspace",
   "error",
-  "installations",
   "invitations",
   "magic-sign-in",
   "onboarding",
-  "signin",
+  "reset-password",
+  "sign-up",
   "workspace-member-invitation",
-  "404",
 ];
 
 export const CreateWorkspaceForm: React.FC<Props> = ({
   onSubmit,
   defaultValues,
   setDefaultValues,
+  user,
+  secondaryButton,
 }) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
@@ -65,20 +70,30 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       .then(async (res) => {
         if (res.status === true && !restrictedUrls.includes(formData.slug)) {
           setSlugError(false);
+
           await workspaceService
-            .createWorkspace(formData)
-            .then((res) => {
+            .createWorkspace(formData, user)
+            .then(async (res) => {
               setToastAlert({
                 type: "success",
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
-              mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
-              onSubmit(res);
+
+              mutate<IWorkspace[]>(
+                USER_WORKSPACES,
+                (prevData) => [res, ...(prevData ?? [])],
+                false
+              );
+              if (onSubmit) await onSubmit(res);
             })
-            .catch((err) => {
-              console.error(err);
-            });
+            .catch(() =>
+              setToastAlert({
+                type: "error",
+                title: "Error!",
+                message: "Workspace could not be created. Please try again.",
+              })
+            );
         } else setSlugError(true);
       })
       .catch(() => {
@@ -99,110 +114,97 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   );
 
   return (
-    <form
-      className="flex w-full items-center justify-center"
-      onSubmit={handleSubmit(handleCreateWorkspace)}
-    >
-      <div className="flex w-full max-w-xl flex-col">
-        <div className="flex flex-col rounded-[10px] bg-brand-base">
-          <div className="flex flex-col justify-between gap-3 px-4 py-7">
-            <div className="flex flex-col items-start justify-center gap-2.5">
-              <span className="text-sm">Workspace name</span>
-              <Input
-                name="name"
-                register={register}
-                autoComplete="off"
-                onChange={(e) =>
-                  setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))
-                }
-                validations={{
-                  required: "Workspace name is required",
-                  validate: (value) =>
-                    /^[\w\s-]*$/.test(value) ||
-                    `Name can only contain (" "), ( - ), ( _ ) & Alphanumeric characters.`,
-                }}
-                placeholder="e.g. My Workspace"
-                className="placeholder:text-brand-secondary"
-                error={errors.name}
-              />
-            </div>
-            <div className="flex flex-col items-start justify-center gap-2.5">
-              <span className="text-sm">Workspace URL</span>
-              <div className="flex w-full items-center rounded-md border border-brand-base px-3">
-                <span className="whitespace-nowrap text-sm text-brand-secondary">
-                  {typeof window !== "undefined" && window.location.origin}/
-                </span>
-                <Input
-                  mode="trueTransparent"
-                  autoComplete="off"
-                  name="slug"
-                  register={register}
-                  className="block w-full rounded-md bg-transparent py-2 !px-0 text-sm"
-                  validations={{
-                    required: "Workspace URL is required",
-                  }}
-                  onChange={(e) =>
-                    /^[a-zA-Z0-9_-]+$/.test(e.target.value)
-                      ? setInvalidSlug(false)
-                      : setInvalidSlug(true)
+    <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
+      <div className="space-y-6 sm:space-y-7">
+        <div className="space-y-1 text-sm">
+          <label htmlFor="workspaceName">Workspace Name</label>
+          <Input
+            id="workspaceName"
+            name="name"
+            register={register}
+            autoComplete="off"
+            onChange={(e) =>
+              setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))
+            }
+            validations={{
+              required: "Workspace name is required",
+              validate: (value) =>
+                /^[\w\s-]*$/.test(value) ||
+                `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+            }}
+            placeholder="Enter workspace name..."
+            error={errors.name}
+          />
+        </div>
+        <div className="space-y-1 text-sm">
+          <label htmlFor="workspaceUrl">Workspace URL</label>
+          <div className="flex w-full items-center rounded-md border border-custom-border-100 px-3">
+            <span className="whitespace-nowrap text-sm text-custom-text-200">
+              {window && window.location.host}/
+            </span>
+            <Input
+              id="workspaceUrl"
+              mode="trueTransparent"
+              autoComplete="off"
+              name="slug"
+              register={register}
+              className="block w-full rounded-md bg-transparent py-2 !px-0 text-sm"
+              validations={{
+                required: "Workspace URL is required",
+              }}
+              onChange={(e) =>
+                /^[a-zA-Z0-9_-]+$/.test(e.target.value)
+                  ? setInvalidSlug(false)
+                  : setInvalidSlug(true)
+              }
+            />
+          </div>
+          {slugError && (
+            <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>
+          )}
+          {invalidSlug && (
+            <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
+          )}
+        </div>
+        <div className="space-y-1 text-sm">
+          <span>What size is your organization?</span>
+          <div className="w-full">
+            <Controller
+              name="organization_size"
+              control={control}
+              rules={{ required: "This field is required" }}
+              render={({ field: { value, onChange } }) => (
+                <CustomSelect
+                  value={value}
+                  onChange={onChange}
+                  label={
+                    ORGANIZATION_SIZE.find((c) => c === value) ?? (
+                      <span className="text-custom-text-200">Select organization size</span>
+                    )
                   }
-                />
-              </div>
-              {slugError && (
-                <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>
+                  input
+                  width="w-full"
+                >
+                  {ORGANIZATION_SIZE.map((item) => (
+                    <CustomSelect.Option key={item} value={item}>
+                      {item}
+                    </CustomSelect.Option>
+                  ))}
+                </CustomSelect>
               )}
-              {invalidSlug && (
-                <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & Alphanumeric characters.`}</span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-brand-base px-4 py-7">
-            <span className="text-sm">How large is your company?</span>
-            <div className="w-full">
-              <Controller
-                name="company_size"
-                control={control}
-                rules={{ required: "This field is required" }}
-                render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={
-                      value ? (
-                        value.toString()
-                      ) : (
-                        <span className="text-brand-secondary">Select company size</span>
-                      )
-                    }
-                    input
-                    width="w-full"
-                  >
-                    {COMPANY_SIZE?.map((item) => (
-                      <CustomSelect.Option key={item.value} value={item.value}>
-                        {item.label}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                )}
-              />
-              {errors.company_size && (
-                <span className="text-sm text-red-500">{errors.company_size.message}</span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex w-full items-center justify-center rounded-b-[10px] py-7">
-            <PrimaryButton
-              type="submit"
-              className="flex w-1/2 items-center justify-center text-center"
-              size="md"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Creating..." : "Create Workspace"}
-            </PrimaryButton>
+            />
+            {errors.organization_size && (
+              <span className="text-sm text-red-500">{errors.organization_size.message}</span>
+            )}
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        {secondaryButton}
+        <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : "Create Workspace"}
+        </PrimaryButton>
       </div>
     </form>
   );

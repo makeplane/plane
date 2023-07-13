@@ -1,3 +1,6 @@
+# Django imports
+from django.utils import timezone
+
 # Third Party imports
 from rest_framework import serializers
 
@@ -13,10 +16,10 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    TimelineIssue,
     IssueProperty,
     IssueBlocker,
     IssueAssignee,
+    IssueSubscriber,
     IssueLabel,
     Label,
     IssueBlocker,
@@ -38,6 +41,7 @@ class IssueFlatSerializer(BaseSerializer):
             "id",
             "name",
             "description",
+            "description_html",
             "priority",
             "start_date",
             "target_date",
@@ -251,6 +255,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
+        instance.updated_at = timezone.now()
         return super().update(instance, validated_data)
 
 
@@ -271,21 +276,6 @@ class IssueCommentSerializer(BaseSerializer):
 
     class Meta:
         model = IssueComment
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class TimeLineIssueSerializer(BaseSerializer):
-    class Meta:
-        model = TimelineIssue
         fields = "__all__"
         read_only_fields = [
             "workspace",
@@ -478,6 +468,8 @@ class IssueStateSerializer(BaseSerializer):
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
     bridge_id = serializers.UUIDField(read_only=True)
+    attachment_count = serializers.IntegerField(read_only=True)
+    link_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue
@@ -538,4 +530,15 @@ class IssueLiteSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+        ]
+
+
+class IssueSubscriberSerializer(BaseSerializer):
+    class Meta:
+        model = IssueSubscriber
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "issue",
         ]

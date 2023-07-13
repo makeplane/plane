@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // components
 import { GanttChartRoot } from "components/gantt-chart";
+// ui
+import { Tooltip } from "components/ui";
 // types
 import { ICycle } from "types";
 
@@ -22,7 +24,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
         className="rounded-sm flex-shrink-0 w-[10px] h-[10px] flex justify-center items-center"
         style={{ backgroundColor: "#858e96" }}
       />
-      <div className="text-brand-base text-sm">{data?.name}</div>
+      <div className="text-custom-text-100 text-sm">{data?.name}</div>
     </div>
   );
 
@@ -31,9 +33,11 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
     <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${data?.id}`}>
       <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm">
         <div className="flex-shrink-0 w-[4px] h-full" style={{ backgroundColor: "#858e96" }} />
-        <div className="w-full text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden">
-          {data?.name}
-        </div>
+        <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
+          <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
+            {data?.name}
+          </div>
+        </Tooltip>
       </a>
     </Link>
   );

@@ -75,7 +75,7 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-brand-backdrop bg-opacity-75 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -89,8 +89,8 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
-                  <div className="bg-brand-surface-2 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
+                  <div className="bg-custom-background-80 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
                       <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                         <ExclamationTriangleIcon
@@ -101,12 +101,12 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                         <Dialog.Title
                           as="h3"
-                          className="text-lg font-medium leading-6 text-brand-base"
+                          className="text-lg font-medium leading-6 text-custom-text-100"
                         >
                           Delete Attachment
                         </Dialog.Title>
                         <div className="mt-2">
-                          <p className="text-sm text-brand-secondary">
+                          <p className="text-sm text-custom-text-200">
                             Are you sure you want to delete attachment-{" "}
                             <span className="font-bold">{getFileName(data.attributes.name)}</span>?
                             This attachment will be permanently removed. This action cannot be
@@ -116,7 +116,7 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-end gap-2 bg-brand-surface-1 p-4 sm:px-6">
+                  <div className="flex justify-end gap-2 bg-custom-background-90 p-4 sm:px-6">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                     <DangerButton
                       onClick={() => {

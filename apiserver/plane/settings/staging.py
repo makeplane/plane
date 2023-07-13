@@ -11,15 +11,16 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 from .common import *  # noqa
+
 # Database
-DEBUG = True
+DEBUG = int(os.environ.get("DEBUG", 1)) == 1
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "plane",
+        "NAME": os.environ.get("PGUSER", "plane"),
         "USER": "",
         "PASSWORD": "",
-        "HOST": "",
+        "HOST": os.environ.get("PGHOST", "localhost"),
     }
 }
 
@@ -46,9 +47,17 @@ ALLOWED_HOSTS = ["*"]
 # TODO: Make it FALSE and LIST DOMAINS IN FULL PROD.
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Simplified static file serving.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
+
+# Make true if running in a docker environment
+DOCKERIZED = int(os.environ.get("DOCKERIZED", 0)) == 1
+FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
@@ -58,6 +67,7 @@ sentry_sdk.init(
     traces_sample_rate=1,
     send_default_pii=True,
     environment="staging",
+    profiles_sample_rate=1.0,
 )
 
 # The AWS region to connect to.
@@ -142,7 +152,9 @@ AWS_S3_SIGNATURE_VERSION = None
 AWS_S3_FILE_OVERWRITE = False
 
 # AWS Settings End
-
+STORAGES["default"] = {
+        "BACKEND": "django_s3_storage.storage.S3Storage",
+}
 
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
@@ -155,17 +167,11 @@ ALLOWED_HOSTS = [
     "*",
 ]
 
-
-DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"
-# Simplified static file serving.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 
 REDIS_URL = os.environ.get("REDIS_URL")
-DOCKERIZED = os.environ.get("DOCKERIZED", False)
 
 CACHES = {
     "default": {
@@ -192,17 +198,23 @@ PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
+
+OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
-GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
+GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
 redis_url = os.environ.get("REDIS_URL")
-broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+broker_url = (
+    f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
+)
 
 CELERY_RESULT_BACKEND = broker_url
 CELERY_BROKER_URL = broker_url
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
+
+ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"

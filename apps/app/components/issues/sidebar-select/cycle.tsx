@@ -16,26 +16,33 @@ import { ContrastIcon } from "components/icons";
 // types
 import { ICycle, IIssue, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_INCOMPLETE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
   handleCycleChange: (cycle: ICycle) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarCycleSelect: React.FC<Props> = ({
   issueDetail,
   handleCycleChange,
   userAuth,
+  disabled = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: incompleteCycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_INCOMPLETE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getIncompleteCycles(workspaceSlug as string, projectId as string)
+      ? () =>
+          cyclesService.getCyclesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            "incomplete"
+          )
       : null
   );
 
@@ -56,11 +63,11 @@ export const SidebarCycleSelect: React.FC<Props> = ({
 
   const issueCycle = issueDetail?.issue_cycle;
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <ContrastIcon className="h-4 w-4 flex-shrink-0" />
         <p>Cycle</p>
       </div>
@@ -72,7 +79,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
               tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}
             >
               <span className="w-full max-w-[125px] truncate text-left sm:block">
-                <span className={`${issueCycle ? "text-brand-base" : "text-brand-secondary"}`}>
+                <span className={`${issueCycle ? "text-custom-text-100" : "text-custom-text-200"}`}>
                   {issueCycle ? truncateText(issueCycle.cycle_detail.name, 15) : "No cycle"}
                 </span>
               </span>

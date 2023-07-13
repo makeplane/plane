@@ -7,8 +7,9 @@ import useSWR from "swr";
 
 // services
 import workspaceServices from "services/workspace.service";
+// contexts
+import { WorkspaceMemberProvider } from "contexts/workspace-member.context";
 // layouts
-import Container from "layouts/container";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
@@ -21,15 +22,7 @@ import { LayerDiagonalIcon } from "components/icons";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
-type Meta = {
-  title?: string | null;
-  description?: string | null;
-  image?: string | null;
-  url?: string | null;
-};
-
 type Props = {
-  meta?: Meta;
   children: React.ReactNode;
   noHeader?: boolean;
   bg?: "primary" | "secondary";
@@ -39,7 +32,6 @@ type Props = {
 };
 
 export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
-  meta,
   children,
   noHeader = false,
   bg = "primary",
@@ -88,7 +80,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 
   return (
     <UserAuthorizationLayout>
-      <Container meta={meta}>
+      <WorkspaceMemberProvider>
         <CommandPalette />
         <div className="relative flex h-screen w-full overflow-hidden">
           <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
@@ -109,20 +101,19 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
             <main
               className={`relative flex h-full w-full flex-col overflow-hidden ${
                 bg === "primary"
-                  ? "bg-brand-surface-1"
+                  ? "bg-custom-background-100"
                   : bg === "secondary"
-                  ? "bg-brand-sidebar"
-                  : "bg-brand-base"
+                  ? "bg-custom-background-90"
+                  : "bg-custom-background-80"
               }`}
             >
-              {!noHeader && (
-                <AppHeader
-                  breadcrumbs={breadcrumbs}
-                  left={left}
-                  right={right}
-                  setToggleSidebar={setToggleSidebar}
-                />
-              )}
+              <AppHeader
+                breadcrumbs={breadcrumbs}
+                left={left}
+                right={right}
+                setToggleSidebar={setToggleSidebar}
+                noHeader={noHeader}
+              />
               <div className="h-full w-full overflow-hidden">
                 <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
                   {children}
@@ -131,7 +122,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
             </main>
           )}
         </div>
-      </Container>
+      </WorkspaceMemberProvider>
     </UserAuthorizationLayout>
   );
 };

@@ -67,7 +67,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
             openai.api_key = settings.OPENAI_API_KEY
             response = openai.Completion.create(
-                engine=settings.GPT_ENGINE,
+                model=settings.GPT_ENGINE,
                 prompt=final_text,
                 temperature=0.7,
                 max_tokens=1024,

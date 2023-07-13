@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
-import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
 
@@ -13,6 +12,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsHeader } from "components/project";
 // ui
@@ -34,6 +34,8 @@ const ControlSettings: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -65,7 +67,7 @@ const ControlSettings: NextPage = () => {
     };
 
     await projectService
-      .updateProject(workspaceSlug as string, projectId as string, payload)
+      .updateProject(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(PROJECT_DETAILS(projectId as string));
         mutate(PROJECTS_LIST(workspaceSlug as string));
@@ -109,7 +111,7 @@ const ControlSettings: NextPage = () => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Project Lead</h4>
-              <p className="text-sm text-brand-secondary">Select the project leader.</p>
+              <p className="text-sm text-custom-text-200">Select the project leader.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -121,7 +123,7 @@ const ControlSettings: NextPage = () => {
                       {...field}
                       label={
                         people?.find((person) => person.member.id === field.value)?.member
-                          .first_name ?? <span className="text-brand-secondary">Select lead</span>
+                          .first_name ?? <span className="text-custom-text-200">Select lead</span>
                       }
                       width="w-full"
                       input
@@ -135,12 +137,10 @@ const ControlSettings: NextPage = () => {
                           <div className="flex items-center gap-2">
                             {person.member.avatar && person.member.avatar !== "" ? (
                               <div className="relative h-4 w-4">
-                                <Image
+                                <img
                                   src={person.member.avatar}
-                                  alt="avatar"
-                                  className="rounded-full"
-                                  layout="fill"
-                                  objectFit="cover"
+                                  className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                                  alt="User Avatar"
                                 />
                               </div>
                             ) : (
@@ -169,7 +169,7 @@ const ControlSettings: NextPage = () => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Default Assignee</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Select the default assignee for the project.
               </p>
             </div>
@@ -183,7 +183,7 @@ const ControlSettings: NextPage = () => {
                       {...field}
                       label={
                         people?.find((p) => p.member.id === field.value)?.member.first_name ?? (
-                          <span className="text-brand-secondary">Select default assignee</span>
+                          <span className="text-custom-text-200">Select default assignee</span>
                         )
                       }
                       width="w-full"
@@ -198,12 +198,10 @@ const ControlSettings: NextPage = () => {
                           <div className="flex items-center gap-2">
                             {person.member.avatar && person.member.avatar !== "" ? (
                               <div className="relative h-4 w-4">
-                                <Image
+                                <img
                                   src={person.member.avatar}
-                                  alt="avatar"
-                                  className="rounded-full"
-                                  layout="fill"
-                                  objectFit="cover"
+                                  className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                                  alt="User Avatar"
                                 />
                               </div>
                             ) : (

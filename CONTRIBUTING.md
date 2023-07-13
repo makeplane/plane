@@ -23,7 +23,6 @@ You can open a new issue with this [issue form](https://github.com/makeplane/pla
 - Python version 3.8+
 - Postgres version v14
 - Redis version v6.2.7
-- pnpm version 7.22.0
 
 ### Setup the project
 

@@ -3,24 +3,43 @@ import { useRouter } from "next/router";
 // ui
 import { CustomDatePicker, Tooltip } from "components/ui";
 // helpers
-import { findHowManyDaysLeft } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // services
 import trackEventServices from "services/track-event.service";
 // types
-import { IIssue } from "types";
+import { ICurrentUserResponse, IIssue } from "types";
+import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  tooltipPosition?: "top" | "bottom";
+  noBorder?: boolean;
+  user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
-export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, isNotAllowed }) => {
+export const ViewDueDateSelect: React.FC<Props> = ({
+  issue,
+  partialUpdateIssue,
+  tooltipPosition = "top",
+  noBorder = false,
+  user,
+  isNotAllowed,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { issueView } = useIssuesView();
+
   return (
-    <Tooltip tooltipHeading="Due Date" tooltipContent={issue.target_date ?? "N/A"}>
+    <Tooltip
+      tooltipHeading="Due Date"
+      tooltipContent={
+        issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"
+      }
+      position={tooltipPosition}
+    >
       <div
         className={`group relative max-w-[6.5rem] ${
           issue.target_date === null
@@ -40,7 +59,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
                 priority: issue.priority,
                 state: issue.state,
               },
-              issue.id
+              issue
             );
             trackEventServices.trackIssuePartialPropertyUpdateEvent(
               {
@@ -51,10 +70,14 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
                 projectName: issue.project_detail.name,
                 issueId: issue.id,
               },
-              "ISSUE_PROPERTY_UPDATE_DUE_DATE"
+              "ISSUE_PROPERTY_UPDATE_DUE_DATE",
+              user
             );
           }}
-          className={issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}
+          className={`${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
+            issueView === "kanban" ? "bg-custom-background-90" : "bg-custom-background-100"
+          }`}
+          noBorder={noBorder}
           disabled={isNotAllowed}
         />
       </div>

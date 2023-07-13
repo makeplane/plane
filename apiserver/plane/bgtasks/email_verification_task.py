@@ -19,7 +19,7 @@ def email_verification(first_name, email, token, current_site):
 
     try:
         realtivelink = "/request-email-verification/" + "?token=" + str(token)
-        abs_url = "http://" + current_site + realtivelink
+        abs_url = current_site + realtivelink
 
         from_email_string = settings.EMAIL_FROM
 
@@ -39,5 +39,8 @@ def email_verification(first_name, email, token, current_site):
         msg.send()
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

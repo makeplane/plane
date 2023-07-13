@@ -23,6 +23,7 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
+  ViewLabelSelect,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
@@ -42,9 +43,16 @@ import {
 import { LayerDiagonalIcon } from "components/icons";
 // helpers
 import { handleIssuesMutation } from "constants/issue";
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  ISubIssueResponse,
+  Properties,
+  TIssueGroupByOptions,
+  UserAuth,
+} from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -52,6 +60,8 @@ import {
   MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -69,6 +79,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -87,6 +98,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   handleDeleteIssue,
   handleTrashBox,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   // context menu
@@ -99,92 +111,86 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const { orderBy, params } = useIssuesView();
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
-    (formData: Partial<IIssue>, issueId: string) => {
+    (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
-      if (cycleId)
-        mutate<
-          | {
-              [key: string]: IIssue[];
-            }
-          | IIssue[]
-        >(
-          CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
-          (prevData) =>
-            handleIssuesMutation(
-              formData,
-              groupTitle ?? "",
-              selectedGroup,
-              index,
-              orderBy,
-              prevData
-            ),
-          false
-        );
-      else if (moduleId)
-        mutate<
-          | {
-              [key: string]: IIssue[];
-            }
-          | IIssue[]
-        >(
-          MODULE_ISSUES_WITH_PARAMS(moduleId as string),
-          (prevData) =>
-            handleIssuesMutation(
-              formData,
-              groupTitle ?? "",
-              selectedGroup,
-              index,
-              orderBy,
-              prevData
-            ),
-          false
-        );
-      else {
-        mutate<
-          | {
-              [key: string]: IIssue[];
-            }
-          | IIssue[]
-        >(
-          PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
+      const fetchKey = cycleId
+        ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
+        : moduleId
+        ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
+        : viewId
+        ? VIEW_ISSUES(viewId.toString(), params)
+        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
+
+      if (issue.parent) {
+        mutate<ISubIssueResponse>(
+          SUB_ISSUES(issue.parent.toString()),
           (prevData) => {
             if (!prevData) return prevData;
 
-            return handleIssuesMutation(
+            return {
+              ...prevData,
+              sub_issues: (prevData.sub_issues ?? []).map((i) => {
+                if (i.id === issue.id) {
+                  return {
+                    ...i,
+                    ...formData,
+                  };
+                }
+                return i;
+              }),
+            };
+          },
+          false
+        );
+      } else {
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          fetchKey,
+          (prevData) =>
+            handleIssuesMutation(
               formData,
               groupTitle ?? "",
               selectedGroup,
               index,
               orderBy,
               prevData
-            );
-          },
+            ),
           false
         );
       }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
+        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData, user)
         .then(() => {
-          if (cycleId) {
-            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-            mutate(CYCLE_DETAILS(cycleId as string));
-          } else if (moduleId) {
-            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-            mutate(MODULE_DETAILS(moduleId as string));
-          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-        })
-        .catch((error) => {
-          console.log(error);
+          mutate(fetchKey);
+
+          if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
+          if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, groupTitle, index, selectedGroup, orderBy, params]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      viewId,
+      groupTitle,
+      index,
+      selectedGroup,
+      orderBy,
+      params,
+      user,
+    ]
   );
 
   const getStyle = (
@@ -259,8 +265,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className={`mb-3 rounded bg-brand-base shadow ${
-          snapshot.isDragging ? "border-2 border-brand-accent shadow-lg" : ""
+        className={`mb-3 rounded bg-custom-background-90 shadow ${
+          snapshot.isDragging ? "border-2 border-custom-primary shadow-lg" : ""
         }`}
         ref={provided.innerRef}
         {...provided.draggableProps}
@@ -284,7 +290,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 <CustomMenu
                   customButton={
                     <button
-                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded p-1 text-left text-xs duration-300 hover:bg-brand-surface-2"
+                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded p-1 text-left text-xs duration-300 hover:bg-custom-background-80"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <EllipsisHorizontalIcon className="h-4 w-4" />
@@ -324,16 +330,11 @@ export const SingleBoardIssue: React.FC<Props> = ({
           <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
             <a>
               {properties.key && (
-                <div className="mb-2.5 text-xs font-medium text-brand-secondary">
+                <div className="mb-2.5 text-xs font-medium text-custom-text-200">
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <h5
-                className="break-all text-sm group-hover:text-brand-accent"
-                style={{ lineClamp: 3, WebkitLineClamp: 3 }}
-              >
-                {truncateText(issue.name, 100)}
-              </h5>
+              <h5 className="text-sm break-words line-clamp-3">{issue.name}</h5>
             </a>
           </Link>
           <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
@@ -342,6 +343,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
             )}
@@ -350,6 +352,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
             )}
@@ -357,33 +360,25 @@ export const SingleBoardIssue: React.FC<Props> = ({
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
+                user={user}
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.labels && issue.label_details.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {issue.label_details.map((label) => (
-                  <div
-                    key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
-                  >
-                    <span
-                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                      }}
-                    />
-                    {label.name}
-                  </div>
-                ))}
-              </div>
+            {properties.labels && (
+              <ViewLabelSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+                user={user}
+                selfPositioned
+              />
             )}
             {properties.assignee && (
               <ViewAssigneeSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
-                tooltipPosition="left"
+                user={user}
                 selfPositioned
               />
             )}
@@ -392,13 +387,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                user={user}
                 selfPositioned
               />
             )}
             {properties.sub_issue_count && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <LayerDiagonalIcon className="h-3.5 w-3.5" />
                     {issue.sub_issues_count}
                   </div>
@@ -406,9 +402,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
               </div>
             )}
             {properties.link && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <LinkIcon className="h-3.5 w-3.5" />
                     {issue.link_count}
                   </div>
@@ -416,9 +412,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
               </div>
             )}
             {properties.attachment_count && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
                     {issue.attachment_count}
                   </div>

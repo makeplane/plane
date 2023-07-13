@@ -9,6 +9,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // hooks
 import useToast from "hooks/use-toast";
 import useTheme from "hooks/use-theme";
+import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
 // components
@@ -29,6 +30,9 @@ export const ProjectSidebarList: FC = () => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { user } = useUserAuth();
+
   // states
   const [isCreateProjectModal, setCreateProjectModal] = useState(false);
   // theme
@@ -136,16 +140,23 @@ export const ProjectSidebarList: FC = () => {
 
   return (
     <>
-      <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
+      <CreateProjectModal
+        isOpen={isCreateProjectModal}
+        setIsOpen={setCreateProjectModal}
+        user={user}
+      />
       <DeleteProjectModal
         isOpen={deleteProjectModal}
         onClose={() => setDeleteProjectModal(false)}
         data={projectToDelete}
+        user={user}
       />
-      <div className="h-full overflow-y-auto border-t border-brand-base bg-brand-sidebar">
+      <div className="h-full overflow-y-auto border-t border-custom-sidebar-border-100 bg-custom-sidebar-background-100">
         {favoriteProjects && favoriteProjects.length > 0 && (
           <div className="mt-3 flex flex-col space-y-2 px-3.5">
-            {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Favorites</h5>}
+            {!sidebarCollapse && (
+              <h5 className="text-sm font-semibold text-custom-sidebar-text-200">Favorites</h5>
+            )}
             {favoriteProjects.map((favoriteProject) => {
               const project = favoriteProject.project_detail;
 
@@ -163,7 +174,9 @@ export const ProjectSidebarList: FC = () => {
           </div>
         )}
         <div className="flex flex-col space-y-2.5 p-3.5">
-          {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Projects</h5>}
+          {!sidebarCollapse && (
+            <h5 className="text-sm font-semibold text-custom-sidebar-text-200">Projects</h5>
+          )}
           {projects ? (
             <>
               {normalProjects.length > 0 ? (
@@ -180,13 +193,13 @@ export const ProjectSidebarList: FC = () => {
               ) : (
                 <div className="space-y-3 text-center">
                   {!sidebarCollapse && (
-                    <h4 className="text-sm text-brand-secondary">
+                    <h4 className="text-sm text-custom-text-200">
                       You don{"'"}t have any project yet
                     </h4>
                   )}
                   <button
                     type="button"
-                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-brand-surface-2 p-2 text-xs text-brand-base"
+                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-custom-background-80 p-2 text-xs text-custom-text-100"
                     onClick={() => setCreateProjectModal(true)}
                   >
                     <PlusIcon className="h-4 w-4" />

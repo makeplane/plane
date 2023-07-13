@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 type Props = {
   users: {
     avatar: string | null;
@@ -12,7 +10,7 @@ type Props = {
 };
 
 export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
-  <div className="p-3 border border-brand-base rounded-[10px]">
+  <div className="p-3 border border-custom-border-100 rounded-[10px]">
     <h6 className="text-base font-medium">{title}</h6>
     {users.length > 0 ? (
       <div className="mt-3 space-y-3">
@@ -23,12 +21,10 @@ export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
           >
             <div className="flex items-center gap-2">
               {user && user.avatar && user.avatar !== "" ? (
-                <div className="rounded-full h-4 w-4 flex-shrink-0">
-                  <Image
+                <div className="relative rounded-full h-4 w-4 flex-shrink-0">
+                  <img
                     src={user.avatar}
-                    height="100%"
-                    width="100%"
-                    className="rounded-full"
+                    className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
                     alt={user.email ?? "None"}
                   />
                 </div>
@@ -37,7 +33,7 @@ export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
                   {user.firstName !== "" ? user.firstName[0] : "?"}
                 </div>
               )}
-              <span className="break-all text-brand-secondary">
+              <span className="break-words text-custom-text-200">
                 {user.firstName !== "" ? `${user.firstName} ${user.lastName}` : "No assignee"}
               </span>
             </div>
@@ -46,7 +42,7 @@ export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
         ))}
       </div>
     ) : (
-      <div className="text-brand-secondary text-center text-sm py-8">No matching data found.</div>
+      <div className="text-custom-text-200 text-center text-sm py-8">No matching data found.</div>
     )}
   </div>
 );

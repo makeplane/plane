@@ -35,7 +35,7 @@ import {
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, IPageBlock, IProject } from "types";
+import { ICurrentUserResponse, IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -43,9 +43,10 @@ type Props = {
   block: IPageBlock;
   projectDetails: IProject | undefined;
   index: number;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index }) => {
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index, user }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -87,20 +88,33 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
     );
 
     await pagesService
-      .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, {
-        name: formData.name,
-        description: formData.description,
-        description_html: formData.description_html,
-      })
+      .patchPageBlock(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string,
+        block.id,
+        {
+          name: formData.name,
+          description: formData.description,
+          description_html: formData.description_html,
+        },
+        user
+      )
       .then((res) => {
         mutate(PAGE_BLOCKS_LIST(pageId as string));
         if (block.issue && block.sync)
           issuesService
-            .patchIssue(workspaceSlug as string, projectId as string, block.issue, {
-              name: res.name,
-              description: res.description,
-              description_html: res.description_html,
-            })
+            .patchIssue(
+              workspaceSlug as string,
+              projectId as string,
+              block.issue,
+              {
+                name: res.name,
+                description: res.description,
+                description_html: res.description_html,
+              },
+              user
+            )
             .finally(() => setIsSyncing(false));
       });
   };
@@ -113,7 +127,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
         workspaceSlug as string,
         projectId as string,
         pageId as string,
-        block.id
+        block.id,
+        user
       )
       .then((res: IIssue) => {
         mutate<IPageBlock[]>(
@@ -152,7 +167,13 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
     );
 
     await pagesService
-      .deletePageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id)
+      .deletePageBlock(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string,
+        block.id,
+        user
+      )
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -168,10 +189,15 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug as string, projectId as string, {
-        prompt: block.name,
-        task: "Generate a proper description for this issue in context of a project management software.",
-      })
+      .createGptTask(
+        workspaceSlug as string,
+        projectId as string,
+        {
+          prompt: block.name,
+          task: "Generate a proper description for this issue.",
+        },
+        user
+      )
       .then((res) => {
         if (res.response === "")
           setToastAlert({
@@ -243,7 +269,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
       block.id,
       {
         sync: !block.sync,
-      }
+      },
+      user
     );
   };
 
@@ -281,12 +308,13 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 data={block}
                 setIsSyncing={setIsSyncing}
                 focus="name"
+                user={user}
               />
             </div>
           ) : (
             <div
-              className={`group relative w-full rounded bg-brand-surface-2 text-brand-secondary ${
-                snapshot.isDragging ? "bg-brand-base p-4 shadow" : ""
+              className={`group relative w-full rounded bg-custom-background-80 text-custom-text-200 ${
+                snapshot.isDragging ? "bg-custom-background-100 p-4 shadow" : ""
               }`}
               ref={provided.innerRef}
               {...provided.draggableProps}
@@ -301,7 +329,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
               </button>
               <div
                 ref={actionSectionRef}
-                className={`absolute top-4 right-2 hidden items-center gap-2 bg-brand-surface-2 pl-4 group-hover:!flex ${
+                className={`absolute top-4 right-2 hidden items-center gap-2 bg-custom-background-80 pl-4 group-hover:!flex ${
                   isMenuActive ? "!flex" : ""
                 }`}
               >
@@ -317,7 +345,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 )}
                 <button
                   type="button"
-                  className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-1 ${
+                  className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 ${
                     iAmFeelingLucky ? "cursor-wait" : ""
                   }`}
                   onClick={handleAutoGenerateDescription}
@@ -333,7 +361,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 </button>
                 <button
                   type="button"
-                  className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-1"
+                  className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                   onClick={() => setGptAssistantModal((prevData) => !prevData)}
                 >
                   <SparklesIcon className="h-4 w-4" />
@@ -341,7 +369,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 </button>
                 <button
                   type="button"
-                  className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-1"
+                  className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                   onClick={() => setCreateBlockForm(true)}
                 >
                   <PencilIcon className="h-3.5 w-3.5" />
@@ -349,7 +377,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 <CustomMenu
                   customButton={
                     <button
-                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2.5 py-1 text-left text-xs duration-300 hover:bg-brand-surface-1"
+                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2.5 py-1 text-left text-xs duration-300 hover:bg-custom-background-90"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <BoltIcon className="h-4.5 w-3.5" />
@@ -389,7 +417,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
               </div>
               <div className={`flex items-start gap-2 px-3 ${snapshot.isDragging ? "" : "py-4"}`}>
                 <div
-                  className="w-full cursor-pointer overflow-hidden break-all px-4"
+                  className="w-full cursor-pointer overflow-hidden break-words px-4"
                   onClick={() => setCreateBlockForm(true)}
                 >
                   <div className="flex items-center">
@@ -398,7 +426,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                         <Link
                           href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}
                         >
-                          <a className="flex h-6 flex-shrink-0 items-center gap-1 rounded bg-brand-surface-2 px-1.5 py-1 text-xs">
+                          <a className="flex h-6 flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs">
                             <LayerDiagonalIcon height="16" width="16" />
                             {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
                           </a>
@@ -408,12 +436,12 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                     <TextArea
                       name="blockName"
                       value={block.name}
-                      className="min-h-[20px] block w-full resize-none overflow-hidden border-none bg-transparent text-sm text-brand-base"
+                      className="min-h-[20px] block w-full resize-none overflow-hidden border-none bg-transparent text-sm text-custom-text-100"
                       noPadding
                     />
                   </div>
                   {block?.description_stripped.length > 0 && (
-                    <p className="mt-3 h-5 truncate text-sm font-normal text-brand-secondary">
+                    <p className="mt-3 h-5 truncate text-sm font-normal text-custom-text-200">
                       {block.description_stripped}
                     </p>
                   )}

@@ -21,7 +21,7 @@ def project_invitation(email, project_id, token, current_site):
         )
 
         relativelink = f"/project-member-invitation/{project_member_invite.id}"
-        abs_url = "http://" + current_site + relativelink
+        abs_url = current_site + relativelink
 
         from_email_string = settings.EMAIL_FROM
 
@@ -50,5 +50,8 @@ def project_invitation(email, project_id, token, current_site):
     except (Project.DoesNotExist, ProjectMemberInvite.DoesNotExist) as e:
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

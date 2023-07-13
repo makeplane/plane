@@ -45,47 +45,46 @@ export const WorkspaceSidebarMenu = () => {
 
   return (
     <div className="flex w-full flex-col items-start justify-start cursor-pointer gap-2 p-3.5">
-      {workspaceLinks(workspaceSlug as string).map((link, index) => (
-        <Link key={index} href={link.href}>
-          <a className="w-full">
-            <Tooltip
-              tooltipContent={link.name}
-              position="right"
-              className="ml-2"
-              disabled={!sidebarCollapse}
-            >
-              <div
-                className={`${
-                  (
-                    link.name === "Settings"
-                      ? router.asPath.includes(link.href)
-                      : router.asPath === link.href
-                  )
-                    ? "bg-brand-surface-2 text-brand-base font-medium"
-                    : "text-brand-secondary hover:text-brand-base hover:bg-brand-surface-2 focus:bg-brand-surface-2"
-                } group flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none ${
-                  sidebarCollapse ? "justify-center" : ""
-                }`}
-              >
-                <Icon
-                  iconName={`${link.icon}`}
-                  className={`${
-                    (
-                      link.name === "Settings"
-                        ? router.asPath.includes(link.href)
-                        : router.asPath === link.href
-                    )
-                      ? "text-brand-base"
-                      : "text-brand-secondary group-hover:text-brand-base"
-                  } `}
-                />
+      {workspaceLinks(workspaceSlug as string).map((link, index) => {
+        const isActive =
+          link.name === "Settings"
+            ? router.asPath.includes(link.href)
+            : router.asPath === link.href;
 
-                {!sidebarCollapse && link.name}
-              </div>
-            </Tooltip>
-          </a>
-        </Link>
-      ))}
+        return (
+          <Link key={index} href={link.href}>
+            <a className="w-full">
+              <Tooltip
+                tooltipContent={link.name}
+                position="right"
+                className="ml-2"
+                disabled={!sidebarCollapse}
+              >
+                <div
+                  className={`${
+                    isActive
+                      ? "bg-custom-sidebar-background-80 text-custom-sidebar-text-100 font-medium"
+                      : "text-custom-sidebar-text-200 hover:text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+                  } group flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none ${
+                    sidebarCollapse ? "justify-center" : ""
+                  }`}
+                >
+                  <Icon
+                    iconName={`${link.icon}`}
+                    className={
+                      isActive
+                        ? "text-custom-sidebar-text-100"
+                        : "text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100"
+                    }
+                  />
+
+                  {!sidebarCollapse && link.name}
+                </div>
+              </Tooltip>
+            </a>
+          </Link>
+        );
+      })}
     </div>
   );
 };

@@ -37,18 +37,19 @@ from plane.db.models import (
     State,
     TeamMember,
     ProjectFavorite,
+    ProjectIdentifier,
+    Module,
+    Cycle,
+    CycleFavorite,
+    ModuleFavorite,
+    PageFavorite,
+    IssueViewFavorite,
+    Page,
+    IssueAssignee,
+    ModuleMember,
+    Inbox,
 )
 
-from plane.db.models import (
-    Project,
-    ProjectMember,
-    Workspace,
-    ProjectMemberInvite,
-    User,
-    ProjectIdentifier,
-    Cycle,
-    Module,
-)
 from plane.bgtasks.project_invitation_task import project_invitation
 
 
@@ -71,6 +72,7 @@ class ProjectViewSet(BaseViewSet):
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
         )
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -80,6 +82,15 @@ class ProjectViewSet(BaseViewSet):
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
             .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                is_member=Exists(
+                    ProjectMember.objects.filter(
+                        member=self.request.user,
+                        project_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
+            )
             .distinct()
         )
 
@@ -133,12 +144,12 @@ class ProjectViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
 
-                ## Add the user as Administrator to the project
+                # Add the user as Administrator to the project
                 ProjectMember.objects.create(
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
 
-                ## Default states
+                # Default states
                 states = [
                     {
                         "name": "Backlog",
@@ -237,6 +248,20 @@ class ProjectViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
+                if serializer.data["inbox_view"]:
+                    Inbox.objects.get_or_create(
+                        name=f"{project.name} Inbox", project=project, is_default=True
+                    )
+
+                    # Create the triage state in Backlog group
+                    State.objects.get_or_create(
+                        name="Triage",
+                        group="backlog",
+                        description="Default state for managing all Inbox Issues",
+                        project_id=pk,
+                        color="#ff7700",
+                    )
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -373,7 +398,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                 ]
             )
 
-            ## Delete joined project invites
+            # Delete joined project invites
             project_invitations.delete()
 
             return Response(status=status.HTTP_200_OK)
@@ -411,14 +436,23 @@ class ProjectMemberViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         try:
-            project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+            project_member = ProjectMember.objects.get(
+                pk=pk, workspace__slug=slug, project_id=project_id
+            )
             if request.user.id == project_member.member_id:
                 return Response(
                     {"error": "You cannot update your own role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            if request.data.get("role", 10) > project_member.role:
+            # Check while updating user roles
+            requested_project_member = ProjectMember.objects.get(
+                project_id=project_id, workspace__slug=slug, member=request.user
+            )
+            if (
+                "role" in request.data
+                and int(request.data.get("role", project_member.role))
+                > requested_project_member.role
+            ):
                 return Response(
                     {
                         "error": "You cannot update a role that is higher than your own role"
@@ -441,8 +475,72 @@ class ProjectMemberViewSet(BaseViewSet):
             )
         except Exception as e:
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
+    def destroy(self, request, slug, project_id, pk):
+        try:
+            project_member = ProjectMember.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            # check requesting user role
+            requesting_project_member = ProjectMember.objects.get(
+                workspace__slug=slug, member=request.user, project_id=project_id
+            )
+            if requesting_project_member.role < project_member.role:
+                return Response(
+                    {
+                        "error": "You cannot remove a user having role higher than yourself"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Remove all favorites
+            ProjectFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
+            CycleFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
+            ModuleFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
+            PageFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
+            IssueViewFavorite.objects.filter(
+                workspace__slug=slug, project_id=project_id, user=project_member.member
+            ).delete()
+            # Also remove issue from issue assigned
+            IssueAssignee.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                assignee=project_member.member,
+            ).delete()
+
+            # Remove if module member
+            ModuleMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=project_member.member,
+            ).delete()
+            # Delete owned Pages
+            Page.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                owned_by=project_member.member,
+            ).delete()
+            project_member.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ProjectMember.DoesNotExist:
+            return Response(
+                {"error": "Project Member does not exist"}, status=status.HTTP_400
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"})
 
 
 class AddMemberToProjectEndpoint(BaseAPIView):
@@ -452,45 +550,47 @@ class AddMemberToProjectEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         try:
-            member_id = request.data.get("member_id", False)
-            role = request.data.get("role", False)
+            members = request.data.get("members", [])
 
-            if not member_id or not role:
+            # get the project
+            project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+            if not len(members):
                 return Response(
-                    {"error": "Member ID and role is required"},
+                    {"error": "Atleast one member is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Check if the user is a member in the workspace
-            if not WorkspaceMember.objects.filter(
-                workspace__slug=slug, member_id=member_id
-            ).exists():
-                # TODO: Update this error message - nk
-                return Response(
-                    {
-                        "error": "User is not a member of the workspace. Invite the user to the workspace to add him to project"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Check if the user is already member of project
-            if ProjectMember.objects.filter(
-                project=project_id, member_id=member_id
-            ).exists():
-                return Response(
-                    {"error": "User is already a member of the project"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Add the user to project
-            project_member = ProjectMember.objects.create(
-                project_id=project_id, member_id=member_id, role=role
+            project_members = ProjectMember.objects.bulk_create(
+                [
+                    ProjectMember(
+                        member_id=member.get("member_id"),
+                        role=member.get("role", 10),
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                    )
+                    for member in members
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
             )
 
-            serializer = ProjectMemberSerializer(project_member)
+            serializer = ProjectMemberSerializer(project_members, many=True)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        except KeyError:
+            return Response(
+                {"error": "Incorrect data sent"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except IntegrityError:
+            return Response(
+                {"error": "User not member of the workspace"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

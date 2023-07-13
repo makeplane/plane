@@ -10,8 +10,10 @@ import pagesService from "services/pages.service";
 import { PagesView } from "components/pages";
 // ui
 import { EmptyState, Loader } from "components/ui";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
 // images
-import emptyPage from "public/empty-state/empty-page.svg";
+import emptyPage from "public/empty-state/page.svg";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -37,37 +39,35 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
     <>
       {pages ? (
         Object.keys(pages).length > 0 && !isEmpty ? (
-          <div className="mt-4 space-y-4 flex flex-col gap-5">
-            {Object.keys(pages).map((key) => {
-              if (pages[key].length === 0) return null;
+          Object.keys(pages).map((key) => {
+            if (pages[key].length === 0) return null;
 
-              return (
-                <React.Fragment key={key}>
-                  <div>
-                    <h2 className="text-xl font-semibold capitalize mb-4">
-                      {replaceUnderscoreIfSnakeCase(key)}
-                    </h2>
-                    <PagesView
-                      pages={pages[key as keyof RecentPagesResponse]}
-                      viewType={viewType}
-                    />
-                  </div>
-                </React.Fragment>
-              );
-            })}
-          </div>
+            return (
+              <div key={key} className="h-full overflow-hidden">
+                <h2 className="text-xl font-semibold capitalize mb-2">
+                  {replaceUnderscoreIfSnakeCase(key)}
+                </h2>
+                <PagesView pages={pages[key as keyof RecentPagesResponse]} viewType={viewType} />
+              </div>
+            );
+          })
         ) : (
-          <div className="mt-4">
-            <EmptyState
-              type="page"
-              title="Create New Page"
-              description="Create and document issues effortlessly in one place with Plane Notes, AI-powered for ease."
-              imgURL={emptyPage}
-            />
-          </div>
+          <EmptyState
+            title="Have your thoughts in place"
+            description="You can think of Pages as an AI-powered notepad."
+            image={emptyPage}
+            buttonText="New Page"
+            buttonIcon={<PlusIcon className="h-4 w-4" />}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "d",
+              });
+              document.dispatchEvent(e);
+            }}
+          />
         )
       ) : (
-        <Loader className="mt-8 space-y-4">
+        <Loader className="space-y-4">
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />

@@ -77,6 +77,13 @@ class ProjectSerializer(BaseSerializer):
         raise serializers.ValidationError(detail="Project Identifier is already taken")
 
 
+class ProjectLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Project
+        fields = ["id", "identifier", "name"]
+        read_only_fields = fields
+
+
 class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
@@ -85,6 +92,7 @@ class ProjectDetailSerializer(BaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
     total_modules = serializers.IntegerField(read_only=True)
+    is_member = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Project
@@ -93,7 +101,7 @@ class ProjectDetailSerializer(BaseSerializer):
 
 class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
-    project = ProjectSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
     member = UserLiteSerializer(read_only=True)
 
     class Meta:
@@ -132,4 +140,14 @@ class ProjectLiteSerializer(BaseSerializer):
     class Meta:
         model = Project
         fields = ["id", "identifier", "name"]
+        read_only_fields = fields
+
+
+class ProjectMemberLiteSerializer(BaseSerializer):
+    member = UserLiteSerializer(read_only=True)
+    is_subscribed = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = ProjectMember
+        fields = ["member", "id", "is_subscribed"]
         read_only_fields = fields

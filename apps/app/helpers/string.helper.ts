@@ -89,7 +89,7 @@ export const cosineSimilarity = (a: string, b: string) => {
 };
 
 export const generateRandomColor = (string: string): string => {
-  if (!string) return "rgb(var(--color-accent))";
+  if (!string) return "rgb(var(--color-primary-100))";
 
   string = `${string}`;
 
@@ -108,4 +108,13 @@ export const generateRandomColor = (string: string): string => {
   const randomColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 
   return randomColor;
+};
+
+export const getFirstCharacters = (str: string) => {
+  const words = str.trim().split(" ");
+  if (words.length === 1) {
+    return words[0].charAt(0);
+  } else {
+    return words[0].charAt(0) + words[1].charAt(0);
+  }
 };

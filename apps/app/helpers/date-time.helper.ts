@@ -18,6 +18,13 @@ export const renderShortNumericDateFormat = (date: string | Date) =>
     month: "short",
   });
 
+export const renderLongDetailDateFormat = (date: string | Date) =>
+  new Date(date).toLocaleDateString("en-UK", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
 export const findHowManyDaysLeft = (date: string | Date) => {
   const today = new Date();
   const eventDate = new Date(date);
@@ -25,13 +32,18 @@ export const findHowManyDaysLeft = (date: string | Date) => {
   return Math.ceil(timeDiff / (1000 * 3600 * 24));
 };
 
-export const getDatesInRange = (startDate: Date, endDate: Date) => {
+export const getDatesInRange = (startDate: string | Date, endDate: string | Date) => {
+  startDate = new Date(startDate);
+  endDate = new Date(endDate);
+
   const date = new Date(startDate.getTime());
   const dates = [];
+
   while (date <= endDate) {
     dates.push(new Date(date));
     date.setDate(date.getDate() + 1);
   }
+
   return dates;
 };
 
@@ -109,7 +121,7 @@ export const getDateRangeStatus = (
   }
 };
 
-export const renderShortDateWithYearFormat = (date: string | Date) => {
+export const renderShortDateWithYearFormat = (date: string | Date, placeholder?: string) => {
   if (!date || date === "") return null;
 
   date = new Date(date);
@@ -131,7 +143,8 @@ export const renderShortDateWithYearFormat = (date: string | Date) => {
   const day = date.getDate();
   const month = months[date.getMonth()];
   const year = date.getFullYear();
-  return isNaN(date.getTime()) ? "N/A" : ` ${month} ${day}, ${year}`;
+
+  return isNaN(date.getTime()) ? placeholder ?? "N/A" : ` ${month} ${day}, ${year}`;
 };
 
 export const renderShortDate = (date: string | Date, placeholder?: string) => {
@@ -159,18 +172,35 @@ export const renderShortDate = (date: string | Date, placeholder?: string) => {
   return isNaN(date.getTime()) ? placeholder ?? "N/A" : `${day} ${month}`;
 };
 
-export const renderShortTime = (date: string | Date) => {
-  if (!date || date === "") return null;
+export const render12HourFormatTime = (date: string | Date): string => {
+  if (!date || date === "") return "";
+
+  date = new Date(date);
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  let period = "AM";
+
+  if (hours >= 12) {
+    period = "PM";
+
+    if (hours > 12) hours -= 12;
+  }
+
+  return hours + ":" + minutes + " " + period;
+};
+
+export const render24HourFormatTime = (date: string | Date): string => {
+  if (!date || date === "") return "";
 
   date = new Date(date);
 
   const hours = date.getHours();
   let minutes: any = date.getMinutes();
 
-  // Add leading zero to single-digit minutes
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
+  // add leading zero to single digit minutes
+  if (minutes < 10) minutes = "0" + minutes;
 
   return hours + ":" + minutes;
 };

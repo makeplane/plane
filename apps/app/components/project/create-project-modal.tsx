@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -22,9 +21,9 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
-import { getRandomEmoji } from "helpers/common.helper";
+import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // types
-import { IProject } from "types";
+import { ICurrentUserResponse, IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // constants
@@ -33,6 +32,7 @@ import { NETWORK_CHOICES } from "constants/project";
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues: Partial<IProject> = {
@@ -63,7 +63,7 @@ const IsGuestCondition: React.FC<{
 };
 
 export const CreateProjectModal: React.FC<Props> = (props) => {
-  const { isOpen, setIsOpen } = props;
+  const { isOpen, setIsOpen, user } = props;
 
   const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
@@ -120,7 +120,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     else payload.emoji = formData.emoji_and_icon;
 
     await projectServices
-      .createProject(workspaceSlug as string, payload)
+      .createProject(workspaceSlug as string, payload, user)
       .then((res) => {
         mutate<IProject[]>(
           PROJECTS_LIST(workspaceSlug as string),
@@ -170,7 +170,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -184,15 +184,13 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="transform rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
-                <div className="relative h-36 w-full rounded-t-lg bg-gray-300">
+              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <div className="relative h-36 w-full rounded-t-lg bg-custom-background-80">
                   {watch("cover_image") !== null && (
-                    <Image
+                    <img
                       src={watch("cover_image")!}
-                      layout="fill"
-                      alt="cover image"
-                      objectFit="cover"
-                      className="rounded-t-lg"
+                      className="absolute top-0 left-0 h-full w-full object-cover rounded-t-lg"
+                      alt="Cover Image"
                     />
                   )}
 
@@ -234,7 +232,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                       {value.name}
                                     </span>
                                   ) : (
-                                    String.fromCodePoint(parseInt(value))
+                                    renderEmoji(value)
                                   )
                                 ) : (
                                   "Icon"
@@ -330,7 +328,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex justify-end gap-2 border-t-2 border-brand-base px-4 py-3">
+                  <div className="mt-5 flex justify-end gap-2 border-t-2 border-custom-border-100 px-4 py-3">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                     <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
                       {isSubmitting ? "Adding project..." : "Add Project"}
