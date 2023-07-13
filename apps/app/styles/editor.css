@@ -1,6 +1,6 @@
 .empty-node::after {
   content: attr(data-placeholder);
-  color: #9ca3af;
+  color: rgb(var(--color-text-400));
 
   position: absolute;
   pointer-events: none;

@@ -158,7 +158,7 @@ const Onboarding: NextPage = () => {
               </div>
             </div>
           )}
-          <div className="absolute sm:fixed text-custom-text-100 text-sm right-4 top-1/4 sm:top-12 -translate-y-1/2 sm:translate-y-0 sm:right-16 sm:py-5">
+          <div className="absolute sm:fixed text-custom-text-100 text-sm font-medium right-4 top-1/4 sm:top-12 -translate-y-1/2 sm:translate-y-0 sm:right-16 sm:py-5">
             {user?.email}
           </div>
         </div>

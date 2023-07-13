@@ -12,9 +12,9 @@ export const orderArrayBy = (
   key: string,
   ordering: "ascending" | "descending" = "ascending"
 ) => {
-  const array = [...orgArray];
+  if (!orgArray || !Array.isArray(orgArray) || orgArray.length === 0) return [];
 
-  if (!array || !Array.isArray(array) || array.length === 0) return [];
+  const array = [...orgArray];
 
   if (key[0] === "-") {
     ordering = "descending";

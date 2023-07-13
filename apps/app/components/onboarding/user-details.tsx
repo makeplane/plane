@@ -144,7 +144,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                     value ? (
                       value.toString()
                     ) : (
-                      <span className="text-gray-400">Select your role...</span>
+                      <span className="text-custom-text-400">Select your role...</span>
                     )
                   }
                   input

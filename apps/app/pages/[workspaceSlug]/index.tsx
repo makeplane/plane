@@ -133,6 +133,7 @@ const WorkspacePage: NextPage = () => {
               Good {greeting}, {user?.first_name} {user?.last_name}
             </h3>
             <h6 className="text-custom-text-400 font-medium">
+              {greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}
               {DAYS[today.getDay()]}, {renderShortDate(today)} {render12HourFormatTime(today)}
             </h6>
             <div className="mt-7 bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
