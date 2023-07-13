@@ -118,7 +118,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     if (!workspaceSlug || !projectId || !archivedIssueId) return;
 
     await issuesService
-      .unArchivedIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
+      .unarchiveIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -174,7 +174,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
               <IssueMainContent
                 issueDetails={issueDetails}
                 submitChanges={submitChanges}
-                nonEditable
+                uneditable
               />
             </div>
           </div>
@@ -184,7 +184,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
               issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
-              nonEditable
+              uneditable
             />
           </div>
         </div>

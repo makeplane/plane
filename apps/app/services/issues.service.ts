@@ -536,7 +536,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async unArchivedIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async unarchiveIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/unarchive/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
