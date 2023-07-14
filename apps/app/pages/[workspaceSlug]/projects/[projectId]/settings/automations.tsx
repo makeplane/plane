@@ -41,14 +41,6 @@ const AutomationsSettings: NextPage = () => {
       false
     );
 
-    if (projectDetails.is_favorite)
-      mutate<IProject[]>(
-        PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
-        (prevData) =>
-          (prevData ?? []).map((p) => (p.id === projectDetails.id ? { ...p, ...formData } : p)),
-        false
-      );
-
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
       (prevData) =>

@@ -71,13 +71,6 @@ const ControlSettings: NextPage = () => {
       .then((res) => {
         mutate(PROJECT_DETAILS(projectId as string));
 
-        if (projectDetails.is_favorite)
-          mutate(
-            PROJECTS_LIST(workspaceSlug as string, {
-              is_favorite: true,
-            })
-          );
-
         mutate(
           PROJECTS_LIST(workspaceSlug as string, {
             is_favorite: "all",
