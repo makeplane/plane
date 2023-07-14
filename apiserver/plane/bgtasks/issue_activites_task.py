@@ -1109,7 +1109,8 @@ def issue_activity(
 
         issue_subscribers = issue_subscribers + issue_assignees
 
-        if issue.created_by_id:
+        # Add bot filtering
+        if issue.created_by_id is not None and not issue.created_by.is_bot:
             issue_subscribers = issue_subscribers + [issue.created_by_id]
 
         issue = Issue.objects.get(project=project, pk=issue_id)
