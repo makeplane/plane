@@ -144,7 +144,6 @@ const MembersSettings: NextPage = () => {
         isOpen={inviteModal}
         setIsOpen={setInviteModal}
         workspace_slug={workspaceSlug as string}
-        members={members}
         user={user}
       />
       <div className="p-8">
