@@ -7,35 +7,37 @@ import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 
 import { Transition, Dialog, Listbox } from "@headlessui/react";
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 
 // date helper
 import { getDatesAfterCurrentDate, getTimestampAfterCurrentTime } from "helpers/date-time.helper";
-
-// services
-import userNotificationServices from "services/notifications.service";
 
 // hooks
 import useToast from "hooks/use-toast";
 
 // components
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { PrimaryButton, SecondaryButton, Icon } from "components/ui";
 
-// icons
-import { XMarkIcon } from "components/icons";
+// types
+import type { IUserNotification } from "types";
 
 type SnoozeModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  notificationId: string | null;
+  notification: IUserNotification | null;
+  onSubmit: (notificationId: string, dateTime?: Date | undefined) => Promise<void>;
 };
 
 const dates = getDatesAfterCurrentDate();
 const timeStamps = getTimestampAfterCurrentTime();
 
+const defaultValues = {
+  time: null,
+  date: null,
+};
+
 export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
-  const { isOpen, onClose, notificationId, onSuccess } = props;
+  const { isOpen, onClose, notification, onSuccess, onSubmit: handleSubmitSnooze } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -47,28 +49,26 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
     reset,
     handleSubmit,
     control,
-  } = useForm<any>();
+  } = useForm<any>({
+    defaultValues,
+  });
 
   const onSubmit = async (formData: any) => {
-    if (!workspaceSlug || !notificationId) return;
+    if (!workspaceSlug || !notification) return;
 
     const dateTime = new Date(
       `${formData.date.toLocaleDateString()} ${formData.time.toLocaleTimeString()}`
     );
 
-    await userNotificationServices
-      .patchUserNotification(workspaceSlug.toString(), notificationId, {
-        snoozed_till: dateTime,
-      })
-      .then(() => {
-        onClose();
-        onSuccess();
-        setToastAlert({
-          title: "Notification snoozed",
-          message: "Notification snoozed successfully",
-          type: "success",
-        });
+    await handleSubmitSnooze(notification.id, dateTime).then(() => {
+      onClose();
+      onSuccess();
+      setToastAlert({
+        title: "Notification snoozed",
+        message: "Notification snoozed successfully",
+        type: "success",
       });
+    });
   };
 
   const handleClose = () => {
@@ -91,7 +91,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -117,7 +117,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
 
                     <div>
                       <button type="button">
-                        <XMarkIcon className="w-5 h-5 text-custom-text-100" />
+                        <Icon iconName="close" className="w-5 h-5 text-custom-text-100" />
                       </button>
                     </div>
                   </div>
@@ -133,18 +133,21 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                             {({ open }) => (
                               <>
                                 <div className="relative mt-2">
-                                  <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                  <Listbox.Button className="relative w-full cursor-default rounded-md border border-custom-border-100 bg-custom-background-100 py-1.5 pl-3 pr-10 text-left text-custom-text-100 shadow-sm focus:outline-none sm:text-sm sm:leading-6">
                                     <span className="flex items-center">
                                       <span className="ml-3 block truncate">
-                                        {value?.toLocaleTimeString([], {
-                                          hour: "2-digit",
-                                          minute: "2-digit",
-                                        }) || "Select Time"}
+                                        {value
+                                          ? new Date(value)?.toLocaleTimeString([], {
+                                              hour: "2-digit",
+                                              minute: "2-digit",
+                                            })
+                                          : "Select Time"}
                                       </span>
                                     </span>
                                     <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                                      <ChevronDownIcon
-                                        className="h-5 w-5 text-gray-400"
+                                      <Icon
+                                        iconName="expand_more"
+                                        className="h-5 w-5 text-custom-text-100"
                                         aria-hidden="true"
                                       />
                                     </span>
@@ -157,14 +160,14 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                     leaveFrom="opacity-100"
                                     leaveTo="opacity-0"
                                   >
-                                    <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                    <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-custom-background-100 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
                                       {timeStamps.map((time, index) => (
                                         <Listbox.Option
                                           key={`${time.label}-${index}`}
                                           className={({ active }) =>
                                             `relative cursor-default select-none py-2 pl-3 pr-9 ${
                                               active
-                                                ? "bg-custom-primary-100 text-custom-text-100"
+                                                ? "bg-custom-primary-100/80 text-custom-text-100"
                                                 : "text-custom-text-700"
                                             }`
                                           }
@@ -190,7 +193,8 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                                       : "text-custom-primary-100"
                                                   }`}
                                                 >
-                                                  <CheckIcon
+                                                  <Icon
+                                                    iconName="done"
                                                     className="h-5 w-5"
                                                     aria-hidden="true"
                                                   />
@@ -219,19 +223,22 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                             {({ open }) => (
                               <>
                                 <div className="relative mt-2">
-                                  <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                  <Listbox.Button className="relative w-full cursor-default rounded-md border border-custom-border-100 bg-custom-background-100 py-1.5 pl-3 pr-10 text-left text-custom-text-100 shadow-sm focus:outline-none sm:text-sm sm:leading-6">
                                     <span className="flex items-center">
                                       <span className="ml-3 block truncate">
-                                        {value?.toLocaleDateString([], {
-                                          day: "numeric",
-                                          month: "long",
-                                          year: "numeric",
-                                        }) || "Select Date"}
+                                        {value
+                                          ? new Date(value)?.toLocaleDateString([], {
+                                              day: "numeric",
+                                              month: "long",
+                                              year: "numeric",
+                                            })
+                                          : "Select Date"}
                                       </span>
                                     </span>
                                     <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                                      <ChevronDownIcon
-                                        className="h-5 w-5 text-gray-400"
+                                      <Icon
+                                        iconName="expand_more"
+                                        className="h-5 w-5 text-custom-text-100"
                                         aria-hidden="true"
                                       />
                                     </span>
@@ -244,14 +251,14 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                     leaveFrom="opacity-100"
                                     leaveTo="opacity-0"
                                   >
-                                    <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                    <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-custom-background-100 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
                                       {dates.map((date, index) => (
                                         <Listbox.Option
                                           key={`${date.label}-${index}`}
                                           className={({ active }) =>
                                             `relative cursor-default select-none py-2 pl-3 pr-9 ${
                                               active
-                                                ? "bg-custom-primary-100 text-custom-text-100"
+                                                ? "bg-custom-primary-100/80 text-custom-text-100"
                                                 : "text-custom-text-700"
                                             }`
                                           }
@@ -277,7 +284,8 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                                       : "text-custom-primary-100"
                                                   }`}
                                                 >
-                                                  <CheckIcon
+                                                  <Icon
+                                                    iconName="done"
                                                     className="h-5 w-5"
                                                     aria-hidden="true"
                                                   />
@@ -302,7 +310,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                     <div className="w-full flex items-center gap-2 justify-end">
                       <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                       <PrimaryButton type="submit" loading={isSubmitting}>
-                        Submit
+                        {isSubmitting ? "Submitting..." : "Submit"}
                       </PrimaryButton>
                     </div>
                   </div>

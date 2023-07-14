@@ -5,34 +5,32 @@ import { useRouter } from "next/router";
 
 // hooks
 import useTheme from "hooks/use-theme";
-// icons
-import { ChartBarIcon } from "@heroicons/react/24/outline";
-import { GridViewIcon, AssignmentClipboardIcon, TickMarkIcon } from "components/icons";
 
 import { NotificationPopover } from "components/notifications";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {
-    icon: GridViewIcon,
+    icon: "grid_view",
     name: "Dashboard",
     href: `/${workspaceSlug}`,
   },
   {
-    icon: ChartBarIcon,
+    icon: "bar_chart",
     name: "Analytics",
     href: `/${workspaceSlug}/analytics`,
   },
   {
-    icon: AssignmentClipboardIcon,
+    icon: "work",
     name: "Projects",
     href: `/${workspaceSlug}/projects`,
   },
   {
-    icon: TickMarkIcon,
+    icon: "task_alt",
     name: "My Issues",
     href: `/${workspaceSlug}/me/my-issues`,
   },
 ];
+
 // components
 import { Icon, Tooltip } from "components/ui";
 

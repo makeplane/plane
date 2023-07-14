@@ -310,7 +310,7 @@ export const getDatesAfterCurrentDate = (): Array<{
   const current = new Date();
   const date = [];
   for (let i = 0; i < 7; i++) {
-    const newDate = new Date(current.getTime() + i * 24 * 60 * 60 * 1000);
+    const newDate = new Date(Math.round(current.getTime() / (30 * 60 * 1000)) * 30 * 60 * 1000);
     date.push({
       label: newDate.toLocaleDateString([], {
         day: "numeric",

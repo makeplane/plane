@@ -4,23 +4,14 @@ import Image from "next/image";
 
 // hooks
 import useTheme from "hooks/use-theme";
-// icons
-import {
-  XMarkIcon,
-  ArchiveIcon,
-  ClockIcon,
-  SortIcon,
-  BellNotificationIcon,
-} from "components/icons";
 
 import { Popover, Transition, Menu } from "@headlessui/react";
-import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 
 // hooks
 import useUserNotification from "hooks/use-user-notifications";
 
 // components
-import { Spinner } from "components/ui";
+import { Spinner, Icon } from "components/ui";
 import { SnoozeNotificationModal, NotificationCard } from "components/notifications";
 
 // type
@@ -60,6 +51,7 @@ export const NotificationPopover = () => {
     notificationsMutate,
     markNotificationArchivedStatus,
     markNotificationReadStatus,
+    markSnoozeNotification,
   } = useUserNotification();
 
   // theme context
@@ -70,7 +62,12 @@ export const NotificationPopover = () => {
       <SnoozeNotificationModal
         isOpen={selectedNotificationForSnooze !== null}
         onClose={() => setSelectedNotificationForSnooze(null)}
-        notificationId={selectedNotificationForSnooze}
+        onSubmit={markSnoozeNotification}
+        notification={
+          notifications?.find(
+            (notification) => notification.id === selectedNotificationForSnooze
+          ) || null
+        }
         onSuccess={() => {
           notificationsMutate();
           setSelectedNotificationForSnooze(null);
@@ -80,26 +77,13 @@ export const NotificationPopover = () => {
         {({ open: isActive, close: closePopover }) => (
           <>
             <Popover.Button
-              className={`${
+              className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                 isActive
-                  ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
-                  : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90"
-              } group flex w-full items-center gap-3 rounded-md p-2 text-sm font-medium outline-none ${
-                sidebarCollapse ? "justify-center" : ""
-              }`}
+                  ? "bg-custom-primary-100/10 text-custom-primary-100"
+                  : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+              } ${sidebarCollapse ? "justify-center" : ""}`}
             >
-              <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
-                <BellNotificationIcon
-                  color={
-                    isActive
-                      ? "rgb(var(--color-sidebar-text-100))"
-                      : "rgb(var(--color-sidebar-text-200))"
-                  }
-                  aria-hidden="true"
-                  height="20"
-                  width="20"
-                />
-              </span>
+              <Icon iconName="notifications" />
               {sidebarCollapse ? null : <span>Notifications</span>}
             </Popover.Button>
             <Transition
@@ -119,13 +103,26 @@ export const NotificationPopover = () => {
                   <div className="flex gap-x-2 justify-center items-center">
                     <button
                       type="button"
+                      onClick={(e) => {
+                        notificationsMutate();
+                        const target = e.target as HTMLButtonElement;
+                        target?.classList.add("animate-spin");
+                        setTimeout(() => {
+                          target?.classList.remove("animate-spin");
+                        }, 1000);
+                      }}
+                    >
+                      <Icon iconName="refresh" className="h-6 w-6 text-custom-text-300" />
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => {
                         setSnoozed(false);
                         setArchived(false);
                         setReadNotification((prev) => !prev);
                       }}
                     >
-                      <SortIcon className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="filter_list" className="h-6 w-6 text-custom-text-300" />
                     </button>
                     <button
                       type="button"
@@ -135,7 +132,7 @@ export const NotificationPopover = () => {
                         setSnoozed((prev) => !prev);
                       }}
                     >
-                      <ClockIcon className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="schedule" className="h-6 w-6 text-custom-text-300" />
                     </button>
                     <button
                       type="button"
@@ -145,10 +142,10 @@ export const NotificationPopover = () => {
                         setArchived((prev) => !prev);
                       }}
                     >
-                      <ArchiveIcon className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="archive" className="h-6 w-6 text-custom-text-300" />
                     </button>
                     <button type="button" onClick={() => closePopover()}>
-                      <XMarkIcon className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="close" className="h-6 w-6 text-custom-text-300" />
                     </button>
                   </div>
                 </div>
@@ -166,7 +163,7 @@ export const NotificationPopover = () => {
                           }}
                         >
                           <h4 className="text-custom-text-300 text-center flex items-center">
-                            <ArrowLeftIcon className="h-5 w-5 text-custom-text-300" />
+                            <Icon iconName="arrow_back" className="h-5 w-5 text-custom-text-300" />
                             <span className="ml-2 font-semibold">
                               {snoozed
                                 ? "Snoozed Notifications"
@@ -202,7 +199,9 @@ export const NotificationPopover = () => {
 
                 <div className="w-full flex-1 overflow-y-auto">
                   {notifications ? (
-                    notifications.length > 0 ? (
+                    notifications.filter(
+                      (notification) => notification.data.issue_activity.field !== "None"
+                    ).length > 0 ? (
                       notifications.map((notification) => (
                         <NotificationCard
                           key={notification.id}
@@ -210,6 +209,7 @@ export const NotificationPopover = () => {
                           markNotificationArchivedStatus={markNotificationArchivedStatus}
                           markNotificationReadStatus={markNotificationReadStatus}
                           setSelectedNotificationForSnooze={setSelectedNotificationForSnooze}
+                          markSnoozeNotification={markSnoozeNotification}
                         />
                       ))
                     ) : (

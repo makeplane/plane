@@ -5,9 +5,10 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 // hooks
-import useUserNotification from "hooks/use-user-notifications";
+import useToast from "hooks/use-toast";
+
 // icons
-import { ArchiveIcon, ClockIcon, SingleCommentCard } from "components/icons";
+import { Icon } from "components/ui";
 
 // helper
 import { stripHTML, replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -18,9 +19,10 @@ import type { IUserNotification } from "types";
 
 type NotificationCardProps = {
   notification: IUserNotification;
-  markNotificationReadStatus: (notificationId: string) => void;
-  markNotificationArchivedStatus: (notificationId: string) => void;
+  markNotificationReadStatus: (notificationId: string) => Promise<void>;
+  markNotificationArchivedStatus: (notificationId: string) => Promise<void>;
   setSelectedNotificationForSnooze: (notificationId: string) => void;
+  markSnoozeNotification: (notificationId: string, dateTime?: Date | undefined) => Promise<void>;
 };
 
 export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
@@ -29,10 +31,15 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
     markNotificationReadStatus,
     markNotificationArchivedStatus,
     setSelectedNotificationForSnooze,
+    markSnoozeNotification,
   } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
+
+  if (notification.data.issue_activity.field === "None") return null;
 
   return (
     <div
@@ -79,7 +86,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   {notification.triggered_by_details.first_name}{" "}
                   {notification.triggered_by_details.last_name}{" "}
                 </span>
-                {notification.data.issue_activity.verb}{" "}
+                {notification.data.issue_activity.field !== "comment" &&
+                  notification.data.issue_activity.verb}{" "}
                 {notification.data.issue_activity.field !== "comment"
                   ? replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)
                   : "commented"}{" "}
@@ -89,13 +97,17 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   {notification.data.issue_activity.field !== "comment" ? (
                     notification.data.issue_activity.field === "target_date" ? (
                       renderShortDateWithYearFormat(notification.data.issue_activity.new_value)
+                    ) : notification.data.issue_activity.field === "attachment" ? (
+                      "the issue"
+                    ) : stripHTML(notification.data.issue_activity.new_value).length > 55 ? (
+                      stripHTML(notification.data.issue_activity.new_value).slice(0, 50) + "..."
                     ) : (
                       stripHTML(notification.data.issue_activity.new_value)
                     )
                   ) : (
                     <span>
                       {`"`}
-                      {notification.data.issue_activity.new_value.length > 50
+                      {notification.data.issue_activity.new_value.length > 55
                         ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
                         : notification.data.issue_activity.issue_comment}
                       {`"`}
@@ -122,25 +134,43 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             {
               id: 1,
               name: notification.read_at ? "Mark as Unread" : "Mark as Read",
-              icon: SingleCommentCard,
+              icon: "chat_bubble",
               onClick: () => {
-                markNotificationReadStatus(notification.id);
+                markNotificationReadStatus(notification.id).then(() => {
+                  setToastAlert({
+                    title: notification.read_at
+                      ? "Notification marked as unread"
+                      : "Notification marked as read",
+                    type: "success",
+                  });
+                });
               },
             },
             {
               id: 2,
               name: notification.archived_at ? "Unarchive Notification" : "Archive Notification",
-              icon: ArchiveIcon,
+              icon: "archive",
               onClick: () => {
-                markNotificationArchivedStatus(notification.id);
+                markNotificationArchivedStatus(notification.id).then(() => {
+                  setToastAlert({
+                    title: notification.archived_at
+                      ? "Notification un-archived"
+                      : "Notification archived",
+                    type: "success",
+                  });
+                });
               },
             },
             {
               id: 3,
               name: notification.snoozed_till ? "Unsnooze Notification" : "Snooze Notification",
-              icon: ClockIcon,
+              icon: "schedule",
               onClick: () => {
-                setSelectedNotificationForSnooze(notification.id);
+                if (notification.snoozed_till)
+                  markSnoozeNotification(notification.id).then(() => {
+                    setToastAlert({ title: "Notification un-snoozed", type: "success" });
+                  });
+                else setSelectedNotificationForSnooze(notification.id);
               },
             },
           ].map((item) => (
@@ -153,7 +183,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               key={item.id}
               className="text-sm flex w-full items-center gap-x-2 hover:bg-custom-background-100 p-0.5 rounded"
             >
-              <item.icon className="h-5 w-5 text-custom-text-300" />
+              <Icon iconName={item.icon} className="h-5 w-5 text-custom-text-300" />
             </button>
           ))}
         </div>

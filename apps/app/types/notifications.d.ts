@@ -46,7 +46,7 @@ export interface IIssueLite {
   state_group: string;
 }
 
-export type NotificationType = "created" | "assigned" | "watching";
+export type NotificationType = "created" | "assigned" | "watching" | null;
 
 export interface INotificationParams {
   snoozed?: boolean;

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -32,7 +32,7 @@ const useUserNotification = () => {
           type: selectedTab,
           snoozed,
           archived,
-          read: readNotification,
+          read: selectedTab === null ? !readNotification : undefined,
         })
       : null,
     workspaceSlug
@@ -41,7 +41,7 @@ const useUserNotification = () => {
             type: selectedTab,
             snoozed,
             archived,
-            read: readNotification,
+            read: selectedTab === null ? !readNotification : undefined,
           })
       : null
   );
@@ -121,11 +121,39 @@ const useUserNotification = () => {
     }
   };
 
+  const markSnoozeNotification = async (notificationId: string, dateTime?: Date) => {
+    if (!workspaceSlug) return;
+
+    const isSnoozed =
+      notifications?.find((notification) => notification.id === notificationId)?.snoozed_till !==
+      null;
+
+    if (isSnoozed) {
+      await userNotificationServices
+        .patchUserNotification(workspaceSlug.toString(), notificationId, {
+          snoozed_till: null,
+        })
+        .then(() => {
+          notificationsMutate();
+        });
+    } else
+      await userNotificationServices
+        .patchUserNotification(workspaceSlug.toString(), notificationId, {
+          snoozed_till: dateTime,
+        })
+        .then(() => {
+          notificationsMutate(
+            (prevData) => prevData?.filter((prev) => prev.id !== notificationId) || []
+          );
+        });
+  };
+
   return {
     notifications,
     notificationsMutate,
     markNotificationReadStatus,
     markNotificationArchivedStatus,
+    markSnoozeNotification,
     snoozed,
     setSnoozed,
     archived,
