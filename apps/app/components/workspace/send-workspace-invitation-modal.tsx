@@ -208,7 +208,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                           {fields.length > 1 && (
                             <button
                               type="button"
-                              className="hidden group-hover:grid self-center place-items-center rounded -ml-3"
+                              className="self-center place-items-center rounded -ml-3"
                               onClick={() => remove(index)}
                             >
                               <XMarkIcon className="h-3.5 w-3.5 text-custom-text-200" />
