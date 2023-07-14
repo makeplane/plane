@@ -71,13 +71,6 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
 
     setIsDeleteLoading(true);
 
-    if (data.is_favorite)
-      mutate<IProject[]>(
-        PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
-        (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
-        false
-      );
-
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
       (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),

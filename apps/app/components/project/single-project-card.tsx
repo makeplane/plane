@@ -56,11 +56,6 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
     if (!workspaceSlug) return;
 
     mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
-      (prevData) => [...(prevData ?? []), { ...project, is_favorite: true }],
-      false
-    );
-    mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
       (prevData) =>
         (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
@@ -90,11 +85,6 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
-      (prevData) => (prevData ?? []).filter((p) => p.id !== project.id),
-      false
-    );
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
       (prevData) =>
@@ -203,7 +193,6 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               <Tooltip
                 tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
                 position="bottom"
-                theme="dark"
               >
                 <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
