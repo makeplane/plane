@@ -70,8 +70,7 @@ const TOUR_STEPS: {
   {
     key: "pages",
     title: "Document with pages",
-    description:
-      "Modules break your big think into Projects or Features,  to help you organize better.",
+    description: "Use Pages to quickly jot down issues when you're in a meeting or starting a day.",
     image: PagesTour,
     prevStep: "views",
   },

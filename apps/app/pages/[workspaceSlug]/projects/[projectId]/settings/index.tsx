@@ -94,7 +94,20 @@ const GeneralSettings: NextPage = () => {
           (prevData) => ({ ...prevData, ...res }),
           false
         );
-        mutate(PROJECTS_LIST(workspaceSlug as string));
+
+        if (projectDetails.is_favorite)
+          mutate(
+            PROJECTS_LIST(workspaceSlug as string, {
+              is_favorite: true,
+            })
+          );
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
+
         setToastAlert({
           type: "success",
           title: "Success!",

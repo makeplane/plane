@@ -21,7 +21,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import type { NextPage } from "next";
 import { IProject } from "types";
 // constant
-import { PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const AutomationsSettings: NextPage = () => {
   const router = useRouter();
@@ -40,10 +40,15 @@ const AutomationsSettings: NextPage = () => {
       (prevData) => ({ ...(prevData as IProject), ...formData }),
       false
     );
-
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, formData, user)
       .then(() => {
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => (p.id === projectDetails?.id ? { ...p, ...formData } : p)),
+          false
+        );
         mutate(PROJECT_DETAILS(projectId as string));
       })
       .catch(() => {
