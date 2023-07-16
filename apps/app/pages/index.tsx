@@ -140,20 +140,21 @@ const HomePage: NextPage = () => {
           </>
           <div className="grid place-items-center h-full overflow-y-auto px-7">
             <div>
-              <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-                Sign in to Plane
-              </h1>
-
               {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
-                <div className="divide-y divide-custom-border-200">
-                  <div className="pb-7">
-                    <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                <>
+                  <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+                    Sign in to Plane
+                  </h1>
+                  <div className="divide-y divide-custom-border-200">
+                    <div className="pb-7">
+                      <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                    </div>
+                    <div className="space-y-4 pt-7 w-full sm:w-[360px] mx-auto">
+                      <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
+                      <GithubLoginButton handleSignIn={handleGitHubSignIn} />
+                    </div>
                   </div>
-                  <div className="space-y-4 pt-7 w-full sm:w-[360px] mx-auto">
-                    <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                    <GithubLoginButton handleSignIn={handleGitHubSignIn} />
-                  </div>
-                </div>
+                </>
               ) : (
                 <EmailPasswordForm onSubmit={handlePasswordSignIn} />
               )}

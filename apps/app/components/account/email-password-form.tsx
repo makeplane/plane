@@ -42,6 +42,13 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
 
   return (
     <>
+      <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+        {isResettingPassword
+          ? "Reset your password"
+          : isSignUpPage
+          ? "Sign up on Plane"
+          : "Sign in to Plane"}
+      </h1>
       {isResettingPassword ? (
         <EmailResetPasswordForm setIsResettingPassword={setIsResettingPassword} />
       ) : (
@@ -60,7 +67,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
                 validate: (value) =>
                   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                     value
-                  ) || "Email ID is not valid",
+                  ) || "Email address is not valid",
               }}
               error={errors.email}
               placeholder="Enter your email address..."

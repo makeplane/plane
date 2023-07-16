@@ -130,7 +130,7 @@ const ResetPasswordPage: NextPage = () => {
                 name="confirmPassword"
                 register={register}
                 validations={{
-                  required: "Confirm password is required",
+                  required: "Password confirmation is required",
                 }}
                 error={errors.confirmPassword}
                 placeholder="Confirm new password..."

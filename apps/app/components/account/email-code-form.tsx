@@ -132,7 +132,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               validate: (value) =>
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                   value
-                ) || "Email ID is not valid",
+                ) || "Email address is not valid",
             }}
             error={errors.email}
             placeholder="Enter your email address..."
