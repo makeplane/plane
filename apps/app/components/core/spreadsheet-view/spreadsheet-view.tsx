@@ -112,7 +112,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                     </button>
                   }
                   position="left"
-                  menuItemsClassName="left-5 !w-36"
+                  optionsClassName="left-5 !w-36"
                   noBorder
                 >
                   <CustomMenu.MenuItem
