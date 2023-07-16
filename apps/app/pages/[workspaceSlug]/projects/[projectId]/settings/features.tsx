@@ -99,44 +99,21 @@ const FeaturesSettings: NextPage = () => {
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    if (projectDetails.is_favorite)
-      mutate<IProject[]>(
-        PROJECTS_LIST(workspaceSlug.toString(), {
-          is_favorite: true,
-        }),
-        (prevData) =>
-          prevData?.map((p) => {
-            if (p.id === projectId)
-              return {
-                ...p,
-                ...formData,
-              };
-
-            return p;
-          }),
-        false
-      );
-
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug.toString(), {
         is_favorite: "all",
       }),
-      (prevData) =>
-        prevData?.map((p) => {
-          if (p.id === projectId)
-            return {
-              ...p,
-              ...formData,
-            };
-
-          return p;
-        }),
+      (prevData) => prevData?.map((p) => (p.id === projectId ? { ...p, ...formData } : p)),
       false
     );
 
     mutate<IProject>(
       PROJECT_DETAILS(projectId as string),
-      (prevData) => ({ ...(prevData as IProject), ...formData }),
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return { ...prevData, ...formData };
+      },
       false
     );
 

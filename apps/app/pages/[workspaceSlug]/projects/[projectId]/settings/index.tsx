@@ -95,13 +95,6 @@ const GeneralSettings: NextPage = () => {
           false
         );
 
-        if (projectDetails.is_favorite)
-          mutate(
-            PROJECTS_LIST(workspaceSlug as string, {
-              is_favorite: true,
-            })
-          );
-
         mutate(
           PROJECTS_LIST(workspaceSlug as string, {
             is_favorite: "all",

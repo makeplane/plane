@@ -11,7 +11,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu, Icon, ToggleSwitch } from "components/ui";
+import { CustomMenu, Icon, ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import {
   ChevronDownIcon,
@@ -82,18 +82,25 @@ export const IssuesFilterView: React.FC = () => {
       {!isArchivedIssues && (
         <div className="flex items-center gap-x-1">
           {issueViewOptions.map((option) => (
-            <button
+            <Tooltip
               key={option.type}
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
-                issueView === option.type
-                  ? "bg-custom-sidebar-background-80"
-                  : "text-custom-sidebar-text-200"
-              }`}
-              onClick={() => setIssueView(option.type)}
+              tooltipContent={
+                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
+              }
+              position="bottom"
             >
-              {option.icon}
-            </button>
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                  issueView === option.type
+                    ? "bg-custom-sidebar-background-80"
+                    : "text-custom-sidebar-text-200"
+                }`}
+                onClick={() => setIssueView(option.type)}
+              >
+                {option.icon}
+              </button>
+            </Tooltip>
           ))}
         </div>
       )}

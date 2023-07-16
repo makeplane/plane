@@ -106,7 +106,7 @@ class ModuleFlatSerializer(BaseSerializer):
 
 class ModuleIssueSerializer(BaseSerializer):
     module_detail = ModuleFlatSerializer(read_only=True, source="module")
-    issue_detail = IssueStateSerializer(read_only=True, source="issue")
+    issue_detail = ProjectLiteSerializer(read_only=True, source="issue")
     sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -151,7 +151,7 @@ class ModuleLinkSerializer(BaseSerializer):
 
 
 class ModuleSerializer(BaseSerializer):
-    project_detail = ProjectSerializer(read_only=True, source="project")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
     lead_detail = UserLiteSerializer(read_only=True, source="lead")
     members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
     link_module = ModuleLinkSerializer(read_only=True, many=True)

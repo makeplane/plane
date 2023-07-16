@@ -462,8 +462,8 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
-    state_detail = StateSerializer(read_only=True, source="state")
-    project_detail = ProjectSerializer(read_only=True, source="project")
+    state_detail = StateLiteSerializer(read_only=True, source="state")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
@@ -477,7 +477,7 @@ class IssueStateSerializer(BaseSerializer):
 
 
 class IssueSerializer(BaseSerializer):
-    project_detail = ProjectSerializer(read_only=True, source="project")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
     parent_detail = IssueFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)

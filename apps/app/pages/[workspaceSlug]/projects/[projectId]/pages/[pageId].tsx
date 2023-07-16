@@ -482,7 +482,6 @@ const SinglePage: NextPage = () => {
                           ? "This page is only visible to you."
                           : "This page can be viewed by anyone in the project."
                       }`}
-                      theme="dark"
                     >
                       {pageDetails.access ? (
                         <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">

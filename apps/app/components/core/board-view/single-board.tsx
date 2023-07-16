@@ -60,6 +60,10 @@ export const SingleBoard: React.FC<Props> = ({
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
+  // Check if it has at least 4 tickets since it is enough to accommodate the Calendar height
+  const issuesLength = groupedByIssues?.[groupTitle].length;
+  const hasMinimumNumberOfCards = issuesLength ? issuesLength >= 4 : false;
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return (
@@ -103,7 +107,11 @@ export const SingleBoard: React.FC<Props> = ({
                   </div>
                 </>
               )}
-              <div className="pt-3 overflow-hidden overflow-y-scroll">
+              <div
+                className={`pt-3 ${
+                  hasMinimumNumberOfCards ? "overflow-hidden overflow-y-scroll" : ""
+                } `}
+              >
                 {groupedByIssues?.[groupTitle].map((issue, index) => (
                   <Draggable
                     key={issue.id}
