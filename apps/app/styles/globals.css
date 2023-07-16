@@ -10,6 +10,11 @@
     font-size: 1.375rem;
     line-height: 1.875rem;
   }
+
+  .text-2\.5xl {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
 }
 
 @layer base {
