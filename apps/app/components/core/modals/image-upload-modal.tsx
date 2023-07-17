@@ -118,7 +118,7 @@ export const ImageUploadModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-300 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
                   <Dialog.Title
                     as="h3"
@@ -132,7 +132,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                         {...getRootProps()}
                         className={`relative grid h-80 w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-custom-border-300 hover:bg-custom-background-90"
+                            ? "border-2 border-dashed border-custom-border-200 hover:bg-custom-background-90"
                             : ""
                         }`}
                       >

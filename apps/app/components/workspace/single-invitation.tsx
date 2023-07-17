@@ -51,7 +51,7 @@ const SingleInvitation: React.FC<Props> = ({
             invitationsRespond.includes(invitation.id)
               ? "bg-custom-background-80 text-custom-text-200"
               : "bg-custom-primary text-white"
-          } text-sm px-4 py-2 border border-custom-border-300 rounded-3xl`}
+          } text-sm px-4 py-2 border border-custom-border-200 rounded-3xl`}
           onClick={(e) => {
             handleInvitation(
               invitation,

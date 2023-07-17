@@ -216,6 +216,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
             watching_notification_count = Notification.objects.filter(
                 workspace__slug=slug,
                 receiver_id=request.user.id,
+                read_at__isnull=True,
                 entity_identifier__in=IssueSubscriber.objects.filter(
                     workspace__slug=slug, subscriber_id=request.user.id
                 ).values_list("issue_id", flat=True),
@@ -225,6 +226,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
             my_issues_count = Notification.objects.filter(
                 workspace__slug=slug,
                 receiver_id=request.user.id,
+                read_at__isnull=True,
                 entity_identifier__in=IssueAssignee.objects.filter(
                     workspace__slug=slug, assignee_id=request.user.id
                 ).values_list("issue_id", flat=True),
@@ -234,6 +236,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
             created_issues_count = Notification.objects.filter(
                 workspace__slug=slug,
                 receiver_id=request.user.id,
+                read_at__isnull=True,
                 entity_identifier__in=Issue.objects.filter(
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True),

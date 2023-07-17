@@ -76,7 +76,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
   return (
     <Disclosure
       as="div"
-      className="rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-5 text-custom-text-100"
+      className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5 text-custom-text-100"
       defaultOpen
     >
       {({ open }) => (
@@ -132,7 +132,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                 {labelChildren.map((child) => (
                   <div
                     key={child.id}
-                    className="group flex items-center justify-between rounded-md border border-custom-border-300 p-2 text-sm"
+                    className="group flex items-center justify-between rounded-md border border-custom-border-200 p-2 text-sm"
                   >
                     <h5 className="flex items-center gap-3">
                       <span

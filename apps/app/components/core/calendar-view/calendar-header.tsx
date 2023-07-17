@@ -92,7 +92,7 @@ export const CalendarHeader: React.FC<Props> = ({
                       </button>
                     ))}
                   </div>
-                  <div className="grid grid-cols-4  border-t border-custom-border-300 px-2">
+                  <div className="grid grid-cols-4  border-t border-custom-border-200 px-2">
                     {MONTHS_LIST.map((month) => (
                       <button
                         onClick={() =>
@@ -152,7 +152,7 @@ export const CalendarHeader: React.FC<Props> = ({
 
       <div className="flex w-full items-center justify-end gap-2">
         <button
-          className="group flex cursor-pointer items-center gap-2 rounded-md border border-custom-border-300 px-3 py-1 text-sm hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none"
+          className="group flex cursor-pointer items-center gap-2 rounded-md border border-custom-border-200 px-3 py-1 text-sm hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none"
           onClick={() => {
             if (isMonthlyView) {
               updateDate(new Date());
@@ -170,7 +170,7 @@ export const CalendarHeader: React.FC<Props> = ({
 
         <CustomMenu
           customButton={
-            <div className="group flex cursor-pointer items-center gap-2 rounded-md border border-custom-border-300 px-3 py-1 text-sm hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none ">
+            <div className="group flex cursor-pointer items-center gap-2 rounded-md border border-custom-border-200 px-3 py-1 text-sm hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none ">
               {isMonthlyView ? "Monthly" : "Weekly"}
               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
             </div>
@@ -207,7 +207,7 @@ export const CalendarHeader: React.FC<Props> = ({
               />
             </div>
           </CustomMenu.MenuItem>
-          <div className="mt-1 flex w-52 items-center justify-between border-t border-custom-border-300 py-2 px-1  text-sm text-custom-text-200">
+          <div className="mt-1 flex w-52 items-center justify-between border-t border-custom-border-200 py-2 px-1  text-sm text-custom-text-200">
             <h4>Show weekends</h4>
             <ToggleSwitch value={showWeekEnds} onChange={() => setShowWeekEnds(!showWeekEnds)} />
           </div>

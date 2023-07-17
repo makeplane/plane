@@ -93,21 +93,21 @@ const WorkspacePage: NextPage = () => {
         projects.length > 0 ? (
           <div className="p-8">
             <div className="flex flex-col gap-8">
-              <div className="text-custom-text-200 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg border border-custom-border-300 bg-custom-background-100 px-4 py-6 md:flex-row md:items-center md:py-3">
-                <p className="font-semibold">
+              <div className="text-custom-text-200 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg border border-custom-border-200 bg-custom-background-100 px-4 py-6 md:flex-row md:items-center md:py-3">
+                <p className="font-medium text-custom-text-100">
                   Plane is open source, support us by starring us on GitHub.
                 </p>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setIsProductUpdatesModalOpen(true)}
-                    className="rounded-md border-2 border-custom-border-300 px-3 py-1.5 text-sm font-medium duration-300"
+                    className="rounded-md border-2 border-custom-border-200 px-3 py-1.5 text-sm font-medium hover:text-custom-text-100 duration-300"
                   >
-                    {`What's New?`}
+                    What{"'"}s New?
                   </button>
                   <a
                     href="https://github.com/makeplane/plane"
                     target="_blank"
-                    className="rounded-md border-2 border-custom-border-300 px-3 py-1.5 text-sm font-medium duration-300"
+                    className="rounded-md border-2 border-custom-border-200 px-3 py-1.5 text-sm font-medium hover:text-custom-text-100 duration-300"
                     rel="noopener noreferrer"
                   >
                     Star us on GitHub

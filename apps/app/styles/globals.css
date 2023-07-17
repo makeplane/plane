@@ -62,8 +62,8 @@
     --color-sidebar-background-80: 245, 245, 245; /* tertiary sidebar bg */
 
     --color-sidebar-text-100: 23, 23, 23; /* primary sidebar text */
-    --color-sidebar-text-200: 58, 58, 58; /* secondary sidebar text */
-    --color-sidebar-text-300: 82, 82, 82; /* tertiary sidebar text */
+    --color-sidebar-text-200: 82, 82, 82; /* secondary sidebar text */
+    --color-sidebar-text-300: 115, 115, 115; /* tertiary sidebar text */
     --color-sidebar-text-400: 163, 163, 163; /* sidebar placeholder text */
 
     --color-sidebar-border-100: 245, 245, 245; /* subtle sidebar border= 1 */
@@ -209,6 +209,7 @@ body {
   outline: none;
 }
 
+/* emoji icon picker */
 .conical-gradient {
   background: conic-gradient(
     from 180deg at 50% 50%,
@@ -222,12 +223,11 @@ body {
   );
 }
 
+/* progress bar */
 .progress-bar {
   fill: currentColor;
   color: rgba(var(--color-sidebar-background-100));
 }
-
-/* end react datepicker styling */
 
 /* lineclamp */
 .lineclamp {

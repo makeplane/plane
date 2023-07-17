@@ -21,11 +21,11 @@ type Props = {
 };
 
 const defaultValues: ICustomTheme = {
-  background: "#fff7f7",
-  text: "#ffc9c9",
-  primary: "#fe5050",
-  sidebarBackground: "#ffffff",
-  sidebarText: "#000000",
+  background: "#292d3e",
+  text: "#ffffff",
+  primary: "#7d57c1",
+  sidebarBackground: "#292d3e",
+  sidebarText: "#ffffff",
   darkPalette: false,
   palette: "",
 };

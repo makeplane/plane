@@ -50,7 +50,7 @@ export const CustomRangeDatePicker: React.FC<Props> = ({
         : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${
       disabled ? "cursor-not-allowed" : "cursor-pointer"
-    } w-full rounded-md border border-custom-border-300 bg-transparent caret-transparent ${className}`}
+    } w-full rounded-md border border-custom-border-200 bg-transparent caret-transparent ${className}`}
     dateFormat="dd-MM-yyyy"
     disabled={disabled}
     selectsStart={selectsStart}

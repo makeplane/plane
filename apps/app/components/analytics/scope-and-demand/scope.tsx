@@ -8,9 +8,9 @@ type Props = {
 };
 
 export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="rounded-[10px] border border-custom-border-300">
+  <div className="rounded-[10px] border border-custom-border-200">
     <h5 className="p-3 text-xs text-green-500">SCOPE</h5>
-    <div className="divide-y divide-custom-border-300">
+    <div className="divide-y divide-custom-border-200">
       <div>
         <h6 className="px-3 text-base font-medium">Pending issues</h6>
         {defaultAnalytics.pending_issue_user.length > 0 ? (
@@ -27,7 +27,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
               );
 
               return (
-                <div className="rounded-md border border-custom-border-300 bg-custom-background-80 p-2 text-xs">
+                <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
                   <span className="font-medium text-custom-text-200">
                     {assignee
                       ? assignee.assignees__first_name + " " + assignee.assignees__last_name

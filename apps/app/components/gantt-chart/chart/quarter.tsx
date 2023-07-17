@@ -7,18 +7,18 @@ export const QuarterChartView: FC<any> = () => {
 
   return (
     <>
-      <div className="absolute flex h-full flex-grow divide-x divide-custom-border-300">
+      <div className="absolute flex h-full flex-grow divide-x divide-custom-border-200">
         {renderView &&
           renderView.length > 0 &&
           renderView.map((_itemRoot: any, _idxRoot: any) => (
             <div key={`title-${_idxRoot}`} className="relative flex flex-col">
-              <div className="relative border-b border-custom-border-300">
+              <div className="relative border-b border-custom-border-200">
                 <div className="sticky left-0 inline-flex whitespace-nowrap px-2 py-1 text-sm font-medium capitalize">
                   {_itemRoot?.title}
                 </div>
               </div>
 
-              <div className="flex h-full w-full divide-x divide-custom-border-300">
+              <div className="flex h-full w-full divide-x divide-custom-border-200">
                 {_itemRoot.children &&
                   _itemRoot.children.length > 0 &&
                   _itemRoot.children.map((_item: any, _idx: any) => (
@@ -29,7 +29,7 @@ export const QuarterChartView: FC<any> = () => {
                     >
                       <div
                         className={`flex-shrink-0 border-b py-1 text-center text-sm capitalize font-medium ${
-                          _item?.today ? `text-red-500 border-red-500` : `border-custom-border-300`
+                          _item?.today ? `text-red-500 border-red-500` : `border-custom-border-200`
                         }`}
                       >
                         <div>{_item.title}</div>

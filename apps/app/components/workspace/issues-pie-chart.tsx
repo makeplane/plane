@@ -14,7 +14,7 @@ type Props = {
 export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
   <div>
     <h3 className="mb-2 font-semibold">Issues by States</h3>
-    <div className="rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-4">
+    <div className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
       <div className="grid grid-cols-1 sm:grid-cols-4">
         <div className="sm:col-span-3">
           <PieGraph
@@ -36,7 +36,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
             activeInnerRadiusOffset={5}
             colors={(datum) => datum.data.color}
             tooltip={(datum) => (
-              <div className="flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 p-2 text-xs">
+              <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
                 <span className="text-custom-text-200 capitalize">{datum.datum.label} issues:</span>{" "}
                 {datum.datum.value}
               </div>

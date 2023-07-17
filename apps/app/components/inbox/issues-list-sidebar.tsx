@@ -18,7 +18,7 @@ export const IssuesListSidebar = () => {
       <InboxFiltersList />
       {inboxIssues ? (
         inboxIssues.length > 0 ? (
-          <div className="divide-y divide-custom-border-300 overflow-auto h-full">
+          <div className="divide-y divide-custom-border-200 overflow-auto h-full">
             {inboxIssues.map((issue) => (
               <InboxIssueCard
                 key={issue.id}

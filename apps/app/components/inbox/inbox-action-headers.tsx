@@ -162,7 +162,7 @@ export const InboxActionHeader = () => {
         handleClose={() => setDeleteIssueModal(false)}
         data={inboxIssues?.find((i) => i.bridge_id === inboxIssueId)}
       />
-      <div className="grid grid-cols-4 border-b border-custom-border-300 divide-x divide-custom-border-300">
+      <div className="grid grid-cols-4 border-b border-custom-border-200 divide-x divide-custom-border-200">
         <div className="col-span-1 flex justify-between p-4">
           <div className="flex items-center gap-2">
             <InboxIcon className="h-4 w-4 text-custom-text-200" />
@@ -175,7 +175,7 @@ export const InboxActionHeader = () => {
             <div className="flex items-center gap-x-2">
               <button
                 type="button"
-                className="rounded border border-custom-border-300 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
+                className="rounded border border-custom-border-200 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", { key: "ArrowUp" });
                   document.dispatchEvent(e);
@@ -185,7 +185,7 @@ export const InboxActionHeader = () => {
               </button>
               <button
                 type="button"
-                className="rounded border border-custom-border-300 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
+                className="rounded border border-custom-border-200 bg-custom-background-90 p-1.5 hover:bg-custom-background-80"
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", { key: "ArrowDown" });
                   document.dispatchEvent(e);
@@ -207,7 +207,7 @@ export const InboxActionHeader = () => {
                         <span>Snooze</span>
                       </SecondaryButton>
                     </Popover.Button>
-                    <Popover.Panel className="w-80 p-2 absolute right-0 z-10 mt-2 rounded-md border border-custom-border-300 bg-custom-background-80 shadow-lg">
+                    <Popover.Panel className="w-80 p-2 absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
                       {({ close }) => (
                         <div className="w-full h-full flex flex-col gap-y-1">
                           <DatePicker

@@ -59,7 +59,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     >
       {({ open }: any) => (
         <>
-          <Combobox.Button className="flex cursor-pointer items-center rounded-md border border-custom-border-300 text-xs shadow-sm duration-200 hover:bg-custom-background-80">
+          <Combobox.Button className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200 hover:bg-custom-background-80">
             {value && value.length > 0 ? (
               <span className="flex items-center justify-center gap-2 px-3 py-1 text-xs">
                 <IssueLabelsList
@@ -90,7 +90,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
               className={`absolute z-10 mt-1 max-h-52 min-w-[8rem] overflow-auto rounded-md border-none
                 bg-custom-background-90 px-2 py-2 text-xs shadow-md focus:outline-none`}
             >
-              <div className="flex w-full items-center justify-start rounded-sm  border-[0.6px] border-custom-border-300 bg-custom-background-90 px-2">
+              <div className="flex w-full items-center justify-start rounded-sm  border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
                 <Combobox.Input
                   className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
@@ -141,7 +141,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                           );
                       } else
                         return (
-                          <div className="border-y border-custom-border-300">
+                          <div className="border-y border-custom-border-200">
                             <div className="flex select-none items-center gap-2 truncate p-2 text-custom-text-100">
                               <RectangleGroupIcon className="h-3 w-3" /> {label.name}
                             </div>

@@ -146,7 +146,7 @@ export const IssuesFilterView: React.FC = () => {
         {({ open }) => (
           <>
             <Popover.Button
-              className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-100 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
+              className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-200 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
                 open
                   ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
                   : "text-custom-sidebar-text-200"
@@ -165,8 +165,8 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-300 bg-custom-background-90 p-3 shadow-lg">
-                <div className="relative divide-y-2 divide-custom-border-300">
+              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
+                <div className="relative divide-y-2 divide-custom-border-200">
                   <div className="space-y-4 pb-3 text-xs">
                     {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
@@ -292,7 +292,7 @@ export const IssuesFilterView: React.FC = () => {
                             className={`rounded border px-2 py-1 text-xs capitalize ${
                               properties[key as keyof Properties]
                                 ? "border-custom-primary bg-custom-primary text-white"
-                                : "border-custom-border-300"
+                                : "border-custom-border-200"
                             }`}
                             onClick={() => setProperties(key as keyof Properties)}
                           >

@@ -1028,10 +1028,14 @@ def issue_activity(
         actor = User.objects.get(pk=actor_id)
         project = Project.objects.get(pk=project_id)
 
-        issue = Issue.objects.filter(pk=issue_id).first()
-        if issue is not None:
+
+        try:
+            issue = Issue.objects.get(pk=issue_id)
             issue.updated_at = timezone.now()
-            issue.save()
+            issue.save(update_fields=["updated_at"])
+        except Exception as e:
+            pass
+
 
         if subscriber:
             # add the user to issue subscriber

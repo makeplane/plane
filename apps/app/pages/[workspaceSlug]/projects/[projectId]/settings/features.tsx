@@ -154,7 +154,7 @@ const FeaturesSettings: NextPage = () => {
             {featuresList.map((feature) => (
               <div
                 key={feature.property}
-                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-5"
+                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5"
               >
                 <div className="flex items-start gap-3">
                   {feature.icon}
