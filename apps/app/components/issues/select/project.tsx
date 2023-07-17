@@ -1,15 +1,9 @@
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
+// hooks
+import useProjects from "hooks/use-projects";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
-// services
-import projectService from "services/project.service";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
 
 export interface IssueProjectSelectProps {
   value: string;
@@ -22,14 +16,7 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({
   onChange,
   setActiveProject,
 }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  // Fetching Projects List
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
-  );
+  const { projects } = useProjects();
 
   return (
     <CustomSelect
@@ -59,7 +46,7 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({
           <p className="text-gray-400">No projects found!</p>
         )
       ) : (
-        <div className="px-2 text-sm text-brand-secondary">Loading...</div>
+        <div className="px-2 text-sm text-custom-text-200">Loading...</div>
       )}
     </CustomSelect>
   );

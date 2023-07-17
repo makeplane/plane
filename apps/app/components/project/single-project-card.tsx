@@ -22,12 +22,13 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
-import type { IFavoriteProject, IProject } from "types";
+import type { IProject } from "types";
 // fetch-keys
-import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST } from "constants/fetch-keys";
+import { PROJECTS_LIST } from "constants/fetch-keys";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -54,22 +55,18 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
+      false
+    );
+
     projectService
       .addProjectToFavorites(workspaceSlug as string, {
         project: project.id,
       })
       .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => ({
-              ...p,
-              is_favorite: p.id === project.id ? true : p.is_favorite,
-            })),
-          false
-        );
-        mutate(FAVORITE_PROJECTS_LIST(workspaceSlug as string));
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -88,24 +85,16 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
+      false
+    );
+
     projectService
       .removeProjectFromFavorites(workspaceSlug as string, project.id)
       .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => ({
-              ...p,
-              is_favorite: p.id === project.id ? false : p.is_favorite,
-            })),
-          false
-        );
-        mutate<IFavoriteProject[]>(
-          FAVORITE_PROJECTS_LIST(workspaceSlug as string),
-          (prevData) => (prevData ?? []).filter((p) => p.project !== project.id),
-          false
-        );
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -137,7 +126,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <>
       {members ? (
-        <div className="flex flex-col rounded-[10px] bg-brand-base shadow">
+        <div className="flex flex-col rounded-[10px] bg-custom-background-90 shadow">
           <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
             <a>
               <div className="relative h-32 w-full rounded-t-[10px]">
@@ -177,14 +166,14 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               </div>
             </a>
           </Link>
-          <div className="flex h-full flex-col rounded-b-[10px] p-4 text-brand-secondary">
+          <div className="flex h-full flex-col rounded-b-[10px] p-4 text-custom-text-200">
             <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
               <a>
                 <div className="flex items-center gap-1">
-                  <h3 className="text-1.5xl font-medium text-brand-base">{project.name}</h3>
+                  <h3 className="text-1.5xl font-medium text-custom-text-100">{project.name}</h3>
                   {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {String.fromCodePoint(parseInt(project.emoji))}
+                      {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
                     <span
@@ -202,20 +191,19 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
             </Link>
             <div className="flex h-full items-end justify-between">
               <Tooltip
-                tooltipContent={`Created at ${renderShortNumericDateFormat(project.created_at)}`}
+                tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
                 position="bottom"
-                theme="dark"
               >
                 <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
-                  {renderShortNumericDateFormat(project.created_at)}
+                  {renderShortDateWithYearFormat(project.created_at)}
                 </div>
               </Tooltip>
               {hasJoined ? (
                 <div className="flex items-center">
                   {(isOwner || isMember) && (
                     <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
-                      <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-brand-surface-1">
+                      <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-custom-background-90">
                         <PencilIcon className="h-4 w-4" />
                       </a>
                     </Link>

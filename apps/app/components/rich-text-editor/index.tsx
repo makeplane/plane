@@ -145,7 +145,8 @@ const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
         uploadHandler: uploadImageHandler,
         createPlaceholder() {
           const div = document.createElement("div");
-          div.className = "w-full aspect-video bg-brand-surface-2 animate-pulse";
+          div.className =
+            "w-full aspect-video bg-custom-background-80 text-custom-text-200 animate-pulse";
           return div;
         },
       }),
@@ -185,10 +186,10 @@ const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
         manager={manager}
         initialContent={state}
         classNames={[
-          `p-3 relative focus:outline-none rounded-md focus:border-brand-base ${
-            noBorder ? "" : "border border-brand-base"
+          `p-3 relative focus:outline-none rounded-md focus:border-custom-border-100 ${
+            noBorder ? "" : "border border-custom-border-100"
           } ${
-            borderOnFocus ? "focus:border border-brand-base" : "focus:border-0"
+            borderOnFocus ? "focus:border border-custom-border-100" : "focus:border-0"
           } ${customClassName}`,
         ]}
         editable={editable}

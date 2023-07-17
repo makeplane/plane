@@ -48,12 +48,12 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
     >
       <Tab.List
         as="div"
-        className="flex sticky top-0 z-10 bg-brand-base w-full px-4 pt-4 pb-1 flex-wrap items-center justify-start gap-4 text-sm"
+        className="flex sticky top-0 z-10 bg-custom-background-100 w-full px-4 pt-4 pb-1 flex-wrap items-center justify-start gap-4 text-sm"
       >
         <Tab
           className={({ selected }) =>
-            `px-3 py-1 text-brand-base rounded-3xl border border-brand-base ${
-              selected ? " bg-brand-accent text-white" : "  hover:bg-brand-surface-2"
+            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-100 ${
+              selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
         >
@@ -61,8 +61,8 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         </Tab>
         <Tab
           className={({ selected }) =>
-            `px-3 py-1 text-brand-base rounded-3xl border border-brand-base ${
-              selected ? " bg-brand-accent text-white" : "  hover:bg-brand-surface-2"
+            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-100 ${
+              selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
         >
@@ -73,7 +73,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         <Tab.Panels as={Fragment}>
           <Tab.Panel
             as="div"
-            className="w-full gap-1 overflow-y-scroll items-center text-brand-secondary p-4"
+            className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4"
           >
             {cycle.distribution.assignees.map((assignee, index) => {
               if (assignee.assignee_id)
@@ -103,7 +103,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                     key={`unassigned-${index}`}
                     title={
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded-full border-2 border-brand-base bg-brand-surface-2">
+                        <div className="h-5 w-5 rounded-full border-2 border-custom-border-100 bg-custom-background-80">
                           <img
                             src="/user.png"
                             height="100%"
@@ -123,7 +123,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
           </Tab.Panel>
           <Tab.Panel
             as="div"
-            className="w-full gap-1 overflow-y-scroll items-center text-brand-secondary p-4"
+            className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4"
           >
             {cycle.distribution.labels.map((label, index) => (
               <SingleProgressStats
@@ -146,7 +146,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
           </Tab.Panel>
         </Tab.Panels>
       ) : (
-        <div className="grid place-items-center text-brand-secondary text-sm text-center mt-4">
+        <div className="grid place-items-center text-custom-text-200 text-sm text-center mt-4">
           No issues present in the cycle.
         </div>
       )}

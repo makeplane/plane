@@ -77,6 +77,13 @@ class ProjectSerializer(BaseSerializer):
         raise serializers.ValidationError(detail="Project Identifier is already taken")
 
 
+class ProjectLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Project
+        fields = ["id", "identifier", "name"]
+        read_only_fields = fields
+
+
 class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
@@ -94,7 +101,7 @@ class ProjectDetailSerializer(BaseSerializer):
 
 class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
-    project = ProjectSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
     member = UserLiteSerializer(read_only=True)
 
     class Meta:
@@ -103,8 +110,8 @@ class ProjectMemberSerializer(BaseSerializer):
 
 
 class ProjectMemberInviteSerializer(BaseSerializer):
-    project = ProjectSerializer(read_only=True)
-    workspace = WorkSpaceSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
 
     class Meta:
         model = ProjectMemberInvite
@@ -118,7 +125,7 @@ class ProjectIdentifierSerializer(BaseSerializer):
 
 
 class ProjectFavoriteSerializer(BaseSerializer):
-    project_detail = ProjectSerializer(source="project", read_only=True)
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
 
     class Meta:
         model = ProjectFavorite
@@ -129,8 +136,13 @@ class ProjectFavoriteSerializer(BaseSerializer):
         ]
 
 
-class ProjectLiteSerializer(BaseSerializer):
+
+
+class ProjectMemberLiteSerializer(BaseSerializer):
+    member = UserLiteSerializer(read_only=True)
+    is_subscribed = serializers.BooleanField(read_only=True)
+
     class Meta:
-        model = Project
-        fields = ["id", "identifier", "name"]
+        model = ProjectMember
+        fields = ["member", "id", "is_subscribed"]
         read_only_fields = fields

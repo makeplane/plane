@@ -211,10 +211,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   return (
     <div
       className={`${
-        fullScreenMode ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-brand-base` : `relative`
+        fullScreenMode
+          ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-custom-background-100`
+          : `relative`
       } ${
-        border ? `border border-brand-base` : ``
-      } flex h-full flex-col rounded-sm select-none bg-brand-base shadow`}
+        border ? `border border-custom-border-100` : ``
+      } flex h-full flex-col rounded-sm select-none bg-custom-background-100 shadow`}
     >
       {/* header */}
       <ChartHeader

@@ -9,7 +9,7 @@ type Props = {
 };
 
 const DefaultLayout: React.FC<Props> = ({ children }) => (
-  <div className="h-screen w-full overflow-auto bg-brand-surface-1">
+  <div className="h-screen w-full overflow-hidden bg-custom-background-100">
     <>{children}</>
   </div>
 );

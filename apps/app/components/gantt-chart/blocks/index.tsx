@@ -113,6 +113,17 @@ export const GanttChartBlocks: FC<{
               )
           )}
       </div>
+
+      {/* sidebar */}
+      {/* <div className="fixed top-0 bottom-0 w-[300px] flex-shrink-0 divide-y divide-custom-border-100 border-r border-custom-border-100 overflow-y-auto">
+        {blocks &&
+          blocks.length > 0 &&
+          blocks.map((block: any, _idx: number) => (
+            <div className="relative h-[40px] bg-custom-background-100" key={`sidebar-blocks-${_idx}`}>
+              {sidebarBlockRender(block?.data)}
+            </div>
+          ))}
+      </div> */}
     </div>
   );
 };

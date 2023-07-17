@@ -23,6 +23,7 @@ type Props = {
   customDisplay: JSX.Element;
   watch: UseFormWatch<IIssue>;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarParentSelect: React.FC<Props> = ({
@@ -31,6 +32,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
   customDisplay,
   watch,
   userAuth,
+  disabled = false,
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
@@ -46,11 +48,11 @@ export const SidebarParentSelect: React.FC<Props> = ({
       : null
   );
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <UserIcon className="h-4 w-4 flex-shrink-0" />
         <p>Parent</p>
       </div>
@@ -75,8 +77,8 @@ export const SidebarParentSelect: React.FC<Props> = ({
         <button
           type="button"
           className={`flex w-full ${
-            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
-          } items-center justify-between gap-1 rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
+            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
+          } items-center justify-between gap-1 rounded-md border border-custom-border-100 px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
           onClick={() => setIsParentModalOpen(true)}
           disabled={isNotAllowed}
         >
@@ -85,7 +87,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
               issues?.find((i) => i.id === watch("parent"))?.sequence_id
             }`
           ) : (
-            <span className="text-brand-secondary">Select issue</span>
+            <span className="text-custom-text-200">Select issue</span>
           )}
         </button>
       </div>

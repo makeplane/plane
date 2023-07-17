@@ -21,9 +21,9 @@ import {
 import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ChartBarIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 // images
-import emptyModule from "public/empty-state/empty-module.svg";
+import emptyModule from "public/empty-state/module.svg";
 // types
 import { IModule, SelectModuleType } from "types/modules";
 import type { NextPage } from "next";
@@ -99,25 +99,25 @@ const ProjectModules: NextPage = () => {
         modules.length > 0 ? (
           <div className="space-y-5 p-8 flex flex-col h-full overflow-hidden">
             <div className="flex gap-4 justify-between">
-              <h3 className="text-2xl font-semibold text-brand-base">Modules</h3>
+              <h3 className="text-2xl font-semibold text-custom-text-100">Modules</h3>
               <div className="flex items-center gap-x-1">
                 <button
                   type="button"
-                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-                    modulesView === "grid" ? "bg-brand-surface-2" : ""
+                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
+                    modulesView === "grid" ? "bg-custom-background-80" : ""
                   }`}
                   onClick={() => setModulesView("grid")}
                 >
-                  <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
+                  <Squares2X2Icon className="h-4 w-4 text-custom-text-200" />
                 </button>
                 <button
                   type="button"
-                  className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
-                    modulesView === "gantt_chart" ? "bg-brand-surface-2" : ""
+                  className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-custom-background-80 ${
+                    modulesView === "gantt_chart" ? "bg-custom-background-80" : ""
                   }`}
                   onClick={() => setModulesView("gantt_chart")}
                 >
-                  <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
+                  <span className="material-symbols-rounded text-custom-text-200 text-[18px] rotate-90">
                     waterfall_chart
                   </span>
                 </button>
@@ -141,10 +141,17 @@ const ProjectModules: NextPage = () => {
           </div>
         ) : (
           <EmptyState
-            type="module"
-            title="Create New Module"
-            description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
-            imgURL={emptyModule}
+            title="Manage your project with modules"
+            description="Modules are smaller, focused projects that help you group and organize issues."
+            image={emptyModule}
+            buttonText="New Module"
+            buttonIcon={<PlusIcon className="h-4 w-4" />}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "m",
+              });
+              document.dispatchEvent(e);
+            }}
           />
         )
       ) : (

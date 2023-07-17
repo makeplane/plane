@@ -38,7 +38,7 @@ const SingleInvitation: React.FC<Props> = ({
       </div>
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
-        <p className="text-sm text-brand-secondary">
+        <p className="text-sm text-custom-text-200">
           Invited by{" "}
           {invitation.created_by_detail
             ? invitation.created_by_detail.first_name
@@ -49,9 +49,9 @@ const SingleInvitation: React.FC<Props> = ({
         <button
           className={`${
             invitationsRespond.includes(invitation.id)
-              ? "bg-brand-surface-2 text-brand-secondary"
-              : "bg-brand-accent text-white"
-          } text-sm px-4 py-2 border border-brand-base rounded-3xl`}
+              ? "bg-custom-background-80 text-custom-text-200"
+              : "bg-custom-primary text-white"
+          } text-sm px-4 py-2 border border-custom-border-100 rounded-3xl`}
           onClick={(e) => {
             handleInvitation(
               invitation,
