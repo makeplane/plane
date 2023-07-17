@@ -209,8 +209,8 @@ export const CustomFloatingToolbar: React.FC<Props> = ({
   }, [clickEdit]);
 
   return (
-    <div className="z-[99999] flex flex-col items-center gap-y-2 divide-x divide-y divide-custom-border-100 rounded border border-custom-border-100 bg-custom-background-80 p-1 px-0.5 shadow-md">
-      <div className="flex items-center gap-y-2 divide-x divide-custom-border-100">
+    <div className="z-[99999] flex flex-col items-center gap-y-2 divide-x divide-y divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-80 p-1 px-0.5 shadow-md">
+      <div className="flex items-center gap-y-2 divide-x divide-custom-border-300">
         <div className="flex items-center gap-x-1 px-2">
           <ToggleHeadingButton
             attrs={{

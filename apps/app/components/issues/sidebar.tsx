@@ -226,7 +226,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         data={issueDetail ?? null}
         user={user}
       />
-      <div className="sticky top-5 w-full divide-y-2 divide-custom-border-100">
+      <div className="sticky top-5 w-full divide-y-2 divide-custom-border-300">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
@@ -235,7 +235,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"
-                className="rounded-md border border-custom-border-100 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
+                className="rounded-md border border-custom-border-300 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
                 onClick={handleCopyText}
               >
                 <LinkIcon className="h-3.5 w-3.5" />
@@ -253,7 +253,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className={`divide-y-2 divide-custom-border-100 ${uneditable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-custom-border-300 ${uneditable ? "opacity-60" : ""}`}>
           {showFirstSection && (
             <div className="py-1">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (

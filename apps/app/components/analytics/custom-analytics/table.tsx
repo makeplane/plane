@@ -37,9 +37,9 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
     <div className="flow-root">
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
-          <table className="min-w-full divide-y divide-custom-border-100 whitespace-nowrap border-y border-custom-border-100">
+          <table className="min-w-full divide-y divide-custom-border-300 whitespace-nowrap border-y border-custom-border-300">
             <thead className="bg-custom-background-80">
-              <tr className="divide-x divide-custom-border-100 text-sm text-custom-text-100">
+              <tr className="divide-x divide-custom-border-300 text-sm text-custom-text-100">
                 <th scope="col" className="py-3 px-2.5 text-left font-medium">
                   {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === params.x_axis)?.label}
                 </th>
@@ -80,11 +80,11 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-custom-border-100">
+            <tbody className="divide-y divide-custom-border-300">
               {barGraphData.data.map((item, index) => (
                 <tr
                   key={`table-row-${index}`}
-                  className="divide-x divide-custom-border-100 text-xs text-custom-text-200"
+                  className="divide-x divide-custom-border-300 text-xs text-custom-text-200"
                 >
                   <td
                     className={`flex items-center gap-2 whitespace-nowrap py-2 px-2.5 font-medium ${

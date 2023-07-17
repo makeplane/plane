@@ -288,7 +288,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
             }
 
             value = (
-              <span className="relative inline-flex items-center rounded-full border border-custom-border-100 px-2 py-0.5 text-xs">
+              <span className="relative inline-flex items-center rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
                 <span className="absolute flex flex-shrink-0 items-center justify-center">
                   <span
                     className="h-1.5 w-1.5 rounded-full"

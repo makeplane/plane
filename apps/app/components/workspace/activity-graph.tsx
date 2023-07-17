@@ -110,7 +110,6 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
                   tooltipContent={`${
                     isActive ? isActive.activity_count : 0
                   } activities on ${renderShortDateWithYearFormat(date)}`}
-                  theme="dark"
                 >
                   <div
                     className={`${

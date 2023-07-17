@@ -83,7 +83,7 @@ const IntegrationGuide = () => {
               {IMPORTERS_EXPORTERS_LIST.map((service) => (
                 <div
                   key={service.provider}
-                  className="rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-4"
+                  className="rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-4"
                 >
                   <div className="flex items-center gap-4 whitespace-nowrap">
                     <div className="relative h-10 w-10 flex-shrink-0">
@@ -113,7 +113,7 @@ const IntegrationGuide = () => {
                 </div>
               ))}
             </div>
-            <div className="rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-4">
+            <div className="rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-4">
               <h3 className="mb-2 flex gap-2 text-lg font-medium">
                 Previous Imports
                 <button
@@ -133,7 +133,7 @@ const IntegrationGuide = () => {
               {importerServices ? (
                 importerServices.length > 0 ? (
                   <div className="space-y-2">
-                    <div className="divide-y divide-custom-border-100">
+                    <div className="divide-y divide-custom-border-300">
                       {importerServices.map((service) => (
                         <SingleImport
                           key={service.id}

@@ -138,7 +138,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
         </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceUrl">Workspace URL</label>
-          <div className="flex w-full items-center rounded-md border border-custom-border-100 px-3">
+          <div className="flex w-full items-center rounded-md border border-custom-border-300 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">
               {window && window.location.host}/
             </span>

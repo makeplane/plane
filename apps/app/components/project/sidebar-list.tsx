@@ -29,8 +29,8 @@ export const ProjectSidebarList: FC = () => {
   const { collapsed: sidebarCollapse } = useTheme();
   const { setToastAlert } = useToast();
 
-  const { projects: favoriteProjects } = useProjects(true);
   const { projects: allProjects } = useProjects();
+  const favoriteProjects = allProjects?.filter((p) => p.is_favorite);
 
   const handleDeleteProject = (project: IProject) => {
     setProjectToDelete(project);

@@ -421,7 +421,7 @@ export const CommandPalette: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-custom-border-100 divide-opacity-10 rounded-xl border border-custom-border-100 bg-custom-background-100 shadow-2xl transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-custom-border-300 divide-opacity-10 rounded-xl border border-custom-border-300 bg-custom-background-100 shadow-2xl transition-all">
                 <Command
                   filter={(value, search) => {
                     if (value.toLowerCase().includes(search.toLowerCase())) return 1;
@@ -456,7 +456,7 @@ export const CommandPalette: React.FC = () => {
                       aria-hidden="true"
                     />
                     <Command.Input
-                      className="w-full border-0 border-b border-custom-border-100 bg-transparent p-4 pl-11 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+                      className="w-full border-0 border-b border-custom-border-300 bg-transparent p-4 pl-11 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
                       placeholder={placeholder}
                       value={searchTerm}
                       onValueChange={(e) => {

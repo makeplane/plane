@@ -118,7 +118,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
         </div>
       </Link>
 
-      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-4">
+      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-4">
         <div className="flex items-center gap-2">
           <div className="h-10 w-10 flex-shrink-0">
             <Image src={JiraLogo} alt="jira logo" />
@@ -135,14 +135,14 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                     index > activeIntegrationState() + 1 ||
                     Boolean(index === activeIntegrationState() + 1 && disableTopBarAfter)
                   }
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-custom-border-100 ${
+                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-custom-border-300 ${
                     index <= activeIntegrationState()
                       ? `border-custom-primary bg-custom-primary ${
                           index === activeIntegrationState()
                             ? "border-opacity-100 bg-opacity-100"
                             : "border-opacity-80 bg-opacity-80"
                         }`
-                      : "border-custom-border-100"
+                      : "border-custom-border-300"
                   }`}
                 >
                   <integration.icon
@@ -157,7 +157,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                     className={`border-b px-7 ${
                       index <= activeIntegrationState() - 1
                         ? `border-custom-primary`
-                        : `border-custom-border-100`
+                        : `border-custom-border-300`
                     }`}
                   >
                     {" "}
@@ -183,7 +183,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                 {currentStep?.state === "import-confirmation" && <JiraConfirmImport />}
               </div>
 
-              <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-custom-border-100 p-4 pb-0">
+              <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-custom-border-300 p-4 pb-0">
                 {currentStep?.state !== "import-configure" && (
                   <SecondaryButton
                     onClick={() => {
