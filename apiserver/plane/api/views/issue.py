@@ -45,7 +45,6 @@ from plane.api.serializers import (
     IssueLiteSerializer,
     IssueAttachmentSerializer,
     IssueSubscriberSerializer,
-    ProjectMemberSerializer,
     ProjectMemberLiteSerializer,
 )
 from plane.api.permissions import (
