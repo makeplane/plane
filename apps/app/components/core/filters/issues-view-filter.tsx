@@ -11,7 +11,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu, Icon, ToggleSwitch } from "components/ui";
+import { CustomMenu, Icon, ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import {
   ChevronDownIcon,
@@ -82,18 +82,25 @@ export const IssuesFilterView: React.FC = () => {
       {!isArchivedIssues && (
         <div className="flex items-center gap-x-1">
           {issueViewOptions.map((option) => (
-            <button
+            <Tooltip
               key={option.type}
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
-                issueView === option.type
-                  ? "bg-custom-sidebar-background-80"
-                  : "text-custom-sidebar-text-200"
-              }`}
-              onClick={() => setIssueView(option.type)}
+              tooltipContent={
+                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
+              }
+              position="bottom"
             >
-              {option.icon}
-            </button>
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                  issueView === option.type
+                    ? "bg-custom-sidebar-background-80"
+                    : "text-custom-sidebar-text-200"
+                }`}
+                onClick={() => setIssueView(option.type)}
+              >
+                {option.icon}
+              </button>
+            </Tooltip>
           ))}
         </div>
       )}
@@ -158,8 +165,8 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-100 bg-custom-background-90 p-3 shadow-lg">
-                <div className="relative divide-y-2 divide-custom-border-100">
+              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-300 bg-custom-background-90 p-3 shadow-lg">
+                <div className="relative divide-y-2 divide-custom-border-300">
                   <div className="space-y-4 pb-3 text-xs">
                     {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
@@ -285,7 +292,7 @@ export const IssuesFilterView: React.FC = () => {
                             className={`rounded border px-2 py-1 text-xs capitalize ${
                               properties[key as keyof Properties]
                                 ? "border-custom-primary bg-custom-primary text-white"
-                                : "border-custom-border-100"
+                                : "border-custom-border-300"
                             }`}
                             onClick={() => setProperties(key as keyof Properties)}
                           >

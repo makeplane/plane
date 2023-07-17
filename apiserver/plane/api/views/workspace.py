@@ -101,6 +101,7 @@ class WorkSpaceViewSet(BaseViewSet):
             .filter(workspace_member__member=self.request.user)
             .annotate(total_members=member_count)
             .annotate(total_issues=issue_count)
+            .select_related("owner")
         )
 
     def create(self, request):

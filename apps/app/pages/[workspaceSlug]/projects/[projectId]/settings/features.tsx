@@ -99,44 +99,21 @@ const FeaturesSettings: NextPage = () => {
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    if (projectDetails.is_favorite)
-      mutate<IProject[]>(
-        PROJECTS_LIST(workspaceSlug.toString(), {
-          is_favorite: true,
-        }),
-        (prevData) =>
-          prevData?.map((p) => {
-            if (p.id === projectId)
-              return {
-                ...p,
-                ...formData,
-              };
-
-            return p;
-          }),
-        false
-      );
-
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug.toString(), {
         is_favorite: "all",
       }),
-      (prevData) =>
-        prevData?.map((p) => {
-          if (p.id === projectId)
-            return {
-              ...p,
-              ...formData,
-            };
-
-          return p;
-        }),
+      (prevData) => prevData?.map((p) => (p.id === projectId ? { ...p, ...formData } : p)),
       false
     );
 
     mutate<IProject>(
       PROJECT_DETAILS(projectId as string),
-      (prevData) => ({ ...(prevData as IProject), ...formData }),
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return { ...prevData, ...formData };
+      },
       false
     );
 
@@ -177,7 +154,7 @@ const FeaturesSettings: NextPage = () => {
             {featuresList.map((feature) => (
               <div
                 key={feature.property}
-                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-custom-border-100 bg-custom-background-100 p-5"
+                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-5"
               >
                 <div className="flex items-start gap-3">
                   {feature.icon}

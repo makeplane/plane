@@ -36,7 +36,7 @@ export const Input: React.FC<Props> = ({
       }}
       className={`block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${
         mode === "primary"
-          ? "rounded-md border border-custom-border-100"
+          ? "rounded-md border border-custom-border-300"
           : mode === "transparent"
           ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary"
           : mode === "trueTransparent"

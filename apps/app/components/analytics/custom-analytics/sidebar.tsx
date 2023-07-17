@@ -185,7 +185,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
     <div
       className={`px-5 py-2.5 flex items-center justify-between space-y-2 ${
         fullScreen
-          ? "border-l border-custom-border-100 md:h-full md:border-l md:border-custom-border-100 md:space-y-4 overflow-hidden md:flex-col md:items-start md:py-5"
+          ? "border-l border-custom-border-300 md:h-full md:border-l md:border-custom-border-300 md:space-y-4 overflow-hidden md:flex-col md:items-start md:py-5"
           : ""
       }`}
     >

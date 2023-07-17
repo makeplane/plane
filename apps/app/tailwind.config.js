@@ -83,7 +83,7 @@ module.exports = {
             300: convertToRGB("--color-border-300"),
             400: convertToRGB("--color-border-400"),
             1000: "rgb(0, 0, 0)",
-            DEFAULT: convertToRGB("--color-border-100"),
+            DEFAULT: convertToRGB("--color-border-300"),
           },
           sidebar: {
             background: {
@@ -139,7 +139,7 @@ module.exports = {
               300: convertToRGB("--color-sidebar-border-300"),
               400: convertToRGB("--color-sidebar-border-400"),
               1000: "rgb(0, 0, 0)",
-              DEFAULT: convertToRGB("--color-sidebar-border-100"),
+              DEFAULT: convertToRGB("--color-sidebar-border-300"),
             },
           },
           backdrop: "#131313",

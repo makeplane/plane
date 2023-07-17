@@ -81,7 +81,7 @@ export const CustomSearchSelect = ({
             <Combobox.Button as="div">{customButton}</Combobox.Button>
           ) : (
             <Combobox.Button
-              className={`flex w-full border border-custom-border-100 ${
+              className={`flex w-full border border-custom-border-300 ${
                 disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
               } ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
@@ -110,7 +110,7 @@ export const CustomSearchSelect = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Combobox.Options
-              className={`${optionsClassName} absolute min-w-[10rem] border border-custom-border-100 p-2 ${
+              className={`${optionsClassName} absolute min-w-[10rem] border border-custom-border-300 p-2 ${
                 position === "right" ? "right-0" : "left-0"
               } ${
                 verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"
@@ -118,7 +118,7 @@ export const CustomSearchSelect = ({
                 dropdownWidth ? dropdownWidth : ``
               } `}
             >
-              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-100 bg-custom-background-90 px-2">
+              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-300 bg-custom-background-90 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
                 <Combobox.Input
                   className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"

@@ -78,11 +78,6 @@ export const SingleSidebarProject: React.FC<Props> = ({
     if (!workspaceSlug) return;
 
     mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
-      (prevData) => [...(prevData ?? []), { ...project, is_favorite: true }],
-      false
-    );
-    mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
       (prevData) =>
         (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
@@ -105,11 +100,6 @@ export const SingleSidebarProject: React.FC<Props> = ({
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug) return;
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: true }),
-      (prevData) => (prevData ?? []).filter((p) => p.id !== project.id),
-      false
-    );
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
       (prevData) =>

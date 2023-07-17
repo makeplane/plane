@@ -1109,7 +1109,8 @@ def issue_activity(
 
         issue_subscribers = issue_subscribers + issue_assignees
 
-        if issue.created_by_id:
+        # Add bot filtering
+        if issue.created_by_id is not None and not issue.created_by.is_bot:
             issue_subscribers = issue_subscribers + [issue.created_by_id]
 
         issue = Issue.objects.get(project=project, pk=issue_id)
@@ -1134,7 +1135,17 @@ def issue_activity(
                                 "state_name": issue.state.name,
                                 "state_group": issue.state.group,
                             },
-                            "issue_activity": str(issue_activity.id),
+                            "issue_activity": {
+                                "id": str(issue_activity.id),
+                                "verb": str(issue_activity.verb),
+                                "field": str(issue_activity.field),
+                                "actor": str(issue_activity.actor_id),
+                                "new_value": str(issue_activity.new_value),
+                                "old_value": str(issue_activity.old_value),
+                                "issue_comment": str(
+                                    issue_activity.issue_comment.comment_stripped if issue_activity.issue_comment is not None else ""
+                                ),
+                            },
                         },
                     )
                 )
