@@ -154,8 +154,10 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             />
             <button
               type="button"
-              className={`flex w-full justify-end text-xs text-custom-text-200 outline-none ${
-                isResendDisabled ? "cursor-default" : "cursor-pointer hover:text-custom-primary-100"
+              className={`flex w-full justify-end text-xs outline-none ${
+                isResendDisabled
+                  ? "cursor-default text-custom-text-200"
+                  : "cursor-pointer text-custom-primary-100"
               } `}
               onClick={() => {
                 setIsCodeResending(true);
@@ -174,7 +176,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               ) : errorResendingCode ? (
                 "Please try again later"
               ) : (
-                "Request new code"
+                "Resend code"
               )}
             </button>
           </>
