@@ -13,13 +13,13 @@ export const SecondaryButton: React.FC<ButtonProps> = ({
 }) => (
   <button
     type={type}
-    className={`${className} border border-custom-border-100 font-medium duration-300 ${
+    className={`${className} border border-custom-border-300 font-medium duration-300 ${
       size === "sm"
         ? "rounded px-3 py-2 text-xs"
         : size === "md"
         ? "rounded-md px-3.5 py-2 text-sm"
         : "rounded-lg px-4 py-2 text-base"
-    } ${disabled ? "cursor-not-allowed border-custom-border-100 bg-custom-background-90" : ""} ${
+    } ${disabled ? "cursor-not-allowed border-custom-border-300 bg-custom-background-90" : ""} ${
       outline
         ? "bg-transparent hover:bg-custom-background-80"
         : "bg-custom-background-80 hover:border-opacity-70 hover:bg-opacity-70"

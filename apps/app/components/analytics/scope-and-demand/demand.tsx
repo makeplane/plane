@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="space-y-3 rounded-[10px] border border-custom-border-100 p-3">
+  <div className="space-y-3 rounded-[10px] border border-custom-border-300 p-3">
     <h5 className="text-xs text-red-500">DEMAND</h5>
     <div>
       <h4 className="text-custom-text-100 text-base font-medium">Total open tasks</h4>
@@ -50,7 +50,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
         );
       })}
     </div>
-    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-custom-border-100 bg-custom-background-80 p-2 text-xs">
+    <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 p-2 text-xs">
       <p className="flex items-center gap-1 text-custom-text-200">
         <PlayIcon className="h-4 w-4 -rotate-90" aria-hidden="true" />
         <span>Estimate Demand:</span>

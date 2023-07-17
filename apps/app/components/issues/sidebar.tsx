@@ -283,7 +283,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         data={issueDetail ?? null}
         user={user}
       />
-      <div className="sticky top-5 w-full divide-y-2 divide-custom-border-100">
+      <div className="sticky top-5 w-full divide-y-2 divide-custom-border-300">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
@@ -292,7 +292,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"
-                className="rounded-md border border-custom-border-100 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
+                className="rounded-md border border-custom-border-300 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
                 onClick={handleCopyText}
               >
                 <LinkIcon className="h-3.5 w-3.5" />
@@ -310,7 +310,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className={`divide-y-2 divide-custom-border-100 ${uneditable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-custom-border-300 ${uneditable ? "opacity-60" : ""}`}>
           {showFirstSection && (
             <div className="py-1">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
@@ -483,7 +483,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       return (
                         <span
                           key={label.id}
-                          className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
+                          className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-300 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
                           onClick={() => {
                             const updatedLabels = watchIssue("labels_list")?.filter(
                               (l) => l !== labelId
@@ -524,7 +524,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 isNotAllowed || uneditable
                                   ? "cursor-not-allowed"
                                   : "cursor-pointer hover:bg-custom-background-90"
-                              } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
+                              } items-center gap-2 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs text-custom-text-200`}
                             >
                               Select Label
                             </Listbox.Button>
@@ -536,7 +536,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                               leaveFrom="opacity-100"
                               leaveTo="opacity-0"
                             >
-                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-custom-background-80 py-1 text-xs shadow-lg border border-custom-border-100 focus:outline-none">
+                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-custom-background-80 py-1 text-xs shadow-lg border border-custom-border-300 focus:outline-none">
                                 <div className="py-1">
                                   {issueLabels ? (
                                     issueLabels.length > 0 ? (
@@ -575,7 +575,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                             );
                                         } else
                                           return (
-                                            <div className="border-y border-custom-border-100 bg-custom-background-90">
+                                            <div className="border-y border-custom-border-300 bg-custom-background-90">
                                               <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-custom-text-100">
                                                 <RectangleGroupIcon className="h-3 w-3" />
                                                 {label.name}
@@ -629,7 +629,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         isNotAllowed || uneditable
                           ? "cursor-not-allowed"
                           : "cursor-pointer hover:bg-custom-background-90"
-                      } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
+                      } items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs text-custom-text-200`}
                       onClick={() => setCreateLabelForm((prevData) => !prevData)}
                       disabled={uneditable}
                     >

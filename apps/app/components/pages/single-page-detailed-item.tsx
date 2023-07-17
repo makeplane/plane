@@ -79,7 +79,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 page.label_details.map((label) => (
                   <div
                     key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs"
+                    className="group flex items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs"
                     style={{
                       backgroundColor: `${
                         label?.color && label.color !== "" ? label.color : "#000000"

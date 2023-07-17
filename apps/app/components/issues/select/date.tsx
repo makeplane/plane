@@ -16,7 +16,7 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
   <Popover className="relative flex items-center justify-center  rounded-lg">
     {({ open }) => (
       <>
-        <Popover.Button className="flex cursor-pointer items-center rounded-md border border-custom-border-100 text-xs shadow-sm duration-200">
+        <Popover.Button className="flex cursor-pointer items-center rounded-md border border-custom-border-300 text-xs shadow-sm duration-200">
           <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200">
             {value ? (
               <>

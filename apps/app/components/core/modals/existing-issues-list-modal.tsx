@@ -154,7 +154,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-100 bg-custom-background-100 shadow-2xl transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-300 bg-custom-background-100 shadow-2xl transition-all">
                 <Combobox
                   as="div"
                   onChange={(val: ISearchIssueResponse) => {
@@ -182,7 +182,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 text-xs border border-custom-border-100 bg-custom-background-80 pl-2 py-1 rounded-md text-custom-text-100 whitespace-nowrap"
+                            className="flex items-center gap-1 text-xs border border-custom-border-300 bg-custom-background-80 pl-2 py-1 rounded-md text-custom-text-100 whitespace-nowrap"
                           >
                             {issue.project__identifier}-{issue.sequence_id}
                             <button
@@ -200,7 +200,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                         ))}
                       </div>
                     ) : (
-                      <div className="w-min text-xs border border-custom-border-100 bg-custom-background-80 p-2 rounded-md whitespace-nowrap">
+                      <div className="w-min text-xs border border-custom-border-300 bg-custom-background-80 p-2 rounded-md whitespace-nowrap">
                         No issues selected
                       </div>
                     )}

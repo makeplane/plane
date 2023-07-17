@@ -61,7 +61,7 @@ export const IssueAttachments = () => {
         attachments.map((file) => (
           <div
             key={file.id}
-            className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-100 bg-custom-background-100 px-4 py-2 text-sm"
+            className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-300 bg-custom-background-100 px-4 py-2 text-sm"
           >
             <Link href={file.asset}>
               <a target="_blank">

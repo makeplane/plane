@@ -62,7 +62,7 @@ export const SpreadsheetView: React.FC<Props> = ({
 
   return (
     <div className="h-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
-      <div className="sticky z-[2] top-0 border-b border-custom-border-100 bg-custom-background-90 w-full min-w-max">
+      <div className="sticky z-[2] top-0 border-b border-custom-border-300 bg-custom-background-90 w-full min-w-max">
         <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
       </div>
       {spreadsheetIssues ? (
@@ -84,12 +84,12 @@ export const SpreadsheetView: React.FC<Props> = ({
             />
           ))}
           <div
-            className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-100 w-full min-w-max"
+            className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-300 w-full min-w-max"
             style={{ gridTemplateColumns }}
           >
             {type === "issue" ? (
               <button
-                className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-100 w-full"
+                className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-300 w-full"
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", { key: "c" });
                   document.dispatchEvent(e);
@@ -104,7 +104,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                   className="sticky left-0 z-[1]"
                   customButton={
                     <button
-                      className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-100 w-full"
+                      className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-300 w-full"
                       type="button"
                     >
                       <PlusIcon className="h-4 w-4" />
