@@ -14,7 +14,6 @@ export * from "./empty-state";
 export * from "./labels-list";
 export * from "./linear-progress-indicator";
 export * from "./loader";
-export * from "./multi-input";
 export * from "./multi-level-dropdown";
 export * from "./multi-level-select";
 export * from "./progress-bar";
