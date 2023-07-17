@@ -9,7 +9,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
