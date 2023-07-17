@@ -37,14 +37,14 @@ const ContextMenu = ({ position, children, title, isOpen, setIsOpen }: Props) =>
       }`}
     >
       <div
-        className={`fixed z-20 flex min-w-[8rem] flex-col items-stretch gap-1 rounded-md border border-custom-border-100 bg-custom-background-90 p-2 text-xs shadow-lg`}
+        className={`fixed z-20 flex min-w-[8rem] flex-col items-stretch gap-1 rounded-md border border-custom-border-300 bg-custom-background-90 p-2 text-xs shadow-lg`}
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
         }}
       >
         {title && (
-          <h4 className="border-b border-custom-border-100 px-1 py-1 pb-2 text-[0.8rem] font-medium">
+          <h4 className="border-b border-custom-border-300 px-1 py-1 pb-2 text-[0.8rem] font-medium">
             {title}
           </h4>
         )}

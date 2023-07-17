@@ -94,7 +94,13 @@ const GeneralSettings: NextPage = () => {
           (prevData) => ({ ...prevData, ...res }),
           false
         );
-        mutate(PROJECTS_LIST(workspaceSlug as string));
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
+
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -255,7 +261,7 @@ const GeneralSettings: NextPage = () => {
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border border-custom-border-100 p-1">
+                <div className="h-32 w-full rounded border border-custom-border-300 p-1">
                   <div className="relative h-full w-full rounded">
                     <img
                       src={watch("cover_image")!}

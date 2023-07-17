@@ -28,9 +28,10 @@ import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 type Props = {
   parentIssue: IIssue;
   user: ICurrentUserResponse | undefined;
+  disabled?: boolean;
 };
 
-export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -180,7 +181,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
 
   const completionPercentage = (completedSubIssues / totalSubIssues) * 100;
 
-  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
+  const isNotAllowed = memberRole.isGuest || memberRole.isViewer || disabled;
 
   return (
     <>

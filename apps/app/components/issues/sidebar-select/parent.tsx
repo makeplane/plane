@@ -23,6 +23,7 @@ type Props = {
   customDisplay: JSX.Element;
   watch: UseFormWatch<IIssue>;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarParentSelect: React.FC<Props> = ({
@@ -31,6 +32,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
   customDisplay,
   watch,
   userAuth,
+  disabled = false,
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
@@ -46,7 +48,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
       : null
   );
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">
@@ -76,7 +78,7 @@ export const SidebarParentSelect: React.FC<Props> = ({
           type="button"
           className={`flex w-full ${
             isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
-          } items-center justify-between gap-1 rounded-md border border-custom-border-100 px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
+          } items-center justify-between gap-1 rounded-md border border-custom-border-300 px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
           onClick={() => setIsParentModalOpen(true)}
           disabled={isNotAllowed}
         >

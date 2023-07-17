@@ -21,6 +21,7 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   watch: UseFormWatch<IIssue>;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarBlockedSelect: React.FC<Props> = ({
@@ -28,6 +29,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
   submitChanges,
   watch,
   userAuth,
+  disabled = false,
 }) => {
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
@@ -69,7 +71,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
     handleClose();
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <>
@@ -90,7 +92,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
               ? watch("blocked_issues").map((issue) => (
                   <div
                     key={issue.blocked_issue_detail?.id}
-                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
+                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-300 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                   >
                     <Link
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.blocked_issue_detail?.id}`}
@@ -124,7 +126,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
             type="button"
             className={`flex w-full text-custom-text-200 ${
               isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
-            } items-center justify-between gap-1 rounded-md border border-custom-border-100 px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
+            } items-center justify-between gap-1 rounded-md border border-custom-border-300 px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
             onClick={() => setIsBlockedModalOpen(true)}
             disabled={isNotAllowed}
           >

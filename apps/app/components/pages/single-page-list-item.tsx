@@ -21,7 +21,11 @@ import {
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
-import { renderLongDateFormat, renderShortDate, renderShortTime } from "helpers/date-time.helper";
+import {
+  renderLongDateFormat,
+  renderShortDate,
+  render24HourFormatTime,
+} from "helpers/date-time.helper";
 // types
 import { IPage, IProjectMember } from "types";
 
@@ -80,7 +84,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                   page.label_details.map((label) => (
                     <div
                       key={label.id}
-                      className="group flex items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs"
+                      className="group flex items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs"
                       style={{
                         backgroundColor: `${label?.color}20`,
                       }}
@@ -98,12 +102,12 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderShortTime(
+                    tooltipContent={`Last updated at ${render24HourFormatTime(
                       page.updated_at
                     )} on ${renderShortDate(page.updated_at)}`}
                   >
                     <p className="text-sm text-custom-text-200">
-                      {renderShortTime(page.updated_at)}
+                      {render24HourFormatTime(page.updated_at)}
                     </p>
                   </Tooltip>
                   {page.is_favorite ? (
@@ -136,7 +140,6 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                           ? "This page is only visible to you."
                           : "This page can be viewed by anyone in the project."
                       }`}
-                      theme="dark"
                     >
                       <button
                         type="button"
@@ -155,7 +158,6 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                     </Tooltip>
                   )}
                   <Tooltip
-                    theme="dark"
                     position="top-right"
                     tooltipContent={`Created by ${
                       people?.find((person) => person.member.id === page.created_by)?.member

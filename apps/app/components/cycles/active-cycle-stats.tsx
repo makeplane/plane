@@ -52,7 +52,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
       >
         <Tab
           className={({ selected }) =>
-            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-100 ${
+            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-300 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
@@ -61,7 +61,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         </Tab>
         <Tab
           className={({ selected }) =>
-            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-100 ${
+            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-300 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
@@ -103,7 +103,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                     key={`unassigned-${index}`}
                     title={
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded-full border-2 border-custom-border-100 bg-custom-background-80">
+                        <div className="h-5 w-5 rounded-full border-2 border-custom-border-300 bg-custom-background-80">
                           <img
                             src="/user.png"
                             height="100%"

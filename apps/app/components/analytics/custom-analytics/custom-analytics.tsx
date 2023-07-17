@@ -61,7 +61,7 @@ export const CustomAnalytics: React.FC<Props> = ({
         <AnalyticsSelectBar
           control={control}
           setValue={setValue}
-          projects={projects}
+          projects={projects ?? []}
           params={params}
           fullScreen={fullScreen}
           isProjectLevel={isProjectLevel}

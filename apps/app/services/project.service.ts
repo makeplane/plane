@@ -6,7 +6,6 @@ import trackEventServices from "services/track-event.service";
 import type {
   GithubRepositoriesResponse,
   ICurrentUserResponse,
-  IFavoriteProject,
   IProject,
   IProjectBulkInviteFormData,
   IProjectMember,
@@ -53,8 +52,15 @@ class ProjectServices extends APIService {
       });
   }
 
-  async getProjects(workspaceSlug: string): Promise<IProject[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/`)
+  async getProjects(
+    workspaceSlug: string,
+    params: {
+      is_favorite: "all" | boolean;
+    }
+  ): Promise<IProject[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -292,14 +298,6 @@ class ProjectServices extends APIService {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/github-repository-sync/`
     )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getFavoriteProjects(workspaceSlug: string): Promise<IFavoriteProject[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

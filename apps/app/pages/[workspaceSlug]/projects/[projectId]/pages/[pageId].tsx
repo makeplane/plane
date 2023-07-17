@@ -41,7 +41,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
-import { renderShortTime, renderShortDate } from "helpers/date-time.helper";
+import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
@@ -337,7 +337,7 @@ const SinglePage: NextPage = () => {
                         return (
                           <div
                             key={label.id}
-                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                             onClick={() => {
                               const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
                               partialUpdatePage({ labels_list: updatedLabels });
@@ -397,11 +397,11 @@ const SinglePage: NextPage = () => {
               <div className="flex items-center">
                 <div className="flex items-center gap-6 text-custom-text-200">
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderShortTime(
+                    tooltipContent={`Last updated at ${render24HourFormatTime(
                       pageDetails.updated_at
                     )} on ${renderShortDate(pageDetails.updated_at)}`}
                   >
-                    <p className="text-sm">{renderShortTime(pageDetails.updated_at)}</p>
+                    <p className="text-sm">{render24HourFormatTime(pageDetails.updated_at)}</p>
                   </Tooltip>
                   <button className="flex items-center gap-2" onClick={handleCopyText}>
                     <LinkIcon className="h-4 w-4" />
@@ -482,7 +482,6 @@ const SinglePage: NextPage = () => {
                           ? "This page is only visible to you."
                           : "This page can be viewed by anyone in the project."
                       }`}
-                      theme="dark"
                     >
                       {pageDetails.access ? (
                         <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">

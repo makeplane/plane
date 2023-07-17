@@ -21,6 +21,7 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   watch: UseFormWatch<IIssue>;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarBlockerSelect: React.FC<Props> = ({
@@ -28,6 +29,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
   submitChanges,
   watch,
   userAuth,
+  disabled = false,
 }) => {
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
@@ -69,7 +71,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
     handleClose();
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <>
@@ -90,7 +92,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
               ? watch("blocker_issues").map((issue) => (
                   <div
                     key={issue.blocker_issue_detail?.id}
-                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
+                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-300 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
                   >
                     <Link
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.blocker_issue_detail?.id}`}
@@ -126,7 +128,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
             type="button"
             className={`flex w-full text-custom-text-200 ${
               isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
-            } items-center justify-between gap-1 rounded-md border border-custom-border-100 px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
+            } items-center justify-between gap-1 rounded-md border border-custom-border-300 px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
             onClick={() => setIsBlockerModalOpen(true)}
             disabled={isNotAllowed}
           >

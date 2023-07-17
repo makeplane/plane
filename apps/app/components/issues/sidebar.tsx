@@ -73,6 +73,7 @@ type Props = {
     | "delete"
     | "all"
   )[];
+  uneditable?: boolean;
 };
 
 const defaultValues: Partial<IIssueLabels> = {
@@ -86,6 +87,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   issueDetail,
   watch: watchIssue,
   fieldsToShow = ["all"],
+  uneditable = false,
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -281,7 +283,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         data={issueDetail ?? null}
         user={user}
       />
-      <div className="sticky top-5 w-full divide-y-2 divide-custom-border-100">
+      <div className="sticky top-5 w-full divide-y-2 divide-custom-border-300">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
@@ -290,7 +292,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"
-                className="rounded-md border border-custom-border-100 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
+                className="rounded-md border border-custom-border-300 p-2 shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary"
                 onClick={handleCopyText}
               >
                 <LinkIcon className="h-3.5 w-3.5" />
@@ -307,7 +309,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
         </div>
-        <div className="divide-y-2 divide-custom-border-100">
+
+        <div className={`divide-y-2 divide-custom-border-300 ${uneditable ? "opacity-60" : ""}`}>
           {showFirstSection && (
             <div className="py-1">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
@@ -319,6 +322,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       value={value}
                       onChange={(val: string) => submitChanges({ state: val })}
                       userAuth={memberRole}
+                      disabled={uneditable}
                     />
                   )}
                 />
@@ -332,6 +336,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       value={value}
                       onChange={(val: string[]) => submitChanges({ assignees_list: val })}
                       userAuth={memberRole}
+                      disabled={uneditable}
                     />
                   )}
                 />
@@ -345,6 +350,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       value={value}
                       onChange={(val: string) => submitChanges({ priority: val })}
                       userAuth={memberRole}
+                      disabled={uneditable}
                     />
                   )}
                 />
@@ -358,6 +364,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       value={value}
                       onChange={(val: number | null) => submitChanges({ estimate_point: val })}
                       userAuth={memberRole}
+                      disabled={uneditable}
                     />
                   )}
                 />
@@ -389,6 +396,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   }
                   watch={watchIssue}
                   userAuth={memberRole}
+                  disabled={uneditable}
                 />
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
@@ -397,6 +405,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   submitChanges={submitChanges}
                   watch={watchIssue}
                   userAuth={memberRole}
+                  disabled={uneditable}
                 />
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
@@ -405,6 +414,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   submitChanges={submitChanges}
                   watch={watchIssue}
                   userAuth={memberRole}
+                  disabled={uneditable}
                 />
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
@@ -427,7 +437,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                             })
                           }
                           className="bg-custom-background-90"
-                          disabled={isNotAllowed}
+                          disabled={isNotAllowed || uneditable}
                         />
                       )}
                     />
@@ -443,6 +453,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   issueDetail={issueDetail}
                   handleCycleChange={handleCycleChange}
                   userAuth={memberRole}
+                  disabled={uneditable}
                 />
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
@@ -450,13 +461,14 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   issueDetail={issueDetail}
                   handleModuleChange={handleModuleChange}
                   userAuth={memberRole}
+                  disabled={uneditable}
                 />
               )}
             </div>
           )}
         </div>
         {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
-          <div className="space-y-3 py-3">
+          <div className={`space-y-3 py-3 ${uneditable ? "opacity-60" : ""}`}>
             <div className="flex items-start justify-between">
               <div className="flex basis-1/2 items-center gap-x-2 text-sm text-custom-text-200">
                 <TagIcon className="h-4 w-4" />
@@ -471,7 +483,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       return (
                         <span
                           key={label.id}
-                          className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
+                          className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-300 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
                           onClick={() => {
                             const updatedLabels = watchIssue("labels_list")?.filter(
                               (l) => l !== labelId
@@ -503,16 +515,16 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         onChange={(val: any) => submitChanges({ labels_list: val })}
                         className="flex-shrink-0"
                         multiple
-                        disabled={isNotAllowed}
+                        disabled={isNotAllowed || uneditable}
                       >
                         {({ open }) => (
                           <div className="relative">
                             <Listbox.Button
                               className={`flex ${
-                                isNotAllowed
+                                isNotAllowed || uneditable
                                   ? "cursor-not-allowed"
                                   : "cursor-pointer hover:bg-custom-background-90"
-                              } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
+                              } items-center gap-2 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs text-custom-text-200`}
                             >
                               Select Label
                             </Listbox.Button>
@@ -524,7 +536,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                               leaveFrom="opacity-100"
                               leaveTo="opacity-0"
                             >
-                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-custom-background-80 py-1 text-xs shadow-lg border border-custom-border-100 focus:outline-none">
+                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-custom-background-80 py-1 text-xs shadow-lg border border-custom-border-300 focus:outline-none">
                                 <div className="py-1">
                                   {issueLabels ? (
                                     issueLabels.length > 0 ? (
@@ -563,7 +575,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                             );
                                         } else
                                           return (
-                                            <div className="border-y border-custom-border-100 bg-custom-background-90">
+                                            <div className="border-y border-custom-border-300 bg-custom-background-90">
                                               <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-custom-text-100">
                                                 <RectangleGroupIcon className="h-3 w-3" />
                                                 {label.name}
@@ -614,11 +626,12 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     <button
                       type="button"
                       className={`flex ${
-                        isNotAllowed
+                        isNotAllowed || uneditable
                           ? "cursor-not-allowed"
                           : "cursor-pointer hover:bg-custom-background-90"
-                      } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
+                      } items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs text-custom-text-200`}
                       onClick={() => setCreateLabelForm((prevData) => !prevData)}
+                      disabled={uneditable}
                     >
                       {createLabelForm ? (
                         <>
@@ -709,14 +722,17 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           </div>
         )}
         {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-          <div className="min-h-[116px] py-1 text-xs">
+          <div className={`min-h-[116px] py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
             <div className="flex items-center justify-between gap-2">
               <h4>Links</h4>
               {!isNotAllowed && (
                 <button
                   type="button"
-                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90"
+                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
+                    uneditable ? "cursor-not-allowed" : "cursor-pointer"
+                  }`}
                   onClick={() => setLinkModal(true)}
+                  disabled={uneditable}
                 >
                   <PlusIcon className="h-4 w-4" />
                 </button>

@@ -20,9 +20,15 @@ type Props = {
   value: string[];
   onChange: (val: string[]) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
+export const SidebarAssigneeSelect: React.FC<Props> = ({
+  value,
+  onChange,
+  userAuth,
+  disabled = false,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -53,7 +59,7 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
     ),
   }));
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">

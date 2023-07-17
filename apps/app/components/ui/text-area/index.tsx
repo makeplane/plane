@@ -66,11 +66,11 @@ export const TextArea: React.FC<Props> = ({
           onChange && onChange(e);
           setTextareaValue(e.target.value);
         }}
-        className={`no-scrollbar w-full bg-transparent ${
+        className={`no-scrollbar w-full bg-transparent placeholder-custom-text-400 ${
           noPadding ? "" : "px-3 py-2"
         } outline-none ${
           mode === "primary"
-            ? "rounded-md border border-custom-border-100"
+            ? "rounded-md border border-custom-border-300"
             : mode === "transparent"
             ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
             : ""

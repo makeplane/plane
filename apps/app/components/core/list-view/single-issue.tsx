@@ -84,6 +84,7 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const { setToastAlert } = useToast();
 
@@ -181,7 +182,11 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
+  const singleIssuePath = isArchivedIssues
+    ? `/${workspaceSlug}/projects/${projectId}/archived-issues/${issue.id}`
+    : `/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`;
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted || isArchivedIssues;
 
   return (
     <>
@@ -207,25 +212,21 @@ export const SingleListIssue: React.FC<Props> = ({
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
-        <a
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
+        <a href={singleIssuePath} target="_blank" rel="noreferrer noopener">
           <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
             Open issue in new tab
           </ContextMenu.Item>
         </a>
       </ContextMenu>
       <div
-        className="flex flex-wrap items-center justify-between px-4 py-2.5 gap-2 border-b border-custom-border-100 bg-custom-background-100 last:border-b-0"
+        className="flex flex-wrap items-center justify-between px-4 py-2.5 gap-2 border-b border-custom-border-300 bg-custom-background-100 last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
           setContextMenuPosition({ x: e.pageX, y: e.pageY });
         }}
       >
-        <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
+        <Link href={singleIssuePath}>
           <div className="flex-grow cursor-pointer">
             <a className="group relative flex items-center gap-2">
               {properties.key && (
@@ -247,7 +248,11 @@ export const SingleListIssue: React.FC<Props> = ({
           </div>
         </Link>
 
-        <div className="flex w-full flex-shrink flex-wrap items-center gap-2 text-xs sm:w-auto">
+        <div
+          className={`flex w-full flex-shrink flex-wrap items-center gap-2 text-xs sm:w-auto ${
+            isArchivedIssues ? "opacity-60" : ""
+          }`}
+        >
           {properties.priority && (
             <ViewPrioritySelect
               issue={issue}
@@ -302,7 +307,7 @@ export const SingleListIssue: React.FC<Props> = ({
             />
           )}
           {properties.sub_issue_count && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <LayerDiagonalIcon className="h-3.5 w-3.5" />
@@ -312,7 +317,7 @@ export const SingleListIssue: React.FC<Props> = ({
             </div>
           )}
           {properties.link && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <LinkIcon className="h-3.5 w-3.5" />
@@ -322,7 +327,7 @@ export const SingleListIssue: React.FC<Props> = ({
             </div>
           )}
           {properties.attachment_count && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
