@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 // hooks
 import useTheme from "hooks/use-theme";
@@ -8,6 +9,7 @@ import useTheme from "hooks/use-theme";
 import { Popover, Transition } from "@headlessui/react";
 
 // hooks
+import useWorkspaceMembers from "hooks/use-workspace-members";
 import useUserNotification from "hooks/use-user-notifications";
 
 // components
@@ -40,6 +42,11 @@ export const NotificationPopover = () => {
     notificationCount,
     totalNotificationCount,
   } = useUserNotification();
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { isOwner, isMember } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
   // theme context
   const { collapsed: sidebarCollapse } = useTheme();
@@ -109,7 +116,7 @@ export const NotificationPopover = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full z-10 mt-3 pt-5 md:w-[36rem] w-[20rem] h-[30rem] border border-custom-background-90 shadow-lg rounded">
+              <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 top-0 pt-5 md:w-[36rem] w-[20rem] h-[27rem] border border-custom-background-90 shadow-lg rounded">
                 <div className="flex justify-between items-center md:px-6 px-2">
                   <h2 className="text-custom-sidebar-text-100 text-lg font-semibold mb-2">
                     Notifications
@@ -192,25 +199,47 @@ export const NotificationPopover = () => {
                   ) : (
                     <div className="border-b border-custom-border-300 md:px-6 px-2 w-full">
                       <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                        {notificationTabs.map((tab) => (
-                          <button
-                            type="button"
-                            key={tab.value}
-                            onClick={() => setSelectedTab(tab.value)}
-                            className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium ${
-                              tab.value === selectedTab
-                                ? "border-custom-primary-100 text-custom-primary-100"
-                                : "border-transparent text-custom-text-500 hover:border-custom-border-300 hover:text-custom-text-200"
-                            }`}
-                          >
-                            {tab.label}
-                            {tab.unreadCount && tab.unreadCount > 0 ? (
-                              <span className="ml-3 bg-custom-background-1000/5 rounded-full text-custom-text-100 text-xs px-1.5">
-                                {getNumberCount(tab.unreadCount)}
-                              </span>
-                            ) : null}
-                          </button>
-                        ))}
+                        {notificationTabs.map((tab) =>
+                          tab.value === "created" ? (
+                            isMember || isOwner ? (
+                              <button
+                                type="button"
+                                key={tab.value}
+                                onClick={() => setSelectedTab(tab.value)}
+                                className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium ${
+                                  tab.value === selectedTab
+                                    ? "border-custom-primary-100 text-custom-primary-100"
+                                    : "border-transparent text-custom-text-500 hover:border-custom-border-300 hover:text-custom-text-200"
+                                }`}
+                              >
+                                {tab.label}
+                                {tab.unreadCount && tab.unreadCount > 0 ? (
+                                  <span className="ml-3 bg-custom-background-1000/5 rounded-full text-custom-text-100 text-xs px-1.5">
+                                    {getNumberCount(tab.unreadCount)}
+                                  </span>
+                                ) : null}
+                              </button>
+                            ) : null
+                          ) : (
+                            <button
+                              type="button"
+                              key={tab.value}
+                              onClick={() => setSelectedTab(tab.value)}
+                              className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium ${
+                                tab.value === selectedTab
+                                  ? "border-custom-primary-100 text-custom-primary-100"
+                                  : "border-transparent text-custom-text-500 hover:border-custom-border-300 hover:text-custom-text-200"
+                              }`}
+                            >
+                              {tab.label}
+                              {tab.unreadCount && tab.unreadCount > 0 ? (
+                                <span className="ml-3 bg-custom-background-1000/5 rounded-full text-custom-text-100 text-xs px-1.5">
+                                  {getNumberCount(tab.unreadCount)}
+                                </span>
+                              ) : null}
+                            </button>
+                          )
+                        )}
                       </nav>
                     </div>
                   )}

@@ -31,7 +31,7 @@ import {
   SidebarLabelSelect,
 } from "components/issues";
 // ui
-import { CustomDatePicker } from "components/ui";
+import { CustomDatePicker, Icon } from "components/ui";
 // icons
 import {
   LinkIcon,
@@ -236,6 +236,21 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
           </h4>
           <div className="flex flex-wrap items-center gap-2">
+            {issueDetail?.created_by !== user?.id &&
+              !issueDetail?.assignees.includes(user?.id ?? "") &&
+              (fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
+                <button
+                  type="button"
+                  className="rounded-md flex items-center gap-2 border border-custom-primary-100 px-2 py-1 text-xs text-custom-primary-100 shadow-sm duration-300 focus:outline-none"
+                  onClick={() => {
+                    if (subscribed) handleUnsubscribe();
+                    else handleSubscribe();
+                  }}
+                >
+                  <Icon iconName="notifications" />
+                  {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
+                </button>
+              )}
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button
                 type="button"
