@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
@@ -16,12 +17,13 @@ import useToast from "hooks/use-toast";
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
 // ui
-import { SecondaryButton, PrimaryButton } from "components/ui";
+import { SecondaryButton, PrimaryButton, EmptyState } from "components/ui";
 // icons
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // images
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import emptyInvitation from "public/empty-state/invitation.svg";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -35,6 +37,8 @@ import { ROLE } from "constants/workspace";
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
+
+  const router = useRouter();
 
   const { theme } = useTheme();
 
@@ -79,7 +83,7 @@ const OnBoard: NextPage = () => {
 
         setIsJoiningWorkspaces(false);
       })
-      .catch((err) => setIsJoiningWorkspaces(false));
+      .catch(() => setIsJoiningWorkspaces(false));
   };
 
   return (
@@ -101,13 +105,13 @@ const OnBoard: NextPage = () => {
               {user?.email}
             </div>
           </div>
-          <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
-            <div className="w-full space-y-10">
-              <h5 className="text-lg">We see that someone has invited you to</h5>
-              <h4 className="text-2xl font-semibold">Join a workspace</h4>
-              <div className="md:w-3/5 space-y-4">
-                {invitations &&
-                  invitations.map((invitation) => {
+          {invitations && invitations.length > 0 ? (
+            <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
+              <div className="w-full space-y-10">
+                <h5 className="text-lg">We see that someone has invited you to</h5>
+                <h4 className="text-2xl font-semibold">Join a workspace</h4>
+                <div className="md:w-3/5 space-y-4">
+                  {invitations.map((invitation) => {
                     const isSelected = invitationsRespond.includes(invitation.id);
 
                     return (
@@ -116,7 +120,7 @@ const OnBoard: NextPage = () => {
                         className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
                           isSelected
                             ? "border-custom-primary-100"
-                            : "border-custom-border-100 hover:bg-custom-background-80"
+                            : "border-custom-border-300 hover:bg-custom-background-80"
                         }`}
                         onClick={() =>
                           handleInvitation(invitation, isSelected ? "withdraw" : "accepted")
@@ -155,26 +159,37 @@ const OnBoard: NextPage = () => {
                       </div>
                     );
                   })}
-              </div>
-              <div className="flex items-center gap-3">
-                <PrimaryButton
-                  type="submit"
-                  size="md"
-                  onClick={submitInvitations}
-                  disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
-                >
-                  Accept & Join
-                </PrimaryButton>
-                <Link href="/">
-                  <a>
-                    <SecondaryButton size="md" outline>
-                      Go Home
-                    </SecondaryButton>
-                  </a>
-                </Link>
+                </div>
+                <div className="flex items-center gap-3">
+                  <PrimaryButton
+                    type="submit"
+                    size="md"
+                    onClick={submitInvitations}
+                    disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
+                  >
+                    Accept & Join
+                  </PrimaryButton>
+                  <Link href="/">
+                    <a>
+                      <SecondaryButton size="md" outline>
+                        Go Home
+                      </SecondaryButton>
+                    </a>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="fixed top-0 left-0 h-full w-full grid place-items-center">
+              <EmptyState
+                title="No pending invites"
+                description="You can see here if someone invites you to a workspace."
+                image={emptyInvitation}
+                buttonText="Back to Dashboard"
+                onClick={() => router.push("/")}
+              />
+            </div>
+          )}
         </div>
       </DefaultLayout>
     </UserAuthorizationLayout>

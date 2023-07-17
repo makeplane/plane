@@ -57,8 +57,8 @@ const CustomSelect = ({
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : "cursor-pointer hover:bg-custom-background-80"
-          } items-center justify-between gap-1 rounded-md border border-custom-border-100 shadow-sm duration-300 focus:outline-none ${
-            input ? "border-custom-border-100 px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+          } items-center justify-between gap-1 rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none ${
+            input ? "border-custom-border-300 px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
           } ${
             textAlignment === "right"
               ? "text-right"
@@ -83,7 +83,7 @@ const CustomSelect = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Listbox.Options
-        className={`${optionsClassName} absolute border border-custom-border-100 ${
+        className={`${optionsClassName} absolute border border-custom-border-300 ${
           position === "right" ? "right-0" : "left-0"
         } ${
           verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"

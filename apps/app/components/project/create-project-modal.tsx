@@ -328,7 +328,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex justify-end gap-2 border-t-2 border-custom-border-100 px-4 py-3">
+                  <div className="mt-5 flex justify-end gap-2 border-t-2 border-custom-border-300 px-4 py-3">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                     <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
                       {isSubmitting ? "Adding project..." : "Add Project"}

@@ -170,7 +170,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
                 </button>
               </div>
             )}
-            <div className="space-y-5 divide-y-2 divide-custom-border-100 opacity-60">
+            <div className="space-y-5 divide-y-2 divide-custom-border-300 opacity-60">
               <IssueMainContent
                 issueDetails={issueDetails}
                 submitChanges={submitChanges}
@@ -178,7 +178,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
               />
             </div>
           </div>
-          <div className="w-1/3 space-y-5 border-l border-custom-border-100 p-5">
+          <div className="w-1/3 space-y-5 border-l border-custom-border-300 p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

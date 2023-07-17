@@ -101,7 +101,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-100 bg-custom-background-100 shadow-2xl transition-all">
+                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-300 bg-custom-background-100 shadow-2xl transition-all">
                   <Combobox
                     value={selectedItem}
                     onChange={(value) => {
@@ -123,7 +123,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
                     <Combobox.Options
                       static
-                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-100 overflow-y-auto"
+                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-300 overflow-y-auto"
                     >
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">

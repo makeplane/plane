@@ -160,7 +160,7 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div className="group flex items-center justify-between gap-2 border-custom-border-100 bg-custom-background-100 p-5 first:rounded-t-[10px] last:rounded-b-[10px]">
+    <div className="group flex items-center justify-between gap-2 border-custom-border-300 bg-custom-background-100 p-5 first:rounded-t-[10px] last:rounded-b-[10px]">
       <div className="flex items-center gap-3">
         {getStateGroupIcon(state.group, "20", "20", state.color)}
         <div>

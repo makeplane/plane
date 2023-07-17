@@ -61,7 +61,7 @@ export const IssueAttachments = () => {
         attachments.map((file) => (
           <div
             key={file.id}
-            className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-100 bg-custom-background-100 px-4 py-2 text-sm"
+            className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-300 bg-custom-background-100 px-4 py-2 text-sm"
           >
             <Link href={file.asset}>
               <a target="_blank">
@@ -69,13 +69,12 @@ export const IssueAttachments = () => {
                   <div className="h-7 w-7">{getFileIcon(getFileExtension(file.asset))}</div>
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <Tooltip theme="dark" tooltipContent={getFileName(file.attributes.name)}>
+                      <Tooltip tooltipContent={getFileName(file.attributes.name)}>
                         <span className="text-sm">
                           {truncateText(`${getFileName(file.attributes.name)}`, 10)}
                         </span>
                       </Tooltip>
                       <Tooltip
-                        theme="dark"
                         tooltipContent={`${
                           people?.find((person) => person.member.id === file.updated_by)?.member
                             .first_name ?? ""
