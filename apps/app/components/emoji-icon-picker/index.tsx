@@ -63,8 +63,8 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] border border-custom-border-100 bg-custom-background-80 shadow-lg">
-          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-custom-border-100 bg-custom-background-80 p-2 shadow-xl">
+        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] border border-custom-border-300 bg-custom-background-80 shadow-lg">
+          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-custom-border-300 bg-custom-background-80 p-2 shadow-xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 p-1">
                 {tabOptions.map((tab) => (
@@ -107,7 +107,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                       </div>
                     </div>
                   )}
-                  <hr className="mb-2 h-[1px] w-full border-custom-border-100" />
+                  <hr className="mb-2 h-[1px] w-full border-custom-border-300" />
                   <div>
                     <div className="grid grid-cols-8 gap-x-2 gap-y-3">
                       {emojis.map((emoji) => (
@@ -173,7 +173,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                         />
                       </div>
                     </div>
-                    <hr className="mb-1 h-[1px] w-full border-custom-border-100" />
+                    <hr className="mb-1 h-[1px] w-full border-custom-border-300" />
                     <div className="mt-1 ml-1 grid grid-cols-8 gap-x-2 gap-y-3">
                       {icons.material_rounded.map((icon, index) => (
                         <button

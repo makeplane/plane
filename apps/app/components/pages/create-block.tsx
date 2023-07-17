@@ -96,7 +96,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
   return (
     <div className="relative">
       <form
-        className="flex flex-col items-center justify-between rounded border-2 border-custom-border-100 p-2"
+        className="flex flex-col items-center justify-between rounded border-2 border-custom-border-300 p-2"
         onSubmit={handleSubmit(createPageBlock)}
       >
         <div className="flex min-h-[75px] w-full">

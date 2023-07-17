@@ -67,12 +67,12 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         updates.map((item, index) => (
                           <React.Fragment key={item.id}>
                             <div className="flex items-center gap-3 text-xs text-custom-text-200">
-                              <span className="flex items-center rounded-full border border-custom-border-100 bg-custom-background-90 px-3 py-1.5 text-xs">
+                              <span className="flex items-center rounded-full border border-custom-border-300 bg-custom-background-90 px-3 py-1.5 text-xs">
                                 {item.tag_name}
                               </span>
                               <span>{renderLongDateFormat(item.published_at)}</span>
                               {index === 0 && (
-                                <span className="flex items-center rounded-full border border-custom-border-100 bg-custom-primary px-3 py-1.5 text-xs text-white">
+                                <span className="flex items-center rounded-full border border-custom-border-300 bg-custom-primary px-3 py-1.5 text-xs text-white">
                                   New
                                 </span>
                               )}

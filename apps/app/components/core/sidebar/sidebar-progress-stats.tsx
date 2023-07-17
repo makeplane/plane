@@ -87,7 +87,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         <Tab
           className={({ selected }) =>
             `w-full  ${
-              roundedTab ? "rounded-3xl border border-custom-border-100" : "rounded"
+              roundedTab ? "rounded-3xl border border-custom-border-300" : "rounded"
             } px-3 py-1 text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
@@ -98,7 +98,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         <Tab
           className={({ selected }) =>
             `w-full ${
-              roundedTab ? "rounded-3xl border border-custom-border-100" : "rounded"
+              roundedTab ? "rounded-3xl border border-custom-border-300" : "rounded"
             } px-3 py-1 text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : " hover:bg-custom-background-80"
             }`
@@ -109,7 +109,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         <Tab
           className={({ selected }) =>
             `w-full ${
-              roundedTab ? "rounded-3xl border border-custom-border-100" : "rounded"
+              roundedTab ? "rounded-3xl border border-custom-border-300" : "rounded"
             } px-3 py-1  text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : " hover:bg-custom-background-80"
             }`
@@ -159,7 +159,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   key={`unassigned-${index}`}
                   title={
                     <div className="flex items-center gap-2">
-                      <div className="h-5 w-5 rounded-full border-2 border-custom-border-100 bg-custom-background-80">
+                      <div className="h-5 w-5 rounded-full border-2 border-custom-border-300 bg-custom-background-80">
                         <img
                           src="/user.png"
                           height="100%"
