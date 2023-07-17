@@ -53,7 +53,7 @@ const TOUR_STEPS: {
     key: "modules",
     title: "Break into modules",
     description:
-      "Modules break your big think into Projects or Features, to help you organize better.",
+      "Modules break your big thing into Projects or Features, to help you organize better.",
     image: ModulesTour,
     prevStep: "cycles",
     nextStep: "views",

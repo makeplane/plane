@@ -17,12 +17,11 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import UpgradeToProModal from "./upgrade-to-pro-modal";
 // ui
-import { CircularProgress } from "components/ui";
+import { CircularProgress, Icon } from "components/ui";
 // icons
 import {
   ArrowLongLeftIcon,
   ChatBubbleOvalLeftEllipsisIcon,
-  RocketLaunchIcon,
   ArrowUpCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -171,7 +170,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
           }}
           title="Shortcuts"
         >
-          <RocketLaunchIcon className="h-4 w-4 text-custom-text-200" />
+          <Icon iconName="bolt" />
         </button>
         <button
           type="button"

@@ -27,6 +27,10 @@ type Props = {
   setDefaultValues: Dispatch<SetStateAction<any>>;
   user: ICurrentUserResponse | undefined;
   secondaryButton?: React.ReactNode;
+  primaryButtonText?: {
+    loading: string;
+    default: string;
+  };
 };
 
 const restrictedUrls = [
@@ -49,6 +53,10 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   setDefaultValues,
   user,
   secondaryButton,
+  primaryButtonText = {
+    loading: "Creating...",
+    default: "Create Workspace",
+  },
 }) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
@@ -203,7 +211,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       <div className="flex items-center gap-4">
         {secondaryButton}
         <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create Workspace"}
+          {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </PrimaryButton>
       </div>
     </form>
