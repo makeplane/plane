@@ -40,7 +40,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, issueId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const { issueView, params } = useIssuesView();
@@ -121,7 +121,8 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
           type: "success",
           message: "Issue deleted successfully",
         });
-        router.back();
+
+        if (issueId) router.back();
       })
       .catch((error) => {
         console.log(error);

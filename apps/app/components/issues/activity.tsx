@@ -98,7 +98,7 @@ const activityDetails: {
   },
   archived_at: {
     message: "archived",
-    icon: <Icon iconName="archive" className="text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="archive" className="!text-sm" aria-hidden="true" />,
   },
 };
 
