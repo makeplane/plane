@@ -108,7 +108,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-100 bg-custom-background-100 shadow-2xl transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-300 bg-custom-background-100 shadow-2xl transition-all">
                 <Combobox value={value} onChange={onChange}>
                   <div className="relative m-1">
                     <MagnifyingGlassIcon

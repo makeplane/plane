@@ -1,9 +1,3 @@
-// onboarding images
-import Welcome from "public/onboarding/welcome.svg";
-import Issue from "public/onboarding/issue.svg";
-import Cycle from "public/onboarding/cycle.svg";
-import Module from "public/onboarding/module.svg";
-import CommandMenu from "public/onboarding/command-menu.svg";
 // services images
 import GithubLogo from "public/services/github.png";
 import JiraLogo from "public/services/jira.png";

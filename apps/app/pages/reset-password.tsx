@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -12,9 +12,9 @@ import userService from "services/user.service";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { Input, SecondaryButton } from "components/ui";
-// icons
-import Logo from "public/plane-logos/blue-without-text.png";
+import { Input, PrimaryButton, Spinner } from "components/ui";
+// images
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 import type { NextPage } from "next";
 
@@ -24,6 +24,8 @@ type FormData = {
 };
 
 const ResetPasswordPage: NextPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
   const { uidb64, token } = router.query;
 
@@ -74,57 +76,70 @@ const ResetPasswordPage: NextPage = () => {
       );
   };
 
+  useEffect(() => {
+    if (parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");
+    else setIsLoading(false);
+  }, [router]);
+
+  if (isLoading)
+    return (
+      <div className="grid place-items-center h-screen w-full">
+        <Spinner />
+      </div>
+    );
+
   return (
     <DefaultLayout>
-      <div className="flex h-screen w-full items-center justify-center overflow-auto">
-        <div className="flex min-h-full w-full flex-col justify-center py-12 px-6 lg:px-8">
-          <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
-            <div className="flex flex-col items-center justify-center gap-10">
-              <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
-              <h2 className="text-center text-xl font-medium text-custom-text-100">
-                Reset your password
-              </h2>
-            </div>
-            <div className="flex flex-col rounded-[10px] bg-custom-background-100 shadow-md">
-              <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
-                <div>
-                  <Input
-                    id="password"
-                    type="password"
-                    name="password"
-                    register={register}
-                    validations={{
-                      required: "Password is required",
-                    }}
-                    error={errors.password}
-                    placeholder="Enter new password"
-                  />
-                </div>
-                <div className="mt-5">
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    name="confirmPassword"
-                    register={register}
-                    validations={{
-                      required: "Confirm password is required",
-                    }}
-                    error={errors.confirmPassword}
-                    placeholder="Confirm new password"
-                  />
-                </div>
-                <div className="mt-5">
-                  <SecondaryButton
-                    type="submit"
-                    className="w-full text-center"
-                    loading={isSubmitting}
-                  >
-                    {isSubmitting ? "Resetting..." : "Reset"}
-                  </SecondaryButton>
-                </div>
-              </form>
+      <>
+        <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
+        <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
+          <div className="grid place-items-center bg-custom-background-100">
+            <div className="h-[30px] w-[30px]">
+              <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
             </div>
           </div>
+        </div>
+      </>
+      <div className="grid place-items-center h-full w-full overflow-y-auto px-7">
+        <div className="w-full">
+          <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+            Reset your password
+          </h1>
+
+          <form
+            className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <div className="space-y-1">
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                register={register}
+                validations={{
+                  required: "Password is required",
+                }}
+                error={errors.password}
+                placeholder="Enter new password..."
+              />
+            </div>
+            <div className="space-y-1">
+              <Input
+                id="confirmPassword"
+                type="password"
+                name="confirmPassword"
+                register={register}
+                validations={{
+                  required: "Password confirmation is required",
+                }}
+                error={errors.confirmPassword}
+                placeholder="Confirm new password..."
+              />
+            </div>
+            <PrimaryButton type="submit" className="w-full text-center" loading={isSubmitting}>
+              {isSubmitting ? "Resetting..." : "Reset"}
+            </PrimaryButton>
+          </form>
         </div>
       </div>
     </DefaultLayout>

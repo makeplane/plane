@@ -169,8 +169,8 @@ class IssueViewSet(BaseViewSet):
             issue_queryset = (
                 self.get_queryset()
                 .filter(**filters)
-                .annotate(cycle_id=F("issue_cycle__id"))
-                .annotate(module_id=F("issue_module__id"))
+                .annotate(cycle_id=F("issue_cycle__cycle_id"))
+                .annotate(module_id=F("issue_module__module_id"))
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                     .order_by()
@@ -955,8 +955,8 @@ class IssueArchiveViewSet(BaseViewSet):
             issue_queryset = (
                 self.get_queryset()
                 .filter(**filters)
-                .annotate(cycle_id=F("issue_cycle__id"))
-                .annotate(module_id=F("issue_module__id"))
+                .annotate(cycle_id=F("issue_cycle__cycle_id"))
+                .annotate(module_id=F("issue_module__module_id"))
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                     .order_by()

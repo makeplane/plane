@@ -120,7 +120,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
         </div>
       )}
       <div
-        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-100 bg-custom-sidebar-background-100 px-4 py-2 ${
+        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-300 bg-custom-sidebar-background-100 px-4 py-2 ${
           sidebarCollapse ? "flex-col" : ""
         }`}
       >

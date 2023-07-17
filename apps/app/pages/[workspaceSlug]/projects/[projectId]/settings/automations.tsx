@@ -33,24 +33,24 @@ const AutomationsSettings: NextPage = () => {
   const { projectDetails } = useProjectDetails();
 
   const handleChange = async (formData: Partial<IProject>) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !projectDetails) return;
 
     mutate<IProject>(
       PROJECT_DETAILS(projectId as string),
       (prevData) => ({ ...(prevData as IProject), ...formData }),
       false
     );
+
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === projectDetails.id ? { ...p, ...formData } : p)),
+      false
+    );
+
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, formData, user)
-      .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => (p.id === projectDetails?.id ? { ...p, ...formData } : p)),
-          false
-        );
-        mutate(PROJECT_DETAILS(projectId as string));
-      })
+      .then(() => {})
       .catch(() => {
         setToastAlert({
           type: "error",

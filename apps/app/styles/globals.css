@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -9,6 +9,11 @@
   .text-1\.5xl {
     font-size: 1.375rem;
     line-height: 1.875rem;
+  }
+
+  .text-2\.5xl {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
   }
 }
 

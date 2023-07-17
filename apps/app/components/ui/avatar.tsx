@@ -37,7 +37,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     {user && user.avatar && user.avatar !== "" ? (
       <div
         className={`rounded-full border-2 ${
-          index ? "border-custom-border-100 bg-custom-background-80" : "border-transparent"
+          index ? "border-custom-border-300 bg-custom-background-80" : "border-transparent"
         }`}
         style={{
           height: height,
@@ -52,7 +52,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       </div>
     ) : (
       <div
-        className="grid place-items-center rounded-full border-2 border-custom-border-100 bg-gray-700 text-xs capitalize text-white"
+        className="grid place-items-center rounded-full border-2 border-custom-border-300 bg-gray-700 text-xs capitalize text-white"
         style={{
           height: height,
           width: width,

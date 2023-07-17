@@ -51,7 +51,7 @@ export const JiraImportUsers: FC = () => {
   }));
 
   return (
-    <div className="h-full w-full space-y-10 divide-y-2 divide-custom-border-100 overflow-y-auto">
+    <div className="h-full w-full space-y-10 divide-y-2 divide-custom-border-300 overflow-y-auto">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Users</h3>
