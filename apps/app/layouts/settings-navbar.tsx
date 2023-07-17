@@ -108,7 +108,7 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
                     : router.asPath === link.href
                 )
                   ? "border-custom-primary bg-custom-primary text-white"
-                  : "border-custom-border-300 bg-custom-background-100 hover:bg-custom-background-90"
+                  : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
               }`}
             >
               {link.label}

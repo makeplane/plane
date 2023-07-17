@@ -22,7 +22,7 @@ export const InboxFiltersList = () => {
           return (
             <div
               key={key}
-              className="flex items-center gap-x-2 rounded-full border border-custom-border-300 bg-custom-background-80 px-2 py-1"
+              className="flex items-center gap-x-2 rounded-full border border-custom-border-200 bg-custom-background-80 px-2 py-1"
             >
               <span className="capitalize text-custom-text-200">
                 {replaceUnderscoreIfSnakeCase(key)}:
@@ -116,7 +116,7 @@ export const InboxFiltersList = () => {
       <button
         type="button"
         onClick={clearAllFilters}
-        className="flex items-center gap-x-1 rounded-full border border-custom-border-300 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
+        className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
       >
         <span>Clear all</span>
         <XMarkIcon className="h-3 w-3" />

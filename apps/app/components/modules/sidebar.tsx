@@ -186,7 +186,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
       <div
         className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } h-full w-[24rem] overflow-y-auto border-l border-custom-border-300 bg-custom-sidebar-background-100 pt-5 pb-10 duration-300`}
+        } h-full w-[24rem] overflow-y-auto border-l border-custom-border-200 bg-custom-sidebar-background-100 pt-5 pb-10 duration-300`}
       >
         {module ? (
           <>
@@ -199,7 +199,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     render={({ field: { value } }) => (
                       <CustomSelect
                         customButton={
-                          <span className="flex cursor-pointer items-center rounded border-[0.5px] border-custom-border-300 bg-custom-background-90 px-2 py-1 text-center text-xs capitalize">
+                          <span className="flex cursor-pointer items-center rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-center text-xs capitalize">
                             {capitalizeFirstLetter(`${watch("status")}`)}
                           </span>
                         }
@@ -222,7 +222,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     {({ open }) => (
                       <>
                         <Popover.Button
-                          className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-300 bg-custom-background-90 px-2 py-1 text-xs ${
+                          className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
                             module.start_date ? "" : "text-custom-text-200"
                           }`}
                         >
@@ -275,7 +275,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     {({ open }) => (
                       <>
                         <Popover.Button
-                          className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-300 bg-custom-background-90 px-2 py-1 text-xs ${
+                          className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
                             module.target_date ? "" : "text-custom-text-200"
                           }`}
                         >
@@ -400,7 +400,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
               </div>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-300 p-6">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
@@ -484,7 +484,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-300 p-6">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
@@ -544,7 +544,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col border-t border-custom-border-300 px-6 py-6 text-xs">
+            <div className="flex w-full flex-col border-t border-custom-border-200 px-6 py-6 text-xs">
               <div className="flex w-full items-center justify-between">
                 <h4 className="text-sm font-medium text-custom-text-200">Links</h4>
                 <button

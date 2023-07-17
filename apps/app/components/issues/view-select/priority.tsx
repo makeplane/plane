@@ -74,7 +74,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
               ? "border-yellow-500/20 bg-yellow-500/20"
               : issue.priority === "low"
               ? "border-green-500/20 bg-green-500/20"
-              : "border-custom-border-300 bg-custom-background-80"
+              : "border-custom-border-200 bg-custom-background-80"
           } items-center`}
         >
           <Tooltip

@@ -115,7 +115,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
 
   return (
     <div
-      className={`flex scroll-m-8 items-center gap-2 rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-5 ${
+      className={`flex scroll-m-8 items-center gap-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5 ${
         labelForm ? "" : "hidden"
       }`}
       ref={ref}

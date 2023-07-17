@@ -71,6 +71,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
               }}
               error={errors.email}
               placeholder="Enter your email address..."
+              className="border-custom-border-300"
             />
           </div>
           <div className="space-y-1">
@@ -84,6 +85,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
               }}
               error={errors.password}
               placeholder="Enter your password..."
+              className="border-custom-border-300"
             />
           </div>
           <div className="text-right text-xs">

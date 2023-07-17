@@ -13,18 +13,8 @@ import { CommentCard } from "components/issues/comment";
 // ui
 import { Icon, Loader } from "components/ui";
 // icons
-import {
-  CalendarDaysIcon,
-  ChartBarIcon,
-  ChatBubbleBottomCenterTextIcon,
-  LinkIcon,
-  PaperClipIcon,
-  PlayIcon,
-  RectangleGroupIcon,
-  Squares2X2Icon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
+import { BlockedIcon, BlockerIcon } from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -41,11 +31,11 @@ const activityDetails: {
 } = {
   assignee: {
     message: "removed the assignee",
-    icon: <UserGroupIcon className="h-3 w-3" color="#6b7280" aria-hidden="true" />,
+    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
   },
   assignees: {
     message: "added a new assignee",
-    icon: <UserGroupIcon className="h-3 w-3" color="#6b7280" aria-hidden="true" />,
+    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
   },
   blocks: {
     message: "marked this issue being blocked by",
@@ -57,62 +47,58 @@ const activityDetails: {
   },
   cycles: {
     message: "set the cycle to",
-    icon: <CyclesIcon height="12" width="12" color="#6b7280" />,
+    icon: <Icon iconName="contrast" className="!text-sm" aria-hidden="true" />,
   },
   estimate_point: {
     message: "set the estimate point to",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
   },
   labels: {
-    icon: <TagIcon height="12" width="12" color="#6b7280" />,
+    icon: <Icon iconName="sell" className="!text-sm" aria-hidden="true" />,
   },
   modules: {
     message: "set the module to",
-    icon: <RectangleGroupIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="dataset" className="!text-sm" aria-hidden="true" />,
   },
   state: {
     message: "set the state to",
-    icon: <Squares2X2Icon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <Squares2X2Icon className="h-3 w-3" aria-hidden="true" />,
   },
   priority: {
     message: "set the priority to",
-    icon: <ChartBarIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
   },
   name: {
     message: "set the name to",
-    icon: (
-      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />
-    ),
+    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
   },
   description: {
     message: "updated the description.",
-    icon: (
-      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />
-    ),
+    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
   },
   target_date: {
     message: "set the due date to",
-    icon: <CalendarDaysIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
   },
   parent: {
     message: "set the parent to",
-    icon: <UserIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="supervised_user_circle" className="!text-sm" aria-hidden="true" />,
   },
   estimate: {
     message: "updated the estimate",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
   },
   link: {
     message: "updated the link",
-    icon: <LinkIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
   },
   attachment: {
     message: "updated the attachment",
-    icon: <PaperClipIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="attach_file" className="!text-sm" aria-hidden="true" />,
   },
   archived_at: {
     message: "archived",
-    icon: <Icon iconName="archive" className="text-sm text-custom-text-200" aria-hidden="true" />,
+    icon: <Icon iconName="archive" className="!text-sm" aria-hidden="true" />,
   },
 };
 
@@ -288,7 +274,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
             }
 
             value = (
-              <span className="relative inline-flex items-center rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+              <span className="relative inline-flex items-center rounded-full border border-custom-border-200 px-2 py-0.5 text-xs">
                 <span className="absolute flex flex-shrink-0 items-center justify-center">
                   <span
                     className="h-1.5 w-1.5 rounded-full"
@@ -352,7 +338,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                       <div>
                         <div className="relative px-1.5">
                           <div className="mt-1.5">
-                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 ring-white">
+                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
                               {activityItem.field ? (
                                 activityItem.new_value === "restore" ? (
                                   <Icon

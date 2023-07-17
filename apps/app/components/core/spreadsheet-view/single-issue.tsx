@@ -179,10 +179,10 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   return (
     <div
-      className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-300 w-full min-w-max"
+      className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max"
       style={{ gridTemplateColumns }}
     >
-      <div className="flex gap-1.5 items-center px-4 sticky z-[1] left-0 text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-300 w-full">
+      <div className="flex gap-1.5 items-center px-4 sticky z-[1] left-0 text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full">
         <div className="flex gap-1.5 items-center" style={issue.parent ? { paddingLeft } : {}}>
           <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100 w-14">
             {properties.key && (
@@ -198,7 +198,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                   onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
                   content={
                     <div
-                      className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-custom-border-300 bg-custom-background-90`}
+                      className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-custom-border-200 bg-custom-background-90`}
                     >
                       <button
                         type="button"
@@ -270,7 +270,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </Link>
       </div>
       {properties.state && (
-        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-300">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
           <ViewStateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -284,7 +284,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.priority && (
-        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-300">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
           <ViewPrioritySelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -297,7 +297,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.assignee && (
-        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-300">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
           <ViewAssigneeSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -310,7 +310,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.labels && (
-        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-300">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
           <ViewLabelSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -324,7 +324,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       )}
 
       {properties.due_date && (
-        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-300">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
           <ViewDueDateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -336,7 +336,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.estimate && (
-        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-300">
+        <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
           <ViewEstimateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
@@ -348,12 +348,12 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
       )}
       {properties.created_on && (
-        <div className="flex items-center text-xs cursor-default text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-300">
+        <div className="flex items-center text-xs cursor-default text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
           {renderLongDetailDateFormat(issue.created_at)}
         </div>
       )}
       {properties.updated_on && (
-        <div className="flex items-center text-xs cursor-default text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-300">
+        <div className="flex items-center text-xs cursor-default text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
           {renderLongDetailDateFormat(issue.updated_at)}
         </div>
       )}

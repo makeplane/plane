@@ -66,7 +66,7 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
       }
       options={options}
       onChange={onChange}
-      height="md"
+      maxHeight="md"
       multiple
       noChevron
     />

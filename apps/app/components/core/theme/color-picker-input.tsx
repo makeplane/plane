@@ -81,7 +81,7 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
               >
                 {watch(name) && watch(name) !== "" ? (
                   <span
-                    className="h-4 w-4 rounded border border-custom-border-300"
+                    className="h-4 w-4 rounded border border-custom-border-200"
                     style={{
                       backgroundColor: `${watch(name)}`,
                     }}

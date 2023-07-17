@@ -107,7 +107,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
           </div>
         </div>
       </div>
-      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-300 px-5 pt-5">
+      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-200 px-5 pt-5">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting}>
           {status

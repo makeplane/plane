@@ -219,7 +219,7 @@ export const SingleListIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className="flex flex-wrap items-center justify-between px-4 py-2.5 gap-2 border-b border-custom-border-300 bg-custom-background-100 last:border-b-0"
+        className="flex flex-wrap items-center justify-between px-4 py-2.5 gap-2 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
@@ -307,7 +307,7 @@ export const SingleListIssue: React.FC<Props> = ({
             />
           )}
           {properties.sub_issue_count && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <LayerDiagonalIcon className="h-3.5 w-3.5" />
@@ -317,7 +317,7 @@ export const SingleListIssue: React.FC<Props> = ({
             </div>
           )}
           {properties.link && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <LinkIcon className="h-3.5 w-3.5" />
@@ -327,7 +327,7 @@ export const SingleListIssue: React.FC<Props> = ({
             </div>
           )}
           {properties.attachment_count && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />

@@ -488,7 +488,7 @@ export const IssuesView: React.FC<Props> = ({
               {viewId ? "Update" : "Save"} view
             </PrimaryButton>
           </div>
-          {<div className="mt-3 border-t border-custom-border-300" />}
+          {<div className="mt-3 border-t border-custom-border-200" />}
         </>
       )}
 

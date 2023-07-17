@@ -37,7 +37,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
     <div>
       <h3 className="mb-2 font-semibold capitalize">{type} Issues</h3>
       {issues ? (
-        <div className="h-[calc(100%-2.25rem)] rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-4 text-sm">
+        <div className="h-[calc(100%-2.25rem)] rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 text-sm">
           <div
             className={`mb-2 grid grid-cols-4 gap-2 rounded-lg px-3 py-2 font-medium ${
               type === "overdue" ? "bg-red-500/20 bg-opacity-20" : "bg-custom-background-80"

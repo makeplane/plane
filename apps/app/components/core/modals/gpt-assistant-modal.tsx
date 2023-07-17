@@ -143,7 +143,7 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-4 shadow ${
+      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
         isOpen ? "block" : "hidden"
       }`}
     >

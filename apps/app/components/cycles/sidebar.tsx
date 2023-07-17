@@ -292,14 +292,14 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       <div
         className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } h-full w-[24rem] overflow-y-auto border-l border-custom-border-300 bg-custom-sidebar-background-100 pt-5 pb-10 duration-300`}
+        } h-full w-[24rem] overflow-y-auto border-l border-custom-border-200 bg-custom-sidebar-background-100 pt-5 pb-10 duration-300`}
       >
         {cycle ? (
           <>
             <div className="flex flex-col items-start justify-center">
               <div className="flex gap-2.5 px-5 text-sm">
                 <div className="flex items-center">
-                  <span className="flex items-center rounded border-[0.5px] border-custom-border-300 bg-custom-background-90 px-2 py-1 text-center text-xs capitalize">
+                  <span className="flex items-center rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-center text-xs capitalize">
                     {capitalizeFirstLetter(cycleStatus)}
                   </span>
                 </div>
@@ -309,7 +309,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       <>
                         <Popover.Button
                           disabled={isCompleted ?? false}
-                          className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-300 bg-custom-background-90 px-2 py-1 text-xs ${
+                          className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
                             cycle.start_date ? "" : "text-custom-text-200"
                           }`}
                         >
@@ -359,7 +359,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       <>
                         <Popover.Button
                           disabled={isCompleted ?? false}
-                          className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-300 bg-custom-background-90 px-2 py-1 text-xs ${
+                          className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
                             cycle.end_date ? "" : "text-custom-text-200"
                           }`}
                         >
@@ -477,7 +477,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
             </div>
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-300 p-6">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
                   <div
@@ -561,7 +561,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 )}
               </Disclosure>
             </div>
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-300 p-6">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
                   <div

@@ -337,7 +337,7 @@ const SinglePage: NextPage = () => {
                         return (
                           <div
                             key={label.id}
-                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                             onClick={() => {
                               const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
                               partialUpdatePage({ labels_list: updatedLabels });
@@ -455,13 +455,13 @@ const SinglePage: NextPage = () => {
                                       height: "1.85rem",
                                       fontSize: "0.875rem",
                                       paddingLeft: "0.25rem",
-                                      color: `rgba(var(--color-text-secondary))`,
+                                      color: `rgba(var(--color-text-200))`,
                                       boxShadow: "none",
                                       backgroundColor: `rgba(var(--color-background-90))`,
                                       borderLeft: `1px solid rgba(var(--color-background-80))`,
                                     },
                                     hash: {
-                                      color: `rgba(var(--color-text-secondary))`,
+                                      color: `rgba(var(--color-text-200))`,
                                       boxShadow: "none",
                                       backgroundColor: `rgba(var(--color-background-90))`,
                                     },

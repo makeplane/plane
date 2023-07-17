@@ -209,8 +209,8 @@ export const ActiveCycleDetails: React.FC = () => {
   }));
 
   return (
-    <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-custom-background-100 border border-custom-border-300">
-      <div className="grid grid-cols-1 divide-y border-custom-border-300 lg:divide-y-0 lg:divide-x lg:grid-cols-3">
+    <div className="grid-row-2 grid rounded-[10px] shadow divide-y bg-custom-background-100 border border-custom-border-200">
+      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:divide-y-0 lg:divide-x lg:grid-cols-3">
         <div className="flex flex-col text-xs">
           <div className="h-full w-full">
             <div className="flex h-60 flex-col gap-5 justify-between rounded-b-[10px] p-4">
@@ -362,8 +362,8 @@ export const ActiveCycleDetails: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="grid col-span-2 grid-cols-1 divide-y border-custom-border-300 md:divide-y-0 md:divide-x md:grid-cols-2">
-          <div className="flex h-60 flex-col border-custom-border-300">
+        <div className="grid col-span-2 grid-cols-1 divide-y border-custom-border-200 md:divide-y-0 md:divide-x md:grid-cols-2">
+          <div className="flex h-60 flex-col border-custom-border-200">
             <div className="flex h-full w-full flex-col text-custom-text-200 p-4">
               <div className="flex w-full items-center gap-2 py-1">
                 <span>Progress</span>
@@ -391,12 +391,12 @@ export const ActiveCycleDetails: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="border-custom-border-300 h-60 overflow-y-scroll">
+          <div className="border-custom-border-200 h-60 overflow-y-scroll">
             <ActiveCycleProgressStats cycle={cycle} />
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 divide-y border-custom-border-300 lg:divide-y-0 lg:divide-x lg:grid-cols-2">
+      <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:divide-y-0 lg:divide-x lg:grid-cols-2">
         <div className="flex flex-col justify-between p-4">
           <div>
             <div className="text-custom-primary">High Priority Issues</div>
@@ -406,7 +406,7 @@ export const ActiveCycleDetails: React.FC = () => {
                   issues.map((issue) => (
                     <div
                       key={issue.id}
-                      className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-custom-border-300 bg-custom-background-90 px-3 py-1.5"
+                      className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-custom-border-200 bg-custom-background-90 px-3 py-1.5"
                     >
                       <div className="flex flex-col gap-1">
                         <div>
@@ -444,7 +444,7 @@ export const ActiveCycleDetails: React.FC = () => {
                             {issue.label_details.map((label) => (
                               <span
                                 key={label.id}
-                                className="group flex items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs text-custom-text-200"
+                                className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs text-custom-text-200"
                               >
                                 <span
                                   className="h-1.5 w-1.5  rounded-full"
@@ -517,7 +517,7 @@ export const ActiveCycleDetails: React.FC = () => {
             </div>
           )}
         </div>
-        <div className="flex flex-col justify-between border-custom-border-300 p-4">
+        <div className="flex flex-col justify-between border-custom-border-200 p-4">
           <div className="flex items-start justify-between gap-4 py-1.5 text-xs">
             <div className="flex items-center gap-3 text-custom-text-100">
               <div className="flex items-center justify-center gap-1">

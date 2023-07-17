@@ -44,7 +44,7 @@ export const GanttChartBlocks: FC<{
                     </div>
 
                     <div
-                      className="rounded shadow-sm bg-custom-background-100 overflow-hidden relative flex items-center h-[34px] border border-custom-border-300"
+                      className="rounded shadow-sm bg-custom-background-100 overflow-hidden relative flex items-center h-[34px] border border-custom-border-200"
                       style={{
                         width: `${block?.position?.width}px`,
                       }}
@@ -68,7 +68,7 @@ export const GanttChartBlocks: FC<{
       </div>
 
       {/* sidebar */}
-      {/* <div className="fixed top-0 bottom-0 w-[300px] flex-shrink-0 divide-y divide-custom-border-300 border-r border-custom-border-300 overflow-y-auto">
+      {/* <div className="fixed top-0 bottom-0 w-[300px] flex-shrink-0 divide-y divide-custom-border-200 border-r border-custom-border-200 overflow-y-auto">
         {blocks &&
           blocks.length > 0 &&
           blocks.map((block: any, _idx: number) => (
