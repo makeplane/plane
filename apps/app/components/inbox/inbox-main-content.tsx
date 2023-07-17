@@ -310,7 +310,7 @@ export const InboxMainContent: React.FC = () => {
             </div>
           </div>
 
-          <div className="basis-1/3 space-y-5 border-custom-border-300 p-5">
+          <div className="basis-1/3 space-y-5 border-custom-border-200 p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

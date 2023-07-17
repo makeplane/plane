@@ -66,7 +66,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
         {({ open }) => (
           <>
             <Listbox.Button
-              className={`flex cursor-pointer items-center gap-1 rounded-md border border-custom-border-300 px-2 py-1 text-xs shadow-sm duration-300 hover:bg-custom-background-90 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
+              className={`flex cursor-pointer items-center gap-1 rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-300 hover:bg-custom-background-90 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
             >
               <CyclesIcon className="h-3 w-3 text-custom-text-200" />
               <div className="flex items-center gap-2 truncate">

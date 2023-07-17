@@ -219,11 +219,11 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-custom-background-100`
           : `relative`
       } ${
-        border ? `border border-custom-border-300` : ``
+        border ? `border border-custom-border-200` : ``
       } flex h-full flex-col rounded-sm select-none bg-custom-background-100 shadow`}
     >
       {/* chart title */}
-      {/* <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-custom-border-300">
+      {/* <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-custom-border-200">
         {title && (
           <div className="text-lg font-medium flex gap-2 items-center">
             <div>{title}</div>
@@ -244,7 +244,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       {/* chart header */}
       <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
         {/* <div
-          className="transition-all border border-custom-border-300 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
+          className="transition-all border border-custom-border-200 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
           onClick={() => setBlocksSidebarView(() => !blocksSidebarView)}
         >
           {blocksSidebarView ? (
@@ -279,7 +279,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             allViews.map((_chatView: any, _idx: any) => (
               <div
                 key={_chatView?.key}
-                className={`cursor-pointer rounded-sm border border-custom-border-300 p-1 px-2 text-xs ${
+                className={`cursor-pointer rounded-sm border border-custom-border-200 p-1 px-2 text-xs ${
                   currentView === _chatView?.key
                     ? `bg-custom-background-80`
                     : `hover:bg-custom-background-90`
@@ -293,7 +293,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
         <div className="flex items-center gap-1">
           <div
-            className={`cursor-pointer rounded-sm border border-custom-border-300 p-1 px-2 text-xs hover:bg-custom-background-80`}
+            className={`cursor-pointer rounded-sm border border-custom-border-200 p-1 px-2 text-xs hover:bg-custom-background-80`}
             onClick={handleToday}
           >
             Today
@@ -301,7 +301,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         </div>
 
         <div
-          className="transition-all border border-custom-border-300 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
+          className="transition-all border border-custom-border-200 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
           onClick={() => setFullScreenMode(() => !fullScreenMode)}
         >
           {fullScreenMode ? (
@@ -313,7 +313,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       </div>
 
       {/* content */}
-      <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-300">
+      <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200">
         <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
           id="scroll-container"

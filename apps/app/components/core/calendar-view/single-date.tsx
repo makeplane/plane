@@ -49,7 +49,7 @@ export const SingleCalendarDate: React.FC<Props> = ({
           key={index}
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className={`group relative flex min-h-[150px] flex-col gap-1.5 border-t border-custom-border-300 p-2.5 text-left text-sm font-medium hover:bg-custom-background-90 ${
+          className={`group relative flex min-h-[150px] flex-col gap-1.5 border-t border-custom-border-200 p-2.5 text-left text-sm font-medium hover:bg-custom-background-90 ${
             isMonthlyView ? "" : "pt-9"
           } ${
             showWeekEnds
@@ -83,7 +83,7 @@ export const SingleCalendarDate: React.FC<Props> = ({
           {totalIssues > 4 && (
             <button
               type="button"
-              className="w-min whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-1.5 py-1 text-xs"
+              className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 px-1.5 py-1 text-xs"
               onClick={() => setShowAllIssues((prevData) => !prevData)}
             >
               {showAllIssues ? "Hide" : totalIssues - 4 + " more"}

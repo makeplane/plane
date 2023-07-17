@@ -169,7 +169,7 @@ const MembersSettings: NextPage = () => {
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="divide-y divide-custom-border-300 rounded-[10px] border border-custom-border-300 bg-custom-background-100 px-6">
+            <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200 bg-custom-background-100 px-6">
               {members.length > 0
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">

@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
-  <div className="p-3 border border-custom-border-300 rounded-[10px]">
+  <div className="p-3 border border-custom-border-200 rounded-[10px]">
     <h6 className="text-base font-medium">{title}</h6>
     {users.length > 0 ? (
       <div className="mt-3 space-y-3">

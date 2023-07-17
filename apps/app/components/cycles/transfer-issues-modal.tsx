@@ -119,7 +119,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                       <XMarkIcon className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2 border-b border-custom-border-300 px-5 pb-3">
+                  <div className="flex items-center gap-2 border-b border-custom-border-200 px-5 pb-3">
                     <MagnifyingGlassIcon className="h-4 w-4 text-custom-text-200" />
                     <input
                       className="bg-custom-background-90 outline-none"

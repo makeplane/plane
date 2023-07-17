@@ -20,7 +20,7 @@ export const SingleLabel: React.FC<Props> = ({
   editLabel,
   handleLabelDelete,
 }) => (
-  <div className="gap-2 space-y-3 divide-y divide-custom-border-300 rounded-[10px]  border border-custom-border-300 bg-custom-background-100 p-5">
+  <div className="gap-2 space-y-3 divide-y divide-custom-border-200 rounded-[10px]  border border-custom-border-200 bg-custom-background-100 p-5">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
         <span

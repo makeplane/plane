@@ -120,7 +120,7 @@ const OnBoard: NextPage = () => {
                         className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
                           isSelected
                             ? "border-custom-primary-100"
-                            : "border-custom-border-300 hover:bg-custom-background-80"
+                            : "border-custom-border-200 hover:bg-custom-background-80"
                         }`}
                         onClick={() =>
                           handleInvitation(invitation, isSelected ? "withdraw" : "accepted")

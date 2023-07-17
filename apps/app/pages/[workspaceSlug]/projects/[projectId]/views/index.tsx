@@ -102,7 +102,7 @@ const ProjectViews: NextPage = () => {
         views.length > 0 ? (
           <div className="space-y-5 p-8">
             <h3 className="text-2xl font-semibold text-custom-text-100">Views</h3>
-            <div className="divide-y divide-custom-border-300 rounded-[10px] border border-custom-border-300">
+            <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200">
               {views.map((view) => (
                 <SingleViewItem
                   key={view.id}

@@ -529,7 +529,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             </div>
           </div>
         </div>
-        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-300 px-5 pt-5">
+        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-200 px-5 pt-5">
           <div
             className="flex cursor-pointer items-center gap-1"
             onClick={() => setCreateMore((prevData) => !prevData)}

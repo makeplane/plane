@@ -121,6 +121,7 @@ const ResetPasswordPage: NextPage = () => {
                 }}
                 error={errors.password}
                 placeholder="Enter new password..."
+                className="border-custom-border-300"
               />
             </div>
             <div className="space-y-1">
@@ -134,6 +135,7 @@ const ResetPasswordPage: NextPage = () => {
                 }}
                 error={errors.confirmPassword}
                 placeholder="Confirm new password..."
+                className="border-custom-border-300"
               />
             </div>
             <PrimaryButton type="submit" className="w-full text-center" loading={isSubmitting}>
