@@ -100,7 +100,7 @@ export const CustomSearchSelect = ({
                 width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
               } ${optionsClassName}`}
             >
-              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-100 bg-custom-background-90 px-2">
+              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
                 <Combobox.Input
                   className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"

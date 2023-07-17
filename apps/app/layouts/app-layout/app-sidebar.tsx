@@ -19,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
 
   return (
     <div
-      className={`fixed md:relative inset-y-0 flex flex-col bg-custom-sidebar-background-100 h-full flex-shrink-0 flex-grow-0 border-r border-custom-sidebar-border-100 z-20 duration-300 ${
+      className={`fixed md:relative inset-y-0 flex flex-col bg-custom-sidebar-background-100 h-full flex-shrink-0 flex-grow-0 border-r border-custom-sidebar-border-200 z-20 duration-300 ${
         sidebarCollapse ? "" : "md:w-[280px]"
       } ${toggleSidebar ? "left-0" : "-left-full md:left-0"}`}
     >

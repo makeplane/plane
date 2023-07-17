@@ -92,7 +92,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
               ? removeIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
               : handleModuleChange(modules?.find((m) => m.id === value) as IModule);
           }}
-          width="auto"
+          width="w-full"
           position="right"
           maxHeight="rg"
           disabled={isNotAllowed}

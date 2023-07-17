@@ -153,6 +153,7 @@ from plane.api.views import (
     ## End Analytics
     # Notification
     NotificationViewSet,
+    UnreadNotificationEndpoint,
     ## End Notification
 )
 
@@ -1381,6 +1382,11 @@ urlpatterns = [
             }
         ),
         name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/unread/",
+        UnreadNotificationEndpoint.as_view(),
+        name="unread-notifications",
     ),
     ## End Notification
 ]
