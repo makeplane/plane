@@ -177,7 +177,7 @@ const ProjectCycles: NextPage = () => {
                     `rounded-3xl border px-6 py-1 outline-none ${
                       selected
                         ? "border-custom-primary bg-custom-primary text-white font-medium"
-                        : "border-custom-border-100 bg-custom-background-100 hover:bg-custom-background-80"
+                        : "border-custom-border-300 bg-custom-background-100 hover:bg-custom-background-80"
                     }`
                   }
                 >

@@ -48,7 +48,7 @@ const BillingSettings: NextPage = () => {
           </div>
           <div className="space-y-8 md:w-2/3">
             <div>
-              <div className="w-80 rounded-md border border-custom-border-100 bg-custom-background-100 p-4 text-center">
+              <div className="w-80 rounded-md border border-custom-border-300 bg-custom-background-100 p-4 text-center">
                 <h4 className="text-md mb-1 leading-6">Payment due</h4>
                 <h2 className="text-3xl font-extrabold">--</h2>
               </div>

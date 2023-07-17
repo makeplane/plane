@@ -337,7 +337,7 @@ const SinglePage: NextPage = () => {
                         return (
                           <div
                             key={label.id}
-                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                             onClick={() => {
                               const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
                               partialUpdatePage({ labels_list: updatedLabels });

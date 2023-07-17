@@ -131,7 +131,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
         data={module}
         user={user}
       />
-      <div className="flex flex-col divide-y divide-custom-border-100 overflow-hidden rounded-[10px] border border-custom-border-100 bg-custom-background-100 text-xs">
+      <div className="flex flex-col divide-y divide-custom-border-300 overflow-hidden rounded-[10px] border border-custom-border-300 bg-custom-background-100 text-xs">
         <div className="p-4">
           <div className="flex w-full flex-col gap-5">
             <div className="flex items-start justify-between gap-2">

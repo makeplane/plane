@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 // components
 import { EmailResetPasswordForm } from "components/account";
 // ui
-import { Input, SecondaryButton } from "components/ui";
+import { Input, PrimaryButton } from "components/ui";
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -42,28 +42,38 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
 
   return (
     <>
+      <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+        {isResettingPassword
+          ? "Reset your password"
+          : isSignUpPage
+          ? "Sign up on Plane"
+          : "Sign in to Plane"}
+      </h1>
       {isResettingPassword ? (
         <EmailResetPasswordForm setIsResettingPassword={setIsResettingPassword} />
       ) : (
-        <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
-          <div>
+        <form
+          className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="space-y-1">
             <Input
               id="email"
               type="email"
               name="email"
               register={register}
               validations={{
-                required: "Email ID is required",
+                required: "Email address is required",
                 validate: (value) =>
                   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                     value
-                  ) || "Email ID is not valid",
+                  ) || "Email address is not valid",
               }}
               error={errors.email}
-              placeholder="Enter your email ID"
+              placeholder="Enter your email address..."
             />
           </div>
-          <div className="mt-5">
+          <div className="space-y-1">
             <Input
               id="password"
               type="password"
@@ -73,30 +83,28 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
                 required: "Password is required",
               }}
               error={errors.password}
-              placeholder="Enter your password"
+              placeholder="Enter your password..."
             />
           </div>
-          <div className="mt-2 flex items-center justify-between">
-            <div className="ml-auto text-sm">
-              {isSignUpPage ? (
-                <Link href="/">
-                  <a className="font-medium text-custom-primary hover:text-custom-primary">
-                    Already have an account? Sign in.
-                  </a>
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsResettingPassword(true)}
-                  className="font-medium text-custom-primary hover:text-custom-primary"
-                >
-                  Forgot your password?
-                </button>
-              )}
-            </div>
+          <div className="text-right text-xs">
+            {isSignUpPage ? (
+              <Link href="/">
+                <a className="text-custom-text-200 hover:text-custom-primary-100">
+                  Already have an account? Sign in.
+                </a>
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsResettingPassword(true)}
+                className="text-custom-text-200 hover:text-custom-primary-100"
+              >
+                Forgot your password?
+              </button>
+            )}
           </div>
-          <div className="mt-5">
-            <SecondaryButton
+          <div>
+            <PrimaryButton
               type="submit"
               className="w-full text-center"
               disabled={!isValid && isDirty}
@@ -105,14 +113,14 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
               {isSignUpPage
                 ? isSubmitting
                   ? "Signing up..."
-                  : "Sign Up"
+                  : "Sign up"
                 : isSubmitting
                 ? "Signing in..."
-                : "Sign In"}
-            </SecondaryButton>
+                : "Sign in"}
+            </PrimaryButton>
             {!isSignUpPage && (
               <Link href="/sign-up">
-                <a className="block font-medium text-custom-primary hover:text-custom-primary text-sm mt-1">
+                <a className="block text-custom-text-200 hover:text-custom-primary-100 text-xs mt-4">
                   Don{"'"}t have an account? Sign up.
                 </a>
               </Link>

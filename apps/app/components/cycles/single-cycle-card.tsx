@@ -128,7 +128,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
 
   return (
     <div>
-      <div className="flex flex-col rounded-[10px] bg-custom-background-100 border border-custom-border-100 text-xs shadow">
+      <div className="flex flex-col rounded-[10px] bg-custom-background-100 border border-custom-border-300 text-xs shadow">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
@@ -321,7 +321,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
           <Disclosure>
             {({ open }) => (
               <div
-                className={`flex h-full w-full flex-col rounded-b-[10px] border-t border-custom-border-100 bg-custom-background-80 text-custom-text-200 ${
+                className={`flex h-full w-full flex-col rounded-b-[10px] border-t border-custom-border-300 bg-custom-background-80 text-custom-text-200 ${
                   open ? "" : "flex-row"
                 }`}
               >

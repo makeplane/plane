@@ -87,7 +87,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="border-b border-custom-border-100 bg-custom-background-100 px-4 py-2.5 last:border-b-0">
+    <div className="border-b border-custom-border-300 bg-custom-background-100 px-4 py-2.5 last:border-b-0">
       <div key={issue.id} className="flex items-center justify-between gap-2">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
@@ -139,7 +139,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               {issue.label_details.map((label) => (
                 <span
                   key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200"
+                  className="group flex items-center gap-1 rounded-2xl border border-custom-border-300 px-2 py-0.5 text-xs text-custom-text-200"
                 >
                   <span
                     className="h-1.5 w-1.5 rounded-full"
@@ -155,7 +155,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             ""
           )}
           {properties.assignee && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2 py-1 text-xs shadow-sm">
               <Tooltip
                 position="top-right"
                 tooltipHeading="Assignees"
@@ -176,7 +176,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </div>
           )}
           {properties.sub_issue_count && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <LayerDiagonalIcon className="h-3.5 w-3.5" />
@@ -186,7 +186,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </div>
           )}
           {properties.link && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <LinkIcon className="h-3.5 w-3.5 text-custom-text-200" />
@@ -196,7 +196,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </div>
           )}
           {properties.attachment_count && (
-            <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
                   <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-custom-text-200" />

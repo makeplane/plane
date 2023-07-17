@@ -49,7 +49,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
           )}
           <Link href={link.url}>
             <a
-              className="relative flex gap-2 rounded-md bg-custom-background-100 p-2"
+              className="relative flex gap-2 rounded-md bg-custom-background-90 p-2"
               target="_blank"
             >
               <div className="mt-0.5">

@@ -72,7 +72,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             alt={comment.actor_detail.first_name}
             height={30}
             width={30}
-            className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-100"
+            className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-300"
           />
         ) : (
           <div
@@ -135,7 +135,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               value={comment.comment_html}
               editable={false}
               noBorder
-              customClassName="text-xs border border-custom-border-100 bg-custom-background-100"
+              customClassName="text-xs border border-custom-border-300 bg-custom-background-100"
               ref={showEditorRef}
             />
           </div>

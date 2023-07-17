@@ -164,7 +164,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
           </div>
         </div>
       </div>
-      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-100 px-5 pt-5">
+      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-300 px-5 pt-5">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting || isDateValid ? false : true}>
           {status
