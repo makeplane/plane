@@ -212,10 +212,41 @@ class NotificationViewSet(BaseViewSet):
 class UnreadNotificationEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
-            unread_notification_count = Notification.objects.filter(
-                receiver=request.user, workspace__slug=slug, read_at__isnull=True
+            # Watching Issues Count
+            watching_notification_count = Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                entity_identifier__in=IssueSubscriber.objects.filter(
+                    workspace__slug=slug, subscriber_id=request.user.id
+                ).values_list("issue_id", flat=True),
             ).count()
-            return Response({"unread_count": unread_notification_count})
+
+            # My Issues Count
+            my_issues_count = Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                entity_identifier__in=IssueAssignee.objects.filter(
+                    workspace__slug=slug, assignee_id=request.user.id
+                ).values_list("issue_id", flat=True),
+            ).count()
+
+            # Created Issues Count
+            created_issues_count = Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                entity_identifier__in=Issue.objects.filter(
+                    workspace__slug=slug, created_by=request.user
+                ).values_list("pk", flat=True),
+            ).count()
+
+            return Response(
+                {
+                    "watching_notifications": watching_notification_count,
+                    "my_issues": my_issues_count,
+                    "created_issues": created_issues_count,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
