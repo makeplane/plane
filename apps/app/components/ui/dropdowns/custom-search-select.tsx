@@ -5,8 +5,12 @@ import { Combobox, Transition } from "@headlessui/react";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+// types
+import { DropdownProps } from "./types";
 
-type CustomSearchSelectProps = {
+export type CustomSearchSelectProps = DropdownProps & {
+  footerOption?: JSX.Element;
+  multiple?: boolean;
   value: any;
   onChange: any;
   options:
@@ -16,43 +20,27 @@ type CustomSearchSelectProps = {
         content: JSX.Element;
       }[]
     | undefined;
-  label?: string | JSX.Element;
-  textAlignment?: "left" | "center" | "right";
-  height?: "sm" | "md" | "rg" | "lg";
-  position?: "right" | "left";
-  verticalPosition?: "top" | "bottom";
-  noChevron?: boolean;
-  customButton?: JSX.Element;
-  className?: string;
-  optionsClassName?: string;
-  input?: boolean;
-  disabled?: boolean;
-  selfPositioned?: boolean;
-  multiple?: boolean;
-  footerOption?: JSX.Element;
-  noResultIcon?: JSX.Element;
-  dropdownWidth?: string;
 };
+
 export const CustomSearchSelect = ({
+  buttonClassName = "",
+  className = "",
+  customButton,
+  disabled = false,
+  footerOption,
+  input = false,
   label,
-  textAlignment,
-  height = "md",
-  value,
+  maxHeight = "md",
+  multiple = false,
+  noChevron = false,
   onChange,
   options,
-  position = "left",
-  verticalPosition = "bottom",
-  noChevron = false,
-  customButton,
-  className = "",
   optionsClassName = "",
-  input = false,
-  disabled = false,
+  position = "left",
   selfPositioned = false,
-  multiple = false,
-  noResultIcon,
-  footerOption,
-  dropdownWidth,
+  value,
+  verticalPosition = "bottom",
+  width = "auto",
 }: CustomSearchSelectProps) => {
   const [query, setQuery] = useState("");
 
@@ -72,7 +60,7 @@ export const CustomSearchSelect = ({
   return (
     <Combobox
       as="div"
-      className={`${!selfPositioned ? "relative" : ""} flex-shrink-0 text-left ${className}`}
+      className={`${selfPositioned ? "" : "relative"} flex-shrink-0 text-left ${className}`}
       {...props}
     >
       {({ open }: any) => (
@@ -81,17 +69,13 @@ export const CustomSearchSelect = ({
             <Combobox.Button as="div">{customButton}</Combobox.Button>
           ) : (
             <Combobox.Button
-              className={`flex w-full border border-custom-border-200 ${
-                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
-              } ${
+              className={`flex items-center justify-between gap-1 w-full rounded-md shadow-sm border border-custom-border-100 duration-300 focus:outline-none ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
-              } items-center justify-between gap-1 rounded-md shadow-sm duration-300 focus:outline-none focus:ring-1 focus:ring-custom-border-100 ${
-                textAlignment === "right"
-                  ? "text-right"
-                  : textAlignment === "center"
-                  ? "text-center"
-                  : "text-left"
-              }`}
+              } ${
+                disabled
+                  ? "cursor-not-allowed text-custom-text-200"
+                  : "cursor-pointer hover:bg-custom-background-80"
+              } ${buttonClassName}`}
             >
               {label}
               {!noChevron && !disabled && (
@@ -110,13 +94,11 @@ export const CustomSearchSelect = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Combobox.Options
-              className={`${optionsClassName} absolute min-w-[10rem] border border-custom-border-200 p-2 ${
-                position === "right" ? "right-0" : "left-0"
-              } ${
-                verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"
-              } z-10 origin-top-right rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
-                dropdownWidth ? dropdownWidth : ``
-              } `}
+              className={`absolute z-10 min-w-[10rem] border border-custom-border-100 p-2 rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
+                position === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
+              } ${verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"} ${
+                width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
+              } ${optionsClassName}`}
             >
               <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
@@ -129,14 +111,14 @@ export const CustomSearchSelect = ({
               </div>
               <div
                 className={`mt-2 space-y-1 ${
-                  height === "sm"
+                  maxHeight === "lg"
+                    ? "max-h-60"
+                    : maxHeight === "md"
+                    ? "max-h-48"
+                    : maxHeight === "rg"
+                    ? "max-h-36"
+                    : maxHeight === "sm"
                     ? "max-h-28"
-                    : height === "md"
-                    ? "max-h-44"
-                    : height === "rg"
-                    ? "max-h-56"
-                    : height === "lg"
-                    ? "max-h-80"
                     : ""
                 } overflow-y-scroll`}
               >
@@ -147,9 +129,9 @@ export const CustomSearchSelect = ({
                         key={option.value}
                         value={option.value}
                         className={({ active, selected }) =>
-                          `${active || selected ? "bg-custom-background-80" : ""} ${
-                            selected ? "text-custom-text-100" : "text-custom-text-200"
-                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5`
+                          `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                            active || selected ? "bg-custom-background-80" : ""
+                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                         }
                       >
                         {({ active, selected }) => (
@@ -176,7 +158,6 @@ export const CustomSearchSelect = ({
                     ))
                   ) : (
                     <span className="flex items-center gap-2 p-1">
-                      {noResultIcon && noResultIcon}
                       <p className="text-left text-custom-text-200 ">No matching results</p>
                     </span>
                   )

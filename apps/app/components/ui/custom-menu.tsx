@@ -4,7 +4,7 @@ import Link from "next/link";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { ChevronDownIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Icon } from "./icon";
 
 type Props = {

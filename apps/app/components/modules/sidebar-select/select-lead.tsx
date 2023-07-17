@@ -75,7 +75,7 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
             </div>
           }
           options={options}
-          height="md"
+          maxHeight="md"
           position="right"
           onChange={onChange}
         />

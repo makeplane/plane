@@ -223,7 +223,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                   }}
                                   options={options}
                                   position="left"
-                                  dropdownWidth="w-full min-w-[12rem]"
+                                  width="w-full min-w-[12rem]"
                                 />
                               )}
                             />
