@@ -84,7 +84,7 @@ const SearchListbox: React.FC<Props> = ({
         <>
           <Combobox.Label className="sr-only">{title}</Combobox.Label>
           <Combobox.Button
-            className={`flex cursor-pointer items-center gap-1 rounded-md border  border-custom-border-300 px-2 py-1 text-xs shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary ${
+            className={`flex cursor-pointer items-center gap-1 rounded-md border  border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-300 hover:bg-custom-background-90 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary ${
               buttonClassName || ""
             }`}
           >

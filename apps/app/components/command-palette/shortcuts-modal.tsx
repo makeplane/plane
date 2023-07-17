@@ -104,7 +104,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         </span>
                       </Dialog.Title>
                       <div>
-                        <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-custom-border-300 bg-custom-background-90 px-3 py-2">
+                        <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-custom-border-200 bg-custom-background-90 px-3 py-2">
                           <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-200" />
                           <Input
                             className="w-full  border-none bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
@@ -130,15 +130,15 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-custom-border-300 bg-custom-background-90 p-1.5">
+                                            <span className="flex h-full items-center rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5">
                                               <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
                                             </span>
                                           ) : key === "Ctrl" ? (
-                                            <kbd className="rounded-sm border border-custom-border-300 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
+                                            <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
                                               <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
                                             </kbd>
                                           ) : (
-                                            <kbd className="rounded-sm border border-custom-border-300 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
+                                            <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
                                               {key}
                                             </kbd>
                                           )}
@@ -173,15 +173,15 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-custom-border-300 bg-custom-background-90 p-1.5 text-custom-text-200">
+                                            <span className="flex h-full items-center rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-custom-text-200">
                                               <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
                                             </span>
                                           ) : key === "Ctrl" ? (
-                                            <kbd className="rounded-sm border border-custom-border-300 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
+                                            <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
                                               <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
                                             </kbd>
                                           ) : (
-                                            <kbd className="rounded-sm border border-custom-border-300 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
+                                            <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
                                               {key}
                                             </kbd>
                                           )}

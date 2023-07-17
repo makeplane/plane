@@ -88,7 +88,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                       <>
                         {openChildFor?.id === option.id && (
                           <div
-                            className={`absolute h-auto max-h-72 w-72 rounded-lg border border-custom-border-300 bg-custom-background-80 ${
+                            className={`absolute h-auto max-h-72 w-72 rounded-lg border border-custom-border-200 bg-custom-background-80 ${
                               direction === "right"
                                 ? "left-full translate-x-2 rounded-tl-none shadow-md"
                                 : "right-full -translate-x-2 rounded-tr-none shadow-md"
@@ -123,7 +123,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                             ))}
 
                             <div
-                              className={`absolute h-0 w-0 border-t-8 border-custom-border-300 ${
+                              className={`absolute h-0 w-0 border-t-8 border-custom-border-200 ${
                                 direction === "right"
                                   ? "top-0 left-0 -translate-x-2 border-r-8 border-b-8 border-b-transparent border-t-transparent border-l-transparent"
                                   : "top-0 right-0 translate-x-2 border-l-8 border-b-8 border-b-transparent border-t-transparent border-r-transparent"

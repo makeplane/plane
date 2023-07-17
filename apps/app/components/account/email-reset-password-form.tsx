@@ -78,6 +78,7 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
           }}
           error={errors.email}
           placeholder="Enter registered email address.."
+          className="border-custom-border-300"
         />
       </div>
       <div className="mt-5 flex flex-col-reverse sm:flex-row items-center gap-2">

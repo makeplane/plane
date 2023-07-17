@@ -186,10 +186,10 @@ const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
         manager={manager}
         initialContent={state}
         classNames={[
-          `p-3 relative focus:outline-none rounded-md focus:border-custom-border-300 ${
-            noBorder ? "" : "border border-custom-border-300"
+          `p-3 relative focus:outline-none rounded-md focus:border-custom-border-200 ${
+            noBorder ? "" : "border border-custom-border-200"
           } ${
-            borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
+            borderOnFocus ? "focus:border border-custom-border-200" : "focus:border-0"
           } ${customClassName}`,
         ]}
         editable={editable}

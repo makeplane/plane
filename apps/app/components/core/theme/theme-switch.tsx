@@ -71,9 +71,8 @@ export const ThemeSwitch: React.FC<Props> = ({
         }
         onChange={({ value, type }: { value: string; type: string }) => {
           if (value === "custom") {
-            if (user?.theme.palette) {
-              setPreLoadedData(user.theme);
-            }
+            if (user?.theme.palette) setPreLoadedData(user.theme);
+
             if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
           } else {
             if (customThemeSelectorOptions) setCustomThemeSelectorOptions(false);

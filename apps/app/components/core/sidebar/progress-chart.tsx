@@ -119,7 +119,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
         gridXValues={chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : ""))}
         enableSlices="x"
         sliceTooltip={(datum) => (
-          <div className="rounded-md border border-custom-border-300 bg-custom-background-80 p-2 text-xs">
+          <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
             {datum.slice.points[0].data.yFormatted}
             <span className="text-custom-text-200"> issues pending on </span>
             {datum.slice.points[0].data.xFormatted}

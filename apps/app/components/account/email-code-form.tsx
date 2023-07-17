@@ -136,6 +136,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             }}
             error={errors.email}
             placeholder="Enter your email address..."
+            className="border-custom-border-300"
           />
         </div>
 
@@ -151,6 +152,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               }}
               error={errors.token}
               placeholder="Enter code..."
+              className="border-custom-border-300"
             />
             <button
               type="button"

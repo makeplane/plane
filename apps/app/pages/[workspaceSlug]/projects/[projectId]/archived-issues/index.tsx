@@ -55,11 +55,11 @@ const ProjectArchivedIssues: NextPage = () => {
         }
       >
         <div className="h-full w-full flex flex-col">
-          <div className="flex items-center ga-1 px-4 py-2.5 shadow-sm border-b border-custom-border-300">
+          <div className="flex items-center ga-1 px-4 py-2.5 shadow-sm border-b border-custom-border-200">
             <button
               type="button"
               onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
-              className="flex items-center gap-1.5 rounded-full border border-custom-border-300 px-3 py-1.5 text-xs"
+              className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
             >
               <Icon iconName="archive" className="text-base" />
               <span>Archived Issues</span>

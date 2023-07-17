@@ -72,7 +72,7 @@ export const FiltersDropdown: React.FC = () => {
         ]}
       />
       {filtersLength > 0 && (
-        <div className="absolute -top-2 -right-2 h-4 w-4 text-[0.65rem] grid place-items-center rounded-full text-custom-text-100 bg-custom-background-80 border border-custom-border-300 z-10">
+        <div className="absolute -top-2 -right-2 h-4 w-4 text-[0.65rem] grid place-items-center rounded-full text-custom-text-100 bg-custom-background-80 border border-custom-border-200 z-10">
           <span>{filtersLength}</span>
         </div>
       )}

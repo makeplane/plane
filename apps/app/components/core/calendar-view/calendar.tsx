@@ -191,7 +191,7 @@ export const CalendarView: React.FC<Props> = ({
             {weeks.map((date, index) => (
               <div
                 key={index}
-                className={`flex  items-center justify-start gap-2 border-custom-border-300 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200 ${
+                className={`flex  items-center justify-start gap-2 border-custom-border-200 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200 ${
                   !isMonthlyView
                     ? showWeekEnds
                       ? (index + 1) % 7 === 0

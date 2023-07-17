@@ -99,7 +99,7 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
   );
 
   return (
-    <div className="flex items-center justify-between gap-2 rounded-[10px] border border-custom-border-300 bg-custom-background-100 p-5">
+    <div className="flex items-center justify-between gap-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5">
       <div className="flex items-start gap-4">
         <div className="h-12 w-12 flex-shrink-0">
           <Image

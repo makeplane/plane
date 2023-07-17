@@ -40,7 +40,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
   return (
     <>
       {children && children.length === 0 ? (
-        <div className="gap-2 space-y-3 divide-y rounded-md border  border-custom-border-300 p-3 md:w-2/3">
+        <div className="gap-2 space-y-3 divide-y rounded-md border  border-custom-border-200 p-3 md:w-2/3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span
