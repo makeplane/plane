@@ -39,8 +39,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
 
   const { setToastAlert } = useToast();
 
-  if (notification.data.issue_activity.field === "None") return null;
-
   return (
     <div
       key={notification.id}
@@ -88,30 +86,39 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 </span>
                 {notification.data.issue_activity.field !== "comment" &&
                   notification.data.issue_activity.verb}{" "}
-                {notification.data.issue_activity.field !== "comment"
-                  ? replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)
-                  : "commented"}{" "}
-                {notification.data.issue_activity.field !== "comment" ? "to" : ""}
+                {notification.data.issue_activity.field === "comment"
+                  ? "commented"
+                  : notification.data.issue_activity.field === "None"
+                  ? null
+                  : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
+                {notification.data.issue_activity.field !== "comment" &&
+                notification.data.issue_activity.field !== "None"
+                  ? "to"
+                  : ""}
                 <span className="font-semibold text-custom-text-200">
                   {" "}
-                  {notification.data.issue_activity.field !== "comment" ? (
-                    notification.data.issue_activity.field === "target_date" ? (
-                      renderShortDateWithYearFormat(notification.data.issue_activity.new_value)
-                    ) : notification.data.issue_activity.field === "attachment" ? (
-                      "the issue"
-                    ) : stripHTML(notification.data.issue_activity.new_value).length > 55 ? (
-                      stripHTML(notification.data.issue_activity.new_value).slice(0, 50) + "..."
+                  {notification.data.issue_activity.field !== "None" ? (
+                    notification.data.issue_activity.field !== "comment" ? (
+                      notification.data.issue_activity.field === "target_date" ? (
+                        renderShortDateWithYearFormat(notification.data.issue_activity.new_value)
+                      ) : notification.data.issue_activity.field === "attachment" ? (
+                        "the issue"
+                      ) : stripHTML(notification.data.issue_activity.new_value).length > 55 ? (
+                        stripHTML(notification.data.issue_activity.new_value).slice(0, 50) + "..."
+                      ) : (
+                        stripHTML(notification.data.issue_activity.new_value)
+                      )
                     ) : (
-                      stripHTML(notification.data.issue_activity.new_value)
+                      <span>
+                        {`"`}
+                        {notification.data.issue_activity.new_value.length > 55
+                          ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
+                          : notification.data.issue_activity.issue_comment}
+                        {`"`}
+                      </span>
                     )
                   ) : (
-                    <span>
-                      {`"`}
-                      {notification.data.issue_activity.new_value.length > 55
-                        ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
-                        : notification.data.issue_activity.issue_comment}
-                      {`"`}
-                    </span>
+                    "the issue and assigned it to you."
                   )}
                 </span>
               </p>

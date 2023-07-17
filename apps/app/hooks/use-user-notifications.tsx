@@ -9,7 +9,7 @@ import useSWR from "swr";
 import userNotificationServices from "services/notifications.service";
 
 // fetch-keys
-import { USER_WORKSPACE_NOTIFICATIONS } from "constants/fetch-keys";
+import { UNREAD_NOTIFICATIONS_COUNT, USER_WORKSPACE_NOTIFICATIONS } from "constants/fetch-keys";
 
 // type
 import type { NotificationType } from "types";
@@ -46,6 +46,14 @@ const useUserNotification = () => {
       : null
   );
 
+  const { data: notificationCount, mutate: mutateNotificationCount } = useSWR(
+    workspaceSlug ? UNREAD_NOTIFICATIONS_COUNT(workspaceSlug.toString()) : null,
+    () =>
+      workspaceSlug
+        ? userNotificationServices.getUnreadNotificationsCount(workspaceSlug.toString())
+        : null
+  );
+
   const markNotificationReadStatus = async (notificationId: string) => {
     if (!workspaceSlug) return;
     const isRead =
@@ -66,6 +74,7 @@ const useUserNotification = () => {
               return prevNotification;
             })
           );
+          mutateNotificationCount();
         })
         .catch(() => {
           throw new Error("Something went wrong");
@@ -85,6 +94,7 @@ const useUserNotification = () => {
               return prevNotification;
             })
           );
+          mutateNotificationCount();
         })
         .catch(() => {
           throw new Error("Something went wrong");
@@ -164,6 +174,13 @@ const useUserNotification = () => {
     setSelectedNotificationForSnooze,
     selectedTab,
     setSelectedTab,
+    totalNotificationCount: notificationCount
+      ? notificationCount.created_issues +
+        notificationCount.watching_notifications +
+        notificationCount.my_issues
+      : null,
+    notificationCount,
+    mutateNotificationCount,
   };
 };
 

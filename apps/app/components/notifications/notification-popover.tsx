@@ -5,7 +5,7 @@ import Image from "next/image";
 // hooks
 import useTheme from "hooks/use-theme";
 
-import { Popover, Transition, Menu } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 
 // hooks
 import useUserNotification from "hooks/use-user-notifications";
@@ -14,26 +14,11 @@ import useUserNotification from "hooks/use-user-notifications";
 import { Spinner, Icon } from "components/ui";
 import { SnoozeNotificationModal, NotificationCard } from "components/notifications";
 
+// helpers
+import { getNumberCount } from "helpers/string.helper";
+
 // type
 import type { NotificationType } from "types";
-
-const notificationTabs: Array<{
-  label: string;
-  value: NotificationType;
-}> = [
-  {
-    label: "My Issues",
-    value: "assigned",
-  },
-  {
-    label: "Created by me",
-    value: "created",
-  },
-  {
-    label: "Subscribed",
-    value: "watching",
-  },
-];
 
 export const NotificationPopover = () => {
   const {
@@ -52,10 +37,34 @@ export const NotificationPopover = () => {
     markNotificationArchivedStatus,
     markNotificationReadStatus,
     markSnoozeNotification,
+    notificationCount,
+    totalNotificationCount,
   } = useUserNotification();
 
   // theme context
   const { collapsed: sidebarCollapse } = useTheme();
+
+  const notificationTabs: Array<{
+    label: string;
+    value: NotificationType;
+    unreadCount?: number;
+  }> = [
+    {
+      label: "My Issues",
+      value: "assigned",
+      unreadCount: notificationCount?.my_issues,
+    },
+    {
+      label: "Created by me",
+      value: "created",
+      unreadCount: notificationCount?.created_issues,
+    },
+    {
+      label: "Subscribed",
+      value: "watching",
+      unreadCount: notificationCount?.watching_notifications,
+    },
+  ];
 
   return (
     <>
@@ -85,6 +94,11 @@ export const NotificationPopover = () => {
             >
               <Icon iconName="notifications" />
               {sidebarCollapse ? null : <span>Notifications</span>}
+              {totalNotificationCount && totalNotificationCount > 0 ? (
+                <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
+                  {getNumberCount(totalNotificationCount)}
+                </span>
+              ) : null}
             </Popover.Button>
             <Transition
               as={Fragment}
@@ -190,6 +204,11 @@ export const NotificationPopover = () => {
                             }`}
                           >
                             {tab.label}
+                            {tab.unreadCount && tab.unreadCount > 0 ? (
+                              <span className="ml-3 bg-custom-background-1000/5 rounded-full text-custom-text-100 text-xs px-1.5">
+                                {getNumberCount(tab.unreadCount)}
+                              </span>
+                            ) : null}
                           </button>
                         ))}
                       </nav>

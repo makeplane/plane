@@ -155,6 +155,18 @@ class UserNotificationsServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getUnreadNotificationsCount(workspaceSlug: string): Promise<{
+    created_issues: number;
+    my_issues: number;
+    watching_notifications: number;
+  }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/users/notifications/unread/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 const userNotificationServices = new UserNotificationsServices();

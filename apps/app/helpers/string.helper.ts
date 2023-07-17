@@ -134,3 +134,20 @@ export const stripHTML = (html: string) => {
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText || "";
 };
+
+/**
+ * @description: This function return number count in string if number is more than 100 then it will return 99+
+ * @param {number} number
+ * @return {string}
+ * @example:
+ * const number = 100;
+ * const text = getNumberCount(number);
+ * console.log(text); // 99+
+ */
+
+export const getNumberCount = (number: number): string => {
+  if (number > 99) {
+    return "99+";
+  }
+  return number.toString();
+};

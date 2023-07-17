@@ -241,3 +241,6 @@ export const USER_WORKSPACE_NOTIFICATIONS_DETAILS = (
   notificationId: string
 ) =>
   `USER_WORKSPACE_NOTIFICATIONS_DETAILS_${workspaceSlug.toUpperCase()}_${notificationId.toUpperCase()}`;
+
+export const UNREAD_NOTIFICATIONS_COUNT = (workspaceSlug: string) =>
+  `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug.toUpperCase()}`;
