@@ -1029,13 +1029,10 @@ def issue_activity(
         project = Project.objects.get(pk=project_id)
 
 
-        try:
-            issue = Issue.objects.get(pk=issue_id)
+        issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+        if issue is not None:
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
-        except Exception as e:
-            pass
-
 
         if subscriber:
             # add the user to issue subscriber
@@ -1114,10 +1111,9 @@ def issue_activity(
         issue_subscribers = issue_subscribers + issue_assignees
 
         # Add bot filtering
-        if issue.created_by_id is not None and not issue.created_by.is_bot:
+        if issue is not None and issue.created_by_id is not None and not issue.created_by.is_bot:
             issue_subscribers = issue_subscribers + [issue.created_by_id]
 
-        issue = Issue.objects.get(project=project, pk=issue_id)
         for subscriber in issue_subscribers:
             for issue_activity in issue_activities_created:
                 bulk_notifications.append(
