@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 # Module imports
-from .base import BaseViewSet
+from .base import BaseViewSet, BaseAPIView
 from plane.db.models import Notification, IssueAssignee, IssueSubscriber, Issue
 from plane.api.serializers import NotificationSerializer
 
@@ -201,6 +201,21 @@ class NotificationViewSet(BaseViewSet):
                 {"error": "Notification does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UnreadNotificationEndpoint(BaseAPIView):
+    def get(self, request, slug):
+        try:
+            unread_notification_count = Notification.objects.filter(
+                receiver=request.user, workspace__slug=slug, read_at__isnull=True
+            ).count()
+            return Response({"unread_count": unread_notification_count})
         except Exception as e:
             capture_exception(e)
             return Response(
