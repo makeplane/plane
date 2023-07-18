@@ -160,32 +160,32 @@ class ProjectViewSet(BaseViewSet):
                 states = [
                     {
                         "name": "Backlog",
-                        "color": "#5e6ad2",
+                        "color": "#A3A3A3",
                         "sequence": 15000,
                         "group": "backlog",
                         "default": True,
                     },
                     {
                         "name": "Todo",
-                        "color": "#eb5757",
+                        "color": "#3A3A3A",
                         "sequence": 25000,
                         "group": "unstarted",
                     },
                     {
                         "name": "In Progress",
-                        "color": "#26b5ce",
+                        "color": "#F59E0B",
                         "sequence": 35000,
                         "group": "started",
                     },
                     {
                         "name": "Done",
-                        "color": "#f2c94c",
+                        "color": "#16A34A",
                         "sequence": 45000,
                         "group": "completed",
                     },
                     {
                         "name": "Cancelled",
-                        "color": "#4cb782",
+                        "color": "#EF4444",
                         "sequence": 55000,
                         "group": "cancelled",
                     },
