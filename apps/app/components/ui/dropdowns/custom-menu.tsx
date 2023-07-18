@@ -106,7 +106,7 @@ const CustomMenu = ({
 );
 
 type MenuItemProps = {
-  children: JSX.Element | string;
+  children: React.ReactNode;
   renderAs?: "button" | "a";
   href?: string;
   onClick?: (args?: any) => void;
