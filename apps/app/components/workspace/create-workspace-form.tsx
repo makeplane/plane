@@ -70,7 +70,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
     setValue,
     getValues,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<IWorkspace>({ defaultValues });
+  } = useForm<IWorkspace>({ defaultValues, mode: "onChange" });
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     await workspaceService

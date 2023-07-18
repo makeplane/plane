@@ -92,13 +92,42 @@ export const timeAgo = (time: any) => {
     list_choice = 2;
   }
   var i = 0,
-    format;
+    format: any[];
   while ((format = time_formats[i++]))
     if (seconds < format[0]) {
       if (typeof format[2] == "string") return format[list_choice];
       else return Math.floor(seconds / format[2]) + " " + format[1] + " " + token;
     }
   return time;
+};
+
+export const formatDateDistance = (date: string | Date) => {
+  const today = new Date();
+  const eventDate = new Date(date);
+  const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
+  const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+  if (days < 1) {
+    const hours = Math.ceil(timeDiff / (1000 * 3600));
+    if (hours < 1) {
+      const minutes = Math.ceil(timeDiff / (1000 * 60));
+      if (minutes < 1) {
+        return "Just now";
+      } else {
+        return `${minutes}m`;
+      }
+    } else {
+      return `${hours}h`;
+    }
+  } else if (days < 7) {
+    return `${days}d`;
+  } else if (days < 30) {
+    return `${Math.floor(days / 7)}w`;
+  } else if (days < 365) {
+    return `${Math.floor(days / 30)}m`;
+  } else {
+    return `${Math.floor(days / 365)}y`;
+  }
 };
 
 export const getDateRangeStatus = (
@@ -247,3 +276,60 @@ export const renderLongDateFormat = (dateString: string) => {
   }
   return `${day}${suffix} ${monthName} ${year}`;
 };
+
+/**
+ *
+ * @returns {Array} Array of time objects with label and value as keys
+ */
+
+export const getTimestampAfterCurrentTime = (): Array<{
+  label: string;
+  value: Date;
+}> => {
+  const current = new Date();
+  const time = [];
+  for (let i = 0; i < 24; i++) {
+    const newTime = new Date(current.getTime() + i * 60 * 60 * 1000);
+    time.push({
+      label: newTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      value: newTime,
+    });
+  }
+  return time;
+};
+
+/**
+ * @returns {Array} Array of date objects with label and value as keys
+ * @description Returns an array of date objects starting from current date to 7 days after
+ */
+
+export const getDatesAfterCurrentDate = (): Array<{
+  label: string;
+  value: Date;
+}> => {
+  const current = new Date();
+  const date = [];
+  for (let i = 0; i < 7; i++) {
+    const newDate = new Date(Math.round(current.getTime() / (30 * 60 * 1000)) * 30 * 60 * 1000);
+    date.push({
+      label: newDate.toLocaleDateString([], {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+      value: newDate,
+    });
+  }
+  return date;
+};
+
+/**
+ * @returns {boolean} true if date is valid
+ * @description Returns true if date is valid
+ * @param {string} date
+ * @example checkIfStringIsDate("2021-01-01") // true
+ * @example checkIfStringIsDate("2021-01-32") // false
+ */
+
+export const checkIfStringIsDate = (date: string): boolean =>
+  new Date(date).toString() !== "Invalid Date";

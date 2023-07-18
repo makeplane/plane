@@ -5,73 +5,58 @@ import { Listbox, Transition } from "@headlessui/react";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon } from "@heroicons/react/24/outline";
+// types
+import { DropdownProps } from "./types";
 
-type CustomSelectProps = {
+export type CustomSelectProps = DropdownProps & {
+  children: React.ReactNode;
   value: any;
   onChange: any;
-  children: React.ReactNode;
-  label?: string | JSX.Element;
-  textAlignment?: "left" | "center" | "right";
-  maxHeight?: "sm" | "rg" | "md" | "lg" | "none";
-  position?: "right" | "left";
-  verticalPosition?: "top" | "bottom";
-  width?: "auto" | string;
-  input?: boolean;
-  noChevron?: boolean;
-  customButton?: JSX.Element;
-  optionsClassName?: string;
-  disabled?: boolean;
-  selfPositioned?: boolean;
 };
 
 const CustomSelect = ({
+  buttonClassName = "",
   children,
+  className = "",
+  customButton,
+  disabled = false,
+  input = false,
   label,
-  textAlignment,
-  value,
+  maxHeight = "md",
+  noChevron = false,
   onChange,
-  maxHeight = "none",
+  optionsClassName = "",
   position = "left",
+  selfPositioned = false,
+  value,
   verticalPosition = "bottom",
   width = "auto",
-  input = false,
-  noChevron = false,
-  customButton,
-  optionsClassName = "",
-  disabled = false,
-  selfPositioned = false,
 }: CustomSelectProps) => (
   <Listbox
     as="div"
     value={value}
     onChange={onChange}
-    className={`${!selfPositioned ? "relative" : ""} flex-shrink-0 text-left`}
+    className={`${selfPositioned ? "" : "relative"} flex-shrink-0 text-left ${className}`}
     disabled={disabled}
   >
-    <div>
+    <>
       {customButton ? (
         <Listbox.Button as="div">{customButton}</Listbox.Button>
       ) : (
         <Listbox.Button
-          className={`flex w-full ${
+          className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-100 shadow-sm duration-300 focus:outline-none ${
+            input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+          } ${
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : "cursor-pointer hover:bg-custom-background-80"
-          } items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 focus:outline-none ${
-            input ? "border-custom-border-200 px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
-          } ${
-            textAlignment === "right"
-              ? "text-right"
-              : textAlignment === "center"
-              ? "text-center"
-              : "text-left"
-          }`}
+          } ${buttonClassName}`}
         >
           {label}
           {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
         </Listbox.Button>
       )}
-    </div>
+    </>
 
     <Transition
       as={React.Fragment}
@@ -83,13 +68,9 @@ const CustomSelect = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Listbox.Options
-        className={`${optionsClassName} absolute border border-custom-border-200 ${
-          position === "right" ? "right-0" : "left-0"
-        } ${
-          verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"
-        } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
-          width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
-        } ${input ? "max-h-48" : ""} ${
+        className={`absolute z-10 border border-custom-border-100 mt-1 origin-top-right overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
+          position === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
+        } ${verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"} ${
           maxHeight === "lg"
             ? "max-h-60"
             : maxHeight === "md"
@@ -99,7 +80,7 @@ const CustomSelect = ({
             : maxHeight === "sm"
             ? "max-h-28"
             : ""
-        }`}
+        } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
       >
         <div className="space-y-1 p-2">{children}</div>
       </Listbox.Options>
@@ -117,9 +98,9 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
   <Listbox.Option
     value={value}
     className={({ active, selected }) =>
-      `${className} ${active || selected ? "bg-custom-background-80" : ""} ${
-        selected ? "text-custom-text-100" : "text-custom-text-200"
-      } cursor-pointer select-none truncate rounded px-1 py-1.5`
+      `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+        active || selected ? "bg-custom-background-80" : ""
+      } ${selected ? "text-custom-text-100" : "text-custom-text-200"} ${className}`
     }
   >
     {({ selected }) => (
