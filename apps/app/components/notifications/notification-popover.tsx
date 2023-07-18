@@ -212,9 +212,14 @@ export const NotificationPopover = () => {
                                     : "border-transparent text-custom-text-500 hover:border-custom-border-300 hover:text-custom-text-200"
                                 }`}
                               >
-                                {tab.label}
                                 {tab.unreadCount && tab.unreadCount > 0 ? (
-                                  <span className="ml-3 bg-custom-background-1000/5 rounded-full text-custom-text-100 text-xs px-1.5">
+                                  <span
+                                    className={`ml-3 rounded-full text-xs px-1.5 ${
+                                      tab.value === selectedTab
+                                        ? "bg-custom-primary-100 text-custom-background-100"
+                                        : "bg-custom-background-80 text-custom-text-100"
+                                    }`}
+                                  >
                                     {getNumberCount(tab.unreadCount)}
                                   </span>
                                 ) : null}

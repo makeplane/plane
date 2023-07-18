@@ -243,7 +243,7 @@ export const isDateGreaterThanToday = (dateStr: string) => {
   return date > today;
 };
 
-export const renderLongDateFormat = (dateString: string) => {
+export const renderLongDateFormat = (dateString: string | Date) => {
   const date = new Date(dateString);
   const day = date.getDate();
   const year = date.getFullYear();
@@ -333,3 +333,14 @@ export const getDatesAfterCurrentDate = (): Array<{
 
 export const checkIfStringIsDate = (date: string): boolean =>
   new Date(date).toString() !== "Invalid Date";
+
+// return an array of dates starting from 12:00 to 23:30 with 30 minutes interval as dates
+export const getDatesWith30MinutesInterval = (): Array<Date> => {
+  const dates = [];
+  const current = new Date();
+  for (let i = 0; i < 24; i++) {
+    const newDate = new Date(current.getTime() + i * 60 * 60 * 1000);
+    dates.push(newDate);
+  }
+  return dates;
+};

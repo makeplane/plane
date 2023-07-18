@@ -9,13 +9,17 @@ import { useForm, Controller } from "react-hook-form";
 import { Transition, Dialog, Listbox } from "@headlessui/react";
 
 // date helper
-import { getDatesAfterCurrentDate, getTimestampAfterCurrentTime } from "helpers/date-time.helper";
+import {
+  getDatesAfterCurrentDate,
+  getTimestampAfterCurrentTime,
+  getDatesWith30MinutesInterval,
+} from "helpers/date-time.helper";
 
 // hooks
 import useToast from "hooks/use-toast";
 
 // components
-import { PrimaryButton, SecondaryButton, Icon } from "components/ui";
+import { PrimaryButton, SecondaryButton, Icon, CustomDatePicker } from "components/ui";
 
 // types
 import type { IUserNotification } from "types";
@@ -28,12 +32,12 @@ type SnoozeModalProps = {
   onSubmit: (notificationId: string, dateTime?: Date | undefined) => Promise<void>;
 };
 
-const dates = getDatesAfterCurrentDate();
-const timeStamps = getTimestampAfterCurrentTime();
+const timeStamps = getDatesWith30MinutesInterval();
 
 const defaultValues = {
   time: null,
   date: null,
+  amPm: "AM",
 };
 
 export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
@@ -49,6 +53,8 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
     reset,
     handleSubmit,
     control,
+    watch,
+    setValue,
   } = useForm<any>({
     defaultValues,
   });
@@ -122,7 +128,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex gap-3">
+                  <div className="mt-5 flex items-center gap-3">
                     <div className="flex-1">
                       <Controller
                         control={control}
@@ -133,7 +139,12 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                             {({ open }) => (
                               <>
                                 <div className="relative mt-2">
-                                  <Listbox.Button className="relative w-full cursor-default rounded-md border border-custom-border-100 bg-custom-background-100 py-1.5 pl-3 pr-10 text-left text-custom-text-100 shadow-sm focus:outline-none sm:text-sm sm:leading-6">
+                                  <Listbox.Label>
+                                    <span className="block text-sm font-medium text-custom-text-400">
+                                      Pick a time
+                                    </span>
+                                  </Listbox.Label>
+                                  <Listbox.Button className="relative mt-1 w-full cursor-default rounded-md border border-custom-border-100 bg-custom-background-100 py-1.5 pl-3 pr-10 text-left text-custom-text-100 shadow-sm focus:outline-none sm:text-sm sm:leading-6">
                                     <span className="flex items-center">
                                       <span className="ml-3 block truncate">
                                         {value
@@ -161,9 +172,35 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                     leaveTo="opacity-0"
                                   >
                                     <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-custom-background-100 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
+                                      <div className="w-full rounded overflow-hidden h-9 mx-1 mb-2 flex">
+                                        <div
+                                          onClick={() => {
+                                            setValue("amPm", "AM");
+                                          }}
+                                          className={`w-1/2 h-full cursor-pointer flex justify-center items-center text-center ${
+                                            watch("amPm") === "AM"
+                                              ? "bg-custom-primary-100/90 text-custom-primary-0"
+                                              : "bg-custom-background-90"
+                                          }`}
+                                        >
+                                          AM
+                                        </div>
+                                        <div
+                                          onClick={() => {
+                                            setValue("amPm", "PM");
+                                          }}
+                                          className={`w-1/2 h-full cursor-pointer flex justify-center items-center text-center ${
+                                            watch("amPm") === "PM"
+                                              ? "bg-custom-primary-100/90 text-custom-primary-0"
+                                              : "bg-custom-background-90"
+                                          }`}
+                                        >
+                                          PM
+                                        </div>
+                                      </div>
                                       {timeStamps.map((time, index) => (
                                         <Listbox.Option
-                                          key={`${time.label}-${index}`}
+                                          key={`${time}-${index}`}
                                           className={({ active }) =>
                                             `relative cursor-default select-none py-2 pl-3 pr-9 ${
                                               active
@@ -171,7 +208,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                                 : "text-custom-text-700"
                                             }`
                                           }
-                                          value={time.value}
+                                          value={time}
                                         >
                                           {({ selected, active }) => (
                                             <>
@@ -181,7 +218,13 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                                     selected ? "font-semibold" : "font-normal"
                                                   }`}
                                                 >
-                                                  {time.label}
+                                                  {
+                                                    // TODO: remove AM/PM from time
+                                                    new Date(time)?.toLocaleTimeString([], {
+                                                      hour: "2-digit",
+                                                      minute: "2-digit",
+                                                    })
+                                                  }
                                                 </span>
                                               </div>
 
@@ -214,95 +257,26 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                       />
                     </div>
                     <div className="flex-1">
-                      <Controller
-                        name="date"
-                        control={control}
-                        rules={{ required: "Please select a date" }}
-                        render={({ field: { value, onChange } }) => (
-                          <Listbox value={value} onChange={onChange}>
-                            {({ open }) => (
-                              <>
-                                <div className="relative mt-2">
-                                  <Listbox.Button className="relative w-full cursor-default rounded-md border border-custom-border-100 bg-custom-background-100 py-1.5 pl-3 pr-10 text-left text-custom-text-100 shadow-sm focus:outline-none sm:text-sm sm:leading-6">
-                                    <span className="flex items-center">
-                                      <span className="ml-3 block truncate">
-                                        {value
-                                          ? new Date(value)?.toLocaleDateString([], {
-                                              day: "numeric",
-                                              month: "long",
-                                              year: "numeric",
-                                            })
-                                          : "Select Date"}
-                                      </span>
-                                    </span>
-                                    <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                                      <Icon
-                                        iconName="expand_more"
-                                        className="h-5 w-5 text-custom-text-100"
-                                        aria-hidden="true"
-                                      />
-                                    </span>
-                                  </Listbox.Button>
-
-                                  <Transition
-                                    show={open}
-                                    as={Fragment}
-                                    leave="transition ease-in duration-100"
-                                    leaveFrom="opacity-100"
-                                    leaveTo="opacity-0"
-                                  >
-                                    <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-custom-background-100 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
-                                      {dates.map((date, index) => (
-                                        <Listbox.Option
-                                          key={`${date.label}-${index}`}
-                                          className={({ active }) =>
-                                            `relative cursor-default select-none py-2 pl-3 pr-9 ${
-                                              active
-                                                ? "bg-custom-primary-100/80 text-custom-text-100"
-                                                : "text-custom-text-700"
-                                            }`
-                                          }
-                                          value={date.value}
-                                        >
-                                          {({ selected, active }) => (
-                                            <>
-                                              <div className="flex items-center">
-                                                <span
-                                                  className={`ml-3 block truncate ${
-                                                    selected ? "font-semibold" : "font-normal"
-                                                  }`}
-                                                >
-                                                  {date.label}
-                                                </span>
-                                              </div>
-
-                                              {selected ? (
-                                                <span
-                                                  className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                                    active
-                                                      ? "text-custom-text-100"
-                                                      : "text-custom-primary-100"
-                                                  }`}
-                                                >
-                                                  <Icon
-                                                    iconName="done"
-                                                    className="h-5 w-5"
-                                                    aria-hidden="true"
-                                                  />
-                                                </span>
-                                              ) : null}
-                                            </>
-                                          )}
-                                        </Listbox.Option>
-                                      ))}
-                                    </Listbox.Options>
-                                  </Transition>
-                                </div>
-                              </>
-                            )}
-                          </Listbox>
-                        )}
-                      />
+                      <span className="block text-sm font-medium text-custom-text-400">
+                        Pick a date
+                      </span>
+                      <div className="mt-2">
+                        <Controller
+                          name="date"
+                          control={control}
+                          rules={{ required: "Please select a date" }}
+                          render={({ field: { value, onChange } }) => (
+                            <CustomDatePicker
+                              placeholder="Pick a date"
+                              value={value}
+                              onChange={onChange}
+                              className="px-3 py-[0.385rem] w-full rounded-md border border-custom-border-100 bg-custom-background-100 text-custom-text-100 shadow-sm focus:outline-none sm:text-sm sm:leading-6"
+                              noBorder
+                              minDate={new Date()}
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
                   </div>
 

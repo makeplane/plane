@@ -4,15 +4,22 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+// headless ui
+import { Menu, Transition } from "@headlessui/react";
+
 // hooks
 import useToast from "hooks/use-toast";
 
 // icons
-import { Icon } from "components/ui";
+import { Icon, Tooltip } from "components/ui";
 
 // helper
 import { stripHTML, replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-import { formatDateDistance, renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import {
+  formatDateDistance,
+  renderLongDateFormat,
+  renderShortDateWithYearFormat,
+} from "helpers/date-time.helper";
 
 // type
 import type { IUserNotification } from "types";
@@ -168,31 +175,126 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 });
               },
             },
-            {
-              id: 3,
-              name: notification.snoozed_till ? "Unsnooze Notification" : "Snooze Notification",
-              icon: "schedule",
-              onClick: () => {
-                if (notification.snoozed_till)
-                  markSnoozeNotification(notification.id).then(() => {
-                    setToastAlert({ title: "Notification un-snoozed", type: "success" });
-                  });
-                else setSelectedNotificationForSnooze(notification.id);
-              },
-            },
+            // {
+            //   id: 3,
+            //   name: notification.snoozed_till ? "Unsnooze Notification" : "Snooze Notification",
+            //   icon: "schedule",
+            //   onClick: () => {
+            //     if (notification.snoozed_till)
+            //       markSnoozeNotification(notification.id).then(() => {
+            //         setToastAlert({ title: "Notification un-snoozed", type: "success" });
+            //       });
+            //     else setSelectedNotificationForSnooze(notification.id);
+            //   },
+            // },
           ].map((item) => (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                item.onClick();
-              }}
-              key={item.id}
-              className="text-sm flex w-full items-center gap-x-2 hover:bg-custom-background-100 p-0.5 rounded"
-            >
-              <Icon iconName={item.icon} className="h-5 w-5 text-custom-text-300" />
-            </button>
+            <Tooltip tooltipContent={item.name} position="top-left">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  item.onClick();
+                }}
+                key={item.id}
+                className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded"
+              >
+                <Icon iconName={item.icon} className="h-5 w-5 text-custom-text-300" />
+              </button>
+            </Tooltip>
           ))}
+
+          <Tooltip tooltipContent="Snooze Notification" position="top-left">
+            <Menu as="div" className="relative inline-block text-left">
+              <div>
+                <Menu.Button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded"
+                >
+                  <Icon iconName="schedule" className="h-5 w-5 text-custom-text-300" />
+                </Menu.Button>
+              </div>
+
+              <Transition
+                as={React.Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 z-10 mt-2 w-28 origin-top-right rounded-md bg-custom-background-100 shadow-lg focus:outline-none">
+                  <div className="py-1">
+                    {[
+                      {
+                        label: "1 days",
+                        value: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+                      },
+                      {
+                        label: "3 days",
+                        value: new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000),
+                      },
+                      {
+                        label: "5 days",
+                        value: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
+                      },
+                      {
+                        label: "1 week",
+                        value: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+                      },
+                      {
+                        label: "2 weeks",
+                        value: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000),
+                      },
+                      {
+                        label: "Custom",
+                        value: null,
+                      },
+                    ].map((item) => (
+                      <Menu.Item
+                        as="button"
+                        className="w-full text-left"
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          if (!item.value) {
+                            setSelectedNotificationForSnooze(notification.id);
+                            return;
+                          }
+
+                          markSnoozeNotification(notification.id, item.value).then(() => {
+                            setToastAlert({
+                              title: `Notification snoozed till ${renderLongDateFormat(
+                                item.value
+                              )}`,
+
+                              type: "success",
+                            });
+                          });
+                        }}
+                        key={item.label}
+                      >
+                        {({ active }) => (
+                          <span
+                            className={`block px-2 py-2 text-sm ${
+                              active
+                                ? "bg-custom-background-90 text-custom-text-100"
+                                : "text-custom-text-300"
+                            }`}
+                          >
+                            {item.label}
+                          </span>
+                        )}
+                      </Menu.Item>
+                    ))}
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          </Tooltip>
         </div>
       </div>
     </div>
