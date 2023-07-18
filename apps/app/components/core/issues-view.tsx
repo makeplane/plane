@@ -31,11 +31,11 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
-import { EmptyState, PrimaryButton, Spinner } from "components/ui";
+import { EmptyState, PrimaryButton, Spinner, Icon } from "components/ui";
 // icons
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // images
-import emptyIssue from "public/empty-state/issue.svg";
+import emptyIssue from "public/empty-state/issue-archive.svg";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
@@ -579,16 +579,12 @@ export const IssuesView: React.FC<Props> = ({
             </>
           ) : (
             <EmptyState
-              title="Project issues will appear here"
-              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+              title="Archived Issues will be shown here"
+              description="All the issues are that have been in completed or canceled state for the configured period of time can be viewed here."
               image={emptyIssue}
-              buttonText="New Issue"
-              buttonIcon={<PlusIcon className="h-4 w-4" />}
+              buttonText="Go to Automation Settings"
               onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "c",
-                });
-                document.dispatchEvent(e);
+                router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
               }}
             />
           )
