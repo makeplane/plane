@@ -35,7 +35,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
     handleSubmit,
     control,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<IUser>({
     defaultValues,
   });
@@ -164,7 +164,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
         </div>
       </div>
 
-      <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
+      <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
         {isSubmitting ? "Updating..." : "Continue"}
       </PrimaryButton>
     </form>

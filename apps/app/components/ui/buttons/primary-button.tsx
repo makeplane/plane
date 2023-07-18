@@ -19,11 +19,7 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
         : size === "md"
         ? "rounded-md px-3.5 py-2 text-sm"
         : "rounded-lg px-4 py-2 text-base"
-    } ${
-      disabled
-        ? "cursor-not-allowed bg-opacity-70 border-opacity-70 hover:bg-opacity-70 hover:border-opacity-70"
-        : ""
-    } ${
+    } ${disabled ? "cursor-not-allowed opacity-70 hover:opacity-70" : ""} ${
       outline
         ? "bg-transparent text-custom-primary hover:bg-custom-primary hover:text-white"
         : "text-white bg-custom-primary hover:border-opacity-90 hover:bg-opacity-90"

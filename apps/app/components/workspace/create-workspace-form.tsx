@@ -69,7 +69,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
     control,
     setValue,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<IWorkspace>({ defaultValues });
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
@@ -210,7 +210,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
 
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
+        <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </PrimaryButton>
       </div>
