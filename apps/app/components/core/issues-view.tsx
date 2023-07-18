@@ -577,14 +577,34 @@ export const IssuesView: React.FC<Props> = ({
                 issueView === "gantt_chart" && <GanttChartView />
               )}
             </>
-          ) : (
+          ) : router.query.view === "archived-issues" ? (
             <EmptyState
               title="Archived Issues will be shown here"
-              description="All the issues are that have been in completed or canceled state for the configured period of time can be viewed here."
+              description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
               image={emptyIssue}
               buttonText="Go to Automation Settings"
               onClick={() => {
                 router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
+              }}
+            />
+          ) : (
+            <EmptyState
+              title={
+                cycleId
+                  ? "Cycle issues will appear here"
+                  : moduleId
+                  ? "Module issues will appear here"
+                  : "Project issues will appear here"
+              }
+              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+              image={emptyIssue}
+              buttonText="New Issue"
+              buttonIcon={<PlusIcon className="h-4 w-4" />}
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "c",
+                });
+                document.dispatchEvent(e);
               }}
             />
           )
