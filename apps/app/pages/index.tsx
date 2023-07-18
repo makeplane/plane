@@ -138,18 +138,18 @@ const HomePage: NextPage = () => {
               </div>
             </div>
           </>
-          <div className="grid place-items-center h-full overflow-y-auto px-7">
+          <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
             <div>
               {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <>
                   <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
                     Sign in to Plane
                   </h1>
-                  <div className="divide-y divide-custom-border-200">
+                  <div className="flex flex-col divide-y divide-custom-border-200 sm:w-[360px] mx-auto">
                     <div className="pb-7">
                       <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
                     </div>
-                    <div className="space-y-4 pt-7 w-full sm:w-[360px] mx-auto">
+                    <div className="flex flex-col items-center justify-center gap-4 pt-7 overflow-hidden">
                       <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
                       <GithubLoginButton handleSignIn={handleGitHubSignIn} />
                     </div>

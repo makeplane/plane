@@ -1,5 +1,5 @@
 import { FC, CSSProperties, useEffect, useRef, useCallback, useState } from "react";
-// next
+
 import Script from "next/script";
 
 export interface IGoogleLoginButton {
@@ -8,18 +8,18 @@ export interface IGoogleLoginButton {
   styles?: CSSProperties;
 }
 
-export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
-  const { handleSignIn } = props;
-
+export const GoogleLoginButton: FC<IGoogleLoginButton> = ({ handleSignIn }) => {
   const googleSignInButton = useRef<HTMLDivElement>(null);
   const [gsiScriptLoaded, setGsiScriptLoaded] = useState(false);
 
   const loadScript = useCallback(() => {
     if (!googleSignInButton.current || gsiScriptLoaded) return;
+
     window?.google?.accounts.id.initialize({
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENTID || "",
       callback: handleSignIn,
     });
+
     window?.google?.accounts.id.renderButton(
       googleSignInButton.current,
       {
@@ -27,12 +27,13 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
         theme: "outline",
         size: "large",
         logo_alignment: "center",
-        height: "46",
         width: "360",
-        text: "continue_with",
+        text: "signin_with",
       } as GsiButtonConfiguration // customization attributes
     );
+
     window?.google?.accounts.id.prompt(); // also display the One Tap dialog
+
     setGsiScriptLoaded(true);
   }, [handleSignIn, gsiScriptLoaded]);
 
