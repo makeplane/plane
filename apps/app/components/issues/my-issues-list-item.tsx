@@ -126,7 +126,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.due_date && (
+          {properties.due_date && issue.target_date && (
             <ViewDueDateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
@@ -134,7 +134,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.labels && issue.label_details.length > 0 ? (
+          {properties.labels && issue.labels.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {issue.label_details.map((label) => (
                 <span
@@ -151,8 +151,6 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
                 </span>
               ))}
             </div>
-          ) : (
-            ""
           )}
           {properties.assignee && (
             <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm">
@@ -175,7 +173,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               </Tooltip>
             </div>
           )}
-          {properties.sub_issue_count && (
+          {properties.sub_issue_count && issue.sub_issues_count > 0 && (
             <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
@@ -185,7 +183,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               </Tooltip>
             </div>
           )}
-          {properties.link && (
+          {properties.link && issue.link_count > 0 && (
             <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
@@ -195,7 +193,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               </Tooltip>
             </div>
           )}
-          {properties.attachment_count && (
+          {properties.attachment_count && issue.attachment_count > 0 && (
             <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
