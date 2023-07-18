@@ -706,9 +706,6 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
 
 class CycleFavoriteViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     serializer_class = CycleFavoriteSerializer
     model = CycleFavorite
