@@ -356,7 +356,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
-            {properties.due_date && (
+            {properties.due_date && issue.target_date && (
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -364,7 +364,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.labels && (
+            {properties.labels && issue.labels.length > 0 && (
               <ViewLabelSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -382,7 +382,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
-            {properties.estimate && (
+            {properties.estimate && issue.estimate_point !== null && (
               <ViewEstimateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -391,7 +391,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
-            {properties.sub_issue_count && (
+            {properties.sub_issue_count && issue.sub_issues_count > 0 && (
               <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
@@ -401,7 +401,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 </Tooltip>
               </div>
             )}
-            {properties.link && (
+            {properties.link && issue.link_count > 0 && (
               <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
@@ -411,7 +411,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 </Tooltip>
               </div>
             )}
-            {properties.attachment_count && (
+            {properties.attachment_count && issue.attachment_count > 0 && (
               <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
