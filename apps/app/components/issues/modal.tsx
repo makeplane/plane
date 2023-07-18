@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -93,15 +93,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       ...prePopulateData,
       assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
     };
-
-  const { data: issues } = useSWR(
-    workspaceSlug && activeProject
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? "")
-      : null,
-    workspaceSlug && activeProject
-      ? () => issuesService.getIssues(workspaceSlug as string, activeProject ?? "")
-      : null
-  );
 
   useEffect(() => {
     if (projects && projects.length > 0)
@@ -317,6 +308,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     else await updateIssue(payload);
   };
 
+  if (!projects || projects.length === 0) return null;
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={() => handleClose()}>
@@ -345,7 +338,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             >
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <IssueForm
-                  issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
                   initialData={data ?? prePopulateData}
                   createMore={createMore}

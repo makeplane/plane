@@ -2,51 +2,31 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
-
-import { Control, Controller, UseFormWatch } from "react-hook-form";
-// fetch keys
+// icons
 import { UserIcon } from "@heroicons/react/24/outline";
-// services
-import issuesServices from "services/issues.service";
 // components
 import { ParentIssuesListModal } from "components/issues";
-// icons
 // types
-import { IIssue, UserAuth } from "types";
-// fetch-keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { IIssue, ISearchIssueResponse, UserAuth } from "types";
 
 type Props = {
-  control: Control<IIssue, any>;
-  submitChanges: (formData: Partial<IIssue>) => void;
-  customDisplay: JSX.Element;
-  watch: UseFormWatch<IIssue>;
+  onChange: (value: string) => void;
+  issueDetails: IIssue | undefined;
   userAuth: UserAuth;
   disabled?: boolean;
 };
 
 export const SidebarParentSelect: React.FC<Props> = ({
-  control,
-  submitChanges,
-  customDisplay,
-  watch,
+  onChange,
+  issueDetails,
   userAuth,
   disabled = false,
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { projectId, issueId } = router.query;
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
@@ -57,22 +37,15 @@ export const SidebarParentSelect: React.FC<Props> = ({
         <p>Parent</p>
       </div>
       <div className="sm:basis-1/2">
-        <Controller
-          control={control}
-          name="parent"
-          render={({ field: { value, onChange } }) => (
-            <ParentIssuesListModal
-              isOpen={isParentModalOpen}
-              handleClose={() => setIsParentModalOpen(false)}
-              onChange={(val) => {
-                submitChanges({ parent: val });
-                onChange(val);
-              }}
-              issueId={issueId as string}
-              value={value}
-              customDisplay={customDisplay}
-            />
-          )}
+        <ParentIssuesListModal
+          isOpen={isParentModalOpen}
+          handleClose={() => setIsParentModalOpen(false)}
+          onChange={(issue) => {
+            onChange(issue.id);
+            setSelectedParentIssue(issue);
+          }}
+          issueId={issueId as string}
+          projectId={projectId as string}
         />
         <button
           type="button"
@@ -82,10 +55,10 @@ export const SidebarParentSelect: React.FC<Props> = ({
           onClick={() => setIsParentModalOpen(true)}
           disabled={isNotAllowed}
         >
-          {watch("parent") && watch("parent") !== "" ? (
-            `${issues?.find((i) => i.id === watch("parent"))?.project_detail?.identifier}-${
-              issues?.find((i) => i.id === watch("parent"))?.sequence_id
-            }`
+          {selectedParentIssue ? (
+            `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+          ) : issueDetails?.parent ? (
+            `${issueDetails.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
           ) : (
             <span className="text-custom-text-200">Select issue</span>
           )}

@@ -21,7 +21,8 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   value?: any;
-  onChange: (...event: any[]) => void;
+  onChange: (issue: ISearchIssueResponse) => void;
+  projectId: string;
   issueId?: string;
   customDisplay?: JSX.Element;
 };
@@ -31,6 +32,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   handleClose: onClose,
   value,
   onChange,
+  projectId,
   issueId,
   customDisplay,
 }) => {
@@ -42,7 +44,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const handleClose = () => {
     onClose();
@@ -109,7 +111,13 @@ export const ParentIssuesListModal: React.FC<Props> = ({
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
-                <Combobox value={value} onChange={onChange}>
+                <Combobox
+                  value={value}
+                  onChange={(val) => {
+                    onChange(val);
+                    handleClose();
+                  }}
+                >
                   <div className="relative m-1">
                     <MagnifyingGlassIcon
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
@@ -165,13 +173,12 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                         {issues.map((issue) => (
                           <Combobox.Option
                             key={issue.id}
-                            value={issue.id}
+                            value={issue}
                             className={({ active, selected }) =>
                               `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
                                 active ? "bg-custom-background-80 text-custom-text-100" : ""
                               } ${selected ? "text-custom-text-100" : ""}`
                             }
-                            onClick={handleClose}
                           >
                             <>
                               <span
