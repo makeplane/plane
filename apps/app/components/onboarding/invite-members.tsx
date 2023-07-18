@@ -41,7 +41,7 @@ export const InviteMembers: React.FC<Props> = ({ workspace, user, stepChange }) 
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, isValid },
   } = useForm<FormValues>();
 
   const { fields, append, remove } = useFieldArray({
@@ -204,7 +204,7 @@ export const InviteMembers: React.FC<Props> = ({ workspace, user, stepChange }) 
         </button>
       </div>
       <div className="flex items-center gap-4">
-        <PrimaryButton type="submit" loading={isSubmitting} size="md">
+        <PrimaryButton type="submit" disabled={!isValid} loading={isSubmitting} size="md">
           {isSubmitting ? "Sending..." : "Send Invite"}
         </PrimaryButton>
         <SecondaryButton size="md" onClick={nextStep} outline>

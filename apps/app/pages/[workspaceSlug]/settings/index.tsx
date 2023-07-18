@@ -276,8 +276,8 @@ const WorkspaceSettings: NextPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold">Company Size</h4>
-                <p className="text-sm text-custom-text-200">How big is your company?</p>
+                <h4 className="text-lg font-semibold">Organization Size</h4>
+                <p className="text-sm text-custom-text-200">What size is your organization?</p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <Controller
@@ -287,7 +287,10 @@ const WorkspaceSettings: NextPage = () => {
                     <CustomSelect
                       value={value}
                       onChange={onChange}
-                      label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select company size"}
+                      label={
+                        ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"
+                      }
+                      width="w-full"
                       input
                     >
                       {ORGANIZATION_SIZE?.map((item) => (

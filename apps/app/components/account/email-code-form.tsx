@@ -178,7 +178,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               ) : errorResendingCode ? (
                 "Please try again later"
               ) : (
-                "Resend code"
+                <span className="font-medium">Resend code</span>
               )}
             </button>
           </>
