@@ -9,6 +9,7 @@ import type {
   IIssueComment,
   IIssueLabels,
   IIssueViewOptions,
+  ISubIssueResponse,
 } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
@@ -420,7 +421,11 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async subIssues(workspaceSlug: string, projectId: string, issueId: string) {
+  async subIssues(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<ISubIssueResponse> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`
     )

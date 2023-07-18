@@ -272,7 +272,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                     >
-                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-custom-background-100">
+                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-custom-background-90">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
                             className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -316,6 +316,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
                 Add sub-issue
               </>
             }
+            buttonClassName="whitespace-nowrap"
             position="left"
             noBorder
             noChevron

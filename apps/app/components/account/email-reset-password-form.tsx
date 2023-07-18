@@ -78,17 +78,17 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
           }}
           error={errors.email}
           placeholder="Enter registered email address.."
-          className="border-custom-border-300"
+          className="border-custom-border-300 h-[46px]"
         />
       </div>
       <div className="mt-5 flex flex-col-reverse sm:flex-row items-center gap-2">
         <SecondaryButton
-          className="w-full text-center"
+          className="w-full text-center h-[46px]"
           onClick={() => setIsResettingPassword(false)}
         >
           Go Back
         </SecondaryButton>
-        <PrimaryButton type="submit" className="w-full text-center" loading={isSubmitting}>
+        <PrimaryButton type="submit" className="w-full text-center h-[46px]" loading={isSubmitting}>
           {isSubmitting ? "Sending link..." : "Send reset link"}
         </PrimaryButton>
       </div>

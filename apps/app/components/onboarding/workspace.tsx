@@ -38,6 +38,10 @@ export const Workspace: React.FC<Props> = ({ user, updateLastWorkspace, stepChan
           defaultValues={defaultValues}
           setDefaultValues={setDefaultValues}
           user={user}
+          primaryButtonText={{
+            loading: "Creating...",
+            default: "Continue",
+          }}
           secondaryButton={
             <SecondaryButton onClick={() => stepChange({ profile_complete: false })}>
               Back
