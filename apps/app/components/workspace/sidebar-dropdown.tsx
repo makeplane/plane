@@ -3,11 +3,13 @@ import { Fragment } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
+// next-themes
+import { useTheme } from "next-themes";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // hooks
 import useUser from "hooks/use-user";
-import useTheme from "hooks/use-theme";
+import useThemeHook from "hooks/use-theme";
 import useWorkspaces from "hooks/use-workspaces";
 import useToast from "hooks/use-toast";
 // services
@@ -43,12 +45,13 @@ export const WorkspaceSidebarDropdown = () => {
   const { workspaceSlug } = router.query;
   // fetching user details
   const { user, mutateUser } = useUser();
-  // fetching theme context
-  const { collapsed: sidebarCollapse } = useTheme();
+
+  const { collapsed: sidebarCollapse } = useThemeHook();
+
+  const { setTheme } = useTheme();
 
   const { setToastAlert } = useToast();
 
-  // fetching workspaces
   const { activeWorkspace, workspaces } = useWorkspaces();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
@@ -75,6 +78,7 @@ export const WorkspaceSidebarDropdown = () => {
       .then(() => {
         mutateUser(undefined);
         router.push("/");
+        setTheme("dark");
       })
       .catch(() =>
         setToastAlert({
