@@ -213,7 +213,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             # Watching Issues Count
-            watching_notification_count = Notification.objects.filter(
+            watching_issues_count = Notification.objects.filter(
                 workspace__slug=slug,
                 receiver_id=request.user.id,
                 read_at__isnull=True,
@@ -244,7 +244,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
 
             return Response(
                 {
-                    "watching_notifications": watching_notification_count,
+                    "watching_issues": watching_issues_count,
                     "my_issues": my_issues_count,
                     "created_issues": created_issues_count,
                 },
