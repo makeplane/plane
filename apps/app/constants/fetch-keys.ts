@@ -1,4 +1,4 @@
-import { IAnalyticsParams, IJiraMetadata } from "types";
+import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "types";
 
 const paramsToKey = (params: any) => {
   const { state, priority, assignees, created_by, labels, target_date, sub_issue } = params;
@@ -223,3 +223,24 @@ export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnaly
   `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${
     params?.cycle
   }_${params?.module}`;
+
+// notifications
+export const USER_WORKSPACE_NOTIFICATIONS = (
+  workspaceSlug: string,
+  params: INotificationParams
+) => {
+  const { type, snoozed, archived, read } = params;
+
+  return `USER_WORKSPACE_NOTIFICATIONS_${workspaceSlug.toUpperCase()}_TYPE_${(
+    type ?? "assigned"
+  ).toUpperCase()}_SNOOZED_${snoozed}_ARCHIVED_${archived}_READ_${read}`;
+};
+
+export const USER_WORKSPACE_NOTIFICATIONS_DETAILS = (
+  workspaceSlug: string,
+  notificationId: string
+) =>
+  `USER_WORKSPACE_NOTIFICATIONS_DETAILS_${workspaceSlug.toUpperCase()}_${notificationId.toUpperCase()}`;
+
+export const UNREAD_NOTIFICATIONS_COUNT = (workspaceSlug: string) =>
+  `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug.toUpperCase()}`;
