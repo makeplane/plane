@@ -31,6 +31,7 @@
         width="100%"
       />
     </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmakeplane%2Fplane?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmakeplane%2Fplane.svg?type=shield"/></a>
 </p>
 
 Meet [Plane](https://plane.so). An open-source software development tool to manage issues, sprints, and product roadmaps with peace of mind 🧘‍♀️.
@@ -158,3 +159,7 @@ Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CON
 ## ⛓️ Security
 
 If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email engineering@plane.so to disclose any security vulnerabilities.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmakeplane%2Fplane.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmakeplane%2Fplane?ref=badge_large)
