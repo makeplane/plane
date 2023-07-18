@@ -56,7 +56,7 @@ const CustomMenu = ({
             ) : (
               <Menu.Button
                 type="button"
-                className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-xs duration-300 ${
+                className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-xs whitespace-nowrap duration-300 ${
                   open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
                 } ${
                   noBorder ? "" : "border border-custom-border-100 shadow-sm focus:outline-none"
