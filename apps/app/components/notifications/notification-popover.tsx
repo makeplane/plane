@@ -189,7 +189,7 @@ export const NotificationPopover = () => {
                               {snoozed
                                 ? "Snoozed Notifications"
                                 : readNotification
-                                ? "Read Notifications"
+                                ? "Unread Notifications"
                                 : "Archived Notifications"}
                             </span>
                           </h4>
@@ -247,9 +247,7 @@ export const NotificationPopover = () => {
 
                 <div className="w-full flex-1 overflow-y-auto">
                   {notifications ? (
-                    notifications.filter(
-                      (notification) => notification.data.issue_activity.field !== "None"
-                    ).length > 0 ? (
+                    notifications.length > 0 ? (
                       notifications.map((notification) => (
                         <NotificationCard
                           key={notification.id}
