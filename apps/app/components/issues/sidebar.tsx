@@ -33,13 +33,7 @@ import {
 // ui
 import { CustomDatePicker, Icon } from "components/ui";
 // icons
-import {
-  LinkIcon,
-  CalendarDaysIcon,
-  TrashIcon,
-  PlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { LinkIcon, CalendarDaysIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -337,29 +331,20 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {showSecondSection && (
               <div className="py-1">
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-                  <SidebarParentSelect
+                  <Controller
                     control={control}
-                    submitChanges={submitChanges}
-                    customDisplay={
-                      issueDetail?.parent_detail ? (
-                        <button
-                          type="button"
-                          className="flex items-center gap-2 rounded bg-custom-background-80 px-3 py-2 text-xs"
-                          onClick={() => submitChanges({ parent: null })}
-                        >
-                          <span className="text-custom-text-200">Selected:</span>{" "}
-                          {issueDetail.parent_detail?.name}
-                          <XMarkIcon className="h-3 w-3" />
-                        </button>
-                      ) : (
-                        <div className="inline-block rounded bg-custom-background-90 px-3 py-2 text-xs text-custom-text-200">
-                          No parent selected
-                        </div>
-                      )
-                    }
-                    watch={watchIssue}
-                    userAuth={memberRole}
-                    disabled={uneditable}
+                    name="parent"
+                    render={({ field: { onChange } }) => (
+                      <SidebarParentSelect
+                        onChange={(val: string) => {
+                          submitChanges({ parent: val });
+                          onChange(val);
+                        }}
+                        issueDetails={issueDetail}
+                        userAuth={memberRole}
+                        disabled={uneditable}
+                      />
+                    )}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (

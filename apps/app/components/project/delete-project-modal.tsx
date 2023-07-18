@@ -175,7 +175,11 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                   </div>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading || !canDelete}>
+                    <DangerButton
+                      onClick={handleDeletion}
+                      disabled={!canDelete}
+                      loading={isDeleteLoading}
+                    >
                       {isDeleteLoading ? "Deleting..." : "Delete Project"}
                     </DangerButton>
                   </div>

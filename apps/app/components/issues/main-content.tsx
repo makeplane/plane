@@ -58,7 +58,7 @@ export const IssueMainContent: React.FC<Props> = ({
     <>
       <div className="rounded-lg">
         {issueDetails?.parent && issueDetails.parent !== "" ? (
-          <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
+          <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-90 p-2 text-xs">
             <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${issueDetails.parent}`}>
               <a className="flex items-center gap-2 text-custom-text-200">
                 <span
@@ -76,24 +76,36 @@ export const IssueMainContent: React.FC<Props> = ({
               </a>
             </Link>
 
-            <CustomMenu ellipsis position="left">
-              {siblingIssues && siblingIssues.length > 0 ? (
-                siblingIssues.map((issue: IIssue) => (
-                  <CustomMenu.MenuItem key={issue.id}>
-                    <Link
-                      href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id}`}
-                    >
-                      <a>
-                        {issueDetails.project_detail.identifier}-{issue.sequence_id}
-                      </a>
-                    </Link>
-                  </CustomMenu.MenuItem>
-                ))
+            <CustomMenu position="left" ellipsis>
+              {siblingIssues && siblingIssues.sub_issues.length > 0 ? (
+                <>
+                  <h2 className="text-custom-text-200 px-1 mb-2">Sibling issues</h2>
+                  {siblingIssues.sub_issues.map((issue) => {
+                    if (issue.id !== issueDetails.id)
+                      return (
+                        <CustomMenu.MenuItem
+                          key={issue.id}
+                          renderAs="a"
+                          href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                            issue.id
+                          }`}
+                        >
+                          {issueDetails.project_detail.identifier}-{issue.sequence_id}
+                        </CustomMenu.MenuItem>
+                      );
+                  })}
+                </>
               ) : (
-                <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-custom-text-200">
-                  No other sibling issues
-                </CustomMenu.MenuItem>
+                <p className="flex items-center gap-2 whitespace-nowrap px-1 text-left text-xs text-custom-text-200 py-1">
+                  No sibling issues
+                </p>
               )}
+              <CustomMenu.MenuItem
+                renderAs="button"
+                onClick={() => submitChanges({ parent: null })}
+              >
+                Remove parent issue
+              </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
         ) : null}

@@ -380,7 +380,6 @@ export const CommandPalette: React.FC = () => {
           user={user}
         />
       )}
-
       <CreateUpdateIssueModal
         isOpen={isIssueModalOpen}
         handleClose={() => setIsIssueModalOpen(false)}
