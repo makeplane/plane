@@ -35,7 +35,8 @@ import { EmptyState, PrimaryButton, Spinner, Icon } from "components/ui";
 // icons
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // images
-import emptyIssue from "public/empty-state/issue-archive.svg";
+import emptyIssue from "public/empty-state/issue.svg";
+import emptyIssueArchive from "public/empty-state/issue-archive.svg";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
@@ -581,7 +582,7 @@ export const IssuesView: React.FC<Props> = ({
             <EmptyState
               title="Archived Issues will be shown here"
               description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
-              image={emptyIssue}
+              image={emptyIssueArchive}
               buttonText="Go to Automation Settings"
               onClick={() => {
                 router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
