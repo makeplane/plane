@@ -1,10 +1,36 @@
 import React from "react";
 
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // hooks
 import useTheme from "hooks/use-theme";
+
+import { NotificationPopover } from "components/notifications";
+
+const workspaceLinks = (workspaceSlug: string) => [
+  {
+    icon: "grid_view",
+    name: "Dashboard",
+    href: `/${workspaceSlug}`,
+  },
+  {
+    icon: "bar_chart",
+    name: "Analytics",
+    href: `/${workspaceSlug}/analytics`,
+  },
+  {
+    icon: "work",
+    name: "Projects",
+    href: `/${workspaceSlug}/projects`,
+  },
+  {
+    icon: "task_alt",
+    name: "My Issues",
+    href: `/${workspaceSlug}/me/my-issues`,
+  },
+];
+
 // components
 import { Icon, Tooltip } from "components/ui";
 
@@ -14,34 +40,6 @@ export const WorkspaceSidebarMenu = () => {
 
   // theme context
   const { collapsed: sidebarCollapse } = useTheme();
-
-  const workspaceLinks = (workspaceSlug: string) => [
-    {
-      icon: "grid_view",
-      name: "Dashboard",
-      href: `/${workspaceSlug}`,
-    },
-    {
-      icon: "bar_chart",
-      name: "Analytics",
-      href: `/${workspaceSlug}/analytics`,
-    },
-    {
-      icon: "work",
-      name: "Projects",
-      href: `/${workspaceSlug}/projects`,
-    },
-    {
-      icon: "task_alt",
-      name: "My Issues",
-      href: `/${workspaceSlug}/me/my-issues`,
-    },
-    {
-      icon: "settings",
-      name: "Settings",
-      href: `/${workspaceSlug}/settings`,
-    },
-  ];
 
   return (
     <div className="w-full cursor-pointer space-y-2 px-4 mt-5">
@@ -75,6 +73,8 @@ export const WorkspaceSidebarMenu = () => {
           </Link>
         );
       })}
+
+      <NotificationPopover />
     </div>
   );
 };
