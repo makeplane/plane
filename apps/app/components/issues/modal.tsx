@@ -262,7 +262,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
-      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
+      .patchIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);

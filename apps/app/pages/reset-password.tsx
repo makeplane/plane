@@ -100,7 +100,7 @@ const ResetPasswordPage: NextPage = () => {
           </div>
         </div>
       </>
-      <div className="grid place-items-center h-full w-full overflow-y-auto px-7">
+      <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
         <div className="w-full">
           <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
             Reset your password

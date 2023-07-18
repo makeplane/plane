@@ -346,26 +346,6 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async updateIssue(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
-    return this.put(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
-      data
-    )
-      .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async patchIssue(
     workspaceSlug: string,
     projectId: string,
