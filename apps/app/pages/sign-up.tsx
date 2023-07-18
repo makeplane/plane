@@ -86,7 +86,7 @@ const SignUp: NextPage = () => {
           </div>
         </div>
       </>
-      <div className="grid place-items-center h-full w-full overflow-y-auto px-7">
+      <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
         <div>
           <EmailPasswordForm onSubmit={handleSignUp} />
         </div>

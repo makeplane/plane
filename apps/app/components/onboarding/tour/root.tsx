@@ -53,7 +53,7 @@ const TOUR_STEPS: {
     key: "modules",
     title: "Break into modules",
     description:
-      "Modules break your big think into Projects or Features, to help you organize better.",
+      "Modules break your big thing into Projects or Features, to help you organize better.",
     image: ModulesTour,
     prevStep: "cycles",
     nextStep: "views",
@@ -132,7 +132,7 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
               <Image src={currentStep?.image} alt={currentStep?.title} />
             </div>
             <div className="flex flex-col h-1/2 sm:h-2/5 p-4 overflow-y-auto">
-              <h3 className="font-medium text-lg">{currentStep?.title}</h3>
+              <h3 className="font-semibold sm:text-xl">{currentStep?.title}</h3>
               <p className="text-custom-text-200 text-sm mt-3">{currentStep?.description}</p>
               <div className="h-full flex items-end justify-between gap-4 mt-3">
                 <div className="flex items-center gap-4">

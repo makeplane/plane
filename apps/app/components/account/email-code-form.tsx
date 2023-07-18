@@ -120,7 +120,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           Please check your inbox at <span className="font-medium">{watch("email")}</span>
         </p>
       )}
-      <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto">
+      <form className="space-y-4 mt-10">
         <div className="space-y-1">
           <Input
             id="email"
@@ -136,7 +136,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             }}
             error={errors.email}
             placeholder="Enter your email address..."
-            className="border-custom-border-300"
+            className="border-custom-border-300 h-[46px]"
           />
         </div>
 
@@ -152,7 +152,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               }}
               error={errors.token}
               placeholder="Enter code..."
-              className="border-custom-border-300"
+              className="border-custom-border-300 h-[46px]"
             />
             <button
               type="button"
@@ -178,7 +178,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               ) : errorResendingCode ? (
                 "Please try again later"
               ) : (
-                "Resend code"
+                <span className="font-medium">Resend code</span>
               )}
             </button>
           </>
@@ -186,7 +186,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
         {codeSent ? (
           <PrimaryButton
             type="submit"
-            className="w-full text-center"
+            className="w-full text-center h-[46px]"
             size="md"
             onClick={handleSubmit(handleSignin)}
             disabled={!isValid && isDirty}
@@ -196,7 +196,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           </PrimaryButton>
         ) : (
           <PrimaryButton
-            className="w-full text-center"
+            className="w-full text-center h-[46px]"
             size="md"
             onClick={() => {
               handleSubmit(onSubmit)().then(() => {

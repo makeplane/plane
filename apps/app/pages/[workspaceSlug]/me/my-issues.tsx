@@ -72,7 +72,8 @@ const MyIssuesPage: NextPage = () => {
                         <h4 className="text-sm text-custom-text-200">Properties</h4>
                         <div className="flex flex-wrap items-center gap-2">
                           {Object.keys(properties).map((key) => {
-                            if (key === "estimate") return null;
+                            if (key === "estimate" || key === "created_on" || key === "updated_on")
+                              return null;
 
                             return (
                               <button
