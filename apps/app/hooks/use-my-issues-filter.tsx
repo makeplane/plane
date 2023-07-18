@@ -5,10 +5,10 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 // types
-import { IWorkspaceMember, Properties } from "types";
+import { IWorkspaceMember, MyIssueProperties } from "types";
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
-const initialValues: Properties = {
+const initialValues: MyIssueProperties = {
   assignee: true,
   due_date: false,
   key: true,
@@ -19,12 +19,10 @@ const initialValues: Properties = {
   attachment_count: false,
   link: false,
   estimate: false,
-  created_on: false,
-  updated_on: false,
 };
 
 const useMyIssuesProperties = (workspaceSlug?: string) => {
-  const [properties, setProperties] = useState<Properties>(initialValues);
+  const [properties, setProperties] = useState<MyIssueProperties>(initialValues);
 
   const { user } = useUser();
 
@@ -49,7 +47,7 @@ const useMyIssuesProperties = (workspaceSlug?: string) => {
   }, [myWorkspace, workspaceSlug, user]);
 
   const updateIssueProperties = useCallback(
-    (key: keyof Properties) => {
+    (key: keyof MyIssueProperties) => {
       if (!workspaceSlug || !user) return;
 
       setProperties((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -83,7 +81,7 @@ const useMyIssuesProperties = (workspaceSlug?: string) => {
     [workspaceSlug, myWorkspace, user]
   );
 
-  const newProperties: Properties = {
+  const newProperties: MyIssueProperties = {
     assignee: properties.assignee,
     due_date: properties.due_date,
     key: properties.key,
@@ -94,8 +92,6 @@ const useMyIssuesProperties = (workspaceSlug?: string) => {
     attachment_count: properties.attachment_count,
     link: properties.link,
     estimate: properties.estimate,
-    created_on: properties.created_on,
-    updated_on: properties.updated_on,
   };
 
   return [newProperties, updateIssueProperties] as const;

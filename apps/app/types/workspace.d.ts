@@ -39,7 +39,7 @@ export interface IWorkspaceBulkInviteFormData {
   emails: { email: string; role: 5 | 10 | 15 | 20 }[];
 }
 
-export type Properties = {
+export type PropertiesBuilder = {
   assignee: boolean;
   due_date: boolean;
   labels: boolean;
@@ -50,6 +50,11 @@ export type Properties = {
   link: boolean;
   attachment_count: boolean;
   estimate: boolean;
+};
+
+export type MyIssueProperties = PropertiesBuilder;
+
+export type Properties = PropertiesBuilder & {
   created_on: boolean;
   updated_on: boolean;
 };

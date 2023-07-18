@@ -18,7 +18,7 @@ import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // hooks
 import useMyIssuesProperties from "hooks/use-my-issues-filter";
 // types
-import { IIssue, Properties } from "types";
+import { IIssue, MyIssueProperties } from "types";
 // components
 import { MyIssuesListItem } from "components/issues";
 // helpers
@@ -34,6 +34,8 @@ const MyIssuesPage: NextPage = () => {
   const { myIssues } = useIssues(workspaceSlug as string);
   const { projects } = useProjects();
 
+  // TODO: remove create on and update on
+  // [ ] - attachment count, link count, due date, labels, sub-issue count
   const [properties, setProperties] = useMyIssuesProperties(workspaceSlug as string);
 
   return (
@@ -79,11 +81,11 @@ const MyIssuesPage: NextPage = () => {
                                 key={key}
                                 type="button"
                                 className={`rounded border px-2 py-1 text-xs capitalize ${
-                                  properties[key as keyof Properties]
+                                  properties[key as keyof MyIssueProperties]
                                     ? "border-custom-primary bg-custom-primary text-white"
                                     : "border-custom-border-200"
                                 }`}
-                                onClick={() => setProperties(key as keyof Properties)}
+                                onClick={() => setProperties(key as keyof MyIssueProperties)}
                               >
                                 {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
                               </button>
