@@ -136,7 +136,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             }}
             error={errors.email}
             placeholder="Enter your email address..."
-            className="border-custom-border-300"
+            className="border-custom-border-300 h-[46px]"
           />
         </div>
 
@@ -152,7 +152,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               }}
               error={errors.token}
               placeholder="Enter code..."
-              className="border-custom-border-300"
+              className="border-custom-border-300 h-[46px]"
             />
             <button
               type="button"
@@ -186,7 +186,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
         {codeSent ? (
           <PrimaryButton
             type="submit"
-            className="w-full text-center"
+            className="w-full text-center h-[46px]"
             size="md"
             onClick={handleSubmit(handleSignin)}
             disabled={!isValid && isDirty}
@@ -196,7 +196,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           </PrimaryButton>
         ) : (
           <PrimaryButton
-            className="w-full text-center"
+            className="w-full text-center h-[46px]"
             size="md"
             onClick={() => {
               handleSubmit(onSubmit)().then(() => {

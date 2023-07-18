@@ -71,7 +71,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
               }}
               error={errors.email}
               placeholder="Enter your email address..."
-              className="border-custom-border-300"
+              className="border-custom-border-300 h-[46px]"
             />
           </div>
           <div className="space-y-1">
@@ -85,7 +85,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
               }}
               error={errors.password}
               placeholder="Enter your password..."
-              className="border-custom-border-300"
+              className="border-custom-border-300 h-[46px]"
             />
           </div>
           <div className="text-right text-xs">
@@ -108,7 +108,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
           <div>
             <PrimaryButton
               type="submit"
-              className="w-full text-center"
+              className="w-full text-center h-[46px]"
               disabled={!isValid && isDirty}
               loading={isSubmitting}
             >
