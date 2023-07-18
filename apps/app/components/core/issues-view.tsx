@@ -580,7 +580,7 @@ export const IssuesView: React.FC<Props> = ({
           ) : (
             <EmptyState
               title="Archived Issues will be shown here"
-              description="All the issues are that have been in completed or canceled state for the configured period of time can be viewed here."
+              description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
               image={emptyIssue}
               buttonText="Go to Automation Settings"
               onClick={() => {
