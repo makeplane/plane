@@ -243,6 +243,10 @@ export const IssueForm: FC<IssueFormProps> = ({
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
             user={user}
+            onSuccess={(response) => {
+              setValue("labels", [...watch("labels"), response.id]);
+              setValue("labels_list", [...watch("labels_list"), response.id]);
+            }}
           />
         </>
       )}

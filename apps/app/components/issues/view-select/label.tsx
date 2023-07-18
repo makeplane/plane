@@ -127,8 +127,6 @@ export const ViewLabelSelect: React.FC<Props> = ({
     </button>
   );
 
-  const noResultIcon = <TagIcon className="h-3.5 w-3.5 text-custom-text-200" />;
-
   return (
     <>
       {projectId && (
@@ -152,8 +150,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
         disabled={isNotAllowed}
         selfPositioned={selfPositioned}
         footerOption={footerOption}
-        noResultIcon={noResultIcon}
-        dropdownWidth="w-full min-w-[12rem]"
+        width="w-full min-w-[12rem]"
       />
     </>
   );

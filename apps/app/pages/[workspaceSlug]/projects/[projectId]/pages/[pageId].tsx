@@ -553,6 +553,11 @@ const SinglePage: NextPage = () => {
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
                       user={user}
+                      onSuccess={(response) => {
+                        partialUpdatePage({
+                          labels_list: [...(pageDetails.labels ?? []), response.id],
+                        });
+                      }}
                     />
                   )}
                 </>
