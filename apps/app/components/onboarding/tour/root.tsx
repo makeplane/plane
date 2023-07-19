@@ -93,7 +93,7 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
               <Image src={PlaneWhiteLogo} alt="Plane White Logo" />
             </div>
             <div className="h-2/5 overflow-y-auto p-6">
-              <h3 className="font-medium text-lg">
+              <h3 className="font-semibold sm:text-xl">
                 Welcome to Plane, {user?.first_name} {user?.last_name}
               </h3>
               <p className="text-custom-text-200 text-sm mt-3">

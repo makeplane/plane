@@ -113,7 +113,7 @@
 .react-datepicker__day--disabled,
 .react-datepicker__day--disabled:hover {
   background: transparent !important;
-  color: rgba(var(--color-text-200)) !important;
+  color: rgba(var(--color-text-400)) !important;
   cursor: default;
 }
 
