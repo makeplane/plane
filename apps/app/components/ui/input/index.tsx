@@ -21,7 +21,7 @@ export const Input: React.FC<Props> = ({
 }) => (
   <>
     {label && (
-      <label htmlFor={id} className="text-brand-muted-1 mb-2">
+      <label htmlFor={id} className="text-custom-text-200 mb-2">
         {label}
       </label>
     )}
@@ -34,11 +34,11 @@ export const Input: React.FC<Props> = ({
         register && register(name).onChange(e);
         onChange && onChange(e);
       }}
-      className={`block rounded-md bg-transparent text-sm focus:outline-none ${
+      className={`block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${
         mode === "primary"
-          ? "rounded-md border border-brand-base"
+          ? "rounded-md border border-custom-border-200"
           : mode === "transparent"
-          ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-brand-accent"
+          ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary"
           : mode === "trueTransparent"
           ? "rounded border-none bg-transparent ring-0"
           : ""

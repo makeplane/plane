@@ -1,6 +1,6 @@
 .empty-node::after {
   content: attr(data-placeholder);
-  color: #9ca3af;
+  color: rgb(var(--color-text-400));
 
   position: absolute;
   pointer-events: none;
@@ -87,10 +87,10 @@
 }
 
 .MuiButtonBase-root svg {
-  fill: rgb(var(--color-text-base)) !important;
+  fill: rgb(var(--color-text-100)) !important;
 }
 
 .MuiButtonBase-root.Mui-selected,
 .MuiButtonBase-root:hover {
-  background-color: rgb(var(--color-bg-base)) !important;
+  background-color: rgb(var(--color-background-100)) !important;
 }

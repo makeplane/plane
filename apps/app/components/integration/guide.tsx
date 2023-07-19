@@ -83,7 +83,7 @@ const IntegrationGuide = () => {
               {IMPORTERS_EXPORTERS_LIST.map((service) => (
                 <div
                   key={service.provider}
-                  className="rounded-[10px] border border-brand-base bg-brand-base p-4"
+                  className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4"
                 >
                   <div className="flex items-center gap-4 whitespace-nowrap">
                     <div className="relative h-10 w-10 flex-shrink-0">
@@ -96,7 +96,7 @@ const IntegrationGuide = () => {
                     </div>
                     <div className="w-full">
                       <h3>{service.title}</h3>
-                      <p className="text-sm text-brand-secondary">{service.description}</p>
+                      <p className="text-sm text-custom-text-200">{service.description}</p>
                     </div>
                     <div className="flex-shrink-0">
                       <Link
@@ -113,12 +113,12 @@ const IntegrationGuide = () => {
                 </div>
               ))}
             </div>
-            <div className="rounded-[10px] border border-brand-base bg-brand-base p-4">
+            <div className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
               <h3 className="mb-2 flex gap-2 text-lg font-medium">
                 Previous Imports
                 <button
                   type="button"
-                  className="flex flex-shrink-0 items-center gap-1 rounded bg-brand-surface-2 py-1 px-1.5 text-xs outline-none"
+                  className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs outline-none"
                   onClick={() => {
                     setRefreshing(true);
                     mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() =>
@@ -133,7 +133,7 @@ const IntegrationGuide = () => {
               {importerServices ? (
                 importerServices.length > 0 ? (
                   <div className="space-y-2">
-                    <div className="divide-y divide-brand-base">
+                    <div className="divide-y divide-custom-border-200">
                       {importerServices.map((service) => (
                         <SingleImport
                           key={service.id}
@@ -145,7 +145,7 @@ const IntegrationGuide = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="py-2 text-sm text-brand-secondary">
+                  <p className="py-2 text-sm text-custom-text-200">
                     No previous imports available.
                   </p>
                 )

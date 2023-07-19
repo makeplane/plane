@@ -89,7 +89,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -103,7 +103,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -118,7 +118,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                   </div>
 
                   <span>
-                    <p className="text-sm leading-7 text-brand-secondary">
+                    <p className="text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete workspace{" "}
                       <span className="break-words font-semibold">{data?.name}</span>? All of the
                       data related to the workspace will be permanently removed. This action cannot
@@ -126,10 +126,12 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                     </p>
                   </span>
 
-                  <div className="text-brand-secondary">
+                  <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
                       Enter the workspace name{" "}
-                      <span className="font-medium text-brand-base">{selectedWorkspace?.name}</span>{" "}
+                      <span className="font-medium text-custom-text-100">
+                        {selectedWorkspace?.name}
+                      </span>{" "}
                       to continue:
                     </p>
                     <Input
@@ -144,10 +146,10 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                     />
                   </div>
 
-                  <div className="text-brand-secondary">
+                  <div className="text-custom-text-200">
                     <p className="text-sm">
                       To confirm, type{" "}
-                      <span className="font-medium text-brand-base">delete my workspace</span>{" "}
+                      <span className="font-medium text-custom-text-100">delete my workspace</span>{" "}
                       below:
                     </p>
                     <Input

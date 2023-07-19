@@ -72,7 +72,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             alt={comment.actor_detail.first_name}
             height={30}
             width={30}
-            className="grid h-7 w-7 place-items-center rounded-full border-2 border-brand-base"
+            className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-200"
           />
         ) : (
           <div
@@ -82,9 +82,9 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           </div>
         )}
 
-        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-brand-surface-2 px-0.5 py-px">
+        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
           <ChatBubbleLeftEllipsisIcon
-            className="h-3.5 w-3.5 text-brand-secondary"
+            className="h-3.5 w-3.5 text-custom-text-200"
             aria-hidden="true"
           />
         </span>
@@ -95,7 +95,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             {comment.actor_detail.first_name}
             {comment.actor_detail.is_bot ? "Bot" : " " + comment.actor_detail.last_name}
           </div>
-          <p className="mt-0.5 text-xs text-brand-secondary">
+          <p className="mt-0.5 text-xs text-custom-text-200">
             Commented {timeAgo(comment.created_at)}
           </p>
         </div>
@@ -135,7 +135,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               value={comment.comment_html}
               editable={false}
               noBorder
-              customClassName="text-xs border border-brand-base bg-brand-base"
+              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
               ref={showEditorRef}
             />
           </div>

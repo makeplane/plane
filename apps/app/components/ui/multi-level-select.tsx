@@ -48,11 +48,11 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
           <div className="relative mt-1">
             <Listbox.Button
               onClick={() => setOpenChildFor(null)}
-              className="relative w-full cursor-default rounded-lg bg-brand-surface-2 py-2 pl-3 pr-10 text-left shadow-md sm:text-sm"
+              className="relative w-full cursor-default rounded-lg bg-custom-background-80 py-2 pl-3 pr-10 text-left shadow-md sm:text-sm"
             >
               <span className="block truncate">{selected?.label ?? label}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <ChevronUpDownIcon className="h-5 w-5 text-custom-text-200" aria-hidden="true" />
               </span>
             </Listbox.Button>
             <Transition
@@ -64,13 +64,13 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
             >
               <Listbox.Options
                 static
-                className="absolute mt-1 max-h-60 w-full rounded-md bg-brand-surface-2 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                className="absolute mt-1 max-h-60 w-full rounded-md bg-custom-background-80 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
               >
                 {options.map((option) => (
                   <Listbox.Option
                     key={option.id}
                     className={
-                      "relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-brand-surface-1 hover:text-brand-base"
+                      "relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-custom-background-90 hover:text-custom-text-100"
                     }
                     onClick={(e: any) => {
                       if (option.children !== null) {
@@ -88,7 +88,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                       <>
                         {openChildFor?.id === option.id && (
                           <div
-                            className={`absolute h-auto max-h-72 w-72 rounded-lg border border-brand-base bg-brand-surface-2 ${
+                            className={`absolute h-auto max-h-72 w-72 rounded-lg border border-custom-border-200 bg-custom-background-80 ${
                               direction === "right"
                                 ? "left-full translate-x-2 rounded-tl-none shadow-md"
                                 : "right-full -translate-x-2 rounded-tr-none shadow-md"
@@ -98,7 +98,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                               <Listbox.Option
                                 key={child.id}
                                 className={
-                                  "relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-brand-surface-1 hover:text-brand-base"
+                                  "relative cursor-default select-none py-2 pl-10 pr-4 hover:bg-custom-background-90 hover:text-custom-text-100"
                                 }
                                 as="div"
                                 value={child}
@@ -113,7 +113,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                                       {child.label}
                                     </span>
                                     {selected ? (
-                                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-600">
+                                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-custom-text-200">
                                         <CheckIcon className="h-5 w-5" aria-hidden="true" />
                                       </span>
                                     ) : null}
@@ -123,7 +123,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                             ))}
 
                             <div
-                              className={`absolute h-0 w-0 border-t-8 border-brand-base ${
+                              className={`absolute h-0 w-0 border-t-8 border-custom-border-200 ${
                                 direction === "right"
                                   ? "top-0 left-0 -translate-x-2 border-r-8 border-b-8 border-b-transparent border-t-transparent border-l-transparent"
                                   : "top-0 right-0 translate-x-2 border-l-8 border-b-8 border-b-transparent border-t-transparent border-r-transparent"
@@ -137,7 +137,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                           {option.label}
                         </span>
                         {selected ? (
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-600">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-custom-text-200">
                             <CheckIcon className="h-5 w-5" aria-hidden="true" />
                           </span>
                         ) : null}

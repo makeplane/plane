@@ -62,17 +62,17 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           ) : currentDefaultState ? (
             getStateGroupIcon(currentDefaultState.group, "16", "16", currentDefaultState.color)
           ) : (
-            <Squares2X2Icon className="h-3.5 w-3.5 text-brand-secondary" />
+            <Squares2X2Icon className="h-3.5 w-3.5 text-custom-text-200" />
           )}
           {selectedOption?.name
             ? selectedOption.name
-            : currentDefaultState?.name ?? <span className="text-brand-secondary">State</span>}
+            : currentDefaultState?.name ?? <span className="text-custom-text-200">State</span>}
         </div>
       }
       footerOption={
         <button
           type="button"
-          className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-brand-secondary hover:bg-brand-surface-2"
+          className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-4 w-4" aria-hidden="true" />

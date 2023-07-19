@@ -84,7 +84,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       <div
         className={`flex ${
           isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-        } items-center gap-2 text-brand-secondary`}
+        } items-center gap-2 text-custom-text-200`}
       >
         {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
           <div className="-my-0.5 flex items-center justify-center gap-2">
@@ -92,7 +92,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
           </div>
         ) : (
           <div className="flex items-center justify-center gap-2">
-            <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+            <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
           </div>
         )}
       </div>
@@ -130,7 +130,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       position={position}
       disabled={isNotAllowed}
       selfPositioned={selfPositioned}
-      dropdownWidth="w-full min-w-[12rem]"
+      width="w-full min-w-[12rem]"
     />
   );
 };

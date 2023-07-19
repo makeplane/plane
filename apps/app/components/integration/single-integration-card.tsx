@@ -99,7 +99,7 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
   );
 
   return (
-    <div className="flex items-center justify-between gap-2 rounded-[10px] border border-brand-base bg-brand-base p-5">
+    <div className="flex items-center justify-between gap-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5">
       <div className="flex items-start gap-4">
         <div className="h-12 w-12 flex-shrink-0">
           <Image
@@ -116,14 +116,14 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
                   <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-green-500" /> Installed
                 </span>
               ) : (
-                <span className="flex items-center gap-1 text-sm font-normal text-gray-400">
-                  <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gray-400" /> Not
-                  Installed
+                <span className="flex items-center gap-1 text-sm font-normal text-custom-text-200">
+                  <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-custom-background-80" />{" "}
+                  Not Installed
                 </span>
               )
             ) : null}
           </h3>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-custom-text-200">
             {workspaceIntegrations
               ? isInstalled
                 ? integrationDetails[integration.provider].installed
