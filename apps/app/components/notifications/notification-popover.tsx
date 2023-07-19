@@ -73,8 +73,6 @@ export const NotificationPopover = () => {
     },
   ];
 
-  console.log(isMember, isOwner);
-
   return (
     <>
       <SnoozeNotificationModal
