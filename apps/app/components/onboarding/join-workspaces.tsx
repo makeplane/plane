@@ -146,7 +146,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange }) => {
         >
           Accept & Join
         </PrimaryButton>
-        <SecondaryButton size="md" onClick={finishOnboarding} outline>
+        <SecondaryButton className="border border-none bg-transparent" size="md" onClick={finishOnboarding} >
           Skip for now
         </SecondaryButton>
       </div>
