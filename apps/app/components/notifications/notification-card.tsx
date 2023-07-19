@@ -90,13 +90,15 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         <div className="relative w-12 h-12 rounded-full">
           {notification.triggered_by_details.avatar &&
           notification.triggered_by_details.avatar !== "" ? (
-            <Image
-              src={notification.triggered_by_details.avatar}
-              alt="profile image"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-full"
-            />
+            <div className="h-12 w-12 rounded-full">
+              <Image
+                src={notification.triggered_by_details.avatar}
+                alt="Profile Image"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-full"
+              />
+            </div>
           ) : (
             <div className="w-12 h-12 bg-custom-background-100 rounded-full flex justify-center items-center">
               <span className="text-custom-text-100 font-medium text-lg">
