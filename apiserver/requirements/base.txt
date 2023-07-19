@@ -30,3 +30,5 @@ openai==0.27.8
 slack-sdk==3.21.3
 celery==5.3.1
 django_celery_beat==2.5.0
+psycopg-binary==3.1.9
+psycopg-c==3.1.9
