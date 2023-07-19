@@ -17,12 +17,12 @@ export const CHARTS_THEME: Theme = {
       background: "rgb(var(--color-background-80))",
       color: "rgb(var(--color-text-200))",
       fontSize: "0.8rem",
-      border: "1px solid rgb(var(--color-background-80))",
+      border: "1px solid rgb(var(--color-border-300))",
     },
   },
   grid: {
     line: {
-      stroke: "rgb(var(--color-background-80))",
+      stroke: "rgb(var(--color-border-100))",
     },
   },
 };
