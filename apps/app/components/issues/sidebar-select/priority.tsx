@@ -14,10 +14,16 @@ type Props = {
   value: string | null;
   onChange: (val: string) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+export const SidebarPrioritySelect: React.FC<Props> = ({
+  value,
+  onChange,
+  userAuth,
+  disabled = false,
+}) => {
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">

@@ -16,6 +16,7 @@ from .project import (
 from .people import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
 )
 
@@ -144,4 +145,4 @@ from .analytic import (
     DefaultAnalyticsEndpoint,
 )
 
-from .notification import NotificationViewSet
+from .notification import NotificationViewSet, UnreadNotificationEndpoint

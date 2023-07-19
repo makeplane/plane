@@ -71,9 +71,8 @@ export const ThemeSwitch: React.FC<Props> = ({
         }
         onChange={({ value, type }: { value: string; type: string }) => {
           if (value === "custom") {
-            if (user?.theme.palette) {
-              setPreLoadedData(user.theme);
-            }
+            if (user?.theme.palette) setPreLoadedData(user.theme);
+
             if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
           } else {
             if (customThemeSelectorOptions) setCustomThemeSelectorOptions(false);
@@ -81,9 +80,11 @@ export const ThemeSwitch: React.FC<Props> = ({
             for (let i = 10; i <= 900; i >= 100 ? (i += 100) : (i += 10)) {
               document.documentElement.style.removeProperty(`--color-background-${i}`);
               document.documentElement.style.removeProperty(`--color-text-${i}`);
+              document.documentElement.style.removeProperty(`--color-border-${i}`);
               document.documentElement.style.removeProperty(`--color-primary-${i}`);
               document.documentElement.style.removeProperty(`--color-sidebar-background-${i}`);
               document.documentElement.style.removeProperty(`--color-sidebar-text-${i}`);
+              document.documentElement.style.removeProperty(`--color-sidebar-border-${i}`);
             }
           }
           setTheme(value);

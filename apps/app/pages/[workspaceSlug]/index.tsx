@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import Image from "next/image";
+import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 
+// next-themes
+import { useTheme } from "next-themes";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // services
@@ -19,16 +22,20 @@ import {
   IssuesPieChart,
   IssuesStats,
 } from "components/workspace";
+import { TourRoot } from "components/onboarding";
 // ui
-import { PrimaryButton, ProductUpdatesModal } from "components/ui";
+import { Icon, PrimaryButton, ProductUpdatesModal } from "components/ui";
 // images
 import emptyDashboard from "public/empty-state/dashboard.svg";
+import githubBlackImage from "/public/logos/github-black.png";
+import githubWhiteImage from "/public/logos/github-white.png";
 // helpers
 import { render12HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 // types
+import { ICurrentUserResponse } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
+import { CURRENT_USER, USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 // constants
 import { DAYS } from "constants/project";
 
@@ -38,6 +45,8 @@ const WorkspacePage: NextPage = () => {
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { theme } = useTheme();
 
   const { user } = useUser();
   const { projects } = useProjects();
@@ -58,38 +67,68 @@ const WorkspacePage: NextPage = () => {
   }, [month, workspaceSlug]);
 
   return (
-    <WorkspaceAuthorizationLayout noHeader>
+    <WorkspaceAuthorizationLayout
+      left={
+        <div className="flex items-center gap-2 px-3">
+          <Icon iconName="grid_view" />
+          Dashboard
+        </div>
+      }
+      right={
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsProductUpdatesModalOpen(true)}
+            className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded"
+          >
+            <Icon iconName="bolt" className="!text-base -my-1" />
+            What{"'"}s New?
+          </button>
+          <Link href="https://github.com/makeplane/plane" target="_blank" rel="noopener noreferrer">
+            <a className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded">
+              <Image
+                src={theme === "dark" ? githubWhiteImage : githubBlackImage}
+                height={16}
+                width={16}
+                alt="GitHub Logo"
+              />
+              Star us on GitHub
+            </a>
+          </Link>
+        </div>
+      }
+    >
       {isProductUpdatesModalOpen && (
         <ProductUpdatesModal
           isOpen={isProductUpdatesModalOpen}
           setIsOpen={setIsProductUpdatesModalOpen}
         />
       )}
+      {user && !user.is_tour_completed && (
+        <div className="fixed top-0 left-0 h-full w-full bg-custom-backdrop bg-opacity-50 transition-opacity z-20 grid place-items-center">
+          <TourRoot
+            onComplete={() => {
+              mutate<ICurrentUserResponse>(
+                CURRENT_USER,
+                (prevData) => {
+                  if (!prevData) return prevData;
+
+                  return {
+                    ...prevData,
+                    is_tour_completed: true,
+                  };
+                },
+                false
+              );
+
+              userService.updateUserTourCompleted(user).catch(() => mutate(CURRENT_USER));
+            }}
+          />
+        </div>
+      )}
       {projects ? (
         projects.length > 0 ? (
           <div className="p-8">
             <div className="flex flex-col gap-8">
-              <div className="text-custom-text-200 flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg border border-custom-border-100 bg-custom-background-100 px-4 py-6 md:flex-row md:items-center md:py-3">
-                <p className="font-semibold">
-                  Plane is open source, support us by starring us on GitHub.
-                </p>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setIsProductUpdatesModalOpen(true)}
-                    className="rounded-md border-2 border-custom-border-100 px-3 py-1.5 text-sm font-medium duration-300"
-                  >
-                    {`What's New?`}
-                  </button>
-                  <a
-                    href="https://github.com/makeplane/plane"
-                    target="_blank"
-                    className="rounded-md border-2 border-custom-border-100 px-3 py-1.5 text-sm font-medium duration-300"
-                    rel="noopener noreferrer"
-                  >
-                    Star us on GitHub
-                  </a>
-                </div>
-              </div>
               <IssuesStats data={workspaceDashboardData} />
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <IssuesList issues={workspaceDashboardData?.overdue_issues} type="overdue" />
@@ -109,6 +148,7 @@ const WorkspacePage: NextPage = () => {
               Good {greeting}, {user?.first_name} {user?.last_name}
             </h3>
             <h6 className="text-custom-text-400 font-medium">
+              {greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}
               {DAYS[today.getDay()]}, {renderShortDate(today)} {render12HourFormatTime(today)}
             </h6>
             <div className="mt-7 bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">

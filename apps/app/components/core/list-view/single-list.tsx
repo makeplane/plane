@@ -67,6 +67,7 @@ export const SingleList: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
@@ -159,7 +160,9 @@ export const SingleList: React.FC<Props> = ({
                 </span>
               </div>
             </Disclosure.Button>
-            {type === "issue" ? (
+            {isArchivedIssues ? (
+              ""
+            ) : type === "issue" ? (
               <button
                 type="button"
                 className="p-1  text-custom-text-200 hover:bg-custom-background-80"

@@ -31,11 +31,12 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
-import { EmptyState, PrimaryButton, Spinner } from "components/ui";
+import { EmptyState, PrimaryButton, Spinner, Icon } from "components/ui";
 // icons
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
+import emptyIssueArchive from "public/empty-state/issue-archive.svg";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
@@ -488,7 +489,7 @@ export const IssuesView: React.FC<Props> = ({
               {viewId ? "Update" : "Save"} view
             </PrimaryButton>
           </div>
-          {<div className="mt-3 border-t border-custom-border-100" />}
+          {<div className="mt-3 border-t border-custom-border-200" />}
         </>
       )}
 
@@ -577,9 +578,25 @@ export const IssuesView: React.FC<Props> = ({
                 issueView === "gantt_chart" && <GanttChartView />
               )}
             </>
+          ) : router.pathname.includes("archived-issues") ? (
+            <EmptyState
+              title="Archived Issues will be shown here"
+              description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
+              image={emptyIssueArchive}
+              buttonText="Go to Automation Settings"
+              onClick={() => {
+                router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
+              }}
+            />
           ) : (
             <EmptyState
-              title="Project issues will appear here"
+              title={
+                cycleId
+                  ? "Cycle issues will appear here"
+                  : moduleId
+                  ? "Module issues will appear here"
+                  : "Project issues will appear here"
+              }
               description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
               image={emptyIssue}
               buttonText="New Issue"

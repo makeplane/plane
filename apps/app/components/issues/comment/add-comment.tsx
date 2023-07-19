@@ -43,9 +43,10 @@ const defaultValues: Partial<IIssueComment> = {
 type Props = {
   issueId: string;
   user: ICurrentUserResponse | undefined;
+  disabled?: boolean;
 };
 
-export const AddComment: React.FC<Props> = ({ issueId, user }) => {
+export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false }) => {
   const {
     handleSubmit,
     control,
@@ -111,7 +112,7 @@ export const AddComment: React.FC<Props> = ({ issueId, user }) => {
             )}
           />
 
-          <SecondaryButton type="submit" disabled={isSubmitting} className="mt-2">
+          <SecondaryButton type="submit" disabled={isSubmitting || disabled} className="mt-2">
             {isSubmitting ? "Adding..." : "Comment"}
           </SecondaryButton>
         </div>

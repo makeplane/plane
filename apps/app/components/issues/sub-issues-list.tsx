@@ -28,9 +28,10 @@ import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 type Props = {
   parentIssue: IIssue;
   user: ICurrentUserResponse | undefined;
+  disabled?: boolean;
 };
 
-export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -180,7 +181,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
 
   const completionPercentage = (completedSubIssues / totalSubIssues) * 100;
 
-  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
+  const isNotAllowed = memberRole.isGuest || memberRole.isViewer || disabled;
 
   return (
     <>
@@ -271,7 +272,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                     >
-                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-custom-background-100">
+                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-custom-background-90">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
                             className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -315,6 +316,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
                 Add sub-issue
               </>
             }
+            buttonClassName="whitespace-nowrap"
             position="left"
             noBorder
             noChevron

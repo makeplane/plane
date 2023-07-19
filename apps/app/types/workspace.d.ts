@@ -13,8 +13,8 @@ export interface IWorkspace {
   readonly slug: string;
   readonly created_by: string;
   readonly updated_by: string;
-  company_size: number | null;
-  total_issues: number | null;
+  organization_size: string;
+  total_issues: number;
 }
 
 export interface IWorkspaceLite {
@@ -33,6 +33,10 @@ export interface IWorkspaceMemberInvitation {
   role: 5 | 10 | 15 | 20;
   created_by_detail: IUser;
   workspace: IWorkspace;
+}
+
+export interface IWorkspaceBulkInviteFormData {
+  emails: { email: string; role: 5 | 10 | 15 | 20 }[];
 }
 
 export type Properties = {

@@ -23,9 +23,15 @@ type Props = {
   value: string;
   onChange: (val: string) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
+export const SidebarStateSelect: React.FC<Props> = ({
+  value,
+  onChange,
+  userAuth,
+  disabled = false,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
@@ -39,7 +45,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
 
   const selectedState = states?.find((s) => s.id === value);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">

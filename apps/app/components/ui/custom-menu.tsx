@@ -4,7 +4,8 @@ import Link from "next/link";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { ChevronDownIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { Icon } from "./icon";
 
 type Props = {
   children: React.ReactNode;
@@ -61,8 +62,9 @@ const CustomMenu = ({
                 type="button"
                 className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:bg-custom-background-80 outline-none"
               >
-                <EllipsisHorizontalIcon
-                  className={`h-4 w-4 ${verticalEllipsis ? "rotate-90" : ""}`}
+                <Icon
+                  iconName="more_horiz"
+                  className={`${verticalEllipsis ? "rotate-90" : ""} text-brand-secondary`}
                 />
               </Menu.Button>
             ) : (
@@ -79,7 +81,7 @@ const CustomMenu = ({
                 } ${
                   noBorder
                     ? "rounded-md"
-                    : "rounded-md border border-custom-border-100 shadow-sm focus:outline-none"
+                    : "rounded-md border border-custom-border-200 shadow-sm focus:outline-none"
                 } ${
                   width === "sm"
                     ? "w-10"
@@ -134,7 +136,7 @@ const CustomMenu = ({
             } ${
               menuItemsWhiteBg
                 ? "border-custom-border-200 bg-custom-background-100"
-                : "border-custom-border-100 bg-custom-background-90"
+                : "border-custom-border-200 bg-custom-background-90"
             } ${menuItemsClassName}`}
           >
             <div className="py-1">{children}</div>

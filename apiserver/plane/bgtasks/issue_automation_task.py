@@ -12,7 +12,7 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import Issue, Project, IssueActivity, State
+from plane.db.models import Issue, Project, State
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
@@ -49,6 +49,11 @@ def archive_old_issues():
                     Q(issue_module__module__target_date__lt=timezone.now().date())
                     & Q(issue_module__isnull=False)
                 ),
+            ).filter(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True)
             )
 
             # Check if Issues
@@ -65,7 +70,7 @@ def archive_old_issues():
                 [
                     issue_activity.delay(
                         type="issue.activity.updated",
-                        requested_data=json.dumps({"archive_at": issue.archived_at}),
+                        requested_data=json.dumps({"archived_at": issue.archived_at}),
                         actor_id=str(project.created_by_id),
                         issue_id=issue.id,
                         project_id=project_id,
@@ -111,14 +116,19 @@ def close_old_issues():
                     Q(issue_module__module__target_date__lt=timezone.now().date())
                     & Q(issue_module__isnull=False)
                 ),
+            ).filter(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True)
             )
 
             # Check if Issues
             if issues:
                 if project.default_state is None:
-                    close_state = project.default_state
-                else:
                     close_state = State.objects.filter(group="cancelled").first()
+                else:
+                    close_state = project.default_state
 
                 issues_to_update = []
                 for issue in issues:

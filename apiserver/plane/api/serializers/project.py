@@ -110,8 +110,8 @@ class ProjectMemberSerializer(BaseSerializer):
 
 
 class ProjectMemberInviteSerializer(BaseSerializer):
-    project = ProjectSerializer(read_only=True)
-    workspace = WorkSpaceSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
 
     class Meta:
         model = ProjectMemberInvite
@@ -125,7 +125,7 @@ class ProjectIdentifierSerializer(BaseSerializer):
 
 
 class ProjectFavoriteSerializer(BaseSerializer):
-    project_detail = ProjectSerializer(source="project", read_only=True)
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
 
     class Meta:
         model = ProjectFavorite
@@ -136,11 +136,6 @@ class ProjectFavoriteSerializer(BaseSerializer):
         ]
 
 
-class ProjectLiteSerializer(BaseSerializer):
-    class Meta:
-        model = Project
-        fields = ["id", "identifier", "name"]
-        read_only_fields = fields
 
 
 class ProjectMemberLiteSerializer(BaseSerializer):

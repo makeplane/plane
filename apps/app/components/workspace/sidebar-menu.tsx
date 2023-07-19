@@ -1,13 +1,38 @@
 import React from "react";
 
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // hooks
 import useTheme from "hooks/use-theme";
-// icons
-import { ChartBarIcon } from "@heroicons/react/24/outline";
-import { GridViewIcon, AssignmentClipboardIcon, TickMarkIcon, SettingIcon } from "components/icons";
+
+import { NotificationPopover } from "components/notifications";
+
+const workspaceLinks = (workspaceSlug: string) => [
+  {
+    icon: "grid_view",
+    name: "Dashboard",
+    href: `/${workspaceSlug}`,
+  },
+  {
+    icon: "bar_chart",
+    name: "Analytics",
+    href: `/${workspaceSlug}/analytics`,
+  },
+  {
+    icon: "work",
+    name: "Projects",
+    href: `/${workspaceSlug}/projects`,
+  },
+  {
+    icon: "task_alt",
+    name: "My Issues",
+    href: `/${workspaceSlug}/me/my-issues`,
+  },
+];
+
+// components
+import { Icon, Tooltip } from "components/ui";
 
 export const WorkspaceSidebarMenu = () => {
   const router = useRouter();
@@ -16,36 +41,8 @@ export const WorkspaceSidebarMenu = () => {
   // theme context
   const { collapsed: sidebarCollapse } = useTheme();
 
-  const workspaceLinks = (workspaceSlug: string) => [
-    {
-      icon: GridViewIcon,
-      name: "Dashboard",
-      href: `/${workspaceSlug}`,
-    },
-    {
-      icon: ChartBarIcon,
-      name: "Analytics",
-      href: `/${workspaceSlug}/analytics`,
-    },
-    {
-      icon: AssignmentClipboardIcon,
-      name: "Projects",
-      href: `/${workspaceSlug}/projects`,
-    },
-    {
-      icon: TickMarkIcon,
-      name: "My Issues",
-      href: `/${workspaceSlug}/me/my-issues`,
-    },
-    {
-      icon: SettingIcon,
-      name: "Settings",
-      href: `/${workspaceSlug}/settings`,
-    },
-  ];
-
   return (
-    <div className="flex w-full flex-col items-start justify-start gap-2 px-3 py-1">
+    <div className="w-full cursor-pointer space-y-2 px-4 mt-5">
       {workspaceLinks(workspaceSlug as string).map((link, index) => {
         const isActive =
           link.name === "Settings"
@@ -54,32 +51,30 @@ export const WorkspaceSidebarMenu = () => {
 
         return (
           <Link key={index} href={link.href}>
-            <a
-              className={`${
-                isActive
-                  ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
-                  : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 focus:bg-custom-sidebar-background-90"
-              } group flex w-full items-center gap-3 rounded-md p-2 text-sm font-medium outline-none ${
-                sidebarCollapse ? "justify-center" : ""
-              }`}
-            >
-              <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
-                <link.icon
-                  color={
+            <a className="block w-full">
+              <Tooltip
+                tooltipContent={link.name}
+                position="right"
+                className="ml-2"
+                disabled={!sidebarCollapse}
+              >
+                <div
+                  className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
-                      ? "rgb(var(--color-sidebar-text-100))"
-                      : "rgb(var(--color-sidebar-text-200))"
-                  }
-                  aria-hidden="true"
-                  height="20"
-                  width="20"
-                />
-              </span>
-              {!sidebarCollapse && link.name}
+                      ? "bg-custom-primary-100/10 text-custom-primary-100"
+                      : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+                  } ${sidebarCollapse ? "justify-center" : ""}`}
+                >
+                  <Icon iconName={`${link.icon}`} />
+                  {!sidebarCollapse && link.name}
+                </div>
+              </Tooltip>
             </a>
           </Link>
         );
       })}
+
+      <NotificationPopover />
     </div>
   );
 };
