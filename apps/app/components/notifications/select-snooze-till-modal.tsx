@@ -15,7 +15,13 @@ import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
 import useToast from "hooks/use-toast";
 
 // components
-import { PrimaryButton, SecondaryButton, Icon, CustomDatePicker } from "components/ui";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  Icon,
+  CustomDatePicker,
+  CustomSelect,
+} from "components/ui";
 
 // types
 import type { IUserNotification } from "types";
@@ -105,7 +111,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
     dateTime.setMinutes(minutes);
 
     await handleSubmitSnooze(notification.id, dateTime).then(() => {
-      onClose();
+      handleClose();
       onSuccess();
       setToastAlert({
         title: "Notification snoozed",
@@ -118,7 +124,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
   const handleClose = () => {
     onClose();
     const timeout = setTimeout(() => {
-      reset();
+      reset({ ...defaultValues });
       clearTimeout(timeout);
     }, 500);
   };
@@ -149,7 +155,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-80 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex justify-between items-center">
                     <Dialog.Title
@@ -168,155 +174,96 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
 
                   <div className="mt-5 flex items-center gap-3">
                     <div className="flex-1">
-                      <span className="block text-sm font-medium text-custom-text-400">
+                      <h6 className="block text-sm font-medium text-custom-text-400 mb-2">
                         Pick a date
-                      </span>
-                      <div className="mt-2">
-                        <Controller
-                          name="date"
-                          control={control}
-                          rules={{ required: "Please select a date" }}
-                          render={({ field: { value, onChange } }) => (
-                            <CustomDatePicker
-                              placeholder="Pick a date"
-                              value={value}
-                              onChange={(val) => {
-                                setValue("time", null);
-                                onChange(val);
-                              }}
-                              className="px-3 py-[0.385rem] w-full rounded-md border border-custom-border-100 bg-custom-background-100 text-custom-text-100 shadow-sm focus:outline-none sm:text-sm sm:leading-6"
-                              noBorder
-                              minDate={new Date()}
-                            />
-                          )}
-                        />
-                      </div>
+                      </h6>
+                      <Controller
+                        name="date"
+                        control={control}
+                        rules={{ required: "Please select a date" }}
+                        render={({ field: { value, onChange } }) => (
+                          <CustomDatePicker
+                            placeholder="Select date"
+                            value={value}
+                            onChange={(val) => {
+                              setValue("time", null);
+                              onChange(val);
+                            }}
+                            className="px-3 py-2 w-full rounded-md border border-custom-border-300 bg-custom-background-100 text-custom-text-100 focus:outline-none !text-sm"
+                            noBorder
+                            minDate={new Date()}
+                          />
+                        )}
+                      />
                     </div>
                     <div className="flex-1">
+                      <h6 className="block text-sm font-medium text-custom-text-400 mb-2">
+                        Pick a time
+                      </h6>
                       <Controller
                         control={control}
                         name="time"
                         rules={{ required: "Please select a time" }}
                         render={({ field: { value, onChange } }) => (
-                          <Listbox value={value} onChange={onChange}>
-                            {({ open }) => (
-                              <>
-                                <div className="relative mt-2">
-                                  <Listbox.Label>
-                                    <span className="block text-sm font-medium text-custom-text-400">
-                                      Pick a time
-                                    </span>
-                                  </Listbox.Label>
-                                  <Listbox.Button className="relative mt-1 w-full cursor-default rounded-md border border-custom-border-100 bg-custom-background-100 py-1.5 pl-3 pr-10 text-left text-custom-text-100 shadow-sm focus:outline-none sm:text-sm sm:leading-6">
-                                    <span className="flex items-center">
-                                      <span className="ml-3 block truncate">
-                                        {value ? (
-                                          <span>
-                                            {value} {watch("period").toLowerCase()}
-                                          </span>
-                                        ) : (
-                                          "Select a time"
-                                        )}
-                                      </span>
-                                    </span>
-                                    <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                                      <Icon
-                                        iconName="expand_more"
-                                        className="h-5 w-5 text-custom-text-100"
-                                        aria-hidden="true"
-                                      />
-                                    </span>
-                                  </Listbox.Button>
-
-                                  <Transition
-                                    show={open}
-                                    as={Fragment}
-                                    leave="transition ease-in duration-100"
-                                    leaveFrom="opacity-100"
-                                    leaveTo="opacity-0"
-                                  >
-                                    <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-custom-background-100 py-1 text-base shadow-lg focus:outline-none sm:text-sm">
-                                      <div className="w-full rounded overflow-hidden h-9 mx-1 mb-2 flex">
-                                        <div
-                                          onClick={() => {
-                                            setValue("period", "AM");
-                                          }}
-                                          className={`w-1/2 h-full cursor-pointer flex justify-center items-center text-center ${
-                                            watch("period") === "AM"
-                                              ? "bg-custom-primary-100/90 text-custom-primary-0"
-                                              : "bg-custom-background-90"
-                                          }`}
-                                        >
-                                          AM
-                                        </div>
-                                        <div
-                                          onClick={() => {
-                                            setValue("period", "PM");
-                                          }}
-                                          className={`w-1/2 h-full cursor-pointer flex justify-center items-center text-center ${
-                                            watch("period") === "PM"
-                                              ? "bg-custom-primary-100/90 text-custom-primary-0"
-                                              : "bg-custom-background-90"
-                                          }`}
-                                        >
-                                          PM
-                                        </div>
-                                      </div>
-                                      {getTimeStamp().length > 0 ? (
-                                        getTimeStamp().map((time, index) => (
-                                          <Listbox.Option
-                                            key={`${time}-${index}`}
-                                            className={({ active }) =>
-                                              `relative cursor-default select-none py-2 pl-3 pr-9 ${
-                                                active
-                                                  ? "bg-custom-primary-100/80 text-custom-text-100"
-                                                  : "text-custom-text-700"
-                                              }`
-                                            }
-                                            value={time.value}
-                                          >
-                                            {({ selected, active }) => (
-                                              <>
-                                                <div className="flex items-center">
-                                                  <span
-                                                    className={`ml-3 block truncate ${
-                                                      selected ? "font-semibold" : "font-normal"
-                                                    }`}
-                                                  >
-                                                    {time.label}
-                                                  </span>
-                                                </div>
-
-                                                {selected ? (
-                                                  <span
-                                                    className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                                      active
-                                                        ? "text-custom-text-100"
-                                                        : "text-custom-primary-100"
-                                                    }`}
-                                                  >
-                                                    <Icon
-                                                      iconName="done"
-                                                      className="h-5 w-5"
-                                                      aria-hidden="true"
-                                                    />
-                                                  </span>
-                                                ) : null}
-                                              </>
-                                            )}
-                                          </Listbox.Option>
-                                        ))
-                                      ) : (
-                                        <p className="text-custom-text-80 text-center p-3">
-                                          No available time for this date.
-                                        </p>
-                                      )}
-                                    </Listbox.Options>
-                                  </Transition>
-                                </div>
-                              </>
+                          <CustomSelect
+                            value={value}
+                            onChange={onChange}
+                            label={
+                              <div className="truncate">
+                                {value ? (
+                                  <span>
+                                    {value} {watch("period").toLowerCase()}
+                                  </span>
+                                ) : (
+                                  <span className="text-custom-text-400 text-sm">
+                                    Select a time
+                                  </span>
+                                )}
+                              </div>
+                            }
+                            width="w-full"
+                            input
+                          >
+                            <div className="w-full rounded overflow-hidden h-9 mb-2 flex">
+                              <div
+                                onClick={() => {
+                                  setValue("period", "AM");
+                                }}
+                                className={`w-1/2 h-full cursor-pointer flex justify-center items-center text-center ${
+                                  watch("period") === "AM"
+                                    ? "bg-custom-primary-100/90 text-custom-primary-0"
+                                    : "bg-custom-background-80"
+                                }`}
+                              >
+                                AM
+                              </div>
+                              <div
+                                onClick={() => {
+                                  setValue("period", "PM");
+                                }}
+                                className={`w-1/2 h-full cursor-pointer flex justify-center items-center text-center ${
+                                  watch("period") === "PM"
+                                    ? "bg-custom-primary-100/90 text-custom-primary-0"
+                                    : "bg-custom-background-80"
+                                }`}
+                              >
+                                PM
+                              </div>
+                            </div>
+                            {getTimeStamp().length > 0 ? (
+                              getTimeStamp().map((time, index) => (
+                                <CustomSelect.Option key={`${time}-${index}`} value={time.value}>
+                                  <div className="flex items-center">
+                                    <span className="ml-3 block truncate">{time.label}</span>
+                                  </div>
+                                </CustomSelect.Option>
+                              ))
+                            ) : (
+                              <p className="text-custom-text-200 text-center p-3">
+                                No available time for this date.
+                              </p>
                             )}
-                          </Listbox>
+                          </CustomSelect>
                         )}
                       />
                     </div>
