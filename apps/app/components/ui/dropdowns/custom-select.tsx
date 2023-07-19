@@ -44,7 +44,7 @@ const CustomSelect = ({
         <Listbox.Button as="div">{customButton}</Listbox.Button>
       ) : (
         <Listbox.Button
-          className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-100 shadow-sm duration-300 focus:outline-none ${
+          className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none ${
             input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
           } ${
             disabled
@@ -68,7 +68,7 @@ const CustomSelect = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Listbox.Options
-        className={`absolute z-10 border border-custom-border-100 mt-1 origin-top-right overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
+        className={`absolute z-10 border border-custom-border-300 mt-1 origin-top-right overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
           position === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
         } ${verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"} ${
           maxHeight === "lg"

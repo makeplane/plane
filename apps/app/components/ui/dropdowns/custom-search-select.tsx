@@ -69,7 +69,7 @@ export const CustomSearchSelect = ({
             <Combobox.Button as="div">{customButton}</Combobox.Button>
           ) : (
             <Combobox.Button
-              className={`flex items-center justify-between gap-1 w-full rounded-md shadow-sm border border-custom-border-100 duration-300 focus:outline-none ${
+              className={`flex items-center justify-between gap-1 w-full rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
               } ${
                 disabled
@@ -94,7 +94,7 @@ export const CustomSearchSelect = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Combobox.Options
-              className={`absolute z-10 min-w-[10rem] border border-custom-border-100 p-2 rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
+              className={`absolute z-10 min-w-[10rem] border border-custom-border-300 p-2 rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
                 position === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
               } ${verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"} ${
                 width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width

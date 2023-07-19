@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // hooks
@@ -13,9 +12,10 @@ import useWorkspaceMembers from "hooks/use-workspace-members";
 import useUserNotification from "hooks/use-user-notifications";
 
 // components
-import { Spinner, Icon } from "components/ui";
+import { Icon, Loader, EmptyState } from "components/ui";
 import { SnoozeNotificationModal, NotificationCard } from "components/notifications";
-
+// images
+import emptyNotification from "public/empty-state/notification.svg";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
 
@@ -116,16 +116,15 @@ export const NotificationPopover = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 top-0 pt-5 md:w-[36rem] w-[20rem] h-[27rem] border border-custom-background-90 shadow-lg rounded">
-                <div className="flex justify-between items-center md:px-6 px-2">
-                  <h2 className="text-custom-sidebar-text-100 text-lg font-semibold mb-2">
-                    Notifications
-                  </h2>
-                  <div className="flex gap-x-2 justify-center items-center">
+              <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 top-0 md:w-[36rem] w-[20rem] h-[27rem] border border-custom-border-300 shadow-lg rounded-xl">
+                <div className="flex items-center justify-between px-5 pt-5">
+                  <h2 className="text-xl font-semibold mb-2">Notifications</h2>
+                  <div className="flex gap-x-4 justify-center items-center text-custom-text-200">
                     <button
                       type="button"
                       onClick={(e) => {
                         notificationsMutate();
+
                         const target = e.target as HTMLButtonElement;
                         target?.classList.add("animate-spin");
                         setTimeout(() => {
@@ -133,7 +132,7 @@ export const NotificationPopover = () => {
                         }, 1000);
                       }}
                     >
-                      <Icon iconName="refresh" className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="refresh" />
                     </button>
                     <button
                       type="button"
@@ -143,7 +142,7 @@ export const NotificationPopover = () => {
                         setReadNotification((prev) => !prev);
                       }}
                     >
-                      <Icon iconName="filter_list" className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="filter_list" />
                     </button>
                     <button
                       type="button"
@@ -153,7 +152,7 @@ export const NotificationPopover = () => {
                         setSnoozed((prev) => !prev);
                       }}
                     >
-                      <Icon iconName="schedule" className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="schedule" />
                     </button>
                     <button
                       type="button"
@@ -163,94 +162,96 @@ export const NotificationPopover = () => {
                         setArchived((prev) => !prev);
                       }}
                     >
-                      <Icon iconName="archive" className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="archive" />
                     </button>
                     <button type="button" onClick={() => closePopover()}>
-                      <Icon iconName="close" className="h-6 w-6 text-custom-text-300" />
+                      <Icon iconName="close" />
                     </button>
                   </div>
                 </div>
-
-                <div className="mt-5 flex flex-col items-center">
+                <div className="border-b border-custom-border-300 w-full px-5 mt-5">
                   {snoozed || archived || readNotification ? (
-                    <div className="w-full mb-3">
-                      <div className="flex flex-col flex-1 px-2 md:px-6 overflow-y-auto">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSnoozed(false);
-                            setArchived(false);
-                            setReadNotification(false);
-                          }}
-                        >
-                          <h4 className="text-custom-text-300 text-center flex items-center">
-                            <Icon iconName="arrow_back" className="h-5 w-5 text-custom-text-300" />
-                            <span className="ml-2 font-semibold">
-                              {snoozed
-                                ? "Snoozed Notifications"
-                                : readNotification
-                                ? "Read Notifications"
-                                : "Archived Notifications"}
-                            </span>
-                          </h4>
-                        </button>
-                      </div>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSnoozed(false);
+                        setArchived(false);
+                        setReadNotification(false);
+                      }}
+                    >
+                      <h4 className="flex items-center gap-2 pb-4">
+                        <Icon iconName="arrow_back" />
+                        <span className="ml-2 font-medium">
+                          {snoozed
+                            ? "Snoozed Notifications"
+                            : readNotification
+                            ? "Unread Notifications"
+                            : "Archived Notifications"}
+                        </span>
+                      </h4>
+                    </button>
                   ) : (
-                    <div className="border-b border-custom-border-300 md:px-6 px-2 w-full">
-                      <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                        {notificationTabs.map((tab) =>
-                          tab.value === "created" ? (
-                            isMember || isOwner ? (
-                              <button
-                                type="button"
-                                key={tab.value}
-                                onClick={() => setSelectedTab(tab.value)}
-                                className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium ${
-                                  tab.value === selectedTab
-                                    ? "border-custom-primary-100 text-custom-primary-100"
-                                    : "border-transparent text-custom-text-500 hover:border-custom-border-300 hover:text-custom-text-200"
-                                }`}
-                              >
-                                {tab.label}
-                                {tab.unreadCount && tab.unreadCount > 0 ? (
-                                  <span className="ml-3 bg-custom-background-1000/5 rounded-full text-custom-text-100 text-xs px-1.5">
-                                    {getNumberCount(tab.unreadCount)}
-                                  </span>
-                                ) : null}
-                              </button>
-                            ) : null
-                          ) : (
+                    <nav className="flex space-x-5 overflow-x-auto" aria-label="Tabs">
+                      {notificationTabs.map((tab) =>
+                        tab.value === "created" ? (
+                          isMember || isOwner ? (
                             <button
                               type="button"
                               key={tab.value}
                               onClick={() => setSelectedTab(tab.value)}
-                              className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium ${
+                              className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium outline-none ${
                                 tab.value === selectedTab
                                   ? "border-custom-primary-100 text-custom-primary-100"
-                                  : "border-transparent text-custom-text-500 hover:border-custom-border-300 hover:text-custom-text-200"
+                                  : "border-transparent text-custom-text-200"
                               }`}
                             >
-                              {tab.label}
                               {tab.unreadCount && tab.unreadCount > 0 ? (
-                                <span className="ml-3 bg-custom-background-1000/5 rounded-full text-custom-text-100 text-xs px-1.5">
+                                <span
+                                  className={`ml-2 rounded-full text-xs px-2 py-0.5 ${
+                                    tab.value === selectedTab
+                                      ? "bg-custom-primary-100 text-white"
+                                      : "bg-custom-background-80 text-custom-text-200"
+                                  }`}
+                                >
                                   {getNumberCount(tab.unreadCount)}
                                 </span>
                               ) : null}
                             </button>
-                          )
-                        )}
-                      </nav>
-                    </div>
+                          ) : null
+                        ) : (
+                          <button
+                            type="button"
+                            key={tab.value}
+                            onClick={() => setSelectedTab(tab.value)}
+                            className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium ${
+                              tab.value === selectedTab
+                                ? "border-custom-primary-100 text-custom-primary-100"
+                                : "border-transparent text-custom-text-200"
+                            }`}
+                          >
+                            {tab.label}
+                            {tab.unreadCount && tab.unreadCount > 0 ? (
+                              <span
+                                className={`ml-2 rounded-full text-xs px-2 py-0.5 ${
+                                  tab.value === selectedTab
+                                    ? "bg-custom-primary-100 text-white"
+                                    : "bg-custom-background-80 text-custom-text-200"
+                                }`}
+                              >
+                                {getNumberCount(tab.unreadCount)}
+                              </span>
+                            ) : null}
+                          </button>
+                        )
+                      )}
+                    </nav>
                   )}
                 </div>
 
-                <div className="w-full flex-1 overflow-y-auto">
-                  {notifications ? (
-                    notifications.filter(
-                      (notification) => notification.data.issue_activity.field !== "None"
-                    ).length > 0 ? (
-                      notifications.map((notification) => (
+                {notifications ? (
+                  notifications.length > 0 ? (
+                    <div className="divide-y divide-custom-border-100 overflow-y-auto">
+                      {notifications.map((notification) => (
                         <NotificationCard
                           key={notification.id}
                           notification={notification}
@@ -259,30 +260,27 @@ export const NotificationPopover = () => {
                           setSelectedNotificationForSnooze={setSelectedNotificationForSnooze}
                           markSnoozeNotification={markSnoozeNotification}
                         />
-                      ))
-                    ) : (
-                      <div className="flex flex-col w-full h-full justify-center items-center">
-                        <Image
-                          src="/empty-state/empty-notification.svg"
-                          alt="Empty"
-                          width={200}
-                          height={200}
-                          layout="fixed"
-                        />
-                        <h4 className="text-custom-text-300 text-lg font-semibold">
-                          You{"'"}re updated with all the notifications
-                        </h4>
-                        <p className="text-custom-text-300 text-sm mt-2">
-                          You have read all the notifications.
-                        </p>
-                      </div>
-                    )
-                  ) : (
-                    <div className="flex w-full h-full justify-center items-center">
-                      <Spinner />
+                      ))}
                     </div>
-                  )}
-                </div>
+                  ) : (
+                    <div className="grid h-full w-full place-items-center overflow-hidden">
+                      <EmptyState
+                        title="You're updated with all the notifications"
+                        description="You have read all the notifications."
+                        image={emptyNotification}
+                        isFullScreen={false}
+                      />
+                    </div>
+                  )
+                ) : (
+                  <Loader className="p-5 space-y-4">
+                    <Loader.Item height="50px" />
+                    <Loader.Item height="50px" />
+                    <Loader.Item height="50px" />
+                    <Loader.Item height="50px" />
+                    <Loader.Item height="50px" />
+                  </Loader>
+                )}
               </Popover.Panel>
             </Transition>
           </>

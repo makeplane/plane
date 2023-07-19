@@ -36,7 +36,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
             activeInnerRadiusOffset={5}
             colors={(datum) => datum.data.color}
             tooltip={(datum) => (
-              <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
+              <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
                 <span className="text-custom-text-200 capitalize">{datum.datum.label} issues:</span>{" "}
                 {datum.datum.value}
               </div>
@@ -59,7 +59,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
                 className="h-2 w-2"
                 style={{ backgroundColor: STATE_GROUP_COLORS[cell.state_group] }}
               />
-              <div className="capitalize text-custom-text-200 text-xs">
+              <div className="capitalize text-custom-text-200 text-xs whitespace-nowrap">
                 {cell.state_group}- {cell.state_count}
               </div>
             </div>
