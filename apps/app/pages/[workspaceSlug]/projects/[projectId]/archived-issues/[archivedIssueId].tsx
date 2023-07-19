@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -39,6 +39,8 @@ const defaultValues = {
 };
 
 const ArchivedIssueDetailsPage: NextPage = () => {
+  const [isRestoring, setIsRestoring] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
 
@@ -117,6 +119,8 @@ const ArchivedIssueDetailsPage: NextPage = () => {
   const handleUnArchive = async () => {
     if (!workspaceSlug || !projectId || !archivedIssueId) return;
 
+    setIsRestoring(true);
+
     await issuesService
       .unarchiveIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
       .then(() => {
@@ -133,7 +137,8 @@ const ArchivedIssueDetailsPage: NextPage = () => {
           title: "Error!",
           message: "Something went wrong. Please try again.",
         });
-      });
+      })
+      .finally(() => setIsRestoring(false));
   };
 
   return (
@@ -153,8 +158,8 @@ const ArchivedIssueDetailsPage: NextPage = () => {
       }
     >
       {issueDetails && projectId ? (
-        <div className="flex h-full">
-          <div className="w-2/3 space-y-2 p-5">
+        <div className="flex h-full overflow-hidden">
+          <div className="w-2/3 h-full overflow-y-auto space-y-2 divide-y-2 divide-custom-border-300 p-5">
             {issueDetails.archived_at && (
               <div className="flex items-center justify-between gap-2 px-2.5 py-2 text-sm border rounded-md text-custom-text-200 border-custom-border-200 bg-custom-background-90">
                 <div className="flex gap-2 items-center">
@@ -164,13 +169,14 @@ const ArchivedIssueDetailsPage: NextPage = () => {
                 <button
                   className="flex items-center gap-2 p-1.5 text-sm rounded-md border border-custom-border-200"
                   onClick={handleUnArchive}
+                  disabled={isRestoring}
                 >
                   <Icon iconName="history" />
-                  <p>Restore Issue</p>
+                  <span>{isRestoring ? "Restoring..." : "Restore Issue"}</span>
                 </button>
               </div>
             )}
-            <div className="space-y-5 divide-y-2 divide-custom-border-200 opacity-60">
+            <div className="space-y-5 divide-y-2 divide-custom-border-200 opacity-60 pointer-events-none">
               <IssueMainContent
                 issueDetails={issueDetails}
                 submitChanges={submitChanges}
@@ -178,7 +184,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
               />
             </div>
           </div>
-          <div className="w-1/3 space-y-5 border-l border-custom-border-200 p-5">
+          <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 p-5 overflow-hidden">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}
