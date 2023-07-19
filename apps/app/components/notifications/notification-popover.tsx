@@ -191,7 +191,7 @@ export const NotificationPopover = () => {
                       </h4>
                     </button>
                   ) : (
-                    <nav className="flex space-x-5" aria-label="Tabs">
+                    <nav className="flex space-x-5 overflow-x-auto" aria-label="Tabs">
                       {notificationTabs.map((tab) =>
                         tab.value === "created" ? (
                           isMember || isOwner ? (
@@ -199,7 +199,7 @@ export const NotificationPopover = () => {
                               type="button"
                               key={tab.value}
                               onClick={() => setSelectedTab(tab.value)}
-                              className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium ${
+                              className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium outline-none ${
                                 tab.value === selectedTab
                                   ? "border-custom-primary-100 text-custom-primary-100"
                                   : "border-transparent text-custom-text-200"
@@ -273,7 +273,7 @@ export const NotificationPopover = () => {
                     </div>
                   )
                 ) : (
-                  <Loader className="p-5 pt-0 space-y-4">
+                  <Loader className="p-5 space-y-4">
                     <Loader.Item height="50px" />
                     <Loader.Item height="50px" />
                     <Loader.Item height="50px" />
