@@ -159,7 +159,7 @@ class UserNotificationsServices extends APIService {
   async getUnreadNotificationsCount(workspaceSlug: string): Promise<{
     created_issues: number;
     my_issues: number;
-    watching_notifications: number;
+    watching_issues: number;
   }> {
     return this.get(`/api/workspaces/${workspaceSlug}/users/notifications/unread/`)
       .then((response) => response?.data)

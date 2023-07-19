@@ -170,7 +170,7 @@ const useUserNotification = () => {
     setSelectedTab,
     totalNotificationCount: notificationCount
       ? notificationCount.created_issues +
-        notificationCount.watching_notifications +
+        notificationCount.watching_issues +
         notificationCount.my_issues
       : null,
     notificationCount,
