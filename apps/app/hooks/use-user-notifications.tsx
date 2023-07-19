@@ -30,7 +30,7 @@ const useUserNotification = () => {
     type: snoozed || archived || readNotification ? undefined : selectedTab,
     snoozed,
     archived,
-    read: !readNotification,
+    read: !readNotification ? undefined : false,
   };
 
   const { data: notifications, mutate: notificationsMutate } = useSWR(
