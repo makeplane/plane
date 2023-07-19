@@ -69,7 +69,7 @@ export const NotificationPopover = () => {
     {
       label: "Subscribed",
       value: "watching",
-      unreadCount: notificationCount?.watching_notifications,
+      unreadCount: notificationCount?.watching_issues,
     },
   ];
 
