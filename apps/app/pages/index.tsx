@@ -145,11 +145,11 @@ const HomePage: NextPage = () => {
                   <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
                     Sign in to Plane
                   </h1>
-                  <div className="flex flex-col divide-y divide-custom-border-200 sm:w-[360px] mx-auto">
+                  <div className="flex flex-col divide-y divide-custom-border-200">
                     <div className="pb-7">
                       <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
                     </div>
-                    <div className="flex flex-col items-center justify-center gap-4 pt-7 overflow-hidden">
+                    <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
                       <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
                       <GithubLoginButton handleSignIn={handleGitHubSignIn} />
                     </div>
