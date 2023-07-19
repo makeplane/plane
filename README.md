@@ -19,14 +19,14 @@
 <p>
     <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Screen.png?updatedAt=1684942001069"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Screen.png"
         alt="Plane Screens"
         width="100%"
       />
     </a>
     <a href="https://app.plane.so/#gh-dark-mode-only" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Screens_Dark_Mode.png?updatedAt=1684942388044"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Screens+Dark+Mode.png"
         alt="Plane Screens"
         width="100%"
       />
@@ -86,7 +86,7 @@ docker compose up -d
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Views_Dark_Mode.png?updatedAt=1684943050275"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Views+Dark+Mode.png"
         alt="Plane Views"
         width="100%"
       />
@@ -95,7 +95,7 @@ docker compose up -d
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Issue_Detail_Dark_Mode.png?updatedAt=1684943050202"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Issue+Detail+Dark+Mode.png"
         alt="Plane Issue Details"
         width="100%"
       />
@@ -104,7 +104,7 @@ docker compose up -d
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Cycles___Modules_Dark_Mode.png?updatedAt=1684943050281"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Cycles+%26+Modules+Dark+Mode.png"
         alt="Plane Cycles and Modules"
         width="100%"
       />
@@ -113,7 +113,7 @@ docker compose up -d
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Analytics_Dark_Mode.png?updatedAt=1684944596824"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Analytics+Dark+Mode.png"
         alt="Plane Analytics"
         width="100%"
       />
@@ -122,7 +122,7 @@ docker compose up -d
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Pages_Dark_Mode.png?updatedAt=1684943050202"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Pages+Dark+Mode.png"
         alt="Plane Pages"
         width="100%"
       />
@@ -132,7 +132,7 @@ docker compose up -d
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Commad_K_Dark_Mode.png?updatedAt=1684943050312"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Commad+K+Dark+Mode.png"
         alt="Plane Command Menu"
         width="100%"
       />

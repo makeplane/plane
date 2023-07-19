@@ -33,7 +33,7 @@ class NotificationViewSet(BaseViewSet):
             order_by = request.GET.get("order_by", "-created_at")
             snoozed = request.GET.get("snoozed", "false")
             archived = request.GET.get("archived", "false")
-            read = request.GET.get("read", "false")
+            read = request.GET.get("read", "true")
 
             # Filter type
             type = request.GET.get("type", "all")
@@ -53,8 +53,6 @@ class NotificationViewSet(BaseViewSet):
                     Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
                 )
 
-            if read == "true":
-                notifications = notifications.filter(read_at__isnull=False)
             if read == "false":
                 notifications = notifications.filter(read_at__isnull=True)
 
@@ -213,7 +211,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             # Watching Issues Count
-            watching_notification_count = Notification.objects.filter(
+            watching_issues_count = Notification.objects.filter(
                 workspace__slug=slug,
                 receiver_id=request.user.id,
                 read_at__isnull=True,
@@ -244,7 +242,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
 
             return Response(
                 {
-                    "watching_notifications": watching_notification_count,
+                    "watching_issues": watching_issues_count,
                     "my_issues": my_issues_count,
                     "created_issues": created_issues_count,
                 },

@@ -70,7 +70,7 @@ def archive_old_issues():
                 [
                     issue_activity.delay(
                         type="issue.activity.updated",
-                        requested_data=json.dumps({"archived_at": issue.archived_at}),
+                        requested_data=json.dumps({"archived_at": str(issue.archived_at)}),
                         actor_id=str(project.created_by_id),
                         issue_id=issue.id,
                         project_id=project_id,
@@ -140,7 +140,7 @@ def close_old_issues():
                 [
                     issue_activity.delay(
                         type="issue.activity.updated",
-                        requested_data=json.dumps({"closed_to": issue.state_id}),
+                        requested_data=json.dumps({"closed_to": str(issue.state_id)}),
                         actor_id=str(project.created_by_id),
                         issue_id=issue.id,
                         project_id=project_id,

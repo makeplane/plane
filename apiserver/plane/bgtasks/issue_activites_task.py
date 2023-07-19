@@ -1030,6 +1030,7 @@ def issue_activity(
 
 
         issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+
         if issue is not None:
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
@@ -1109,6 +1110,8 @@ def issue_activity(
         )
 
         issue_subscribers = issue_subscribers + issue_assignees
+
+        issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
 
         # Add bot filtering
         if issue is not None and issue.created_by_id is not None and not issue.created_by.is_bot:
