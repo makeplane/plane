@@ -33,7 +33,7 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
@@ -193,20 +193,20 @@ export const InboxMainContent: React.FC = () => {
 
   if (!inboxIssueId)
     return (
-      <div className="h-full p-4 grid place-items-center text-brand-secondary">
+      <div className="h-full p-4 grid place-items-center text-custom-text-200">
         <div className="grid h-full place-items-center">
           <div className="my-5 flex flex-col items-center gap-4">
             <InboxIcon height={60} width={60} />
             {inboxIssues && inboxIssues.length > 0 ? (
-              <span className="text-brand-secondary">
+              <span className="text-custom-text-200">
                 {inboxIssues?.length} issues found. Select an issue from the sidebar to view its
                 details.
               </span>
             ) : (
-              <span className="text-brand-secondary">
+              <span className="text-custom-text-200">
                 No issues found. Use{" "}
-                <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre> shortcut to
-                create a new issue
+                <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre> shortcut
+                to create a new issue
               </span>
             )}
           </div>
@@ -228,11 +228,11 @@ export const InboxMainContent: React.FC = () => {
                   : issueStatus === 0
                   ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
                     ? "text-red-500 border-red-500 bg-red-500/10"
-                    : "text-brand-secondary border-gray-500 bg-gray-500/10"
+                    : "text-custom-text-200 border-gray-500 bg-gray-500/10"
                   : issueStatus === 1
                   ? "text-green-500 border-green-500 bg-green-500/10"
                   : issueStatus === 2
-                  ? "text-brand-secondary border-gray-500 bg-gray-500/10"
+                  ? "text-custom-text-200 border-gray-500 bg-gray-500/10"
                   : ""
               }`}
             >
@@ -252,13 +252,17 @@ export const InboxMainContent: React.FC = () => {
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
                       This issue was snoozed till{" "}
-                      {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}
+                      {renderShortDateWithYearFormat(
+                        issueDetails.issue_inbox[0].snoozed_till ?? ""
+                      )}
                       .
                     </p>
                   ) : (
                     <p>
                       This issue has been snoozed till{" "}
-                      {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}
+                      {renderShortDateWithYearFormat(
+                        issueDetails.issue_inbox[0].snoozed_till ?? ""
+                      )}
                       .
                     </p>
                   )}
@@ -300,13 +304,13 @@ export const InboxMainContent: React.FC = () => {
               />
             </div>
             <div className="space-y-5">
-              <h3 className="text-lg text-brand-base">Comments/Activity</h3>
+              <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
               <IssueActivitySection issueId={issueDetails.id} user={user} />
               <AddComment issueId={issueDetails.id} user={user} />
             </div>
           </div>
 
-          <div className="basis-1/3 space-y-5 border-brand-base p-5">
+          <div className="basis-1/3 space-y-5 border-custom-border-200 p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

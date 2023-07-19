@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // hooks
@@ -152,12 +151,12 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
 
   return (
     <div>
-      <div className="flex flex-col text-xs hover:bg-brand-surface-2">
+      <div className="flex flex-col text-xs hover:bg-custom-background-80">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
             <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
               <div className="flex items-center justify-between gap-1">
-                <span className="flex items-start gap-2">
+                <div className="flex items-start gap-2">
                   <ContrastIcon
                     className="mt-1 h-5 w-5"
                     color={`${
@@ -168,24 +167,26 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         : cycleStatus === "completed"
                         ? "#3F76FF"
                         : cycleStatus === "draft"
-                        ? "#858E96"
+                        ? "rgb(var(--color-text-200))"
                         : ""
                     }`}
                   />
-                  <div>
+                  <div className="max-w-2xl">
                     <Tooltip
                       tooltipContent={cycle.name}
                       className="break-words"
                       position="top-left"
                     >
-                      <h3 className="break-words text-base font-semibold">
-                        {truncateText(cycle.name, 70)}
+                      <h3 className="break-words w-full text-base font-semibold">
+                        {truncateText(cycle.name, 60)}
                       </h3>
                     </Tooltip>
-                    <p className="mt-2 text-brand-secondary">{cycle.description}</p>
+                    <p className="mt-2 text-custom-text-200 break-words w-full">
+                      {cycle.description}
+                    </p>
                   </div>
-                </span>
-                <span className="flex items-center gap-4 capitalize">
+                </div>
+                <div className="flex-shrink-0 flex items-center gap-4">
                   <span
                     className={`rounded-full px-1.5 py-0.5
                     ${
@@ -201,14 +202,14 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     }`}
                   >
                     {cycleStatus === "current" ? (
-                      <span className="flex gap-1">
+                      <span className="flex gap-1 whitespace-nowrap">
                         <PersonRunningIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(cycle.end_date ?? new Date())} days left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1">
                         <AlarmClockIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(cycle.start_date ?? new Date())} days left
                       </span>
                     ) : cycleStatus === "completed" ? (
                       <span className="flex items-center gap-1">
@@ -233,20 +234,20 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                   </span>
 
                   {cycleStatus !== "draft" && (
-                    <div className="flex items-center justify-start gap-2 text-brand-secondary">
-                      <div className="flex items-start gap-1 ">
+                    <div className="flex items-center justify-start gap-2 text-custom-text-200">
+                      <div className="flex items-start gap-1 whitespace-nowrap">
                         <CalendarDaysIcon className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(startDate)}</span>
                       </div>
                       <ArrowRightIcon className="h-4 w-4" />
-                      <div className="flex items-start gap-1 ">
+                      <div className="flex items-start gap-1 whitespace-nowrap">
                         <TargetIcon className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(endDate)}</span>
                       </div>
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2.5 text-brand-secondary">
+                  <div className="flex items-center gap-2.5 text-custom-text-200">
                     {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                       <img
                         src={cycle.owned_by.avatar}
@@ -256,7 +257,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         alt={cycle.owned_by.first_name}
                       />
                     ) : (
-                      <span className="bg-brand-secondary flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 capitalize  text-white">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 capitalize text-white">
                         {cycle.owned_by.first_name.charAt(0)}
                       </span>
                     )}
@@ -285,7 +286,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     }`}
                     >
                       {cycleStatus === "current" ? (
-                        <span className="flex gap-1">
+                        <span className="flex gap-1 whitespace-nowrap">
                           {cycle.total_issues > 0 ? (
                             <>
                               <RadialProgressBar
@@ -334,7 +335,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="#858E96" />
+                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                   <div className="flex items-center">
@@ -378,7 +379,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       </CustomMenu.MenuItem>
                     </CustomMenu>
                   </div>
-                </span>
+                </div>
               </div>
             </div>
           </a>

@@ -140,14 +140,14 @@ const SingleCycle: React.FC = () => {
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 font-normal rounded-md text-brand-secondary"
+              className="!py-1.5 font-normal rounded-md text-custom-text-200 hover:text-custom-text-100"
               outline
             >
               Analytics
             </SecondaryButton>
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
                 cycleSidebar ? "rotate-180" : ""
               }`}
               onClick={() => setCycleSidebar((prevData) => !prevData)}
@@ -159,7 +159,7 @@ const SingleCycle: React.FC = () => {
       >
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <div
-          className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} ${
+          className={`h-full flex flex-col ${cycleSidebar ? "mr-[24rem]" : ""} ${
             analyticsModal ? "mr-[50%]" : ""
           } duration-300`}
         >

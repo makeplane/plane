@@ -3,11 +3,12 @@ import { useRouter } from "next/router";
 // ui
 import { CustomDatePicker, Tooltip } from "components/ui";
 // helpers
-import { findHowManyDaysLeft } from "helpers/date-time.helper";
+import { findHowManyDaysLeft, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // services
 import trackEventServices from "services/track-event.service";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
+import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
   issue: IIssue;
@@ -29,10 +30,14 @@ export const ViewDueDateSelect: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { issueView } = useIssuesView();
+
   return (
     <Tooltip
       tooltipHeading="Due Date"
-      tooltipContent={issue.target_date ?? "N/A"}
+      tooltipContent={
+        issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"
+      }
       position={tooltipPosition}
     >
       <div
@@ -69,7 +74,9 @@ export const ViewDueDateSelect: React.FC<Props> = ({
               user
             );
           }}
-          className={issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}
+          className={`${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
+            issueView === "kanban" ? "bg-custom-background-90" : "bg-custom-background-100"
+          }`}
           noBorder={noBorder}
           disabled={isNotAllowed}
         />

@@ -37,7 +37,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     {user && user.avatar && user.avatar !== "" ? (
       <div
         className={`rounded-full border-2 ${
-          index ? "border-brand-surface-1 bg-brand-surface-2" : "border-transparent"
+          index ? "border-custom-border-200 bg-custom-background-80" : "border-transparent"
         }`}
         style={{
           height: height,
@@ -52,7 +52,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       </div>
     ) : (
       <div
-        className="grid place-items-center rounded-full border-2 border-brand-surface-1 bg-gray-700 text-xs capitalize text-white"
+        className="grid place-items-center rounded-full border-2 border-custom-border-200 bg-gray-700 text-xs capitalize text-white"
         style={{
           height: height,
           width: width,
@@ -90,7 +90,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
 
   if ((users && users.length === 0) || (userIds && userIds.length === 0))
     return (
-      <div className="h-5 w-5 rounded-full border-2 border-white bg-brand-surface-2">
+      <div className="h-5 w-5 rounded-full border-2 border-white bg-custom-background-80">
         <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
       </div>
     );

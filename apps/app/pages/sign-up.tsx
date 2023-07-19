@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -12,8 +12,10 @@ import useToast from "hooks/use-toast";
 import DefaultLayout from "layouts/default-layout";
 // components
 import { EmailPasswordForm } from "components/account";
+// ui
+import { Spinner } from "components/ui";
 // images
-import Logo from "public/logo.png";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 import type { NextPage } from "next";
 type EmailPasswordFormValues = {
@@ -23,6 +25,8 @@ type EmailPasswordFormValues = {
 };
 
 const SignUp: NextPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
 
   const { setToastAlert } = useToast();
@@ -58,22 +62,33 @@ const SignUp: NextPage = () => {
       );
   };
 
+  useEffect(() => {
+    if (parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");
+    else setIsLoading(false);
+  }, [router]);
+
+  if (isLoading)
+    return (
+      <div className="grid place-items-center h-screen w-full">
+        <Spinner />
+      </div>
+    );
+
   return (
     <DefaultLayout>
-      <div className="flex h-screen w-full items-center justify-center overflow-auto">
-        <div className="flex min-h-full w-full flex-col justify-center py-12 px-6 lg:px-8">
-          <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
-            <div className="flex flex-col items-center justify-center gap-10">
-              <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
-              <div className="text-center text-xl font-medium text-brand-base">
-                Create a new Plane Account
-              </div>
-            </div>
-
-            <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
-              <EmailPasswordForm onSubmit={handleSignUp} />
+      <>
+        <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
+        <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
+          <div className="grid place-items-center bg-custom-background-100">
+            <div className="h-[30px] w-[30px]">
+              <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
             </div>
           </div>
+        </div>
+      </>
+      <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
+        <div>
+          <EmailPasswordForm onSubmit={handleSignUp} />
         </div>
       </div>
     </DefaultLayout>

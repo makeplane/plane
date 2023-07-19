@@ -37,10 +37,10 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
     <div>
       <h3 className="mb-2 font-semibold capitalize">{type} Issues</h3>
       {issues ? (
-        <div className="h-[calc(100%-2.25rem)] rounded-[10px] border border-brand-base bg-brand-base p-4 text-sm">
+        <div className="h-[calc(100%-2.25rem)] rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 text-sm">
           <div
             className={`mb-2 grid grid-cols-4 gap-2 rounded-lg px-3 py-2 font-medium ${
-              type === "overdue" ? "bg-red-500/20 bg-opacity-20" : "bg-brand-surface-2"
+              type === "overdue" ? "bg-red-500/20 bg-opacity-20" : "bg-custom-background-80"
             }`}
           >
             <h4 className="capitalize">{type}</h4>
@@ -86,10 +86,10 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
               <div className="grid h-full place-items-center">
                 <div className="my-5 flex flex-col items-center gap-4">
                   <LayerDiagonalIcon height={60} width={60} />
-                  <span className="text-brand-secondary">
+                  <span className="text-custom-text-200">
                     No issues found. Use{" "}
-                    <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre> shortcut to
-                    create a new issue
+                    <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>{" "}
+                    shortcut to create a new issue
                   </span>
                 </div>
               </div>

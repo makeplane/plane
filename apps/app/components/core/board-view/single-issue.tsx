@@ -43,7 +43,7 @@ import {
 import { LayerDiagonalIcon } from "components/icons";
 // helpers
 import { handleIssuesMutation } from "constants/issue";
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import {
   ICurrentUserResponse,
@@ -265,8 +265,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className={`mb-3 rounded bg-brand-base shadow ${
-          snapshot.isDragging ? "border-2 border-brand-accent shadow-lg" : ""
+        className={`mb-3 rounded bg-custom-background-90 shadow ${
+          snapshot.isDragging ? "border-2 border-custom-primary shadow-lg" : ""
         }`}
         ref={provided.innerRef}
         {...provided.draggableProps}
@@ -290,7 +290,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 <CustomMenu
                   customButton={
                     <button
-                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded p-1 text-left text-xs duration-300 hover:bg-brand-surface-2"
+                      className="flex w-full cursor-pointer items-center justify-between gap-1 rounded p-1 text-left text-xs duration-300 hover:bg-custom-background-80"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <EllipsisHorizontalIcon className="h-4 w-4" />
@@ -330,13 +330,11 @@ export const SingleBoardIssue: React.FC<Props> = ({
           <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
             <a>
               {properties.key && (
-                <div className="mb-2.5 text-xs font-medium text-brand-secondary">
+                <div className="mb-2.5 text-xs font-medium text-custom-text-200">
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <h5 className="text-sm group-hover:text-brand-accent break-words line-clamp-3">
-                {issue.name}
-              </h5>
+              <h5 className="text-sm break-words line-clamp-3">{issue.name}</h5>
             </a>
           </Link>
           <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
@@ -358,7 +356,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
-            {properties.due_date && (
+            {properties.due_date && issue.target_date && (
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -366,7 +364,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.labels && (
+            {properties.labels && issue.labels.length > 0 && (
               <ViewLabelSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -384,7 +382,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
-            {properties.estimate && (
+            {properties.estimate && issue.estimate_point !== null && (
               <ViewEstimateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -393,30 +391,30 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
-            {properties.sub_issue_count && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+            {properties.sub_issue_count && issue.sub_issues_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <LayerDiagonalIcon className="h-3.5 w-3.5" />
                     {issue.sub_issues_count}
                   </div>
                 </Tooltip>
               </div>
             )}
-            {properties.link && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+            {properties.link && issue.link_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <LinkIcon className="h-3.5 w-3.5" />
                     {issue.link_count}
                   </div>
                 </Tooltip>
               </div>
             )}
-            {properties.attachment_count && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+            {properties.attachment_count && issue.attachment_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
                     {issue.attachment_count}
                   </div>

@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
@@ -13,7 +15,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { DangerButton, Input, SecondaryButton } from "components/ui";
 // types
-import type { ICurrentUserResponse, IProject, IWorkspace } from "types";
+import type { ICurrentUserResponse, IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
@@ -37,7 +39,8 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
 
-  const workspaceSlug = (data?.workspace as IWorkspace)?.slug;
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -64,26 +67,24 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   };
 
   const handleDeletion = async () => {
-    setIsDeleteLoading(true);
     if (!data || !workspaceSlug || !canDelete) return;
+
+    setIsDeleteLoading(true);
+
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
+      false
+    );
+
     await projectService
-      .deleteProject(workspaceSlug, data.id, user)
+      .deleteProject(workspaceSlug as string, data.id, user)
       .then(() => {
         handleClose();
-        mutate<IProject[]>(PROJECTS_LIST(workspaceSlug), (prevData) =>
-          prevData?.filter((project: IProject) => project.id !== data.id)
-        );
+
         if (onSuccess) onSuccess();
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Project deleted successfully",
-        });
       })
-      .catch((error) => {
-        console.log(error);
-        setIsDeleteLoading(false);
-      });
+      .catch(() => setIsDeleteLoading(false));
   };
 
   return (
@@ -98,7 +99,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -112,7 +113,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -126,17 +127,19 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm leading-7 text-brand-secondary">
+                    <p className="text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete project{" "}
                       <span className="break-words font-semibold">{selectedProject?.name}</span>?
                       All of the data related to the project will be permanently removed. This
                       action cannot be undone
                     </p>
                   </span>
-                  <div className="text-brand-secondary">
+                  <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
                       Enter the project name{" "}
-                      <span className="font-medium text-brand-base">{selectedProject?.name}</span>{" "}
+                      <span className="font-medium text-custom-text-100">
+                        {selectedProject?.name}
+                      </span>{" "}
                       to continue:
                     </p>
                     <Input
@@ -150,10 +153,11 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                       name="projectName"
                     />
                   </div>
-                  <div className="text-brand-secondary">
+                  <div className="text-custom-text-200">
                     <p className="text-sm">
                       To confirm, type{" "}
-                      <span className="font-medium text-brand-base">delete my project</span> below:
+                      <span className="font-medium text-custom-text-100">delete my project</span>{" "}
+                      below:
                     </p>
                     <Input
                       type="text"
@@ -171,7 +175,11 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                   </div>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading || !canDelete}>
+                    <DangerButton
+                      onClick={handleDeletion}
+                      disabled={!canDelete}
+                      loading={isDeleteLoading}
+                    >
                       {isDeleteLoading ? "Deleting..." : "Delete Project"}
                     </DangerButton>
                   </div>

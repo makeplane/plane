@@ -31,12 +31,12 @@ import type { NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // constants
-import { COMPANY_SIZE } from "constants/workspace";
+import { ORGANIZATION_SIZE } from "constants/workspace";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
   url: "",
-  company_size: null,
+  organization_size: "2-10",
   logo: null,
 };
 
@@ -80,7 +80,7 @@ const WorkspaceSettings: NextPage = () => {
     const payload: Partial<IWorkspace> = {
       logo: formData.logo,
       name: formData.name,
-      company_size: formData.company_size,
+      organization_size: formData.organization_size,
     };
 
     await workspaceService
@@ -177,7 +177,7 @@ const WorkspaceSettings: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">Logo</h4>
-                <p className="text-sm text-brand-secondary">
+                <p className="text-sm text-custom-text-200">
                   Max file size is 5MB. Supported file types are .jpg and .png.
                 </p>
               </div>
@@ -218,7 +218,7 @@ const WorkspaceSettings: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">URL</h4>
-                <p className="text-sm text-brand-secondary">Your workspace URL.</p>
+                <p className="text-sm text-custom-text-200">Your workspace URL.</p>
               </div>
               <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
                 <Input
@@ -258,7 +258,7 @@ const WorkspaceSettings: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">Name</h4>
-                <p className="text-sm text-brand-secondary">Give a name to your workspace.</p>
+                <p className="text-sm text-custom-text-200">Give a name to your workspace.</p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <Input
@@ -276,23 +276,26 @@ const WorkspaceSettings: NextPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold">Company Size</h4>
-                <p className="text-sm text-brand-secondary">How big is your company?</p>
+                <h4 className="text-lg font-semibold">Organization Size</h4>
+                <p className="text-sm text-custom-text-200">What size is your organization?</p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <Controller
-                  name="company_size"
+                  name="organization_size"
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <CustomSelect
                       value={value}
                       onChange={onChange}
-                      label={value ? value.toString() : "Select company size"}
+                      label={
+                        ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"
+                      }
+                      width="w-full"
                       input
                     >
-                      {COMPANY_SIZE?.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
-                          {item.label}
+                      {ORGANIZATION_SIZE?.map((item) => (
+                        <CustomSelect.Option key={item} value={item}>
+                          {item}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
@@ -308,7 +311,7 @@ const WorkspaceSettings: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">Danger Zone</h4>
-                <p className="text-sm text-brand-secondary">
+                <p className="text-sm text-custom-text-200">
                   The danger zone of the workspace delete page is a critical area that requires
                   careful consideration and attention. When deleting a workspace, all of the data
                   and resources within that workspace will be permanently removed and cannot be

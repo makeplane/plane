@@ -41,7 +41,7 @@ export const FiltersDropdown: React.FC = () => {
               ...PRIORITIES.map((priority) => ({
                 id: priority === null ? "null" : priority,
                 label: (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 capitalize">
                     {getPriorityIcon(priority)} {priority ?? "None"}
                   </div>
                 ),
@@ -72,7 +72,7 @@ export const FiltersDropdown: React.FC = () => {
         ]}
       />
       {filtersLength > 0 && (
-        <div className="absolute -top-2 -right-2 h-4 w-4 text-[0.65rem] grid place-items-center rounded-full text-brand-base bg-brand-surface-2 border border-brand-base z-10">
+        <div className="absolute -top-2 -right-2 h-4 w-4 text-[0.65rem] grid place-items-center rounded-full text-custom-text-100 bg-custom-background-80 border border-custom-border-200 z-10">
           <span>{filtersLength}</span>
         </div>
       )}

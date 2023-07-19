@@ -87,7 +87,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="border-b border-brand-base bg-brand-base px-4 py-2.5 last:border-b-0">
+    <div className="border-b border-custom-border-200 bg-custom-background-100 px-4 py-2.5 last:border-b-0">
       <div key={issue.id} className="flex items-center justify-between gap-2">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
@@ -96,13 +96,13 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
                 tooltipHeading="Issue ID"
                 tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
               >
-                <span className="flex-shrink-0 text-xs text-brand-secondary">
+                <span className="flex-shrink-0 text-xs text-custom-text-200">
                   {issue.project_detail?.identifier}-{issue.sequence_id}
                 </span>
               </Tooltip>
             )}
             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="text-[0.825rem] text-brand-base">
+              <span className="text-[0.825rem] text-custom-text-100">
                 {truncateText(issue.name, 50)}
               </span>
             </Tooltip>
@@ -126,7 +126,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.due_date && (
+          {properties.due_date && issue.target_date && (
             <ViewDueDateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
@@ -134,12 +134,12 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.labels && issue.label_details.length > 0 ? (
+          {properties.labels && issue.labels.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {issue.label_details.map((label) => (
                 <span
                   key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs text-brand-secondary"
+                  className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs text-custom-text-200"
                 >
                   <span
                     className="h-1.5 w-1.5 rounded-full"
@@ -151,11 +151,9 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
                 </span>
               ))}
             </div>
-          ) : (
-            ""
           )}
           {properties.assignee && (
-            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm">
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm">
               <Tooltip
                 position="top-right"
                 tooltipHeading="Assignees"
@@ -175,31 +173,31 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               </Tooltip>
             </div>
           )}
-          {properties.sub_issue_count && (
-            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+          {properties.sub_issue_count && issue.sub_issues_count > 0 && (
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
-                <div className="flex items-center gap-1 text-brand-secondary">
+                <div className="flex items-center gap-1 text-custom-text-200">
                   <LayerDiagonalIcon className="h-3.5 w-3.5" />
                   {issue.sub_issues_count}
                 </div>
               </Tooltip>
             </div>
           )}
-          {properties.link && (
-            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm">
+          {properties.link && issue.link_count > 0 && (
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
-                <div className="flex items-center gap-1 text-brand-secondary">
-                  <LinkIcon className="h-3.5 w-3.5 text-brand-secondary" />
+                <div className="flex items-center gap-1 text-custom-text-200">
+                  <LinkIcon className="h-3.5 w-3.5 text-custom-text-200" />
                   {issue.link_count}
                 </div>
               </Tooltip>
             </div>
           )}
-          {properties.attachment_count && (
-            <div className="flex cursor-default items-center rounded-md border border-brand-base px-2 py-1 text-xs shadow-sm">
+          {properties.attachment_count && issue.attachment_count > 0 && (
+            <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
-                <div className="flex items-center gap-1 text-brand-secondary">
-                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-brand-secondary" />
+                <div className="flex items-center gap-1 text-custom-text-200">
+                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45 text-custom-text-200" />
                   {issue.attachment_count}
                 </div>
               </Tooltip>

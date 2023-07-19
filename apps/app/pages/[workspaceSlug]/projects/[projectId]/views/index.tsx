@@ -16,7 +16,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 //icons
 import { PlusIcon } from "components/icons";
 // images
-import emptyView from "public/empty-state/empty-view.svg";
+import emptyView from "public/empty-state/view.svg";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
@@ -101,8 +101,8 @@ const ProjectViews: NextPage = () => {
       {views ? (
         views.length > 0 ? (
           <div className="space-y-5 p-8">
-            <h3 className="text-2xl font-semibold text-brand-base">Views</h3>
-            <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
+            <h3 className="text-2xl font-semibold text-custom-text-100">Views</h3>
+            <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200">
               {views.map((view) => (
                 <SingleViewItem
                   key={view.id}
@@ -115,10 +115,17 @@ const ProjectViews: NextPage = () => {
           </div>
         ) : (
           <EmptyState
-            type="view"
-            title="Create New View"
+            title="Get focused with views"
             description="Views aid in saving your issues by applying various filters and grouping options."
-            imgURL={emptyView}
+            image={emptyView}
+            buttonText="New View"
+            buttonIcon={<PlusIcon className="h-4 w-4" />}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "v",
+              });
+              document.dispatchEvent(e);
+            }}
           />
         )
       ) : (

@@ -96,6 +96,7 @@ class ProjectViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
+            is_favorite = request.GET.get("is_favorite", "all")
             subquery = ProjectFavorite.objects.filter(
                 user=self.request.user,
                 project_id=OuterRef("pk"),
@@ -126,6 +127,12 @@ class ProjectViewSet(BaseViewSet):
                     .values("count")
                 )
             )
+
+            if is_favorite == "true":
+                projects = projects.filter(is_favorite=True)
+            if is_favorite == "false":
+                projects = projects.filter(is_favorite=False)
+
             return Response(ProjectDetailSerializer(projects, many=True).data)
         except Exception as e:
             capture_exception(e)
@@ -153,32 +160,32 @@ class ProjectViewSet(BaseViewSet):
                 states = [
                     {
                         "name": "Backlog",
-                        "color": "#5e6ad2",
+                        "color": "#A3A3A3",
                         "sequence": 15000,
                         "group": "backlog",
                         "default": True,
                     },
                     {
                         "name": "Todo",
-                        "color": "#eb5757",
+                        "color": "#3A3A3A",
                         "sequence": 25000,
                         "group": "unstarted",
                     },
                     {
                         "name": "In Progress",
-                        "color": "#26b5ce",
+                        "color": "#F59E0B",
                         "sequence": 35000,
                         "group": "started",
                     },
                     {
                         "name": "Done",
-                        "color": "#f2c94c",
+                        "color": "#16A34A",
                         "sequence": 45000,
                         "group": "completed",
                     },
                     {
                         "name": "Cancelled",
-                        "color": "#4cb782",
+                        "color": "#EF4444",
                         "sequence": 55000,
                         "group": "cancelled",
                     },
@@ -259,7 +266,7 @@ class ProjectViewSet(BaseViewSet):
                         group="backlog",
                         description="Default state for managing all Inbox Issues",
                         project_id=pk,
-                        color="#ff7700"
+                        color="#ff7700",
                     )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -550,45 +557,47 @@ class AddMemberToProjectEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         try:
-            member_id = request.data.get("member_id", False)
-            role = request.data.get("role", False)
+            members = request.data.get("members", [])
 
-            if not member_id or not role:
+            # get the project
+            project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+            if not len(members):
                 return Response(
-                    {"error": "Member ID and role is required"},
+                    {"error": "Atleast one member is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Check if the user is a member in the workspace
-            if not WorkspaceMember.objects.filter(
-                workspace__slug=slug, member_id=member_id
-            ).exists():
-                # TODO: Update this error message - nk
-                return Response(
-                    {
-                        "error": "User is not a member of the workspace. Invite the user to the workspace to add him to project"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Check if the user is already member of project
-            if ProjectMember.objects.filter(
-                project=project_id, member_id=member_id
-            ).exists():
-                return Response(
-                    {"error": "User is already a member of the project"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Add the user to project
-            project_member = ProjectMember.objects.create(
-                project_id=project_id, member_id=member_id, role=role
+            project_members = ProjectMember.objects.bulk_create(
+                [
+                    ProjectMember(
+                        member_id=member.get("member_id"),
+                        role=member.get("role", 10),
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                    )
+                    for member in members
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
             )
 
-            serializer = ProjectMemberSerializer(project_member)
+            serializer = ProjectMemberSerializer(project_members, many=True)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        except KeyError:
+            return Response(
+                {"error": "Incorrect data sent"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except IntegrityError:
+            return Response(
+                {"error": "User not member of the workspace"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

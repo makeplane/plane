@@ -37,7 +37,9 @@ class UserEndpoint(BaseViewSet):
             workspace_invites = WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).count()
-            assigned_issues = Issue.issue_objects.filter(assignees__in=[request.user]).count()
+            assigned_issues = Issue.issue_objects.filter(
+                assignees__in=[request.user]
+            ).count()
 
             serialized_data = UserSerializer(request.user).data
             serialized_data["workspace"] = {
@@ -47,7 +49,9 @@ class UserEndpoint(BaseViewSet):
                 "fallback_workspace_slug": workspace.slug,
                 "invites": workspace_invites,
             }
-            serialized_data.setdefault("issues", {})["assigned_issues"] = assigned_issues
+            serialized_data.setdefault("issues", {})[
+                "assigned_issues"
+            ] = assigned_issues
 
             return Response(
                 serialized_data,
@@ -59,11 +63,15 @@ class UserEndpoint(BaseViewSet):
             workspace_invites = WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).count()
-            assigned_issues = Issue.issue_objects.filter(assignees__in=[request.user]).count()
+            assigned_issues = Issue.issue_objects.filter(
+                assignees__in=[request.user]
+            ).count()
 
-            fallback_workspace = Workspace.objects.filter(
-                workspace_member__member=request.user
-            ).order_by("created_at").first()
+            fallback_workspace = (
+                Workspace.objects.filter(workspace_member__member=request.user)
+                .order_by("created_at")
+                .first()
+            )
 
             serialized_data = UserSerializer(request.user).data
 
@@ -78,7 +86,9 @@ class UserEndpoint(BaseViewSet):
                 else None,
                 "invites": workspace_invites,
             }
-            serialized_data.setdefault("issues", {})["assigned_issues"] = assigned_issues
+            serialized_data.setdefault("issues", {})[
+                "assigned_issues"
+            ] = assigned_issues
 
             return Response(
                 serialized_data,
@@ -97,6 +107,23 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
         try:
             user = User.objects.get(pk=request.user.id)
             user.is_onboarded = request.data.get("is_onboarded", False)
+            user.save()
+            return Response(
+                {"message": "Updated successfully"}, status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UpdateUserTourCompletedEndpoint(BaseAPIView):
+    def patch(self, request):
+        try:
+            user = User.objects.get(pk=request.user.id)
+            user.is_tour_completed = request.data.get("is_tour_completed", False)
             user.save()
             return Response(
                 {"message": "Updated successfully"}, status=status.HTTP_200_OK

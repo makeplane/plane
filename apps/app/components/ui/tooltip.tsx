@@ -1,11 +1,13 @@
 import React from "react";
 
+// next-themes
+import { useTheme } from "next-themes";
+// tooltip2
 import { Tooltip2 } from "@blueprintjs/popover2";
 
 type Props = {
   tooltipHeading?: string;
-  tooltipContent: string | JSX.Element;
-  triangle?: boolean;
+  tooltipContent: string | React.ReactNode;
   position?:
     | "top"
     | "right"
@@ -25,7 +27,8 @@ type Props = {
   children: JSX.Element;
   disabled?: boolean;
   className?: string;
-  theme?: "light" | "dark";
+  openDelay?: number;
+  closeDelay?: number;
 };
 
 export const Tooltip: React.FC<Props> = ({
@@ -35,24 +38,40 @@ export const Tooltip: React.FC<Props> = ({
   children,
   disabled = false,
   className = "",
-  theme = "light",
-  triangle,
-}) => (
-  <Tooltip2
-    disabled={disabled}
-    content={
-      <div
-        className={`${className} relative z-50 flex max-w-[600px] flex-col items-start justify-center gap-1 rounded-md p-2 text-left text-xs shadow-md ${
-          theme === "light" ? "text-brand-muted-1 bg-brand-surface-2" : "bg-black text-white"
-        }`}
-      >
-        {tooltipHeading && <h5 className="font-medium">{tooltipHeading}</h5>}
-        {tooltipContent}
-      </div>
-    }
-    position={position}
-    renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
-      React.cloneElement(children, { ref: eleReference, ...tooltipProps, ...children.props })
-    }
-  />
-);
+  openDelay = 500,
+  closeDelay,
+}) => {
+  const { theme } = useTheme();
+
+  return (
+    <Tooltip2
+      disabled={disabled}
+      hoverOpenDelay={openDelay}
+      hoverCloseDelay={closeDelay}
+      content={
+        <div
+          className={`relative z-50 max-w-xs gap-1 rounded-md p-2 text-xs shadow-md ${
+            theme === "custom"
+              ? "bg-custom-background-100 text-custom-text-200"
+              : "bg-black text-gray-400"
+          } break-words overflow-hidden ${className}`}
+        >
+          {tooltipHeading && (
+            <h5
+              className={`font-medium ${
+                theme === "custom" ? "text-custom-text-100" : "text-white"
+              }`}
+            >
+              {tooltipHeading}
+            </h5>
+          )}
+          {tooltipContent}
+        </div>
+      }
+      position={position}
+      renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
+        React.cloneElement(children, { ref: eleReference, ...tooltipProps, ...children.props })
+      }
+    />
+  );
+};

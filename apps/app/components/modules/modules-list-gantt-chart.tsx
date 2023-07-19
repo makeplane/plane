@@ -28,7 +28,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
           backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color,
         }}
       />
-      <div className="text-brand-base text-sm">{data?.name}</div>
+      <div className="text-custom-text-100 text-sm">{data?.name}</div>
     </div>
   );
 
@@ -41,7 +41,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
           style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color }}
         />
         <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
-          <div className="text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
+          <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
             {data?.name}
           </div>
         </Tooltip>

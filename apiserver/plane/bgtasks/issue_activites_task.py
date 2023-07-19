@@ -5,6 +5,7 @@ import requests
 # Django imports
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 
 # Third Party imports
 from celery import shared_task
@@ -20,6 +21,9 @@ from plane.db.models import (
     State,
     Cycle,
     Module,
+    IssueSubscriber,
+    Notification,
+    IssueAssignee,
 )
 from plane.api.serializers import IssueActivitySerializer
 
@@ -554,6 +558,64 @@ def track_estimate_points(
             )
 
 
+def track_archive_at(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    if requested_data.get("archived_at") is None:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} has restored the issue",
+                verb="updated",
+                actor=actor,
+                field="archived_at",
+                old_value="archive",
+                new_value="restore",
+            )
+        )
+    else:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"Plane has archived the issue",
+                verb="updated",
+                actor=actor,
+                field="archived_at",
+                old_value=None,
+                new_value="archive",
+            )
+        )
+
+
+def track_closed_to(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    if requested_data.get("closed_to") is not None:
+        updated_state = State.objects.get(
+            pk=requested_data.get("closed_to"), project=project
+        )
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor=actor,
+                verb="updated",
+                old_value=None,
+                new_value=updated_state.name,
+                field="state",
+                project=project,
+                workspace=project.workspace,
+                comment=f"Plane updated the state to {updated_state.name}",
+                old_identifier=None,
+                new_identifier=updated_state.id,
+            )
+        )
+
+
 def update_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -570,6 +632,8 @@ def update_issue_activity(
         "blocks_list": track_blocks,
         "blockers_list": track_blockings,
         "estimate_point": track_estimate_points,
+        "archived_at": track_archive_at,
+        "closed_to": track_closed_to,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
@@ -950,13 +1014,35 @@ def delete_attachment_activity(
 # Receive message from room group
 @shared_task
 def issue_activity(
-    type, requested_data, current_instance, issue_id, actor_id, project_id
+    type,
+    requested_data,
+    current_instance,
+    issue_id,
+    actor_id,
+    project_id,
+    subscriber=True,
 ):
     try:
         issue_activities = []
 
         actor = User.objects.get(pk=actor_id)
         project = Project.objects.get(pk=project_id)
+
+
+        issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+
+        if issue is not None:
+            issue.updated_at = timezone.now()
+            issue.save(update_fields=["updated_at"])
+
+        if subscriber:
+            # add the user to issue subscriber
+            try:
+                _ = IssueSubscriber.objects.get_or_create(
+                    issue_id=issue_id, subscriber=actor
+                )
+            except Exception as e:
+                pass
 
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
@@ -992,18 +1078,84 @@ def issue_activity(
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
             # Don't send activities if the actor is a bot
-            if settings.PROXY_BASE_URL:
-                for issue_activity in issue_activities_created:
-                    headers = {"Content-Type": "application/json"}
-                    issue_activity_json = json.dumps(
-                        IssueActivitySerializer(issue_activity).data,
-                        cls=DjangoJSONEncoder,
+            try:
+                if settings.PROXY_BASE_URL:
+                    for issue_activity in issue_activities_created:
+                        headers = {"Content-Type": "application/json"}
+                        issue_activity_json = json.dumps(
+                            IssueActivitySerializer(issue_activity).data,
+                            cls=DjangoJSONEncoder,
+                        )
+                        _ = requests.post(
+                            f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
+                            json=issue_activity_json,
+                            headers=headers,
+                        )
+            except Exception as e:
+                capture_exception(e)
+
+        # Create Notifications
+        bulk_notifications = []
+
+        issue_subscribers = list(
+            IssueSubscriber.objects.filter(project=project, issue_id=issue_id)
+            .exclude(subscriber_id=actor_id)
+            .values_list("subscriber", flat=True)
+        )
+
+        issue_assignees = list(
+            IssueAssignee.objects.filter(project=project, issue_id=issue_id)
+            .exclude(assignee_id=actor_id)
+            .values_list("assignee", flat=True)
+        )
+
+        issue_subscribers = issue_subscribers + issue_assignees
+
+        issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+
+        # Add bot filtering
+        if issue is not None and issue.created_by_id is not None and not issue.created_by.is_bot:
+            issue_subscribers = issue_subscribers + [issue.created_by_id]
+
+        for subscriber in issue_subscribers:
+            for issue_activity in issue_activities_created:
+                bulk_notifications.append(
+                    Notification(
+                        workspace=project.workspace,
+                        sender="in_app:issue_activities",
+                        triggered_by_id=actor_id,
+                        receiver_id=subscriber,
+                        entity_identifier=issue_id,
+                        entity_name="issue",
+                        project=project,
+                        title=issue_activity.comment,
+                        data={
+                            "issue": {
+                                "id": str(issue_id),
+                                "name": str(issue.name),
+                                "identifier": str(project.identifier),
+                                "sequence_id": issue.sequence_id,
+                                "state_name": issue.state.name,
+                                "state_group": issue.state.group,
+                            },
+                            "issue_activity": {
+                                "id": str(issue_activity.id),
+                                "verb": str(issue_activity.verb),
+                                "field": str(issue_activity.field),
+                                "actor": str(issue_activity.actor_id),
+                                "new_value": str(issue_activity.new_value),
+                                "old_value": str(issue_activity.old_value),
+                                "issue_comment": str(
+                                    issue_activity.issue_comment.comment_stripped if issue_activity.issue_comment is not None else ""
+                                ),
+                            },
+                        },
                     )
-                    _ = requests.post(
-                        f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
-                        json=issue_activity_json,
-                        headers=headers,
-                    )
+                )
+
+        # Bulk create notifications
+        Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+
         return
     except Exception as e:
         # Print logs if in DEBUG mode

@@ -27,6 +27,8 @@ import {
   DangerButton,
 } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// helpers
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -92,7 +94,13 @@ const GeneralSettings: NextPage = () => {
           (prevData) => ({ ...prevData, ...res }),
           false
         );
-        mutate(PROJECTS_LIST(workspaceSlug as string));
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
+
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -164,7 +172,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Icon & Name</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Select an icon and a name for your project.
               </p>
             </div>
@@ -186,7 +194,7 @@ const GeneralSettings: NextPage = () => {
                                 {value.name}
                               </span>
                             ) : (
-                              String.fromCodePoint(parseInt(value))
+                              renderEmoji(value)
                             )
                           ) : (
                             "Icon"
@@ -224,7 +232,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Description</h4>
-              <p className="text-sm text-brand-secondary">Give a description to your project.</p>
+              <p className="text-sm text-custom-text-200">Give a description to your project.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -247,13 +255,13 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Cover Photo</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Select your cover photo from the given library.
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border border-brand-base p-1">
+                <div className="h-32 w-full rounded border border-custom-border-200 p-1">
                   <div className="relative h-full w-full rounded">
                     <img
                       src={watch("cover_image")!}
@@ -281,7 +289,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Identifier</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Create a 1-6 characters{"'"} identifier for the project.
               </p>
             </div>
@@ -317,7 +325,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Network</h4>
-              <p className="text-sm text-brand-secondary">Select privacy type for the project.</p>
+              <p className="text-sm text-custom-text-200">Select privacy type for the project.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -364,7 +372,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Danger Zone</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 The danger zone of the project delete page is a critical area that requires careful
                 consideration and attention. When deleting a project, all of the data and resources
                 within that project will be permanently removed and cannot be recovered.

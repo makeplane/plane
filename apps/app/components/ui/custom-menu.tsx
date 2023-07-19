@@ -4,7 +4,8 @@ import Link from "next/link";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { ChevronDownIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { Icon } from "./icon";
 
 type Props = {
   children: React.ReactNode;
@@ -59,17 +60,18 @@ const CustomMenu = ({
             {ellipsis || verticalEllipsis ? (
               <Menu.Button
                 type="button"
-                className="relative grid place-items-center rounded p-1 text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-base focus:outline-none"
+                className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:bg-custom-background-80 outline-none"
               >
-                <EllipsisHorizontalIcon
-                  className={`h-4 w-4 ${verticalEllipsis ? "rotate-90" : ""}`}
+                <Icon
+                  iconName="more_horiz"
+                  className={`${verticalEllipsis ? "rotate-90" : ""} text-brand-secondary`}
                 />
               </Menu.Button>
             ) : (
               <Menu.Button
                 type="button"
-                className={`flex cursor-pointer items-center justify-between gap-1 px-2.5 py-1 text-xs duration-300 hover:bg-brand-surface-2 ${
-                  open ? "bg-brand-surface-1 text-brand-base" : "text-brand-secondary"
+                className={`flex cursor-pointer items-center justify-between gap-1 px-2.5 py-1 text-xs duration-300 hover:bg-custom-background-80 ${
+                  open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
                 } ${
                   textAlignment === "right"
                     ? "text-right"
@@ -79,7 +81,7 @@ const CustomMenu = ({
                 } ${
                   noBorder
                     ? "rounded-md"
-                    : "rounded-md border border-brand-base shadow-sm focus:outline-none"
+                    : "rounded-md border border-custom-border-200 shadow-sm focus:outline-none"
                 } ${
                   width === "sm"
                     ? "w-10"
@@ -133,8 +135,8 @@ const CustomMenu = ({
                 : "min-w-full"
             } ${
               menuItemsWhiteBg
-                ? "border-brand-surface-1 bg-brand-base"
-                : "border-brand-base bg-brand-surface-1"
+                ? "border-custom-border-200 bg-custom-background-100"
+                : "border-custom-border-200 bg-custom-background-90"
             } ${menuItemsClassName}`}
           >
             <div className="py-1">{children}</div>
@@ -158,8 +160,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
         <Link href={href ?? ""}>
           <a
             className={`${className} ${
-              active ? "bg-brand-surface-2" : ""
-            } hover:text-brand-muted-1 inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2`}
+              active ? "bg-custom-background-80" : ""
+            } hover:text-custom-text-200 inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
             onClick={close}
           >
             {children}
@@ -169,8 +171,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
         <button
           type="button"
           className={`${className} ${
-            active ? "bg-brand-surface-2" : ""
-          } hover:text-brand-muted-1 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-brand-secondary hover:bg-brand-surface-2`}
+            active ? "bg-custom-background-80" : ""
+          } hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
           onClick={onClick}
         >
           {children}

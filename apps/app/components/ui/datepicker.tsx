@@ -15,6 +15,7 @@ type Props = {
   className?: string;
   isClearable?: boolean;
   disabled?: boolean;
+  minDate?: Date;
 };
 
 export const CustomDatePicker: React.FC<Props> = ({
@@ -28,6 +29,7 @@ export const CustomDatePicker: React.FC<Props> = ({
   className = "",
   isClearable = true,
   disabled = false,
+  minDate,
 }) => (
   <DatePicker
     placeholderText={placeholder}
@@ -38,19 +40,20 @@ export const CustomDatePicker: React.FC<Props> = ({
     }}
     className={`${
       renderAs === "input"
-        ? "block px-3 py-2 text-sm focus:outline-none"
+        ? "block px-2 py-2 text-sm focus:outline-none"
         : renderAs === "button"
-        ? `px-3 py-1 text-xs shadow-sm ${
-            disabled ? "" : "hover:bg-brand-surface-2"
-          } duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent`
+        ? `px-2 py-1 text-xs shadow-sm ${
+            disabled ? "" : "hover:bg-custom-background-80"
+          } duration-300`
         : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${
       disabled ? "cursor-not-allowed" : "cursor-pointer"
     } ${
-      noBorder ? "" : "border border-brand-base"
-    } w-full rounded-md bg-transparent caret-transparent ${className}`}
-    dateFormat="dd-MM-yyyy"
+      noBorder ? "" : "border border-custom-border-200"
+    } w-full rounded-md caret-transparent outline-none ${className}`}
+    dateFormat="MMM dd, yyyy"
     isClearable={isClearable}
     disabled={disabled}
+    minDate={minDate}
   />
 );

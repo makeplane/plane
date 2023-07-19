@@ -69,6 +69,25 @@ class UserService extends APIService {
       });
   }
 
+  async updateUserTourCompleted(user: ICurrentUserResponse): Promise<any> {
+    return this.patch("/api/users/me/tour-completed/", {
+      is_tour_completed: true,
+    })
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackUserTourCompleteEvent(
+            {
+              user_role: user.role ?? "None",
+            },
+            user
+          );
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getUserActivity(): Promise<IUserActivityResponse> {
     return this.get("/api/users/activities/")
       .then((response) => response?.data)

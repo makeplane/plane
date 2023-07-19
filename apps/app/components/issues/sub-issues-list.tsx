@@ -28,9 +28,10 @@ import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 type Props = {
   parentIssue: IIssue;
   user: ICurrentUserResponse | undefined;
+  disabled?: boolean;
 };
 
-export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -180,7 +181,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
 
   const completionPercentage = (completedSubIssues / totalSubIssues) * 100;
 
-  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
+  const isNotAllowed = memberRole.isGuest || memberRole.isViewer || disabled;
 
   return (
     <>
@@ -203,16 +204,16 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
             <>
               <div className="flex items-center justify-between">
                 <div className="flex items-center justify-start gap-3">
-                  <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1">
+                  <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-custom-background-90">
                     <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
                     Sub-issues{" "}
-                    <span className="ml-1 text-brand-secondary">
+                    <span className="ml-1 text-custom-text-200">
                       {subIssuesResponse.sub_issues.length}
                     </span>
                   </Disclosure.Button>
                   {subIssuesResponse.state_distribution && (
-                    <div className="flex w-60 items-center gap-2 text-brand-base">
-                      <div className="bar relative h-1.5 w-full rounded bg-brand-surface-2">
+                    <div className="flex w-60 items-center gap-2 text-custom-text-100">
+                      <div className="bar relative h-1.5 w-full rounded bg-custom-background-80">
                         <div
                           className="absolute top-0 left-0 h-1.5 rounded bg-green-500 duration-300"
                           style={{
@@ -242,7 +243,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
                   <div className="flex items-center">
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1"
+                      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-custom-background-90"
                       onClick={handleCreateIssueModal}
                     >
                       <PlusIcon className="h-3 w-3" />
@@ -271,7 +272,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                     >
-                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-brand-base">
+                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-custom-background-90">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
                             className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -279,7 +280,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
                               backgroundColor: issue.state_detail.color,
                             }}
                           />
-                          <span className="flex-shrink-0 text-brand-secondary">
+                          <span className="flex-shrink-0 text-custom-text-200">
                             {issue.project_detail.identifier}-{issue.sequence_id}
                           </span>
                           <span className="max-w-sm break-words font-medium">{issue.name}</span>
@@ -295,7 +296,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
                               handleSubIssueRemove(issue.id);
                             }}
                           >
-                            <XMarkIcon className="h-4 w-4 text-brand-secondary hover:text-brand-base" />
+                            <XMarkIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
                           </button>
                         )}
                       </a>
@@ -315,6 +316,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user }) => {
                 Add sub-issue
               </>
             }
+            buttonClassName="whitespace-nowrap"
             position="left"
             noBorder
             noChevron

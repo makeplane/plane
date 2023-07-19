@@ -10,16 +10,14 @@ from sentry_sdk.integrations.redis import RedisIntegration
 
 from .common import *  # noqa
 
-DEBUG = int(os.environ.get(
-    "DEBUG", 1
-))  == 1
+DEBUG = int(os.environ.get("DEBUG", 1)) == 1
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("PGUSER", "plane"),
         "USER": "",
         "PASSWORD": "",
@@ -27,13 +25,11 @@ DATABASES = {
     }
 }
 
-DOCKERIZED = int(os.environ.get(
-    "DOCKERIZED", 0
-))  == 1
+DOCKERIZED = int(os.environ.get("DOCKERIZED", 0)) == 1
 
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
-FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT",  5242880))
+FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 if DOCKERIZED:
     DATABASES["default"] = dj_database_url.config()
@@ -63,7 +59,29 @@ if os.environ.get("SENTRY_DSN", False):
         send_default_pii=True,
         environment="local",
         traces_sample_rate=0.7,
+        profiles_sample_rate=1.0,
     )
+else:
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+            },
+        },
+        "root": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+        "loggers": {
+            "*": {
+                "handlers": ["console"],
+                "level": "DEBUG",
+                "propagate": True,
+            },
+        },
+    }
 
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
@@ -82,8 +100,9 @@ PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
+OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
-GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
+GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 

@@ -163,8 +163,8 @@ export const SingleCalendarIssue: React.FC<Props> = ({
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
-      className={`w-full relative cursor-pointer rounded border border-brand-base px-1.5 py-1.5 text-xs duration-300 hover:cursor-move hover:bg-brand-surface-2 ${
-        snapshot.isDragging ? "bg-brand-surface-2 shadow-lg" : ""
+      className={`w-full relative cursor-pointer rounded border border-custom-border-200 px-1.5 py-1.5 text-xs duration-300 hover:cursor-move hover:bg-custom-background-80 ${
+        snapshot.isDragging ? "bg-custom-background-80 shadow-lg" : ""
       }`}
     >
       <div className="group/card flex w-full flex-col items-start justify-center gap-1.5 text-xs sm:w-auto ">
@@ -199,18 +199,18 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 tooltipHeading="Issue ID"
                 tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
               >
-                <span className="flex-shrink-0 text-xs text-brand-secondary">
+                <span className="flex-shrink-0 text-xs text-custom-text-200">
                   {issue.project_detail?.identifier}-{issue.sequence_id}
                 </span>
               </Tooltip>
             )}
             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="text-xs text-brand-base">{truncateText(issue.name, 25)}</span>
+              <span className="text-xs text-custom-text-100">{truncateText(issue.name, 25)}</span>
             </Tooltip>
           </a>
         </Link>
         {displayProperties && (
-          <div className="relative mt-1.5 flex flex-wrap items-center gap-2 text-xs">
+          <div className="relative mt-1.5 w-full flex flex-wrap items-center gap-2 text-xs">
             {properties.priority && (
               <ViewPrioritySelect
                 issue={issue}
@@ -225,12 +225,13 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="left"
+                className="max-w-full"
                 isNotAllowed={isNotAllowed}
                 user={user}
               />
             )}
 
-            {properties.due_date && (
+            {properties.due_date && issue.target_date && (
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -238,7 +239,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.labels && (
+            {properties.labels && issue.labels.length > 0 && (
               <ViewLabelSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -256,7 +257,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.estimate && (
+            {properties.estimate && issue.estimate_point !== null && (
               <ViewEstimateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -265,30 +266,30 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.sub_issue_count && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+            {properties.sub_issue_count && issue.sub_issues_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <LayerDiagonalIcon className="h-3.5 w-3.5" />
                     {issue.sub_issues_count}
                   </div>
                 </Tooltip>
               </div>
             )}
-            {properties.link && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+            {properties.link && issue.link_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <LinkIcon className="h-3.5 w-3.5" />
                     {issue.link_count}
                   </div>
                 </Tooltip>
               </div>
             )}
-            {properties.attachment_count && (
-              <div className="flex cursor-default items-center rounded-md border border-brand-base px-2.5 py-1 text-xs shadow-sm">
+            {properties.attachment_count && issue.attachment_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-                  <div className="flex items-center gap-1 text-brand-secondary">
+                  <div className="flex items-center gap-1 text-custom-text-200">
                     <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
                     {issue.attachment_count}
                   </div>
