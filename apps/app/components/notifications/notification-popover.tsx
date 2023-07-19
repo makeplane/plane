@@ -205,6 +205,7 @@ export const NotificationPopover = () => {
                                   : "border-transparent text-custom-text-200"
                               }`}
                             >
+                              {tab.label}
                               {tab.unreadCount && tab.unreadCount > 0 ? (
                                 <span
                                   className={`ml-2 rounded-full text-xs px-2 py-0.5 ${

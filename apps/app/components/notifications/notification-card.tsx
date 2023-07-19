@@ -221,44 +221,46 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         ))}
 
         <Tooltip tooltipContent="Snooze Notification" position="top-left">
-          <CustomMenu
-            menuButtonOnClick={(e) => {
-              e.stopPropagation();
-            }}
-            customButton={
-              <button
-                type="button"
-                className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded"
-              >
-                <Icon iconName="schedule" className="h-5 w-5 text-custom-text-300" />
-              </button>
-            }
-            optionsClassName="!z-20"
-          >
-            {snoozeOptions.map((item) => (
-              <CustomMenu.MenuItem
-                key={item.label}
-                renderAs="button"
-                onClick={(e) => {
-                  e.stopPropagation();
+          <div>
+            <CustomMenu
+              menuButtonOnClick={(e) => {
+                e.stopPropagation();
+              }}
+              customButton={
+                <button
+                  type="button"
+                  className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded"
+                >
+                  <Icon iconName="schedule" className="h-5 w-5 text-custom-text-300" />
+                </button>
+              }
+              optionsClassName="!z-20"
+            >
+              {snoozeOptions.map((item) => (
+                <CustomMenu.MenuItem
+                  key={item.label}
+                  renderAs="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
 
-                  if (!item.value) {
-                    setSelectedNotificationForSnooze(notification.id);
-                    return;
-                  }
+                    if (!item.value) {
+                      setSelectedNotificationForSnooze(notification.id);
+                      return;
+                    }
 
-                  markSnoozeNotification(notification.id, item.value).then(() => {
-                    setToastAlert({
-                      title: `Notification snoozed till ${renderLongDateFormat(item.value)}`,
-                      type: "success",
+                    markSnoozeNotification(notification.id, item.value).then(() => {
+                      setToastAlert({
+                        title: `Notification snoozed till ${renderLongDateFormat(item.value)}`,
+                        type: "success",
+                      });
                     });
-                  });
-                }}
-              >
-                {item.label}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
+                  }}
+                >
+                  {item.label}
+                </CustomMenu.MenuItem>
+              ))}
+            </CustomMenu>
+          </div>
         </Tooltip>
       </div>
     </div>
