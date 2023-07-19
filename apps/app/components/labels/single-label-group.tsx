@@ -20,7 +20,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { IIssueLabels } from "types";
+import { ICurrentUserResponse, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -30,6 +30,7 @@ type Props = {
   addLabelToGroup: (parentLabel: IIssueLabels) => void;
   editLabel: (label: IIssueLabels) => void;
   handleLabelDelete: () => void;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const SingleLabelGroup: React.FC<Props> = ({
@@ -38,6 +39,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
   addLabelToGroup,
   editLabel,
   handleLabelDelete,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -57,9 +59,15 @@ export const SingleLabelGroup: React.FC<Props> = ({
     );
 
     issuesService
-      .patchIssueLabel(workspaceSlug as string, projectId as string, label.id, {
-        parent: null,
-      })
+      .patchIssueLabel(
+        workspaceSlug as string,
+        projectId as string,
+        label.id,
+        {
+          parent: null,
+        },
+        user
+      )
       .then(() => {
         mutate(PROJECT_ISSUE_LABELS(projectId as string));
       });
@@ -68,7 +76,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
   return (
     <Disclosure
       as="div"
-      className="rounded-[10px] border border-brand-base bg-brand-base p-5 text-brand-base"
+      className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5 text-custom-text-100"
       defaultOpen
     >
       {({ open }) => (
@@ -104,7 +112,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
               <Disclosure.Button>
                 <span>
                   <ChevronDownIcon
-                    className={`h-4 w-4 text-brand-base ${!open ? "rotate-90 transform" : ""}`}
+                    className={`h-4 w-4 text-custom-text-100 ${!open ? "rotate-90 transform" : ""}`}
                   />
                 </span>
               </Disclosure.Button>
@@ -124,7 +132,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                 {labelChildren.map((child) => (
                   <div
                     key={child.id}
-                    className="group flex items-center justify-between rounded-md border border-brand-base p-2 text-sm"
+                    className="group flex items-center justify-between rounded-md border border-custom-border-200 p-2 text-sm"
                   >
                     <h5 className="flex items-center gap-3">
                       <span

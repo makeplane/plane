@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Image from "next/image";
-
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
@@ -12,6 +10,7 @@ import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImageUploadModal } from "components/core";
 // ui
@@ -24,7 +23,6 @@ import type { NextPage } from "next";
 import type { IUser } from "types";
 // constants
 import { USER_ROLES } from "constants/workspace";
-import SettingsNavbar from "layouts/settings-navbar";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -69,7 +67,7 @@ const Profile: NextPage = () => {
       .then((res) => {
         mutateUser((prevData) => {
           if (!prevData) return prevData;
-          return { ...prevData, user: { ...payload, ...res } };
+          return { ...prevData, ...res };
         }, false);
         setIsEditing(false);
         setToastAlert({
@@ -92,14 +90,11 @@ const Profile: NextPage = () => {
 
     setIsRemoving(true);
 
-    const index = url.indexOf(".com");
-    const asset = url.substring(index + 5);
-
-    fileService.deleteUserFile(asset).then(() => {
+    fileService.deleteUserFile(url).then(() => {
       if (updateUser)
         userService
           .updateUser({ avatar: "" })
-          .then((res) => {
+          .then(() => {
             setToastAlert({
               type: "success",
               title: "Success!",
@@ -107,7 +102,7 @@ const Profile: NextPage = () => {
             });
             mutateUser((prevData) => {
               if (!prevData) return prevData;
-              return { ...prevData, user: res };
+              return { ...prevData, avatar: "" };
             }, false);
           })
           .catch(() => {
@@ -141,11 +136,11 @@ const Profile: NextPage = () => {
         userImage
       />
       {myProfile ? (
-        <div className="px-24 py-8">
-          <div className="mb-12 space-y-6">
+        <div className="p-8">
+          <div className="mb-8 space-y-6">
             <div>
               <h3 className="text-3xl font-semibold">Profile Settings</h3>
-              <p className="mt-1 text-brand-secondary">
+              <p className="mt-1 text-custom-text-200">
                 This information will be visible to only you.
               </p>
             </div>
@@ -154,8 +149,8 @@ const Profile: NextPage = () => {
           <div className="space-y-8 sm:space-y-12">
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Profile Picture</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Profile Picture</h4>
+                <p className="text-sm text-custom-text-200">
                   Max file size is 5MB. Supported file types are .jpg and .png.
                 </p>
               </div>
@@ -163,19 +158,16 @@ const Profile: NextPage = () => {
                 <div className="flex items-center gap-4">
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                     {!watch("avatar") || watch("avatar") === "" ? (
-                      <div className="h-12 w-12 rounded-md bg-brand-surface-2 p-2">
-                        <UserIcon className="h-full w-full text-brand-secondary" />
+                      <div className="h-12 w-12 rounded-md bg-custom-background-80 p-2">
+                        <UserIcon className="h-full w-full text-custom-text-200" />
                       </div>
                     ) : (
                       <div className="relative h-12 w-12 overflow-hidden">
-                        <Image
+                        <img
                           src={watch("avatar")}
-                          alt={myProfile.first_name}
-                          layout="fill"
-                          objectFit="cover"
-                          className="rounded-md"
+                          className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
                           onClick={() => setIsImageUploadModalOpen(true)}
-                          priority
+                          alt={myProfile.first_name}
                         />
                       </div>
                     )}
@@ -202,8 +194,8 @@ const Profile: NextPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Full Name</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Full Name</h4>
+                <p className="text-sm text-custom-text-200">
                   This name will be reflected on all the projects you are working on.
                 </p>
               </div>
@@ -231,8 +223,8 @@ const Profile: NextPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Email</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Email</h4>
+                <p className="text-sm text-custom-text-200">
                   The email address that you are using.
                 </p>
               </div>
@@ -250,8 +242,8 @@ const Profile: NextPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Role</h4>
-                <p className="text-sm text-brand-secondary">Add your role.</p>
+                <h4 className="text-lg font-semibold text-custom-text-100">Role</h4>
+                <p className="text-sm text-custom-text-200">Add your role.</p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <Controller

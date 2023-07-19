@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 // icons
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
@@ -16,9 +16,9 @@ import { CycleDetailsSidebar } from "components/cycles";
 // services
 import issuesService from "services/issues.service";
 import cycleServices from "services/cycles.service";
-import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
@@ -27,14 +27,10 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { getDateRangeStatus } from "helpers/date-time.helper";
+// types
+import { ISearchIssueResponse } from "types";
 // fetch-keys
-import {
-  CYCLE_ISSUES,
-  CYCLES_LIST,
-  PROJECT_DETAILS,
-  CYCLE_DETAILS,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
+import { CYCLES_LIST, CYCLE_DETAILS } from "constants/fetch-keys";
 
 const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -44,14 +40,9 @@ const SingleCycle: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { setToastAlert } = useToast();
+  const { user } = useUserAuth();
 
-  const { data: activeProject } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { setToastAlert } = useToast();
 
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId as string) : null,
@@ -77,27 +68,25 @@ const SingleCycle: React.FC = () => {
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
       : "draft";
 
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const openIssuesListModal = () => {
     setCycleIssuesListModal(true);
   };
 
-  const handleAddIssuesToCycle = async (data: { issues: string[] }) => {
+  const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
 
+    const payload = {
+      issues: data.map((i) => i.id),
+    };
+
     await issuesService
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
-      .then(() => {
-        mutate(CYCLE_ISSUES(cycleId as string));
-      })
+      .addIssueToCycle(
+        workspaceSlug as string,
+        projectId as string,
+        cycleId as string,
+        payload,
+        user
+      )
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -112,15 +101,15 @@ const SingleCycle: React.FC = () => {
       <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
-        issues={issues?.filter((i) => !i.cycle_id) ?? []}
+        searchParams={{ cycle: true }}
         handleOnSubmit={handleAddIssuesToCycle}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${activeProject?.name ?? "Project"} Cycles`}
-              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
+              title={`${cycleDetails?.project_detail.name ?? "Project"} Cycles`}
+              link={`/${workspaceSlug}/projects/${projectId}/cycles`}
             />
           </Breadcrumbs>
         }
@@ -139,7 +128,7 @@ const SingleCycle: React.FC = () => {
               <CustomMenu.MenuItem
                 key={cycle.id}
                 renderAs="a"
-                href={`/${workspaceSlug}/projects/${activeProject?.id}/cycles/${cycle.id}`}
+                href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}
               >
                 {truncateText(cycle.name, 40)}
               </CustomMenu.MenuItem>
@@ -151,14 +140,14 @@ const SingleCycle: React.FC = () => {
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 font-normal rounded-md text-brand-secondary"
+              className="!py-1.5 font-normal rounded-md text-custom-text-200 hover:text-custom-text-100"
               outline
             >
               Analytics
             </SecondaryButton>
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
                 cycleSidebar ? "rotate-180" : ""
               }`}
               onClick={() => setCycleSidebar((prevData) => !prevData)}
@@ -170,7 +159,7 @@ const SingleCycle: React.FC = () => {
       >
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <div
-          className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} ${
+          className={`h-full flex flex-col ${cycleSidebar ? "mr-[24rem]" : ""} ${
             analyticsModal ? "mr-[50%]" : ""
           } duration-300`}
         >
@@ -185,6 +174,7 @@ const SingleCycle: React.FC = () => {
           cycle={cycleDetails}
           isOpen={cycleSidebar}
           isCompleted={cycleStatus === "completed" ?? false}
+          user={user}
         />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

@@ -17,7 +17,7 @@ import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import type { IIssueLabels, IState } from "types";
+import type { ICurrentUserResponse, IIssueLabels, IState } from "types";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -26,14 +26,22 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
+  onSuccess?: (response: IIssueLabels) => void;
+  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues: Partial<IState> = {
   name: "",
-  color: "#858E96",
+  color: "rgb(var(--color-text-200))",
 };
 
-export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose }) => {
+export const CreateLabelModal: React.FC<Props> = ({
+  isOpen,
+  projectId,
+  handleClose,
+  user,
+  onSuccess,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -57,7 +65,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
     if (!workspaceSlug) return;
 
     await issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         mutate<IIssueLabels[]>(
           PROJECT_ISSUE_LABELS(projectId),
@@ -65,6 +73,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
           false
         );
         onClose();
+        if (onSuccess) onSuccess(res);
       })
       .catch((error) => {
         console.log(error);
@@ -97,10 +106,13 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-brand-surface-1 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-90 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-custom-text-100"
+                    >
                       Create Label
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
@@ -108,8 +120,8 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                         {({ open, close }) => (
                           <>
                             <Popover.Button
-                              className={`group inline-flex items-center rounded-sm py-2 text-base font-medium hover:text-brand-base focus:outline-none ${
-                                open ? "text-brand-base" : "text-brand-secondary"
+                              className={`group inline-flex items-center rounded-sm py-2 text-base font-medium hover:text-custom-text-100 focus:outline-none ${
+                                open ? "text-custom-text-100" : "text-custom-text-200"
                               }`}
                             >
                               {watch("color") && watch("color") !== "" && (
@@ -121,7 +133,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                 />
                               )}
                               <ChevronDownIcon
-                                className={`ml-2 h-5 w-5 group-hover:text-brand-secondary ${
+                                className={`ml-2 h-5 w-5 group-hover:text-custom-text-200 ${
                                   open ? "text-gray-600" : "text-gray-400"
                                 }`}
                                 aria-hidden="true"

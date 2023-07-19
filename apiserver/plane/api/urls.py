@@ -5,6 +5,7 @@ from django.urls import path
 
 from plane.api.views import (
     # Authentication
+    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
@@ -21,6 +22,7 @@ from plane.api.views import (
     # User
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
     ## End User
     # Workspaces
@@ -69,13 +71,14 @@ from plane.api.views import (
     BulkDeleteIssuesEndpoint,
     BulkImportIssuesEndpoint,
     ProjectUserViewsEndpoint,
-    TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
     IssueAttachmentEndpoint,
+    IssueArchiveViewSet,
+    IssueSubscriberViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -84,9 +87,6 @@ from plane.api.views import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
     ## End Estimates
-    # Shortcuts
-    ShortCutViewSet,
-    ## End Shortcuts
     # Views
     IssueViewViewSet,
     ViewIssuesEndpoint,
@@ -140,6 +140,10 @@ from plane.api.views import (
     # Release Notes
     ReleaseNotesEndpoint,
     ## End Release Notes
+    # Inbox
+    InboxViewSet,
+    InboxIssueViewSet,
+    ## End Inbox
     # Analytics
     AnalyticsEndpoint,
     AnalyticViewViewset,
@@ -147,6 +151,10 @@ from plane.api.views import (
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
     ## End Analytics
+    # Notification
+    NotificationViewSet,
+    UnreadNotificationEndpoint,
+    ## End Notification
 )
 
 
@@ -154,6 +162,7 @@ urlpatterns = [
     #  Social Auth
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
     # Auth
+    path("sign-up/", SignUpEndpoint.as_view(), name="sign-up"),
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),
     path("sign-out/", SignOutEndpoint.as_view(), name="sign-out"),
     # Magic Sign In/Up
@@ -170,7 +179,7 @@ urlpatterns = [
     ),
     # Password Manipulation
     path(
-        "password-reset/<uidb64>/<token>/",
+        "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
         name="password-reset",
     ),
@@ -195,7 +204,12 @@ urlpatterns = [
     path(
         "users/me/onboard/",
         UpdateUserOnBoardedEndpoint.as_view(),
-        name="change-password",
+        name="user-onboard",
+    ),
+    path(
+        "users/me/tour-completed/",
+        UpdateUserTourCompletedEndpoint.as_view(),
+        name="user-tour",
     ),
     path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces
@@ -292,7 +306,6 @@ urlpatterns = [
         WorkspaceInvitationsViewset.as_view(
             {
                 "delete": "destroy",
-                "get": "retrieve",
                 "get": "retrieve",
             }
         ),
@@ -466,7 +479,6 @@ urlpatterns = [
         "workspaces/<str:slug>/user-favorite-projects/",
         ProjectFavoritesViewSet.as_view(
             {
-                "get": "list",
                 "post": "create",
             }
         ),
@@ -534,30 +546,6 @@ urlpatterns = [
         name="bulk-create-estimate-points",
     ),
     # End Estimates ##
-    # Shortcuts
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/shortcuts/",
-        ShortCutViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-shortcut",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/shortcuts/<uuid:pk>/",
-        ShortCutViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-shortcut",
-    ),
-    ## End Shortcuts
     # Views
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
@@ -820,30 +808,34 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     ## End IssueComments
-    ## Roadmap
+    # Issue Subscribers
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/roadmaps/",
-        TimeLineIssueViewSet.as_view(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/",
+        IssueSubscriberViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
             }
         ),
-        name="project-issue-roadmap",
+        name="project-issue-subscribers",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/roadmaps/<uuid:pk>/",
-        TimeLineIssueViewSet.as_view(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/<uuid:subscriber_id>/",
+        IssueSubscriberViewSet.as_view({"delete": "destroy"}),
+        name="project-issue-subscribers",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribe/",
+        IssueSubscriberViewSet.as_view(
             {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
+                "get": "subscription_status",
+                "post": "subscribe",
+                "delete": "unsubscribe",
             }
         ),
-        name="project-issue-roadmap",
+        name="project-issue-subscribers",
     ),
-    ## End Roadmap
+    ## End Issue Subscribers
     ## IssueProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",
@@ -868,6 +860,36 @@ urlpatterns = [
         name="project-issue-roadmap",
     ),
     ## IssueProperty Ebd
+    ## Issue Archives
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/",
+        IssueArchiveViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="project-issue-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/<uuid:pk>/",
+        IssueArchiveViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/unarchive/<uuid:pk>/",
+        IssueArchiveViewSet.as_view(
+            {
+                "post": "unarchive",
+            }
+        ),
+        name="project-issue-archive",
+    ),
+    ## End Issue Archives
     ## File Assets
     path(
         "workspaces/<str:slug>/file-assets/",
@@ -1242,6 +1264,50 @@ urlpatterns = [
         name="release-notes",
     ),
     ## End Release Notes
+    # Inbox
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
+        InboxViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="inbox",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:pk>/",
+        InboxViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="inbox",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/",
+        InboxIssueViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="inbox-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/<uuid:pk>/",
+        InboxIssueViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="inbox-issue",
+    ),
+    ## End Inbox
     # Analytics
     path(
         "workspaces/<str:slug>/analytics/",
@@ -1276,4 +1342,51 @@ urlpatterns = [
         name="default-analytics",
     ),
     ## End Analytics
+    # Notification
+    path(
+        "workspaces/<str:slug>/users/notifications/",
+        NotificationViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/",
+        NotificationViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/read/",
+        NotificationViewSet.as_view(
+            {
+                "post": "mark_read",
+                "delete": "mark_unread",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/<uuid:pk>/archive/",
+        NotificationViewSet.as_view(
+            {
+                "post": "archive",
+                "delete": "unarchive",
+            }
+        ),
+        name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/unread/",
+        UnreadNotificationEndpoint.as_view(),
+        name="unread-notifications",
+    ),
+    ## End Notification
 ]

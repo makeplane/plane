@@ -8,8 +8,8 @@ import useSWR from "swr";
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
+import useUserAuth from "hooks/use-user-auth";
 // services
-import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
@@ -31,7 +31,7 @@ import { ListBulletIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/24/ou
 import { SelectCycleType } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { CURRENT_CYCLE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
 
@@ -62,18 +62,12 @@ const ProjectCycles: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: currentCycle } = useSWR(
-    workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () =>
-          cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
       : null
   );
 
@@ -110,40 +104,41 @@ const ProjectCycles: NextPage = () => {
         isOpen={createUpdateCycleModal}
         handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycle}
+        user={user}
       />
       <div className="space-y-5 p-8 h-full flex flex-col overflow-hidden">
         <div className="flex gap-4 justify-between">
-          <h3 className="text-2xl font-semibold text-brand-base">Cycles</h3>
+          <h3 className="text-2xl font-semibold text-custom-text-100">Cycles</h3>
           <div className="flex items-center gap-x-1">
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-                cyclesView === "list" ? "bg-brand-surface-2" : ""
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
+                cyclesView === "list" ? "bg-custom-background-80" : ""
               }`}
               onClick={() => setCyclesView("list")}
             >
-              <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
+              <ListBulletIcon className="h-4 w-4 text-custom-text-200" />
             </button>
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
-                cyclesView === "board" ? "bg-brand-surface-2" : ""
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
+                cyclesView === "board" ? "bg-custom-background-80" : ""
               }`}
               onClick={() => setCyclesView("board")}
             >
-              <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
+              <Squares2X2Icon className="h-4 w-4 text-custom-text-200" />
             </button>
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-brand-surface-2 ${
-                cyclesView === "gantt_chart" ? "bg-brand-surface-2" : ""
+              className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-custom-background-80 ${
+                cyclesView === "gantt_chart" ? "bg-custom-background-80" : ""
               }`}
               onClick={() => {
                 setCyclesView("gantt_chart");
                 setCycleTab("All");
               }}
             >
-              <span className="material-symbols-rounded text-brand-secondary text-[18px] rotate-90">
+              <span className="material-symbols-rounded text-custom-text-200 text-[18px] rotate-90">
                 waterfall_chart
               </span>
             </button>
@@ -181,8 +176,8 @@ const ProjectCycles: NextPage = () => {
                   className={({ selected }) =>
                     `rounded-3xl border px-6 py-1 outline-none ${
                       selected
-                        ? "border-brand-accent bg-brand-accent text-white font-medium"
-                        : "border-brand-base bg-brand-base hover:bg-brand-surface-2"
+                        ? "border-custom-primary bg-custom-primary text-white font-medium"
+                        : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-80"
                     }`
                   }
                 >
@@ -196,16 +191,8 @@ const ProjectCycles: NextPage = () => {
               <AllCyclesList viewType={cyclesView} />
             </Tab.Panel>
             {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="mt-7 space-y-5">
-                {currentCycle?.[0] ? (
-                  <ActiveCycleDetails cycle={currentCycle?.[0]} />
-                ) : (
-                  <div className="flex w-full items-center justify-start rounded-[10px] bg-brand-surface-2 px-6 py-4">
-                    <h3 className="text-base font-medium text-brand-base ">
-                      No active cycle is present.
-                    </h3>
-                  </div>
-                )}
+              <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
+                <ActiveCycleDetails />
               </Tab.Panel>
             )}
             <Tab.Panel as="div" className="h-full overflow-y-auto">

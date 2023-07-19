@@ -1,16 +1,17 @@
 import React from "react";
-// next imports
+
 import Image from "next/image";
-// next types
+
 import type { NextPage } from "next";
+
 // layouts
 import DefaultLayout from "layouts/default-layout";
+// services
+import authenticationService from "services/authentication.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
-// services
-import authenticationService from "services/authentication.service";
-// social auth buttons
+// components
 import {
   GoogleLoginButton,
   GithubLoginButton,
@@ -19,56 +20,102 @@ import {
 } from "components/account";
 // ui
 import { Spinner } from "components/ui";
-// icons
-import Logo from "public/logo.png";
+// images
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+// types
+type EmailPasswordFormValues = {
+  email: string;
+  password?: string;
+  medium?: string;
+};
 
 const HomePage: NextPage = () => {
-  const { user, isLoading, mutateUser } = useUserAuth("sign-in");
+  const { isLoading, mutateUser } = useUserAuth("sign-in");
 
   const { setToastAlert } = useToast();
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
       if (clientId && credential) {
-        mutateUser(
-          await authenticationService.socialAuth({
-            medium: "google",
-            credential,
-            clientId,
-          })
-        );
+        const socialAuthPayload = {
+          medium: "google",
+          credential,
+          clientId,
+        };
+        const response = await authenticationService.socialAuth(socialAuthPayload);
+        if (response && response?.user) mutateUser();
       } else {
         throw Error("Cant find credentials");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err: any) {
       setToastAlert({
         title: "Error signing in!",
         type: "error",
-        message: "Something went wrong. Please try again later or contact the support team.",
+        message:
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
 
-  const handleGithubSignIn = async (credential: string) => {
+  const handleGitHubSignIn = async (credential: string) => {
     try {
       if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
-        mutateUser(
-          await authenticationService.socialAuth({
-            medium: "github",
-            credential,
-            clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
-          })
-        );
+        const socialAuthPayload = {
+          medium: "github",
+          credential,
+          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
+        };
+        const response = await authenticationService.socialAuth(socialAuthPayload);
+        if (response && response?.user) mutateUser();
       } else {
         throw Error("Cant find credentials");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err: any) {
       setToastAlert({
         title: "Error signing in!",
         type: "error",
-        message: "Something went wrong. Please try again later or contact the support team.",
+        message:
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
+      });
+    }
+  };
+
+  const handlePasswordSignIn = async (formData: EmailPasswordFormValues) => {
+    await authenticationService
+      .emailLogin(formData)
+      .then((response) => {
+        try {
+          if (response) mutateUser();
+        } catch (err: any) {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              err?.error ||
+              "Something went wrong. Please try again later or contact the support team.",
+          });
+        }
+      })
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message:
+            err?.error ||
+            "Something went wrong. Please try again later or contact the support team.",
+        })
+      );
+  };
+
+  const handleEmailCodeSignIn = async (response: any) => {
+    try {
+      if (response) mutateUser();
+    } catch (err: any) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message:
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
@@ -76,38 +123,58 @@ const HomePage: NextPage = () => {
   return (
     <DefaultLayout>
       {isLoading ? (
-        <div className="grid h-screen place-items-center">
+        <div className="grid place-items-center h-screen">
           <Spinner />
         </div>
       ) : (
-        <div className="flex h-screen w-full items-center justify-center overflow-auto bg-gray-50">
-          <div className="flex min-h-full w-full flex-col justify-center py-12 px-6 lg:px-8">
-            <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
-              <div className="flex flex-col items-center justify-center gap-10">
-                <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
-                <div className="text-center text-xl font-medium text-black">
-                  Sign In to your Plane Account
+        <>
+          <>
+            <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
+            <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
+              <div className="grid place-items-center bg-custom-background-100">
+                <div className="h-[30px] w-[30px]">
+                  <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
                 </div>
               </div>
-
-              <div className="flex flex-col rounded-[10px] bg-white  shadow-md">
-                {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
-                  <>
-                    <EmailCodeForm />
-                    <div className="flex flex-col gap-3 py-5 px-5 border-t items-center justify-center border-gray-300 ">
-                      <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                      <GithubLoginButton handleSignIn={handleGithubSignIn} />
+            </div>
+          </>
+          <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
+            <div>
+              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                <>
+                  <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+                    Sign in to Plane
+                  </h1>
+                  <div className="flex flex-col divide-y divide-custom-border-200">
+                    <div className="pb-7">
+                      <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <EmailPasswordForm />
-                  </>
-                )}
-              </div>
+                    <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
+                      <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
+                      <GithubLoginButton handleSignIn={handleGitHubSignIn} />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <EmailPasswordForm onSubmit={handlePasswordSignIn} />
+              )}
+
+              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                <p className="pt-16 text-custom-text-200 text-sm text-center">
+                  By signing up, you agree to the{" "}
+                  <a
+                    href="https://plane.so/terms-and-conditions"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium underline"
+                  >
+                    Terms & Conditions
+                  </a>
+                </p>
+              ) : null}
             </div>
           </div>
-        </div>
+        </>
       )}
     </DefaultLayout>
   );

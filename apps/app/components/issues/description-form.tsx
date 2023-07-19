@@ -4,8 +4,6 @@ import dynamic from "next/dynamic";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
@@ -28,15 +26,22 @@ export interface IssueDescriptionFormValues {
 }
 
 export interface IssueDetailsProps {
-  issue: IIssue;
+  issue: {
+    name: string;
+    description: string;
+    description_html: string;
+  };
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
+  isAllowed: boolean;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormSubmit }) => {
+export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
+  issue,
+  handleFormSubmit,
+  isAllowed,
+}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [characterLimit, setCharacterLimit] = useState(false);
-
-  const { memberRole } = useProjectMyMembership();
 
   const { setShowAlert } = useReloadConfirmations();
 
@@ -78,8 +83,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
     });
   }, [issue, reset]);
 
-  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
-
   return (
     <div className="relative">
       <div className="relative">
@@ -102,13 +105,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
               });
           }}
           required={true}
-          className="min-h-10 block w-full resize-none
-      overflow-hidden rounded border-none bg-transparent
-      px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-theme"
+          className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
           role="textbox"
+          disabled={!isAllowed}
         />
         {characterLimit && (
-          <div className="pointer-events-none absolute bottom-0 right-0 z-[2] rounded bg-brand-surface-2 p-1 text-xs">
+          <div className="pointer-events-none absolute bottom-0 right-0 z-[2] rounded bg-custom-background-80 p-1 text-xs">
             <span
               className={`${
                 watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
@@ -156,13 +158,13 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
                   });
               }}
               placeholder="Description"
-              editable={!isNotAllowed}
+              editable={isAllowed}
             />
           );
         }}
       />
       <div
-        className={`absolute -bottom-8 right-0 text-sm text-brand-secondary ${
+        className={`absolute -bottom-8 right-0 text-sm text-custom-text-200 ${
           isSubmitting ? "block" : "hidden"
         }`}
       >

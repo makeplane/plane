@@ -9,11 +9,18 @@ import type {
 } from "./";
 
 export interface IProject {
+  archive_in: number;
+  close_in: number;
   created_at: Date;
   created_by: string;
   cover_image: string | null;
   cycle_view: boolean;
+  issue_views_view: boolean;
+  module_view: boolean;
+  page_view: boolean;
+  inbox_view: boolean;
   default_assignee: IUser | string | null;
+  default_state: string | null;
   description: string;
   emoji: string | null;
   emoji_and_icon:
@@ -53,18 +60,6 @@ export interface IProjectLite {
   identifier: string;
 }
 
-export interface IFavoriteProject {
-  created_at: Date;
-  created_by: string;
-  id: string;
-  project: string;
-  project_detail: IProject;
-  updated_at: Date;
-  updated_by: string;
-  user: string;
-  workspace: string;
-}
-
 type ProjectViewTheme = {
   issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
@@ -76,8 +71,8 @@ type ProjectViewTheme = {
 export interface IProjectMember {
   id: string;
   member: IUserLite;
-  project: IProject;
-  workspace: IWorkspace;
+  project: IProjectLite;
+  workspace: IWorkspaceLite;
   comment: string;
   role: 5 | 10 | 15 | 20;
 
@@ -109,6 +104,10 @@ export interface IProjectMemberInvitation {
   updated_by: string;
 }
 
+export interface IProjectBulkInviteFormData {
+  members: { role: 5 | 10 | 15 | 20; member_id: string }[];
+}
+
 export interface IGithubRepository {
   id: string;
   full_name: string;
@@ -119,4 +118,26 @@ export interface IGithubRepository {
 export interface GithubRepositoriesResponse {
   repositories: IGithubRepository[];
   total_count: number;
+}
+
+export type TProjectIssuesSearchParams = {
+  search: string;
+  parent?: boolean;
+  blocker_blocked_by?: boolean;
+  cycle?: boolean;
+  module?: boolean;
+  sub_issue?: boolean;
+  issue_id?: string;
+};
+
+export interface ISearchIssueResponse {
+  id: string;
+  name: string;
+  project_id: string;
+  project__identifier: string;
+  sequence_id: number;
+  state__color: string;
+  state__group: string;
+  state__name: string;
+  workspace__slug: string;
 }

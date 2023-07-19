@@ -16,10 +16,10 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    TimelineIssue,
     IssueProperty,
     IssueBlocker,
     IssueAssignee,
+    IssueSubscriber,
     IssueLabel,
     Label,
     IssueBlocker,
@@ -41,6 +41,7 @@ class IssueFlatSerializer(BaseSerializer):
             "id",
             "name",
             "description",
+            "description_html",
             "priority",
             "start_date",
             "target_date",
@@ -287,21 +288,6 @@ class IssueCommentSerializer(BaseSerializer):
         ]
 
 
-class TimeLineIssueSerializer(BaseSerializer):
-    class Meta:
-        model = TimelineIssue
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
 class IssuePropertySerializer(BaseSerializer):
     class Meta:
         model = IssueProperty
@@ -476,12 +462,14 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
-    state_detail = StateSerializer(read_only=True, source="state")
-    project_detail = ProjectSerializer(read_only=True, source="project")
-    label_details = LabelSerializer(read_only=True, source="labels", many=True)
+    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
+    state_detail = StateLiteSerializer(read_only=True, source="state")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
     bridge_id = serializers.UUIDField(read_only=True)
+    attachment_count = serializers.IntegerField(read_only=True)
+    link_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue
@@ -489,7 +477,7 @@ class IssueStateSerializer(BaseSerializer):
 
 
 class IssueSerializer(BaseSerializer):
-    project_detail = ProjectSerializer(read_only=True, source="project")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
     parent_detail = IssueFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
@@ -542,4 +530,15 @@ class IssueLiteSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+        ]
+
+
+class IssueSubscriberSerializer(BaseSerializer):
+    class Meta:
+        model = IssueSubscriber
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "issue",
         ]

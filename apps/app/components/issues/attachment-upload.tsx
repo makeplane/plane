@@ -17,7 +17,11 @@ import { IIssueAttachment } from "types";
 
 const maxFileSize = 5 * 1024 * 1024; // 5 MB
 
-export const IssueAttachmentUpload = () => {
+type Props = {
+  disabled?: boolean;
+};
+
+export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -74,7 +78,7 @@ export const IssueAttachmentUpload = () => {
     onDrop,
     maxSize: maxFileSize,
     multiple: false,
-    disabled: isLoading,
+    disabled: isLoading || disabled,
   });
 
   const fileError =
@@ -85,9 +89,9 @@ export const IssueAttachmentUpload = () => {
   return (
     <div
       {...getRootProps()}
-      className={`flex items-center justify-center h-[60px] cursor-pointer border-2 border-dashed text-brand-accent bg-brand-accent/5 text-xs rounded-md px-4 ${
-        isDragActive ? "bg-brand-accent/10 border-brand-accent" : "border-brand-base"
-      } ${isDragReject ? "bg-red-100" : ""}`}
+      className={`flex items-center justify-center h-[60px] border-2 border-dashed text-custom-primary bg-custom-primary/5 text-xs rounded-md px-4 ${
+        isDragActive ? "bg-custom-primary/10 border-custom-primary" : "border-custom-border-200"
+      } ${isDragReject ? "bg-red-100" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
     >
       <input {...getInputProps()} />
       <span className="flex items-center gap-2">

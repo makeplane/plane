@@ -18,7 +18,7 @@ import { Loader, PrimaryButton } from "components/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse } from "types";
+import { IAnalyticsParams, IAnalyticsResponse, ICurrentUserResponse } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 
@@ -29,6 +29,7 @@ type Props = {
   control: Control<IAnalyticsParams, any>;
   setValue: UseFormSetValue<IAnalyticsParams>;
   fullScreen: boolean;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const CustomAnalytics: React.FC<Props> = ({
@@ -38,6 +39,7 @@ export const CustomAnalytics: React.FC<Props> = ({
   control,
   setValue,
   fullScreen,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -59,7 +61,7 @@ export const CustomAnalytics: React.FC<Props> = ({
         <AnalyticsSelectBar
           control={control}
           setValue={setValue}
-          projects={projects}
+          projects={projects ?? []}
           params={params}
           fullScreen={fullScreen}
           isProjectLevel={isProjectLevel}
@@ -84,7 +86,7 @@ export const CustomAnalytics: React.FC<Props> = ({
               </div>
             ) : (
               <div className="grid h-full place-items-center p-5">
-                <div className="space-y-4 text-brand-secondary">
+                <div className="space-y-4 text-custom-text-200">
                   <p className="text-sm">No matching issues found. Try changing the parameters.</p>
                 </div>
               </div>
@@ -102,7 +104,7 @@ export const CustomAnalytics: React.FC<Props> = ({
           )
         ) : (
           <div className="grid h-full place-items-center p-5">
-            <div className="space-y-4 text-brand-secondary">
+            <div className="space-y-4 text-custom-text-200">
               <p className="text-sm">There was some error in fetching the data.</p>
               <div className="flex items-center justify-center gap-2">
                 <PrimaryButton
@@ -124,6 +126,7 @@ export const CustomAnalytics: React.FC<Props> = ({
         params={params}
         fullScreen={fullScreen}
         isProjectLevel={isProjectLevel}
+        user={user}
       />
     </div>
   );

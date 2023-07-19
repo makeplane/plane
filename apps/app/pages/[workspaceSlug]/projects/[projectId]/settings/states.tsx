@@ -8,6 +8,7 @@ import useSWR from "swr";
 import stateService from "services/state.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
+import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -38,6 +39,8 @@ const StatesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
+
   const { projectDetails } = useProjectDetails();
 
   const { data: states } = useSWR(
@@ -55,6 +58,7 @@ const StatesSettings: NextPage = () => {
         isOpen={!!selectDeleteState}
         data={statesList?.find((s) => s.id === selectDeleteState) ?? null}
         onClose={() => setSelectDeleteState(null)}
+        user={user}
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
@@ -71,8 +75,8 @@ const StatesSettings: NextPage = () => {
           <SettingsHeader />
           <div className="grid grid-cols-12 gap-10">
             <div className="col-span-12 sm:col-span-5">
-              <h3 className="text-2xl font-semibold text-brand-base">States</h3>
-              <p className="text-brand-secondary">Manage the states of this project.</p>
+              <h3 className="text-2xl font-semibold text-custom-text-100">States</h3>
+              <p className="text-custom-text-200">Manage the states of this project.</p>
             </div>
             <div className="col-span-12 space-y-8 sm:col-span-7">
               {states && projectDetails ? (
@@ -81,25 +85,27 @@ const StatesSettings: NextPage = () => {
                     return (
                       <div key={key}>
                         <div className="mb-2 flex w-full justify-between">
-                          <h4 className="font-medium capitalize">{key}</h4>
+                          <h4 className="text-custom-text-200 capitalize">{key}</h4>
                           <button
                             type="button"
-                            className="flex items-center gap-2 text-brand-accent outline-none"
+                            className="flex items-center gap-2 text-custom-primary-100 hover:text-custom-primary-200 outline-none"
                             onClick={() => setActiveGroup(key as keyof StateGroup)}
                           >
                             <PlusIcon className="h-4 w-4" />
                             Add
                           </button>
                         </div>
-                        <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base">
+                        <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200">
                           {key === activeGroup && (
                             <CreateUpdateStateInline
+                              groupLength={orderedStateGroups[key].length}
                               onClose={() => {
                                 setActiveGroup(null);
                                 setSelectedState(null);
                               }}
                               data={null}
                               selectedGroup={key as keyof StateGroup}
+                              user={user}
                             />
                           )}
                           {orderedStateGroups[key].map((state, index) =>
@@ -111,10 +117,11 @@ const StatesSettings: NextPage = () => {
                                 statesList={statesList}
                                 handleEditState={() => setSelectedState(state.id)}
                                 handleDeleteState={() => setSelectDeleteState(state.id)}
+                                user={user}
                               />
                             ) : (
                               <div
-                                className="border-b border-brand-base last:border-b-0"
+                                className="border-b border-custom-border-200 last:border-b-0"
                                 key={state.id}
                               >
                                 <CreateUpdateStateInline
@@ -122,10 +129,12 @@ const StatesSettings: NextPage = () => {
                                     setActiveGroup(null);
                                     setSelectedState(null);
                                   }}
+                                  groupLength={orderedStateGroups[key].length}
                                   data={
                                     statesList?.find((state) => state.id === selectedState) ?? null
                                   }
                                   selectedGroup={key as keyof StateGroup}
+                                  user={user}
                                 />
                               </div>
                             )

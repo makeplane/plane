@@ -17,7 +17,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssue, IState, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, IState, UserAuth } from "types";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -31,6 +31,7 @@ type Props = {
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   isCompleted?: boolean;
+  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
@@ -46,6 +47,7 @@ export const SingleBoard: React.FC<Props> = ({
   handleTrashBox,
   removeIssue,
   isCompleted = false,
+  user,
   userAuth,
 }) => {
   // collapse/expand
@@ -57,6 +59,10 @@ export const SingleBoard: React.FC<Props> = ({
   const { workspaceSlug, projectId } = router.query;
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
+
+  // Check if it has at least 4 tickets since it is enough to accommodate the Calendar height
+  const issuesLength = groupedByIssues?.[groupTitle].length;
+  const hasMinimumNumberOfCards = issuesLength ? issuesLength >= 4 : false;
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
@@ -75,7 +81,9 @@ export const SingleBoard: React.FC<Props> = ({
           {(provided, snapshot) => (
             <div
               className={`relative h-full ${
-                orderBy !== "sort_order" && snapshot.isDraggingOver ? "bg-brand-base/20" : ""
+                orderBy !== "sort_order" && snapshot.isDraggingOver
+                  ? "bg-custom-background-100/20"
+                  : ""
               } ${!isCollapsed ? "hidden" : "flex flex-col"}`}
               ref={provided.innerRef}
               {...provided.droppableProps}
@@ -85,12 +93,12 @@ export const SingleBoard: React.FC<Props> = ({
                   <div
                     className={`absolute ${
                       snapshot.isDraggingOver ? "block" : "hidden"
-                    } pointer-events-none top-0 left-0 z-[99] h-full w-full bg-brand-surface-1 opacity-50`}
+                    } pointer-events-none top-0 left-0 z-[99] h-full w-full bg-custom-background-90 opacity-50`}
                   />
                   <div
                     className={`absolute ${
                       snapshot.isDraggingOver ? "block" : "hidden"
-                    } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-brand-base p-2 text-xs`}
+                    } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-custom-background-100 p-2 text-xs`}
                   >
                     This board is ordered by{" "}
                     {replaceUnderscoreIfSnakeCase(
@@ -99,7 +107,11 @@ export const SingleBoard: React.FC<Props> = ({
                   </div>
                 </>
               )}
-              <div className="pt-3 overflow-hidden overflow-y-scroll">
+              <div
+                className={`pt-3 ${
+                  hasMinimumNumberOfCards ? "overflow-hidden overflow-y-scroll" : ""
+                } `}
+              >
                 {groupedByIssues?.[groupTitle].map((issue, index) => (
                   <Draggable
                     key={issue.id}
@@ -129,6 +141,7 @@ export const SingleBoard: React.FC<Props> = ({
                             removeIssue(issue.bridge_id, issue.id);
                         }}
                         isCompleted={isCompleted}
+                        user={user}
                         userAuth={userAuth}
                       />
                     )}
@@ -142,43 +155,45 @@ export const SingleBoard: React.FC<Props> = ({
                   {provided.placeholder}
                 </span>
               </div>
-              <div>
-                {type === "issue" ? (
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 font-medium text-brand-accent outline-none p-1"
-                    onClick={addIssueToState}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    Add Issue
-                  </button>
-                ) : (
-                  !isCompleted && (
-                    <CustomMenu
-                      customButton={
-                        <button
-                          type="button"
-                          className="flex items-center gap-2 font-medium text-brand-accent outline-none"
-                        >
-                          <PlusIcon className="h-4 w-4" />
-                          Add Issue
-                        </button>
-                      }
-                      position="left"
-                      noBorder
+              {selectedGroup !== "created_by" && (
+                <div>
+                  {type === "issue" ? (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
+                      onClick={addIssueToState}
                     >
-                      <CustomMenu.MenuItem onClick={addIssueToState}>
-                        Create new
-                      </CustomMenu.MenuItem>
-                      {openIssuesListModal && (
-                        <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                          Add an existing issue
+                      <PlusIcon className="h-4 w-4" />
+                      Add Issue
+                    </button>
+                  ) : (
+                    !isCompleted && (
+                      <CustomMenu
+                        customButton={
+                          <button
+                            type="button"
+                            className="flex items-center gap-2 font-medium text-custom-primary outline-none"
+                          >
+                            <PlusIcon className="h-4 w-4" />
+                            Add Issue
+                          </button>
+                        }
+                        position="left"
+                        noBorder
+                      >
+                        <CustomMenu.MenuItem onClick={addIssueToState}>
+                          Create new
                         </CustomMenu.MenuItem>
-                      )}
-                    </CustomMenu>
-                  )
-                )}
-              </div>
+                        {openIssuesListModal && (
+                          <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                            Add an existing issue
+                          </CustomMenu.MenuItem>
+                        )}
+                      </CustomMenu>
+                    )
+                  )}
+                </div>
+              )}
             </div>
           )}
         </StrictModeDroppable>

@@ -28,6 +28,13 @@ def generate_display_name(instance):
         return instance.first_name.lower()
 
 
+def get_default_onboarding():
+    return {
+        "profile_complete": False,
+        "workspace_create": False,
+        "workspace_invite": False,
+        "workspace_join": False,
+    }
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
@@ -84,6 +91,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_bot = models.BooleanField(default=False)
     theme = models.JSONField(default=dict)
     display_name = models.CharField(max_length=255, default=generate_display_name)
+    is_tour_completed = models.BooleanField(default=False)
+    onboarding_step = models.JSONField(default=get_default_onboarding)
 
     USERNAME_FIELD = "email"
 

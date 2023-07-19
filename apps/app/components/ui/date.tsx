@@ -5,7 +5,7 @@ import { CalendarDaysIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // react-datepicker
 import DatePicker from "react-datepicker";
 // import "react-datepicker/dist/react-datepicker.css";
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
 type Props = {
   value: string | null;
@@ -17,11 +17,11 @@ export const DateSelect: React.FC<Props> = ({ value, onChange, label }) => (
   <Popover className="relative flex items-center justify-center  rounded-lg">
     {({ open }) => (
       <>
-        <Popover.Button className="flex cursor-pointer items-center rounded-md border border-brand-base text-xs shadow-sm duration-300 hover:bg-brand-surface-2">
-          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-brand-secondary">
+        <Popover.Button className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-300 hover:bg-custom-background-80">
+          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200">
             {value ? (
               <>
-                <span className="text-brand-base">{value}</span>
+                <span className="text-custom-text-100">{renderShortDateWithYearFormat(value)}</span>
                 <button onClick={() => onChange(null)}>
                   <XMarkIcon className="h-3 w-3" />
                 </button>

@@ -22,9 +22,9 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
     <div className="relative flex w-full h-full items-center p-1 overflow-hidden gap-1">
       <div
         className="rounded-sm flex-shrink-0 w-[10px] h-[10px] flex justify-center items-center"
-        style={{ backgroundColor: "#858e96" }}
+        style={{ backgroundColor: "rgb(var(--color-primary-100))" }}
       />
-      <div className="text-brand-base text-sm">{data?.name}</div>
+      <div className="text-custom-text-100 text-sm">{data?.name}</div>
     </div>
   );
 
@@ -32,9 +32,12 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
   const GanttBlockView = ({ data }: { data: ICycle }) => (
     <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${data?.id}`}>
       <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm">
-        <div className="flex-shrink-0 w-[4px] h-full" style={{ backgroundColor: "#858e96" }} />
+        <div
+          className="flex-shrink-0 w-[4px] h-full"
+          style={{ backgroundColor: "rgb(var(--color-primary-100))" }}
+        />
         <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
-          <div className="text-brand-base text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
+          <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
             {data?.name}
           </div>
         </Tooltip>

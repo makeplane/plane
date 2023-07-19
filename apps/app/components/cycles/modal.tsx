@@ -15,7 +15,7 @@ import { CycleForm } from "components/cycles";
 // helper
 import { getDateRangeStatus, isDateGreaterThanToday } from "helpers/date-time.helper";
 // types
-import type { ICycle } from "types";
+import type { ICurrentUserResponse, ICycle } from "types";
 // fetch keys
 import {
   COMPLETED_CYCLES_LIST,
@@ -30,12 +30,14 @@ type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   data?: ICycle | null;
+  user: ICurrentUserResponse | undefined;
 };
 
 export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
   isOpen,
   handleClose,
   data,
+  user,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -46,7 +48,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await cycleService
-      .createCycle(workspaceSlug.toString(), projectId.toString(), payload)
+      .createCycle(workspaceSlug.toString(), projectId.toString(), payload, user)
       .then((res) => {
         switch (getDateRangeStatus(res.start_date, res.end_date)) {
           case "completed":
@@ -84,7 +86,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await cycleService
-      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload)
+      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload, user)
       .then((res) => {
         switch (getDateRangeStatus(data?.start_date, data?.end_date)) {
           case "completed":
@@ -232,7 +234,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
@@ -245,7 +247,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-brand-base bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <CycleForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}

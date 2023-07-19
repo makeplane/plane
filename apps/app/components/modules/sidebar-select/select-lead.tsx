@@ -53,7 +53,7 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+      <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
         <UserCircleIcon className="h-5 w-5" />
         <span>Lead</span>
       </div>
@@ -70,12 +70,12 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
                   selectedOption?.email
                 )
               ) : (
-                <span className="text-brand-secondary">No lead</span>
+                <span className="text-custom-text-200">No lead</span>
               )}
             </div>
           }
           options={options}
-          height="md"
+          maxHeight="md"
           position="right"
           onChange={onChange}
         />

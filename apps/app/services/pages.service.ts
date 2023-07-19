@@ -3,7 +3,7 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
 // types
-import { IPage, IPageBlock, RecentPagesResponse, IIssue } from "types";
+import { IPage, IPageBlock, RecentPagesResponse, IIssue, ICurrentUserResponse } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -15,10 +15,15 @@ class PageServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createPage(workspaceSlug: string, projectId: string, data: Partial<IPage>): Promise<IPage> {
+  async createPage(
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IPage>,
+    user: ICurrentUserResponse | undefined
+  ): Promise<IPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_CREATE");
+        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -30,14 +35,15 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: Partial<IPage>
+    data: Partial<IPage>,
+    user: ICurrentUserResponse | undefined
   ): Promise<IPage> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_UPDATE");
+        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -45,10 +51,15 @@ class PageServices extends APIService {
       });
   }
 
-  async deletePage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+  async deletePage(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_DELETE");
+        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -123,14 +134,16 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: Partial<IPageBlock>
+    data: Partial<IPageBlock>,
+    user: ICurrentUserResponse | undefined
   ): Promise<IPageBlock> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_CREATE");
+        if (trackEvent)
+          trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -158,14 +171,16 @@ class PageServices extends APIService {
     projectId: string,
     pageId: string,
     pageBlockId: string,
-    data: Partial<IPageBlock>
+    data: Partial<IPageBlock>,
+    user: ICurrentUserResponse | undefined
   ): Promise<IPage> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${pageBlockId}/`,
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_UPDATE");
+        if (trackEvent)
+          trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -177,13 +192,15 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    pageBlockId: string
+    pageBlockId: string,
+    user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${pageBlockId}/`
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_DELETE");
+        if (trackEvent)
+          trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -209,14 +226,19 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    blockId: string
+    blockId: string,
+    user: ICurrentUserResponse | undefined
   ): Promise<IIssue> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${blockId}/issues/`
     )
       .then((response) => {
         if (trackEvent)
-          trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_CONVERTED_TO_ISSUE");
+          trackEventServices.trackPageBlockEvent(
+            response?.data,
+            "PAGE_BLOCK_CONVERTED_TO_ISSUE",
+            user
+          );
         return response?.data;
       })
       .catch((error) => {

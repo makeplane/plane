@@ -8,6 +8,7 @@ import { mutate } from "swr";
 import cyclesService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUserAuth from "hooks/use-user-auth";
 // components
 import {
   CreateUpdateCycleModal,
@@ -18,8 +19,10 @@ import {
 } from "components/cycles";
 // ui
 import { EmptyState, Loader } from "components/ui";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
 // images
-import emptyCycle from "public/empty-state/empty-cycle.svg";
+import emptyCycle from "public/empty-state/cycle.svg";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
@@ -48,6 +51,7 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUserAuth();
   const { setToastAlert } = useToast();
 
   const handleEditCycle = (cycle: ICycle) => {
@@ -158,19 +162,21 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
         isOpen={createUpdateCycleModal}
         handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycleToUpdate}
+        user={user}
       />
       <DeleteCycleModal
         isOpen={deleteCycleModal}
         setIsOpen={setDeleteCycleModal}
         data={selectedCycleToDelete}
+        user={user}
       />
       {cycles ? (
         cycles.length > 0 ? (
           viewType === "list" ? (
-            <div className="divide-y divide-brand-base">
+            <div className="divide-y divide-custom-border-200">
               {cycles.map((cycle) => (
-                <div className="hover:bg-brand-surface-2">
-                  <div className="flex flex-col border-brand-base">
+                <div className="hover:bg-custom-background-80">
+                  <div className="flex flex-col border-custom-border-200">
                     <SingleCycleList
                       key={cycle.id}
                       cycle={cycle}
@@ -201,10 +207,17 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
           )
         ) : (
           <EmptyState
-            type="cycle"
-            title="Create New Cycle"
-            description="Sprint more effectively with Cycles by confining your project to a fixed amount of time. Create new cycle now."
-            imgURL={emptyCycle}
+            title="Plan your project with cycles"
+            description="Cycle is a custom time period in which a team works to complete items on their backlog."
+            image={emptyCycle}
+            buttonText="New Cycle"
+            buttonIcon={<PlusIcon className="h-4 w-4" />}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "q",
+              });
+              document.dispatchEvent(e);
+            }}
           />
         )
       ) : viewType === "list" ? (

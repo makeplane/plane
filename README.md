@@ -19,14 +19,14 @@
 <p>
     <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Screen.png?updatedAt=1684942001069"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Screen.png"
         alt="Plane Screens"
         width="100%"
       />
     </a>
     <a href="https://app.plane.so/#gh-dark-mode-only" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Screens_Dark_Mode.png?updatedAt=1684942388044"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Screens+Dark+Mode.png"
         alt="Plane Screens"
         width="100%"
       />
@@ -45,11 +45,11 @@ The easiest way to get started with Plane is by creating a [Plane Cloud](https:/
 
 ### Docker Compose Setup
 
-- Download the docker-compose.yml and setup.sh file
+- Clone the repository
 
 ```bash
-curl https://raw.githubusercontent.com/makeplane/plane/develop/docker-compose-hub.yml --output docker-compose.yml
-curl https://raw.githubusercontent.com/makeplane/plane/develop/setup.sh --output setup.sh
+git clone https://github.com/makeplane/plane
+cd plane
 chmod +x setup.sh
 ```
 
@@ -60,14 +60,6 @@ chmod +x setup.sh
 ```
 
 > If running in a cloud env replace localhost with public facing IP address of the VM
-
-- Export Environment Variables
-
-```bash
-set -a
-source .env
-set +a
-```
 
 - Run Docker compose up
 
@@ -94,7 +86,7 @@ docker compose up -d
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Views_Dark_Mode.png?updatedAt=1684943050275"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Views+Dark+Mode.png"
         alt="Plane Views"
         width="100%"
       />
@@ -103,7 +95,7 @@ docker compose up -d
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Issue_Detail_Dark_Mode.png?updatedAt=1684943050202"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Issue+Detail+Dark+Mode.png"
         alt="Plane Issue Details"
         width="100%"
       />
@@ -112,7 +104,7 @@ docker compose up -d
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Cycles___Modules_Dark_Mode.png?updatedAt=1684943050281"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Cycles+%26+Modules+Dark+Mode.png"
         alt="Plane Cycles and Modules"
         width="100%"
       />
@@ -121,7 +113,7 @@ docker compose up -d
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Analytics_Dark_Mode.png?updatedAt=1684944596824"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Analytics+Dark+Mode.png"
         alt="Plane Analytics"
         width="100%"
       />
@@ -130,7 +122,7 @@ docker compose up -d
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Pages_Dark_Mode.png?updatedAt=1684943050202"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Pages+Dark+Mode.png"
         alt="Plane Pages"
         width="100%"
       />
@@ -140,7 +132,7 @@ docker compose up -d
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Commad_K_Dark_Mode.png?updatedAt=1684943050312"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Commad+K+Dark+Mode.png"
         alt="Plane Command Menu"
         width="100%"
       />
@@ -165,4 +157,4 @@ Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CON
 
 ## ⛓️ Security
 
-If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email security@plane.so to disclose any security vulnerabilities.
+If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email engineering@plane.so to disclose any security vulnerabilities.

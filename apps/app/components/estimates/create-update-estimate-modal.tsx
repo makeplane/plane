@@ -17,7 +17,7 @@ import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { IEstimate, IEstimateFormData } from "types";
+import { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
 // fetch-keys
 import { ESTIMATES_LIST, ESTIMATE_DETAILS } from "constants/fetch-keys";
 
@@ -25,6 +25,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IEstimate;
+  user: ICurrentUserResponse | undefined;
 };
 
 type FormValues = {
@@ -49,7 +50,7 @@ const defaultValues: Partial<FormValues> = {
   value6: "",
 };
 
-export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen }) => {
+export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, user }) => {
   const {
     register,
     formState: { isSubmitting },
@@ -73,7 +74,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     if (!workspaceSlug || !projectId) return;
 
     await estimatesService
-      .createEstimate(workspaceSlug as string, projectId as string, payload)
+      .createEstimate(workspaceSlug as string, projectId as string, payload, user)
       .then(() => {
         mutate(ESTIMATES_LIST(projectId as string));
         onClose();
@@ -118,7 +119,13 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     );
 
     await estimatesService
-      .patchEstimate(workspaceSlug as string, projectId as string, data?.id as string, payload)
+      .patchEstimate(
+        workspaceSlug as string,
+        projectId as string,
+        data?.id as string,
+        payload,
+        user
+      )
       .then(() => {
         mutate(ESTIMATES_LIST(projectId.toString()));
         mutate(ESTIMATE_DETAILS(data.id));
@@ -233,7 +240,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -247,7 +254,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg border border-brand-base bg-brand-base px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+                <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
                       <div className="text-lg font-medium leading-6">
@@ -275,9 +282,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
-                            <span className="rounded-lg px-2 text-sm text-brand-secondary">1</span>
-                            <span className="rounded-r-lg bg-brand-base">
+                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                            <span className="rounded-lg px-2 text-sm text-custom-text-200">1</span>
+                            <span className="rounded-r-lg bg-custom-background-100">
                               <Input
                                 id="name"
                                 name="value1"
@@ -291,9 +298,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
-                            <span className="rounded-lg px-2 text-sm text-brand-secondary">2</span>
-                            <span className="rounded-r-lg bg-brand-base">
+                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                            <span className="rounded-lg px-2 text-sm text-custom-text-200">2</span>
+                            <span className="rounded-r-lg bg-custom-background-100">
                               <Input
                                 id="name"
                                 name="value2"
@@ -307,9 +314,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
-                            <span className="rounded-lg px-2 text-sm text-brand-secondary">3</span>
-                            <span className="rounded-r-lg bg-brand-base">
+                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                            <span className="rounded-lg px-2 text-sm text-custom-text-200">3</span>
+                            <span className="rounded-r-lg bg-custom-background-100">
                               <Input
                                 id="name"
                                 name="value3"
@@ -323,9 +330,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
-                            <span className="rounded-lg px-2 text-sm text-brand-secondary">4</span>
-                            <span className="rounded-r-lg bg-brand-base">
+                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                            <span className="rounded-lg px-2 text-sm text-custom-text-200">4</span>
+                            <span className="rounded-r-lg bg-custom-background-100">
                               <Input
                                 id="name"
                                 name="value4"
@@ -339,9 +346,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
-                            <span className="rounded-lg px-2 text-sm text-brand-secondary">5</span>
-                            <span className="rounded-r-lg bg-brand-base">
+                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                            <span className="rounded-lg px-2 text-sm text-custom-text-200">5</span>
+                            <span className="rounded-r-lg bg-custom-background-100">
                               <Input
                                 id="name"
                                 name="value5"
@@ -355,9 +362,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-brand-surface-2">
-                            <span className="rounded-lg px-2 text-sm text-brand-secondary">6</span>
-                            <span className="rounded-r-lg bg-brand-base">
+                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                            <span className="rounded-lg px-2 text-sm text-custom-text-200">6</span>
+                            <span className="rounded-r-lg bg-custom-background-100">
                               <Input
                                 id="name"
                                 name="value6"

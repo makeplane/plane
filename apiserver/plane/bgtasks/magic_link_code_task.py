@@ -31,4 +31,7 @@ def magic_link(email, key, token, current_site):
         return
     except Exception as e:
         capture_exception(e)
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         return

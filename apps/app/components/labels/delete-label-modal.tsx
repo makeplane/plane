@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { DangerButton, SecondaryButton } from "components/ui";
 // types
-import type { IIssueLabels } from "types";
+import type { ICurrentUserResponse, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -23,9 +23,10 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IIssueLabels | null;
+  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data }) => {
+export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -50,7 +51,7 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
     );
 
     await issuesService
-      .deleteIssueLabel(workspaceSlug.toString(), projectId.toString(), data.id)
+      .deleteIssueLabel(workspaceSlug.toString(), projectId.toString(), data.id, user)
       .then(() => handleClose())
       .catch(() => {
         setIsDeleteLoading(false);
@@ -76,7 +77,7 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -90,7 +91,7 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-base border border-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 border border-custom-border-200 text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
@@ -102,15 +103,15 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg font-medium leading-6 text-brand-base"
+                        className="text-lg font-medium leading-6 text-custom-text-100"
                       >
                         Delete Label
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-brand-secondary">
+                        <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete label-{" "}
-                          <span className="font-medium text-brand-base">{data?.name}</span>? The
-                          label will be removed from all the issues.
+                          <span className="font-medium text-custom-text-100">{data?.name}</span>?
+                          The label will be removed from all the issues.
                         </p>
                       </div>
                     </div>

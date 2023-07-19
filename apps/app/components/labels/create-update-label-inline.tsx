@@ -6,6 +6,8 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // react-color
 import { TwitterPicker } from "react-color";
 // headless ui
@@ -30,7 +32,7 @@ type Props = {
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
-  color: "#858E96",
+  color: "rgb(var(--color-text-200))",
 };
 
 type Ref = HTMLDivElement;
@@ -41,6 +43,8 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
 ) {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUserAuth();
 
   const {
     handleSubmit,
@@ -58,7 +62,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
     await issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         mutate<IIssueLabels[]>(
           PROJECT_ISSUE_LABELS(projectId as string),
@@ -78,7 +82,8 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
         workspaceSlug as string,
         projectId as string,
         labelToUpdate?.id ?? "",
-        formData
+        formData,
+        user
       )
       .then(() => {
         reset(defaultValues);
@@ -110,7 +115,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
 
   return (
     <div
-      className={`flex scroll-m-8 items-center gap-2 rounded-[10px] border border-brand-base bg-brand-base p-5 ${
+      className={`flex scroll-m-8 items-center gap-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5 ${
         labelForm ? "" : "hidden"
       }`}
       ref={ref}
@@ -121,7 +126,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
             <>
               <Popover.Button
                 className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-brand-base" : "text-brand-secondary"
+                  open ? "text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
                 <span
@@ -131,7 +136,7 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
                   }}
                 />
                 <ChevronDownIcon
-                  className={`ml-2 h-5 w-5 group-hover:text-brand-secondary ${
+                  className={`ml-2 h-5 w-5 group-hover:text-custom-text-200 ${
                     open ? "text-gray-600" : "text-gray-400"
                   }`}
                   aria-hidden="true"
