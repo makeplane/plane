@@ -578,7 +578,7 @@ export const IssuesView: React.FC<Props> = ({
                 issueView === "gantt_chart" && <GanttChartView />
               )}
             </>
-          ) : router.query.view === "archived-issues" ? (
+          ) : router.pathname.includes("archived-issues") ? (
             <EmptyState
               title="Archived Issues will be shown here"
               description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
