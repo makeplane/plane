@@ -176,7 +176,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         {[
           {
             id: 1,
-            name: notification.read_at ? "Mark as Unread" : "Mark as Read",
+            name: notification.read_at ? "Mark as unread" : "Mark as read",
             icon: "chat_bubble",
             onClick: () => {
               markNotificationReadStatus(notification.id).then(() => {
@@ -191,7 +191,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           },
           {
             id: 2,
-            name: notification.archived_at ? "Unarchive Notification" : "Archive Notification",
+            name: notification.archived_at ? "Unarchive" : "Archive",
             icon: "archive",
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
@@ -205,7 +205,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             },
           },
         ].map((item) => (
-          <Tooltip tooltipContent={item.name} position="top-left">
+          <Tooltip tooltipContent={item.name}>
             <button
               type="button"
               onClick={(e) => {
@@ -220,7 +220,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           </Tooltip>
         ))}
 
-        <Tooltip tooltipContent="Snooze Notification" position="top-left">
+        <Tooltip tooltipContent="Snooze">
           <div>
             <CustomMenu
               menuButtonOnClick={(e) => {

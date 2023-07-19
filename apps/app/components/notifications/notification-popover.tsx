@@ -12,7 +12,7 @@ import useWorkspaceMembers from "hooks/use-workspace-members";
 import useUserNotification from "hooks/use-user-notifications";
 
 // components
-import { Icon, Loader, EmptyState } from "components/ui";
+import { Icon, Loader, EmptyState, Tooltip } from "components/ui";
 import { SnoozeNotificationModal, NotificationCard } from "components/notifications";
 // images
 import emptyNotification from "public/empty-state/notification.svg";
@@ -120,50 +120,58 @@ export const NotificationPopover = () => {
                 <div className="flex items-center justify-between px-5 pt-5">
                   <h2 className="text-xl font-semibold mb-2">Notifications</h2>
                   <div className="flex gap-x-4 justify-center items-center text-custom-text-200">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        notificationsMutate();
+                    <Tooltip tooltipContent="Refresh">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          notificationsMutate();
 
-                        const target = e.target as HTMLButtonElement;
-                        target?.classList.add("animate-spin");
-                        setTimeout(() => {
-                          target?.classList.remove("animate-spin");
-                        }, 1000);
-                      }}
-                    >
-                      <Icon iconName="refresh" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSnoozed(false);
-                        setArchived(false);
-                        setReadNotification((prev) => !prev);
-                      }}
-                    >
-                      <Icon iconName="filter_list" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setArchived(false);
-                        setReadNotification(false);
-                        setSnoozed((prev) => !prev);
-                      }}
-                    >
-                      <Icon iconName="schedule" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSnoozed(false);
-                        setReadNotification(false);
-                        setArchived((prev) => !prev);
-                      }}
-                    >
-                      <Icon iconName="archive" />
-                    </button>
+                          const target = e.target as HTMLButtonElement;
+                          target?.classList.add("animate-spin");
+                          setTimeout(() => {
+                            target?.classList.remove("animate-spin");
+                          }, 1000);
+                        }}
+                      >
+                        <Icon iconName="refresh" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip tooltipContent="Unread notifications">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSnoozed(false);
+                          setArchived(false);
+                          setReadNotification((prev) => !prev);
+                        }}
+                      >
+                        <Icon iconName="filter_list" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip tooltipContent="Snoozed notifications">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setArchived(false);
+                          setReadNotification(false);
+                          setSnoozed((prev) => !prev);
+                        }}
+                      >
+                        <Icon iconName="schedule" />
+                      </button>
+                    </Tooltip>
+                    <Tooltip tooltipContent="Archived notifications">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSnoozed(false);
+                          setReadNotification(false);
+                          setArchived((prev) => !prev);
+                        }}
+                      >
+                        <Icon iconName="archive" />
+                      </button>
+                    </Tooltip>
                     <button type="button" onClick={() => closePopover()}>
                       <Icon iconName="close" />
                     </button>
