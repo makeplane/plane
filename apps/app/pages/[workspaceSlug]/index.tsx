@@ -69,13 +69,13 @@ const WorkspacePage: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       left={
-        <div className="flex items-center gap-2 px-3">
+        <div className="flex items-center gap-2 pl-3">
           <Icon iconName="grid_view" />
           Dashboard
         </div>
       }
       right={
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 px-3">
           <button
             onClick={() => setIsProductUpdatesModalOpen(true)}
             className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded"

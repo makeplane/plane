@@ -26,23 +26,17 @@ const useUserNotification = () => {
   );
   const [selectedTab, setSelectedTab] = useState<NotificationType>("assigned");
 
+  const params = {
+    type: snoozed || archived || readNotification ? undefined : selectedTab,
+    snoozed,
+    archived,
+    read: !readNotification ? undefined : false,
+  };
+
   const { data: notifications, mutate: notificationsMutate } = useSWR(
+    workspaceSlug ? USER_WORKSPACE_NOTIFICATIONS(workspaceSlug.toString(), params) : null,
     workspaceSlug
-      ? USER_WORKSPACE_NOTIFICATIONS(workspaceSlug.toString(), {
-          type: selectedTab,
-          snoozed,
-          archived,
-          read: selectedTab === null ? !readNotification : undefined,
-        })
-      : null,
-    workspaceSlug
-      ? () =>
-          userNotificationServices.getUserNotifications(workspaceSlug.toString(), {
-            type: selectedTab,
-            snoozed,
-            archived,
-            read: selectedTab === null ? !readNotification : undefined,
-          })
+      ? () => userNotificationServices.getUserNotifications(workspaceSlug.toString(), params)
       : null
   );
 

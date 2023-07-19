@@ -13,6 +13,7 @@ export type CustomMenuProps = DropdownProps & {
   ellipsis?: boolean;
   noBorder?: boolean;
   verticalEllipsis?: boolean;
+  menuButtonOnClick?: (...args: any) => void;
 };
 
 const CustomMenu = ({
@@ -32,17 +33,21 @@ const CustomMenu = ({
   verticalEllipsis = false,
   verticalPosition = "bottom",
   width = "auto",
+  menuButtonOnClick,
 }: CustomMenuProps) => (
   <Menu as="div" className={`${selfPositioned ? "" : "relative"} w-min text-left ${className}`}>
     {({ open }) => (
       <>
         {customButton ? (
-          <Menu.Button as="div">{customButton}</Menu.Button>
+          <Menu.Button as="button" onClick={menuButtonOnClick}>
+            {customButton}
+          </Menu.Button>
         ) : (
           <>
             {ellipsis || verticalEllipsis ? (
               <Menu.Button
                 type="button"
+                onClick={menuButtonOnClick}
                 disabled={disabled}
                 className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none ${
                   disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
@@ -59,7 +64,7 @@ const CustomMenu = ({
                 className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-xs whitespace-nowrap duration-300 ${
                   open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
                 } ${
-                  noBorder ? "" : "border border-custom-border-100 shadow-sm focus:outline-none"
+                  noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"
                 } ${
                   disabled
                     ? "cursor-not-allowed text-custom-text-200"
@@ -83,7 +88,7 @@ const CustomMenu = ({
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items
-            className={`absolute z-10 overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-100 p-1 text-xs shadow-lg focus:outline-none bg-custom-background-90 ${
+            className={`absolute z-10 overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 p-1 text-xs shadow-lg focus:outline-none bg-custom-background-90 ${
               position === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
             } ${verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"} ${
               maxHeight === "lg"

@@ -45,8 +45,6 @@ const useUserIssueNotificationSubscription = (
   }, [workspaceSlug, projectId, issueId, mutate]);
 
   const handleSubscribe = useCallback(() => {
-    console.log(workspaceSlug, projectId, issueId, user);
-
     if (!workspaceSlug || !projectId || !issueId || !user) return;
 
     userNotificationServices
