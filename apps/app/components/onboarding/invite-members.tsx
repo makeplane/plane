@@ -207,7 +207,7 @@ export const InviteMembers: React.FC<Props> = ({ workspace, user, stepChange }) 
         <PrimaryButton type="submit" disabled={!isValid} loading={isSubmitting} size="md">
           {isSubmitting ? "Sending..." : "Send Invite"}
         </PrimaryButton>
-        <SecondaryButton size="md" onClick={nextStep} outline>
+        <SecondaryButton className="border border-none bg-transparent" size="md" onClick={nextStep}>
           Skip this step
         </SecondaryButton>
       </div>
