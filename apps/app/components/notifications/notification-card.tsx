@@ -13,7 +13,9 @@ import { CustomMenu, Icon, Tooltip } from "components/ui";
 import { stripHTML, replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import {
   formatDateDistance,
+  render12HourFormatTime,
   renderLongDateFormat,
+  renderShortDate,
   renderShortDateWithYearFormat,
 } from "helpers/date-time.helper";
 
@@ -153,7 +155,17 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               {notification.data.issue.identifier}-{notification.data.issue.sequence_id}{" "}
               {notification.data.issue.name}
             </p>
-            <p className="text-custom-text-300">{formatDateDistance(notification.created_at)}</p>
+            {notification.snoozed_till ? (
+              <p className="text-custom-text-300 flex items-center gap-x-1">
+                <Icon iconName="schedule" />
+                <span>
+                  Till {renderShortDate(notification.snoozed_till)},{" "}
+                  {render12HourFormatTime(notification.snoozed_till)}
+                </span>
+              </p>
+            ) : (
+              <p className="text-custom-text-300">{formatDateDistance(notification.created_at)}</p>
+            )}
           </div>
         </div>
       </div>
@@ -190,18 +202,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               });
             },
           },
-          // {
-          //   id: 3,
-          //   name: notification.snoozed_till ? "Unsnooze Notification" : "Snooze Notification",
-          //   icon: "schedule",
-          //   onClick: () => {
-          //     if (notification.snoozed_till)
-          //       markSnoozeNotification(notification.id).then(() => {
-          //         setToastAlert({ title: "Notification un-snoozed", type: "success" });
-          //       });
-          //     else setSelectedNotificationForSnooze(notification.id);
-          //   },
-          // },
         ].map((item) => (
           <Tooltip tooltipContent={item.name} position="top-left">
             <button
@@ -248,7 +248,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   markSnoozeNotification(notification.id, item.value).then(() => {
                     setToastAlert({
                       title: `Notification snoozed till ${renderLongDateFormat(item.value)}`,
-
                       type: "success",
                     });
                   });

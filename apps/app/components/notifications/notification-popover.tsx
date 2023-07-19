@@ -209,7 +209,7 @@ export const NotificationPopover = () => {
                                 <span
                                   className={`ml-2 rounded-full text-xs px-2 py-0.5 ${
                                     tab.value === selectedTab
-                                      ? "bg-custom-primary-100 text-custom-text-100"
+                                      ? "bg-custom-primary-100 text-white"
                                       : "bg-custom-background-80 text-custom-text-200"
                                   }`}
                                 >
@@ -234,7 +234,7 @@ export const NotificationPopover = () => {
                               <span
                                 className={`ml-2 rounded-full text-xs px-2 py-0.5 ${
                                   tab.value === selectedTab
-                                    ? "bg-custom-primary-100 text-custom-text-100"
+                                    ? "bg-custom-primary-100 text-white"
                                     : "bg-custom-background-80 text-custom-text-200"
                                 }`}
                               >

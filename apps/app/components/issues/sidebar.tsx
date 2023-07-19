@@ -61,6 +61,7 @@ type Props = {
     | "link"
     | "delete"
     | "all"
+    | "subscribe"
   )[];
   uneditable?: boolean;
 };
@@ -232,7 +233,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           <div className="flex flex-wrap items-center gap-2">
             {issueDetail?.created_by !== user?.id &&
               !issueDetail?.assignees.includes(user?.id ?? "") &&
-              (fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
+              !router.pathname.includes("[archivedIssueId]") &&
+              (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
                 <button
                   type="button"
                   className="rounded-md flex items-center gap-2 border border-custom-primary-100 px-2 py-1 text-xs text-custom-primary-100 shadow-sm duration-300 focus:outline-none"
