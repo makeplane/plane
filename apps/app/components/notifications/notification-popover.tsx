@@ -136,7 +136,7 @@ export const NotificationPopover = () => {
                         <Icon iconName="refresh" />
                       </button>
                     </Tooltip>
-                    <Tooltip tooltipContent="Show only unread notifications">
+                    <Tooltip tooltipContent="Unread notifications">
                       <button
                         type="button"
                         onClick={() => {
@@ -148,7 +148,7 @@ export const NotificationPopover = () => {
                         <Icon iconName="filter_list" />
                       </button>
                     </Tooltip>
-                    <Tooltip tooltipContent="Show only snoozed notifications">
+                    <Tooltip tooltipContent="Snoozed notifications">
                       <button
                         type="button"
                         onClick={() => {
@@ -160,7 +160,7 @@ export const NotificationPopover = () => {
                         <Icon iconName="schedule" />
                       </button>
                     </Tooltip>
-                    <Tooltip tooltipContent="Show only archived notifications">
+                    <Tooltip tooltipContent="Archived notifications">
                       <button
                         type="button"
                         onClick={() => {
