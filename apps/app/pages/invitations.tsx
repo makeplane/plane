@@ -105,91 +105,93 @@ const OnBoard: NextPage = () => {
               {user?.email}
             </div>
           </div>
-          {invitations && invitations.length > 0 ? (
-            <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
-              <div className="w-full space-y-10">
-                <h5 className="text-lg">We see that someone has invited you to</h5>
-                <h4 className="text-2xl font-semibold">Join a workspace</h4>
-                <div className="md:w-3/5 space-y-4">
-                  {invitations.map((invitation) => {
-                    const isSelected = invitationsRespond.includes(invitation.id);
+          {invitations ? (
+            invitations.length > 0 ? (
+              <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
+                <div className="w-full space-y-10">
+                  <h5 className="text-lg">We see that someone has invited you to</h5>
+                  <h4 className="text-2xl font-semibold">Join a workspace</h4>
+                  <div className="max-h-[37vh] md:w-3/5 space-y-4 overflow-y-auto">
+                    {invitations.map((invitation) => {
+                      const isSelected = invitationsRespond.includes(invitation.id);
 
-                    return (
-                      <div
-                        key={invitation.id}
-                        className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
-                          isSelected
-                            ? "border-custom-primary-100"
-                            : "border-custom-border-200 hover:bg-custom-background-80"
-                        }`}
-                        onClick={() =>
-                          handleInvitation(invitation, isSelected ? "withdraw" : "accepted")
-                        }
-                      >
-                        <div className="flex-shrink-0">
-                          <div className="grid place-items-center h-9 w-9 rounded">
-                            {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
-                              <img
-                                src={invitation.workspace.logo}
-                                height="100%"
-                                width="100%"
-                                className="rounded"
-                                alt={invitation.workspace.name}
-                              />
-                            ) : (
-                              <span className="grid place-items-center h-9 w-9 py-1.5 px-3 rounded bg-gray-700 uppercase text-white">
-                                {invitation.workspace.name[0]}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium">
-                            {truncateText(invitation.workspace.name, 30)}
-                          </div>
-                          <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
-                        </div>
-                        <span
-                          className={`flex-shrink-0 ${
-                            isSelected ? "text-custom-primary-100" : "text-custom-text-200"
+                      return (
+                        <div
+                          key={invitation.id}
+                          className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
+                            isSelected
+                              ? "border-custom-primary-100"
+                              : "border-custom-border-200 hover:bg-custom-background-80"
                           }`}
+                          onClick={() =>
+                            handleInvitation(invitation, isSelected ? "withdraw" : "accepted")
+                          }
                         >
-                          <CheckCircleIcon className="h-5 w-5" />
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="flex items-center gap-3">
-                  <PrimaryButton
-                    type="submit"
-                    size="md"
-                    onClick={submitInvitations}
-                    disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
-                  >
-                    Accept & Join
-                  </PrimaryButton>
-                  <Link href="/">
-                    <a>
-                      <SecondaryButton size="md" outline>
-                        Go Home
-                      </SecondaryButton>
-                    </a>
-                  </Link>
+                          <div className="flex-shrink-0">
+                            <div className="grid place-items-center h-9 w-9 rounded">
+                              {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
+                                <img
+                                  src={invitation.workspace.logo}
+                                  height="100%"
+                                  width="100%"
+                                  className="rounded"
+                                  alt={invitation.workspace.name}
+                                />
+                              ) : (
+                                <span className="grid place-items-center h-9 w-9 py-1.5 px-3 rounded bg-gray-700 uppercase text-white">
+                                  {invitation.workspace.name[0]}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium">
+                              {truncateText(invitation.workspace.name, 30)}
+                            </div>
+                            <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                          </div>
+                          <span
+                            className={`flex-shrink-0 ${
+                              isSelected ? "text-custom-primary-100" : "text-custom-text-200"
+                            }`}
+                          >
+                            <CheckCircleIcon className="h-5 w-5" />
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <PrimaryButton
+                      type="submit"
+                      size="md"
+                      onClick={submitInvitations}
+                      disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
+                    >
+                      Accept & Join
+                    </PrimaryButton>
+                    <Link href="/">
+                      <a>
+                        <SecondaryButton size="md" outline>
+                          Go Home
+                        </SecondaryButton>
+                      </a>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="fixed top-0 left-0 h-full w-full grid place-items-center">
-              <EmptyState
-                title="No pending invites"
-                description="You can see here if someone invites you to a workspace."
-                image={emptyInvitation}
-                buttonText="Back to Dashboard"
-                onClick={() => router.push("/")}
-              />
-            </div>
-          )}
+            ) : (
+              <div className="fixed top-0 left-0 h-full w-full grid place-items-center">
+                <EmptyState
+                  title="No pending invites"
+                  description="You can see here if someone invites you to a workspace."
+                  image={emptyInvitation}
+                  buttonText="Back to Dashboard"
+                  onClick={() => router.push("/")}
+                />
+              </div>
+            )
+          ) : null}
         </div>
       </DefaultLayout>
     </UserAuthorizationLayout>
