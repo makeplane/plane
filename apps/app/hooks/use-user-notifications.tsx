@@ -54,44 +54,48 @@ const useUserNotification = () => {
       notifications?.find((notification) => notification.id === notificationId)?.read_at !== null;
 
     if (isRead) {
+      notificationsMutate(
+        (prev) =>
+          prev?.map((prevNotification) => {
+            if (prevNotification.id === notificationId) {
+              return {
+                ...prevNotification,
+                read_at: null,
+              };
+            }
+            return prevNotification;
+          }),
+        false
+      );
       await userNotificationServices
         .markUserNotificationAsUnread(workspaceSlug.toString(), notificationId)
-        .then(() => {
-          notificationsMutate((prev) =>
-            prev?.map((prevNotification) => {
-              if (prevNotification.id === notificationId) {
-                return {
-                  ...prevNotification,
-                  read_at: null,
-                };
-              }
-              return prevNotification;
-            })
-          );
-          mutateNotificationCount();
-        })
         .catch(() => {
           throw new Error("Something went wrong");
+        })
+        .finally(() => {
+          notificationsMutate();
         });
     } else {
+      notificationsMutate(
+        (prev) =>
+          prev?.map((prevNotification) => {
+            if (prevNotification.id === notificationId) {
+              return {
+                ...prevNotification,
+                read_at: new Date(),
+              };
+            }
+            return prevNotification;
+          }),
+        false
+      );
       await userNotificationServices
         .markUserNotificationAsRead(workspaceSlug.toString(), notificationId)
-        .then(() => {
-          notificationsMutate((prev) =>
-            prev?.map((prevNotification) => {
-              if (prevNotification.id === notificationId) {
-                return {
-                  ...prevNotification,
-                  read_at: new Date(),
-                };
-              }
-              return prevNotification;
-            })
-          );
-          mutateNotificationCount();
-        })
         .catch(() => {
           throw new Error("Something went wrong");
+        })
+        .finally(() => {
+          notificationsMutate();
         });
     }
   };
@@ -105,22 +109,24 @@ const useUserNotification = () => {
     if (isArchived) {
       await userNotificationServices
         .markUserNotificationAsUnarchived(workspaceSlug.toString(), notificationId)
-        .then(() => {
-          notificationsMutate();
-        })
         .catch(() => {
           throw new Error("Something went wrong");
+        })
+        .finally(() => {
+          notificationsMutate();
         });
     } else {
+      notificationsMutate(
+        (prev) => prev?.filter((prevNotification) => prevNotification.id !== notificationId),
+        false
+      );
       await userNotificationServices
         .markUserNotificationAsArchived(workspaceSlug.toString(), notificationId)
-        .then(() => {
-          notificationsMutate((prev) =>
-            prev?.filter((prevNotification) => prevNotification.id !== notificationId)
-          );
-        })
         .catch(() => {
           throw new Error("Something went wrong");
+        })
+        .finally(() => {
+          notificationsMutate();
         });
     }
   };
@@ -137,19 +143,25 @@ const useUserNotification = () => {
         .patchUserNotification(workspaceSlug.toString(), notificationId, {
           snoozed_till: null,
         })
-        .then(() => {
+        .finally(() => {
           notificationsMutate();
         });
-    } else
+    } else {
+      notificationsMutate(
+        (prevData) => prevData?.filter((prev) => prev.id !== notificationId) || [],
+        false
+      );
       await userNotificationServices
         .patchUserNotification(workspaceSlug.toString(), notificationId, {
           snoozed_till: dateTime,
         })
-        .then(() => {
-          notificationsMutate(
-            (prevData) => prevData?.filter((prev) => prev.id !== notificationId) || []
-          );
+        .catch(() => {
+          new Error("Something went wrong");
+        })
+        .finally(() => {
+          notificationsMutate();
         });
+    }
   };
 
   return {

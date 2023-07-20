@@ -118,7 +118,7 @@ export const NotificationPopover = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 top-0 md:w-[36rem] w-[20rem] h-[27rem] border border-custom-border-300 shadow-lg rounded-xl">
+              <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 top-0 md:w-[36rem] w-[20rem] h-[50vh] border border-custom-border-300 shadow-lg rounded-xl">
                 <div className="flex items-center justify-between px-5 pt-5">
                   <h2 className="text-xl font-semibold mb-2">Notifications</h2>
                   <div className="flex gap-x-4 justify-center items-center text-custom-text-200">
