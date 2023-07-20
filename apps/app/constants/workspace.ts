@@ -1,9 +1,3 @@
-// onboarding images
-import Welcome from "public/onboarding/welcome.svg";
-import Issue from "public/onboarding/issue.svg";
-import Cycle from "public/onboarding/cycle.svg";
-import Module from "public/onboarding/module.svg";
-import CommandMenu from "public/onboarding/command-menu.svg";
 // services images
 import GithubLogo from "public/services/github.png";
 import JiraLogo from "public/services/jira.png";
@@ -15,57 +9,20 @@ export const ROLE = {
   20: "Admin",
 };
 
-export const COMPANY_SIZE = [
-  { value: 5, label: "5" },
-  { value: 10, label: "10" },
-  { value: 25, label: "25" },
-  { value: 50, label: "50" },
-];
+export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
 export const USER_ROLES = [
-  { value: "Founder or leadership team", label: "Founder or leadership team" },
-  { value: "Product manager", label: "Product manager" },
-  { value: "Designer", label: "Designer" },
-  { value: "Software developer", label: "Software developer" },
-  { value: "Freelancer", label: "Freelancer" },
+  { value: "Product / Project Manager", label: "Product / Project Manager" },
+  { value: "Development / Engineering", label: "Development / Engineering" },
+  { value: "Founder / Executive", label: "Founder / Executive" },
+  { value: "Freelancer / Consultant", label: "Freelancer / Consultant" },
+  { value: "Marketing / Growth", label: "Marketing / Growth" },
+  { value: "Sales / Business Development", label: "Sales / Business Development" },
+  { value: "Support / Operations", label: "Support / Operations" },
+  { value: "Student / Professor", label: "Student / Professor" },
+  { value: "Human Resources", label: "Human Resources" },
   { value: "Other", label: "Other" },
 ];
-
-export const ONBOARDING_CARDS = {
-  welcome: {
-    imgURL: Welcome,
-    step: "1/5",
-    title: "Welcome to Plane",
-    description: "Plane helps you plan your issues, cycles, and product modules to ship faster.",
-  },
-  issue: {
-    imgURL: Issue,
-    step: "2/5",
-    title: "Plan with Issues",
-    description:
-      "Issues are the building blocks of Plane. Most concepts in Plane are associated with issues or their properties.",
-  },
-  cycle: {
-    imgURL: Cycle,
-    step: "3/5",
-    title: "Move with Cycles",
-    description:
-      "Cycles help you and your team progress faster, similar to sprints commonly used in agile development.",
-  },
-  module: {
-    imgURL: Module,
-    step: "4/5",
-    title: "Break into Modules ",
-    description:
-      "Modules break your big thoughts into Projects or Features, to help you organize better.",
-  },
-  commandMenu: {
-    imgURL: CommandMenu,
-    step: "5 /5",
-    title: "Command Menu",
-    description: "With Command Menu, you can create, update, and navigate across the platform.",
-  },
-};
 
 export const IMPORTERS_EXPORTERS_LIST = [
   {

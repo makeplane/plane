@@ -20,9 +20,15 @@ type Props = {
   value: string[];
   onChange: (val: string[]) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
+export const SidebarAssigneeSelect: React.FC<Props> = ({
+  value,
+  onChange,
+  userAuth,
+  disabled = false,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -53,11 +59,11 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
     ),
   }));
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
         <p>Assignees</p>
       </div>
@@ -65,11 +71,11 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
         <CustomSearchSelect
           value={value}
           label={
-            <div className="flex items-center gap-2 text-brand-secondary">
+            <div className="flex items-center gap-2 text-custom-text-200">
               {value && value.length > 0 && Array.isArray(value) ? (
                 <div className="-my-0.5 flex items-center justify-center gap-2">
                   <AssigneesList userIds={value} length={3} showLength={false} />
-                  <span className="text-brand-base">{value.length} Assignees</span>
+                  <span className="text-custom-text-100">{value.length} Assignees</span>
                 </div>
               ) : (
                 "No assignees"

@@ -23,9 +23,15 @@ type Props = {
   value: string;
   onChange: (val: string) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
+export const SidebarStateSelect: React.FC<Props> = ({
+  value,
+  onChange,
+  userAuth,
+  disabled = false,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
@@ -39,11 +45,11 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
 
   const selectedState = states?.find((s) => s.id === value);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
         <p>State</p>
       </div>
@@ -51,7 +57,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
         <CustomSelect
           label={
             selectedState ? (
-              <div className="flex items-center gap-2 text-left text-brand-base">
+              <div className="flex items-center gap-2 text-left text-custom-text-100">
                 {getStateGroupIcon(
                   selectedState?.group ?? "backlog",
                   "16",
@@ -61,7 +67,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
                 {addSpaceIfCamelCase(selectedState?.name ?? "")}
               </div>
             ) : inboxIssueId ? (
-              <div className="flex items-center gap-2 text-left text-brand-base">
+              <div className="flex items-center gap-2 text-left text-custom-text-100">
                 {getStateGroupIcon("backlog", "16", "16", "#ff7700")}
                 Triage
               </div>

@@ -19,6 +19,7 @@ import type { IIssue } from "types";
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATES_LIST,
   VIEW_ISSUES,
@@ -43,7 +44,8 @@ const useIssuesView = () => {
   } = useContext(issueViewContext);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, archivedIssueId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const params: any = {
     order_by: orderBy,
@@ -60,6 +62,7 @@ const useIssuesView = () => {
       ? filters?.issue__labels__id.join(",")
       : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
+    target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
   };
 
   const { data: projectIssues } = useSWR(
@@ -69,6 +72,15 @@ const useIssuesView = () => {
     workspaceSlug && projectId && params
       ? () =>
           issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, params)
+      : null
+  );
+
+  const { data: projectArchivedIssues } = useSWR(
+    workspaceSlug && projectId && params && isArchivedIssues && !archivedIssueId
+      ? PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
+      : null,
+    workspaceSlug && projectId && params && isArchivedIssues && !archivedIssueId
+      ? () => issuesService.getArchivedIssues(workspaceSlug as string, projectId as string, params)
       : null
   );
 
@@ -148,6 +160,8 @@ const useIssuesView = () => {
       ? moduleIssues
       : viewId
       ? viewIssues
+      : isArchivedIssues
+      ? projectArchivedIssues
       : projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
@@ -160,10 +174,12 @@ const useIssuesView = () => {
     cycleIssues,
     moduleIssues,
     viewIssues,
+    projectArchivedIssues,
     groupByProperty,
     cycleId,
     moduleId,
     viewId,
+    isArchivedIssues,
     emptyStatesObject,
   ]);
 
@@ -173,19 +189,19 @@ const useIssuesView = () => {
 
   return {
     groupedByIssues,
-    issueView,
+    issueView: isArchivedIssues ? "list" : issueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
     setOrderBy,
-    showEmptyGroups,
+    showEmptyGroups: isArchivedIssues ? false : showEmptyGroups,
     setShowEmptyGroups,
     calendarDateRange,
     setCalendarDateRange,
     filters,
     setFilters,
     params,
-    isNotEmpty: !isEmpty,
+    isEmpty,
     resetFilterToDefault,
     setNewFilterDefaultView,
     setIssueView,

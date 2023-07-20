@@ -59,7 +59,7 @@ const ControlSettings: NextPage = () => {
   } = useForm<IProject>({ defaultValues });
 
   const onSubmit = async (formData: IProject) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !projectDetails) return;
 
     const payload: Partial<IProject> = {
       default_assignee: formData.default_assignee,
@@ -70,7 +70,12 @@ const ControlSettings: NextPage = () => {
       .updateProject(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(PROJECT_DETAILS(projectId as string));
-        mutate(PROJECTS_LIST(workspaceSlug as string));
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
 
         setToastAlert({
           title: "Success",
@@ -111,7 +116,7 @@ const ControlSettings: NextPage = () => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Project Lead</h4>
-              <p className="text-sm text-brand-secondary">Select the project leader.</p>
+              <p className="text-sm text-custom-text-200">Select the project leader.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -123,7 +128,7 @@ const ControlSettings: NextPage = () => {
                       {...field}
                       label={
                         people?.find((person) => person.member.id === field.value)?.member
-                          .first_name ?? <span className="text-brand-secondary">Select lead</span>
+                          .first_name ?? <span className="text-custom-text-200">Select lead</span>
                       }
                       width="w-full"
                       input
@@ -169,7 +174,7 @@ const ControlSettings: NextPage = () => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Default Assignee</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Select the default assignee for the project.
               </p>
             </div>
@@ -183,7 +188,7 @@ const ControlSettings: NextPage = () => {
                       {...field}
                       label={
                         people?.find((p) => p.member.id === field.value)?.member.first_name ?? (
-                          <span className="text-brand-secondary">Select default assignee</span>
+                          <span className="text-custom-text-200">Select default assignee</span>
                         )
                       }
                       width="w-full"

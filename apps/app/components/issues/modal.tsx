@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
 import inboxServices from "services/inbox.service";
@@ -18,6 +17,7 @@ import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 import useInboxView from "hooks/use-inbox-view";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
+import useProjects from "hooks/use-projects";
 // components
 import { IssueForm } from "components/issues";
 // types
@@ -27,7 +27,6 @@ import {
   PROJECT_ISSUES_DETAILS,
   PROJECT_ISSUES_LIST,
   USER_ISSUE,
-  PROJECTS_LIST,
   SUB_ISSUES,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   CYCLE_ISSUES_WITH_PARAMS,
@@ -83,6 +82,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { user } = useUser();
+  const { projects } = useProjects();
+
   const { setToastAlert } = useToast();
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
@@ -92,20 +93,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       ...prePopulateData,
       assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
     };
-
-  const { data: issues } = useSWR(
-    workspaceSlug && activeProject
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? "")
-      : null,
-    workspaceSlug && activeProject
-      ? () => issuesService.getIssues(workspaceSlug as string, activeProject ?? "")
-      : null
-  );
-
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
-  );
 
   useEffect(() => {
     if (projects && projects.length > 0)
@@ -275,7 +262,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
-      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
+      .patchIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
@@ -321,9 +308,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     else await updateIssue(payload);
   };
 
+  if (!projects || projects.length === 0) return null;
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => {}}>
+      <Dialog as="div" className="relative z-20" onClose={() => handleClose()}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -333,7 +322,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -347,9 +336,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-brand-base bg-brand-base p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <IssueForm
-                  issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
                   initialData={data ?? prePopulateData}
                   createMore={createMore}

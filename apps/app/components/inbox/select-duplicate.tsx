@@ -88,7 +88,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+              <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
             </Transition.Child>
 
             <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -101,7 +101,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-brand-base bg-brand-base shadow-2xl transition-all">
+                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
                   <Combobox
                     value={selectedItem}
                     onChange={(value) => {
@@ -110,12 +110,12 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                   >
                     <div className="relative m-1">
                       <MagnifyingGlassIcon
-                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
+                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
                         aria-hidden="true"
                       />
                       <input
                         type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
                         placeholder="Search..."
                         onChange={(e) => setQuery(e.target.value)}
                       />
@@ -123,24 +123,26 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
                     <Combobox.Options
                       static
-                      className="max-h-80 scroll-py-2 divide-y divide-brand-base overflow-y-auto"
+                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
                     >
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-brand-base">
+                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
                               Select issue
                             </h2>
                           )}
-                          <ul className="text-sm text-brand-base">
+                          <ul className="text-sm text-custom-text-100">
                             {filteredIssues.map((issue) => (
                               <Combobox.Option
                                 key={issue.id}
                                 as="div"
                                 value={issue.id}
                                 className={({ active, selected }) =>
-                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
-                                    active || selected ? "bg-brand-surface-2 text-brand-base" : ""
+                                  `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                                    active || selected
+                                      ? "bg-custom-background-80 text-custom-text-100"
+                                      : ""
                                   } `
                                 }
                               >
@@ -151,14 +153,14 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                                       backgroundColor: issue.state_detail.color,
                                     }}
                                   />
-                                  <span className="flex-shrink-0 text-xs text-brand-secondary">
+                                  <span className="flex-shrink-0 text-xs text-custom-text-200">
                                     {
                                       issues?.find((i) => i.id === issue.id)?.project_detail
                                         ?.identifier
                                     }
                                     -{issue.sequence_id}
                                   </span>
-                                  <span className="text-brand-muted-1">{issue.name}</span>
+                                  <span className="text-custom-text-200">{issue.name}</span>
                                 </div>
                               </Combobox.Option>
                             ))}
@@ -167,9 +169,12 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                       ) : (
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                           <LayerDiagonalIcon height="56" width="56" />
-                          <h3 className="text-sm text-brand-secondary">
+                          <h3 className="text-sm text-custom-text-200">
                             No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre>.
+                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">
+                              C
+                            </pre>
+                            .
                           </h3>
                         </div>
                       )}

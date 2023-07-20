@@ -43,7 +43,7 @@ export const THEMES_OBJ = [
   },
   {
     value: "custom",
-    label: "Custom",
+    label: "Custom Theming",
     type: "light",
     icon: {
       border: "#FFC9C9",

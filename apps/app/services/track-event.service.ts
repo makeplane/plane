@@ -193,6 +193,23 @@ class TrackEventServices extends APIService {
     });
   }
 
+  async trackUserTourCompleteEvent(
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "USER_TOUR_COMPLETE",
+        extra: {
+          ...data,
+        },
+        user: user,
+      },
+    });
+  }
+
   async trackIssueEvent(
     data: IIssue | any,
     eventName: IssueEventType,

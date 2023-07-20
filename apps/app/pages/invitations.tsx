@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
+// next-themes
+import { useTheme } from "next-themes";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
@@ -13,34 +16,38 @@ import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
-// components
-import SingleInvitation from "components/workspace/single-invitation";
-import { OnboardingLogo } from "components/onboarding";
 // ui
-import { Spinner, EmptySpace, EmptySpaceItem, SecondaryButton, PrimaryButton } from "components/ui";
+import { SecondaryButton, PrimaryButton, EmptyState } from "components/ui";
 // icons
-import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
+// images
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import emptyInvitation from "public/empty-state/invitation.svg";
+// helpers
+import { truncateText } from "helpers/string.helper";
 // types
 import type { NextPage } from "next";
 import type { IWorkspaceMemberInvitation } from "types";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+// constants
+import { ROLE } from "constants/workspace";
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
-
-  const { user } = useUser();
+  const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
 
   const router = useRouter();
+
+  const { theme } = useTheme();
+
+  const { user } = useUser();
 
   const { setToastAlert } = useToast();
 
   const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
-  );
-
-  const { data: workspaces, mutate: mutateWorkspaces } = useSWR("USER_WORKSPACES", () =>
-    workspaceService.userWorkspaces()
   );
 
   const handleInvitation = (
@@ -57,119 +64,134 @@ const OnBoard: NextPage = () => {
   };
 
   const submitInvitations = () => {
-    // userService.updateUserOnBoard();
-
     if (invitationsRespond.length === 0) {
       setToastAlert({
         type: "error",
         title: "Error!",
-        message: "Please select atleast one invitation.",
+        message: "Please select at least one invitation.",
       });
       return;
     }
+
+    setIsJoiningWorkspaces(true);
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(() => {
         mutateInvitations();
-        mutateWorkspaces();
+        mutate("USER_WORKSPACES");
+
+        setIsJoiningWorkspaces(false);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => setIsJoiningWorkspaces(false));
   };
 
   return (
     <UserAuthorizationLayout>
       <DefaultLayout>
-        <div className="relative grid h-full place-items-center p-5">
-          <div className="h-full flex flex-col items-center justify-center w-full py-4">
-            <div className="mb-7 flex items-center justify-center text-center">
-              <OnboardingLogo className="h-12 w-48 fill-current text-brand-base" />
+        <div className="flex h-full flex-col gap-y-2 sm:gap-y-0 sm:flex-row overflow-hidden">
+          <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
+            <div className="absolute border-b-[0.5px] sm:border-r-[0.5px] border-custom-border-200 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:translate-y-0" />
+            <div className="absolute grid place-items-center bg-custom-background-100 px-3 sm:px-0 sm:py-5 left-5 sm:left-1/2 md:left-1/3 sm:-translate-x-[15px] top-1/2 -translate-y-1/2 sm:translate-y-0 sm:top-12">
+              <div className="h-[30px] w-[133px]">
+                {theme === "light" ? (
+                  <Image src={BlackHorizontalLogo} alt="Plane black logo" />
+                ) : (
+                  <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
+                )}
+              </div>
             </div>
+            <div className="absolute sm:fixed text-custom-text-100 text-sm right-4 top-1/4 sm:top-12 -translate-y-1/2 sm:translate-y-0 sm:right-16 sm:py-5">
+              {user?.email}
+            </div>
+          </div>
+          {invitations ? (
+            invitations.length > 0 ? (
+              <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
+                <div className="w-full space-y-10">
+                  <h5 className="text-lg">We see that someone has invited you to</h5>
+                  <h4 className="text-2xl font-semibold">Join a workspace</h4>
+                  <div className="max-h-[37vh] md:w-3/5 space-y-4 overflow-y-auto">
+                    {invitations.map((invitation) => {
+                      const isSelected = invitationsRespond.includes(invitation.id);
 
-            <div className="flex h-[436px] w-full max-w-xl rounded-[10px] p-7 bg-brand-base shadow-md">
-              {invitations && workspaces ? (
-                invitations.length > 0 ? (
-                  <div className="flex w-full flex-col gap-3 justify-between">
-                    <div className="flex flex-col gap-2 justify-center ">
-                      <h3 className="text-base font-semibold text-brand-base">
-                        Workspace Invitations
-                      </h3>
-                      <p className="text-sm text-brand-secondary">
-                        Create or join the workspace to get started with Plane.
-                      </p>
-                    </div>
-
-                    <ul role="list" className="h-[255px] w-full overflow-y-auto">
-                      {invitations.map((invitation) => (
-                        <SingleInvitation
+                      return (
+                        <div
                           key={invitation.id}
-                          invitation={invitation}
-                          invitationsRespond={invitationsRespond}
-                          handleInvitation={handleInvitation}
-                        />
-                      ))}
-                    </ul>
-
-                    <div className="flex items-center gap-3">
-                      <Link href="/">
-                        <a className="w-full">
-                          <SecondaryButton className="w-full">Go Home</SecondaryButton>
-                        </a>
-                      </Link>
-                      <PrimaryButton className="w-full" onClick={submitInvitations}>
-                        Accept and Continue
-                      </PrimaryButton>
-                    </div>
-                  </div>
-                ) : workspaces && workspaces.length > 0 ? (
-                  <div className="flex flex-col w-full overflow-auto gap-y-3">
-                    <h2 className="mb-4 text-xl font-medium">Your workspaces</h2>
-                    {workspaces.map((workspace) => (
-                      <Link key={workspace.id} href={workspace.slug}>
-                        <a>
-                          <div className="mb-2 flex items-center justify-between rounded border border-brand-base px-4 py-2">
-                            <div className="flex items-center gap-x-2 text-sm">
-                              <CubeIcon className="h-5 w-5 text-brand-secondary" />
-                              {workspace.name}
-                            </div>
-                            <div className="flex items-center gap-x-2 text-xs text-brand-secondary">
-                              {workspace.owner.first_name}
+                          className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
+                            isSelected
+                              ? "border-custom-primary-100"
+                              : "border-custom-border-200 hover:bg-custom-background-80"
+                          }`}
+                          onClick={() =>
+                            handleInvitation(invitation, isSelected ? "withdraw" : "accepted")
+                          }
+                        >
+                          <div className="flex-shrink-0">
+                            <div className="grid place-items-center h-9 w-9 rounded">
+                              {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
+                                <img
+                                  src={invitation.workspace.logo}
+                                  height="100%"
+                                  width="100%"
+                                  className="rounded"
+                                  alt={invitation.workspace.name}
+                                />
+                              ) : (
+                                <span className="grid place-items-center h-9 w-9 py-1.5 px-3 rounded bg-gray-700 uppercase text-white">
+                                  {invitation.workspace.name[0]}
+                                </span>
+                              )}
                             </div>
                           </div>
-                        </a>
-                      </Link>
-                    ))}
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium">
+                              {truncateText(invitation.workspace.name, 30)}
+                            </div>
+                            <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                          </div>
+                          <span
+                            className={`flex-shrink-0 ${
+                              isSelected ? "text-custom-primary-100" : "text-custom-text-200"
+                            }`}
+                          >
+                            <CheckCircleIcon className="h-5 w-5" />
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
-                ) : (
-                  invitations.length === 0 &&
-                  workspaces.length === 0 && (
-                    <EmptySpace
-                      title="You don't have any workspaces yet"
-                      description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+                  <div className="flex items-center gap-3">
+                    <PrimaryButton
+                      type="submit"
+                      size="md"
+                      onClick={submitInvitations}
+                      disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     >
-                      <EmptySpaceItem
-                        Icon={PlusIcon}
-                        title={"Create your Workspace"}
-                        action={() => {
-                          router.push("/create-workspace");
-                        }}
-                      />
-                    </EmptySpace>
-                  )
-                )
-              ) : (
-                <div className="flex h-full w-full items-center justify-center">
-                  <Spinner />
+                      Accept & Join
+                    </PrimaryButton>
+                    <Link href="/">
+                      <a>
+                        <SecondaryButton size="md" outline>
+                          Go Home
+                        </SecondaryButton>
+                      </a>
+                    </Link>
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
-          <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
-            <span className="text-xs text-brand-secondary">Logged in:</span>
-            <span className="text-sm text-brand-base">{user?.email}</span>
-          </div>
+              </div>
+            ) : (
+              <div className="fixed top-0 left-0 h-full w-full grid place-items-center">
+                <EmptyState
+                  title="No pending invites"
+                  description="You can see here if someone invites you to a workspace."
+                  image={emptyInvitation}
+                  buttonText="Back to Dashboard"
+                  onClick={() => router.push("/")}
+                />
+              </div>
+            )
+          ) : null}
         </div>
       </DefaultLayout>
     </UserAuthorizationLayout>

@@ -27,13 +27,13 @@
   font-size: 0.75rem;
   line-height: 1rem;
   border-radius: 0.25rem;
-  background-color: rgba(var(--color-bg-base));
+  background-color: rgba(var(--color-background-100));
 }
 
 [cmdk-item]:hover {
-  background-color: rgba(var(--color-bg-surface-2));
+  background-color: rgba(var(--color-background-80));
 }
 
 [cmdk-item][aria-selected="true"] {
-  background-color: rgba(var(--color-bg-surface-2));
+  background-color: rgba(var(--color-background-80));
 }

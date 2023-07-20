@@ -32,6 +32,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
     setError,
     setValue,
     getValues,
+    watch,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailCodeFormValues>({
     defaultValues: {
@@ -112,43 +113,35 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
 
   return (
     <>
-      <form className="space-y-5 py-5 px-5">
-        {(codeSent || codeResent) && (
-          <div className="rounded-md bg-green-500/20 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <CheckCircleIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-green-500">
-                  {codeResent
-                    ? "Please check your mail for new code."
-                    : "Please check your mail for code."}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-        <div>
+      {(codeSent || codeResent) && (
+        <p className="text-center mt-4">
+          We have sent the sign in code.
+          <br />
+          Please check your inbox at <span className="font-medium">{watch("email")}</span>
+        </p>
+      )}
+      <form className="space-y-4 mt-10 sm:w-[360px] mx-auto">
+        <div className="space-y-1">
           <Input
             id="email"
             type="email"
             name="email"
             register={register}
             validations={{
-              required: "Email ID is required",
+              required: "Email address is required",
               validate: (value) =>
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                   value
-                ) || "Email ID is not valid",
+                ) || "Email address is not valid",
             }}
             error={errors.email}
-            placeholder="Enter your Email ID"
+            placeholder="Enter your email address..."
+            className="border-custom-border-300 h-[46px]"
           />
         </div>
 
         {codeSent && (
-          <div>
+          <>
             <Input
               id="token"
               type="token"
@@ -158,14 +151,15 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                 required: "Code is required",
               }}
               error={errors.token}
-              placeholder="Enter code"
+              placeholder="Enter code..."
+              className="border-custom-border-300 h-[46px]"
             />
             <button
               type="button"
-              className={`mt-5 flex w-full justify-end text-xs outline-none ${
+              className={`flex w-full justify-end text-xs outline-none ${
                 isResendDisabled
-                  ? "cursor-default text-brand-secondary"
-                  : "cursor-pointer text-brand-accent"
+                  ? "cursor-default text-custom-text-200"
+                  : "cursor-pointer text-custom-primary-100"
               } `}
               onClick={() => {
                 setIsCodeResending(true);
@@ -178,46 +172,43 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               disabled={isResendDisabled}
             >
               {resendCodeTimer > 0 ? (
-                <p className="text-right">
-                  Didn{"'"}t receive code? Get new code in {resendCodeTimer} seconds.
-                </p>
+                <span className="text-right">Request new code in {resendCodeTimer} seconds</span>
               ) : isCodeResending ? (
-                "Sending code..."
+                "Sending new code..."
               ) : errorResendingCode ? (
                 "Please try again later"
               ) : (
-                "Resend code"
+                <span className="font-medium">Resend code</span>
               )}
             </button>
-          </div>
+          </>
         )}
-        <div>
-          {codeSent ? (
-            <PrimaryButton
-              type="submit"
-              className="w-full text-center"
-              size="md"
-              onClick={handleSubmit(handleSignin)}
-              disabled={!isValid && isDirty}
-              loading={isLoading}
-            >
-              {isLoading ? "Signing in..." : "Sign in"}
-            </PrimaryButton>
-          ) : (
-            <PrimaryButton
-              className="w-full text-center"
-              size="md"
-              onClick={() => {
-                handleSubmit(onSubmit)().then(() => {
-                  setResendCodeTimer(30);
-                });
-              }}
-              loading={isSubmitting || (!isValid && isDirty)}
-            >
-              {isSubmitting ? "Sending code..." : "Send code"}
-            </PrimaryButton>
-          )}
-        </div>
+        {codeSent ? (
+          <PrimaryButton
+            type="submit"
+            className="w-full text-center h-[46px]"
+            size="md"
+            onClick={handleSubmit(handleSignin)}
+            disabled={!isValid && isDirty}
+            loading={isLoading}
+          >
+            {isLoading ? "Signing in..." : "Sign in"}
+          </PrimaryButton>
+        ) : (
+          <PrimaryButton
+            className="w-full text-center h-[46px]"
+            size="md"
+            onClick={() => {
+              handleSubmit(onSubmit)().then(() => {
+                setResendCodeTimer(30);
+              });
+            }}
+            disabled={!isValid && isDirty}
+            loading={isSubmitting}
+          >
+            {isSubmitting ? "Sending code..." : "Send sign in code"}
+          </PrimaryButton>
+        )}
       </form>
     </>
   );

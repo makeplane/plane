@@ -18,6 +18,8 @@ const initialValues: Properties = {
   attachment_count: false,
   link: false,
   estimate: false,
+  created_on: false,
+  updated_on: false,
 };
 
 const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
@@ -96,6 +98,8 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     attachment_count: properties.attachment_count,
     link: properties.link,
     estimate: properties.estimate,
+    created_on: properties.created_on,
+    updated_on: properties.updated_on,
   };
 
   return [newProperties, updateIssueProperties] as const;

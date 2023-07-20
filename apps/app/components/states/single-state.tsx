@@ -160,19 +160,19 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div className="group flex items-center justify-between gap-2 border-brand-base bg-brand-base p-5 first:rounded-t-[10px] last:rounded-b-[10px]">
+    <div className="group flex items-center justify-between gap-2 border-custom-border-200 bg-custom-background-100 p-5 first:rounded-t-[10px] last:rounded-b-[10px]">
       <div className="flex items-center gap-3">
         {getStateGroupIcon(state.group, "20", "20", state.color)}
         <div>
           <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
-          <p className="text-xs text-brand-secondary">{state.description}</p>
+          <p className="text-xs text-custom-text-200">{state.description}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
         {index !== 0 && (
           <button
             type="button"
-            className="hidden text-brand-secondary group-hover:inline-block"
+            className="hidden text-custom-text-200 group-hover:inline-block"
             onClick={() => handleMove(state, "up")}
           >
             <ArrowUpIcon className="h-4 w-4" />
@@ -181,18 +181,18 @@ export const SingleState: React.FC<Props> = ({
         {!(index === groupLength - 1) && (
           <button
             type="button"
-            className="hidden text-brand-secondary group-hover:inline-block"
+            className="hidden text-custom-text-200 group-hover:inline-block"
             onClick={() => handleMove(state, "down")}
           >
             <ArrowDownIcon className="h-4 w-4" />
           </button>
         )}
         {state.default ? (
-          <span className="text-xs text-brand-secondary">Default</span>
+          <span className="text-xs text-custom-text-200">Default</span>
         ) : (
           <button
             type="button"
-            className="hidden text-xs text-brand-secondary group-hover:inline-block"
+            className="hidden text-xs text-custom-text-200 group-hover:inline-block"
             onClick={handleMakeDefault}
             disabled={isSubmitting}
           >
@@ -201,7 +201,7 @@ export const SingleState: React.FC<Props> = ({
         )}
 
         <button type="button" className="grid place-items-center" onClick={handleEditState}>
-          <PencilSquareIcon className="h-4 w-4 text-brand-secondary" />
+          <PencilSquareIcon className="h-4 w-4 text-custom-text-200" />
         </button>
         <button
           type="button"

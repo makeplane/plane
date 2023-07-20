@@ -44,27 +44,17 @@ const BillingSettings: NextPage = () => {
         <section className="space-y-8">
           <div>
             <h3 className="text-2xl font-semibold leading-6">Billing & Plans</h3>
-            <p className="mt-4 text-sm text-brand-secondary">[Free launch preview] plan Pro</p>
+            <p className="mt-4 text-sm text-custom-text-200">Free launch preview</p>
           </div>
           <div className="space-y-8 md:w-2/3">
             <div>
-              <div className="w-80 rounded-md border border-brand-base bg-brand-base p-4 text-center">
-                <h4 className="text-md mb-1 leading-6">Payment due</h4>
-                <h2 className="text-3xl font-extrabold">--</h2>
-              </div>
-            </div>
-            <div>
               <h4 className="text-md mb-1 leading-6">Current plan</h4>
-              <p className="mb-3 text-sm text-brand-secondary">
+              <p className="mb-3 text-sm text-custom-text-200">
                 You are currently using the free plan
               </p>
               <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
-                <SecondaryButton outline>View Plans and Upgrade</SecondaryButton>
+                <SecondaryButton outline>View Plans</SecondaryButton>
               </a>
-            </div>
-            <div>
-              <h4 className="text-md mb-1 leading-6">Billing history</h4>
-              <p className="mb-3 text-sm text-brand-secondary">There are no invoices to display</p>
             </div>
           </div>
         </section>

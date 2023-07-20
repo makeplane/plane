@@ -18,8 +18,10 @@ import {
 } from "components/pages";
 // ui
 import { EmptyState, Loader } from "components/ui";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
 // images
-import emptyPage from "public/empty-state/empty-page.svg";
+import emptyPage from "public/empty-state/page.svg";
 // types
 import { IPage, TPageViewProps } from "types";
 import {
@@ -208,7 +210,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         <div className="space-y-4 h-full overflow-y-auto">
           {pages.length > 0 ? (
             viewType === "list" ? (
-              <ul role="list" className="divide-y divide-brand-base">
+              <ul role="list" className="divide-y divide-custom-border-200">
                 {pages.map((page) => (
                   <SinglePageListItem
                     key={page.id}
@@ -223,7 +225,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                 ))}
               </ul>
             ) : viewType === "detailed" ? (
-              <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base">
+              <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200 bg-custom-background-100">
                 {pages.map((page) => (
                   <SinglePageDetailedItem
                     key={page.id}
@@ -238,7 +240,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                 ))}
               </div>
             ) : (
-              <div className="rounded-[10px] border border-brand-base">
+              <div className="rounded-[10px] border border-custom-border-200">
                 {pages.map((page) => (
                   <SinglePageDetailedItem
                     key={page.id}
@@ -255,10 +257,17 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
             )
           ) : (
             <EmptyState
-              type="page"
-              title="Create New Page"
-              description="Create and document issues effortlessly in one place with Plane Notes, AI-powered for ease."
-              imgURL={emptyPage}
+              title="Have your thoughts in place"
+              description="You can think of Pages as an AI-powered notepad."
+              image={emptyPage}
+              buttonText="New Page"
+              buttonIcon={<PlusIcon className="h-4 w-4" />}
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "d",
+                });
+                document.dispatchEvent(e);
+              }}
             />
           )}
         </div>

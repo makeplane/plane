@@ -480,9 +480,6 @@ class ModuleLinkViewSet(BaseViewSet):
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     serializer_class = ModuleFavoriteSerializer
     model = ModuleFavorite

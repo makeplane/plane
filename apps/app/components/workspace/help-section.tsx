@@ -1,4 +1,4 @@
-import { useState, useRef, FC } from "react";
+import React, { useRef, useState } from "react";
 
 import Link from "next/link";
 
@@ -8,12 +8,9 @@ import { Transition } from "@headlessui/react";
 import useTheme from "hooks/use-theme";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
-import {
-  ArrowLongLeftIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-  RocketLaunchIcon,
-} from "@heroicons/react/24/outline";
-import { QuestionMarkCircleIcon, DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
+import { Bolt, HelpOutlineOutlined, WestOutlined } from "@mui/icons-material";
+import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import { DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
 
 const helpOptions = [
   {
@@ -43,116 +40,122 @@ export interface WorkspaceHelpSectionProps {
   setSidebarActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
-  const { setSidebarActive } = props;
-  // theme
-  const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
-  // states
+export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setSidebarActive }) => {
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
-  // refs
+
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
-  // hooks
+
+  const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
+
   useOutsideClickDetector(helpOptionsRef, () => setIsNeedHelpOpen(false));
 
-  const helpOptionMode = sidebarCollapse ? "left-full" : "left-[-75px]";
-
   return (
-    <div
-      className={`flex w-full items-center justify-between self-baseline border-t border-brand-base bg-brand-sidebar px-6 py-2 ${
-        sidebarCollapse ? "flex-col" : ""
-      }`}
-    >
-      <button
-        type="button"
-        className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base ${
-          sidebarCollapse ? "w-full justify-center" : ""
+    <>
+      <div
+        className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 py-2 px-4 ${
+          sidebarCollapse ? "flex-col" : ""
         }`}
-        onClick={() => {
-          const e = new KeyboardEvent("keydown", {
-            key: "h",
-          });
-          document.dispatchEvent(e);
-        }}
-        title="Shortcuts"
       >
-        <RocketLaunchIcon className="h-4 w-4 text-brand-secondary" />
-        {!sidebarCollapse && <span>Shortcuts</span>}
-      </button>
-      <button
-        type="button"
-        className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base ${
-          sidebarCollapse ? "w-full justify-center" : ""
-        }`}
-        onClick={() => setIsNeedHelpOpen((prev) => !prev)}
-        title="Help"
-      >
-        <QuestionMarkCircleIcon className="h-4 w-4 text-brand-secondary" />
-        {!sidebarCollapse && <span>Help</span>}
-      </button>
-      <button
-        type="button"
-        className="flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base md:hidden"
-        onClick={() => setSidebarActive(false)}
-      >
-        <ArrowLongLeftIcon className="h-4 w-4 flex-shrink-0 text-brand-secondary group-hover:text-brand-base" />
-      </button>
-      <button
-        type="button"
-        className={`hidden items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-brand-secondary outline-none hover:bg-brand-surface-1 hover:text-brand-base md:flex ${
-          sidebarCollapse ? "w-full justify-center" : ""
-        }`}
-        onClick={() => toggleCollapsed()}
-      >
-        <ArrowLongLeftIcon
-          className={`h-4 w-4 flex-shrink-0 text-brand-secondary duration-300 group-hover:text-brand-base ${
-            sidebarCollapse ? "rotate-180" : ""
-          }`}
-        />
-      </button>
-
-      <div className="relative">
-        <Transition
-          show={isNeedHelpOpen}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <div
-            className={`absolute bottom-2 ${helpOptionMode} space-y-2 rounded-sm bg-brand-surface-2 p-1 shadow-md`}
-            ref={helpOptionsRef}
-          >
-            {helpOptions.map(({ name, Icon, href, onClick }) => {
-              if (href)
-                return (
-                  <Link href={href} key={name}>
-                    <a
-                      target="_blank"
-                      className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-brand-surface-1"
-                    >
-                      <Icon className="h-4 w-4 text-brand-secondary" />
-                      <span className="text-sm">{name}</span>
-                    </a>
-                  </Link>
-                );
-              else
-                return (
-                  <button
-                    key={name}
-                    type="button"
-                    onClick={onClick ? onClick : undefined}
-                    className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-brand-surface-1"
-                  >
-                    <Icon className="h-4 w-4 text-brand-secondary" />
-                    <span className="text-sm">{name}</span>
-                  </button>
-                );
-            })}
+        {!sidebarCollapse && (
+          <div className="w-1/2 text-center rounded-md px-2.5 py-1.5 font-medium outline-none text-sm bg-green-500/10 text-green-500">
+            Free Plan
           </div>
-        </Transition>
+        )}
+        <div
+          className={`flex items-center gap-1 ${
+            sidebarCollapse ? "flex-col justify-center" : "justify-evenly w-1/2"
+          }`}
+        >
+          <button
+            type="button"
+            className={`rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
+              sidebarCollapse ? "w-full" : ""
+            }`}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "h",
+              });
+              document.dispatchEvent(e);
+            }}
+          >
+            <Bolt fontSize="small" />
+          </button>
+          <button
+            type="button"
+            className={`rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
+              sidebarCollapse ? "w-full" : ""
+            }`}
+            onClick={() => setIsNeedHelpOpen((prev) => !prev)}
+          >
+            <HelpOutlineOutlined fontSize="small" />
+          </button>
+          <button
+            type="button"
+            className="rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none md:hidden"
+            onClick={() => setSidebarActive(false)}
+          >
+            <WestOutlined fontSize="small" />
+          </button>
+          <button
+            type="button"
+            className={`hidden md:flex rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
+              sidebarCollapse ? "w-full" : ""
+            }`}
+            onClick={() => toggleCollapsed()}
+          >
+            <WestOutlined
+              fontSize="small"
+              className={`duration-300 ${sidebarCollapse ? "rotate-180" : ""}`}
+            />
+          </button>
+        </div>
+
+        <div className="relative">
+          <Transition
+            show={isNeedHelpOpen}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <div
+              className={`absolute bottom-2 ${
+                sidebarCollapse ? "left-full" : "left-[-75px]"
+              } space-y-2 rounded-sm bg-custom-background-80 p-1 shadow-md`}
+              ref={helpOptionsRef}
+            >
+              {helpOptions.map(({ name, Icon, href, onClick }) => {
+                if (href)
+                  return (
+                    <Link href={href} key={name}>
+                      <a
+                        target="_blank"
+                        className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-custom-background-90"
+                      >
+                        <Icon className="h-4 w-4 text-custom-text-200" />
+                        <span className="text-sm">{name}</span>
+                      </a>
+                    </Link>
+                  );
+                else
+                  return (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={onClick ? onClick : undefined}
+                      className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-custom-background-90"
+                    >
+                      <Icon className="h-4 w-4 text-custom-sidebar-text-200" />
+                      <span className="text-sm">{name}</span>
+                    </button>
+                  );
+              })}
+            </div>
+          </Transition>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

@@ -1,69 +1,74 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { mutate } from "swr";
+
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+// services
+import projectService from "services/project.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Tooltip } from "components/ui";
 // icons
+import { LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
-  ChevronDownIcon,
-  DocumentTextIcon,
-  LinkIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ContrastIcon,
-  LayerDiagonalIcon,
-  PeopleGroupIcon,
-  SettingIcon,
-  ViewListIcon,
-} from "components/icons";
+  ArchiveOutlined,
+  ArticleOutlined,
+  ContrastOutlined,
+  DatasetOutlined,
+  ExpandMoreOutlined,
+  FilterNoneOutlined,
+  PhotoFilterOutlined,
+  SettingsOutlined,
+} from "@mui/icons-material";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject } from "types";
+// fetch-keys
+import { PROJECTS_LIST } from "constants/fetch-keys";
 
 type Props = {
   project: IProject;
   sidebarCollapse: boolean;
   handleDeleteProject: () => void;
   handleCopyText: () => void;
-  handleAddToFavorites?: () => void;
-  handleRemoveFromFavorites?: () => void;
+  shortContextMenu?: boolean;
 };
 
 const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Issues",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    icon: LayerDiagonalIcon,
+    Icon: FilterNoneOutlined,
   },
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    icon: ContrastIcon,
+    Icon: ContrastOutlined,
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    icon: PeopleGroupIcon,
+    Icon: DatasetOutlined,
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
-    icon: ViewListIcon,
+    Icon: PhotoFilterOutlined,
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    icon: DocumentTextIcon,
+    Icon: ArticleOutlined,
   },
   {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    icon: SettingIcon,
+    Icon: SettingsOutlined,
   },
 ];
 
@@ -72,65 +77,122 @@ export const SingleSidebarProject: React.FC<Props> = ({
   sidebarCollapse,
   handleDeleteProject,
   handleCopyText,
-  handleAddToFavorites,
-  handleRemoveFromFavorites,
+  shortContextMenu = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { setToastAlert } = useToast();
+
+  const handleAddToFavorites = () => {
+    if (!workspaceSlug) return;
+
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
+      false
+    );
+
+    projectService
+      .addProjectToFavorites(workspaceSlug as string, {
+        project: project.id,
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favorites. Please try again.",
+        })
+      );
+  };
+
+  const handleRemoveFromFavorites = () => {
+    if (!workspaceSlug) return;
+
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
+      false
+    );
+
+    projectService.removeProjectFromFavorites(workspaceSlug as string, project.id).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the project from favorites. Please try again.",
+      })
+    );
+  };
 
   return (
     <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
       {({ open }) => (
         <>
-          <div className="flex items-center gap-x-1">
-            <Disclosure.Button
-              as="div"
-              className={`flex w-full cursor-pointer select-none items-center rounded-md py-2 text-left text-sm font-medium ${
-                sidebarCollapse ? "justify-center" : "justify-between"
-              }`}
+          <div className="flex items-center gap-x-1 text-custom-sidebar-text-100">
+            <Tooltip
+              tooltipContent={`${project?.name}`}
+              position="right"
+              className="ml-2"
+              disabled={!sidebarCollapse}
             >
-              <div className="flex items-center gap-x-2">
-                {project.emoji ? (
-                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                    {String.fromCodePoint(parseInt(project.emoji))}
-                  </span>
-                ) : project.icon_prop ? (
-                  <div className="h-7 w-7 grid place-items-center">
-                    <span
-                      style={{ color: project.icon_prop.color }}
-                      className="material-symbols-rounded text-lg"
-                    >
-                      {project.icon_prop.name}
+              <Disclosure.Button
+                as="div"
+                className={`flex w-full cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
+                  sidebarCollapse ? "justify-center" : "justify-between"
+                }`}
+              >
+                <div className="flex items-center gap-x-2">
+                  {project.emoji ? (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      {renderEmoji(project.emoji)}
                     </span>
-                  </div>
-                ) : (
-                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                    {project?.name.charAt(0)}
-                  </span>
-                )}
+                  ) : project.icon_prop ? (
+                    <div className="h-7 w-7 grid place-items-center">
+                      <span
+                        style={{ color: project.icon_prop.color }}
+                        className="material-symbols-rounded text-lg"
+                      >
+                        {project.icon_prop.name}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                      {project?.name.charAt(0)}
+                    </span>
+                  )}
 
+                  {!sidebarCollapse && (
+                    <p
+                      className={`overflow-hidden text-ellipsis ${
+                        open ? "" : "text-custom-sidebar-text-200"
+                      }`}
+                    >
+                      {truncateText(project?.name, 14)}
+                    </p>
+                  )}
+                </div>
                 {!sidebarCollapse && (
-                  <p className="overflow-hidden text-ellipsis text-[0.875rem]">
-                    {truncateText(project?.name, 20)}
-                  </p>
+                  <ExpandMoreOutlined
+                    fontSize="small"
+                    className={`${open ? "rotate-180" : ""} text-custom-text-200 duration-300`}
+                  />
                 )}
-              </div>
-              {!sidebarCollapse && (
-                <span>
-                  <ChevronDownIcon className={`h-4 w-4 duration-300 ${open ? "rotate-180" : ""}`} />
-                </span>
-              )}
-            </Disclosure.Button>
+              </Disclosure.Button>
+            </Tooltip>
 
             {!sidebarCollapse && (
               <CustomMenu ellipsis>
-                <CustomMenu.MenuItem onClick={handleDeleteProject}>
-                  <span className="flex items-center justify-start gap-2 ">
-                    <TrashIcon className="h-4 w-4" />
-                    <span>Delete project</span>
-                  </span>
-                </CustomMenu.MenuItem>
-                {handleAddToFavorites && (
+                {!shortContextMenu && (
+                  <CustomMenu.MenuItem onClick={handleDeleteProject}>
+                    <span className="flex items-center justify-start gap-2 ">
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Delete project</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
+                {!project.is_favorite && (
                   <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                     <span className="flex items-center justify-start gap-2">
                       <StarIcon className="h-4 w-4" />
@@ -138,7 +200,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     </span>
                   </CustomMenu.MenuItem>
                 )}
-                {handleRemoveFromFavorites && (
+                {project.is_favorite && (
                   <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                     <span className="flex items-center justify-start gap-2">
                       <StarIcon className="h-4 w-4" />
@@ -152,6 +214,18 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     <span>Copy project link</span>
                   </span>
                 </CustomMenu.MenuItem>
+                {project.archive_in > 0 && (
+                  <CustomMenu.MenuItem
+                    onClick={() =>
+                      router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)
+                    }
+                  >
+                    <div className="flex items-center justify-start gap-2">
+                      <ArchiveOutlined fontSize="small" />
+                      <span>Archived Issues</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
               </CustomMenu>
             )}
           </div>
@@ -164,9 +238,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Disclosure.Panel
-              className={`${sidebarCollapse ? "" : "ml-[2.25rem]"} flex flex-col gap-y-1`}
-            >
+            <Disclosure.Panel className={`space-y-2 ${sidebarCollapse ? "" : "ml-[2.25rem]"}`}>
               {navigation(workspaceSlug as string, project?.id).map((item) => {
                 if (
                   (item.name === "Cycles" && !project.cycle_view) ||
@@ -178,23 +250,28 @@ export const SingleSidebarProject: React.FC<Props> = ({
 
                 return (
                   <Link key={item.name} href={item.href}>
-                    <a
-                      className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
-                        router.asPath.includes(item.href)
-                          ? "bg-brand-surface-2 text-brand-base"
-                          : "text-brand-secondary hover:bg-brand-surface-2 hover:text-brand-secondary focus:bg-brand-surface-2 focus:text-brand-secondary"
-                      } ${sidebarCollapse ? "justify-center" : ""}`}
-                    >
-                      <div className="grid place-items-center">
-                        <item.icon
-                          className={`h-5 w-5 flex-shrink-0 text-brand-secondary ${
-                            !sidebarCollapse ? "mr-3" : ""
-                          }`}
-                          color="#858e96"
-                          aria-hidden="true"
-                        />
-                      </div>
-                      {!sidebarCollapse && item.name}
+                    <a className="block w-full">
+                      <Tooltip
+                        tooltipContent={`${project?.name}: ${item.name}`}
+                        position="right"
+                        className="ml-2"
+                        disabled={!sidebarCollapse}
+                      >
+                        <div
+                          className={`group flex items-center rounded-md px-2 py-1.5 gap-2.5 text-xs font-medium outline-none ${
+                            router.asPath.includes(item.href)
+                              ? "bg-custom-primary-100/10 text-custom-primary-100"
+                              : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+                          } ${sidebarCollapse ? "justify-center" : ""}`}
+                        >
+                          <item.Icon
+                            sx={{
+                              fontSize: 18,
+                            }}
+                          />
+                          {!sidebarCollapse && item.name}
+                        </div>
+                      </Tooltip>
                     </a>
                   </Link>
                 );

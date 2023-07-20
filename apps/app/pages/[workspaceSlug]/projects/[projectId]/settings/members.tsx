@@ -153,7 +153,7 @@ const MembersSettings: NextPage = () => {
             <h3 className="text-2xl font-semibold">Members</h3>
             <button
               type="button"
-              className="flex items-center gap-2 text-brand-accent outline-none"
+              className="flex items-center gap-2 text-custom-primary outline-none"
               onClick={() => setInviteModal(true)}
             >
               <PlusIcon className="h-4 w-4" />
@@ -168,7 +168,7 @@ const MembersSettings: NextPage = () => {
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="divide-y divide-brand-base rounded-[10px] border border-brand-base bg-brand-base px-6">
+            <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200 bg-custom-background-100 px-6">
               {members.length > 0
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">
@@ -190,7 +190,7 @@ const MembersSettings: NextPage = () => {
                           <h4 className="text-sm">
                             {member.first_name} {member.last_name}
                           </h4>
-                          <p className="mt-0.5 text-xs text-brand-secondary">{member.email}</p>
+                          <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs">

@@ -22,7 +22,22 @@ const ProfilePreferences = () => {
 
   useEffect(() => {
     if (theme === "custom") {
-      if (myProfile?.theme.palette) setPreLoadedData(myProfile.theme);
+      if (myProfile?.theme.palette)
+        setPreLoadedData({
+          background: myProfile.theme.background !== "" ? myProfile.theme.background : "#0d101b",
+          text: myProfile.theme.text !== "" ? myProfile.theme.text : "#c5c5c5",
+          primary: myProfile.theme.primary !== "" ? myProfile.theme.primary : "#3f76ff",
+          sidebarBackground:
+            myProfile.theme.sidebarBackground !== ""
+              ? myProfile.theme.sidebarBackground
+              : "#0d101b",
+          sidebarText: myProfile.theme.sidebarText !== "" ? myProfile.theme.sidebarText : "#c5c5c5",
+          darkPalette: false,
+          palette:
+            myProfile.theme.palette !== ",,,,"
+              ? myProfile.theme.palette
+              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+        });
       if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
     }
   }, [myProfile, theme, customThemeSelectorOptions]);
@@ -40,7 +55,7 @@ const ProfilePreferences = () => {
           <div className="mb-8 space-y-6">
             <div>
               <h3 className="text-3xl font-semibold">Profile Settings</h3>
-              <p className="mt-1 text-brand-secondary">
+              <p className="mt-1 text-custom-text-200">
                 This information will be visible to only you.
               </p>
             </div>
@@ -49,8 +64,8 @@ const ProfilePreferences = () => {
           <div className="space-y-8 sm:space-y-12">
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Theme</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
+                <p className="text-sm text-custom-text-200">
                   Select or customize your interface color scheme.
                 </p>
               </div>

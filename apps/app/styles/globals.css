@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +10,11 @@
     font-size: 1.375rem;
     line-height: 1.875rem;
   }
+
+  .text-2\.5xl {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
 }
 
 @layer base {
@@ -17,69 +23,141 @@
   }
 
   :root {
-    --color-bg-base: 255, 255, 255;
-    --color-bg-surface-1: 249, 250, 251;
-    --color-bg-surface-2: 243, 244, 246;
+    --color-primary-10: 236, 241, 255;
+    --color-primary-20: 217, 228, 255;
+    --color-primary-30: 197, 214, 255;
+    --color-primary-40: 178, 200, 255;
+    --color-primary-50: 159, 187, 255;
+    --color-primary-60: 140, 173, 255;
+    --color-primary-70: 121, 159, 255;
+    --color-primary-80: 101, 145, 255;
+    --color-primary-90: 82, 132, 255;
+    --color-primary-100: 63, 118, 255;
+    --color-primary-200: 57, 106, 230;
+    --color-primary-300: 50, 94, 204;
+    --color-primary-400: 44, 83, 179;
+    --color-primary-500: 38, 71, 153;
+    --color-primary-600: 32, 59, 128;
+    --color-primary-700: 25, 47, 102;
+    --color-primary-800: 19, 35, 76;
+    --color-primary-900: 13, 24, 51;
 
-    --color-border: 229, 231, 235;
-    --color-bg-sidebar: 255, 255, 255;
-    --color-accent: 63, 118, 255;
+    /* default theme- light */
+    --color-background-100: 255, 255, 255; /* primary bg */
+    --color-background-90: 250, 250, 250; /* secondary bg */
+    --color-background-80: 245, 245, 245; /* tertiary bg */
 
-    --color-text-base: 3, 7, 18;
-    --color-text-secondary: 55, 65, 81;
-  }
+    --color-text-100: 23, 23, 23; /* primary text */
+    --color-text-200: 82, 82, 82; /* secondary text */
+    --color-text-300: 115, 115, 115; /* tertiary text */
+    --color-text-400: 163, 163, 163; /* placeholder text */
 
-  [data-theme="light"] {
-    --color-bg-base: 255, 255, 255;
-    --color-bg-surface-1: 249, 250, 251;
-    --color-bg-surface-2: 243, 244, 246;
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
 
-    --color-border: 229, 231, 235;
-    --color-bg-sidebar: 255, 255, 255;
-    --color-accent: 63, 118, 255;
+    --color-sidebar-background-100: 255, 255, 255; /* primary sidebar bg */
+    --color-sidebar-background-90: 250, 250, 250; /* secondary sidebar bg */
+    --color-sidebar-background-80: 245, 245, 245; /* tertiary sidebar bg */
 
-    --color-text-base: 3, 7, 18;
-    --color-text-secondary: 55, 65, 81;
+    --color-sidebar-text-100: 23, 23, 23; /* primary sidebar text */
+    --color-sidebar-text-200: 82, 82, 82; /* secondary sidebar text */
+    --color-sidebar-text-300: 115, 115, 115; /* tertiary sidebar text */
+    --color-sidebar-text-400: 163, 163, 163; /* sidebar placeholder text */
+
+    --color-sidebar-border-100: 245, 245, 245; /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: 229, 229, 229; /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: 212, 212, 212; /* strong sidebar border- 1 */
+    --color-sidebar-border-400: 185, 185, 185; /* strong sidebar border- 2 */
   }
 
   [data-theme="dark"] {
-    --color-bg-base: 25, 27, 27;
-    --color-bg-surface-1: 29, 30, 32;
-    --color-bg-surface-2: 39, 42, 45;
+    color-scheme: dark !important;
 
-    --color-border: 46, 50, 52;
-    --color-bg-sidebar: 19, 20, 22;
-    --color-accent: 60, 133, 217;
+    --color-background-100: 7, 7, 7; /* primary bg */
+    --color-background-90: 11, 11, 11; /* secondary bg */
+    --color-background-80: 23, 23, 23; /* tertiary bg */
 
-    --color-text-base: 233, 244, 252;
-    --color-text-secondary: 142, 148, 146;
+    --color-text-100: 241, 241, 241; /* primary text */
+    --color-text-200: 115, 115, 115; /* secondary text */
+    --color-text-300: 163, 163, 163; /* tertiary text */
+    --color-text-400: 82, 82, 82; /* placeholder text */
+
+    --color-border-100: 34, 34, 34; /* subtle border= 1 */
+    --color-border-200: 38, 38, 38; /* subtle border- 2 */
+    --color-border-300: 46, 46, 46; /* strong border- 1 */
+    --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+    --color-sidebar-background-100: 7, 7, 7; /* primary sidebar bg */
+    --color-sidebar-background-90: 11, 11, 11; /* secondary sidebar bg */
+    --color-sidebar-background-80: 23, 23, 23; /* tertiary sidebar bg */
+
+    --color-sidebar-text-100: 241, 241, 241; /* primary sidebar text */
+    --color-sidebar-text-200: 115, 115, 115; /* secondary sidebar text */
+    --color-sidebar-text-300: 163, 163, 163; /* tertiary sidebar text */
+    --color-sidebar-text-400: 82, 82, 82; /* sidebar placeholder text */
+
+    --color-sidebar-border-100: 34, 34, 34; /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: 38, 38, 38; /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: 46, 46, 46; /* strong sidebar border- 1 */
+    --color-sidebar-border-400: 58, 58, 58; /* strong sidebar border- 2 */
   }
 
   [data-theme="light-contrast"] {
-    --color-bg-base: 250, 250, 250;
-    --color-bg-surface-1: 250, 250, 250;
-    --color-bg-surface-2: 206, 212, 218;
+    color-scheme: light !important;
 
-    --color-border: 0, 0, 0;
-    --color-bg-sidebar: 255, 255, 255;
-    --color-accent: 63, 118, 255;
+    --color-text-100: 11, 11, 11; /* primary text */
+    --color-text-200: 38, 38, 38; /* secondary text */
+    --color-text-300: 58, 58, 58; /* tertiary text */
+    --color-text-400: 115, 115, 115; /* placeholder text */
 
-    --color-text-base: 0, 0, 0;
-    --color-text-secondary: 0, 0, 0;
+    --color-border-100: 34, 34, 34; /* subtle border= 1 */
+    --color-border-200: 38, 38, 38; /* subtle border- 2 */
+    --color-border-300: 46, 46, 46; /* strong border- 1 */
+    --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+    --color-sidebar-text-100: 11, 11, 11; /* primary sidebar text */
+    --color-sidebar-text-200: 38, 38, 38; /* secondary sidebar text */
+    --color-sidebar-text-300: 58, 58, 58; /* tertiary sidebar text */
+    --color-sidebar-text-400: 115, 115, 115; /* sidebar placeholder text */
+
+    --color-sidebar-border-100: 34, 34, 34; /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: 38, 38, 38; /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: 46, 46, 46; /* strong sidebar border- 1 */
+    --color-sidebar-border-400: 58, 58, 58; /* strong sidebar border- 2 */
   }
 
   [data-theme="dark-contrast"] {
-    --color-bg-base: 25, 27, 27;
-    --color-bg-surface-1: 31, 32, 35;
-    --color-bg-surface-2: 39, 42, 45;
-
-    --color-border: 255, 255, 255;
-    --color-bg-sidebar: 19, 20, 22;
-    --color-accent: 60, 133, 217;
-
-    --color-text-base: 255, 255, 255;
-    --color-text-secondary: 142, 148, 146;
     color-scheme: dark !important;
+
+    --color-background-100: 7, 7, 7; /* primary bg */
+    --color-background-90: 11, 11, 11; /* secondary bg */
+    --color-background-80: 23, 23, 23; /* tertiary bg */
+
+    --color-text-100: 250, 250, 250; /* primary text */
+    --color-text-200: 241, 241, 241; /* secondary text */
+    --color-text-300: 212, 212, 212; /* tertiary text */
+    --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    --color-sidebar-background-100: 7, 7, 7; /* primary sidebar bg */
+    --color-sidebar-background-90: 11, 11, 11; /* secondary sidebar bg */
+    --color-sidebar-background-80: 23, 23, 23; /* tertiary sidebar bg */
+
+    --color-sidebar-text-100: 250, 250, 250; /* primary sidebar text */
+    --color-sidebar-text-200: 241, 241, 241; /* secondary sidebar text */
+    --color-sidebar-text-300: 212, 212, 212; /* tertiary sidebar text */
+    --color-sidebar-text-400: 115, 115, 115; /* sidebar placeholder text */
+
+    --color-sidebar-border-100: 245, 245, 245; /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: 229, 229, 229; /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: 212, 212, 212; /* strong sidebar border- 1 */
+    --color-sidebar-border-400: 185, 185, 185; /* strong sidebar border- 2 */
   }
 }
 
@@ -97,7 +175,7 @@
 }
 
 body {
-  color: rgba(var(--color-text-base));
+  color: rgba(var(--color-text-100));
 }
 
 /* scrollbar style */
@@ -117,12 +195,12 @@ body {
 
 .horizontal-scroll-enable::-webkit-scrollbar-track {
   height: 7px;
-  background-color: rgba(var(--color-bg-base));
+  background-color: rgba(var(--color-background-100));
 }
 
 .horizontal-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: rgba(var(--color-bg-surface-2));
+  background-color: rgba(var(--color-background-80));
 }
 
 .vertical-scroll-enable::-webkit-scrollbar {
@@ -136,7 +214,7 @@ body {
 
 .vertical-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: rgba(var(--color-bg-surface-1));
+  background-color: rgba(var(--color-background-90));
 }
 /* end scrollbar style */
 
@@ -179,25 +257,7 @@ body {
   outline: none;
 }
 
-/* react datepicker styling */
-.react-datepicker-wrapper input::placeholder {
-  color: rgba(var(--color-text-secondary));
-  opacity: 1;
-}
-
-.react-datepicker-wrapper input:-ms-input-placeholder {
-  color: rgba(var(--color-text-secondary));
-}
-
-.react-datepicker-wrapper .react-datepicker__close-icon::after {
-  background: transparent;
-  color: rgba(var(--color-text-secondary));
-}
-
-.react-datepicker-popper {
-  z-index: 30 !important;
-}
-
+/* emoji icon picker */
 .conical-gradient {
   background: conic-gradient(
     from 180deg at 50% 50%,
@@ -211,12 +271,11 @@ body {
   );
 }
 
+/* progress bar */
 .progress-bar {
   fill: currentColor;
-  color: rgba(var(--color-bg-sidebar));
+  color: rgba(var(--color-sidebar-background-100));
 }
-
-/* end react datepicker styling */
 
 /* lineclamp */
 .lineclamp {
@@ -229,4 +288,14 @@ body {
 /* popover2 styling */
 .bp4-popover2-transition-container {
   z-index: 1 !important;
+}
+
+::-webkit-input-placeholder,
+::placeholder,
+:-ms-input-placeholder {
+  color: rgb(var(--color-text-400));
+}
+
+.bp4-overlay-content {
+  z-index: 555 !important;
 }

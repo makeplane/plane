@@ -16,6 +16,7 @@ from .project import (
 from .people import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
 )
 
@@ -65,6 +66,8 @@ from .issue import (
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
     IssueAttachmentEndpoint,
+    IssueArchiveViewSet,
+    IssueSubscriberViewSet,
 )
 
 from .auth_extended import (
@@ -133,6 +136,7 @@ from .estimate import (
 from .release import ReleaseNotesEndpoint
 
 from .inbox import InboxViewSet, InboxIssueViewSet
+
 from .analytic import (
     AnalyticsEndpoint,
     AnalyticViewViewset,
@@ -140,3 +144,5 @@ from .analytic import (
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
 )
+
+from .notification import NotificationViewSet, UnreadNotificationEndpoint

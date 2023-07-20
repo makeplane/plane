@@ -12,9 +12,11 @@ import AppSidebar from "layouts/app-layout/app-sidebar";
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // ui
-import { PrimaryButton, Spinner } from "components/ui";
+import { EmptyState, PrimaryButton, Spinner } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
+// images
+import emptyProject from "public/empty-state/project.svg";
 
 type Props = {
   children: React.ReactNode;
@@ -55,7 +57,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
         <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
 
         {loading ? (
-          <div className="grid h-full w-full place-items-center p-4">
+          <div className="grid h-full w-full place-items-center p-4 bg-custom-background-100">
             <div className="flex flex-col items-center gap-3 text-center">
               <h3 className="text-xl">Loading your project...</h3>
               <Spinner />
@@ -64,18 +66,19 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
         ) : error?.status === 401 || error?.status === 403 ? (
           <JoinProject />
         ) : error?.status === 404 ? (
-          <div className="container grid h-screen place-items-center">
-            <div className="space-y-4 text-center">
-              <p className="text-2xl font-semibold">No such project exists. Create one?</p>
-              <PrimaryButton
-                onClick={() => {
-                  const e = new KeyboardEvent("keydown", { key: "p" });
-                  document.dispatchEvent(e);
-                }}
-              >
-                Create project
-              </PrimaryButton>
-            </div>
+          <div className="container grid h-screen place-items-center bg-custom-background-100">
+            <EmptyState
+              title="No such project exists"
+              description="Try creating a new project"
+              image={emptyProject}
+              buttonText="Create Project"
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "p",
+                });
+                document.dispatchEvent(e);
+              }}
+            />
           </div>
         ) : settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
           <NotAuthorizedView
@@ -94,10 +97,10 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
           <main
             className={`relative flex h-full w-full flex-col overflow-hidden ${
               bg === "primary"
-                ? "bg-brand-surface-1"
+                ? "bg-custom-background-100"
                 : bg === "secondary"
-                ? "bg-brand-sidebar"
-                : "bg-brand-base"
+                ? "bg-custom-background-90"
+                : "bg-custom-background-80"
             }`}
           >
             <AppHeader

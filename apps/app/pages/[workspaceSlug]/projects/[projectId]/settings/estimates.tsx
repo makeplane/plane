@@ -23,7 +23,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // images
-import emptyEstimate from "public/empty-state/empty-estimate.svg";
+import emptyEstimate from "public/empty-state/estimate.svg";
 // types
 import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
@@ -122,14 +122,14 @@ const EstimatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8">
+        <div className="h-full flex flex-col p-8 overflow-hidden">
           <SettingsHeader />
           <section className="flex items-center justify-between">
             <h3 className="text-2xl font-semibold">Estimates</h3>
             <div className="col-span-12 space-y-5 sm:col-span-7">
               <div className="flex items-center gap-2">
-                <span
-                  className="flex cursor-pointer items-center gap-2 text-theme"
+                <div
+                  className="flex cursor-pointer items-center gap-2 text-custom-primary-100 hover:text-custom-primary-200"
                   onClick={() => {
                     setEstimateToUpdate(undefined);
                     setEstimateFormOpen(true);
@@ -137,7 +137,7 @@ const EstimatesSettings: NextPage = () => {
                 >
                   <PlusIcon className="h-4 w-4" />
                   Create New Estimate
-                </span>
+                </div>
                 {projectDetails?.estimate && (
                   <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
                 )}
@@ -146,7 +146,7 @@ const EstimatesSettings: NextPage = () => {
           </section>
           {estimatesList ? (
             estimatesList.length > 0 ? (
-              <section className="mt-5 divide-y divide-brand-base rounded-xl border border-brand-base bg-brand-base px-6">
+              <section className="h-full mt-5 divide-y divide-custom-border-200 rounded-xl border border-custom-border-200 bg-custom-background-100 px-6 overflow-y-auto">
                 {estimatesList.map((estimate) => (
                   <SingleEstimate
                     key={estimate.id}
@@ -158,13 +158,14 @@ const EstimatesSettings: NextPage = () => {
                 ))}
               </section>
             ) : (
-              <div className="mt-5">
+              <div className="h-full w-full overflow-y-auto">
                 <EmptyState
-                  type="estimate"
-                  title="Create New Estimate"
-                  description="Estimates help you communicate the complexity of an issue. You can create your own estimate and communicate with your team."
-                  imgURL={emptyEstimate}
-                  action={() => {
+                  title="No estimates yet"
+                  description="Estimates help you communicate the complexity of an issue."
+                  image={emptyEstimate}
+                  buttonText="Add Estimate"
+                  buttonIcon={<PlusIcon className="h-4 w-4" />}
+                  onClick={() => {
                     setEstimateToUpdate(undefined);
                     setEstimateFormOpen(true);
                   }}

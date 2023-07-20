@@ -41,7 +41,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
-import { renderShortTime, renderShortDate } from "helpers/date-time.helper";
+import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
@@ -306,7 +306,7 @@ const SinglePage: NextPage = () => {
                 <div className="flex w-full items-center gap-2">
                   <button
                     type="button"
-                    className="flex items-center gap-2 text-sm text-brand-secondary"
+                    className="flex items-center gap-2 text-sm text-custom-text-200"
                     onClick={() => router.back()}
                   >
                     <ArrowLeftIcon className="h-4 w-4" />
@@ -320,7 +320,7 @@ const SinglePage: NextPage = () => {
                     onBlur={handleSubmit(updatePage)}
                     onChange={(e) => setValue("name", e.target.value)}
                     required={true}
-                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
+                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0"
                     role="textbox"
                     noPadding
                   />
@@ -337,7 +337,7 @@ const SinglePage: NextPage = () => {
                         return (
                           <div
                             key={label.id}
-                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                             onClick={() => {
                               const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
                               partialUpdatePage({ labels_list: updatedLabels });
@@ -366,7 +366,7 @@ const SinglePage: NextPage = () => {
                     customButton={
                       <button
                         type="button"
-                        className="flex items-center gap-1 rounded-sm bg-brand-surface-2 p-1.5 text-xs"
+                        className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs"
                       >
                         <PlusIcon className="h-3.5 w-3.5" />
                         {pageDetails.labels.length <= 0 && <span>Add Label</span>}
@@ -376,12 +376,12 @@ const SinglePage: NextPage = () => {
                     footerOption={
                       <button
                         type="button"
-                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
+                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
                         onClick={() => {
                           setLabelModal(true);
                         }}
                       >
-                        <span className="flex items-center justify-start gap-1 text-brand-secondary">
+                        <span className="flex items-center justify-start gap-1 text-custom-text-200">
                           <PlusIcon className="h-4 w-4" aria-hidden="true" />
                           <span>Create New Label</span>
                         </span>
@@ -395,13 +395,13 @@ const SinglePage: NextPage = () => {
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="flex items-center gap-6 text-brand-secondary">
+                <div className="flex items-center gap-6 text-custom-text-200">
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderShortTime(
+                    tooltipContent={`Last updated at ${render24HourFormatTime(
                       pageDetails.updated_at
                     )} on ${renderShortDate(pageDetails.updated_at)}`}
                   >
-                    <p className="text-sm">{renderShortTime(pageDetails.updated_at)}</p>
+                    <p className="text-sm">{render24HourFormatTime(pageDetails.updated_at)}</p>
                   </Tooltip>
                   <button className="flex items-center gap-2" onClick={handleCopyText}>
                     <LinkIcon className="h-4 w-4" />
@@ -413,7 +413,7 @@ const SinglePage: NextPage = () => {
                           <Popover.Button
                             type="button"
                             className={`group inline-flex items-center outline-none ${
-                              open ? "text-brand-base" : "text-brand-secondary"
+                              open ? "text-custom-text-100" : "text-custom-text-200"
                             }`}
                           >
                             {watch("color") && watch("color") !== "" ? (
@@ -443,27 +443,27 @@ const SinglePage: NextPage = () => {
                                 styles={{
                                   default: {
                                     card: {
-                                      backgroundColor: `rgba(var(--color-bg-surface-2))`,
+                                      backgroundColor: `rgba(var(--color-background-80))`,
                                     },
                                     triangle: {
                                       position: "absolute",
                                       borderColor:
-                                        "transparent transparent rgba(var(--color-bg-surface-2)) transparent",
+                                        "transparent transparent rgba(var(--color-background-80)) transparent",
                                     },
                                     input: {
                                       border: "none",
                                       height: "1.85rem",
                                       fontSize: "0.875rem",
                                       paddingLeft: "0.25rem",
-                                      color: `rgba(var(--color-text-secondary))`,
+                                      color: `rgba(var(--color-text-200))`,
                                       boxShadow: "none",
-                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
-                                      borderLeft: `1px solid rgba(var(--color-bg-surface-2))`,
+                                      backgroundColor: `rgba(var(--color-background-90))`,
+                                      borderLeft: `1px solid rgba(var(--color-background-80))`,
                                     },
                                     hash: {
-                                      color: `rgba(var(--color-text-secondary))`,
+                                      color: `rgba(var(--color-text-200))`,
                                       boxShadow: "none",
-                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
+                                      backgroundColor: `rgba(var(--color-background-90))`,
                                     },
                                   },
                                 }}
@@ -482,7 +482,6 @@ const SinglePage: NextPage = () => {
                           ? "This page is only visible to you."
                           : "This page can be viewed by anyone in the project."
                       }`}
-                      theme="dark"
                     >
                       {pageDetails.access ? (
                         <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
@@ -554,6 +553,11 @@ const SinglePage: NextPage = () => {
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
                       user={user}
+                      onSuccess={(response) => {
+                        partialUpdatePage({
+                          labels_list: [...(pageDetails.labels ?? []), response.id],
+                        });
+                      }}
                     />
                   )}
                 </>

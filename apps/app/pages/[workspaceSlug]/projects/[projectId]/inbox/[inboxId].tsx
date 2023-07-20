@@ -52,7 +52,7 @@ const ProjectInbox: NextPage = () => {
       >
         <div className="flex flex-col h-full">
           <InboxActionHeader />
-          <div className="grid grid-cols-4 flex-1 divide-x divide-brand-base overflow-hidden">
+          <div className="grid grid-cols-4 flex-1 divide-x divide-custom-border-200 overflow-hidden">
             <IssuesListSidebar />
             <div className="col-span-3 h-full overflow-auto">
               <InboxMainContent />

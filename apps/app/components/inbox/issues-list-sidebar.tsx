@@ -18,7 +18,7 @@ export const IssuesListSidebar = () => {
       <InboxFiltersList />
       {inboxIssues ? (
         inboxIssues.length > 0 ? (
-          <div className="divide-y divide-brand-base overflow-auto h-full">
+          <div className="divide-y divide-custom-border-200 overflow-auto h-full">
             {inboxIssues.map((issue) => (
               <InboxIssueCard
                 key={issue.id}
@@ -28,7 +28,7 @@ export const IssuesListSidebar = () => {
             ))}
           </div>
         ) : (
-          <div className="h-full p-4 grid place-items-center text-center text-sm text-brand-secondary">
+          <div className="h-full p-4 grid place-items-center text-center text-sm text-custom-text-200">
             {filtersLength > 0 &&
               "No issues found for the selected filters. Try changing the filters."}
           </div>

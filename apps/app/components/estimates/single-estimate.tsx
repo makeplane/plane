@@ -72,18 +72,21 @@ export const SingleEstimate: React.FC<Props> = ({
             <h6 className="flex w-[40vw] items-center gap-2 truncate text-sm font-medium">
               {estimate.name}
               {projectDetails?.estimate && projectDetails?.estimate === estimate.id && (
-                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs capitalize text-green-500">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-500">
                   In use
                 </span>
               )}
             </h6>
-            <p className="font-sm w-[40vw] truncate text-[14px] font-normal text-brand-secondary">
+            <p className="font-sm w-[40vw] truncate text-[14px] font-normal text-custom-text-200">
               {estimate.description}
             </p>
           </div>
           <div className="flex items-center gap-2">
             {projectDetails?.estimate !== estimate.id && estimate.points.length > 0 && (
-              <SecondaryButton onClick={handleUseEstimate} className="py-1">
+              <SecondaryButton
+                onClick={handleUseEstimate}
+                className="!py-1 text-custom-text-200 hover:text-custom-text-100"
+              >
                 Use
               </SecondaryButton>
             )}
@@ -114,11 +117,11 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
         </div>
         {estimate.points.length > 0 ? (
-          <div className="flex text-xs text-brand-secondary">
+          <div className="flex text-xs text-custom-text-200">
             Estimate points (
             <span className="flex gap-1">
               {orderArrayBy(estimate.points, "key").map((point, index) => (
-                <h6 key={point.id} className="text-brand-secondary">
+                <h6 key={point.id} className="text-custom-text-200">
                   {point.value}
                   {index !== estimate.points.length - 1 && ","}{" "}
                 </h6>
@@ -128,7 +131,7 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
         ) : (
           <div>
-            <p className="text-xs text-brand-secondary">No estimate points</p>
+            <p className="text-xs text-custom-text-200">No estimate points</p>
           </div>
         )}
       </div>

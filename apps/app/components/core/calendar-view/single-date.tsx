@@ -49,7 +49,7 @@ export const SingleCalendarDate: React.FC<Props> = ({
           key={index}
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className={`group relative flex min-h-[150px] flex-col gap-1.5 border-t border-brand-base p-2.5 text-left text-sm font-medium hover:bg-brand-surface-1 ${
+          className={`group relative flex min-h-[150px] flex-col gap-1.5 border-t border-custom-border-200 p-2.5 text-left text-sm font-medium hover:bg-custom-background-90 ${
             isMonthlyView ? "" : "pt-9"
           } ${
             showWeekEnds
@@ -83,7 +83,7 @@ export const SingleCalendarDate: React.FC<Props> = ({
           {totalIssues > 4 && (
             <button
               type="button"
-              className="w-min whitespace-nowrap rounded-md border border-brand-base bg-brand-surface-2 px-1.5 py-1 text-xs"
+              className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 px-1.5 py-1 text-xs"
               onClick={() => setShowAllIssues((prevData) => !prevData)}
             >
               {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
@@ -91,13 +91,13 @@ export const SingleCalendarDate: React.FC<Props> = ({
           )}
 
           <div
-            className={`absolute top-2 right-2 flex items-center justify-center rounded-md bg-brand-surface-2 p-1 text-xs text-brand-secondary opacity-0 group-hover:opacity-100`}
+            className={`absolute top-2 right-2 flex items-center justify-center rounded-md bg-custom-background-80 p-1 text-xs text-custom-text-200 opacity-0 group-hover:opacity-100`}
           >
             <button
               className="flex items-center justify-center gap-1 text-center"
               onClick={() => addIssueToDate(date.date)}
             >
-              <PlusSmallIcon className="h-4 w-4 text-brand-secondary" />
+              <PlusSmallIcon className="h-4 w-4 text-custom-text-200" />
               Add issue
             </button>
           </div>

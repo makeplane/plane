@@ -71,6 +71,10 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
       label: "Estimates",
       href: `/${workspaceSlug}/projects/${projectId}/settings/estimates`,
     },
+    {
+      label: "Automations",
+      href: `/${workspaceSlug}/projects/${projectId}/settings/automations`,
+    },
   ];
 
   const profileLinks: Array<{
@@ -103,8 +107,8 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
                     ? router.asPath.includes(link.href)
                     : router.asPath === link.href
                 )
-                  ? "border-brand-accent bg-brand-accent text-white"
-                  : "border-brand-base bg-brand-base hover:bg-brand-surface-1"
+                  ? "border-custom-primary bg-custom-primary text-white"
+                  : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
               }`}
             >
               {link.label}
