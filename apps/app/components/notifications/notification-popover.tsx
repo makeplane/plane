@@ -261,7 +261,7 @@ export const NotificationPopover = () => {
 
                 {notifications ? (
                   notifications.length > 0 ? (
-                    <div className="divide-y divide-custom-border-100 overflow-y-auto">
+                    <div className="divide-y divide-custom-border-100 overflow-y-auto h-full">
                       {notifications.map((notification) => (
                         <NotificationCard
                           key={notification.id}
