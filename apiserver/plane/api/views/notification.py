@@ -214,6 +214,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 receiver_id=request.user.id,
                 read_at__isnull=True,
+                archived_at__isnull=True,
                 entity_identifier__in=IssueSubscriber.objects.filter(
                     workspace__slug=slug, subscriber_id=request.user.id
                 ).values_list("issue_id", flat=True),
@@ -224,6 +225,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 receiver_id=request.user.id,
                 read_at__isnull=True,
+                archived_at__isnull=True,
                 entity_identifier__in=IssueAssignee.objects.filter(
                     workspace__slug=slug, assignee_id=request.user.id
                 ).values_list("issue_id", flat=True),
@@ -234,6 +236,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 receiver_id=request.user.id,
                 read_at__isnull=True,
+                archived_at__isnull=True,
                 entity_identifier__in=Issue.objects.filter(
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True),
