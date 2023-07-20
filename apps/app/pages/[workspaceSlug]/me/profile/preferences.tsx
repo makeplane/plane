@@ -22,7 +22,22 @@ const ProfilePreferences = () => {
 
   useEffect(() => {
     if (theme === "custom") {
-      if (myProfile?.theme.palette) setPreLoadedData(myProfile.theme);
+      if (myProfile?.theme.palette)
+        setPreLoadedData({
+          background: myProfile.theme.background !== "" ? myProfile.theme.background : "#0d101b",
+          text: myProfile.theme.text !== "" ? myProfile.theme.text : "#c5c5c5",
+          primary: myProfile.theme.primary !== "" ? myProfile.theme.primary : "#3f76ff",
+          sidebarBackground:
+            myProfile.theme.sidebarBackground !== ""
+              ? myProfile.theme.sidebarBackground
+              : "#0d101b",
+          sidebarText: myProfile.theme.sidebarText !== "" ? myProfile.theme.sidebarText : "#c5c5c5",
+          darkPalette: false,
+          palette:
+            myProfile.theme.palette !== ",,,,"
+              ? myProfile.theme.palette
+              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+        });
       if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
     }
   }, [myProfile, theme, customThemeSelectorOptions]);
