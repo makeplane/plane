@@ -74,6 +74,7 @@ const useUserNotification = () => {
         })
         .finally(() => {
           notificationsMutate();
+          mutateNotificationCount();
         });
     } else {
       notificationsMutate(
@@ -96,6 +97,7 @@ const useUserNotification = () => {
         })
         .finally(() => {
           notificationsMutate();
+          mutateNotificationCount();
         });
     }
   };
@@ -114,6 +116,7 @@ const useUserNotification = () => {
         })
         .finally(() => {
           notificationsMutate();
+          mutateNotificationCount();
         });
     } else {
       notificationsMutate(
@@ -127,6 +130,7 @@ const useUserNotification = () => {
         })
         .finally(() => {
           notificationsMutate();
+          mutateNotificationCount();
         });
     }
   };
@@ -145,6 +149,7 @@ const useUserNotification = () => {
         })
         .finally(() => {
           notificationsMutate();
+          mutateNotificationCount();
         });
     } else {
       notificationsMutate(
@@ -160,6 +165,7 @@ const useUserNotification = () => {
         })
         .finally(() => {
           notificationsMutate();
+          mutateNotificationCount();
         });
     }
   };
