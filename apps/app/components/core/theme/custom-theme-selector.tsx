@@ -69,8 +69,8 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
           return { ...prevData, ...res };
         }, false);
 
-        applyTheme(payload.palette, darkPalette);
         setTheme("custom");
+        applyTheme(payload.palette, darkPalette);
       })
       .catch((err) => console.log(err));
   };
