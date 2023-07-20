@@ -32,3 +32,4 @@ celery==5.3.1
 django_celery_beat==2.5.0
 psycopg-binary==3.1.9
 psycopg-c==3.1.9
+scout-apm==2.26.1
