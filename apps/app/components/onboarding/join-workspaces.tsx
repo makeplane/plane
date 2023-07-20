@@ -88,7 +88,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange }) => {
     <div className="w-full space-y-7 sm:space-y-10">
       <h5 className="sm:text-lg">We see that someone has invited you to</h5>
       <h4 className="text-xl sm:text-2xl font-semibold">Join a workspace</h4>
-      <div className="md:w-3/5 space-y-4">
+      <div className="max-h-[37vh] overflow-y-auto md:w-3/5 space-y-4">
         {invitations &&
           invitations.map((invitation) => {
             const isSelected = invitationsRespond.includes(invitation.id);
@@ -146,7 +146,11 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange }) => {
         >
           Accept & Join
         </PrimaryButton>
-        <SecondaryButton className="border border-none bg-transparent" size="md" onClick={finishOnboarding} >
+        <SecondaryButton
+          className="border border-none bg-transparent"
+          size="md"
+          onClick={finishOnboarding}
+        >
           Skip for now
         </SecondaryButton>
       </div>

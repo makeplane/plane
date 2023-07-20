@@ -43,7 +43,7 @@ const userLinks = (workspaceSlug: string) => [
 export const WorkspaceSidebarDropdown = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // fetching user details
+
   const { user, mutateUser } = useUser();
 
   const { collapsed: sidebarCollapse } = useThemeHook();
@@ -139,8 +139,8 @@ export const WorkspaceSidebarDropdown = () => {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items
-          className="fixed left-2 z-20 mt-1 flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 shadow-lg focus:outline-none"
+          className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md
+          border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 shadow-lg outline-none"
         >
           <div className="flex flex-col items-start justify-start gap-3 p-3">
             <div className="text-sm text-custom-sidebar-text-200">{user?.email}</div>

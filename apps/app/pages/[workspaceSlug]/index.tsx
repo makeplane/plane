@@ -24,7 +24,9 @@ import {
 } from "components/workspace";
 import { TourRoot } from "components/onboarding";
 // ui
-import { Icon, PrimaryButton, ProductUpdatesModal } from "components/ui";
+import { PrimaryButton, ProductUpdatesModal } from "components/ui";
+// icons
+import { BoltOutlined, GridViewOutlined } from "@mui/icons-material";
 // images
 import emptyDashboard from "public/empty-state/dashboard.svg";
 import githubBlackImage from "/public/logos/github-black.png";
@@ -70,7 +72,7 @@ const WorkspacePage: NextPage = () => {
     <WorkspaceAuthorizationLayout
       left={
         <div className="flex items-center gap-2 pl-3">
-          <Icon iconName="grid_view" />
+          <GridViewOutlined fontSize="small" />
           Dashboard
         </div>
       }
@@ -80,7 +82,7 @@ const WorkspacePage: NextPage = () => {
             onClick={() => setIsProductUpdatesModalOpen(true)}
             className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded"
           >
-            <Icon iconName="bolt" className="!text-base -my-1" />
+            <BoltOutlined fontSize="small" className="-my-1" />
             What{"'"}s New?
           </button>
           <Link href="https://github.com/makeplane/plane" target="_blank" rel="noopener noreferrer">

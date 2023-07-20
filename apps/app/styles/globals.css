@@ -295,3 +295,7 @@ body {
 :-ms-input-placeholder {
   color: rgb(var(--color-text-400));
 }
+
+.bp4-overlay-content {
+  z-index: 555 !important;
+}

@@ -30,7 +30,6 @@ class NotificationViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            order_by = request.GET.get("order_by", "-created_at")
             snoozed = request.GET.get("snoozed", "false")
             archived = request.GET.get("archived", "false")
             read = request.GET.get("read", "true")
@@ -40,7 +39,7 @@ class NotificationViewSet(BaseViewSet):
 
             notifications = Notification.objects.filter(
                 workspace__slug=slug, receiver_id=request.user.id
-            ).order_by(order_by)
+            ).order_by("snoozed_till", "-created_at")
 
             # Filter for snoozed notifications
             if snoozed == "false":

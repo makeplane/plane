@@ -8,6 +8,7 @@ import plane.db.models.user
 import uuid
 
 
+
 def onboarding_default_steps(apps, schema_editor):
     default_onboarding_schema = {
         "workspace_join": True,
@@ -23,7 +24,7 @@ def onboarding_default_steps(apps, schema_editor):
         obj.is_tour_completed = True
         updated_user.append(obj)
 
-    Model.objects.bulk_update(updated_user, ["onboarding_step"], batch_size=100)
+    Model.objects.bulk_update(updated_user, ["onboarding_step", "is_tour_completed"], batch_size=100)
 
 
 class Migration(migrations.Migration):
@@ -79,6 +80,7 @@ class Migration(migrations.Migration):
             name="onboarding_step",
             field=models.JSONField(default=plane.db.models.user.get_default_onboarding),
         ),
+        migrations.RunPython(onboarding_default_steps),
         migrations.CreateModel(
             name="Notification",
             fields=[

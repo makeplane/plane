@@ -207,7 +207,10 @@ const WorkspaceSettings: NextPage = () => {
                       {isImageUploading ? "Uploading..." : "Upload"}
                     </SecondaryButton>
                     {activeWorkspace.logo && activeWorkspace.logo !== "" && (
-                      <DangerButton onClick={() => handleDelete(activeWorkspace.logo)}>
+                      <DangerButton
+                        onClick={() => handleDelete(activeWorkspace.logo)}
+                        loading={isImageRemoving}
+                      >
                         {isImageRemoving ? "Removing..." : "Remove"}
                       </DangerButton>
                     )}

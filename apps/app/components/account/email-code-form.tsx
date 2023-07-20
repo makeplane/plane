@@ -120,7 +120,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           Please check your inbox at <span className="font-medium">{watch("email")}</span>
         </p>
       )}
-      <form className="space-y-4 mt-10">
+      <form className="space-y-4 mt-10 sm:w-[360px] mx-auto">
         <div className="space-y-1">
           <Input
             id="email"
