@@ -274,7 +274,7 @@ export const NotificationPopover = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="grid h-full w-full place-items-center overflow-hidden">
+                    <div className="grid h-full w-full place-items-center overflow-hidden scale-75">
                       <EmptyState
                         title="You're updated with all the notifications"
                         description="You have read all the notifications."
