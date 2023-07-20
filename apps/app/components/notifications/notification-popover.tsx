@@ -14,6 +14,8 @@ import useUserNotification from "hooks/use-user-notifications";
 // components
 import { Icon, Loader, EmptyState, Tooltip } from "components/ui";
 import { SnoozeNotificationModal, NotificationCard } from "components/notifications";
+// icons
+import { NotificationsOutlined } from "@mui/icons-material";
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
@@ -99,7 +101,7 @@ export const NotificationPopover = () => {
                   : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
               } ${sidebarCollapse ? "justify-center" : ""}`}
             >
-              <Icon iconName="notifications" />
+              <NotificationsOutlined fontSize="small" />
               {sidebarCollapse ? null : <span>Notifications</span>}
               {totalNotificationCount && totalNotificationCount > 0 ? (
                 <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
