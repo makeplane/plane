@@ -177,7 +177,6 @@ export const IssuesFilterView: React.FC = () => {
                               GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
                                 ?.name ?? "Select"
                             }
-                            width="lg"
                           >
                             {GROUP_BY_OPTIONS.map((option) =>
                               issueView === "kanban" && option.key === null ? null : (
@@ -198,7 +197,6 @@ export const IssuesFilterView: React.FC = () => {
                               ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
                               "Select"
                             }
-                            width="lg"
                           >
                             {ORDER_BY_OPTIONS.map((option) =>
                               groupByProperty === "priority" && option.key === "priority" ? null : (
@@ -223,7 +221,6 @@ export const IssuesFilterView: React.FC = () => {
                           FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
                             ?.name ?? "Select"
                         }
-                        width="lg"
                       >
                         {FILTER_ISSUE_OPTIONS.map((option) => (
                           <CustomMenu.MenuItem
