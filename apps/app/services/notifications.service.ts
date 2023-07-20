@@ -111,14 +111,10 @@ class UserNotificationsServices extends APIService {
   async subscribeToIssueNotifications(
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
-    data: {
-      subscriber: string;
-    }
+    issueId: string
   ): Promise<any> {
     return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-subscribers/`,
-      data
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/subscribe/`
     )
       .then((response) => response?.data)
       .catch((error) => {
