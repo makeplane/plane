@@ -5,40 +5,45 @@ import { useRouter } from "next/router";
 
 // hooks
 import useTheme from "hooks/use-theme";
-
+// components
 import { NotificationPopover } from "components/notifications";
+// ui
+import { Tooltip } from "components/ui";
+// icons
+import {
+  BarChartRounded,
+  GridViewOutlined,
+  TaskAltOutlined,
+  WorkOutlineOutlined,
+} from "@mui/icons-material";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {
-    icon: "grid_view",
+    Icon: GridViewOutlined,
     name: "Dashboard",
     href: `/${workspaceSlug}`,
   },
   {
-    icon: "bar_chart",
+    Icon: BarChartRounded,
     name: "Analytics",
     href: `/${workspaceSlug}/analytics`,
   },
   {
-    icon: "work",
+    Icon: WorkOutlineOutlined,
     name: "Projects",
     href: `/${workspaceSlug}/projects`,
   },
   {
-    icon: "task_alt",
+    Icon: TaskAltOutlined,
     name: "My Issues",
     href: `/${workspaceSlug}/me/my-issues`,
   },
 ];
 
-// components
-import { Icon, Tooltip } from "components/ui";
-
 export const WorkspaceSidebarMenu = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // theme context
   const { collapsed: sidebarCollapse } = useTheme();
 
   return (
@@ -65,7 +70,7 @@ export const WorkspaceSidebarMenu = () => {
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                   } ${sidebarCollapse ? "justify-center" : ""}`}
                 >
-                  <Icon iconName={`${link.icon}`} />
+                  {<link.Icon fontSize="small" />}
                   {!sidebarCollapse && link.name}
                 </div>
               </Tooltip>

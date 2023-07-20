@@ -4,9 +4,10 @@ import Link from "next/link";
 
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
+// ui
+import { DropdownProps } from "components/ui";
 // icons
-import { DropdownProps, Icon } from "components/ui";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ExpandMoreOutlined, MoreHorizOutlined } from "@mui/icons-material";
 
 export type CustomMenuProps = DropdownProps & {
   children: React.ReactNode;
@@ -53,8 +54,8 @@ const CustomMenu = ({
                   disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
-                <Icon
-                  iconName="more_horiz"
+                <MoreHorizOutlined
+                  fontSize="small"
                   className={`${verticalEllipsis ? "rotate-90" : ""} text-custom-text-200`}
                 />
               </Menu.Button>
@@ -72,7 +73,14 @@ const CustomMenu = ({
                 } ${buttonClassName}`}
               >
                 {label}
-                {!noChevron && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+                {!noChevron && (
+                  <ExpandMoreOutlined
+                    sx={{
+                      fontSize: 14,
+                    }}
+                    aria-hidden="true"
+                  />
+                )}
               </Menu.Button>
             )}
           </>
