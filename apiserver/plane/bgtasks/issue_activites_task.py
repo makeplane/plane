@@ -1129,6 +1129,7 @@ def issue_activity(
                 issue is not None
                 and issue.created_by_id is not None
                 and not issue.created_by.is_bot
+                and str(issue.created_by_id) != str(actor_id)
             ):
                 issue_subscribers = issue_subscribers + [issue.created_by_id]
 

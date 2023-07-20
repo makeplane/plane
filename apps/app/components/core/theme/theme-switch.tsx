@@ -71,7 +71,21 @@ export const ThemeSwitch: React.FC<Props> = ({
         }
         onChange={({ value, type }: { value: string; type: string }) => {
           if (value === "custom") {
-            if (user?.theme.palette) setPreLoadedData(user.theme);
+            if (user?.theme.palette) {
+              setPreLoadedData({
+                background: user.theme.background !== "" ? user.theme.background : "#0d101b",
+                text: user.theme.text !== "" ? user.theme.text : "#c5c5c5",
+                primary: user.theme.primary !== "" ? user.theme.primary : "#3f76ff",
+                sidebarBackground:
+                  user.theme.sidebarBackground !== "" ? user.theme.sidebarBackground : "#0d101b",
+                sidebarText: user.theme.sidebarText !== "" ? user.theme.sidebarText : "#c5c5c5",
+                darkPalette: false,
+                palette:
+                  user.theme.palette !== ",,,,"
+                    ? user.theme.palette
+                    : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+              });
+            }
 
             if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
           } else {
@@ -87,6 +101,7 @@ export const ThemeSwitch: React.FC<Props> = ({
               document.documentElement.style.removeProperty(`--color-sidebar-border-${i}`);
             }
           }
+
           setTheme(value);
           document.documentElement.style.setProperty("color-scheme", type);
         }}
