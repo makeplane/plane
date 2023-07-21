@@ -43,7 +43,7 @@ import { ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   control: any;
-  submitChanges: (formData: any) => void;
+  submitChanges: (formData: Partial<IIssue>) => void;
   issueDetail: IIssue | undefined;
   watch: UseFormWatch<IIssue>;
   fieldsToShow?: (
