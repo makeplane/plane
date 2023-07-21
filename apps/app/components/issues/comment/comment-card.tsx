@@ -52,8 +52,8 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
   const onEnter = (formData: IIssueComment) => {
     if (isSubmitting) return;
     setIsEditing(false);
+
     onSubmit(formData);
-    console.log(formData);
 
     editorRef.current?.setEditorValue(formData.comment_json);
     showEditorRef.current?.setEditorValue(formData.comment_json);

@@ -53,13 +53,13 @@ export interface ICurrentUserResponse extends IUser {
 }
 
 export interface IUserLite {
-  readonly id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
   avatar: string;
   created_at: Date;
+  email: string;
+  first_name: string;
+  readonly id: string;
   is_bot: boolean;
+  last_name: string;
 }
 
 export interface IUserActivity {
