@@ -50,6 +50,19 @@ class IssueFlatSerializer(BaseSerializer):
         ]
 
 
+class IssueProjectLiteSerializer(BaseSerializer):
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+
+    class Meta:
+        model = Issue
+        fields = [
+            "project_detail",
+            "name",
+            "sequence_id",
+        ]
+        read_only_fields = fields
+
+
 ##TODO: Find a better way to write this serializer
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
@@ -335,19 +348,27 @@ class IssueLabelSerializer(BaseSerializer):
 
 
 class BlockedIssueSerializer(BaseSerializer):
-    blocked_issue_detail = IssueFlatSerializer(source="block", read_only=True)
+    blocked_issue_detail = IssueProjectLiteSerializer(source="block", read_only=True)
 
     class Meta:
         model = IssueBlocker
-        fields = "__all__"
+        fields = [
+            "blocked_issue_detail",
+        ]
+        read_only_fields = fields
 
 
 class BlockerIssueSerializer(BaseSerializer):
-    blocker_issue_detail = IssueFlatSerializer(source="blocked_by", read_only=True)
+    blocker_issue_detail = IssueProjectLiteSerializer(
+        source="blocked_by", read_only=True
+    )
 
     class Meta:
         model = IssueBlocker
-        fields = "__all__"
+        fields = [
+            "blocker_issue_detail",
+        ]
+        read_only_fields = fields
 
 
 class IssueAssigneeSerializer(BaseSerializer):
