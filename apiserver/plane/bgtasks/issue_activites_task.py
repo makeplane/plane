@@ -1034,7 +1034,7 @@ def issue_activity(
             "module.activity.created",
             "module.activity.deleted",
         ]:
-            issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+            issue = Issue.objects.filter(pk=issue_id).first()
 
             if issue is not None:
                 issue.updated_at = timezone.now()
@@ -1122,7 +1122,7 @@ def issue_activity(
 
             issue_subscribers = issue_subscribers + issue_assignees
 
-            issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+            issue = Issue.objects.filter(pk=issue_id).first()
 
             # Add bot filtering
             if (
