@@ -260,6 +260,7 @@ class IssueSearchEndpoint(BaseAPIView):
                     "name",
                     "id",
                     "sequence_id",
+                    "project__name",
                     "project__identifier",
                     "project_id",
                     "workspace__slug",
