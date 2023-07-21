@@ -56,6 +56,7 @@ class IssueProjectLiteSerializer(BaseSerializer):
     class Meta:
         model = Issue
         fields = [
+            "id",
             "project_detail",
             "name",
             "sequence_id",
