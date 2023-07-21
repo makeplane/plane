@@ -481,6 +481,21 @@ class IssueAttachmentSerializer(BaseSerializer):
         ]
 
 
+class IssueStateFlatSerializer(BaseSerializer):
+    state_detail = StateLiteSerializer(read_only=True, source="state")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "sequence_id",
+            "name",
+            "state_detail",
+            "project_detail",
+        ]
+
+
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
@@ -500,7 +515,7 @@ class IssueStateSerializer(BaseSerializer):
 class IssueSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
-    parent_detail = IssueStateSerializer(read_only=True, source="parent")
+    parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     # List of issues blocked by this issue
