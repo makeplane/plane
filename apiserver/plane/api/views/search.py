@@ -206,7 +206,7 @@ class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
             query = request.query_params.get("search", False)
-            project_search = request.query_params.get("project_search", "true")
+            workspace_search = request.query_params.get("workspace_search", "false")
             parent = request.query_params.get("parent", "false")
             blocker_blocked_by = request.query_params.get("blocker_blocked_by", "false")
             cycle = request.query_params.get("cycle", "false")
@@ -220,7 +220,7 @@ class IssueSearchEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
             )
 
-            if project_search == "true":
+            if workspace_search == "false":
                 issues = issues.filter(project_id=project_id)
 
             if query:
