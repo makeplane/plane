@@ -500,7 +500,7 @@ class IssueStateSerializer(BaseSerializer):
 class IssueSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
-    parent_detail = IssueFlatSerializer(read_only=True, source="parent")
+    parent_detail = IssueStateSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     # List of issues blocked by this issue
