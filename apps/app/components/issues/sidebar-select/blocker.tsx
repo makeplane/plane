@@ -1,20 +1,18 @@
 import React, { useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 // react-hook-form
 import { UseFormWatch } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
-import useProjectDetails from "hooks/use-project-details";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockerIcon } from "components/icons";
 // types
-import { BlockeIssue, IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { BlockeIssueDetail, IIssue, ISearchIssueResponse, UserAuth } from "types";
 
 type Props = {
   issueId?: string;
@@ -34,10 +32,9 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
   const { setToastAlert } = useToast();
-  const { projectDetails } = useProjectDetails();
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const handleClose = () => {
     setIsBlockerModalOpen(false);
@@ -54,11 +51,16 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
       return;
     }
 
-    const selectedIssues: BlockeIssue[] = data.map((i) => ({
+    const selectedIssues: { blocker_issue_detail: BlockeIssueDetail }[] = data.map((i) => ({
       blocker_issue_detail: {
         id: i.id,
         name: i.name,
         sequence_id: i.sequence_id,
+        project_detail: {
+          id: i.project_id,
+          identifier: i.project__identifier,
+          name: i.project__name,
+        },
       },
     }));
 
@@ -94,14 +96,15 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                     key={issue.blocker_issue_detail?.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
                   >
-                    <Link
-                      href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.blocker_issue_detail?.id}`}
+                    <a
+                      href={`/${workspaceSlug}/projects/${issue.blocker_issue_detail?.project_detail.id}/issues/${issue.blocker_issue_detail?.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1"
                     >
-                      <a className="flex items-center gap-1">
-                        <BlockerIcon height={10} width={10} />
-                        {`${projectDetails?.identifier}-${issue.blocker_issue_detail?.sequence_id}`}
-                      </a>
-                    </Link>
+                      <BlockerIcon height={10} width={10} />
+                      {`${issue.blocker_issue_detail?.project_detail.identifier}-${issue.blocker_issue_detail?.sequence_id}`}
+                    </a>
                     <button
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"

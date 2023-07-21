@@ -7,6 +7,7 @@ import type {
   IUserLite,
   IProjectLite,
   IWorkspaceLite,
+  IStateLite,
 } from "types";
 
 export interface IIssueCycle {
@@ -53,8 +54,10 @@ export interface IIssueParent {
   id: string;
   name: string;
   priority: string | null;
+  project_detail: IProjectLite;
   sequence_id: number;
   start_date: string | null;
+  state_detail: IStateLite;
   target_date: string | null;
 }
 
@@ -70,8 +73,8 @@ export interface IIssue {
   assignees_list: string[];
   attachment_count: number;
   attachments: any[];
-  blocked_issues: BlockeIssue[];
-  blocker_issues: BlockeIssue[];
+  blocked_issues: { blocked_issue_detail?: BlockeIssueDetail }[];
+  blocker_issues: { blocker_issue_detail?: BlockeIssueDetail }[];
   blockers_list: string[];
   blocks_list: string[];
   bridge_id?: string | null;
@@ -137,15 +140,11 @@ export interface ISubIssueResponse {
   sub_issues: IIssue[];
 }
 
-export interface BlockeIssue {
-  blocked_issue_detail?: BlockeIssueDetail;
-  blocker_issue_detail?: BlockeIssueDetail;
-}
-
 export interface BlockeIssueDetail {
   id: string;
   name: string;
   sequence_id: number;
+  project_detail: IProjectLite;
 }
 
 export interface IIssueComment {
