@@ -94,21 +94,28 @@ export const NotificationPopover = () => {
       <Popover className="relative w-full">
         {({ open: isActive, close: closePopover }) => (
           <>
-            <Popover.Button
-              className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                isActive
-                  ? "bg-custom-primary-100/10 text-custom-primary-100"
-                  : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-              } ${sidebarCollapse ? "justify-center" : ""}`}
+            <Tooltip
+              tooltipContent="Notifications"
+              position="right"
+              className="ml-2"
+              disabled={!sidebarCollapse}
             >
-              <NotificationsOutlined fontSize="small" />
-              {sidebarCollapse ? null : <span>Notifications</span>}
-              {totalNotificationCount && totalNotificationCount > 0 ? (
-                <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
-                  {getNumberCount(totalNotificationCount)}
-                </span>
-              ) : null}
-            </Popover.Button>
+              <Popover.Button
+                className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
+                  isActive
+                    ? "bg-custom-primary-100/10 text-custom-primary-100"
+                    : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                } ${sidebarCollapse ? "justify-center" : ""}`}
+              >
+                <NotificationsOutlined fontSize="small" />
+                {sidebarCollapse ? null : <span>Notifications</span>}
+                {totalNotificationCount && totalNotificationCount > 0 ? (
+                  <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
+                    {getNumberCount(totalNotificationCount)}
+                  </span>
+                ) : null}
+              </Popover.Button>
+            </Tooltip>
             <Transition
               as={Fragment}
               enter="transition ease-out duration-200"

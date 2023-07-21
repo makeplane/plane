@@ -57,7 +57,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
         }`}
       >
         {!sidebarCollapse && (
-          <div className="w-1/2 text-center rounded-md px-2.5 py-1.5 font-medium outline-none text-sm bg-green-500/10 text-green-500">
+          <div className="w-1/2 text-center cursor-default rounded-md px-2.5 py-1.5 font-medium outline-none text-sm bg-green-500/10 text-green-500">
             Free Plan
           </div>
         )}
