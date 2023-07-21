@@ -260,8 +260,10 @@ export const IssueForm: FC<IssueFormProps> = ({
                 render={({ field: { value, onChange } }) => (
                   <IssueProjectSelect
                     value={value}
-                    onChange={onChange}
-                    setActiveProject={setActiveProject}
+                    onChange={(val: string) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
                   />
                 )}
               />
