@@ -42,7 +42,6 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,31 +96,18 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (!workspaceSlug || !projectId) return;
+    if (!isOpen || !workspaceSlug || !projectId) return;
 
-    setIsLoading(true);
+    setIsSearching(true);
 
-    if (debouncedSearchTerm) {
-      setIsSearching(true);
-
-      projectService
-        .projectIssuesSearch(workspaceSlug as string, projectId as string, {
-          search: debouncedSearchTerm,
-          ...searchParams,
-        })
-        .then((res) => {
-          setIssues(res);
-        })
-        .finally(() => {
-          setIsLoading(false);
-          setIsSearching(false);
-        });
-    } else {
-      setIssues([]);
-      setIsLoading(false);
-      setIsSearching(false);
-    }
-  }, [debouncedSearchTerm, workspaceSlug, projectId, searchParams]);
+    projectService
+      .projectIssuesSearch(workspaceSlug as string, projectId as string, {
+        search: debouncedSearchTerm,
+        ...searchParams,
+      })
+      .then((res) => setIssues(res))
+      .finally(() => setIsSearching(false));
+  }, [debouncedSearchTerm, isOpen, projectId, searchParams, workspaceSlug]);
 
   return (
     <>
@@ -169,7 +155,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm placeholder:text-custom-text-400"
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -206,20 +192,20 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                     )}
                   </div>
 
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto mt-2">
-                    {debouncedSearchTerm !== "" && (
+                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                    {searchTerm !== "" && (
                       <h5 className="text-[0.825rem] text-custom-text-200 mx-2">
                         Search results for{" "}
                         <span className="text-custom-text-100">
                           {'"'}
-                          {debouncedSearchTerm}
+                          {searchTerm}
                           {'"'}
                         </span>{" "}
                         in project:
                       </h5>
                     )}
 
-                    {!isLoading &&
+                    {!isSearching &&
                       issues.length === 0 &&
                       searchTerm !== "" &&
                       debouncedSearchTerm !== "" && (
@@ -235,7 +221,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                         </div>
                       )}
 
-                    {isLoading || isSearching ? (
+                    {isSearching ? (
                       <Loader className="space-y-3 p-3">
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
