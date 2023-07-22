@@ -6,6 +6,7 @@ import type {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueViewOptions,
+  TStateGroup,
 } from "./";
 
 export interface IProject {
@@ -128,6 +129,7 @@ export type TProjectIssuesSearchParams = {
   module?: boolean;
   sub_issue?: boolean;
   issue_id?: string;
+  workspace_search: boolean;
 };
 
 export interface ISearchIssueResponse {
@@ -135,9 +137,10 @@ export interface ISearchIssueResponse {
   name: string;
   project_id: string;
   project__identifier: string;
+  project__name: string;
   sequence_id: number;
   state__color: string;
-  state__group: string;
+  state__group: TStateGroup;
   state__name: string;
   workspace__slug: string;
 }

@@ -50,13 +50,13 @@ const CustomMenu = ({
                 type="button"
                 onClick={menuButtonOnClick}
                 disabled={disabled}
-                className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none ${
+                className={`relative grid place-items-center rounded p-1 text-custom-text-200 hover:text-custom-text-100 outline-none ${
                   disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
                 <MoreHorizOutlined
                   fontSize="small"
-                  className={`${verticalEllipsis ? "rotate-90" : ""} text-custom-text-200`}
+                  className={verticalEllipsis ? "rotate-90" : ""}
                 />
               </Menu.Button>
             ) : (

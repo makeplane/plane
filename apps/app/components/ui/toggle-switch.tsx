@@ -17,7 +17,7 @@ export const ToggleSwitch: React.FC<Props> = (props) => {
       checked={value}
       disabled={disabled}
       onChange={onChange}
-      className={`relative inline-flex ${
+      className={`relative flex-shrink-0 inline-flex ${
         size === "sm" ? "h-3.5 w-6" : size === "md" ? "h-4 w-7" : "h-6 w-11"
       } flex-shrink-0 cursor-pointer rounded-full border-2 border-custom-border-200 transition-colors duration-200 ease-in-out focus:outline-none ${
         value ? "bg-green-500" : "bg-custom-background-80"
