@@ -71,7 +71,6 @@ const ProfilePreferences = () => {
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <ThemeSwitch
-                  user={myProfile}
                   setPreLoadedData={setPreLoadedData}
                   customThemeSelectorOptions={customThemeSelectorOptions}
                   setCustomThemeSelectorOptions={setCustomThemeSelectorOptions}

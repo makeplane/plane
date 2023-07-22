@@ -30,6 +30,7 @@ export interface IUser {
 }
 
 export interface ICustomTheme {
+  theme?: string;
   background: string;
   text: string;
   primary: string;

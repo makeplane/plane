@@ -21,6 +21,7 @@ type Props = {
 };
 
 const defaultValues: ICustomTheme = {
+  theme: "custom",
   background: "#0d101b",
   text: "#c5c5c5",
   primary: "#3f76ff",
@@ -49,6 +50,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
 
   const handleFormSubmit = async (formData: ICustomTheme) => {
     const payload: ICustomTheme = {
+      theme: "custom",
       background: formData.background,
       text: formData.text,
       primary: formData.primary,

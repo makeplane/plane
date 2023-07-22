@@ -1,18 +1,18 @@
 import { createContext, useCallback, useReducer, useEffect } from "react";
+
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
-// components
-import ToastAlert from "components/toast-alert";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
+// components
+import ToastAlert from "components/toast-alert";
+// helpers
+import { applyTheme } from "helpers/theme.helper";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
-// helper
-import { applyTheme } from "helpers/theme.helper";
-// constants
 
 export const themeContext = createContext<ContextType>({} as ContextType);
 
@@ -92,15 +92,19 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   useEffect(() => {
     const theme = localStorage.getItem("theme");
-    if (theme && theme === "custom") {
-      if (user && user.theme.palette) {
-        applyTheme(
-          user.theme.palette !== ",,,,"
-            ? user.theme.palette
-            : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
-          user.theme.darkPalette
-        );
-      }
+
+    if (user) {
+      if (theme && theme === "custom")
+        if (user.theme.palette)
+          applyTheme(
+            user.theme.palette !== ",,,,"
+              ? user.theme.palette
+              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+            user.theme.darkPalette
+          );
+        else applyTheme("#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5", true);
+    } else {
+      if (window) localStorage.removeItem("theme");
     }
   }, [user]);
 

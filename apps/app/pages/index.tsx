@@ -4,13 +4,15 @@ import Image from "next/image";
 
 import type { NextPage } from "next";
 
-// layouts
-import DefaultLayout from "layouts/default-layout";
+// next-themes
+import { useTheme } from "next-themes";
 // services
 import authenticationService from "services/authentication.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
+// layouts
+import DefaultLayout from "layouts/default-layout";
 // components
 import {
   GoogleLoginButton,
@@ -23,6 +25,7 @@ import { Spinner } from "components/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
+import { IUser } from "types";
 type EmailPasswordFormValues = {
   email: string;
   password?: string;
@@ -34,6 +37,14 @@ const HomePage: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
+  const { theme, setTheme } = useTheme();
+
+  const handleThemeChangeOnSignIn = (user: IUser) => {
+    const userTheme = user.theme.theme;
+
+    if (userTheme && theme !== userTheme) setTheme(userTheme);
+  };
+
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
       if (clientId && credential) {
@@ -42,11 +53,14 @@ const HomePage: NextPage = () => {
           credential,
           clientId,
         };
+
         const response = await authenticationService.socialAuth(socialAuthPayload);
-        if (response && response?.user) mutateUser();
-      } else {
-        throw Error("Cant find credentials");
-      }
+
+        if (response && response?.user) {
+          mutateUser();
+          handleThemeChangeOnSignIn(response.user);
+        }
+      } else throw Error("Cant find credentials");
     } catch (err: any) {
       setToastAlert({
         title: "Error signing in!",
@@ -65,11 +79,14 @@ const HomePage: NextPage = () => {
           credential,
           clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
         };
+
         const response = await authenticationService.socialAuth(socialAuthPayload);
-        if (response && response?.user) mutateUser();
-      } else {
-        throw Error("Cant find credentials");
-      }
+
+        if (response && response?.user) {
+          mutateUser();
+          handleThemeChangeOnSignIn(response.user);
+        }
+      } else throw Error("Cant find credentials");
     } catch (err: any) {
       setToastAlert({
         title: "Error signing in!",
@@ -85,7 +102,10 @@ const HomePage: NextPage = () => {
       .emailLogin(formData)
       .then((response) => {
         try {
-          if (response) mutateUser();
+          if (response) {
+            mutateUser();
+            handleThemeChangeOnSignIn(response.user);
+          }
         } catch (err: any) {
           setToastAlert({
             type: "error",
@@ -109,7 +129,10 @@ const HomePage: NextPage = () => {
 
   const handleEmailCodeSignIn = async (response: any) => {
     try {
-      if (response) mutateUser();
+      if (response) {
+        mutateUser();
+        handleThemeChangeOnSignIn(response.user);
+      }
     } catch (err: any) {
       setToastAlert({
         type: "error",

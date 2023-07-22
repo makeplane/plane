@@ -1,38 +1,63 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 
+// next-themes
 import { useTheme } from "next-themes";
-
-// constants
-import { THEMES_OBJ } from "constants/themes";
+// services
+import userService from "services/user.service";
+// hooks
+import useUser from "hooks/use-user";
 // ui
 import { CustomSelect } from "components/ui";
 // types
-import { ICustomTheme, IUser } from "types";
+import { ICustomTheme } from "types";
+// constants
+import { THEMES_OBJ } from "constants/themes";
 
 type Props = {
-  user: IUser | undefined;
   setPreLoadedData: Dispatch<SetStateAction<ICustomTheme | null>>;
   customThemeSelectorOptions: boolean;
   setCustomThemeSelectorOptions: Dispatch<SetStateAction<boolean>>;
 };
 
 export const ThemeSwitch: React.FC<Props> = ({
-  user,
   setPreLoadedData,
   customThemeSelectorOptions,
   setCustomThemeSelectorOptions,
 }) => {
   const [mounted, setMounted] = useState(false);
+
   const { theme, setTheme } = useTheme();
+
+  const { user, mutateUser } = useUser();
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
+  const handleThemeChange = (newTheme: string) => {
+    if (!user) return;
+
+    setTheme(newTheme);
+
+    userService
+      .updateUser({
+        theme: {
+          ...user.theme,
+          theme: newTheme,
+        },
+      })
+      .then((res) => {
+        mutateUser((prevData) => {
+          if (!prevData) return prevData;
+
+          return { ...prevData, ...res };
+        }, false);
+      })
+      .finally(() => mutateUser());
+  };
+
+  if (!mounted) return null;
 
   const currentThemeObj = THEMES_OBJ.find((t) => t.value === theme);
 
@@ -66,13 +91,14 @@ export const ThemeSwitch: React.FC<Props> = ({
               {currentThemeObj.label}
             </div>
           ) : (
-            "Select your theme"
+            "System Preference"
           )
         }
         onChange={({ value, type }: { value: string; type: string }) => {
           if (value === "custom") {
             if (user?.theme.palette) {
               setPreLoadedData({
+                theme: "custom",
                 background: user.theme.background !== "" ? user.theme.background : "#0d101b",
                 text: user.theme.text !== "" ? user.theme.text : "#c5c5c5",
                 primary: user.theme.primary !== "" ? user.theme.primary : "#3f76ff",
@@ -102,7 +128,7 @@ export const ThemeSwitch: React.FC<Props> = ({
             }
           }
 
-          setTheme(value);
+          handleThemeChange(value);
           document.documentElement.style.setProperty("color-scheme", type);
         }}
         input
