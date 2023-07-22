@@ -9,11 +9,11 @@ import { useTheme } from "next-themes";
 // services
 import projectService from "services/project.service";
 // hooks
-import useUserAuth from "hooks/use-user-auth";
+import useUser from "hooks/use-user";
 // components
 import ToastAlert from "components/toast-alert";
 // helpers
-import { applyTheme } from "helpers/theme.helper";
+import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 
@@ -68,12 +68,13 @@ export const reducer: ReducerFunctionType = (state, action) => {
 
 export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { user } = useUserAuth(null);
+
+  const { user } = useUser();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { theme } = useTheme();
+  const { setTheme } = useTheme();
 
   const { data: myViewProps } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
@@ -95,21 +96,22 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
   }, [myViewProps]);
 
+  // set theme based on user theme
   useEffect(() => {
     if (user) {
-      if (theme && theme === "custom")
-        if (user.theme.palette)
-          applyTheme(
-            user.theme.palette !== ",,,,"
-              ? user.theme.palette
-              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
-            user.theme.darkPalette
-          );
+      const userTheme = user.theme.theme ?? "system";
+
+      setTheme(userTheme);
+
+      if (userTheme === "custom") {
+        if (user.theme.palette) applyTheme(user.theme.palette, user.theme.darkPalette ?? false);
         else applyTheme("#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5", true);
+      } else unsetCustomCssVariables();
     } else {
-      if (window) localStorage.removeItem("theme");
+      setTheme("system");
+      unsetCustomCssVariables();
     }
-  }, [theme, user]);
+  }, [setTheme, user]);
 
   return (
     <themeContext.Provider

@@ -30,7 +30,7 @@ type Props = {
 export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error, register }) => {
   const handleColorChange = (newColor: ColorResult) => {
     const { hex } = newColor;
-    setValue(name, hex);
+    setValue(name, hex.toLowerCase());
   };
 
   const getColorText = (colorName: keyof ICustomTheme) => {
@@ -56,10 +56,9 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
         id={name}
         name={name}
         type="name"
-        placeholder="#FFFFFF"
+        placeholder="#ffffff"
         autoComplete="off"
         error={error}
-        value={watch(name)}
         register={register}
         validations={{
           required: `${getColorText(name)} color is required`,

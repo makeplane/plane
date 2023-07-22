@@ -4,8 +4,6 @@ import Image from "next/image";
 
 import type { NextPage } from "next";
 
-// next-themes
-import { useTheme } from "next-themes";
 // services
 import authenticationService from "services/authentication.service";
 // hooks
@@ -25,7 +23,6 @@ import { Spinner } from "components/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import { IUser } from "types";
 type EmailPasswordFormValues = {
   email: string;
   password?: string;
@@ -36,14 +33,6 @@ const HomePage: NextPage = () => {
   const { isLoading, mutateUser } = useUserAuth("sign-in");
 
   const { setToastAlert } = useToast();
-
-  const { theme, setTheme } = useTheme();
-
-  const handleThemeChangeOnSignIn = (user: IUser) => {
-    const userTheme = user.theme.theme;
-
-    if (userTheme && theme !== userTheme) setTheme(userTheme);
-  };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -56,10 +45,7 @@ const HomePage: NextPage = () => {
 
         const response = await authenticationService.socialAuth(socialAuthPayload);
 
-        if (response && response?.user) {
-          mutateUser();
-          handleThemeChangeOnSignIn(response.user);
-        }
+        if (response && response?.user) mutateUser();
       } else throw Error("Cant find credentials");
     } catch (err: any) {
       setToastAlert({
@@ -82,10 +68,7 @@ const HomePage: NextPage = () => {
 
         const response = await authenticationService.socialAuth(socialAuthPayload);
 
-        if (response && response?.user) {
-          mutateUser();
-          handleThemeChangeOnSignIn(response.user);
-        }
+        if (response && response?.user) mutateUser();
       } else throw Error("Cant find credentials");
     } catch (err: any) {
       setToastAlert({
@@ -100,12 +83,9 @@ const HomePage: NextPage = () => {
   const handlePasswordSignIn = async (formData: EmailPasswordFormValues) => {
     await authenticationService
       .emailLogin(formData)
-      .then((response) => {
+      .then(async (response) => {
         try {
-          if (response) {
-            mutateUser();
-            handleThemeChangeOnSignIn(response.user);
-          }
+          if (response) mutateUser();
         } catch (err: any) {
           setToastAlert({
             type: "error",
@@ -129,10 +109,7 @@ const HomePage: NextPage = () => {
 
   const handleEmailCodeSignIn = async (response: any) => {
     try {
-      if (response) {
-        mutateUser();
-        handleThemeChangeOnSignIn(response.user);
-      }
+      if (response) mutateUser();
     } catch (err: any) {
       setToastAlert({
         type: "error",

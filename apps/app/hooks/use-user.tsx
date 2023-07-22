@@ -5,13 +5,11 @@ import useSWR from "swr";
 import userService from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
-// types
-import type { ICurrentUserResponse, IUser } from "types";
 
 export default function useUser({ redirectTo = "", redirectIfFound = false, options = {} } = {}) {
   const router = useRouter();
   // API to fetch user information
-  const { data, isLoading, error, mutate } = useSWR<ICurrentUserResponse>(
+  const { data, isLoading, error, mutate } = useSWR(
     CURRENT_USER,
     () => userService.currentUser(),
     options

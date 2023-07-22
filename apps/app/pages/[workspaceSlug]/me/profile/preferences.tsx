@@ -15,10 +15,11 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ICustomTheme } from "types";
 
 const ProfilePreferences = () => {
-  const { user: myProfile } = useUserAuth();
-  const { theme } = useTheme();
-  const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
   const [preLoadedData, setPreLoadedData] = useState<ICustomTheme | null>(null);
+
+  const { user: myProfile } = useUserAuth();
+
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (theme === "custom") {
@@ -38,9 +39,8 @@ const ProfilePreferences = () => {
               ? myProfile.theme.palette
               : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
         });
-      if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
     }
-  }, [myProfile, theme, customThemeSelectorOptions]);
+  }, [myProfile, theme]);
 
   return (
     <WorkspaceAuthorizationLayout
@@ -70,14 +70,10 @@ const ProfilePreferences = () => {
                 </p>
               </div>
               <div className="col-span-12 sm:col-span-6">
-                <ThemeSwitch
-                  setPreLoadedData={setPreLoadedData}
-                  customThemeSelectorOptions={customThemeSelectorOptions}
-                  setCustomThemeSelectorOptions={setCustomThemeSelectorOptions}
-                />
+                <ThemeSwitch setPreLoadedData={setPreLoadedData} />
               </div>
             </div>
-            {customThemeSelectorOptions && <CustomThemeSelector preLoadedData={preLoadedData} />}
+            {theme === "custom" && <CustomThemeSelector preLoadedData={preLoadedData} />}
           </div>
         </div>
       ) : (

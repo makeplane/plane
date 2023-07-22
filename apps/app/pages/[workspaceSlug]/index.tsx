@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import Image from "next/image";
-import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 
@@ -85,17 +84,20 @@ const WorkspacePage: NextPage = () => {
             <BoltOutlined fontSize="small" className="-my-1" />
             What{"'"}s New?
           </button>
-          <Link href="https://github.com/makeplane/plane" target="_blank" rel="noopener noreferrer">
-            <a className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded">
-              <Image
-                src={theme === "dark" ? githubWhiteImage : githubBlackImage}
-                height={16}
-                width={16}
-                alt="GitHub Logo"
-              />
-              Star us on GitHub
-            </a>
-          </Link>
+          <a
+            href="https://github.com/makeplane/plane"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded"
+          >
+            <Image
+              src={theme === "dark" ? githubWhiteImage : githubBlackImage}
+              height={16}
+              width={16}
+              alt="GitHub Logo"
+            />
+            Star us on GitHub
+          </a>
         </div>
       }
     >

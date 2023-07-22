@@ -60,6 +60,8 @@ const calculateShades = (hexValue: string): TShades => {
 };
 
 export const applyTheme = (palette: string, isDarkPalette: boolean) => {
+  palette = palette !== ",,,," ? palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5";
+
   // palette: [bg, text, primary, sidebarBg, sidebarText]
   const values: string[] = palette.split(",");
   values.push(isDarkPalette ? "dark" : "light");
@@ -116,4 +118,19 @@ export const applyTheme = (palette: string, isDarkPalette: boolean) => {
   document
     .querySelector<HTMLElement>("[data-theme='custom']")
     ?.style.setProperty("--color-scheme", values[5]);
+};
+
+export const unsetCustomCssVariables = () => {
+  for (let i = 10; i <= 900; i >= 100 ? (i += 100) : (i += 10)) {
+    const dom = document.querySelector<HTMLElement>("[data-theme='custom']");
+
+    dom?.style.removeProperty(`--color-background-${i}`);
+    dom?.style.removeProperty(`--color-text-${i}`);
+    dom?.style.removeProperty(`--color-border-${i}`);
+    dom?.style.removeProperty(`--color-primary-${i}`);
+    dom?.style.removeProperty(`--color-sidebar-background-${i}`);
+    dom?.style.removeProperty(`--color-sidebar-text-${i}`);
+    dom?.style.removeProperty(`--color-sidebar-border-${i}`);
+    dom?.style.removeProperty("--color-scheme");
+  }
 };
