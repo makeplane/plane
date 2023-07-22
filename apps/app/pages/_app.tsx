@@ -17,7 +17,6 @@ import "styles/react-datepicker.css";
 import NProgress from "nprogress";
 
 // contexts
-import { UserProvider } from "contexts/user.context";
 import { ToastContextProvider } from "contexts/toast.context";
 import { ThemeContextProvider } from "contexts/theme.context";
 // types

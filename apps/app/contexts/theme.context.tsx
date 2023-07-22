@@ -3,6 +3,9 @@ import { createContext, useCallback, useReducer, useEffect } from "react";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
+
+// next-themes
+import { useTheme } from "next-themes";
 // services
 import projectService from "services/project.service";
 // hooks
@@ -70,6 +73,8 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { theme } = useTheme();
+
   const { data: myViewProps } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
     workspaceSlug && projectId
@@ -91,8 +96,6 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [myViewProps]);
 
   useEffect(() => {
-    const theme = localStorage.getItem("theme");
-
     if (user) {
       if (theme && theme === "custom")
         if (user.theme.palette)
@@ -106,7 +109,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } else {
       if (window) localStorage.removeItem("theme");
     }
-  }, [user]);
+  }, [theme, user]);
 
   return (
     <themeContext.Provider

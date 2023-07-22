@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 
+// next-themes
 import { useTheme } from "next-themes";
-
+// react-hook-form
 import { useForm } from "react-hook-form";
-
-// hooks
-import useUser from "hooks/use-user";
-// ui
-import { PrimaryButton } from "components/ui";
-import { ColorPickerInput } from "components/core";
 // services
 import userService from "services/user.service";
-// helper
+// hooks
+import useUser from "hooks/use-user";
+// components
+import { ColorPickerInput } from "components/core";
+// ui
+import { PrimaryButton } from "components/ui";
+// helpers
 import { applyTheme } from "helpers/theme.helper";
 // types
 import { ICustomTheme } from "types";
