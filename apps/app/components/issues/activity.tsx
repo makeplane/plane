@@ -54,8 +54,22 @@ const activityDetails: {
   },
   attachment: {
     message: (activity) => {
-      if (activity.verb === "created") return "uploaded a new attachment.";
-      else return "removed the attachment.";
+      if (activity.verb === "created")
+        return (
+          <>
+            uploaded a new{" "}
+            <a
+              href={`${activity.new_value}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              attachment
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
+          </>
+        );
+      else return "removed an attachment.";
     },
     icon: <Icon iconName="attach_file" className="!text-sm" aria-hidden="true" />,
   },
@@ -187,28 +201,15 @@ const activityDetails: {
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-custom-text-100"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
             >
               link
+              <Icon iconName="launch" className="!text-xs" />
             </a>{" "}
             to the issue.
           </>
         );
-      else
-        return (
-          <>
-            removed this{" "}
-            <a
-              href={`${activity.old_value}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-custom-text-100"
-            >
-              link
-            </a>{" "}
-            from the issue.
-          </>
-        );
+      else return "removed a link.";
     },
     icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
   },
@@ -244,18 +245,18 @@ const activityDetails: {
   },
   parent: {
     message: (activity) => {
-      if (!activity.old_value)
+      if (!activity.new_value)
         return (
           <>
-            set the parent to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            removed the parent{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
           </>
         );
       else
         return (
           <>
-            removed the parent{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            set the parent to{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
           </>
         );
     },
@@ -373,7 +374,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
         {issueActivities.map((activityItem, index) => {
           // determines what type of action is performed
           const message = activityItem.field
-            ? activityDetails[activityItem.field as keyof typeof activityDetails].message(
+            ? activityDetails[activityItem.field as keyof typeof activityDetails]?.message(
                 activityItem
               )
             : "created the issue.";
