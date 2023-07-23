@@ -19,7 +19,7 @@ import { getFileName } from "helpers/attachment.helper";
 // types
 import type { IIssueAttachment } from "types";
 // fetch-keys
-import { ISSUE_ATTACHMENTS } from "constants/fetch-keys";
+import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -53,6 +53,7 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
         issueId as string,
         assetId as string
       )
+      .then(() => mutate(PROJECT_ISSUES_ACTIVITY(issueId as string)))
       .catch(() => {
         setToastAlert({
           type: "error",

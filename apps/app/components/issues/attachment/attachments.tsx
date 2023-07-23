@@ -81,12 +81,12 @@ export const IssueAttachments = () => {
                         } uploaded on ${renderLongDateFormat(file.updated_at)}`}
                       >
                         <span>
-                          <ExclamationIcon className="h-3 w-3 fill-current text-custom-text-100" />
+                          <ExclamationIcon className="h-3 w-3 fill-current" />
                         </span>
                       </Tooltip>
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-3 text-xs text-custom-text-200">
                       <span>{getFileExtension(file.asset).toUpperCase()}</span>
                       <span>{convertBytesToSize(file.attributes.size)}</span>
                     </div>
@@ -101,7 +101,7 @@ export const IssueAttachments = () => {
                 setAttachmentDeleteModal(true);
               }}
             >
-              <XMarkIcon className="h-4 w-4 text-gray-500 hover:text-gray-800" />
+              <XMarkIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
             </button>
           </div>
         ))}
