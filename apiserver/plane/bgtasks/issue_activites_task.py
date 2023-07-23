@@ -376,7 +376,7 @@ def track_assignees(
                         verb="updated",
                         old_value=assignee.email,
                         new_value="",
-                        field="assignee",
+                        field="assignees",
                         project=project,
                         workspace=project.workspace,
                         comment=f"{actor.email} removed assignee {assignee.email}",
