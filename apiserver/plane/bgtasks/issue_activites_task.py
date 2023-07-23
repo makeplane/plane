@@ -989,7 +989,7 @@ def create_attachment_activity(
             verb="created",
             actor=actor,
             field="attachment",
-            new_value=current_instance.get("access", ""),
+            new_value=current_instance.get("asset", ""),
             new_identifier=current_instance.get("id", None),
         )
     )
