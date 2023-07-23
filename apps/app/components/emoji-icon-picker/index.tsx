@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 // headless ui
 import { Tab, Transition, Popover } from "@headlessui/react";
 // react colors
@@ -11,8 +11,6 @@ import icons from "./icons.json";
 // helpers
 import { getRecentEmojis, saveRecentEmoji } from "./helpers";
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 const tabOptions = [
   {
@@ -26,8 +24,6 @@ const tabOptions = [
 ];
 
 const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorChange }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
   const [isOpen, setIsOpen] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
   const [activeColor, setActiveColor] = useState<string>("rgb(var(--color-text-200))");
@@ -38,20 +34,13 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
     setRecentEmojis(getRecentEmojis());
   }, []);
 
-  useOutsideClickDetector(ref, () => {
-    setIsOpen(false);
-  });
-
   useEffect(() => {
     if (!value || value?.length === 0) onChange(getRandomEmoji());
   }, [value, onChange]);
 
   return (
-    <Popover className="relative z-[1]" ref={ref}>
-      <Popover.Button
-        className="rounded-full bg-custom-background-90 p-2 outline-none sm:text-sm"
-        onClick={() => setIsOpen((prev) => !prev)}
-      >
+    <Popover className="relative z-[1]">
+      <Popover.Button onClick={() => setIsOpen((prev) => !prev)} className="outline-none">
         {label}
       </Popover.Button>
       <Transition

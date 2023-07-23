@@ -19,7 +19,7 @@ import { SettingsHeader } from "components/project";
 import { CustomSelect, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import { IProject, IWorkspace } from "types";
+import { IProject, IUserLite, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, PROJECT_MEMBERS } from "constants/fetch-keys";
@@ -93,7 +93,7 @@ const ControlSettings: NextPage = () => {
       reset({
         ...projectDetails,
         default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
-        project_lead: projectDetails.project_lead?.id ?? projectDetails.project_lead,
+        project_lead: (projectDetails.project_lead as IUserLite)?.id ?? projectDetails.project_lead,
         workspace: (projectDetails.workspace as IWorkspace).id,
       });
   }, [projectDetails, reset]);

@@ -30,7 +30,7 @@ export const JiraImportUsers: FC = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString());
+  const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
   const options = members?.map((member) => ({
     value: member.member.email,

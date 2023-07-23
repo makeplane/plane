@@ -89,7 +89,7 @@ const CustomSelect = ({
 );
 
 type OptionProps = {
-  children: string | JSX.Element;
+  children: React.ReactNode;
   value: any;
   className?: string;
 };
