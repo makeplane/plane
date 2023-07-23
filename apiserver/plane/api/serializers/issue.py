@@ -355,6 +355,8 @@ class BlockedIssueSerializer(BaseSerializer):
         model = IssueBlocker
         fields = [
             "blocked_issue_detail",
+            "blocked_by",
+            "block",
         ]
         read_only_fields = fields
 
@@ -368,6 +370,8 @@ class BlockerIssueSerializer(BaseSerializer):
         model = IssueBlocker
         fields = [
             "blocker_issue_detail",
+            "blocked_by",
+            "block",
         ]
         read_only_fields = fields
 
