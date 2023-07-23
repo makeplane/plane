@@ -22,6 +22,7 @@ from plane.api.views import (
     # User
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
     ## End User
     # Workspaces
@@ -152,6 +153,7 @@ from plane.api.views import (
     ## End Analytics
     # Notification
     NotificationViewSet,
+    UnreadNotificationEndpoint,
     ## End Notification
 )
 
@@ -202,7 +204,12 @@ urlpatterns = [
     path(
         "users/me/onboard/",
         UpdateUserOnBoardedEndpoint.as_view(),
-        name="change-password",
+        name="user-onboard",
+    ),
+    path(
+        "users/me/tour-completed/",
+        UpdateUserTourCompletedEndpoint.as_view(),
+        name="user-tour",
     ),
     path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces
@@ -472,7 +479,6 @@ urlpatterns = [
         "workspaces/<str:slug>/user-favorite-projects/",
         ProjectFavoritesViewSet.as_view(
             {
-                "get": "list",
                 "post": "create",
             }
         ),
@@ -1376,6 +1382,11 @@ urlpatterns = [
             }
         ),
         name="notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/unread/",
+        UnreadNotificationEndpoint.as_view(),
+        name="unread-notifications",
     ),
     ## End Notification
 ]

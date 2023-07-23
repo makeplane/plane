@@ -45,7 +45,6 @@ from plane.api.serializers import (
     IssueLiteSerializer,
     IssueAttachmentSerializer,
     IssueSubscriberSerializer,
-    ProjectMemberSerializer,
     ProjectMemberLiteSerializer,
 )
 from plane.api.permissions import (
@@ -169,8 +168,8 @@ class IssueViewSet(BaseViewSet):
             issue_queryset = (
                 self.get_queryset()
                 .filter(**filters)
-                .annotate(cycle_id=F("issue_cycle__id"))
-                .annotate(module_id=F("issue_module__id"))
+                .annotate(cycle_id=F("issue_cycle__cycle_id"))
+                .annotate(module_id=F("issue_module__module_id"))
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                     .order_by()
@@ -955,8 +954,8 @@ class IssueArchiveViewSet(BaseViewSet):
             issue_queryset = (
                 self.get_queryset()
                 .filter(**filters)
-                .annotate(cycle_id=F("issue_cycle__id"))
-                .annotate(module_id=F("issue_module__id"))
+                .annotate(cycle_id=F("issue_cycle__cycle_id"))
+                .annotate(module_id=F("issue_module__module_id"))
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                     .order_by()
@@ -1087,7 +1086,7 @@ class IssueArchiveViewSet(BaseViewSet):
             issue.save()
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=json.dumps({"archived_in": None}),
+                requested_data=json.dumps({"archived_at": None}),
                 actor_id=str(request.user.id),
                 issue_id=str(issue.id),
                 project_id=str(project_id),

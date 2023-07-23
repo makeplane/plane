@@ -345,7 +345,7 @@ class MagicSignInEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
-            user_token = request.data.get("token", "").strip().lower()
+            user_token = request.data.get("token", "").strip()
             key = request.data.get("key", False)
 
             if not key or user_token == "":

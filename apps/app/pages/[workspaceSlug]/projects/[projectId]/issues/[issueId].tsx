@@ -76,6 +76,9 @@ const IssueDetailsPage: NextPage = () => {
         ...formData,
       };
 
+      delete payload.blocker_issues;
+      delete payload.blocked_issues;
+
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
@@ -119,11 +122,11 @@ const IssueDetailsPage: NextPage = () => {
       }
     >
       {issueDetails && projectId ? (
-        <div className="flex h-full">
-          <div className="w-2/3 space-y-5 divide-y-2 divide-custom-border-100 p-5">
+        <div className="flex h-full overflow-hidden">
+          <div className="w-2/3 h-full overflow-y-auto space-y-5 divide-y-2 divide-custom-border-300 p-5">
             <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
           </div>
-          <div className="w-1/3 space-y-5 border-l border-custom-border-100 p-5">
+          <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 p-5 overflow-hidden">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

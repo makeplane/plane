@@ -185,7 +185,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
     <div
       className={`px-5 py-2.5 flex items-center justify-between space-y-2 ${
         fullScreen
-          ? "border-l border-custom-border-100 md:h-full md:border-l md:border-custom-border-100 md:space-y-4 overflow-hidden md:flex-col md:items-start md:py-5"
+          ? "border-l border-custom-border-200 md:h-full md:border-l md:border-custom-border-200 md:space-y-4 overflow-hidden md:flex-col md:items-start md:py-5"
           : ""
       }`}
     >
@@ -360,11 +360,8 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Network</h6>
                       <span>
-                        {
-                          NETWORK_CHOICES[
-                            `${projectDetails?.network}` as keyof typeof NETWORK_CHOICES
-                          ]
-                        }
+                        {NETWORK_CHOICES.find((n) => n.key === projectDetails?.network)?.label ??
+                          ""}
                       </span>
                     </div>
                   </div>

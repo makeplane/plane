@@ -6,109 +6,298 @@ import useSWR from "swr";
 
 // services
 import issuesService from "services/issues.service";
-// hooks
-import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { CommentCard } from "components/issues/comment";
 // ui
-import { Loader } from "components/ui";
+import { Icon, Loader } from "components/ui";
 // icons
-import {
-  CalendarDaysIcon,
-  ChartBarIcon,
-  ChatBubbleBottomCenterTextIcon,
-  LinkIcon,
-  PaperClipIcon,
-  PlayIcon,
-  RectangleGroupIcon,
-  Squares2X2Icon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
+import { BlockedIcon, BlockerIcon } from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper";
-import { addSpaceIfCamelCase } from "helpers/string.helper";
+import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssueComment, IIssueLabels } from "types";
+import { ICurrentUserResponse, IIssueActivity, IIssueComment } from "types";
 // fetch-keys
-import { PROJECT_ISSUES_ACTIVITY, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const activityDetails: {
   [key: string]: {
-    message?: string;
-    icon: JSX.Element;
+    message: (activity: IIssueActivity) => React.ReactNode;
+    icon: React.ReactNode;
   };
 } = {
   assignee: {
-    message: "removed the assignee",
-    icon: <UserGroupIcon className="h-3 w-3" color="#6b7280" aria-hidden="true" />,
+    message: (activity) => (
+      <>
+        removed the assignee{" "}
+        <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+      </>
+    ),
+    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
   },
   assignees: {
-    message: "added a new assignee",
-    icon: <UserGroupIcon className="h-3 w-3" color="#6b7280" aria-hidden="true" />,
-  },
-  blocks: {
-    message: "marked this issue being blocked by",
-    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
-  },
-  blocking: {
-    message: "marked this issue is blocking",
-    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
-  },
-  cycles: {
-    message: "set the cycle to",
-    icon: <CyclesIcon height="12" width="12" color="#6b7280" />,
-  },
-  estimate_point: {
-    message: "set the estimate point to",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-custom-text-200" aria-hidden="true" />,
-  },
-  labels: {
-    icon: <TagIcon height="12" width="12" color="#6b7280" />,
-  },
-  modules: {
-    message: "set the module to",
-    icon: <RectangleGroupIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
-  },
-  state: {
-    message: "set the state to",
-    icon: <Squares2X2Icon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
-  },
-  priority: {
-    message: "set the priority to",
-    icon: <ChartBarIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
-  },
-  name: {
-    message: "set the name to",
-    icon: (
-      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />
+    message: (activity) => (
+      <>
+        added a new assignee{" "}
+        <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+      </>
     ),
+    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
   },
-  description: {
-    message: "updated the description.",
-    icon: (
-      <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />
-    ),
-  },
-  target_date: {
-    message: "set the due date to",
-    icon: <CalendarDaysIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
-  },
-  parent: {
-    message: "set the parent to",
-    icon: <UserIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
-  },
-  estimate: {
-    message: "updated the estimate",
-    icon: <PlayIcon className="h-3 w-3 -rotate-90 text-custom-text-200" aria-hidden="true" />,
-  },
-  link: {
-    message: "updated the link",
-    icon: <LinkIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+  archived_at: {
+    message: (activity) => {
+      if (activity.new_value === "restore") return "restored the issue.";
+      else return "archived the issue.";
+    },
+    icon: <Icon iconName="archive" className="!text-sm" aria-hidden="true" />,
   },
   attachment: {
-    message: "updated the attachment",
-    icon: <PaperClipIcon className="h-3 w-3 text-custom-text-200" aria-hidden="true" />,
+    message: (activity) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            uploaded a new{" "}
+            <a
+              href={`${activity.new_value}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              attachment
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
+          </>
+        );
+      else return "removed an attachment.";
+    },
+    icon: <Icon iconName="attach_file" className="!text-sm" aria-hidden="true" />,
+  },
+  blocking: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked this issue is blocking issue{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed the blocking issue{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
+  },
+  blocks: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked this issue is being blocked by{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed this issue being blocked by issue{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
+  },
+  cycles: {
+    message: (activity) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            added this issue to the cycle{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else if (activity.verb === "updated")
+        return (
+          <>
+            set the cycle to{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed the issue from the cycle{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <Icon iconName="contrast" className="!text-sm" aria-hidden="true" />,
+  },
+  description: {
+    message: (activity) => "updated the description.",
+    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+  },
+  estimate_point: {
+    message: (activity) => {
+      if (!activity.new_value) return "removed the estimate point.";
+      else
+        return (
+          <>
+            set the estimate point to{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+    },
+    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
+  },
+  labels: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            added a new label{" "}
+            <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{
+                  backgroundColor: "#000000",
+                }}
+                aria-hidden="true"
+              />
+              <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            </span>
+          </>
+        );
+      else
+        return (
+          <>
+            removed the label{" "}
+            <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{
+                  backgroundColor: "#000000",
+                }}
+                aria-hidden="true"
+              />
+              <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            </span>
+          </>
+        );
+    },
+    icon: <Icon iconName="sell" className="!text-sm" aria-hidden="true" />,
+  },
+  link: {
+    message: (activity) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            added this{" "}
+            <a
+              href={`${activity.new_value}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              link
+              <Icon iconName="launch" className="!text-xs" />
+            </a>{" "}
+            to the issue.
+          </>
+        );
+      else return "removed a link.";
+    },
+    icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
+  },
+  modules: {
+    message: (activity) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            added this issue to the module{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else if (activity.verb === "updated")
+        return (
+          <>
+            set the module to{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed the issue from the module{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <Icon iconName="dataset" className="!text-sm" aria-hidden="true" />,
+  },
+  name: {
+    message: (activity) => `set the name to ${activity.new_value}.`,
+    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+  },
+  parent: {
+    message: (activity) => {
+      if (!activity.new_value)
+        return (
+          <>
+            removed the parent{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            set the parent to{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+    },
+    icon: <Icon iconName="supervised_user_circle" className="!text-sm" aria-hidden="true" />,
+  },
+  priority: {
+    message: (activity) => (
+      <>
+        set the priority to{" "}
+        <span className="font-medium text-custom-text-100">
+          {activity.new_value ? capitalizeFirstLetter(activity.new_value) : "None"}
+        </span>
+        .
+      </>
+    ),
+    icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
+  },
+  state: {
+    message: (activity) => (
+      <>
+        set the state to{" "}
+        <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+      </>
+    ),
+    icon: <Squares2X2Icon className="h-3 w-3" aria-hidden="true" />,
+  },
+  target_date: {
+    message: (activity) => {
+      if (!activity.new_value) return "removed the due date.";
+      else
+        return (
+          <>
+            set the due date to{" "}
+            <span className="font-medium text-custom-text-100">
+              {renderShortDateWithYearFormat(activity.new_value)}
+            </span>
+            .
+          </>
+        );
+    },
+    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
   },
 };
 
@@ -121,29 +310,17 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { isEstimateActive, estimatePoints } = useEstimateOption();
-
   const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
-    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId as string) : null,
-    workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.getIssueActivities(
-            workspaceSlug as string,
-            projectId as string,
-            issueId as string
-          )
-      : null
-  );
-
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId ? PROJECT_ISSUES_ACTIVITY(issueId) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () =>
+          issuesService.getIssueActivities(workspaceSlug as string, projectId as string, issueId)
       : null
   );
 
   const handleCommentUpdate = async (comment: IIssueComment) => {
     if (!workspaceSlug || !projectId || !issueId) return;
+
     await issuesService
       .patchIssueComment(
         workspaceSlug as string,
@@ -153,9 +330,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
         comment,
         user
       )
-      .then((res) => {
-        mutateIssueActivities();
-      });
+      .then((res) => mutateIssueActivities());
   };
 
   const handleCommentDelete = async (commentId: string) => {
@@ -172,15 +347,6 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
         user
       )
       .then(() => mutateIssueActivities());
-  };
-
-  const getLabelColor = (labelId: string) => {
-    if (!issueLabels) return;
-    const label = issueLabels.find((label) => label.id === labelId);
-    if (typeof label !== "undefined") {
-      return label.color !== "" ? label.color : "#000000";
-    }
-    return "#000000";
   };
 
   if (!issueActivities) {
@@ -205,187 +371,75 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-4">
-        {issueActivities.map((activityItem, activityItemIdx) => {
+        {issueActivities.map((activityItem, index) => {
           // determines what type of action is performed
-          let action = activityDetails[activityItem.field as keyof typeof activityDetails]?.message;
-          if (activityItem.field === "labels") {
-            action = activityItem.new_value !== "" ? "added a new label" : "removed the label";
-          } else if (activityItem.field === "blocking") {
-            action =
-              activityItem.new_value !== ""
-                ? "marked this issue is blocking"
-                : "removed the issue from blocking";
-          } else if (activityItem.field === "blocks") {
-            action =
-              activityItem.new_value !== ""
-                ? "marked this issue being blocked by"
-                : "removed blocker";
-          } else if (activityItem.field === "target_date") {
-            action =
-              activityItem.new_value && activityItem.new_value !== ""
-                ? "set the due date to"
-                : "removed the due date";
-          } else if (activityItem.field === "parent") {
-            action =
-              activityItem.new_value && activityItem.new_value !== ""
-                ? "set the parent to"
-                : "removed the parent";
-          } else if (activityItem.field === "priority") {
-            action =
-              activityItem.new_value && activityItem.new_value !== ""
-                ? "set the priority to"
-                : "removed the priority";
-          } else if (activityItem.field === "description") {
-            action = "updated the";
-          } else if (activityItem.field === "attachment") {
-            action = `${activityItem.verb} the`;
-          } else if (activityItem.field === "link") {
-            action = `${activityItem.verb} the`;
-          } else if (activityItem.field === "estimate") {
-            action = "updated the";
-          } else if (activityItem.field === "cycles") {
-            action =
-              activityItem.new_value && activityItem.new_value !== ""
-                ? "set the cycle to"
-                : "removed the cycle";
-          } else if (activityItem.field === "modules") {
-            action =
-              activityItem.new_value && activityItem.new_value !== ""
-                ? "set the module to"
-                : "removed the module";
-          }
-          // for values that are after the action clause
-          let value: any = activityItem.new_value ? activityItem.new_value : activityItem.old_value;
-          if (
-            activityItem.verb === "created" &&
-            activityItem.field !== "cycles" &&
-            activityItem.field !== "modules" &&
-            activityItem.field !== "attachment" &&
-            activityItem.field !== "link" &&
-            activityItem.field !== "estimate"
-          ) {
-            value = <span className="text-custom-text-200">created this issue.</span>;
-          } else if (activityItem.field === "state") {
-            value = activityItem.new_value ? addSpaceIfCamelCase(activityItem.new_value) : "None";
-          } else if (activityItem.field === "labels") {
-            let name;
-            let id = "#000000";
-            if (activityItem.new_value !== "") {
-              name = activityItem.new_value;
-              id = activityItem.new_identifier ? activityItem.new_identifier : id;
-            } else {
-              name = activityItem.old_value;
-              id = activityItem.old_identifier ? activityItem.old_identifier : id;
-            }
-
-            value = (
-              <span className="relative inline-flex items-center rounded-full border border-custom-border-100 px-2 py-0.5 text-xs">
-                <span className="absolute flex flex-shrink-0 items-center justify-center">
-                  <span
-                    className="h-1.5 w-1.5 rounded-full"
-                    style={{
-                      backgroundColor: getLabelColor(id),
-                    }}
-                    aria-hidden="true"
-                  />
-                </span>
-                <span className="ml-3 font-medium text-custom-text-100">{name}</span>
-              </span>
-            );
-          } else if (activityItem.field === "assignees") {
-            value = activityItem.new_value;
-          } else if (activityItem.field === "target_date") {
-            const date =
-              activityItem.new_value && activityItem.new_value !== ""
-                ? activityItem.new_value
-                : activityItem.old_value;
-            value = renderShortDateWithYearFormat(date as string);
-          } else if (activityItem.field === "description") {
-            value = "description";
-          } else if (activityItem.field === "attachment") {
-            value = "attachment";
-          } else if (activityItem.field === "cycles") {
-            const cycles =
-              activityItem.new_value && activityItem.new_value !== ""
-                ? activityItem.new_value
-                : activityItem.old_value;
-            value = cycles ? addSpaceIfCamelCase(cycles) : "None";
-          } else if (activityItem.field === "modules") {
-            const modules =
-              activityItem.new_value && activityItem.new_value !== ""
-                ? activityItem.new_value
-                : activityItem.old_value;
-            value = modules ? addSpaceIfCamelCase(modules) : "None";
-          } else if (activityItem.field === "link") {
-            value = "link";
-          } else if (activityItem.field === "estimate_point") {
-            value = activityItem.new_value
-              ? isEstimateActive
-                ? estimatePoints.find((e) => e.key === parseInt(activityItem.new_value ?? "", 10))
-                    ?.value
-                : activityItem.new_value +
-                  ` Point${parseInt(activityItem.new_value ?? "", 10) > 1 ? "s" : ""}`
-              : "None";
-          }
+          const message = activityItem.field
+            ? activityDetails[activityItem.field as keyof typeof activityDetails]?.message(
+                activityItem
+              )
+            : "created the issue.";
 
           if ("field" in activityItem && activityItem.field !== "updated_by") {
             return (
               <li key={activityItem.id}>
                 <div className="relative pb-1">
-                  {issueActivities.length > 1 && activityItemIdx !== issueActivities.length - 1 ? (
+                  {issueActivities.length > 1 && index !== issueActivities.length - 1 ? (
                     <span
                       className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-custom-background-80"
                       aria-hidden="true"
                     />
                   ) : null}
                   <div className="relative flex items-start space-x-2">
-                    <>
-                      <div>
-                        <div className="relative px-1.5">
-                          <div className="mt-1.5">
-                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 ring-white">
-                              {activityItem.field ? (
+                    <div>
+                      <div className="relative px-1.5">
+                        <div className="mt-1.5">
+                          <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
+                            {activityItem.field ? (
+                              activityItem.new_value === "restore" ? (
+                                <Icon iconName="history" className="text-sm text-custom-text-200" />
+                              ) : (
                                 activityDetails[activityItem.field as keyof typeof activityDetails]
                                   ?.icon
-                              ) : activityItem.actor_detail.avatar &&
-                                activityItem.actor_detail.avatar !== "" ? (
-                                <img
-                                  src={activityItem.actor_detail.avatar}
-                                  alt={activityItem.actor_detail.first_name}
-                                  height={24}
-                                  width={24}
-                                  className="rounded-full"
-                                />
-                              ) : (
-                                <div
-                                  className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white`}
-                                >
-                                  {activityItem.actor_detail.first_name.charAt(0)}
-                                </div>
-                              )}
-                            </div>
+                              )
+                            ) : activityItem.actor_detail.avatar &&
+                              activityItem.actor_detail.avatar !== "" ? (
+                              <img
+                                src={activityItem.actor_detail.avatar}
+                                alt={activityItem.actor_detail.first_name}
+                                height={24}
+                                width={24}
+                                className="rounded-full"
+                              />
+                            ) : (
+                              <div
+                                className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white`}
+                              >
+                                {activityItem.actor_detail.first_name.charAt(0)}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
-                      <div className="min-w-0 flex-1 py-3">
-                        <div className="text-xs text-custom-text-200">
+                    </div>
+                    <div className="min-w-0 flex-1 py-3">
+                      <div className="text-xs text-custom-text-200 break-words">
+                        {activityItem.field === "archived_at" &&
+                        activityItem.new_value !== "restore" ? (
+                          <span className="text-gray font-medium">Plane</span>
+                        ) : (
                           <span className="text-gray font-medium">
                             {activityItem.actor_detail.first_name}
                             {activityItem.actor_detail.is_bot
                               ? " Bot"
                               : " " + activityItem.actor_detail.last_name}
                           </span>
-                          <span> {action} </span>
-                          <span className="text-xs font-medium text-custom-text-100">
-                            {" "}
-                            {value}{" "}
-                          </span>
-                          <span className="whitespace-nowrap">
-                            {timeAgo(activityItem.created_at)}
-                          </span>
-                        </div>
+                        )}{" "}
+                        {message}{" "}
+                        <span className="whitespace-nowrap">
+                          {timeAgo(activityItem.created_at)}
+                        </span>
                       </div>
-                    </>
+                    </div>
                   </div>
                 </div>
               </li>
@@ -394,7 +448,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
             return (
               <div key={activityItem.id} className="mt-4">
                 <CommentCard
-                  comment={activityItem as any}
+                  comment={activityItem as IIssueComment}
                   onSubmit={handleCommentUpdate}
                   handleCommentDeletion={handleCommentDelete}
                 />

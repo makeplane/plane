@@ -55,7 +55,7 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
       </div>
       <div className="sm:basis-1/2">
         <CustomSearchSelect
-          value={value}
+          value={value ?? []}
           label={
             <div className="flex items-center gap-2 text-custom-text-200">
               {value && value.length > 0 && Array.isArray(value) ? (
@@ -70,7 +70,7 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
           }
           options={options}
           onChange={onChange}
-          height="md"
+          maxHeight="md"
           position="right"
           multiple
         />

@@ -1,35 +1,17 @@
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
+// hooks
+import useProjects from "hooks/use-projects";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
-// services
-import projectService from "services/project.service";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
 
 export interface IssueProjectSelectProps {
   value: string;
   onChange: (value: string) => void;
-  setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({
-  value,
-  onChange,
-  setActiveProject,
-}) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  // Fetching Projects List
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
-  );
+export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({ value, onChange }) => {
+  const { projects } = useProjects();
 
   return (
     <CustomSelect
@@ -42,10 +24,7 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({
           </span>
         </>
       }
-      onChange={(val: string) => {
-        onChange(val);
-        setActiveProject(val);
-      }}
+      onChange={(val: string) => onChange(val)}
       noChevron
     >
       {projects ? (

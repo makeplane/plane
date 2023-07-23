@@ -94,7 +94,12 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const theme = localStorage.getItem("theme");
     if (theme && theme === "custom") {
       if (user && user.theme.palette) {
-        applyTheme(user.theme.palette, user.theme.darkPalette);
+        applyTheme(
+          user.theme.palette !== ",,,,"
+            ? user.theme.palette
+            : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+          user.theme.darkPalette
+        );
       }
     }
   }, [user]);

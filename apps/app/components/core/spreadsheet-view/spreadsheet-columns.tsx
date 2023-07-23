@@ -56,7 +56,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                   className="!w-full"
                   customButton={
                     <div
-                      className={`relative group flex items-center justify-start gap-1.5 cursor-pointer text-sm text-custom-text-200 text-current hover:text-custom-text-100 w-full py-3 px-2 ${
+                      className={`relative group flex items-center justify-start gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-3 px-2 ${
                         activeSortingProperty === col.propertyName ? "bg-custom-background-80" : ""
                       }`}
                     >
@@ -90,16 +90,9 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                       <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                     </div>
                   }
-                  menuItemsWhiteBg
                   width="xl"
                 >
                   <CustomMenu.MenuItem
-                    className={`${
-                      selectedMenuItem === `${col.ascendingOrder}_${col.propertyName}`
-                        ? "bg-custom-background-80"
-                        : ""
-                    }`}
-                    key={col.propertyName}
                     onClick={() => {
                       handleOrderBy(col.ascendingOrder, col.propertyName);
                     }}

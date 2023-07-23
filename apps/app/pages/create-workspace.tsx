@@ -1,60 +1,100 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 import Image from "next/image";
+
+import { mutate } from "swr";
+
+// next-themes
+import { useTheme } from "next-themes";
+// services
+import userService from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
-// components
-import { OnboardingLogo } from "components/onboarding";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
-// images
-import Logo from "public/onboarding/logo.svg";
-// types
-import type { NextPage } from "next";
-// constants
+// components
 import { CreateWorkspaceForm } from "components/workspace";
+// images
+import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+// types
+import { ICurrentUserResponse, IWorkspace } from "types";
+import type { NextPage } from "next";
+// fetch-keys
+import { CURRENT_USER } from "constants/fetch-keys";
 
 const CreateWorkspace: NextPage = () => {
-  const router = useRouter();
-  const defaultValues = {
+  const [defaultValues, setDefaultValues] = useState({
     name: "",
     slug: "",
-    company_size: null,
-  };
+    organization_size: "",
+  });
+
+  const router = useRouter();
+
+  const { theme } = useTheme();
 
   const { user } = useUser();
+
+  const onSubmit = async (workspace: IWorkspace) => {
+    mutate<ICurrentUserResponse>(
+      CURRENT_USER,
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          last_workspace_id: workspace.id,
+          workspace: {
+            ...prevData.workspace,
+            fallback_workspace_id: workspace.id,
+            fallback_workspace_slug: workspace.slug,
+            last_workspace_id: workspace.id,
+            last_workspace_slug: workspace.slug,
+          },
+        };
+      },
+      false
+    );
+
+    await userService
+      .updateUser({ last_workspace_id: workspace.id })
+      .then(() => router.push(`/${workspace.slug}`));
+  };
+
   return (
     <UserAuthorizationLayout>
       <DefaultLayout>
-        <div className="relative grid h-full place-items-center p-5">
-          <div className="h-full flex flex-col items-center justify-center w-full py-4">
-            <div className="mb-7 flex items-center justify-center text-center">
-              <OnboardingLogo className="h-12 w-48 fill-current text-custom-text-100" />
-            </div>
-
-            <div className="flex h-[366px] w-full max-w-xl flex-col justify-between rounded-[10px] bg-custom-background-100 shadow-md">
-              <div className="flex items-center justify-start gap-3 px-7 pt-7 pb-3.5 text-gray-8 text-sm">
-                <div className="flex flex-col gap-2 justify-center ">
-                  <h3 className="text-base font-semibold text-custom-text-100">Create Workspace</h3>
-                  <p className="text-sm text-custom-text-200">
-                    Create or join the workspace to get started with Plane.
-                  </p>
-                </div>
+        <div className="flex h-full flex-col gap-y-2 sm:gap-y-0 sm:flex-row overflow-hidden">
+          <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
+            <div className="absolute border-b-[0.5px] sm:border-r-[0.5px] border-custom-border-200 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:translate-y-0" />
+            <div className="absolute grid place-items-center bg-custom-background-100 px-3 sm:px-0 sm:py-5 left-5 sm:left-1/2 md:left-1/3 sm:-translate-x-[15px] top-1/2 -translate-y-1/2 sm:translate-y-0 sm:top-12">
+              <div className="h-[30px] w-[133px]">
+                {theme === "light" ? (
+                  <Image src={BlackHorizontalLogo} alt="Plane black logo" />
+                ) : (
+                  <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
+                )}
               </div>
-              <CreateWorkspaceForm
-                defaultValues={defaultValues}
-                setDefaultValues={() => {}}
-                onSubmit={(res) => router.push(`/${res.slug}`)}
-                user={user}
-              />
+            </div>
+            <div className="absolute sm:fixed text-custom-text-100 text-sm right-4 top-1/4 sm:top-12 -translate-y-1/2 sm:translate-y-0 sm:right-16 sm:py-5">
+              {user?.email}
             </div>
           </div>
-
-          <div className="absolute flex flex-col gap-1 justify-center items-start left-5 top-5">
-            <span className="text-xs text-custom-text-200">Logged in:</span>
-            <span className="text-sm text-custom-text-100">{user?.email}</span>
+          <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
+            <div className="w-full space-y-7 sm:space-y-10">
+              <h4 className="text-2xl font-semibold">Create your workspace</h4>
+              <div className="sm:w-3/4 md:w-2/5">
+                <CreateWorkspaceForm
+                  onSubmit={onSubmit}
+                  defaultValues={defaultValues}
+                  setDefaultValues={setDefaultValues}
+                  user={user}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </DefaultLayout>

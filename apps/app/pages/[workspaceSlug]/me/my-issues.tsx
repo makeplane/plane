@@ -50,7 +50,7 @@ const MyIssuesPage: NextPage = () => {
               {({ open }) => (
                 <>
                   <Popover.Button
-                    className={`group flex items-center gap-2 rounded-md border border-custom-border-100 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-background-90 hover:text-custom-text-100 focus:outline-none ${
+                    className={`group flex items-center gap-2 rounded-md border border-custom-border-200 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-background-90 hover:text-custom-text-100 focus:outline-none ${
                       open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
                     }`}
                   >
@@ -72,7 +72,8 @@ const MyIssuesPage: NextPage = () => {
                         <h4 className="text-sm text-custom-text-200">Properties</h4>
                         <div className="flex flex-wrap items-center gap-2">
                           {Object.keys(properties).map((key) => {
-                            if (key === "estimate") return null;
+                            if (key === "estimate" || key === "created_on" || key === "updated_on")
+                              return null;
 
                             return (
                               <button
@@ -81,7 +82,7 @@ const MyIssuesPage: NextPage = () => {
                                 className={`rounded border px-2 py-1 text-xs capitalize ${
                                   properties[key as keyof Properties]
                                     ? "border-custom-primary bg-custom-primary text-white"
-                                    : "border-custom-border-100"
+                                    : "border-custom-border-200"
                                 }`}
                                 onClick={() => setProperties(key as keyof Properties)}
                               >

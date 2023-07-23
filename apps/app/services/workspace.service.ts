@@ -13,6 +13,7 @@ import {
   IWorkspaceSearchResults,
   IProductUpdateResponse,
   ICurrentUserResponse,
+  IWorkspaceBulkInviteFormData,
 } from "types";
 
 const trackEvent =
@@ -87,7 +88,7 @@ class WorkspaceService extends APIService {
 
   async inviteWorkspace(
     workspaceSlug: string,
-    data: any,
+    data: IWorkspaceBulkInviteFormData,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)

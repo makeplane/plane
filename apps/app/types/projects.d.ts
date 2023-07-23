@@ -6,9 +6,12 @@ import type {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueViewOptions,
+  TStateGroup,
 } from "./";
 
 export interface IProject {
+  archive_in: number;
+  close_in: number;
   created_at: Date;
   created_by: string;
   cover_image: string | null;
@@ -18,6 +21,7 @@ export interface IProject {
   page_view: boolean;
   inbox_view: boolean;
   default_assignee: IUser | string | null;
+  default_state: string | null;
   description: string;
   emoji: string | null;
   emoji_and_icon:
@@ -40,7 +44,7 @@ export interface IProject {
   name: string;
   network: number;
   page_view: boolean;
-  project_lead: IUser | string | null;
+  project_lead: IUserLite | string | null;
   slug: string;
   total_cycles: number;
   total_members: number;
@@ -55,18 +59,6 @@ export interface IProjectLite {
   id: string;
   name: string;
   identifier: string;
-}
-
-export interface IFavoriteProject {
-  created_at: Date;
-  created_by: string;
-  id: string;
-  project: string;
-  project_detail: IProject;
-  updated_at: Date;
-  updated_by: string;
-  user: string;
-  workspace: string;
 }
 
 type ProjectViewTheme = {
@@ -137,6 +129,7 @@ export type TProjectIssuesSearchParams = {
   module?: boolean;
   sub_issue?: boolean;
   issue_id?: string;
+  workspace_search: boolean;
 };
 
 export interface ISearchIssueResponse {
@@ -144,9 +137,10 @@ export interface ISearchIssueResponse {
   name: string;
   project_id: string;
   project__identifier: string;
+  project__name: string;
   sequence_id: number;
   state__color: string;
-  state__group: string;
+  state__group: TStateGroup;
   state__name: string;
   workspace__slug: string;
 }

@@ -7,5 +7,5 @@ django-storages==1.13.2
 boto3==1.27.0
 django-anymail==10.0
 django-debug-toolbar==4.1.0
-gevent==22.10.2
+gevent==23.7.0
 psycogreen==1.0.2

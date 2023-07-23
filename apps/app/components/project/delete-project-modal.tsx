@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
@@ -13,7 +15,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { DangerButton, Input, SecondaryButton } from "components/ui";
 // types
-import type { ICurrentUserResponse, IProject, IWorkspace } from "types";
+import type { ICurrentUserResponse, IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
@@ -37,7 +39,8 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
 
-  const workspaceSlug = (data?.workspace as IWorkspace)?.slug;
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -55,6 +58,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
 
   const handleClose = () => {
     setIsDeleteLoading(false);
+
     const timer = setTimeout(() => {
       setConfirmProjectName("");
       setConfirmDeleteMyProject(false);
@@ -64,26 +68,31 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   };
 
   const handleDeletion = async () => {
-    setIsDeleteLoading(true);
     if (!data || !workspaceSlug || !canDelete) return;
+
+    setIsDeleteLoading(true);
+
     await projectService
-      .deleteProject(workspaceSlug, data.id, user)
+      .deleteProject(workspaceSlug as string, data.id, user)
       .then(() => {
         handleClose();
-        mutate<IProject[]>(PROJECTS_LIST(workspaceSlug), (prevData) =>
-          prevData?.filter((project: IProject) => project.id !== data.id)
+
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+          (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
+          false
         );
+
         if (onSuccess) onSuccess();
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Project deleted successfully",
-        });
       })
-      .catch((error) => {
-        console.log(error);
-        setIsDeleteLoading(false);
-      });
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again later.",
+        })
+      )
+      .finally(() => setIsDeleteLoading(false));
   };
 
   return (
@@ -112,7 +121,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-100 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -174,7 +183,11 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                   </div>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading || !canDelete}>
+                    <DangerButton
+                      onClick={handleDeletion}
+                      disabled={!canDelete}
+                      loading={isDeleteLoading}
+                    >
                       {isDeleteLoading ? "Deleting..." : "Delete Project"}
                     </DangerButton>
                   </div>

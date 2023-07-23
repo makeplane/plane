@@ -26,9 +26,9 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import type { IFavoriteProject, IProject } from "types";
+import type { IProject } from "types";
 // fetch-keys
-import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST } from "constants/fetch-keys";
+import { PROJECTS_LIST } from "constants/fetch-keys";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -55,22 +55,18 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
+      false
+    );
+
     projectService
       .addProjectToFavorites(workspaceSlug as string, {
         project: project.id,
       })
       .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => ({
-              ...p,
-              is_favorite: p.id === project.id ? true : p.is_favorite,
-            })),
-          false
-        );
-        mutate(FAVORITE_PROJECTS_LIST(workspaceSlug as string));
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -89,24 +85,16 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
+      false
+    );
+
     projectService
       .removeProjectFromFavorites(workspaceSlug as string, project.id)
       .then(() => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => ({
-              ...p,
-              is_favorite: p.id === project.id ? false : p.is_favorite,
-            })),
-          false
-        );
-        mutate<IFavoriteProject[]>(
-          FAVORITE_PROJECTS_LIST(workspaceSlug as string),
-          (prevData) => (prevData ?? []).filter((p) => p.project !== project.id),
-          false
-        );
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -150,7 +138,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   alt={project.name}
                   className="absolute top-0 left-0 h-full w-full object-cover rounded-t-[10px]"
                 />
-                <div className="absolute left-7 bottom-4 flex items-center gap-3 text-white">
+                <div className="absolute bottom-4 left-4 flex items-center gap-3 text-white">
                   {!hasJoined ? (
                     <button
                       type="button"
@@ -205,7 +193,6 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               <Tooltip
                 tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
                 position="bottom"
-                theme="dark"
               >
                 <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />

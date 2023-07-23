@@ -28,11 +28,16 @@ import { SUB_ISSUES } from "constants/fetch-keys";
 type Props = {
   issueDetails: IIssue;
   submitChanges: (formData: Partial<IIssue>) => Promise<void>;
+  uneditable?: boolean;
 };
 
-export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges }) => {
+export const IssueMainContent: React.FC<Props> = ({
+  issueDetails,
+  submitChanges,
+  uneditable = false,
+}) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId, archivedIssueId } = router.query;
 
   const { user } = useUserAuth();
   const { memberRole } = useProjectMyMembership();
@@ -48,22 +53,26 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges 
           )
       : null
   );
+  const siblingIssuesList = siblingIssues?.sub_issues.filter((i) => i.id !== issueDetails.id);
 
   return (
     <>
       <div className="rounded-lg">
-        {issueDetails?.parent && issueDetails.parent !== "" ? (
-          <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
-            <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${issueDetails.parent}`}>
+        {issueDetails?.parent ? (
+          <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-90 p-2 text-xs">
+            <Link
+              href={`/${workspaceSlug}/projects/${issueDetails.parent_detail?.project_detail.id}/issues/${issueDetails.parent}`}
+            >
               <a className="flex items-center gap-2 text-custom-text-200">
                 <span
                   className="block h-1.5 w-1.5 rounded-full"
                   style={{
-                    backgroundColor: issueDetails?.state_detail?.color,
+                    backgroundColor: issueDetails.parent_detail?.state_detail.color,
                   }}
                 />
                 <span className="flex-shrink-0">
-                  {issueDetails.project_detail.identifier}-{issueDetails.parent_detail?.sequence_id}
+                  {issueDetails.parent_detail?.project_detail.identifier}-
+                  {issueDetails.parent_detail?.sequence_id}
                 </span>
                 <span className="truncate">
                   {issueDetails.parent_detail?.name.substring(0, 50)}
@@ -71,47 +80,65 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges 
               </a>
             </Link>
 
-            <CustomMenu ellipsis position="left">
-              {siblingIssues && siblingIssues.length > 0 ? (
-                siblingIssues.map((issue: IIssue) => (
-                  <CustomMenu.MenuItem key={issue.id}>
-                    <Link
-                      href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id}`}
-                    >
-                      <a>
+            <CustomMenu position="left" ellipsis>
+              {siblingIssuesList ? (
+                siblingIssuesList.length > 0 ? (
+                  <>
+                    <h2 className="text-custom-text-200 px-1 mb-2">Sibling issues</h2>
+                    {siblingIssuesList.map((issue) => (
+                      <CustomMenu.MenuItem
+                        key={issue.id}
+                        renderAs="a"
+                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                          issue.id
+                        }`}
+                      >
                         {issueDetails.project_detail.identifier}-{issue.sequence_id}
-                      </a>
-                    </Link>
-                  </CustomMenu.MenuItem>
-                ))
-              ) : (
-                <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-custom-text-200">
-                  No other sibling issues
-                </CustomMenu.MenuItem>
-              )}
+                      </CustomMenu.MenuItem>
+                    ))}
+                  </>
+                ) : (
+                  <p className="flex items-center gap-2 whitespace-nowrap px-1 text-left text-xs text-custom-text-200 py-1">
+                    No sibling issues
+                  </p>
+                )
+              ) : null}
+              <CustomMenu.MenuItem
+                renderAs="button"
+                onClick={() => submitChanges({ parent: null })}
+              >
+                Remove parent issue
+              </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
         ) : null}
         <IssueDescriptionForm
           issue={issueDetails}
           handleFormSubmit={submitChanges}
-          isAllowed={memberRole.isMember || memberRole.isOwner}
+          isAllowed={memberRole.isMember || memberRole.isOwner || !uneditable}
         />
         <div className="mt-2 space-y-2">
-          <SubIssuesList parentIssue={issueDetails} user={user} />
+          <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} />
         </div>
       </div>
       <div className="flex flex-col gap-3 py-3">
         <h3 className="text-lg">Attachments</h3>
         <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          <IssueAttachmentUpload />
+          <IssueAttachmentUpload disabled={uneditable} />
           <IssueAttachments />
         </div>
       </div>
       <div className="space-y-5 pt-3">
         <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
-        <IssueActivitySection issueId={issueId as string} user={user} />
-        <AddComment issueId={issueId as string} user={user} />
+        <IssueActivitySection
+          issueId={(archivedIssueId as string) ?? (issueId as string)}
+          user={user}
+        />
+        <AddComment
+          issueId={(archivedIssueId as string) ?? (issueId as string)}
+          user={user}
+          disabled={uneditable}
+        />
       </div>
     </>
   );
