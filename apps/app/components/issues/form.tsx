@@ -75,6 +75,7 @@ const defaultValues: Partial<IIssue> = {
   assignees_list: [],
   labels: [],
   labels_list: [],
+  target_date: null,
 };
 
 export interface IssueFormProps {
@@ -271,7 +272,6 @@ export const IssueForm: FC<IssueFormProps> = ({
             </h3>
           </div>
           {watch("parent") &&
-            watch("parent") !== "" &&
             (fieldsToShow.includes("all") || fieldsToShow.includes("parent")) &&
             selectedParentIssue && (
               <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
@@ -476,7 +476,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <CustomMenu ellipsis>
-                    {watch("parent") && watch("parent") !== "" ? (
+                    {watch("parent") ? (
                       <>
                         <CustomMenu.MenuItem
                           renderAs="button"

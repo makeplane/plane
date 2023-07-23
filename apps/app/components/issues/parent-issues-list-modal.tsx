@@ -11,8 +11,9 @@ import useDebounce from "hooks/use-debounce";
 // components
 import { LayerDiagonalIcon } from "components/icons";
 // ui
-import { Loader } from "components/ui";
+import { Loader, ToggleSwitch, Tooltip } from "components/ui";
 // icons
+import { LaunchOutlined } from "@mui/icons-material";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
 import { ISearchIssueResponse } from "types";
@@ -24,7 +25,6 @@ type Props = {
   onChange: (issue: ISearchIssueResponse) => void;
   projectId: string;
   issueId?: string;
-  customDisplay?: JSX.Element;
 };
 
 export const ParentIssuesListModal: React.FC<Props> = ({
@@ -34,12 +34,11 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   onChange,
   projectId,
   issueId,
-  customDisplay,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
 
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
@@ -49,35 +48,24 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const handleClose = () => {
     onClose();
     setSearchTerm("");
+    setIsWorkspaceLevel(false);
   };
 
   useEffect(() => {
-    if (!workspaceSlug || !projectId) return;
+    if (!isOpen || !workspaceSlug || !projectId) return;
 
-    setIsLoading(true);
+    setIsSearching(true);
 
-    if (debouncedSearchTerm) {
-      setIsSearching(true);
-
-      projectService
-        .projectIssuesSearch(workspaceSlug as string, projectId as string, {
-          search: debouncedSearchTerm,
-          parent: true,
-          issue_id: issueId,
-        })
-        .then((res) => {
-          setIssues(res);
-        })
-        .finally(() => {
-          setIsLoading(false);
-          setIsSearching(false);
-        });
-    } else {
-      setIssues([]);
-      setIsLoading(false);
-      setIsSearching(false);
-    }
-  }, [debouncedSearchTerm, workspaceSlug, projectId, issueId]);
+    projectService
+      .projectIssuesSearch(workspaceSlug as string, projectId as string, {
+        search: debouncedSearchTerm,
+        parent: true,
+        issue_id: issueId,
+        workspace_search: isWorkspaceLevel,
+      })
+      .then((res) => setIssues(res))
+      .finally(() => setIsSearching(false));
+  }, [debouncedSearchTerm, isOpen, issueId, isWorkspaceLevel, projectId, workspaceSlug]);
 
   return (
     <>
@@ -124,28 +112,49 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm placeholder:text-custom-text-400"
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       displayValue={() => ""}
                     />
                   </div>
-                  {customDisplay && <div className="p-2">{customDisplay}</div>}
-                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto mt-2">
-                    {debouncedSearchTerm !== "" && (
+                  <div className="flex sm:justify-end p-2">
+                    <Tooltip tooltipContent="Toggle workspace level search">
+                      <div
+                        className={`flex-shrink-0 flex items-center gap-1 text-xs cursor-pointer ${
+                          isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
+                        }`}
+                      >
+                        <ToggleSwitch
+                          value={isWorkspaceLevel}
+                          onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                          label="Workspace level"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                          className="flex-shrink-0"
+                        >
+                          workspace level
+                        </button>
+                      </div>
+                    </Tooltip>
+                  </div>
+                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                    {searchTerm !== "" && (
                       <h5 className="text-[0.825rem] text-custom-text-200 mx-2">
                         Search results for{" "}
                         <span className="text-custom-text-100">
                           {'"'}
-                          {debouncedSearchTerm}
+                          {searchTerm}
                           {'"'}
                         </span>{" "}
                         in project:
                       </h5>
                     )}
 
-                    {!isLoading &&
+                    {!isSearching &&
                       issues.length === 0 &&
                       searchTerm !== "" &&
                       debouncedSearchTerm !== "" && (
@@ -161,7 +170,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                         </div>
                       )}
 
-                    {isLoading || isSearching ? (
+                    {isSearching ? (
                       <Loader className="space-y-3 p-3">
                         <Loader.Item height="40px" />
                         <Loader.Item height="40px" />
@@ -175,12 +184,12 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                             key={issue.id}
                             value={issue}
                             className={({ active, selected }) =>
-                              `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                              `group flex items-center justify-between gap-2 cursor-pointer select-none rounded-md px-3 py-2 text-custom-text-200 ${
                                 active ? "bg-custom-background-80 text-custom-text-100" : ""
                               } ${selected ? "text-custom-text-100" : ""}`
                             }
                           >
-                            <>
+                            <div className="flex items-center gap-2">
                               <span
                                 className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                 style={{
@@ -191,7 +200,20 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                 {issue.project__identifier}-{issue.sequence_id}
                               </span>{" "}
                               {issue.name}
-                            </>
+                            </div>
+                            <a
+                              href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+                              target="_blank"
+                              className="group-hover:block hidden relative z-1 text-custom-text-200 hover:text-custom-text-100"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <LaunchOutlined
+                                sx={{
+                                  fontSize: 16,
+                                }}
+                              />
+                            </a>
                           </Combobox.Option>
                         ))}
                       </ul>

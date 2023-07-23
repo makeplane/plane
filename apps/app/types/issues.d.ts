@@ -7,6 +7,7 @@ import type {
   IUserLite,
   IProjectLite,
   IWorkspaceLite,
+  IStateLite,
 } from "types";
 
 export interface IIssueCycle {
@@ -53,8 +54,10 @@ export interface IIssueParent {
   id: string;
   name: string;
   priority: string | null;
+  project_detail: IProjectLite;
   sequence_id: number;
   start_date: string | null;
+  state_detail: IStateLite;
   target_date: string | null;
 }
 
@@ -70,8 +73,8 @@ export interface IIssue {
   assignees_list: string[];
   attachment_count: number;
   attachments: any[];
-  blocked_issues: BlockeIssue[];
-  blocker_issues: BlockeIssue[];
+  blocked_issues: { blocked_issue_detail?: BlockeIssueDetail }[];
+  blocker_issues: { blocker_issue_detail?: BlockeIssueDetail }[];
   blockers_list: string[];
   blocks_list: string[];
   bridge_id?: string | null;
@@ -137,34 +140,11 @@ export interface ISubIssueResponse {
   sub_issues: IIssue[];
 }
 
-export interface BlockeIssue {
-  blocked_issue_detail?: BlockeIssueDetail;
-  blocker_issue_detail?: BlockeIssueDetail;
-}
-
 export interface BlockeIssueDetail {
   id: string;
   name: string;
   sequence_id: number;
-}
-
-export interface IIssueComment {
-  id: string;
-  actor: string;
-  actor_detail: IUserLite;
-  created_at: Date;
-  updated_at: Date;
-  comment: string;
-  comment_html: string;
-  comment_json: any;
-  attachments: any[];
-  created_by: string;
-  updated_by: string;
-  project: string;
   project_detail: IProjectLite;
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
-  issue: string;
 }
 
 export type IssuePriorities = {
@@ -210,25 +190,32 @@ export interface IIssueLabels {
 }
 
 export interface IIssueActivity {
-  id: string;
+  actor: string;
   actor_detail: IUserLite;
-  created_at: Date;
-  updated_at: Date;
-  verb: string;
-  field: string | null;
-  old_value: string | null;
-  new_value: string | null;
-  comment: string;
   attachments: any[];
-  old_identifier: string | null;
-  new_identifier: string | null;
+  comment: string;
+  created_at: Date;
   created_by: string;
-  updated_by: string;
-  project: string;
-  workspace: string;
+  field: string | null;
+  id: string;
   issue: string;
   issue_comment: string | null;
-  actor: string;
+  new_identifier: string | null;
+  new_value: string | null;
+  old_identifier: string | null;
+  old_value: string | null;
+  project: string;
+  updated_at: Date;
+  updated_by: string;
+  verb: string;
+  workspace: string;
+  workspace_detail: IWorkspaceLite;
+}
+
+export interface IIssueComment extends IIssueActivity {
+  comment_html: string;
+  comment_json: any;
+  comment_stripped: string;
 }
 
 export interface IIssueLite {
