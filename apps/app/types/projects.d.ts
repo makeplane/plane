@@ -44,7 +44,7 @@ export interface IProject {
   name: string;
   network: number;
   page_view: boolean;
-  project_lead: IUser | string | null;
+  project_lead: IUserLite | string | null;
   slug: string;
   total_cycles: number;
   total_members: number;

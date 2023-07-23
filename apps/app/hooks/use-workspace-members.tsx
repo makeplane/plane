@@ -6,7 +6,7 @@ import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hooks
 import useUser from "./use-user";
 
-const useWorkspaceMembers = (workspaceSlug?: string) => {
+const useWorkspaceMembers = (workspaceSlug: string) => {
   const { user } = useUser();
 
   const { data: workspaceMembers, error: workspaceMemberErrors } = useSWR(
