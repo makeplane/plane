@@ -27,22 +27,23 @@ const activityDetails: {
     icon: React.ReactNode;
   };
 } = {
-  assignee: {
-    message: (activity) => (
-      <>
-        removed the assignee{" "}
-        <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-      </>
-    ),
-    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
-  },
   assignees: {
-    message: (activity) => (
-      <>
-        added a new assignee{" "}
-        <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-      </>
-    ),
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            added a new assignee{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed the assignee{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
     icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
   },
   archived_at: {
