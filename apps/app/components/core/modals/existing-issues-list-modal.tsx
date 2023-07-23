@@ -33,6 +33,7 @@ type Props = {
   handleClose: () => void;
   searchParams: Partial<TProjectIssuesSearchParams>;
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
+  workspaceLevelToggle?: boolean;
 };
 
 export const ExistingIssuesListModal: React.FC<Props> = ({
@@ -40,6 +41,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
   handleClose: onClose,
   searchParams,
   handleOnSubmit,
+  workspaceLevelToggle = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
@@ -194,25 +196,27 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                         No issues selected
                       </div>
                     )}
-                    <Tooltip tooltipContent="Toggle workspace level search">
-                      <div
-                        className={`flex-shrink-0 flex items-center gap-1 text-xs cursor-pointer ${
-                          isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
-                        }`}
-                      >
-                        <ToggleSwitch
-                          value={isWorkspaceLevel}
-                          onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                          className="flex-shrink-0"
+                    {workspaceLevelToggle && (
+                      <Tooltip tooltipContent="Toggle workspace level search">
+                        <div
+                          className={`flex-shrink-0 flex items-center gap-1 text-xs cursor-pointer ${
+                            isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
+                          }`}
                         >
-                          workspace level
-                        </button>
-                      </div>
-                    </Tooltip>
+                          <ToggleSwitch
+                            value={isWorkspaceLevel}
+                            onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                            className="flex-shrink-0"
+                          >
+                            workspace level
+                          </button>
+                        </div>
+                      </Tooltip>
+                    )}
                   </div>
 
                   <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">

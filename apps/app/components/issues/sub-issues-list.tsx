@@ -115,6 +115,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
         handleClose={() => setSubIssuesListModal(false)}
         searchParams={{ sub_issue: true, issue_id: parentIssue?.id }}
         handleOnSubmit={addAsSubIssue}
+        workspaceLevelToggle
       />
       {subIssuesResponse && subIssuesResponse.sub_issues.length > 0 ? (
         <Disclosure defaultOpen={true}>
