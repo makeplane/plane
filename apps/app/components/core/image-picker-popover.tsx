@@ -62,7 +62,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
   return (
     <Popover className="relative z-[2]" ref={ref}>
       <Popover.Button
-        className="rounded-md border border-custom-border-200 bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200"
+        className="rounded-md border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {label}
@@ -77,7 +77,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
         leaveTo="transform opacity-0 scale-95"
       >
         <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
-          <div className="h-96 w-80 overflow-auto rounded border border-custom-border-200 bg-custom-background-80 p-5 shadow-2xl sm:max-w-2xl md:w-96 lg:w-[40rem]">
+          <div className="h-96 w-80 overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl sm:max-w-2xl md:w-96 lg:w-[40rem]">
             <Tab.Group>
               <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
                 {tabOptions.map((tab) => (
