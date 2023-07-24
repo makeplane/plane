@@ -210,7 +210,22 @@ const activityDetails: {
             to the issue.
           </>
         );
-      else return "removed a link.";
+      else
+        return (
+          <>
+            removed this{" "}
+            <a
+              href={`${activity.old_value}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              link
+              <Icon iconName="launch" className="!text-xs" />
+            </a>{" "}
+            from the issue.
+          </>
+        );
     },
     icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
   },
