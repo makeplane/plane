@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 # Module imports
-from .base import BaseViewSet
+from .base import BaseViewSet, BaseAPIView
 from plane.db.models import Notification, IssueAssignee, IssueSubscriber, Issue
 from plane.api.serializers import NotificationSerializer
 
@@ -25,22 +25,21 @@ class NotificationViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 receiver_id=self.request.user.id,
             )
-            .select_related("workspace")
+            .select_related("workspace", "project," "triggered_by", "receiver")
         )
 
     def list(self, request, slug):
         try:
-            order_by = request.GET.get("order_by", "-created_at")
             snoozed = request.GET.get("snoozed", "false")
             archived = request.GET.get("archived", "false")
-            read = request.GET.get("read", "false")
+            read = request.GET.get("read", "true")
 
             # Filter type
             type = request.GET.get("type", "all")
 
             notifications = Notification.objects.filter(
                 workspace__slug=slug, receiver_id=request.user.id
-            ).order_by(order_by)
+            ).order_by("snoozed_till", "-created_at")
 
             # Filter for snoozed notifications
             if snoozed == "false":
@@ -53,8 +52,6 @@ class NotificationViewSet(BaseViewSet):
                     Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
                 )
 
-            if read == "true":
-                notifications = notifications.filter(read_at__isnull=False)
             if read == "false":
                 notifications = notifications.filter(read_at__isnull=True)
 
@@ -123,7 +120,7 @@ class NotificationViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
     def mark_read(self, request, slug, pk):
         try:
             notification = Notification.objects.get(
@@ -165,7 +162,6 @@ class NotificationViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
 
     def archive(self, request, slug, pk):
         try:
@@ -209,3 +205,54 @@ class NotificationViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
+class UnreadNotificationEndpoint(BaseAPIView):
+    def get(self, request, slug):
+        try:
+            # Watching Issues Count
+            watching_issues_count = Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                read_at__isnull=True,
+                archived_at__isnull=True,
+                entity_identifier__in=IssueSubscriber.objects.filter(
+                    workspace__slug=slug, subscriber_id=request.user.id
+                ).values_list("issue_id", flat=True),
+            ).count()
+
+            # My Issues Count
+            my_issues_count = Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                read_at__isnull=True,
+                archived_at__isnull=True,
+                entity_identifier__in=IssueAssignee.objects.filter(
+                    workspace__slug=slug, assignee_id=request.user.id
+                ).values_list("issue_id", flat=True),
+            ).count()
+
+            # Created Issues Count
+            created_issues_count = Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                read_at__isnull=True,
+                archived_at__isnull=True,
+                entity_identifier__in=Issue.objects.filter(
+                    workspace__slug=slug, created_by=request.user
+                ).values_list("pk", flat=True),
+            ).count()
+
+            return Response(
+                {
+                    "watching_issues": watching_issues_count,
+                    "my_issues": my_issues_count,
+                    "created_issues": created_issues_count,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

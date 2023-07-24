@@ -9,7 +9,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
@@ -27,6 +27,10 @@ type Props = {
   setDefaultValues: Dispatch<SetStateAction<any>>;
   user: ICurrentUserResponse | undefined;
   secondaryButton?: React.ReactNode;
+  primaryButtonText?: {
+    loading: string;
+    default: string;
+  };
 };
 
 const restrictedUrls = [
@@ -49,6 +53,10 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   setDefaultValues,
   user,
   secondaryButton,
+  primaryButtonText = {
+    loading: "Creating...",
+    default: "Create Workspace",
+  },
 }) => {
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
@@ -61,8 +69,8 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
     control,
     setValue,
     getValues,
-    formState: { errors, isSubmitting },
-  } = useForm<IWorkspace>({ defaultValues });
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<IWorkspace>({ defaultValues, mode: "onChange" });
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     await workspaceService
@@ -138,7 +146,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
         </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceUrl">Workspace URL</label>
-          <div className="flex w-full items-center rounded-md border border-custom-border-100 px-3">
+          <div className="flex w-full items-center rounded-md border border-custom-border-200 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">
               {window && window.location.host}/
             </span>
@@ -202,8 +210,8 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
 
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <PrimaryButton type="submit" size="md" disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create Workspace"}
+        <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+          {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </PrimaryButton>
       </div>
     </form>

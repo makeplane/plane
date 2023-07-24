@@ -1,32 +1,37 @@
 // icons
-import { ContrastIcon, LayerDiagonalIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
-import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import {
+  ArticleOutlined,
+  ContrastOutlined,
+  DatasetOutlined,
+  FilterNoneOutlined,
+  PhotoFilterOutlined,
+} from "@mui/icons-material";
 // types
 import { TTourSteps } from "./root";
 
 const sidebarOptions: {
   key: TTourSteps;
-  icon: any;
+  Icon: any;
 }[] = [
   {
     key: "issues",
-    icon: LayerDiagonalIcon,
+    Icon: FilterNoneOutlined,
   },
   {
     key: "cycles",
-    icon: ContrastIcon,
+    Icon: ContrastOutlined,
   },
   {
     key: "modules",
-    icon: PeopleGroupIcon,
+    Icon: DatasetOutlined,
   },
   {
     key: "views",
-    icon: ViewListIcon,
+    Icon: PhotoFilterOutlined,
   },
   {
     key: "pages",
-    icon: DocumentTextIcon,
+    Icon: ArticleOutlined,
   },
 ];
 
@@ -53,13 +58,10 @@ export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
           }`}
           onClick={() => setStep(option.key)}
         >
-          <option.icon
-            className={`h-5 w-5 flex-shrink-0 ${
-              step === option.key ? "text-custom-primary-100" : "text-custom-text-200"
-            }`}
-            color={`${
-              step === option.key ? "rgb(var(--color-primary-100))" : "rgb(var(--color-text-200))"
-            }`}
+          <option.Icon
+            sx={{
+              fontSize: 18,
+            }}
             aria-hidden="true"
           />
           {option.key}

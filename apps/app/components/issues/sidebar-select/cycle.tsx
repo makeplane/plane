@@ -91,7 +91,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
               ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
               : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
           }}
-          width="auto"
+          width="w-full"
           position="right"
           maxHeight="rg"
           disabled={isNotAllowed}

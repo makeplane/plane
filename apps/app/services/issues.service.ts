@@ -9,6 +9,7 @@ import type {
   IIssueComment,
   IIssueLabels,
   IIssueViewOptions,
+  ISubIssueResponse,
 } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
@@ -345,26 +346,6 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async updateIssue(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
-    return this.put(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
-      data
-    )
-      .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async patchIssue(
     workspaceSlug: string,
     projectId: string,
@@ -420,7 +401,11 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async subIssues(workspaceSlug: string, projectId: string, issueId: string) {
+  async subIssues(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<ISubIssueResponse> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`
     )

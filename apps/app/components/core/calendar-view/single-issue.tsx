@@ -163,7 +163,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
-      className={`w-full relative cursor-pointer rounded border border-custom-border-100 px-1.5 py-1.5 text-xs duration-300 hover:cursor-move hover:bg-custom-background-80 ${
+      className={`w-full relative cursor-pointer rounded border border-custom-border-200 px-1.5 py-1.5 text-xs duration-300 hover:cursor-move hover:bg-custom-background-80 ${
         snapshot.isDragging ? "bg-custom-background-80 shadow-lg" : ""
       }`}
     >
@@ -231,7 +231,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
               />
             )}
 
-            {properties.due_date && (
+            {properties.due_date && issue.target_date && (
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -239,7 +239,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.labels && (
+            {properties.labels && issue.labels.length > 0 && (
               <ViewLabelSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -257,7 +257,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.estimate && (
+            {properties.estimate && issue.estimate_point !== null && (
               <ViewEstimateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -266,8 +266,8 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {properties.sub_issue_count && (
-              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
+            {properties.sub_issue_count && issue.sub_issues_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <LayerDiagonalIcon className="h-3.5 w-3.5" />
@@ -276,8 +276,8 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 </Tooltip>
               </div>
             )}
-            {properties.link && (
-              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
+            {properties.link && issue.link_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <LinkIcon className="h-3.5 w-3.5" />
@@ -286,8 +286,8 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 </Tooltip>
               </div>
             )}
-            {properties.attachment_count && (
-              <div className="flex cursor-default items-center rounded-md border border-custom-border-100 px-2.5 py-1 text-xs shadow-sm">
+            {properties.attachment_count && issue.attachment_count > 0 && (
+              <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
                     <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />

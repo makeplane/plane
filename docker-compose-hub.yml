@@ -82,6 +82,21 @@ services:
                         - plane-db
                         - plane-redis
 
+        plane-beat-worker:
+                container_name: planebeatworker
+                image: makeplane/plane-worker:latest
+                restart: always
+                command: ./bin/beat
+                env_file:
+                        - .env
+                environment:
+                        <<: *api-and-worker-env
+                depends_on:
+                        - plane-api
+                        - plane-db
+                        - plane-redis
+
+
         plane-db:
                 container_name: plane-db
                 image: postgres:15.2-alpine

@@ -96,7 +96,7 @@ export const applyTheme = (palette: string, isDarkPalette: boolean) => {
       ?.style.setProperty(`--color-sidebar-text-${shade}`, sidebarTextRgbValues);
 
     if (i >= 100 && i <= 400) {
-      const borderShade = (shade + 100) as keyof TShades;
+      const borderShade = i === 100 ? 70 : i === 200 ? 80 : i === 300 ? 90 : 100;
 
       document
         .querySelector<HTMLElement>("[data-theme='custom']")

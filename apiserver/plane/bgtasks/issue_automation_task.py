@@ -49,6 +49,11 @@ def archive_old_issues():
                     Q(issue_module__module__target_date__lt=timezone.now().date())
                     & Q(issue_module__isnull=False)
                 ),
+            ).filter(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True)
             )
 
             # Check if Issues
@@ -65,7 +70,7 @@ def archive_old_issues():
                 [
                     issue_activity.delay(
                         type="issue.activity.updated",
-                        requested_data=json.dumps({"archived_at": issue.archived_at}),
+                        requested_data=json.dumps({"archived_at": str(issue.archived_at)}),
                         actor_id=str(project.created_by_id),
                         issue_id=issue.id,
                         project_id=project_id,
@@ -111,6 +116,11 @@ def close_old_issues():
                     Q(issue_module__module__target_date__lt=timezone.now().date())
                     & Q(issue_module__isnull=False)
                 ),
+            ).filter(
+                Q(issue_inbox__status=1)
+                | Q(issue_inbox__status=-1)
+                | Q(issue_inbox__status=2)
+                | Q(issue_inbox__isnull=True)
             )
 
             # Check if Issues
@@ -130,7 +140,7 @@ def close_old_issues():
                 [
                     issue_activity.delay(
                         type="issue.activity.updated",
-                        requested_data=json.dumps({"closed_to": issue.state_id}),
+                        requested_data=json.dumps({"closed_to": str(issue.state_id)}),
                         actor_id=str(project.created_by_id),
                         issue_id=issue.id,
                         project_id=project_id,

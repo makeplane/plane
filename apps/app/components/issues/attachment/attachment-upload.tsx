@@ -6,14 +6,14 @@ import { mutate } from "swr";
 
 // react-dropzone
 import { useDropzone } from "react-dropzone";
-// toast
-import useToast from "hooks/use-toast";
-// fetch key
-import { ISSUE_ATTACHMENTS } from "constants/fetch-keys";
 // services
 import issuesService from "services/issues.service";
-// type
+// hooks
+import useToast from "hooks/use-toast";
+// types
 import { IIssueAttachment } from "types";
+// fetch-keys
+import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const maxFileSize = 5 * 1024 * 1024; // 5 MB
 
@@ -56,6 +56,7 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
           (prevData) => [res, ...(prevData ?? [])],
           false
         );
+        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -90,7 +91,7 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
     <div
       {...getRootProps()}
       className={`flex items-center justify-center h-[60px] border-2 border-dashed text-custom-primary bg-custom-primary/5 text-xs rounded-md px-4 ${
-        isDragActive ? "bg-custom-primary/10 border-custom-primary" : "border-custom-border-100"
+        isDragActive ? "bg-custom-primary/10 border-custom-primary" : "border-custom-border-200"
       } ${isDragReject ? "bg-red-100" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
     >
       <input {...getInputProps()} />

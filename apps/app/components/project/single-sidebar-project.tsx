@@ -10,9 +10,19 @@ import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, Icon, Tooltip } from "components/ui";
+import { CustomMenu, Tooltip } from "components/ui";
 // icons
 import { LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ArchiveOutlined,
+  ArticleOutlined,
+  ContrastOutlined,
+  DatasetOutlined,
+  ExpandMoreOutlined,
+  FilterNoneOutlined,
+  PhotoFilterOutlined,
+  SettingsOutlined,
+} from "@mui/icons-material";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -33,32 +43,32 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Issues",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    icon: "stack",
+    Icon: FilterNoneOutlined,
   },
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    icon: "contrast",
+    Icon: ContrastOutlined,
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    icon: "dataset",
+    Icon: DatasetOutlined,
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
-    icon: "photo_filter",
+    Icon: PhotoFilterOutlined,
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    icon: "article",
+    Icon: ArticleOutlined,
   },
   {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    icon: "settings",
+    Icon: SettingsOutlined,
   },
 ];
 
@@ -164,8 +174,8 @@ export const SingleSidebarProject: React.FC<Props> = ({
                   )}
                 </div>
                 {!sidebarCollapse && (
-                  <Icon
-                    iconName="expand_more"
+                  <ExpandMoreOutlined
+                    fontSize="small"
                     className={`${open ? "rotate-180" : ""} text-custom-text-200 duration-300`}
                   />
                 )}
@@ -211,7 +221,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     }
                   >
                     <div className="flex items-center justify-start gap-2">
-                      <Icon iconName="archive" className="h-4 w-4" />
+                      <ArchiveOutlined fontSize="small" />
                       <span>Archived Issues</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -248,13 +258,17 @@ export const SingleSidebarProject: React.FC<Props> = ({
                         disabled={!sidebarCollapse}
                       >
                         <div
-                          className={`group flex items-center rounded-md px-2 py-1.5 gap-2 text-xs font-medium outline-none ${
+                          className={`group flex items-center rounded-md px-2 py-1.5 gap-2.5 text-xs font-medium outline-none ${
                             router.asPath.includes(item.href)
                               ? "bg-custom-primary-100/10 text-custom-primary-100"
                               : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                           } ${sidebarCollapse ? "justify-center" : ""}`}
                         >
-                          <Icon iconName={item.icon} />
+                          <item.Icon
+                            sx={{
+                              fontSize: 18,
+                            }}
+                          />
                           {!sidebarCollapse && item.name}
                         </div>
                       </Tooltip>

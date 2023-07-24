@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -94,19 +94,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
     };
 
-  const { data: issues } = useSWR(
-    workspaceSlug && activeProject
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? "")
-      : null,
-    workspaceSlug && activeProject
-      ? () => issuesService.getIssues(workspaceSlug as string, activeProject ?? "")
-      : null
-  );
-
   useEffect(() => {
-    if (projects && projects.length > 0)
+    if (projects && projects.length > 0 && !activeProject)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [projectId, projects]);
+  }, [activeProject, projectId, projects]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -271,7 +262,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
-      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
+      .patchIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
@@ -317,6 +308,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     else await updateIssue(payload);
   };
 
+  if (!projects || projects.length === 0) return null;
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={() => handleClose()}>
@@ -343,9 +336,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <IssueForm
-                  issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
                   initialData={data ?? prePopulateData}
                   createMore={createMore}

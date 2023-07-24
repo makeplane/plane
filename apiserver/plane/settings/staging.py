@@ -16,7 +16,7 @@ from .common import *  # noqa
 DEBUG = int(os.environ.get("DEBUG", 1)) == 1
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("PGUSER", "plane"),
         "USER": "",
         "PASSWORD": "",

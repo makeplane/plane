@@ -3,11 +3,13 @@ import { Fragment } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
+// next-themes
+import { useTheme } from "next-themes";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // hooks
 import useUser from "hooks/use-user";
-import useTheme from "hooks/use-theme";
+import useThemeHook from "hooks/use-theme";
 import useWorkspaces from "hooks/use-workspaces";
 import useToast from "hooks/use-toast";
 // services
@@ -41,14 +43,15 @@ const userLinks = (workspaceSlug: string) => [
 export const WorkspaceSidebarDropdown = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // fetching user details
+
   const { user, mutateUser } = useUser();
-  // fetching theme context
-  const { collapsed: sidebarCollapse } = useTheme();
+
+  const { collapsed: sidebarCollapse } = useThemeHook();
+
+  const { setTheme } = useTheme();
 
   const { setToastAlert } = useToast();
 
-  // fetching workspaces
   const { activeWorkspace, workspaces } = useWorkspaces();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
@@ -75,6 +78,7 @@ export const WorkspaceSidebarDropdown = () => {
       .then(() => {
         mutateUser(undefined);
         router.push("/");
+        setTheme("dark");
       })
       .catch(() =>
         setToastAlert({
@@ -135,8 +139,8 @@ export const WorkspaceSidebarDropdown = () => {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items
-          className="fixed left-2 z-20 mt-1 flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
-          border border-custom-sidebar-border-100 bg-custom-sidebar-background-90 shadow-lg focus:outline-none"
+          className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md
+          border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 shadow-lg outline-none"
         >
           <div className="flex flex-col items-start justify-start gap-3 p-3">
             <div className="text-sm text-custom-sidebar-text-200">{user?.email}</div>
@@ -210,7 +214,7 @@ export const WorkspaceSidebarDropdown = () => {
               </div>
             )}
           </div>
-          <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-custom-sidebar-border-100 px-3 py-2 text-sm">
+          <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-custom-sidebar-border-200 px-3 py-2 text-sm">
             {userLinks(workspaceSlug as string).map((link, index) => (
               <Menu.Item
                 key={index}

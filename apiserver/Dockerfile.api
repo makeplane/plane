@@ -49,7 +49,7 @@ USER root
 RUN apk --no-cache add "bash~=5.2"
 COPY ./bin ./bin/
 
-RUN chmod +x ./bin/takeoff ./bin/worker
+RUN chmod +x ./bin/takeoff ./bin/worker ./bin/beat
 RUN chmod -R 777 /code
 
 USER captain

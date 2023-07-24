@@ -11,14 +11,16 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu, Icon, ToggleSwitch, Tooltip } from "components/ui";
+import { CustomMenu, ToggleSwitch, Tooltip } from "components/ui";
 // icons
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import {
-  ChevronDownIcon,
-  ListBulletIcon,
-  Squares2X2Icon,
-  CalendarDaysIcon,
-} from "@heroicons/react/24/outline";
+  CalendarMonthOutlined,
+  FormatListBulletedOutlined,
+  GridViewOutlined,
+  TableChartOutlined,
+  WaterfallChartOutlined,
+} from "@mui/icons-material";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -27,26 +29,26 @@ import { Properties, TIssueViewOptions } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
 
-const issueViewOptions: { type: TIssueViewOptions; icon: any }[] = [
+const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   {
     type: "list",
-    icon: <ListBulletIcon className="h-4 w-4" />,
+    Icon: FormatListBulletedOutlined,
   },
   {
     type: "kanban",
-    icon: <Squares2X2Icon className="h-4 w-4" />,
+    Icon: GridViewOutlined,
   },
   {
     type: "calendar",
-    icon: <CalendarDaysIcon className="h-4 w-4" />,
+    Icon: CalendarMonthOutlined,
   },
   {
     type: "spreadsheet",
-    icon: <Icon iconName="table_chart" />,
+    Icon: TableChartOutlined,
   },
   {
     type: "gantt_chart",
-    icon: <Icon iconName="waterfall_chart" className="rotate-90" />,
+    Icon: WaterfallChartOutlined,
   },
 ];
 
@@ -98,7 +100,12 @@ export const IssuesFilterView: React.FC = () => {
                 }`}
                 onClick={() => setIssueView(option.type)}
               >
-                {option.icon}
+                <option.Icon
+                  sx={{
+                    fontSize: 16,
+                  }}
+                  className={option.type === "gantt_chart" ? "rotate-90" : ""}
+                />
               </button>
             </Tooltip>
           ))}
@@ -146,7 +153,7 @@ export const IssuesFilterView: React.FC = () => {
         {({ open }) => (
           <>
             <Popover.Button
-              className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-100 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
+              className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-200 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
                 open
                   ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
                   : "text-custom-sidebar-text-200"
@@ -165,8 +172,8 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-100 bg-custom-background-90 p-3 shadow-lg">
-                <div className="relative divide-y-2 divide-custom-border-100">
+              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
+                <div className="relative divide-y-2 divide-custom-border-200">
                   <div className="space-y-4 pb-3 text-xs">
                     {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
@@ -177,7 +184,6 @@ export const IssuesFilterView: React.FC = () => {
                               GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
                                 ?.name ?? "Select"
                             }
-                            width="lg"
                           >
                             {GROUP_BY_OPTIONS.map((option) =>
                               issueView === "kanban" && option.key === null ? null : (
@@ -198,7 +204,6 @@ export const IssuesFilterView: React.FC = () => {
                               ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
                               "Select"
                             }
-                            width="lg"
                           >
                             {ORDER_BY_OPTIONS.map((option) =>
                               groupByProperty === "priority" && option.key === "priority" ? null : (
@@ -223,7 +228,6 @@ export const IssuesFilterView: React.FC = () => {
                           FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
                             ?.name ?? "Select"
                         }
-                        width="lg"
                       >
                         {FILTER_ISSUE_OPTIONS.map((option) => (
                           <CustomMenu.MenuItem
@@ -292,7 +296,7 @@ export const IssuesFilterView: React.FC = () => {
                             className={`rounded border px-2 py-1 text-xs capitalize ${
                               properties[key as keyof Properties]
                                 ? "border-custom-primary bg-custom-primary text-white"
-                                : "border-custom-border-100"
+                                : "border-custom-border-200"
                             }`}
                             onClick={() => setProperties(key as keyof Properties)}
                           >

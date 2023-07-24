@@ -145,6 +145,8 @@ const GeneralSettings: NextPage = () => {
     else await updateProject(payload);
   };
 
+  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
@@ -261,7 +263,7 @@ const GeneralSettings: NextPage = () => {
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border border-custom-border-100 p-1">
+                <div className="h-32 w-full rounded border border-custom-border-200 p-1">
                   <div className="relative h-full w-full rounded">
                     <img
                       src={watch("cover_image")!}
@@ -336,16 +338,12 @@ const GeneralSettings: NextPage = () => {
                     <CustomSelect
                       value={value}
                       onChange={onChange}
-                      label={
-                        Object.keys(NETWORK_CHOICES).find((k) => k === value.toString())
-                          ? NETWORK_CHOICES[value.toString() as keyof typeof NETWORK_CHOICES]
-                          : "Select network"
-                      }
+                      label={currentNetwork?.label ?? "Select network"}
                       input
                     >
-                      {Object.keys(NETWORK_CHOICES).map((key) => (
-                        <CustomSelect.Option key={key} value={parseInt(key)}>
-                          {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
+                      {NETWORK_CHOICES.map((network) => (
+                        <CustomSelect.Option key={network.key} value={network.key}>
+                          {network.label}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>

@@ -96,13 +96,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             setCharacterLimit(false);
 
             setIsSubmitting(true);
-            handleSubmit(handleDescriptionFormSubmit)()
-              .then(() => {
-                setIsSubmitting(false);
-              })
-              .catch(() => {
-                setIsSubmitting(false);
-              });
+            handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting(false));
           }}
           required={true}
           className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
@@ -110,7 +104,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
           disabled={!isAllowed}
         />
         {characterLimit && (
-          <div className="pointer-events-none absolute bottom-0 right-0 z-[2] rounded bg-custom-background-80 p-1 text-xs">
+          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
             <span
               className={`${
                 watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
@@ -123,52 +117,47 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         )}
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
-      <Controller
-        name="description"
-        control={control}
-        render={({ field: { value } }) => {
-          if (!value && !watch("description_html")) return <></>;
+      <div className="relative">
+        <Controller
+          name="description"
+          control={control}
+          render={({ field: { value } }) => {
+            if (!value && !watch("description_html")) return <></>;
 
-          return (
-            <RemirrorRichTextEditor
-              value={
-                !value ||
-                value === "" ||
-                (typeof value === "object" && Object.keys(value).length === 0)
-                  ? watch("description_html")
-                  : value
-              }
-              onJSONChange={(jsonValue) => {
-                setShowAlert(true);
-                setValue("description", jsonValue);
-              }}
-              onHTMLChange={(htmlValue) => {
-                setShowAlert(true);
-                setValue("description_html", htmlValue);
-              }}
-              onBlur={() => {
-                setIsSubmitting(true);
-                handleSubmit(handleDescriptionFormSubmit)()
-                  .then(() => {
-                    setIsSubmitting(false);
-                    setShowAlert(false);
-                  })
-                  .catch(() => {
-                    setIsSubmitting(false);
-                  });
-              }}
-              placeholder="Description"
-              editable={isAllowed}
-            />
-          );
-        }}
-      />
-      <div
-        className={`absolute -bottom-8 right-0 text-sm text-custom-text-200 ${
-          isSubmitting ? "block" : "hidden"
-        }`}
-      >
-        Saving...
+            return (
+              <RemirrorRichTextEditor
+                value={
+                  !value ||
+                  value === "" ||
+                  (typeof value === "object" && Object.keys(value).length === 0)
+                    ? watch("description_html")
+                    : value
+                }
+                onJSONChange={(jsonValue) => {
+                  setShowAlert(true);
+                  setValue("description", jsonValue);
+                }}
+                onHTMLChange={(htmlValue) => {
+                  setShowAlert(true);
+                  setValue("description_html", htmlValue);
+                }}
+                onBlur={() => {
+                  setIsSubmitting(true);
+                  handleSubmit(handleDescriptionFormSubmit)()
+                    .then(() => setShowAlert(false))
+                    .finally(() => setIsSubmitting(false));
+                }}
+                placeholder="Description"
+                editable={isAllowed}
+              />
+            );
+          }}
+        />
+        {isSubmitting && (
+          <div className="absolute bottom-1 right-1 text-xs text-custom-text-200 bg-custom-background-100 p-3 z-10">
+            Saving...
+          </div>
+        )}
       </div>
     </div>
   );

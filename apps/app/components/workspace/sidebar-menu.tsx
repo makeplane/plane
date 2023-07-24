@@ -1,47 +1,50 @@
 import React from "react";
 
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // hooks
 import useTheme from "hooks/use-theme";
 // components
-import { Icon, Tooltip } from "components/ui";
+import { NotificationPopover } from "components/notifications";
+// ui
+import { Tooltip } from "components/ui";
+// icons
+import {
+  BarChartRounded,
+  GridViewOutlined,
+  TaskAltOutlined,
+  WorkOutlineOutlined,
+} from "@mui/icons-material";
+
+const workspaceLinks = (workspaceSlug: string) => [
+  {
+    Icon: GridViewOutlined,
+    name: "Dashboard",
+    href: `/${workspaceSlug}`,
+  },
+  {
+    Icon: BarChartRounded,
+    name: "Analytics",
+    href: `/${workspaceSlug}/analytics`,
+  },
+  {
+    Icon: WorkOutlineOutlined,
+    name: "Projects",
+    href: `/${workspaceSlug}/projects`,
+  },
+  {
+    Icon: TaskAltOutlined,
+    name: "My Issues",
+    href: `/${workspaceSlug}/me/my-issues`,
+  },
+];
 
 export const WorkspaceSidebarMenu = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // theme context
   const { collapsed: sidebarCollapse } = useTheme();
-
-  const workspaceLinks = (workspaceSlug: string) => [
-    {
-      icon: "grid_view",
-      name: "Dashboard",
-      href: `/${workspaceSlug}`,
-    },
-    {
-      icon: "bar_chart",
-      name: "Analytics",
-      href: `/${workspaceSlug}/analytics`,
-    },
-    {
-      icon: "work",
-      name: "Projects",
-      href: `/${workspaceSlug}/projects`,
-    },
-    {
-      icon: "task_alt",
-      name: "My Issues",
-      href: `/${workspaceSlug}/me/my-issues`,
-    },
-    {
-      icon: "settings",
-      name: "Settings",
-      href: `/${workspaceSlug}/settings`,
-    },
-  ];
 
   return (
     <div className="w-full cursor-pointer space-y-2 px-4 mt-5">
@@ -67,7 +70,7 @@ export const WorkspaceSidebarMenu = () => {
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                   } ${sidebarCollapse ? "justify-center" : ""}`}
                 >
-                  <Icon iconName={`${link.icon}`} />
+                  {<link.Icon fontSize="small" />}
                   {!sidebarCollapse && link.name}
                 </div>
               </Tooltip>
@@ -75,6 +78,8 @@ export const WorkspaceSidebarMenu = () => {
           </Link>
         );
       })}
+
+      <NotificationPopover />
     </div>
   );
 };
