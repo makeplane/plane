@@ -149,9 +149,9 @@ const GeneralSettings: NextPage = () => {
     const { value } = event.target;
 
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
-    const FormattedValue = alphanumericValue.toUpperCase();
+    const formattedValue = alphanumericValue.toUpperCase();
 
-    setValue("identifier", FormattedValue);
+    setValue("identifier", formattedValue);
   };
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);

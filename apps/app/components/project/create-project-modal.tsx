@@ -158,9 +158,9 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
     const { value } = event.target;
 
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
-    const FormattedValue = alphanumericValue.toUpperCase();
+    const formattedValue = alphanumericValue.toUpperCase();
 
-    setValue("identifier", FormattedValue);
+    setValue("identifier", formattedValue);
     setIsChangeIdentifierRequired(false);
   };
 
