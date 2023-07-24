@@ -38,9 +38,13 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             # Filter type
             type = request.GET.get("type", "all")
 
-            notifications = Notification.objects.filter(
-                workspace__slug=slug, receiver_id=request.user.id
-            ).order_by("snoozed_till", "-created_at")
+            notifications = (
+                Notification.objects.filter(
+                    workspace__slug=slug, receiver_id=request.user.id
+                )
+                .select_related("workspace", "project," "triggered_by", "receiver")
+                .order_by("snoozed_till", "-created_at")
+            )
 
             # Filter for snoozed notifications
             if snoozed == "false":

@@ -270,9 +270,15 @@ class IssueViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id):
         try:
-            project = Project.objects.get(workspace__slug=slug, pk=project_id)
+            project = Project.objects.get(pk=project_id)
+
             serializer = IssueCreateSerializer(
-                data=request.data, context={"project": project}
+                data=request.data,
+                context={
+                    "project_id": project_id,
+                    "workspace_id": project.workspace_id,
+                    "default_assignee_id": project.default_assignee_id,
+                },
             )
 
             if serializer.is_valid():
@@ -396,6 +402,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 IssueComment.objects.filter(issue_id=issue_id)
                 .filter(project__project_projectmember__member=self.request.user)
                 .order_by("created_at")
+                .select_related("actor", "issue", "project", "workspace")
             )
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
@@ -1096,13 +1103,15 @@ class IssueArchiveViewSet(BaseViewSet):
             return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
         except Issue.DoesNotExist:
             return Response(
-                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND)
+                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong, please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
 
 class IssueSubscriberViewSet(BaseViewSet):
     serializer_class = IssueSubscriberSerializer
@@ -1144,18 +1153,22 @@ class IssueSubscriberViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, issue_id):
         try:
-            members = ProjectMember.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).annotate(
-                is_subscribed=Exists(
-                    IssueSubscriber.objects.filter(
-                        workspace__slug=slug,
-                        project_id=project_id,
-                        issue_id=issue_id,
-                        subscriber=OuterRef("member"),
+            members = (
+                ProjectMember.objects.filter(
+                    workspace__slug=slug, project_id=project_id
+                )
+                .annotate(
+                    is_subscribed=Exists(
+                        IssueSubscriber.objects.filter(
+                            workspace__slug=slug,
+                            project_id=project_id,
+                            issue_id=issue_id,
+                            subscriber=OuterRef("member"),
+                        )
                     )
                 )
-            ).select_related("member")
+                .select_related("member")
+            )
             serializer = ProjectMemberLiteSerializer(members, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
