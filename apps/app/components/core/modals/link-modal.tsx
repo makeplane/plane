@@ -86,13 +86,15 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                             id="url"
                             label="URL"
                             name="url"
-                            type="url"
+                            type="text"
                             placeholder="Enter URL"
                             autoComplete="off"
                             error={errors.url}
                             register={register}
                             validations={{
                               required: "URL is required",
+                              validate: (value) =>
+                                /^(https?:\/\/)/.test(value) || "URL is not valid",
                             }}
                           />
                         </div>
