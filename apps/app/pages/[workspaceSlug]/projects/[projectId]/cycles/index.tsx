@@ -176,8 +176,8 @@ const ProjectCycles: NextPage = () => {
             </Tab.List>
             <div className="justify-end sm:justify-start flex items-center gap-x-1">
               {cycleViews.map((view) => {
-                if (view.key === "gantt" && (cycleTab === "Active" || cycleTab === "Drafts"))
-                  return null;
+                if (cycleTab === "Active") return null;
+                if (view.key === "gantt" && cycleTab === "Drafts") return null;
 
                 return (
                   <button
