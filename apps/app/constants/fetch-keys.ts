@@ -1,3 +1,4 @@
+import { objToQueryParams } from "helpers/string.helper";
 import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "types";
 
 const paramsToKey = (params: any) => {
@@ -244,3 +245,29 @@ export const USER_WORKSPACE_NOTIFICATIONS_DETAILS = (
 
 export const UNREAD_NOTIFICATIONS_COUNT = (workspaceSlug: string) =>
   `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug.toUpperCase()}`;
+
+export const getPaginatedNotificationKey = (
+  index: number,
+  prevData: any,
+  workspaceSlug: string,
+  params: any
+) => {
+  if (prevData && !prevData?.results?.length) return null;
+
+  if (index === 0)
+    return `/api/workspaces/${workspaceSlug}/users/notifications?${objToQueryParams({
+      ...params,
+      // TODO: change to '100:0:0'
+      cursor: "2:0:0",
+    })}`;
+
+  const cursor = prevData?.next_cursor;
+  const nextPageResults = prevData?.next_page_results;
+
+  if (!nextPageResults) return null;
+
+  return `/api/workspaces/${workspaceSlug}/users/notifications?${objToQueryParams({
+    ...params,
+    cursor,
+  })}`;
+};
