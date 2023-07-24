@@ -437,7 +437,7 @@ class ProjectIssuesServices extends APIService {
     issueId: string,
     data: {
       metadata: any;
-      title: string;
+      title: string | null;
       url: string;
     }
   ): Promise<any> {

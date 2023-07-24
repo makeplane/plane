@@ -98,11 +98,6 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                             register={register}
                             validations={{
                               required: "URL is required",
-                              pattern: {
-                                value:
-                                  /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z0-9()]{2,6}(?:\/[-a-zA-Z0-9()@:%_\+.~#?&//=]*)?$/,
-                                message: `URL is not valid`,
-                              },
                             }}
                           />
                         </div>
