@@ -225,9 +225,16 @@ export const IssueForm: FC<IssueFormProps> = ({
     reset({
       ...defaultValues,
       ...initialData,
+    });
+  }, [setFocus, initialData, reset]);
+
+  // update projectId in form when projectId changes
+  useEffect(() => {
+    reset({
+      ...getValues(),
       project: projectId,
     });
-  }, [setFocus, initialData, reset, projectId]);
+  }, [getValues, projectId, reset]);
 
   return (
     <>
