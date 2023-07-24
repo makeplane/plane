@@ -31,13 +31,7 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
   });
 
   const onSubmit = async (formData: IIssueLink | ModuleLink) => {
-    const formattedTitle = formData.title === "" ? null : formData.title;
-    const formattedUrl =
-      formData.url.startsWith("https://") || formData.url.startsWith("http://")
-        ? formData.url
-        : "http://" + formData.url;
-    await onFormSubmit({ title: formattedTitle, url: formattedUrl });
-
+    await onFormSubmit({ title: formData.title === "" ? null : formData.title, url: formData.url });
     onClose();
   };
 
@@ -91,7 +85,7 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                             id="url"
                             label="URL"
                             name="url"
-                            type="text"
+                            type="url"
                             placeholder="https://..."
                             autoComplete="off"
                             error={errors.url}
