@@ -107,7 +107,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
       setValue(
         "identifier",
         projectName
-          .replace(/[^A-Za-z]/g, "")
+          .replace(/[^a-zA-Z0-9]/g, "")
           .toUpperCase()
           .substring(0, 3)
       );
@@ -152,6 +152,16 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
           })
         );
       });
+  };
+
+  const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+
+    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    const FormattedValue = alphanumericValue.toUpperCase();
+
+    setValue("identifier", FormattedValue);
+    setIsChangeIdentifierRequired(false);
   };
 
   const options = workspaceMembers?.map((member) => ({
@@ -294,11 +304,12 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                           placeholder="Identifier"
                           error={errors.identifier}
                           register={register}
-                          onChange={() => setIsChangeIdentifierRequired(false)}
+                          onChange={handleIdentifierChange}
                           validations={{
                             required: "Identifier is required",
                             validate: (value) =>
-                              /^[A-Z]+$/.test(value) || "Identifier must be in uppercase.",
+                              /^[A-Z0-9]+$/.test(value.toUpperCase()) ||
+                              "Identifier must be in uppercase.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
