@@ -15,7 +15,7 @@ import { CycleForm } from "components/cycles";
 // helper
 import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
-import type { CycleDateCheckData, ICurrentUserResponse, ICycle } from "types";
+import type { CycleDateCheckData, ICurrentUserResponse, ICycle, IProject } from "types";
 // fetch keys
 import {
   COMPLETED_CYCLES_LIST,
@@ -23,6 +23,7 @@ import {
   CYCLES_LIST,
   DRAFT_CYCLES_LIST,
   INCOMPLETE_CYCLES_LIST,
+  PROJECT_DETAILS,
   UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 
@@ -65,6 +66,20 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
         }
         mutate(INCOMPLETE_CYCLES_LIST(projectId.toString()));
         mutate(CYCLES_LIST(projectId.toString()));
+
+        // update total cycles count in the project details
+        mutate<IProject>(
+          PROJECT_DETAILS(projectId.toString()),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              total_cycles: prevData.total_cycles + 1,
+            };
+          },
+          false
+        );
 
         setToastAlert({
           type: "success",
