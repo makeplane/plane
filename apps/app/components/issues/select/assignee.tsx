@@ -21,7 +21,6 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // fetching project members
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId

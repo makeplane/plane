@@ -6,6 +6,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from sentry_sdk import capture_exception
+from plane.utils.paginator import BasePaginator
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
@@ -13,7 +14,7 @@ from plane.db.models import Notification, IssueAssignee, IssueSubscriber, Issue
 from plane.api.serializers import NotificationSerializer
 
 
-class NotificationViewSet(BaseViewSet):
+class NotificationViewSet(BaseViewSet, BasePaginator):
     model = Notification
     serializer_class = NotificationSerializer
 
@@ -30,7 +31,6 @@ class NotificationViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            order_by = request.GET.get("order_by", "-created_at")
             snoozed = request.GET.get("snoozed", "false")
             archived = request.GET.get("archived", "false")
             read = request.GET.get("read", "true")
@@ -38,9 +38,13 @@ class NotificationViewSet(BaseViewSet):
             # Filter type
             type = request.GET.get("type", "all")
 
-            notifications = Notification.objects.filter(
-                workspace__slug=slug, receiver_id=request.user.id
-            ).order_by(order_by)
+            notifications = (
+                Notification.objects.filter(
+                    workspace__slug=slug, receiver_id=request.user.id
+                )
+                .select_related("workspace", "project", "triggered_by", "receiver")
+                .order_by("snoozed_till", "-created_at")
+            )
 
             # Filter for snoozed notifications
             if snoozed == "false":
@@ -83,6 +87,16 @@ class NotificationViewSet(BaseViewSet):
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True)
                 notifications = notifications.filter(entity_identifier__in=issue_ids)
+
+            # Pagination
+            if request.GET.get("per_page", False) and request.GET.get("cursor", False):
+                return self.paginate(
+                    request=request,
+                    queryset=(notifications),
+                    on_results=lambda notifications: NotificationSerializer(
+                        notifications, many=True
+                    ).data,
+                )
 
             serializer = NotificationSerializer(notifications, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -215,6 +229,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 receiver_id=request.user.id,
                 read_at__isnull=True,
+                archived_at__isnull=True,
                 entity_identifier__in=IssueSubscriber.objects.filter(
                     workspace__slug=slug, subscriber_id=request.user.id
                 ).values_list("issue_id", flat=True),
@@ -225,6 +240,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 receiver_id=request.user.id,
                 read_at__isnull=True,
+                archived_at__isnull=True,
                 entity_identifier__in=IssueAssignee.objects.filter(
                     workspace__slug=slug, assignee_id=request.user.id
                 ).values_list("issue_id", flat=True),
@@ -235,6 +251,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 receiver_id=request.user.id,
                 read_at__isnull=True,
+                archived_at__isnull=True,
                 entity_identifier__in=Issue.objects.filter(
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True),

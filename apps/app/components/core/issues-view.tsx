@@ -31,7 +31,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
-import { EmptyState, PrimaryButton, Spinner, Icon } from "components/ui";
+import { EmptyState, PrimaryButton, Spinner, SecondaryButton } from "components/ui";
 // icons
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // images
@@ -601,6 +601,17 @@ export const IssuesView: React.FC<Props> = ({
               image={emptyIssue}
               buttonText="New Issue"
               buttonIcon={<PlusIcon className="h-4 w-4" />}
+              secondaryButton={
+                cycleId || moduleId ? (
+                  <SecondaryButton
+                    className="flex items-center gap-1.5"
+                    onClick={openIssuesListModal}
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    Add an existing issue
+                  </SecondaryButton>
+                ) : null
+              }
               onClick={() => {
                 const e = new KeyboardEvent("keydown", {
                   key: "c",

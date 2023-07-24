@@ -217,7 +217,7 @@ export const render12HourFormatTime = (date: string | Date): string => {
     if (hours > 12) hours -= 12;
   }
 
-  return hours + ":" + minutes + " " + period;
+  return hours + ":" + (minutes < 10 ? `0${minutes}` : minutes) + " " + period;
 };
 
 export const render24HourFormatTime = (date: string | Date): string => {

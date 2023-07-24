@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
+
 import useSWR from "swr";
+
 // services
 import issueServices from "services/issues.service";
 // hooks
@@ -9,17 +11,17 @@ import { IssuePriorities, Properties } from "types";
 
 const initialValues: Properties = {
   assignee: true,
-  due_date: false,
+  due_date: true,
   key: true,
-  labels: false,
-  priority: false,
+  labels: true,
+  priority: true,
   state: true,
-  sub_issue_count: false,
-  attachment_count: false,
-  link: false,
-  estimate: false,
-  created_on: false,
-  updated_on: false,
+  sub_issue_count: true,
+  attachment_count: true,
+  link: true,
+  estimate: true,
+  created_on: true,
+  updated_on: true,
 };
 
 const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {

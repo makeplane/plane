@@ -4,9 +4,10 @@ import Link from "next/link";
 
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
+// ui
+import { DropdownProps } from "components/ui";
 // icons
-import { DropdownProps, Icon } from "components/ui";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ExpandMoreOutlined, MoreHorizOutlined } from "@mui/icons-material";
 
 export type CustomMenuProps = DropdownProps & {
   children: React.ReactNode;
@@ -39,7 +40,7 @@ const CustomMenu = ({
     {({ open }) => (
       <>
         {customButton ? (
-          <Menu.Button as="button" onClick={menuButtonOnClick}>
+          <Menu.Button as="button" type="button" onClick={menuButtonOnClick}>
             {customButton}
           </Menu.Button>
         ) : (
@@ -49,13 +50,13 @@ const CustomMenu = ({
                 type="button"
                 onClick={menuButtonOnClick}
                 disabled={disabled}
-                className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none ${
+                className={`relative grid place-items-center rounded p-1 text-custom-text-200 hover:text-custom-text-100 outline-none ${
                   disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
-                <Icon
-                  iconName="more_horiz"
-                  className={`${verticalEllipsis ? "rotate-90" : ""} text-custom-text-200`}
+                <MoreHorizOutlined
+                  fontSize="small"
+                  className={verticalEllipsis ? "rotate-90" : ""}
                 />
               </Menu.Button>
             ) : (
@@ -72,7 +73,14 @@ const CustomMenu = ({
                 } ${buttonClassName}`}
               >
                 {label}
-                {!noChevron && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+                {!noChevron && (
+                  <ExpandMoreOutlined
+                    sx={{
+                      fontSize: 14,
+                    }}
+                    aria-hidden="true"
+                  />
+                )}
               </Menu.Button>
             )}
           </>

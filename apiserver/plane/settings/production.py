@@ -71,6 +71,8 @@ CORS_ALLOW_HEADERS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+INSTALLED_APPS += ("scout_apm.django",)
+
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -270,3 +272,8 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 
 
 ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
+
+# Scout Settings
+SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
+SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
+SCOUT_NAME = "Plane"

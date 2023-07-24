@@ -47,7 +47,7 @@ class Project(BaseModel):
         "db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project"
     )
     identifier = models.CharField(
-        max_length=5,
+        max_length=12,
         verbose_name="Project Identifier",
     )
     default_assignee = models.ForeignKey(
@@ -168,7 +168,7 @@ class ProjectIdentifier(AuditModel):
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="project_identifier"
     )
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=12)
 
     class Meta:
         unique_together = ["name", "workspace"]

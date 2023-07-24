@@ -31,11 +31,18 @@ const useUserIssueNotificationSubscription = (
   const handleUnsubscribe = useCallback(() => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
+    mutate(
+      {
+        subscribed: false,
+      },
+      false
+    );
+
     userNotificationServices
       .unsubscribeFromIssueNotifications(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string
+        workspaceSlug.toString(),
+        projectId.toString(),
+        issueId.toString()
       )
       .then(() => {
         mutate({
@@ -47,14 +54,18 @@ const useUserIssueNotificationSubscription = (
   const handleSubscribe = useCallback(() => {
     if (!workspaceSlug || !projectId || !issueId || !user) return;
 
+    mutate(
+      {
+        subscribed: true,
+      },
+      false
+    );
+
     userNotificationServices
       .subscribeToIssueNotifications(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        {
-          subscriber: user.id,
-        }
+        workspaceSlug.toString(),
+        projectId.toString(),
+        issueId.toString()
       )
       .then(() => {
         mutate({

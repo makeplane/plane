@@ -38,7 +38,7 @@ export const Tooltip: React.FC<Props> = ({
   children,
   disabled = false,
   className = "",
-  openDelay = 500,
+  openDelay = 200,
   closeDelay,
 }) => {
   const { theme } = useTheme();

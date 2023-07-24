@@ -116,7 +116,7 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
                     <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+                    <PrimaryButton type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Adding Link..." : "Add Link"}
                     </PrimaryButton>
                   </div>
