@@ -198,7 +198,7 @@ class ProjectIssuesServices extends APIService {
     moduleId: string,
     data: {
       metadata: any;
-      title: string;
+      title: string | null;
       url: string;
     }
   ): Promise<any> {
