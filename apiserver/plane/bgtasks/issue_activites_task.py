@@ -567,7 +567,7 @@ def track_archive_at(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} has restored the issue",
+                comment=f"has restored the issue",
                 verb="updated",
                 actor=actor,
                 field="archived_at",
