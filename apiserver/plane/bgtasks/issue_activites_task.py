@@ -376,7 +376,7 @@ def track_assignees(
                         verb="updated",
                         old_value=assignee.email,
                         new_value="",
-                        field="assignee",
+                        field="assignees",
                         project=project,
                         workspace=project.workspace,
                         comment=f"{actor.email} removed assignee {assignee.email}",
@@ -989,7 +989,7 @@ def create_attachment_activity(
             verb="created",
             actor=actor,
             field="attachment",
-            new_value=current_instance.get("access", ""),
+            new_value=current_instance.get("asset", ""),
             new_identifier=current_instance.get("id", None),
         )
     )
