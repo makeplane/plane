@@ -629,7 +629,7 @@ class SubIssuesEndpoint(BaseAPIView):
         try:
             sub_issues = (
                 Issue.issue_objects.filter(
-                    parent_id=issue_id, workspace__slug=slug, project_id=project_id
+                    parent_id=issue_id, workspace__slug=slug
                 )
                 .select_related("project")
                 .select_related("workspace")
@@ -661,7 +661,7 @@ class SubIssuesEndpoint(BaseAPIView):
 
             state_distribution = (
                 State.objects.filter(
-                    ~Q(name="Triage"), workspace__slug=slug, project_id=project_id
+                    ~Q(name="Triage"), workspace__slug=slug
                 )
                 .annotate(
                     state_count=Count(

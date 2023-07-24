@@ -50,6 +50,20 @@ class IssueFlatSerializer(BaseSerializer):
         ]
 
 
+class IssueProjectLiteSerializer(BaseSerializer):
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "project_detail",
+            "name",
+            "sequence_id",
+        ]
+        read_only_fields = fields
+
+
 ##TODO: Find a better way to write this serializer
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
@@ -335,19 +349,31 @@ class IssueLabelSerializer(BaseSerializer):
 
 
 class BlockedIssueSerializer(BaseSerializer):
-    blocked_issue_detail = IssueFlatSerializer(source="block", read_only=True)
+    blocked_issue_detail = IssueProjectLiteSerializer(source="block", read_only=True)
 
     class Meta:
         model = IssueBlocker
-        fields = "__all__"
+        fields = [
+            "blocked_issue_detail",
+            "blocked_by",
+            "block",
+        ]
+        read_only_fields = fields
 
 
 class BlockerIssueSerializer(BaseSerializer):
-    blocker_issue_detail = IssueFlatSerializer(source="blocked_by", read_only=True)
+    blocker_issue_detail = IssueProjectLiteSerializer(
+        source="blocked_by", read_only=True
+    )
 
     class Meta:
         model = IssueBlocker
-        fields = "__all__"
+        fields = [
+            "blocker_issue_detail",
+            "blocked_by",
+            "block",
+        ]
+        read_only_fields = fields
 
 
 class IssueAssigneeSerializer(BaseSerializer):
@@ -460,6 +486,21 @@ class IssueAttachmentSerializer(BaseSerializer):
         ]
 
 
+class IssueStateFlatSerializer(BaseSerializer):
+    state_detail = StateLiteSerializer(read_only=True, source="state")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "sequence_id",
+            "name",
+            "state_detail",
+            "project_detail",
+        ]
+
+
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
@@ -479,7 +520,7 @@ class IssueStateSerializer(BaseSerializer):
 class IssueSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
-    parent_detail = IssueFlatSerializer(read_only=True, source="parent")
+    parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     # List of issues blocked by this issue
