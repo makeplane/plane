@@ -73,6 +73,7 @@ export const CustomSearchSelect = ({
             <Combobox.Button as="div">{customButton}</Combobox.Button>
           ) : (
             <Combobox.Button
+              type="button"
               className={`flex items-center justify-between gap-1 w-full rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
               } ${
