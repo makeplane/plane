@@ -104,7 +104,13 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
 
   useEffect(() => {
     if (projectName && isChangeIdentifierRequired)
-      setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
+      setValue(
+        "identifier",
+        projectName
+          .replace(/[^A-Za-z]/g, "")
+          .toUpperCase()
+          .substring(0, 3)
+      );
   }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
 
   useEffect(() => () => setIsChangeIdentifierRequired(true), [isOpen]);
