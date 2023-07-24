@@ -15,8 +15,8 @@ type Props = {
   onFormSubmit: (formData: IIssueLink | ModuleLink) => Promise<void>;
 };
 
-const defaultValues: ModuleLink = {
-  title: null,
+const defaultValues: IIssueLink | ModuleLink = {
+  title: "",
   url: "",
 };
 
@@ -31,7 +31,7 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
   });
 
   const onSubmit = async (formData: IIssueLink | ModuleLink) => {
-    const formattedTitle = formData.title === "" && !formData.title ? null : formData.title;
+    const formattedTitle = formData.title === "" ? null : formData.title;
     const formattedUrl =
       formData.url.startsWith("https://") || formData.url.startsWith("http://")
         ? formData.url
