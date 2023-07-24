@@ -42,7 +42,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 Notification.objects.filter(
                     workspace__slug=slug, receiver_id=request.user.id
                 )
-                .select_related("workspace", "project," "triggered_by", "receiver")
+                .select_related("workspace", "project", "triggered_by", "receiver")
                 .order_by("snoozed_till", "-created_at")
             )
 
