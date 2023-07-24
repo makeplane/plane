@@ -6,6 +6,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from sentry_sdk import capture_exception
+from plane.utils.paginator import BasePaginator
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
@@ -13,7 +14,7 @@ from plane.db.models import Notification, IssueAssignee, IssueSubscriber, Issue
 from plane.api.serializers import NotificationSerializer
 
 
-class NotificationViewSet(BaseViewSet):
+class NotificationViewSet(BaseViewSet, BasePaginator):
     model = Notification
     serializer_class = NotificationSerializer
 
@@ -37,9 +38,13 @@ class NotificationViewSet(BaseViewSet):
             # Filter type
             type = request.GET.get("type", "all")
 
-            notifications = Notification.objects.filter(
-                workspace__slug=slug, receiver_id=request.user.id
-            ).order_by("snoozed_till", "-created_at")
+            notifications = (
+                Notification.objects.filter(
+                    workspace__slug=slug, receiver_id=request.user.id
+                )
+                .select_related("workspace", "project", "triggered_by", "receiver")
+                .order_by("snoozed_till", "-created_at")
+            )
 
             # Filter for snoozed notifications
             if snoozed == "false":
@@ -82,6 +87,16 @@ class NotificationViewSet(BaseViewSet):
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True)
                 notifications = notifications.filter(entity_identifier__in=issue_ids)
+
+            # Pagination
+            if request.GET.get("per_page", False) and request.GET.get("cursor", False):
+                return self.paginate(
+                    request=request,
+                    queryset=(notifications),
+                    on_results=lambda notifications: NotificationSerializer(
+                        notifications, many=True
+                    ).data,
+                )
 
             serializer = NotificationSerializer(notifications, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

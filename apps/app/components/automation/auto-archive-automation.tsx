@@ -28,7 +28,7 @@ export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleC
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-7 px-6 py-5 rounded-[10px] border border-custom-border-100 bg-custom-background-90">
+      <div className="flex flex-col gap-7 px-6 py-5 rounded-[10px] border border-custom-border-300 bg-custom-background-90">
         <div className="flex items-center justify-between gap-x-8 gap-y-2">
           <div className="flex flex-col gap-2.5">
             <h4 className="text-lg font-semibold">Auto-archive closed issues</h4>

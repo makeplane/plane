@@ -85,3 +85,9 @@ export type SelectCycleType =
   | undefined;
 
 export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | null;
+
+export type CycleDateCheckData = {
+  start_date: string;
+  end_date: string;
+  cycle_id?: string;
+};

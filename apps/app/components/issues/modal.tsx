@@ -95,9 +95,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     };
 
   useEffect(() => {
-    if (projects && projects.length > 0)
+    if (projects && projects.length > 0 && !activeProject)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [projectId, projects]);
+  }, [activeProject, projectId, projects]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

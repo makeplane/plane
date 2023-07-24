@@ -10,17 +10,21 @@ import { DropdownProps } from "./types";
 
 export type CustomSearchSelectProps = DropdownProps & {
   footerOption?: JSX.Element;
-  multiple?: boolean;
-  value: any;
   onChange: any;
   options:
     | {
         value: any;
         query: string;
-        content: JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
-};
+} & (
+    | { multiple?: false; value: any } // if multiple is false, value can be anything
+    | {
+        multiple?: true;
+        value: any[]; // if multiple is true, value should be an array
+      }
+  );
 
 export const CustomSearchSelect = ({
   buttonClassName = "",
@@ -69,6 +73,7 @@ export const CustomSearchSelect = ({
             <Combobox.Button as="div">{customButton}</Combobox.Button>
           ) : (
             <Combobox.Button
+              type="button"
               className={`flex items-center justify-between gap-1 w-full rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
                 input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
               } ${
@@ -103,7 +108,7 @@ export const CustomSearchSelect = ({
               <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
                 <Combobox.Input
-                  className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
+                  className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Type to search..."
                   displayValue={(assigned: any) => assigned?.name}

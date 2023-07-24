@@ -55,10 +55,10 @@ export const SidebarParentSelect: React.FC<Props> = ({
           onClick={() => setIsParentModalOpen(true)}
           disabled={isNotAllowed}
         >
-          {selectedParentIssue ? (
+          {selectedParentIssue && issueDetails?.parent ? (
             `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-          ) : issueDetails?.parent ? (
-            `${issueDetails.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
+          ) : !selectedParentIssue && issueDetails?.parent ? (
+            `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
           ) : (
             <span className="text-custom-text-200">Select issue</span>
           )}

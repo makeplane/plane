@@ -6,14 +6,14 @@ import { mutate } from "swr";
 
 // react-dropzone
 import { useDropzone } from "react-dropzone";
-// toast
-import useToast from "hooks/use-toast";
-// fetch key
-import { ISSUE_ATTACHMENTS } from "constants/fetch-keys";
 // services
 import issuesService from "services/issues.service";
-// type
+// hooks
+import useToast from "hooks/use-toast";
+// types
 import { IIssueAttachment } from "types";
+// fetch-keys
+import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const maxFileSize = 5 * 1024 * 1024; // 5 MB
 
@@ -56,6 +56,7 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
           (prevData) => [res, ...(prevData ?? [])],
           false
         );
+        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         setToastAlert({
           type: "success",
           title: "Success!",
