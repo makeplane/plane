@@ -32,7 +32,7 @@ export interface IModule {
     created_by_detail: IUserLite;
     id: string;
     metadata: any;
-    title: string;
+    title: string | null;
     url: string;
   }[];
   links_list: ModuleLink[];
@@ -74,7 +74,7 @@ export interface ModuleIssueResponse {
 }
 
 export type ModuleLink = {
-  title: string;
+  title: string | null;
   url: string;
 };
 

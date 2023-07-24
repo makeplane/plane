@@ -16,7 +16,7 @@ type Props = {
 };
 
 const defaultValues: ModuleLink = {
-  title: "",
+  title: null,
   url: "",
 };
 
@@ -30,8 +30,13 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
     defaultValues,
   });
 
-  const onSubmit = async (formData: ModuleLink) => {
-    await onFormSubmit(formData);
+  const onSubmit = async (formData: IIssueLink | ModuleLink) => {
+    const formattedTitle = formData.title === "" && !formData.title ? null : formData.title;
+    const formattedUrl =
+      formData.url.startsWith("https://") || formData.url.startsWith("http://")
+        ? formData.url
+        : "http://" + formData.url;
+    await onFormSubmit({ title: formattedTitle, url: formattedUrl });
 
     onClose();
   };
@@ -86,29 +91,31 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                             id="url"
                             label="URL"
                             name="url"
-                            type="url"
-                            placeholder="Enter URL"
+                            type="text"
+                            placeholder="https://..."
                             autoComplete="off"
                             error={errors.url}
                             register={register}
                             validations={{
                               required: "URL is required",
+                              pattern: {
+                                value:
+                                  /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z0-9()]{2,6}(?:\/[-a-zA-Z0-9()@:%_\+.~#?&//=]*)?$/,
+                                message: `URL is not valid`,
+                              },
                             }}
                           />
                         </div>
                         <div>
                           <Input
                             id="title"
-                            label="Title"
+                            label="Title (optional)"
                             name="title"
                             type="text"
                             placeholder="Enter title"
                             autoComplete="off"
                             error={errors.title}
                             register={register}
-                            validations={{
-                              required: "Title is required",
-                            }}
                           />
                         </div>
                       </div>
