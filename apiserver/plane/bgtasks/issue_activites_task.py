@@ -959,6 +959,11 @@ def update_link_activity(
 def delete_link_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
+
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -968,6 +973,8 @@ def delete_link_activity(
             verb="deleted",
             actor=actor,
             field="link",
+            old_value=current_instance.get("url", ""),
+            new_value=""
         )
     )
 
