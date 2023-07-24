@@ -425,7 +425,7 @@ class IssueCommentViewSet(BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     permission_classes = [
-        ProjectEntityPermission,
+        ProjectLitePermission,
     ]
 
     filterset_fields = [
