@@ -19,13 +19,13 @@ from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+
 def generate_display_name(instance):
-    if not instance.first_name:
-        letters = string.ascii_letters
-        random_letters = ''.join(random.choice(letters) for _ in range(6))
-        return random_letters
-    else:
-        return instance.first_name.lower()
+    return (
+        instance.email.split("@")[0]
+        if len(instance.email.split("@"))
+        else "".join(random.choice(string.ascii_letters) for _ in range(6))
+    )
 
 
 def get_default_onboarding():
@@ -35,6 +35,7 @@ def get_default_onboarding():
         "workspace_invite": False,
         "workspace_join": False,
     }
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(

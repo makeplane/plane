@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, random, string
 import uuid
 
 sys.path.append("/code")
@@ -22,6 +22,7 @@ def populate():
         print(f"User created with an email: {default_email}")
     else:
         print(f"User already exists with the default email: {default_email}")
+
 
 if __name__ == "__main__":
     populate()
