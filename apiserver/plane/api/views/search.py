@@ -32,7 +32,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_projects(self, query, slug, project_id):
-        fields = ["name"]
+        fields = ["name", "identifier"]
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
@@ -47,7 +47,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def filter_issues(self, query, slug, project_id):
-        fields = ["name", "sequence_id"]
+        fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
         for field in fields:
             if field == "sequence_id":
