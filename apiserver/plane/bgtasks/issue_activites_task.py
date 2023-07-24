@@ -968,6 +968,8 @@ def delete_link_activity(
             verb="deleted",
             actor=actor,
             field="link",
+            old_value=current_instance.get("url", ""),
+            new_value=""
         )
     )
 
