@@ -244,20 +244,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                         <EmojiIconPicker
                           label={
                             <div className="h-[44px] w-[44px] grid place-items-center rounded-md bg-custom-background-80 outline-none text-lg">
-                              {value ? (
-                                typeof value === "object" ? (
-                                  <span
-                                    style={{ color: value.color }}
-                                    className="material-symbols-rounded text-lg"
-                                  >
-                                    {value.name}
-                                  </span>
-                                ) : (
-                                  renderEmoji(value)
-                                )
-                              ) : (
-                                "Icon"
-                              )}
+                              {value ? renderEmoji(value) : "Icon"}
                             </div>
                           }
                           onChange={onChange}

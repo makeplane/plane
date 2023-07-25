@@ -176,12 +176,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                       {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
-                    <span
-                      style={{ color: project.icon_prop.color }}
-                      className="material-symbols-rounded text-lg"
-                    >
-                      {project.icon_prop.name}
-                    </span>
+                    renderEmoji(project.icon_prop)
                   ) : null}
                 </div>
                 <p className="mt-3.5 mb-7 break-words">
