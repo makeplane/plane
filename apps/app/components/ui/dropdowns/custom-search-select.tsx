@@ -109,6 +109,7 @@ export const CustomSearchSelect = ({
                 <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
                 <Combobox.Input
                   className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Type to search..."
                   displayValue={(assigned: any) => assigned?.name}

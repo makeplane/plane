@@ -31,6 +31,13 @@ def get_default_props():
         "showEmptyGroups": True,
     }
 
+def get_default_preferences():
+    return {
+        "pages": {
+            "block_display": True
+        }
+    }
+
 
 class Project(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
@@ -147,6 +154,7 @@ class ProjectMember(ProjectBaseModel):
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
+    preferences = models.JSONField(default=get_default_preferences)
 
     class Meta:
         unique_together = ["project", "member"]

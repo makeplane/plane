@@ -161,7 +161,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm placeholder:text-custom-text-400"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 text-sm placeholder:text-custom-text-400"
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
