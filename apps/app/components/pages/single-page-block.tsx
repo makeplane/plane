@@ -42,11 +42,18 @@ import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 type Props = {
   block: IPageBlock;
   projectDetails: IProject | undefined;
+  showBlockDetails: boolean;
   index: number;
   user: ICurrentUserResponse | undefined;
 };
 
-export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index, user }) => {
+export const SinglePageBlock: React.FC<Props> = ({
+  block,
+  projectDetails,
+  showBlockDetails,
+  index,
+  user,
+}) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -441,7 +448,11 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index,
                     />
                   </div>
                   {block?.description_stripped.length > 0 && (
-                    <p className="mt-3 h-5 truncate text-sm font-normal text-custom-text-200">
+                    <p
+                      className={`mt-3 text-sm font-normal text-custom-text-200 ${
+                        showBlockDetails ? "" : "h-5 truncate"
+                      }`}
+                    >
                       {block.description_stripped}
                     </p>
                   )}

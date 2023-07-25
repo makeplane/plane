@@ -69,6 +69,12 @@ type ProjectViewTheme = {
   filters: IIssueFilterOptions;
 };
 
+type ProjectPreferences = {
+  pages: {
+    block_display: boolean;
+  };
+};
+
 export interface IProjectMember {
   id: string;
   member: IUserLite;
@@ -76,6 +82,8 @@ export interface IProjectMember {
   workspace: IWorkspaceLite;
   comment: string;
   role: 5 | 10 | 15 | 20;
+
+  preferences: ProjectPreferences;
 
   view_props: ProjectViewTheme;
   default_props: ProjectViewTheme;

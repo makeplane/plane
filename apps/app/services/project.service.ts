@@ -11,6 +11,7 @@ import type {
   IProjectMember,
   IProjectMemberInvitation,
   ISearchIssueResponse,
+  ProjectPreferences,
   ProjectViewTheme,
   TProjectIssuesSearchParams,
 } from "types";
@@ -252,6 +253,7 @@ class ProjectServices extends APIService {
     data: {
       view_props?: ProjectViewTheme;
       default_props?: ProjectViewTheme;
+      preferences?: ProjectPreferences;
     }
   ): Promise<any> {
     await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-views/`, data)
