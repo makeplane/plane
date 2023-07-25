@@ -11,6 +11,7 @@ type Props = {
   image: any;
   buttonText?: string;
   buttonIcon?: any;
+  secondaryButton?: React.ReactNode;
   onClick?: () => void;
   isFullScreen?: boolean;
 };
@@ -22,6 +23,7 @@ export const EmptyState: React.FC<Props> = ({
   onClick,
   buttonText,
   buttonIcon,
+  secondaryButton,
   isFullScreen = true,
 }) => (
   <div
@@ -33,12 +35,15 @@ export const EmptyState: React.FC<Props> = ({
       <Image src={image} className="w-52 sm:w-60" alt={buttonText} />
       <h6 className="text-xl font-semibold mt-6 sm:mt-8 mb-3">{title}</h6>
       <p className="text-custom-text-300 mb-7 sm:mb-8">{description}</p>
-      {buttonText && (
-        <PrimaryButton className="flex items-center gap-1.5" onClick={onClick}>
-          {buttonIcon}
-          {buttonText}
-        </PrimaryButton>
-      )}
+      <div className="flex items-center gap-4">
+        {buttonText && (
+          <PrimaryButton className="flex items-center gap-1.5" onClick={onClick}>
+            {buttonIcon}
+            {buttonText}
+          </PrimaryButton>
+        )}
+        {secondaryButton}
+      </div>
     </div>
   </div>
 );

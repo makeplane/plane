@@ -1,23 +1,19 @@
-import React from "react";
-
-import { mutate } from "swr";
+import React, { useEffect } from "react";
 
 // react-hook-form
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
-// contexts
-import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+// icons
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IWorkspaceMemberInvitation } from "types";
-// fetch-keys
-import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+import { ICurrentUserResponse, IWorkspace, IWorkspaceMemberInvitation } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 
@@ -25,59 +21,91 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workspace_slug: string;
-  members: any[];
   user: ICurrentUserResponse | undefined;
 };
 
-const defaultValues: Partial<IWorkspaceMemberInvitation> = {
-  email: "",
-  role: 5,
+type EmailRole = {
+  email: string;
+  role: 5 | 10 | 15 | 20;
+};
+
+type FormValues = {
+  emails: EmailRole[];
+};
+
+const defaultValues: FormValues = {
+  emails: [
+    {
+      email: "",
+      role: 15,
+    },
+  ],
 };
 
 const SendWorkspaceInvitationModal: React.FC<Props> = ({
   isOpen,
   setIsOpen,
   workspace_slug,
-  members,
   user,
 }) => {
-  const { setToastAlert } = useToast();
-  const { memberDetails } = useWorkspaceMyMembership();
-
   const {
     control,
-    register,
-    formState: { errors, isSubmitting },
-    handleSubmit,
     reset,
-  } = useForm<IWorkspaceMemberInvitation>({
-    defaultValues,
-    reValidateMode: "onChange",
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm<FormValues>();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "emails",
   });
+
+  const { setToastAlert } = useToast();
 
   const handleClose = () => {
     setIsOpen(false);
-    reset(defaultValues);
+    const timeout = setTimeout(() => {
+      reset(defaultValues);
+      clearTimeout(timeout);
+    }, 500);
   };
 
-  const onSubmit = async (formData: IWorkspaceMemberInvitation) => {
+  const onSubmit = async (formData: FormValues) => {
+    if (!workspace_slug) return;
+
+    const payload = { ...formData };
+
     await workspaceService
-      .inviteWorkspace(workspace_slug, { emails: [formData] }, user)
-      .then((res) => {
+      .inviteWorkspace(workspace_slug, payload, user)
+      .then(async (res) => {
         setIsOpen(false);
         handleClose();
-        mutate(WORKSPACE_INVITATIONS, (prevData: any) => [
-          { ...res, ...formData },
-          ...(prevData ?? []),
-        ]);
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: "Member invited successfully.",
+          message: "Invitations sent successfully.",
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: `${err.error}`,
+        });
+        console.log(err);
+      })
+      .finally(() => reset(defaultValues));
   };
+
+  const appendField = () => {
+    append({ email: "", role: 15 });
+  };
+
+  useEffect(() => {
+    if (fields.length === 0) {
+      append([{ email: "", role: 15 }]);
+    }
+  }, [fields, append]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -91,11 +119,11 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="flex items-center justify-center min-h-full p-4 text-center">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -105,72 +133,107 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-90 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
-                <form onSubmit={handleSubmit(onSubmit)}>
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl opacity-100 translate-y-0 sm:scale-100">
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  onKeyDown={(e) => {
+                    if (e.code === "Enter") e.preventDefault();
+                  }}
+                >
                   <div className="space-y-5">
-                    <div>
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
-                        Members
-                      </Dialog.Title>
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-custom-text-100"
+                    >
+                      Invite people to collaborate
+                    </Dialog.Title>
+                    <div className="mt-2">
                       <p className="text-sm text-custom-text-200">
                         Invite members to work on your workspace.
                       </p>
                     </div>
-                    <div className="space-y-3">
-                      <div>
-                        <Input
-                          id="email"
-                          label="Email"
-                          name="email"
-                          type="email"
-                          placeholder="Enter email"
-                          error={errors.email}
-                          register={register}
-                          validations={{
-                            required: "Email is required",
-                            validate: (value) => {
-                              if (members.find((member) => member.email === value))
-                                return "Email already exist";
-                            },
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <Controller
-                          control={control}
-                          rules={{ required: true }}
-                          name="role"
-                          render={({ field: { value, onChange } }) => (
-                            <CustomSelect
-                              value={value}
-                              label={ROLE[value]}
-                              onChange={onChange}
-                              width="w-full"
-                              input
-                            >
-                              {Object.entries(ROLE).map(([key, value]) => {
-                                if (parseInt(key) > (memberDetails?.role ?? 5)) return null;
 
-                                return (
-                                  <CustomSelect.Option key={key} value={key}>
-                                    {value}
-                                  </CustomSelect.Option>
-                                );
-                              })}
-                            </CustomSelect>
+                    <div className="space-y-4 mb-3">
+                      {fields.map((field, index) => (
+                        <div key={field.id} className="group relative grid grid-cols-11 gap-4">
+                          <div className="col-span-7">
+                            <Controller
+                              control={control}
+                              name={`emails.${index}.email`}
+                              rules={{
+                                required: "Email ID is required",
+                                pattern: {
+                                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                  message: "Invalid Email ID",
+                                },
+                              }}
+                              render={({ field }) => (
+                                <>
+                                  <Input
+                                    {...field}
+                                    className="text-xs sm:text-sm"
+                                    placeholder="Enter their email..."
+                                  />
+                                  {errors.emails?.[index]?.email && (
+                                    <span className="ml-1 text-red-500 text-xs">
+                                      {errors.emails?.[index]?.email?.message}
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            />
+                          </div>
+                          <div className="col-span-3">
+                            <Controller
+                              control={control}
+                              name={`emails.${index}.role`}
+                              rules={{ required: true }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomSelect
+                                  value={value}
+                                  label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
+                                  onChange={onChange}
+                                  width="w-full"
+                                  input
+                                >
+                                  {Object.entries(ROLE).map(([key, value]) => (
+                                    <CustomSelect.Option key={key} value={parseInt(key)}>
+                                      {value}
+                                    </CustomSelect.Option>
+                                  ))}
+                                </CustomSelect>
+                              )}
+                            />
+                          </div>
+                          {fields.length > 1 && (
+                            <button
+                              type="button"
+                              className="self-center place-items-center rounded -ml-3"
+                              onClick={() => remove(index)}
+                            >
+                              <XMarkIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                            </button>
                           )}
-                        />
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton type="submit" loading={isSubmitting}>
-                      {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
-                    </PrimaryButton>
+
+                  <div className="mt-5 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 outline-custom-primary bg-transparent text-custom-primary text-sm font-medium py-2 pr-3"
+                      onClick={appendField}
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                      Add more
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <PrimaryButton type="submit" loading={isSubmitting}>
+                        {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
+                      </PrimaryButton>
+                    </div>
                   </div>
                 </form>
               </Dialog.Panel>

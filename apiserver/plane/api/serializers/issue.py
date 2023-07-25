@@ -50,6 +50,20 @@ class IssueFlatSerializer(BaseSerializer):
         ]
 
 
+class IssueProjectLiteSerializer(BaseSerializer):
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "project_detail",
+            "name",
+            "sequence_id",
+        ]
+        read_only_fields = fields
+
+
 ##TODO: Find a better way to write this serializer
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
@@ -101,8 +115,15 @@ class IssueCreateSerializer(BaseSerializer):
         labels = validated_data.pop("labels_list", None)
         blocks = validated_data.pop("blocks_list", None)
 
-        project = self.context["project"]
-        issue = Issue.objects.create(**validated_data, project=project)
+        project_id = self.context["project_id"]
+        workspace_id = self.context["workspace_id"]
+        default_assignee_id = self.context["default_assignee_id"]
+
+        issue = Issue.objects.create(**validated_data, project_id=project_id)
+
+        # Issue Audit Users
+        created_by_id = issue.created_by_id
+        updated_by_id = issue.updated_by_id
 
         if blockers is not None and len(blockers):
             IssueBlocker.objects.bulk_create(
@@ -110,10 +131,10 @@ class IssueCreateSerializer(BaseSerializer):
                     IssueBlocker(
                         block=issue,
                         blocked_by=blocker,
-                        project=project,
-                        workspace=project.workspace,
-                        created_by=issue.created_by,
-                        updated_by=issue.updated_by,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
                     )
                     for blocker in blockers
                 ],
@@ -126,10 +147,10 @@ class IssueCreateSerializer(BaseSerializer):
                     IssueAssignee(
                         assignee=user,
                         issue=issue,
-                        project=project,
-                        workspace=project.workspace,
-                        created_by=issue.created_by,
-                        updated_by=issue.updated_by,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
                     )
                     for user in assignees
                 ],
@@ -137,14 +158,14 @@ class IssueCreateSerializer(BaseSerializer):
             )
         else:
             # Then assign it to default assignee
-            if project.default_assignee is not None:
+            if default_assignee_id is not None:
                 IssueAssignee.objects.create(
-                    assignee=project.default_assignee,
+                    assignee_id=default_assignee_id,
                     issue=issue,
-                    project=project,
-                    workspace=project.workspace,
-                    created_by=issue.created_by,
-                    updated_by=issue.updated_by,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    created_by_id=created_by_id,
+                    updated_by_id=updated_by_id,
                 )
 
         if labels is not None and len(labels):
@@ -153,10 +174,10 @@ class IssueCreateSerializer(BaseSerializer):
                     IssueLabel(
                         label=label,
                         issue=issue,
-                        project=project,
-                        workspace=project.workspace,
-                        created_by=issue.created_by,
-                        updated_by=issue.updated_by,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
                     )
                     for label in labels
                 ],
@@ -169,10 +190,10 @@ class IssueCreateSerializer(BaseSerializer):
                     IssueBlocker(
                         block=block,
                         blocked_by=issue,
-                        project=project,
-                        workspace=project.workspace,
-                        created_by=issue.created_by,
-                        updated_by=issue.updated_by,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
                     )
                     for block in blocks
                 ],
@@ -187,6 +208,12 @@ class IssueCreateSerializer(BaseSerializer):
         labels = validated_data.pop("labels_list", None)
         blocks = validated_data.pop("blocks_list", None)
 
+        # Related models
+        project_id = instance.project_id
+        workspace_id = instance.workspace_id
+        created_by_id = instance.created_by_id
+        updated_by_id = instance.updated_by_id
+
         if blockers is not None:
             IssueBlocker.objects.filter(block=instance).delete()
             IssueBlocker.objects.bulk_create(
@@ -194,10 +221,10 @@ class IssueCreateSerializer(BaseSerializer):
                     IssueBlocker(
                         block=instance,
                         blocked_by=blocker,
-                        project=instance.project,
-                        workspace=instance.project.workspace,
-                        created_by=instance.created_by,
-                        updated_by=instance.updated_by,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
                     )
                     for blocker in blockers
                 ],
@@ -211,10 +238,10 @@ class IssueCreateSerializer(BaseSerializer):
                     IssueAssignee(
                         assignee=user,
                         issue=instance,
-                        project=instance.project,
-                        workspace=instance.project.workspace,
-                        created_by=instance.created_by,
-                        updated_by=instance.updated_by,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
                     )
                     for user in assignees
                 ],
@@ -228,10 +255,10 @@ class IssueCreateSerializer(BaseSerializer):
                     IssueLabel(
                         label=label,
                         issue=instance,
-                        project=instance.project,
-                        workspace=instance.project.workspace,
-                        created_by=instance.created_by,
-                        updated_by=instance.updated_by,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
                     )
                     for label in labels
                 ],
@@ -245,16 +272,17 @@ class IssueCreateSerializer(BaseSerializer):
                     IssueBlocker(
                         block=block,
                         blocked_by=instance,
-                        project=instance.project,
-                        workspace=instance.project.workspace,
-                        created_by=instance.created_by,
-                        updated_by=instance.updated_by,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
                     )
                     for block in blocks
                 ],
                 batch_size=10,
             )
 
+        # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
         return super().update(instance, validated_data)
 
@@ -335,19 +363,31 @@ class IssueLabelSerializer(BaseSerializer):
 
 
 class BlockedIssueSerializer(BaseSerializer):
-    blocked_issue_detail = IssueFlatSerializer(source="block", read_only=True)
+    blocked_issue_detail = IssueProjectLiteSerializer(source="block", read_only=True)
 
     class Meta:
         model = IssueBlocker
-        fields = "__all__"
+        fields = [
+            "blocked_issue_detail",
+            "blocked_by",
+            "block",
+        ]
+        read_only_fields = fields
 
 
 class BlockerIssueSerializer(BaseSerializer):
-    blocker_issue_detail = IssueFlatSerializer(source="blocked_by", read_only=True)
+    blocker_issue_detail = IssueProjectLiteSerializer(
+        source="blocked_by", read_only=True
+    )
 
     class Meta:
         model = IssueBlocker
-        fields = "__all__"
+        fields = [
+            "blocker_issue_detail",
+            "blocked_by",
+            "block",
+        ]
+        read_only_fields = fields
 
 
 class IssueAssigneeSerializer(BaseSerializer):
@@ -460,6 +500,21 @@ class IssueAttachmentSerializer(BaseSerializer):
         ]
 
 
+class IssueStateFlatSerializer(BaseSerializer):
+    state_detail = StateLiteSerializer(read_only=True, source="state")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "sequence_id",
+            "name",
+            "state_detail",
+            "project_detail",
+        ]
+
+
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
@@ -479,7 +534,7 @@ class IssueStateSerializer(BaseSerializer):
 class IssueSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
-    parent_detail = IssueFlatSerializer(read_only=True, source="parent")
+    parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     # List of issues blocked by this issue

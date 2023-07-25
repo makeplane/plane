@@ -1,19 +1,23 @@
-import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction, useCallback } from "react";
-import useSWR, { mutate } from "swr";
+
+import { useRouter } from "next/router";
+
+import { mutate } from "swr";
 
 // cmdk
 import { Command } from "cmdk";
 // services
 import issuesService from "services/issues.service";
-// types
-import { ICurrentUserResponse, IIssue } from "types";
+// hooks
+import useProjectMembers from "hooks/use-project-members";
 // constants
-import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, PROJECT_MEMBERS } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+// ui
+import { Avatar } from "components/ui";
 // icons
 import { CheckIcon } from "components/icons";
-import projectService from "services/project.service";
-import { Avatar } from "components/ui";
+// types
+import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
@@ -25,12 +29,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { data: members } = useSWR(
-    projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { members } = useProjectMembers(workspaceSlug as string, projectId as string);
 
   const options =
     members?.map(({ member }) => ({

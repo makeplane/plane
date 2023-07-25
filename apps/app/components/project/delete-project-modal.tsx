@@ -58,6 +58,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
 
   const handleClose = () => {
     setIsDeleteLoading(false);
+
     const timer = setTimeout(() => {
       setConfirmProjectName("");
       setConfirmDeleteMyProject(false);
@@ -71,20 +72,27 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
 
     setIsDeleteLoading(true);
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
-      false
-    );
-
     await projectService
       .deleteProject(workspaceSlug as string, data.id, user)
       .then(() => {
         handleClose();
 
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+          (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
+          false
+        );
+
         if (onSuccess) onSuccess();
       })
-      .catch(() => setIsDeleteLoading(false));
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again later.",
+        })
+      )
+      .finally(() => setIsDeleteLoading(false));
   };
 
   return (

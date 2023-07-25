@@ -1,5 +1,5 @@
 export type Props = {
-  label: string | React.ReactNode;
+  label: React.ReactNode;
   value: any;
   onChange: (
     data:

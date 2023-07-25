@@ -75,6 +75,7 @@ const defaultValues: Partial<IIssue> = {
   assignees_list: [],
   labels: [],
   labels_list: [],
+  target_date: null,
 };
 
 export interface IssueFormProps {
@@ -224,9 +225,16 @@ export const IssueForm: FC<IssueFormProps> = ({
     reset({
       ...defaultValues,
       ...initialData,
+    });
+  }, [setFocus, initialData, reset]);
+
+  // update projectId in form when projectId changes
+  useEffect(() => {
+    reset({
+      ...getValues(),
       project: projectId,
     });
-  }, [setFocus, initialData, reset, projectId]);
+  }, [getValues, projectId, reset]);
 
   return (
     <>
@@ -260,8 +268,10 @@ export const IssueForm: FC<IssueFormProps> = ({
                 render={({ field: { value, onChange } }) => (
                   <IssueProjectSelect
                     value={value}
-                    onChange={onChange}
-                    setActiveProject={setActiveProject}
+                    onChange={(val: string) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
                   />
                 )}
               />
@@ -271,7 +281,6 @@ export const IssueForm: FC<IssueFormProps> = ({
             </h3>
           </div>
           {watch("parent") &&
-            watch("parent") !== "" &&
             (fieldsToShow.includes("all") || fieldsToShow.includes("parent")) &&
             selectedParentIssue && (
               <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
@@ -476,7 +485,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <CustomMenu ellipsis>
-                    {watch("parent") && watch("parent") !== "" ? (
+                    {watch("parent") ? (
                       <>
                         <CustomMenu.MenuItem
                           renderAs="button"

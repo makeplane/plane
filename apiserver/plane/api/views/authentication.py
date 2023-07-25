@@ -279,6 +279,8 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Clean up
+            email = email.strip().lower()
             validate_email(email)
 
             ## Generate a random token
@@ -346,7 +348,7 @@ class MagicSignInEndpoint(BaseAPIView):
     def post(self, request):
         try:
             user_token = request.data.get("token", "").strip()
-            key = request.data.get("key", False)
+            key = request.data.get("key", False).strip().lower()
 
             if not key or user_token == "":
                 return Response(

@@ -31,6 +31,13 @@ def get_default_props():
         "showEmptyGroups": True,
     }
 
+def get_default_preferences():
+    return {
+        "pages": {
+            "block_display": True
+        }
+    }
+
 
 class Project(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
@@ -47,7 +54,7 @@ class Project(BaseModel):
         "db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project"
     )
     identifier = models.CharField(
-        max_length=5,
+        max_length=12,
         verbose_name="Project Identifier",
     )
     default_assignee = models.ForeignKey(
@@ -147,6 +154,7 @@ class ProjectMember(ProjectBaseModel):
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
+    preferences = models.JSONField(default=get_default_preferences)
 
     class Meta:
         unique_together = ["project", "member"]
@@ -168,7 +176,7 @@ class ProjectIdentifier(AuditModel):
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="project_identifier"
     )
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=12)
 
     class Meta:
         unique_together = ["name", "workspace"]

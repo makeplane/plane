@@ -91,6 +91,24 @@ class ProjectViewSet(BaseViewSet):
                     )
                 )
             )
+            .annotate(
+                total_members=ProjectMember.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                total_modules=Module.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .distinct()
         )
 
@@ -155,6 +173,13 @@ class ProjectViewSet(BaseViewSet):
                 ProjectMember.objects.create(
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
+
+                if serializer.data["project_lead"] is not None:
+                    ProjectMember.objects.create(
+                        project_id=serializer.data["id"],
+                        member_id=serializer.data["project_lead"],
+                        role=20,
+                    )
 
                 # Default states
                 states = [

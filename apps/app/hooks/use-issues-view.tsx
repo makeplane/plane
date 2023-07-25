@@ -33,7 +33,9 @@ const useIssuesView = () => {
     orderBy,
     setOrderBy,
     showEmptyGroups,
+    showSubIssues,
     setShowEmptyGroups,
+    setShowSubIssues,
     calendarDateRange,
     setCalendarDateRange,
     filters,
@@ -63,6 +65,7 @@ const useIssuesView = () => {
       : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
+    sub_issue: showSubIssues,
   };
 
   const { data: projectIssues } = useSWR(
@@ -195,7 +198,9 @@ const useIssuesView = () => {
     orderBy,
     setOrderBy,
     showEmptyGroups: isArchivedIssues ? false : showEmptyGroups,
+    showSubIssues,
     setShowEmptyGroups,
+    setShowSubIssues,
     calendarDateRange,
     setCalendarDateRange,
     filters,
