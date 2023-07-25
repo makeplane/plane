@@ -75,7 +75,7 @@ const IsGuestCondition: React.FC<{
 };
 
 export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user }) => {
-  const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
+  const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
 
   const { setToastAlert } = useToast();
 
@@ -98,24 +98,9 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
     reValidateMode: "onChange",
   });
 
-  const projectName = watch("name");
-  const projectIdentifier = watch("identifier");
-
-  useEffect(() => {
-    if (projectName && isChangeIdentifierRequired)
-      setValue(
-        "identifier",
-        projectName
-          .replace(/[^a-zA-Z0-9]/g, "")
-          .toUpperCase()
-          .substring(0, 3)
-      );
-  }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
-
-  useEffect(() => () => setIsChangeIdentifierRequired(true), [isOpen]);
-
   const handleClose = () => {
     setIsOpen(false);
+    setIsChangeInIdentifierRequired(true);
     reset(defaultValues);
   };
 
@@ -153,14 +138,27 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
       });
   };
 
-  const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
+  const changeIdentifierOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isChangeInIdentifierRequired) return;
+
+    if (e.target.value === "") setValue("identifier", "");
+    else
+      setValue(
+        "identifier",
+        e.target.value
+          .replace(/[^a-zA-Z0-9]/g, "")
+          .toUpperCase()
+          .substring(0, 5)
+      );
+  };
+
+  const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
 
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
-    const formattedValue = alphanumericValue.toUpperCase();
 
-    setValue("identifier", formattedValue);
-    setIsChangeIdentifierRequired(false);
+    setValue("identifier", alphanumericValue.toUpperCase());
+    setIsChangeInIdentifierRequired(false);
   };
 
   const options = workspaceMembers?.map((member) => ({
@@ -281,6 +279,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                           name="name"
                           type="name"
                           placeholder="Project Title"
+                          onChange={changeIdentifierOnNameChange}
                           error={errors.name}
                           register={register}
                           validations={{
