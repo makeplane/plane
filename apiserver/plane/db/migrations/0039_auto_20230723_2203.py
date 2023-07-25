@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def rename_field(apps, schema_editor):
     Model = apps.get_model("db", "IssueActivity")
     updated_activity = []
@@ -9,18 +10,59 @@ def rename_field(apps, schema_editor):
         obj.field = "assignees"
         updated_activity.append(obj)
 
-    Model.objects.bulk_update(
-        updated_activity, ["field"], batch_size=100
-    )
- 
+    Model.objects.bulk_update(updated_activity, ["field"], batch_size=100)
+
+
+def update_workspace_member_props(apps, schema_editor):
+    Model = apps.get_model("db", "WorkspaceMember")
+
+    updated_workspace_member = []
+
+    for obj in Model.objects.all():
+        if obj.view_props is None:
+            obj.view_props = {
+                "filters": {"type": None},
+                "groupByProperty": None,
+                "issueView": "list",
+                "orderBy": "-created_at",
+                "properties": {
+                    "assignee": True,
+                    "due_date": True,
+                    "key": True,
+                    "labels": True,
+                    "priority": True,
+                    "state": True,
+                    "sub_issue_count": True,
+                    "attachment_count": True,
+                    "link": True,
+                    "estimate": True,
+                    "created_on": True,
+                    "updated_on": True,
+                },
+                "showEmptyGroups": True,
+            }
+        else:
+            current_view_props = obj.view_props
+            obj.view_props = {
+                "filters": {"type": None},
+                "groupByProperty": None,
+                "issueView": "list",
+                "orderBy": "-created_at",
+                "showEmptyGroups": True,
+                "properties": current_view_props,
+            }
+
+        updated_workspace_member.append(obj)
+
+    Model.objects.bulk_update(updated_workspace_member, ["view_props"], batch_size=100)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('db', '0038_auto_20230720_1505'),
+        ("db", "0038_auto_20230720_1505"),
     ]
 
     operations = [
-        migrations.RunPython(rename_field)
+        migrations.RunPython(rename_field),
+        migrations.RunPython(update_workspace_member_props),
     ]

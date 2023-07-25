@@ -60,8 +60,14 @@ from plane.db.models import (
     PageFavorite,
     Page,
     IssueViewFavorite,
+    Label,
+    State,
 )
-from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
+from plane.api.permissions import (
+    WorkSpaceBasePermission,
+    WorkSpaceAdminPermission,
+    WorkspaceEntityPermission,
+)
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 
 
@@ -1003,6 +1009,46 @@ class WorkspaceThemeViewSet(BaseViewSet):
                 {"error": "Workspace does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceLabelsEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        try:
+            labels = Label.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+            ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
+            return Response(labels, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceStatesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        try:
+            states = State.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+            ).values("id", "name", "color", "group", "project_id", "workspace__slug")
+            return Response(states, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

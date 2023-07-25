@@ -14,6 +14,30 @@ ROLE_CHOICES = (
 )
 
 
+def get_default_props():
+    return {
+        "filters": {"type": None},
+        "groupByProperty": None,
+        "issueView": "list",
+        "orderBy": "-created_at",
+        "properties": {
+            "assignee": True,
+            "due_date": True,
+            "key": True,
+            "labels": True,
+            "priority": True,
+            "state": True,
+            "sub_issue_count": True,
+            "attachment_count": True,
+            "link": True,
+            "estimate": True,
+            "created_on": True,
+            "updated_on": True,
+        },
+        "showEmptyGroups": True,
+    }
+
+
 class Workspace(BaseModel):
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.URLField(verbose_name="Logo", blank=True, null=True)
@@ -47,7 +71,8 @@ class WorkspaceMember(BaseModel):
     )
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
     company_role = models.TextField(null=True, blank=True)
-    view_props = models.JSONField(null=True, blank=True)
+    view_props = models.JSONField(default=get_default_props)
+    default_props = models.JSONField(default=get_default_props)
 
     class Meta:
         unique_together = ["workspace", "member"]

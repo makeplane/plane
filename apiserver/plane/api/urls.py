@@ -45,6 +45,8 @@ from plane.api.views import (
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
+    WorkspaceLabelsEndpoint,
+    WorkspaceStatesEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -384,6 +386,16 @@ urlpatterns = [
             }
         ),
         name="workspace-themes",
+    ),
+    path(
+        "workspaces/<str:slug>/labels/",
+        WorkspaceLabelsEndpoint.as_view(),
+        name="workspace-labels",
+    ),
+    path(
+        "workspaces/<str:slug>/states/",
+        WorkspaceStatesEndpoint.as_view(),
+        name="workspace-states",
     ),
     ## End Workspaces ##
     # Projects
