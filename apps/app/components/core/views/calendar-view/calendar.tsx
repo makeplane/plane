@@ -34,19 +34,17 @@ import {
 } from "constants/fetch-keys";
 
 type Props = {
-  handleEditIssue: (issue: IIssue) => void;
-  handleDeleteIssue: (issue: IIssue) => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   addIssueToDate: (date: string) => void;
-  isCompleted: boolean;
+  disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
 export const CalendarView: React.FC<Props> = ({
-  handleEditIssue,
-  handleDeleteIssue,
+  handleIssueAction,
   addIssueToDate,
-  isCompleted = false,
+  disableUserActions,
   user,
   userAuth,
 }) => {
@@ -167,7 +165,7 @@ export const CalendarView: React.FC<Props> = ({
     );
   }, [currentDate]);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
   return calendarIssues ? (
     <div className="h-full overflow-y-auto">
@@ -220,10 +218,10 @@ export const CalendarView: React.FC<Props> = ({
           >
             {currentViewDaysData.map((date, index) => (
               <SingleCalendarDate
+                key={`${date}-${index}`}
                 index={index}
                 date={date}
-                handleEditIssue={handleEditIssue}
-                handleDeleteIssue={handleDeleteIssue}
+                handleIssueAction={handleIssueAction}
                 addIssueToDate={addIssueToDate}
                 isMonthlyView={isMonthlyView}
                 showWeekEnds={showWeekEnds}

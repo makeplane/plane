@@ -13,8 +13,7 @@ import { formatDate } from "helpers/calendar.helper";
 import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
-  handleEditIssue: (issue: IIssue) => void;
-  handleDeleteIssue: (issue: IIssue) => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   index: number;
   date: {
     date: string;
@@ -28,8 +27,7 @@ type Props = {
 };
 
 export const SingleCalendarDate: React.FC<Props> = ({
-  handleEditIssue,
-  handleDeleteIssue,
+  handleIssueAction,
   date,
   index,
   addIssueToDate,
@@ -72,8 +70,8 @@ export const SingleCalendarDate: React.FC<Props> = ({
                     provided={provided}
                     snapshot={snapshot}
                     issue={issue}
-                    handleEditIssue={handleEditIssue}
-                    handleDeleteIssue={handleDeleteIssue}
+                    handleEditIssue={() => handleIssueAction(issue, "edit")}
+                    handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                     user={user}
                     isNotAllowed={isNotAllowed}
                   />

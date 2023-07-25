@@ -7,8 +7,6 @@ import { Disclosure, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issues.service";
 import projectService from "services/project.service";
-// hooks
-import useIssuesProperties from "hooks/use-issue-properties";
 // components
 import { SingleListIssue } from "components/core";
 // ui
@@ -23,53 +21,46 @@ import {
   ICurrentUserResponse,
   IIssue,
   IIssueLabels,
+  IIssueViewProps,
   IState,
-  TIssueGroupByOptions,
   UserAuth,
 } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
-  type?: "issue" | "cycle" | "module";
   currentState?: IState | null;
   groupTitle: string;
-  groupedByIssues: {
-    [key: string]: IIssue[];
-  };
-  selectedGroup: TIssueGroupByOptions;
-  addIssueToState: () => void;
-  makeIssueCopy: (issue: IIssue) => void;
-  handleEditIssue: (issue: IIssue) => void;
-  handleDeleteIssue: (issue: IIssue) => void;
+  addIssueToGroup: () => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
-  isCompleted?: boolean;
+  disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
+  viewProps: IIssueViewProps;
 };
 
 export const SingleList: React.FC<Props> = ({
-  type,
   currentState,
   groupTitle,
-  groupedByIssues,
-  selectedGroup,
-  addIssueToState,
-  makeIssueCopy,
-  handleEditIssue,
-  handleDeleteIssue,
+  addIssueToGroup,
+  handleIssueAction,
   openIssuesListModal,
   removeIssue,
-  isCompleted = false,
+  disableUserActions,
   user,
   userAuth,
+  viewProps,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
   const isArchivedIssues = router.pathname.includes("archived-issues");
 
-  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
+  const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
+
+  const { groupByProperty: selectedGroup, groupedIssues, properties } = viewProps;
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
@@ -138,6 +129,8 @@ export const SingleList: React.FC<Props> = ({
     return icon;
   };
 
+  if (!groupedIssues) return null;
+
   return (
     <Disclosure as="div" defaultOpen>
       {({ open }) => (
@@ -156,7 +149,7 @@ export const SingleList: React.FC<Props> = ({
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
                 <span className="text-custom-text-200 min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs">
-                  {groupedByIssues[groupTitle as keyof IIssue].length}
+                  {groupedIssues[groupTitle as keyof IIssue].length}
                 </span>
               </div>
             </Disclosure.Button>
@@ -166,11 +159,11 @@ export const SingleList: React.FC<Props> = ({
               <button
                 type="button"
                 className="p-1  text-custom-text-200 hover:bg-custom-background-80"
-                onClick={addIssueToState}
+                onClick={addIssueToGroup}
               >
                 <PlusIcon className="h-4 w-4" />
               </button>
-            ) : isCompleted ? (
+            ) : disableUserActions ? (
               ""
             ) : (
               <CustomMenu
@@ -182,7 +175,7 @@ export const SingleList: React.FC<Props> = ({
                 position="right"
                 noBorder
               >
-                <CustomMenu.MenuItem onClick={addIssueToState}>Create new</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={addIssueToGroup}>Create new</CustomMenu.MenuItem>
                 {openIssuesListModal && (
                   <CustomMenu.MenuItem onClick={openIssuesListModal}>
                     Add an existing issue
@@ -201,26 +194,26 @@ export const SingleList: React.FC<Props> = ({
             leaveTo="transform opacity-0"
           >
             <Disclosure.Panel>
-              {groupedByIssues[groupTitle] ? (
-                groupedByIssues[groupTitle].length > 0 ? (
-                  groupedByIssues[groupTitle].map((issue, index) => (
+              {groupedIssues[groupTitle] ? (
+                groupedIssues[groupTitle].length > 0 ? (
+                  groupedIssues[groupTitle].map((issue, index) => (
                     <SingleListIssue
                       key={issue.id}
                       type={type}
                       issue={issue}
-                      properties={properties}
                       groupTitle={groupTitle}
                       index={index}
-                      editIssue={() => handleEditIssue(issue)}
-                      makeIssueCopy={() => makeIssueCopy(issue)}
-                      handleDeleteIssue={handleDeleteIssue}
+                      editIssue={() => handleIssueAction(issue, "edit")}
+                      makeIssueCopy={() => handleIssueAction(issue, "copy")}
+                      handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                       removeIssue={() => {
                         if (removeIssue !== null && issue.bridge_id)
                           removeIssue(issue.bridge_id, issue.id);
                       }}
-                      isCompleted={isCompleted}
+                      disableUserActions={disableUserActions}
                       user={user}
                       userAuth={userAuth}
+                      viewProps={viewProps}
                     />
                   ))
                 ) : (

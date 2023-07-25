@@ -123,9 +123,27 @@ export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
 export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAILS_${cycleId.toUpperCase()}`;
 
 export const STATES_LIST = (projectId: string) => `STATES_LIST_${projectId.toUpperCase()}`;
-export const STATE_DETAILS = "STATE_DETAILS";
 
 export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug.toUpperCase()}`;
+export const USER_ISSUES = (workspaceSlug: string, params: any) => {
+  if (!params) return `USER_ISSUES_${workspaceSlug.toUpperCase()}`;
+  const { labels, priority, state, target_date } = params;
+
+  let stateKey = state ? state.split(",") : [];
+  let priorityKey = priority ? priority.split(",") : [];
+  let labelsKey = labels ? labels.split(",") : [];
+  const targetDateKey = target_date ?? "";
+  const type = params.type ? params.type.toUpperCase() : "NULL";
+  const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
+  const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+
+  // sorting each keys in ascending order
+  stateKey = stateKey.sort().join("_");
+  priorityKey = priorityKey.sort().join("_");
+  labelsKey = labelsKey.sort().join("_");
+
+  return `USER_ISSUES_${stateKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+};
 export const USER_ACTIVITY = "USER_ACTIVITY";
 export const USER_WORKSPACE_DASHBOARD = (workspaceSlug: string) =>
   `USER_WORKSPACE_DASHBOARD_${workspaceSlug.toUpperCase()}`;

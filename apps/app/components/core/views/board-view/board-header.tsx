@@ -7,8 +7,6 @@ import useSWR from "swr";
 // services
 import issuesService from "services/issues.service";
 import projectService from "services/project.service";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
 // component
 import { Avatar } from "components/ui";
 // icons
@@ -17,31 +15,33 @@ import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssueLabels, IState } from "types";
+import { IIssueLabels, IIssueViewProps, IState } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   currentState?: IState | null;
   groupTitle: string;
-  addIssueToState: () => void;
+  addIssueToGroup: () => void;
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
-  isCompleted?: boolean;
+  disableUserActions: boolean;
+  viewProps: IIssueViewProps;
 };
 
 export const BoardHeader: React.FC<Props> = ({
   currentState,
   groupTitle,
-  addIssueToState,
+  addIssueToGroup,
   isCollapsed,
   setIsCollapsed,
-  isCompleted = false,
+  disableUserActions,
+  viewProps,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { groupedByIssues, groupByProperty: selectedGroup } = useIssuesView();
+  const { groupedIssues, groupByProperty: selectedGroup } = viewProps;
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
@@ -136,7 +136,7 @@ export const BoardHeader: React.FC<Props> = ({
               isCollapsed ? "ml-0.5" : ""
             } min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs`}
           >
-            {groupedByIssues?.[groupTitle].length ?? 0}
+            {groupedIssues?.[groupTitle].length ?? 0}
           </span>
         </div>
       </div>
@@ -155,11 +155,11 @@ export const BoardHeader: React.FC<Props> = ({
             <ArrowsPointingOutIcon className="h-4 w-4" />
           )}
         </button>
-        {!isCompleted && selectedGroup !== "created_by" && (
+        {!disableUserActions && selectedGroup !== "created_by" && (
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 text-custom-text-200 outline-none duration-300 hover:bg-custom-background-80"
-            onClick={addIssueToState}
+            onClick={addIssueToGroup}
           >
             <PlusIcon className="h-4 w-4" />
           </button>
