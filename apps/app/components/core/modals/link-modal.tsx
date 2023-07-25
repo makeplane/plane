@@ -31,7 +31,7 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
   });
 
   const onSubmit = async (formData: IIssueLink | ModuleLink) => {
-    await onFormSubmit({ title: formData.title === "" ? null : formData.title, url: formData.url });
+    await onFormSubmit({ title: formData.title, url: formData.url });
     onClose();
   };
 
