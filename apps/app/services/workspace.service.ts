@@ -231,13 +231,13 @@ class WorkspaceService extends APIService {
 
   async searchWorkspace(
     workspaceSlug: string,
-    projectId: string,
     params: {
+      project_id?: string;
       search: string;
       workspace_search: boolean;
     }
   ): Promise<IWorkspaceSearchResults> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search/`, {
+    return this.get(`/api/workspaces/${workspaceSlug}/search/`, {
       params,
     })
       .then((res) => res?.data)

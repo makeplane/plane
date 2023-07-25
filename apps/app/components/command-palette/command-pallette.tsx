@@ -292,15 +292,15 @@ export const CommandPalette: React.FC = () => {
 
   useEffect(
     () => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       setIsLoading(true);
-      // this is done prevent subsequent api request
-      // or searchTerm has not been updated within last 500ms.
+
       if (debouncedSearchTerm) {
         setIsSearching(true);
         workspaceService
-          .searchWorkspace(workspaceSlug as string, projectId as string, {
+          .searchWorkspace(workspaceSlug as string, {
+            ...(projectId ? { project_id: projectId.toString() } : {}),
             search: debouncedSearchTerm,
             workspace_search: !projectId ? true : isWorkspaceLevel,
           })
@@ -485,31 +485,35 @@ export const CommandPalette: React.FC = () => {
                     }
                   }}
                 >
-                  {issueId && issueDetails && (
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 pb-0">
+                  <div
+                    className={`flex sm:items-center gap-4 p-3 pb-0 ${
+                      issueDetails ? "flex-col sm:flex-row justify-between" : "justify-end"
+                    }`}
+                  >
+                    {issueDetails && (
                       <div className="overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
                         {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}{" "}
                         {issueDetails.name}
                       </div>
-                      {projectId && (
-                        <Tooltip tooltipContent="Toggle workspace level search">
-                          <div className="flex-shrink-0 self-end sm:self-center flex items-center gap-1 text-xs cursor-pointer">
-                            <button
-                              type="button"
-                              onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                              className="flex-shrink-0"
-                            >
-                              Workspace Level
-                            </button>
-                            <ToggleSwitch
-                              value={isWorkspaceLevel}
-                              onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                            />
-                          </div>
-                        </Tooltip>
-                      )}
-                    </div>
-                  )}
+                    )}
+                    {projectId && (
+                      <Tooltip tooltipContent="Toggle workspace level search">
+                        <div className="flex-shrink-0 self-end sm:self-center flex items-center gap-1 text-xs cursor-pointer">
+                          <button
+                            type="button"
+                            onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                            className="flex-shrink-0"
+                          >
+                            Workspace Level
+                          </button>
+                          <ToggleSwitch
+                            value={isWorkspaceLevel}
+                            onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                          />
+                        </div>
+                      </Tooltip>
+                    )}
+                  </div>
                   <div className="relative">
                     <MagnifyingGlassIcon
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-200"
