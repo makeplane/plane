@@ -12,7 +12,7 @@ type Props = {
     created_by: string;
     created_by_detail: IUserLite;
     metadata: any;
-    title: string | null;
+    title: string;
     url: string;
   }[];
   handleDeleteLink: (linkId: string) => void;

@@ -62,7 +62,7 @@ export interface IIssueParent {
 }
 
 export interface IIssueLink {
-  title: string | null;
+  title: string;
   url: string;
 }
 
@@ -96,7 +96,7 @@ export interface IIssue {
     created_by_detail: IUserLite;
     id: string;
     metadata: any;
-    title: string | null;
+    title: string;
     url: string;
   }[];
   issue_module: IIssueModule | null;
