@@ -46,7 +46,6 @@ from plane.api.views import (
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
     WorkspaceLabelsEndpoint,
-    WorkspaceStatesEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -391,11 +390,6 @@ urlpatterns = [
         "workspaces/<str:slug>/labels/",
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
-    ),
-    path(
-        "workspaces/<str:slug>/states/",
-        WorkspaceStatesEndpoint.as_view(),
-        name="workspace-states",
     ),
     ## End Workspaces ##
     # Projects

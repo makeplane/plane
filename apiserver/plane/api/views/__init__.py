@@ -43,7 +43,6 @@ from .workspace import (
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
     WorkspaceLabelsEndpoint,
-    WorkspaceStatesEndpoint,
 )
 from .state import StateViewSet
 from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet

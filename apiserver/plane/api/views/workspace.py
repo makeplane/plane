@@ -1030,28 +1030,9 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
             ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
             return Response(labels, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class WorkspaceStatesEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
-    def get(self, request, slug):
-        try:
-            states = State.objects.filter(
-                workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-            ).values("id", "name", "color", "group", "project_id", "workspace__slug")
-            return Response(states, status=status.HTTP_200_OK)
-        except Exception as e:
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
