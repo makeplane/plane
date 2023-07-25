@@ -844,11 +844,13 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 
             view_props = project_member.view_props
             default_props = project_member.default_props
+            preferences = project_member.preferences
 
             project_member.view_props = request.data.get("view_props", view_props)
             project_member.default_props = request.data.get(
                 "default_props", default_props
             )
+            project_member.preferences = request.data.get("preferences", preferences)
 
             project_member.save()
 
