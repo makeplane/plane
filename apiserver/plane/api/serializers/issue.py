@@ -606,6 +606,12 @@ class IssueReactionSerializer(BaseSerializer):
     class Meta:
         model = IssueReaction
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "issue",
+            "actor",
+        ]
 
 
 class CommentReactionSerializer(BaseSerializer):
@@ -613,3 +619,9 @@ class CommentReactionSerializer(BaseSerializer):
     class Meta:
         model = CommentReaction
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "comment"
+            "actor",
+        ]

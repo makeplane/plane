@@ -68,6 +68,7 @@ from plane.db.models import (
     IssueSubscriber,
     ProjectMember,
     IssueReaction,
+    CommentReaction,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -1272,6 +1273,20 @@ class IssueSubscriberViewSet(BaseViewSet):
 class IssueReactionViewSet(BaseViewSet):
     serializer_class = IssueReactionSerializer
     model = IssueReaction
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(
+            issue_id=self.kwargs.get("issue_id"),
+            project_id=self.kwargs.get("project_id"),
+            actor=self.request.user,
+        )
+
+class CommentReactionViewSet(BaseViewSet):
+    serializer_class = CommentReactionSerializer
+    model = CommentReaction
     permission_classes = [
         ProjectLitePermission,
     ]

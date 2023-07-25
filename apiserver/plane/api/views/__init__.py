@@ -68,6 +68,8 @@ from .issue import (
     IssueAttachmentEndpoint,
     IssueArchiveViewSet,
     IssueSubscriberViewSet,
+    CommentReactionViewSet,
+    IssueReactionViewSet,
 )
 
 from .auth_extended import (

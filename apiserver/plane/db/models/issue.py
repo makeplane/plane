@@ -445,27 +445,6 @@ class IssueReaction(ProjectBaseModel):
         return f"{self.issue.name} {self.actor.email}"
 
 
-class IssueReaction(ProjectBaseModel):
-
-    actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="issue_reactions",
-    )
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_reactions")
-    reaction = models.CharField(max_length=20)
-
-    class Meta:
-        unique_together = ["issue", "actor", "reaction"]
-        verbose_name = "Issue Reaction"
-        verbose_name_plural = "Issue Reactions"
-        db_table = "issue_reactions"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.issue.name} {self.actor.email}"
-
-
 class CommentReaction(ProjectBaseModel):
 
     actor = models.ForeignKey(
@@ -473,7 +452,7 @@ class CommentReaction(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="comment_reactions",
     )
-    issue = models.ForeignKey(IssueComment, on_delete=models.CASCADE, related_name="comment_reactions")
+    comment = models.ForeignKey(IssueComment, on_delete=models.CASCADE, related_name="comment_reactions")
     reaction = models.CharField(max_length=20)
 
     class Meta:
