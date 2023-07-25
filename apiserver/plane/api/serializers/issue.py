@@ -29,6 +29,8 @@ from plane.db.models import (
     ModuleIssue,
     IssueLink,
     IssueAttachment,
+    IssueReaction,
+    CommentReaction,
 )
 
 
@@ -597,3 +599,17 @@ class IssueSubscriberSerializer(BaseSerializer):
             "project",
             "issue",
         ]
+
+
+class IssueReactionSerializer(BaseSerializer):
+
+    class Meta:
+        model = IssueReaction
+        fields = "__all__"
+
+
+class CommentReactionSerializer(BaseSerializer):
+
+    class Meta:
+        model = CommentReaction
+        fields = "__all__"

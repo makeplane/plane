@@ -46,6 +46,8 @@ from plane.api.serializers import (
     IssueAttachmentSerializer,
     IssueSubscriberSerializer,
     ProjectMemberLiteSerializer,
+    IssueReactionSerializer,
+    CommentReactionSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -65,6 +67,7 @@ from plane.db.models import (
     State,
     IssueSubscriber,
     ProjectMember,
+    IssueReaction,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -635,9 +638,7 @@ class SubIssuesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, issue_id):
         try:
             sub_issues = (
-                Issue.issue_objects.filter(
-                    parent_id=issue_id, workspace__slug=slug
-                )
+                Issue.issue_objects.filter(parent_id=issue_id, workspace__slug=slug)
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("state")
@@ -667,9 +668,7 @@ class SubIssuesEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                State.objects.filter(
-                    ~Q(name="Triage"), workspace__slug=slug
-                )
+                State.objects.filter(~Q(name="Triage"), workspace__slug=slug)
                 .annotate(
                     state_count=Count(
                         "state_issue",
@@ -1268,3 +1267,18 @@ class IssueSubscriberViewSet(BaseViewSet):
                 {"error": "Something went wrong, please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class IssueReactionViewSet(BaseViewSet):
+    serializer_class = IssueReactionSerializer
+    model = IssueReaction
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(
+            issue_id=self.kwargs.get("issue_id"),
+            project_id=self.kwargs.get("project_id"),
+            actor=self.request.user,
+        )

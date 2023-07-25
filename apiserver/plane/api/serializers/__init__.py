@@ -43,6 +43,8 @@ from .issue import (
     IssueLiteSerializer,
     IssueAttachmentSerializer,
     IssueSubscriberSerializer,
+    IssueReactionSerializer,
+    CommentReactionSerializer,
 )
 
 from .module import (
