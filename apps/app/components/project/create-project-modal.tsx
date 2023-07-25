@@ -95,7 +95,6 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
     setValue,
   } = useForm<IProject>({
     defaultValues,
-    mode: "all",
     reValidateMode: "onChange",
   });
 
@@ -315,8 +314,8 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                               message: "Identifier must at least be of 1 character",
                             },
                             maxLength: {
-                              value: 5,
-                              message: "Identifier must at most be of 5 characters",
+                              value: 12,
+                              message: "Identifier must at most be of 12 characters",
                             },
                           }}
                         />
