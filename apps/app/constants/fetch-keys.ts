@@ -232,19 +232,19 @@ export const USER_WORKSPACE_NOTIFICATIONS = (
 ) => {
   const { type, snoozed, archived, read } = params;
 
-  return `USER_WORKSPACE_NOTIFICATIONS_${workspaceSlug.toUpperCase()}_TYPE_${(
+  return `USER_WORKSPACE_NOTIFICATIONS_${workspaceSlug?.toUpperCase()}_TYPE_${(
     type ?? "assigned"
-  ).toUpperCase()}_SNOOZED_${snoozed}_ARCHIVED_${archived}_READ_${read}`;
+  )?.toUpperCase()}_SNOOZED_${snoozed}_ARCHIVED_${archived}_READ_${read}`;
 };
 
 export const USER_WORKSPACE_NOTIFICATIONS_DETAILS = (
   workspaceSlug: string,
   notificationId: string
 ) =>
-  `USER_WORKSPACE_NOTIFICATIONS_DETAILS_${workspaceSlug.toUpperCase()}_${notificationId.toUpperCase()}`;
+  `USER_WORKSPACE_NOTIFICATIONS_DETAILS_${workspaceSlug?.toUpperCase()}_${notificationId?.toUpperCase()}`;
 
 export const UNREAD_NOTIFICATIONS_COUNT = (workspaceSlug: string) =>
-  `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug.toUpperCase()}`;
+  `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug?.toUpperCase()}`;
 
 export const getPaginatedNotificationKey = (
   index: number,
