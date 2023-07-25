@@ -14,10 +14,10 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
-  ViewLabelSelect,
+  ViewIssueLabel,
   ViewPrioritySelect,
   ViewStateSelect,
-} from "components/issues/view-select";
+} from "components/issues";
 // hooks
 import useIssueView from "hooks/use-issues-view";
 // ui
@@ -279,15 +279,7 @@ export const SingleListIssue: React.FC<Props> = ({
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.labels && issue.labels.length > 0 && (
-            <ViewLabelSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              user={user}
-              isNotAllowed={isNotAllowed}
-            />
-          )}
+          {properties.labels && <ViewIssueLabel issue={issue} maxRender={3} />}
           {properties.assignee && (
             <ViewAssigneeSelect
               issue={issue}

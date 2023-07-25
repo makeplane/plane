@@ -10,7 +10,7 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
-  ViewLabelSelect,
+  ViewIssueLabel,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
@@ -311,15 +311,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       )}
       {properties.labels && (
         <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-          <ViewLabelSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            position="left"
-            tooltipPosition={tooltipPosition}
-            customButton
-            user={user}
-            isNotAllowed={isNotAllowed}
-          />
+          <ViewIssueLabel issue={issue} maxRender={1} />
         </div>
       )}
 
