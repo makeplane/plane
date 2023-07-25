@@ -71,7 +71,6 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
 
   const {
     formState: { errors, isSubmitting },
-
     reset,
     handleSubmit,
     control,

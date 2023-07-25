@@ -1240,7 +1240,7 @@ urlpatterns = [
     ##  End Importer
     # Search
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/search/",
+        "workspaces/<str:slug>/search/",
         GlobalSearchEndpoint.as_view(),
         name="global-search",
     ),

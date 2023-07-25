@@ -23,7 +23,7 @@ import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
-  ViewLabelSelect,
+  ViewIssueLabel,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
@@ -365,13 +365,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               />
             )}
             {properties.labels && issue.labels.length > 0 && (
-              <ViewLabelSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                isNotAllowed={isNotAllowed}
-                user={user}
-                selfPositioned
-              />
+              <ViewIssueLabel issue={issue} maxRender={2} />
             )}
             {properties.assignee && (
               <ViewAssigneeSelect
