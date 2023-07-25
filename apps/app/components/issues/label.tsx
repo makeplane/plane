@@ -13,7 +13,7 @@ type Props = {
 export const ViewIssueLabel: React.FC<Props> = ({ issue, maxRender = 1 }) => (
   <>
     {issue.label_details.length > 0 ? (
-      issue.label_details.length < maxRender || issue.label_details.length === maxRender ? (
+      issue.label_details.length <= maxRender ? (
         <>
           {issue.label_details.map((label, index) => (
             <div
