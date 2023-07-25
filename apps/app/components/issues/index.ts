@@ -9,7 +9,6 @@ export * from "./form";
 export * from "./gantt-chart";
 export * from "./main-content";
 export * from "./modal";
-export * from "./my-issues-list-item";
 export * from "./parent-issues-list-modal";
 export * from "./sidebar";
 export * from "./sub-issues-list";

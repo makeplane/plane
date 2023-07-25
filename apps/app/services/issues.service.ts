@@ -248,6 +248,14 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
+  async getWorkspaceLabels(workspaceSlug: string): Promise<IIssueLabels[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/labels/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabels[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`)
       .then((response) => response?.data)

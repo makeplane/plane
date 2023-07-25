@@ -22,11 +22,9 @@ const initialValues: IWorkspaceViewProps = {
   filters: {
     assignees: null,
     created_by: null,
-    issue__assignees__id: null,
-    issue__labels__id: null,
     labels: null,
     priority: null,
-    state: null,
+    state_group: null,
     target_date: null,
     type: null,
   },
@@ -148,7 +146,7 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
 
   const filters = (myWorkspace?.view_props ?? initialValues).filters;
   const setFilters = useCallback(
-    (updatedFilter: Partial<IIssueFilterOptions>) => {
+    (updatedFilter: Partial<IIssueFilterOptions & { state_group: string[] | null }>) => {
       if (!myWorkspace) return;
 
       saveData({

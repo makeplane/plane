@@ -40,7 +40,7 @@ const MyIssuesPage: NextPage = () => {
         </div>
       }
     >
-      <div className="h-full w-full flex flex-col">
+      <div className="h-full w-full flex flex-col overflow-hidden">
         <MyIssuesView />
       </div>
     </WorkspaceAuthorizationLayout>

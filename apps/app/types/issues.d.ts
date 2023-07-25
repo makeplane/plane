@@ -246,6 +246,7 @@ export type TIssueGroupByOptions =
   | "labels"
   | "created_by"
   | "state_detail.group"
+  | "project"
   | null;
 
 export type TIssueOrderByOptions =

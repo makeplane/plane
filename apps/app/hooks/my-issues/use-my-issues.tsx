@@ -15,18 +15,20 @@ const useMyIssues = (workspaceSlug: string | undefined) => {
   const { filters, groupBy, orderBy } = useMyIssuesFilters(workspaceSlug);
 
   const params: any = {
+    assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
+    created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     group_by: groupBy,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     order_by: orderBy,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
-    state: filters?.state ? filters?.state.join(",") : undefined,
+    state_group: filters?.state_group ? filters?.state_group.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
     type: filters?.type ? filters?.type : undefined,
   };
 
   const { data: myIssues, mutate: mutateMyIssues } = useSWR(
-    workspaceSlug ? USER_ISSUES(workspaceSlug as string, params) : null,
-    workspaceSlug ? () => userService.userIssues(workspaceSlug as string, params) : null
+    workspaceSlug ? USER_ISSUES(workspaceSlug.toString(), params) : null,
+    workspaceSlug ? () => userService.userIssues(workspaceSlug.toString(), params) : null
   );
 
   const groupedIssues:

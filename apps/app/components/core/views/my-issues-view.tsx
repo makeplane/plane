@@ -2,18 +2,25 @@ import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
+import useSWR from "swr";
+
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
+// services
+import issuesService from "services/issues.service";
 // hooks
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 import useUserAuth from "hooks/use-user-auth";
+import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
 import { FilterList, AllViews } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // types
 import { IIssue, IIssueFilterOptions } from "types";
+// fetch-keys
+import { WORKSPACE_LABELS } from "constants/fetch-keys";
 
 type Props = {
   openIssuesListModal?: () => void;
@@ -48,6 +55,13 @@ export const MyIssuesView: React.FC<Props> = ({
   const { workspaceSlug } = router.query;
 
   const { user } = useUserAuth();
+
+  const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString());
+
+  const { data: labels } = useSWR(
+    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
+  );
 
   const { groupedIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
   const { filters, setFilters, issueView, groupBy, orderBy, properties, showEmptyGroups } =
@@ -164,7 +178,23 @@ export const MyIssuesView: React.FC<Props> = ({
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
-            <FilterList filters={filters} setFilters={setFilters} />
+            <FilterList
+              filters={filters}
+              setFilters={setFilters}
+              labels={labels}
+              members={members?.map((m) => m.member)}
+              states={undefined}
+              clearAllFilters={() =>
+                setFilters({
+                  assignees: null,
+                  created_by: null,
+                  labels: null,
+                  state_group: null,
+                  target_date: null,
+                  type: null,
+                })
+              }
+            />
           </div>
           {<div className="mt-3 border-t border-custom-border-200" />}
         </>

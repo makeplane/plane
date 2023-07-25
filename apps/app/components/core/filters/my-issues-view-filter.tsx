@@ -8,18 +8,12 @@ import { Popover, Transition } from "@headlessui/react";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 import useEstimateOption from "hooks/use-estimate-option";
 // components
-import { SelectFilters } from "components/views";
+import { MyIssuesSelectFilters } from "components/core";
 // ui
 import { CustomMenu, ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import {
-  CalendarMonthOutlined,
-  FormatListBulletedOutlined,
-  GridViewOutlined,
-  TableChartOutlined,
-  WaterfallChartOutlined,
-} from "@mui/icons-material";
+import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -90,7 +84,7 @@ export const MyIssuesViewFilter: React.FC = () => {
           </Tooltip>
         ))}
       </div>
-      <SelectFilters
+      <MyIssuesSelectFilters
         filters={filters}
         onSelect={(option) => {
           const key = option.key as keyof typeof filters;
@@ -154,20 +148,26 @@ export const MyIssuesViewFilter: React.FC = () => {
                           <h4 className="text-custom-text-200">Group by</h4>
                           <CustomMenu
                             label={
-                              GROUP_BY_OPTIONS.find((option) => option.key === groupBy)?.name ??
-                              "Select"
+                              groupBy === "project"
+                                ? "Project"
+                                : GROUP_BY_OPTIONS.find((option) => option.key === groupBy)?.name ??
+                                  "Select"
                             }
                           >
-                            {GROUP_BY_OPTIONS.map((option) =>
-                              issueView === "kanban" && option.key === null ? null : (
+                            {GROUP_BY_OPTIONS.map((option) => {
+                              if (issueView === "kanban" && option.key === null) return null;
+                              if (option.key === "state" || option.key === "created_by")
+                                return null;
+
+                              return (
                                 <CustomMenu.MenuItem
                                   key={option.key}
                                   onClick={() => setGroupBy(option.key)}
                                 >
                                   {option.name}
                                 </CustomMenu.MenuItem>
-                              )
-                            )}
+                              );
+                            })}
                           </CustomMenu>
                         </div>
                         <div className="flex items-center justify-between">
@@ -178,8 +178,11 @@ export const MyIssuesViewFilter: React.FC = () => {
                               "Select"
                             }
                           >
-                            {ORDER_BY_OPTIONS.map((option) =>
-                              groupBy === "priority" && option.key === "priority" ? null : (
+                            {ORDER_BY_OPTIONS.map((option) => {
+                              if (groupBy === "priority" && option.key === "priority") return null;
+                              if (option.key === "sort_order") return null;
+
+                              return (
                                 <CustomMenu.MenuItem
                                   key={option.key}
                                   onClick={() => {
@@ -188,8 +191,8 @@ export const MyIssuesViewFilter: React.FC = () => {
                                 >
                                   {option.name}
                                 </CustomMenu.MenuItem>
-                              )
-                            )}
+                              );
+                            })}
                           </CustomMenu>
                         </div>
                       </>

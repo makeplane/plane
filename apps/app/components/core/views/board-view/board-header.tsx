@@ -7,6 +7,8 @@ import useSWR from "swr";
 // services
 import issuesService from "services/issues.service";
 import projectService from "services/project.service";
+// hooks
+import useProjects from "hooks/use-projects";
 // component
 import { Avatar } from "components/ui";
 // icons
@@ -57,6 +59,8 @@ export const BoardHeader: React.FC<Props> = ({
       : null
   );
 
+  const { projects } = useProjects();
+
   const getGroupTitle = () => {
     let title = addSpaceIfCamelCase(groupTitle);
 
@@ -66,6 +70,9 @@ export const BoardHeader: React.FC<Props> = ({
         break;
       case "labels":
         title = issueLabels?.find((label) => label.id === groupTitle)?.name ?? "None";
+        break;
+      case "project":
+        title = projects?.find((p) => p.id === groupTitle)?.name ?? "None";
         break;
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
@@ -86,6 +93,9 @@ export const BoardHeader: React.FC<Props> = ({
       case "state":
         icon =
           currentState && getStateGroupIcon(currentState.group, "16", "16", currentState.color);
+        break;
+      case "state_detail.group":
+        icon = getStateGroupIcon(groupTitle as any, "16", "16");
         break;
       case "priority":
         icon = getPriorityIcon(groupTitle, "text-lg");

@@ -35,9 +35,11 @@ import {
   MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  PROJECT_ISSUE_LABELS,
   STATES_LIST,
 } from "constants/fetch-keys";
 import useIssuesProperties from "hooks/use-issue-properties";
+import useProjectMembers from "hooks/use-project-members";
 
 type Props = {
   openIssuesListModal?: () => void;
@@ -95,6 +97,15 @@ export const IssuesView: React.FC<Props> = ({
       : null
   );
   const states = getStatesList(stateGroups ?? {});
+
+  const { data: labels } = useSWR(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
 
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {
@@ -448,7 +459,24 @@ export const IssuesView: React.FC<Props> = ({
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
-            <FilterList filters={filters} setFilters={setFilters} />
+            <FilterList
+              filters={filters}
+              setFilters={setFilters}
+              labels={labels}
+              members={members?.map((m) => m.member)}
+              states={states}
+              clearAllFilters={() =>
+                setFilters({
+                  assignees: null,
+                  created_by: null,
+                  labels: null,
+                  priority: null,
+                  state: null,
+                  target_date: null,
+                  type: null,
+                })
+              }
+            />
             <PrimaryButton
               onClick={() => {
                 if (viewId) {

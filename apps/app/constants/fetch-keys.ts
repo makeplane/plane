@@ -36,6 +36,29 @@ const inboxParamsToKey = (params: any) => {
   return `${priorityKey}_${inboxStatusKey}`;
 };
 
+const myIssuesParamsToKey = (params: any) => {
+  const { assignees, created_by, labels, priority, state_group, target_date } = params;
+
+  let assigneesKey = assignees ? assignees.split(",") : [];
+  let createdByKey = created_by ? created_by.split(",") : [];
+  let stateGroupKey = state_group ? state_group.split(",") : [];
+  let priorityKey = priority ? priority.split(",") : [];
+  let labelsKey = labels ? labels.split(",") : [];
+  const targetDateKey = target_date ?? "";
+  const type = params.type ? params.type.toUpperCase() : "NULL";
+  const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
+  const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+
+  // sorting each keys in ascending order
+  assigneesKey = assigneesKey.sort().join("_");
+  createdByKey = createdByKey.sort().join("_");
+  stateGroupKey = stateGroupKey.sort().join("_");
+  priorityKey = priorityKey.sort().join("_");
+  labelsKey = labelsKey.sort().join("_");
+
+  return `${assigneesKey}_${createdByKey}_${stateGroupKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+};
+
 export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
 export const USER_WORKSPACES = "USER_WORKSPACES";
@@ -96,6 +119,8 @@ export const PROJECT_ISSUE_BY_STATE = (projectId: string) =>
   `PROJECT_ISSUE_BY_STATE_${projectId.toUpperCase()}`;
 export const PROJECT_ISSUE_LABELS = (projectId: string) =>
   `PROJECT_ISSUE_LABELS_${projectId.toUpperCase()}`;
+export const WORKSPACE_LABELS = (workspaceSlug: string) =>
+  `WORKSPACE_LABELS_${workspaceSlug.toUpperCase()}`;
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
   `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
@@ -126,22 +151,10 @@ export const STATES_LIST = (projectId: string) => `STATES_LIST_${projectId.toUpp
 export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug.toUpperCase()}`;
 export const USER_ISSUES = (workspaceSlug: string, params: any) => {
   if (!params) return `USER_ISSUES_${workspaceSlug.toUpperCase()}`;
-  const { labels, priority, state, target_date } = params;
 
-  let stateKey = state ? state.split(",") : [];
-  let priorityKey = priority ? priority.split(",") : [];
-  let labelsKey = labels ? labels.split(",") : [];
-  const targetDateKey = target_date ?? "";
-  const type = params.type ? params.type.toUpperCase() : "NULL";
-  const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
-  const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const paramsKey = myIssuesParamsToKey(params);
 
-  // sorting each keys in ascending order
-  stateKey = stateKey.sort().join("_");
-  priorityKey = priorityKey.sort().join("_");
-  labelsKey = labelsKey.sort().join("_");
-
-  return `USER_ISSUES_${stateKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+  return `USER_ISSUES_${paramsKey}`;
 };
 export const USER_ACTIVITY = "USER_ACTIVITY";
 export const USER_WORKSPACE_DASHBOARD = (workspaceSlug: string) =>
