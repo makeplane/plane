@@ -15,7 +15,7 @@ type Props = {
   onFormSubmit: (formData: IIssueLink | ModuleLink) => Promise<void>;
 };
 
-const defaultValues: ModuleLink = {
+const defaultValues: IIssueLink | ModuleLink = {
   title: "",
   url: "",
 };
@@ -30,9 +30,8 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
     defaultValues,
   });
 
-  const onSubmit = async (formData: ModuleLink) => {
-    await onFormSubmit(formData);
-
+  const onSubmit = async (formData: IIssueLink | ModuleLink) => {
+    await onFormSubmit({ title: formData.title, url: formData.url });
     onClose();
   };
 
@@ -87,7 +86,7 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                             label="URL"
                             name="url"
                             type="url"
-                            placeholder="Enter URL"
+                            placeholder="https://..."
                             autoComplete="off"
                             error={errors.url}
                             register={register}
@@ -99,16 +98,13 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                         <div>
                           <Input
                             id="title"
-                            label="Title"
+                            label="Title (optional)"
                             name="title"
                             type="text"
                             placeholder="Enter title"
                             autoComplete="off"
                             error={errors.title}
                             register={register}
-                            validations={{
-                              required: "Title is required",
-                            }}
                           />
                         </div>
                       </div>
