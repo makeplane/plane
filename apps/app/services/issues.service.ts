@@ -60,7 +60,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<IIssue> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {

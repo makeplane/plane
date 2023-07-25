@@ -1,35 +1,12 @@
-import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
+
+import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
 
 // icons
-import {
-  ArrowRightIcon,
-  ChartBarIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-  DocumentTextIcon,
-  FolderPlusIcon,
-  InboxIcon,
-  LinkIcon,
-  MagnifyingGlassIcon,
-  RocketLaunchIcon,
-  Squares2X2Icon,
-  TrashIcon,
-  UserMinusIcon,
-  UserPlusIcon,
-  UsersIcon,
-} from "@heroicons/react/24/outline";
-import {
-  AssignmentClipboardIcon,
-  ContrastIcon,
-  DiscordIcon,
-  DocumentIcon,
-  GithubIcon,
-  LayerDiagonalIcon,
-  PeopleGroupIcon,
-  SettingIcon,
-  ViewListIcon,
-} from "components/icons";
+import { InboxIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { DiscordIcon, GithubIcon, SettingIcon } from "components/icons";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // cmdk
@@ -56,21 +33,82 @@ import { CreateProjectModal } from "components/project";
 import { CreateUpdateViewModal } from "components/views";
 import { CreateUpdatePageModal } from "components/pages";
 
-import { Spinner } from "components/ui";
+import { Icon, Loader, ToggleSwitch, Tooltip } from "components/ui";
 // helpers
-import {
-  capitalizeFirstLetter,
-  copyTextToClipboard,
-  replaceUnderscoreIfSnakeCase,
-} from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 // services
 import issuesService from "services/issues.service";
 import workspaceService from "services/workspace.service";
 import inboxService from "services/inbox.service";
 // types
-import { IIssue, IWorkspaceSearchResults } from "types";
+import {
+  IIssue,
+  IWorkspaceDefaultSearchResult,
+  IWorkspaceIssueSearchResult,
+  IWorkspaceProjectSearchResult,
+  IWorkspaceSearchResult,
+  IWorkspaceSearchResults,
+} from "types";
 // fetch keys
 import { INBOX_LIST, ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+
+const commandGroups: {
+  [key: string]: {
+    icon: string;
+    itemName: (item: any) => React.ReactNode;
+    path: (item: any) => string;
+    title: string;
+  };
+} = {
+  cycle: {
+    icon: "contrast",
+    itemName: (cycle: IWorkspaceDefaultSearchResult) => cycle?.name,
+    path: (cycle: IWorkspaceDefaultSearchResult) =>
+      `/${cycle?.workspace__slug}/projects/${cycle?.project_id}/cycles/${cycle?.id}`,
+    title: "Cycles",
+  },
+  issue: {
+    icon: "stack",
+    itemName: (issue: IWorkspaceIssueSearchResult) => issue?.name,
+    path: (issue: IWorkspaceIssueSearchResult) =>
+      `/${issue?.workspace__slug}/projects/${issue?.project_id}/issues/${issue?.id}`,
+    title: "Issues",
+  },
+  issue_view: {
+    icon: "photo_filter",
+    itemName: (view: IWorkspaceDefaultSearchResult) => view?.name,
+    path: (view: IWorkspaceDefaultSearchResult) =>
+      `/${view?.workspace__slug}/projects/${view?.project_id}/views/${view?.id}`,
+    title: "Views",
+  },
+  module: {
+    icon: "dataset",
+    itemName: (module: IWorkspaceDefaultSearchResult) => module?.name,
+    path: (module: IWorkspaceDefaultSearchResult) =>
+      `/${module?.workspace__slug}/projects/${module?.project_id}/modules/${module?.id}`,
+    title: "Modules",
+  },
+  page: {
+    icon: "article",
+    itemName: (page: IWorkspaceDefaultSearchResult) => page?.name,
+    path: (page: IWorkspaceDefaultSearchResult) =>
+      `/${page?.workspace__slug}/projects/${page?.project_id}/pages/${page?.id}`,
+    title: "Pages",
+  },
+  project: {
+    icon: "work",
+    itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
+    path: (project: IWorkspaceProjectSearchResult) =>
+      `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
+    title: "Projects",
+  },
+  workspace: {
+    icon: "grid_view",
+    itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
+    path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
+    title: "Workspaces",
+  },
+};
 
 export const CommandPalette: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -101,8 +139,10 @@ export const CommandPalette: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [placeholder, setPlaceholder] = React.useState("Type a command or search...");
-  const [pages, setPages] = React.useState<string[]>([]);
+  const [pages, setPages] = useState<string[]>([]);
   const page = pages[pages.length - 1];
+
+  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, inboxId } = router.query;
@@ -113,7 +153,7 @@ export const CommandPalette: React.FC = () => {
   const { setToastAlert } = useToast();
   const { toggleCollapsed } = useTheme();
 
-  const { data: issueDetails } = useSWR<IIssue | undefined>(
+  const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
@@ -246,20 +286,24 @@ export const CommandPalette: React.FC = () => {
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
+
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
   useEffect(
     () => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug) return;
 
       setIsLoading(true);
-      // this is done prevent subsequent api request
-      // or searchTerm has not been updated within last 500ms.
+
       if (debouncedSearchTerm) {
         setIsSearching(true);
         workspaceService
-          .searchWorkspace(workspaceSlug as string, projectId as string, debouncedSearchTerm)
+          .searchWorkspace(workspaceSlug as string, {
+            ...(projectId ? { project_id: projectId.toString() } : {}),
+            search: debouncedSearchTerm,
+            workspace_search: !projectId ? true : isWorkspaceLevel,
+          })
           .then((results) => {
             setResults(results);
             const count = Object.keys(results.results).reduce(
@@ -288,7 +332,7 @@ export const CommandPalette: React.FC = () => {
         setIsSearching(false);
       }
     },
-    [debouncedSearchTerm, workspaceSlug, projectId] // Only call effect if debounced search term changes
+    [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug] // Only call effect if debounced search term changes
   );
 
   if (!user) return null;
@@ -441,118 +485,57 @@ export const CommandPalette: React.FC = () => {
                     }
                   }}
                 >
-                  {issueId && issueDetails && (
-                    <div className="flex p-3">
-                      <p className="overflow-hidden truncate rounded-md bg-custom-background-90 p-1 px-2 text-xs font-medium text-custom-text-200">
-                        {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
-                        {issueDetails?.name}
-                      </p>
-                    </div>
-                  )}
+                  <div
+                    className={`flex sm:items-center gap-4 p-3 pb-0 ${
+                      issueDetails ? "flex-col sm:flex-row justify-between" : "justify-end"
+                    }`}
+                  >
+                    {issueDetails && (
+                      <div className="overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
+                        {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}{" "}
+                        {issueDetails.name}
+                      </div>
+                    )}
+                    {projectId && (
+                      <Tooltip tooltipContent="Toggle workspace level search">
+                        <div className="flex-shrink-0 self-end sm:self-center flex items-center gap-1 text-xs cursor-pointer">
+                          <button
+                            type="button"
+                            onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                            className="flex-shrink-0"
+                          >
+                            Workspace Level
+                          </button>
+                          <ToggleSwitch
+                            value={isWorkspaceLevel}
+                            onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                          />
+                        </div>
+                      </Tooltip>
+                    )}
+                  </div>
                   <div className="relative">
                     <MagnifyingGlassIcon
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-200"
                       aria-hidden="true"
                     />
                     <Command.Input
-                      className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+                      className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-custom-text-100 placeholder:text-custom-text-400 outline-none focus:ring-0 text-sm"
                       placeholder={placeholder}
                       value={searchTerm}
                       onValueChange={(e) => {
                         setSearchTerm(e);
                       }}
                       autoFocus
+                      tabIndex={1}
                     />
                   </div>
+
                   <Command.List className="max-h-96 overflow-scroll p-2">
-                    {!isLoading &&
-                      resultsCount === 0 &&
-                      searchTerm !== "" &&
-                      debouncedSearchTerm !== "" && (
-                        <div className="my-4 text-center text-custom-text-200">
-                          No results found.
-                        </div>
-                      )}
-
-                    {(isLoading || isSearching) && (
-                      <Command.Loading>
-                        <div className="flex h-full w-full items-center justify-center py-8">
-                          <Spinner />
-                        </div>
-                      </Command.Loading>
-                    )}
-
-                    {debouncedSearchTerm !== "" && (
-                      <>
-                        {Object.keys(results.results).map((key) => {
-                          const section = (results.results as any)[key];
-                          if (section.length > 0) {
-                            return (
-                              <Command.Group
-                                heading={capitalizeFirstLetter(replaceUnderscoreIfSnakeCase(key))}
-                                key={key}
-                              >
-                                {section.map((item: any) => {
-                                  let path = "";
-                                  let value = item.name;
-                                  let Icon: any = ArrowRightIcon;
-
-                                  if (key === "workspace") {
-                                    path = `/${item.slug}`;
-                                    Icon = FolderPlusIcon;
-                                  } else if (key == "project") {
-                                    path = `/${item.workspace__slug}/projects/${item.id}/issues`;
-                                    Icon = AssignmentClipboardIcon;
-                                  } else if (key === "issue") {
-                                    path = `/${item.workspace__slug}/projects/${item.project_id}/issues/${item.id}`;
-                                    // user can search id-num idnum or issue name
-                                    value = `${item.project__identifier}-${item.sequence_id} ${item.project__identifier}${item.sequence_id} ${item.name}`;
-                                    Icon = LayerDiagonalIcon;
-                                  } else if (key === "issue_view") {
-                                    path = `/${item.workspace__slug}/projects/${item.project_id}/views/${item.id}`;
-                                    Icon = ViewListIcon;
-                                  } else if (key === "module") {
-                                    path = `/${item.workspace__slug}/projects/${item.project_id}/modules/${item.id}`;
-                                    Icon = PeopleGroupIcon;
-                                  } else if (key === "page") {
-                                    path = `/${item.workspace__slug}/projects/${item.project_id}/pages/${item.id}`;
-                                    Icon = DocumentTextIcon;
-                                  } else if (key === "cycle") {
-                                    path = `/${item.workspace__slug}/projects/${item.project_id}/cycles/${item.id}`;
-                                    Icon = ContrastIcon;
-                                  }
-
-                                  return (
-                                    <Command.Item
-                                      key={item.id}
-                                      onSelect={() => {
-                                        router.push(path);
-                                        setIsPaletteOpen(false);
-                                      }}
-                                      value={value}
-                                      className="focus:outline-none"
-                                    >
-                                      <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
-                                        <Icon
-                                          className="h-4 w-4 text-custom-text-200"
-                                          color="#6b7280"
-                                        />
-                                        <p className="block flex-1 truncate">{item.name}</p>
-                                      </div>
-                                    </Command.Item>
-                                  );
-                                })}
-                              </Command.Group>
-                            );
-                          }
-                        })}
-                      </>
-                    )}
-
                     {!page && (
                       <>
                         {issueId && (
-                          <>
+                          <Command.Group heading="Issue actions">
                             <Command.Item
                               onSelect={() => {
                                 setPlaceholder("Change state...");
@@ -562,7 +545,7 @@ export const CommandPalette: React.FC = () => {
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <Squares2X2Icon className="h-4 w-4 text-custom-text-200" />
+                                <Icon iconName="grid_view" />
                                 Change state...
                               </div>
                             </Command.Item>
@@ -575,7 +558,7 @@ export const CommandPalette: React.FC = () => {
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <ChartBarIcon className="h-4 w-4 text-custom-text-200" />
+                                <Icon iconName="bar_chart" />
                                 Change priority...
                               </div>
                             </Command.Item>
@@ -588,7 +571,7 @@ export const CommandPalette: React.FC = () => {
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <UsersIcon className="h-4 w-4 text-custom-text-200" />
+                                <Icon iconName="group" />
                                 Assign to...
                               </div>
                             </Command.Item>
@@ -602,21 +585,20 @@ export const CommandPalette: React.FC = () => {
                               <div className="flex items-center gap-2 text-custom-text-200">
                                 {issueDetails?.assignees.includes(user.id) ? (
                                   <>
-                                    <UserMinusIcon className="h-4 w-4 text-custom-text-200" />
+                                    <Icon iconName="person_remove" />
                                     Un-assign from me
                                   </>
                                 ) : (
                                   <>
-                                    <UserPlusIcon className="h-4 w-4 text-custom-text-200" />
+                                    <Icon iconName="person_add" />
                                     Assign to me
                                   </>
                                 )}
                               </div>
                             </Command.Item>
-
                             <Command.Item onSelect={deleteIssue} className="focus:outline-none">
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <TrashIcon className="h-4 w-4 text-custom-text-200" />
+                                <Icon iconName="delete" />
                                 Delete issue
                               </div>
                             </Command.Item>
@@ -628,11 +610,11 @@ export const CommandPalette: React.FC = () => {
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <LinkIcon className="h-4 w-4 text-custom-text-200" />
-                                Copy issue URL to clipboard
+                                <Icon iconName="link" />
+                                Copy issue URL
                               </div>
                             </Command.Item>
-                          </>
+                          </Command.Group>
                         )}
                         <Command.Group heading="Issue">
                           <Command.Item
@@ -640,7 +622,7 @@ export const CommandPalette: React.FC = () => {
                             className="focus:bg-custom-background-80"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <LayerDiagonalIcon className="h-4 w-4" color="#6b7280" />
+                              <Icon iconName="stack" />
                               Create new issue
                             </div>
                             <kbd>C</kbd>
@@ -654,7 +636,7 @@ export const CommandPalette: React.FC = () => {
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <AssignmentClipboardIcon className="h-4 w-4" color="#6b7280" />
+                                <Icon iconName="create_new_folder" />
                                 Create new project
                               </div>
                               <kbd>P</kbd>
@@ -670,46 +652,42 @@ export const CommandPalette: React.FC = () => {
                                 className="focus:outline-none"
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
-                                  <ContrastIcon className="h-4 w-4" color="#6b7280" />
+                                  <Icon iconName="contrast" />
                                   Create new cycle
                                 </div>
                                 <kbd>Q</kbd>
                               </Command.Item>
                             </Command.Group>
-
                             <Command.Group heading="Module">
                               <Command.Item
                                 onSelect={createNewModule}
                                 className="focus:outline-none"
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
-                                  <PeopleGroupIcon className="h-4 w-4" color="#6b7280" />
+                                  <Icon iconName="dataset" />
                                   Create new module
                                 </div>
                                 <kbd>M</kbd>
                               </Command.Item>
                             </Command.Group>
-
                             <Command.Group heading="View">
                               <Command.Item onSelect={createNewView} className="focus:outline-none">
                                 <div className="flex items-center gap-2 text-custom-text-200">
-                                  <ViewListIcon className="h-4 w-4" color="#6b7280" />
+                                  <Icon iconName="photo_filter" />
                                   Create new view
                                 </div>
                                 <kbd>V</kbd>
                               </Command.Item>
                             </Command.Group>
-
                             <Command.Group heading="Page">
                               <Command.Item onSelect={createNewPage} className="focus:outline-none">
                                 <div className="flex items-center gap-2 text-custom-text-200">
-                                  <DocumentTextIcon className="h-4 w-4" color="#6b7280" />
+                                  <Icon iconName="article" />
                                   Create new page
                                 </div>
                                 <kbd>D</kbd>
                               </Command.Item>
                             </Command.Group>
-
                             {projectDetails && projectDetails.inbox_view && (
                               <Command.Group heading="Inbox">
                                 <Command.Item
@@ -740,7 +718,7 @@ export const CommandPalette: React.FC = () => {
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <SettingIcon className="h-4 w-4" color="#6b7280" />
+                              <Icon iconName="settings" />
                               Search settings...
                             </div>
                           </Command.Item>
@@ -751,7 +729,7 @@ export const CommandPalette: React.FC = () => {
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <FolderPlusIcon className="h-4 w-4 text-custom-text-200" />
+                              <Icon iconName="create_new_folder" />
                               Create new workspace
                             </div>
                           </Command.Item>
@@ -764,7 +742,7 @@ export const CommandPalette: React.FC = () => {
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                              <Icon iconName="settings" />
                               Change interface theme...
                             </div>
                           </Command.Item>
@@ -781,7 +759,7 @@ export const CommandPalette: React.FC = () => {
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <RocketLaunchIcon className="h-4 w-4 text-custom-text-200" />
+                              <Icon iconName="rocket_launch" />
                               Open keyboard shortcuts
                             </div>
                           </Command.Item>
@@ -793,7 +771,7 @@ export const CommandPalette: React.FC = () => {
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <DocumentIcon className="h-4 w-4 text-custom-text-200" />
+                              <Icon iconName="article" />
                               Open Plane documentation
                             </div>
                           </Command.Item>
@@ -820,7 +798,7 @@ export const CommandPalette: React.FC = () => {
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <GithubIcon className="h-4 w-4" color="#6b7280" />
+                              <GithubIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
                               Report a bug
                             </div>
                           </Command.Item>
@@ -832,13 +810,74 @@ export const CommandPalette: React.FC = () => {
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <ChatBubbleOvalLeftEllipsisIcon className="h-4 w-4 text-custom-text-200" />
+                              <Icon iconName="sms" />
                               Chat with us
                             </div>
                           </Command.Item>
                         </Command.Group>
                       </>
                     )}
+
+                    {searchTerm !== "" && (
+                      <h5 className="text-xs text-custom-text-100 mx-[3px] my-4">
+                        Search results for{" "}
+                        <span className="font-medium">
+                          {'"'}
+                          {searchTerm}
+                          {'"'}
+                        </span>{" "}
+                        in project:
+                      </h5>
+                    )}
+
+                    {!isLoading &&
+                      resultsCount === 0 &&
+                      searchTerm !== "" &&
+                      debouncedSearchTerm !== "" && (
+                        <div className="my-4 text-center text-custom-text-200">
+                          No results found.
+                        </div>
+                      )}
+
+                    {(isLoading || isSearching) && (
+                      <Command.Loading>
+                        <Loader className="space-y-3">
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                        </Loader>
+                      </Command.Loading>
+                    )}
+
+                    {debouncedSearchTerm !== "" &&
+                      Object.keys(results.results).map((key) => {
+                        const section = (results.results as any)[key];
+                        const currentSection = commandGroups[key];
+
+                        if (section.length > 0) {
+                          return (
+                            <Command.Group key={key} heading={currentSection.title}>
+                              {section.map((item: any) => (
+                                <Command.Item
+                                  key={item.id}
+                                  onSelect={() => {
+                                    router.push(currentSection.path(item));
+                                    setIsPaletteOpen(false);
+                                  }}
+                                  value={`${key}-${item?.name}`}
+                                  className="focus:outline-none"
+                                >
+                                  <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
+                                    <Icon iconName={currentSection.icon} />
+                                    <p className="block flex-1 truncate">{item.name}</p>
+                                  </div>
+                                </Command.Item>
+                              ))}
+                            </Command.Group>
+                          );
+                        }
+                      })}
 
                     {page === "settings" && workspaceSlug && (
                       <>
@@ -890,13 +929,11 @@ export const CommandPalette: React.FC = () => {
                       </>
                     )}
                     {page === "change-issue-state" && issueDetails && (
-                      <>
-                        <ChangeIssueState
-                          issue={issueDetails}
-                          setIsPaletteOpen={setIsPaletteOpen}
-                          user={user}
-                        />
-                      </>
+                      <ChangeIssueState
+                        issue={issueDetails}
+                        setIsPaletteOpen={setIsPaletteOpen}
+                        user={user}
+                      />
                     )}
                     {page === "change-issue-priority" && issueDetails && (
                       <ChangeIssuePriority
