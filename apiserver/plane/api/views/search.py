@@ -63,7 +63,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             workspace__slug=slug,
         )
 
-        if workspace_search == "false":
+        if workspace_search == "false" and project_id:
             issues = issues.filter(project_id=project_id)
 
         return issues.distinct().values(
@@ -87,13 +87,14 @@ class GlobalSearchEndpoint(BaseAPIView):
             workspace__slug=slug,
         )
 
-        if workspace_search == "false":
+        if workspace_search == "false" and project_id:
             cycles = cycles.filter(project_id=project_id)
 
         return cycles.distinct().values(
             "name",
             "id",
             "project_id",
+            "project__identifier",
             "workspace__slug",
         )
 
@@ -109,13 +110,14 @@ class GlobalSearchEndpoint(BaseAPIView):
             workspace__slug=slug,
         )
 
-        if workspace_search == "false":
+        if workspace_search == "false" and project_id:
             modules = modules.filter(project_id=project_id)
 
         return modules.distinct().values(
             "name",
             "id",
             "project_id",
+            "project__identifier",
             "workspace__slug",
         )
 
@@ -131,13 +133,14 @@ class GlobalSearchEndpoint(BaseAPIView):
             workspace__slug=slug,
         )
 
-        if workspace_search == "false":
+        if workspace_search == "false" and project_id:
             pages = pages.filter(project_id=project_id)
 
         return pages.distinct().values(
             "name",
             "id",
             "project_id",
+            "project__identifier",
             "workspace__slug",
         )
 
@@ -153,20 +156,22 @@ class GlobalSearchEndpoint(BaseAPIView):
             workspace__slug=slug,
         )
 
-        if workspace_search == "false":
+        if workspace_search == "false" and project_id:
             issue_views = issue_views.filter(project_id=project_id)
 
         return issue_views.distinct().values(
             "name",
             "id",
             "project_id",
+            "project__identifier",
             "workspace__slug",
         )
 
-    def get(self, request, slug, project_id):
+    def get(self, request, slug):
         try:
             query = request.query_params.get("search", False)
             workspace_search = request.query_params.get("workspace_search", "false")
+            project_id = request.query_params.get("project_id", False)
 
             if not query:
                 return Response(
