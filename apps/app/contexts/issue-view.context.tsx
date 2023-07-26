@@ -91,6 +91,7 @@ export const initialState: StateType = {
     assignees: null,
     labels: null,
     state: null,
+    state_group: null,
     created_by: null,
     target_date: null,
   },
