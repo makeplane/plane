@@ -38,6 +38,7 @@ type Props = {
   addIssueToDate: (date: string) => void;
   addIssueToGroup: (groupTitle: string) => void;
   disableUserActions: boolean;
+  dragDisabled?: boolean;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleOnDragEnd: (result: DropResult) => Promise<void>;
   openIssuesListModal: (() => void) | null;
@@ -51,6 +52,7 @@ export const AllViews: React.FC<Props> = ({
   addIssueToDate,
   addIssueToGroup,
   disableUserActions,
+  dragDisabled = false,
   handleIssueAction,
   handleOnDragEnd,
   openIssuesListModal,
@@ -117,13 +119,14 @@ export const AllViews: React.FC<Props> = ({
               />
             ) : issueView === "kanban" ? (
               <AllBoards
-                states={states}
                 addIssueToGroup={addIssueToGroup}
-                handleIssueAction={handleIssueAction}
-                openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
-                handleTrashBox={handleTrashBox}
-                removeIssue={removeIssue}
                 disableUserActions={disableUserActions}
+                dragDisabled={dragDisabled}
+                handleIssueAction={handleIssueAction}
+                handleTrashBox={handleTrashBox}
+                openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
+                removeIssue={removeIssue}
+                states={states}
                 user={user}
                 userAuth={memberRole}
                 viewProps={viewProps}

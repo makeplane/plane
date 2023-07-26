@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
@@ -19,7 +19,8 @@ import { CreateUpdateViewModal } from "components/views";
 // types
 import { IIssue, IIssueFilterOptions } from "types";
 // fetch-keys
-import { WORKSPACE_LABELS } from "constants/fetch-keys";
+import { USER_ISSUES, WORKSPACE_LABELS } from "constants/fetch-keys";
+import { orderArrayBy } from "helpers/array.helper";
 
 type Props = {
   openIssuesListModal?: () => void;
@@ -76,9 +77,64 @@ export const MyIssuesView: React.FC<Props> = ({
     [setDeleteIssueModal, setIssueToDelete]
   );
 
-  const handleOnDragEnd = useCallback(async (result: DropResult) => {
-    setTrashBox(false);
-  }, []);
+  const handleOnDragEnd = useCallback(
+    async (result: DropResult) => {
+      setTrashBox(false);
+      console.log(result);
+
+      if (!result.destination || !workspaceSlug || !groupedIssues || groupBy !== "priority") return;
+
+      const { source, destination } = result;
+
+      if (source.droppableId === destination.droppableId) return;
+
+      const draggedItem = groupedIssues[source.droppableId][source.index];
+
+      if (destination.droppableId === "trashBox") handleDeleteIssue(draggedItem);
+      else {
+        const sourceGroup = source.droppableId;
+        const destinationGroup = destination.droppableId;
+
+        draggedItem[groupBy] = destinationGroup;
+
+        mutate<{
+          [key: string]: IIssue[];
+        }>(
+          USER_ISSUES(workspaceSlug.toString(), params),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            const sourceGroupArray = [...groupedIssues[sourceGroup]];
+            const destinationGroupArray = [...groupedIssues[destinationGroup]];
+
+            sourceGroupArray.splice(source.index, 1);
+            destinationGroupArray.splice(destination.index, 0, draggedItem);
+
+            return {
+              ...prevData,
+              [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
+              [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
+            };
+          },
+          false
+        );
+
+        // patch request
+        issuesService
+          .patchIssue(
+            workspaceSlug as string,
+            draggedItem.project,
+            draggedItem.id,
+            {
+              priority: draggedItem.priority,
+            },
+            user
+          )
+          .then(() => mutate(USER_ISSUES(workspaceSlug.toString(), params)));
+      }
+    },
+    [groupBy, groupedIssues, handleDeleteIssue, orderBy, params, user, workspaceSlug]
+  );
 
   const addIssueToGroup = useCallback(
     (groupTitle: string) => {
@@ -207,6 +263,7 @@ export const MyIssuesView: React.FC<Props> = ({
         addIssueToDate={addIssueToDate}
         addIssueToGroup={addIssueToGroup}
         disableUserActions={disableUserActions}
+        dragDisabled={groupBy !== "priority"}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
         openIssuesListModal={openIssuesListModal ? openIssuesListModal : null}

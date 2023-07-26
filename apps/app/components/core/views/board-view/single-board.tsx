@@ -17,28 +17,30 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { ICurrentUserResponse, IIssue, IIssueViewProps, IState, UserAuth } from "types";
 
 type Props = {
+  addIssueToGroup: () => void;
   currentState?: IState | null;
+  disableUserActions: boolean;
+  dragDisabled: boolean;
   groupTitle: string;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  addIssueToGroup: () => void;
-  openIssuesListModal?: (() => void) | null;
   handleTrashBox: (isDragging: boolean) => void;
+  openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
-  disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   viewProps: IIssueViewProps;
 };
 
 export const SingleBoard: React.FC<Props> = ({
+  addIssueToGroup,
   currentState,
   groupTitle,
-  handleIssueAction,
-  addIssueToGroup,
-  openIssuesListModal,
-  handleTrashBox,
-  removeIssue,
   disableUserActions,
+  dragDisabled,
+  handleIssueAction,
+  handleTrashBox,
+  openIssuesListModal,
+  removeIssue,
   user,
   userAuth,
   viewProps,
@@ -111,9 +113,7 @@ export const SingleBoard: React.FC<Props> = ({
                     key={issue.id}
                     draggableId={issue.id}
                     index={index}
-                    isDragDisabled={
-                      isNotAllowed || selectedGroup === "created_by" || selectedGroup === "labels"
-                    }
+                    isDragDisabled={isNotAllowed || dragDisabled}
                   >
                     {(provided, snapshot) => (
                       <SingleBoardIssue

@@ -15,6 +15,8 @@ import trackEventServices from "services/track-event.service";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useUserAuth from "hooks/use-user-auth";
+import useIssuesProperties from "hooks/use-issue-properties";
+import useProjectMembers from "hooks/use-project-members";
 // components
 import { FiltersList, AllViews } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -38,8 +40,6 @@ import {
   PROJECT_ISSUE_LABELS,
   STATES_LIST,
 } from "constants/fetch-keys";
-import useIssuesProperties from "hooks/use-issue-properties";
-import useProjectMembers from "hooks/use-project-members";
 
 type Props = {
   openIssuesListModal?: () => void;
@@ -504,6 +504,11 @@ export const IssuesView: React.FC<Props> = ({
         addIssueToDate={addIssueToDate}
         addIssueToGroup={addIssueToGroup}
         disableUserActions={disableUserActions}
+        dragDisabled={
+          selectedGroup === "created_by" ||
+          selectedGroup === "labels" ||
+          selectedGroup === "state_detail.group"
+        }
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
         openIssuesListModal={openIssuesListModal ? openIssuesListModal : null}
