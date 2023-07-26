@@ -840,7 +840,7 @@ urlpatterns = [
     ## End Issue Subscribers
     # Issue Reactions
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-reactions/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/reactions/",
         IssueReactionViewSet.as_view(
             {
                 "get": "list",
@@ -850,7 +850,7 @@ urlpatterns = [
         name="project-issue-reactions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-reactions/<uuid:reaction_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/reactions/<str:reaction_code>/",
         IssueReactionViewSet.as_view(
             {
                 "delete": "destroy",
@@ -861,7 +861,7 @@ urlpatterns = [
     ## End Issue Reactions
     # Comment Reactions
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:comment_id>/comment-reactions/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/reactions/",
         CommentReactionViewSet.as_view(
             {
                 "get": "list",
@@ -871,7 +871,7 @@ urlpatterns = [
         name="project-issue-comment-reactions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:comment_id>/comment-reactions/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
         CommentReactionViewSet.as_view(
             {
                 "delete": "destroy",

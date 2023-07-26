@@ -622,6 +622,6 @@ class CommentReactionSerializer(BaseSerializer):
         read_only_fields = [
             "workspace",
             "project",
-            "comment"
-            "actor",
+            "comment",
+            "actor"
         ]

@@ -1284,6 +1284,29 @@ class IssueReactionViewSet(BaseViewSet):
             actor=self.request.user,
         )
 
+    def destroy(self, request, slug, project_id, issue_id, reaction_code):
+        try:
+            issue_reaction = IssueReaction.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=issue_id,
+                reaction=reaction_code,
+            )
+            issue_reaction.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except IssueReaction.DoesNotExist:
+            return Response(
+                {"error": "Issue reaction does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
 class CommentReactionViewSet(BaseViewSet):
     serializer_class = CommentReactionSerializer
     model = CommentReaction
@@ -1293,7 +1316,29 @@ class CommentReactionViewSet(BaseViewSet):
 
     def perform_create(self, serializer):
         serializer.save(
-            issue_id=self.kwargs.get("issue_id"),
-            project_id=self.kwargs.get("project_id"),
             actor=self.request.user,
+            comment_id=self.kwargs.get("comment_id"),
+            project_id=self.kwargs.get("project_id"),
         )
+
+    def destroy(self, request, slug, project_id, comment_id, reaction_code):
+        try:
+            comment_reaction = CommentReaction.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                comment_id=comment_id,
+                reaction=reaction_code,
+            )
+            comment_reaction.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except CommentReaction.DoesNotExist:
+            return Response(
+                {"error": "Comment reaction does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
