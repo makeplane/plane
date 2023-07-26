@@ -62,35 +62,65 @@ const commandGroups: {
 } = {
   cycle: {
     icon: "contrast",
-    itemName: (cycle: IWorkspaceDefaultSearchResult) => cycle?.name,
+    itemName: (cycle: IWorkspaceDefaultSearchResult) => (
+      <h6>
+        <span className="text-custom-text-200 text-xs">{cycle.project__identifier}</span>
+        {"- "}
+        {cycle.name}
+      </h6>
+    ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
       `/${cycle?.workspace__slug}/projects/${cycle?.project_id}/cycles/${cycle?.id}`,
     title: "Cycles",
   },
   issue: {
     icon: "stack",
-    itemName: (issue: IWorkspaceIssueSearchResult) => issue?.name,
+    itemName: (issue: IWorkspaceIssueSearchResult) => (
+      <h6>
+        <span className="text-custom-text-200 text-xs">{issue.project__identifier}</span>
+        {"- "}
+        {issue.name}
+      </h6>
+    ),
     path: (issue: IWorkspaceIssueSearchResult) =>
       `/${issue?.workspace__slug}/projects/${issue?.project_id}/issues/${issue?.id}`,
     title: "Issues",
   },
   issue_view: {
     icon: "photo_filter",
-    itemName: (view: IWorkspaceDefaultSearchResult) => view?.name,
+    itemName: (view: IWorkspaceDefaultSearchResult) => (
+      <h6>
+        <span className="text-custom-text-200 text-xs">{view.project__identifier}</span>
+        {"- "}
+        {view.name}
+      </h6>
+    ),
     path: (view: IWorkspaceDefaultSearchResult) =>
       `/${view?.workspace__slug}/projects/${view?.project_id}/views/${view?.id}`,
     title: "Views",
   },
   module: {
     icon: "dataset",
-    itemName: (module: IWorkspaceDefaultSearchResult) => module?.name,
+    itemName: (module: IWorkspaceDefaultSearchResult) => (
+      <h6>
+        <span className="text-custom-text-200 text-xs">{module.project__identifier}</span>
+        {"- "}
+        {module.name}
+      </h6>
+    ),
     path: (module: IWorkspaceDefaultSearchResult) =>
       `/${module?.workspace__slug}/projects/${module?.project_id}/modules/${module?.id}`,
     title: "Modules",
   },
   page: {
     icon: "article",
-    itemName: (page: IWorkspaceDefaultSearchResult) => page?.name,
+    itemName: (page: IWorkspaceDefaultSearchResult) => (
+      <h6>
+        <span className="text-custom-text-200 text-xs">{page.project__identifier}</span>
+        {"- "}
+        {page.name}
+      </h6>
+    ),
     path: (page: IWorkspaceDefaultSearchResult) =>
       `/${page?.workspace__slug}/projects/${page?.project_id}/pages/${page?.id}`,
     title: "Pages",
@@ -532,6 +562,69 @@ export const CommandPalette: React.FC = () => {
                   </div>
 
                   <Command.List className="max-h-96 overflow-scroll p-2">
+                    {searchTerm !== "" && (
+                      <h5 className="text-xs text-custom-text-100 mx-[3px] my-4">
+                        Search results for{" "}
+                        <span className="font-medium">
+                          {'"'}
+                          {searchTerm}
+                          {'"'}
+                        </span>{" "}
+                        in {!projectId || isWorkspaceLevel ? "workspace" : "project"}:
+                      </h5>
+                    )}
+
+                    {!isLoading &&
+                      resultsCount === 0 &&
+                      searchTerm !== "" &&
+                      debouncedSearchTerm !== "" && (
+                        <div className="my-4 text-center text-custom-text-200">
+                          No results found.
+                        </div>
+                      )}
+
+                    {(isLoading || isSearching) && (
+                      <Command.Loading>
+                        <Loader className="space-y-3">
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                          <Loader.Item height="40px" />
+                        </Loader>
+                      </Command.Loading>
+                    )}
+
+                    {debouncedSearchTerm !== "" &&
+                      Object.keys(results.results).map((key) => {
+                        const section = (results.results as any)[key];
+                        const currentSection = commandGroups[key];
+
+                        if (section.length > 0) {
+                          return (
+                            <Command.Group key={key} heading={currentSection.title}>
+                              {section.map((item: any) => (
+                                <Command.Item
+                                  key={item.id}
+                                  onSelect={() => {
+                                    router.push(currentSection.path(item));
+                                    setIsPaletteOpen(false);
+                                  }}
+                                  value={`${key}-${item?.name}`}
+                                  className="focus:outline-none"
+                                >
+                                  <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
+                                    <Icon iconName={currentSection.icon} />
+                                    <p className="block flex-1 truncate">
+                                      {currentSection.itemName(item)}
+                                    </p>
+                                  </div>
+                                </Command.Item>
+                              ))}
+                            </Command.Group>
+                          );
+                        }
+                      })}
+
                     {!page && (
                       <>
                         {issueId && (
@@ -817,67 +910,6 @@ export const CommandPalette: React.FC = () => {
                         </Command.Group>
                       </>
                     )}
-
-                    {searchTerm !== "" && (
-                      <h5 className="text-xs text-custom-text-100 mx-[3px] my-4">
-                        Search results for{" "}
-                        <span className="font-medium">
-                          {'"'}
-                          {searchTerm}
-                          {'"'}
-                        </span>{" "}
-                        in project:
-                      </h5>
-                    )}
-
-                    {!isLoading &&
-                      resultsCount === 0 &&
-                      searchTerm !== "" &&
-                      debouncedSearchTerm !== "" && (
-                        <div className="my-4 text-center text-custom-text-200">
-                          No results found.
-                        </div>
-                      )}
-
-                    {(isLoading || isSearching) && (
-                      <Command.Loading>
-                        <Loader className="space-y-3">
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                        </Loader>
-                      </Command.Loading>
-                    )}
-
-                    {debouncedSearchTerm !== "" &&
-                      Object.keys(results.results).map((key) => {
-                        const section = (results.results as any)[key];
-                        const currentSection = commandGroups[key];
-
-                        if (section.length > 0) {
-                          return (
-                            <Command.Group key={key} heading={currentSection.title}>
-                              {section.map((item: any) => (
-                                <Command.Item
-                                  key={item.id}
-                                  onSelect={() => {
-                                    router.push(currentSection.path(item));
-                                    setIsPaletteOpen(false);
-                                  }}
-                                  value={`${key}-${item?.name}`}
-                                  className="focus:outline-none"
-                                >
-                                  <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
-                                    <Icon iconName={currentSection.icon} />
-                                    <p className="block flex-1 truncate">{item.name}</p>
-                                  </div>
-                                </Command.Item>
-                              ))}
-                            </Command.Group>
-                          );
-                        }
-                      })}
 
                     {page === "settings" && workspaceSlug && (
                       <>
