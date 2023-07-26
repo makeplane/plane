@@ -200,17 +200,15 @@ export const MyIssuesView: React.FC<Props> = ({
     },
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
-  const filtersToShow = { ...filters };
-  delete filtersToShow?.assignees;
-  delete filtersToShow?.created_by;
 
-  const nullFilters = Object.keys(filtersToShow).filter(
-    (key) => filtersToShow[key as keyof IIssueFilterOptions] === null
+  const filtersToDisplay = { ...filters, assignees: null, created_by: null };
+
+  const nullFilters = Object.keys(filtersToDisplay).filter(
+    (key) => filtersToDisplay[key as keyof IIssueFilterOptions] === null
   );
-
   const areFiltersApplied =
-    Object.keys(filtersToShow).length > 0 &&
-    nullFilters.length !== Object.keys(filtersToShow).length;
+    Object.keys(filtersToDisplay).length > 0 &&
+    nullFilters.length !== Object.keys(filtersToDisplay).length;
 
   return (
     <>
@@ -242,7 +240,7 @@ export const MyIssuesView: React.FC<Props> = ({
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
             <FiltersList
-              filters={filtersToShow}
+              filters={filtersToDisplay}
               setFilters={setFilters}
               labels={labels}
               members={undefined}

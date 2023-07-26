@@ -8,6 +8,7 @@ import type {
   IProjectLite,
   IWorkspaceLite,
   IStateLite,
+  TStateGroups,
 } from "types";
 
 export interface IIssueCycle {
@@ -231,6 +232,7 @@ export interface IIssueFilterOptions {
   assignees: string[] | null;
   target_date: string[] | null;
   state: string[] | null;
+  state_group: TStateGroups[] | null;
   labels: string[] | null;
   priority: string[] | null;
   created_by: string[] | null;

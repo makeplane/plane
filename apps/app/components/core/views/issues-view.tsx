@@ -466,7 +466,7 @@ export const IssuesView: React.FC<Props> = ({
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
             <FiltersList
               filters={filters}
-              setFilters={setFilters}
+              setFilters={(updatedFilter) => setFilters(updatedFilter, !Boolean(viewId))}
               labels={labels}
               members={members?.map((m) => m.member)}
               states={states}
