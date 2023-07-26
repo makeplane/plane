@@ -39,6 +39,7 @@ from plane.api.serializers import (
     UserLiteSerializer,
     ProjectMemberSerializer,
     WorkspaceThemeSerializer,
+    IssueActivitySerializer,
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -61,7 +62,11 @@ from plane.db.models import (
     Page,
     IssueViewFavorite,
 )
-from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
+from plane.api.permissions import (
+    WorkSpaceBasePermission,
+    WorkSpaceAdminPermission,
+    WorkspaceEntityPermission,
+)
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 
 
@@ -1009,3 +1014,98 @@ class WorkspaceThemeViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class WorkspaceUserProfileEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug, user_id):
+        try:
+            state_distribution = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .annotate(state_group=F("state__group"))
+                .values("state_group")
+                .annotate(state_count=Count("state_group"))
+                .order_by("state_group")
+            )
+
+            created_issues = Issue.issue_objects.filter(
+                workspace__slug=slug,
+                assignees__in=[user_id],
+                project__project_projectmember__member=request.user,
+                created_by_id=user_id,
+            ).count()
+
+            assigned_issues_count = Issue.issue_objects.filter(
+                workspace__slug=slug,
+                assignees__in=[user_id],
+                project__project_projectmember__member=request.user,
+            ).count()
+
+            pending_issues_count = Issue.issue_objects.filter(
+                ~Q(state__group__in=["completed", "cancelled"]),
+                workspace__slug=slug,
+                assignees__in=[user_id],
+                project__project_projectmember__member=request.user,
+            ).count()
+
+            completed_issues_count = Issue.issue_objects.filter(
+                workspace__slug=slug,
+                assignees__in=[user_id],
+                state__group="completed",
+                project__project_projectmember__member=request.user,
+            ).count()
+
+            return Response(
+                {
+                    "state_distribution": state_distribution,
+                    "created_issues": created_issues,
+                    "assigned_issues": assigned_issues_count,
+                    "completed_issues": completed_issues_count,
+                    "pending_issues": pending_issues_count,
+                }
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceUserActivityEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug, user_id):
+        try:
+            queryset = IssueActivity.objects.filter(
+                workspace__slug=slug, project__project_projectmember__member=request.user, actor=user_id,
+            )
+            return self.paginate(
+                request=request,
+                queryset=queryset,
+                on_results=lambda issue_activities: IssueActivitySerializer(
+                    issue_activities, many=True
+                ).data,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserProfilePageProjectSegregationEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
