@@ -49,8 +49,8 @@ const StatesSettings: NextPage = () => {
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const orderedStateGroups = orderStateGroups(states ?? {});
-  const statesList = getStatesList(orderedStateGroups ?? {});
+  const orderedStateGroups = orderStateGroups(states);
+  const statesList = getStatesList(orderedStateGroups);
 
   return (
     <>
@@ -79,7 +79,7 @@ const StatesSettings: NextPage = () => {
               <p className="text-custom-text-200">Manage the states of this project.</p>
             </div>
             <div className="col-span-12 space-y-8 sm:col-span-7">
-              {states && projectDetails ? (
+              {states && projectDetails && orderedStateGroups ? (
                 Object.keys(orderedStateGroups).map((key) => {
                   if (orderedStateGroups[key].length !== 0)
                     return (
@@ -114,7 +114,7 @@ const StatesSettings: NextPage = () => {
                                 key={state.id}
                                 index={index}
                                 state={state}
-                                statesList={statesList}
+                                statesList={statesList ?? []}
                                 handleEditState={() => setSelectedState(state.id)}
                                 handleDeleteState={() => setSelectDeleteState(state.id)}
                                 user={user}

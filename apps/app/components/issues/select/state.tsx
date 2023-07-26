@@ -34,7 +34,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       ? () => stateService.getStates(workspaceSlug as string, projectId)
       : null
   );
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const options = states?.map((state) => ({
     value: state.id,
@@ -48,7 +48,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
   }));
 
   const selectedOption = states?.find((s) => s.id === value);
-  const currentDefaultState = states.find((s) => s.default);
+  const currentDefaultState = states?.find((s) => s.default);
 
   return (
     <CustomSearchSelect
