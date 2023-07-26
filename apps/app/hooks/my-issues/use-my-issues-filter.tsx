@@ -60,8 +60,6 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
     (data: Partial<IWorkspaceViewProps>) => {
       if (!workspaceSlug || !myWorkspace) return;
 
-      console.log("data", data);
-
       const oldData = { ...myWorkspace };
 
       mutate<IWorkspaceMember>(

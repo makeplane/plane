@@ -1,5 +1,6 @@
 export * from "./attachment";
 export * from "./comment";
+export * from "./my-issues";
 export * from "./sidebar-select";
 export * from "./view-select";
 export * from "./activity";

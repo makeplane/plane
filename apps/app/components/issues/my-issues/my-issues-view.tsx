@@ -12,9 +12,8 @@ import issuesService from "services/issues.service";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 import useUserAuth from "hooks/use-user-auth";
-import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
-import { FiltersList, AllViews } from "components/core";
+import { AllViews, FiltersList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // types
@@ -59,11 +58,6 @@ export const MyIssuesView: React.FC<Props> = ({
   const { groupedIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
   const { filters, setFilters, issueView, groupBy, orderBy, properties, showEmptyGroups } =
     useMyIssuesFilters(workspaceSlug?.toString());
-
-  const { workspaceMembers: members } = useWorkspaceMembers(
-    workspaceSlug?.toString(),
-    (filters.assignees ?? []).length > 0 || (filters.created_by ?? []).length > 0
-  );
 
   const { data: labels } = useSWR(
     workspaceSlug && (filters.labels ?? []).length > 0
@@ -148,13 +142,17 @@ export const MyIssuesView: React.FC<Props> = ({
     },
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
+  const filtersToShow = { ...filters };
+  delete filtersToShow?.assignees;
+  delete filtersToShow?.created_by;
 
-  const nullFilters = Object.keys(filters).filter(
-    (key) => filters[key as keyof IIssueFilterOptions] === null
+  const nullFilters = Object.keys(filtersToShow).filter(
+    (key) => filtersToShow[key as keyof IIssueFilterOptions] === null
   );
 
   const areFiltersApplied =
-    Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length;
+    Object.keys(filtersToShow).length > 0 &&
+    nullFilters.length !== Object.keys(filtersToShow).length;
 
   return (
     <>
@@ -186,15 +184,13 @@ export const MyIssuesView: React.FC<Props> = ({
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
             <FiltersList
-              filters={filters}
+              filters={filtersToShow}
               setFilters={setFilters}
               labels={labels}
-              members={members?.map((m) => m.member)}
+              members={undefined}
               states={undefined}
               clearAllFilters={() =>
                 setFilters({
-                  assignees: null,
-                  created_by: null,
                   labels: null,
                   priority: null,
                   state_group: null,
