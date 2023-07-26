@@ -67,11 +67,7 @@ export interface IWorkspaceViewProps {
   issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
-  filters: Partial<
-    IIssueFilterOptions & {
-      state_group: string[] | null;
-    }
-  >;
+  filters: Partial<IIssueFilterOptions>;
   showEmptyGroups: boolean;
 }
 

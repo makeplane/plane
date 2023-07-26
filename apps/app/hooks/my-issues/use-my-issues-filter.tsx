@@ -88,18 +88,24 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
   );
 
   const issueView = (myWorkspace?.view_props ?? initialValues).issueView;
+  const groupBy = (myWorkspace?.view_props ?? initialValues).groupByProperty;
+  const orderBy = (myWorkspace?.view_props ?? initialValues).orderBy;
+  const showEmptyGroups = (myWorkspace?.view_props ?? initialValues).showEmptyGroups;
+  const filters = (myWorkspace?.view_props ?? initialValues).filters;
+
   const setIssueView = useCallback(
     (newView: TIssueViewOptions) => {
-      console.log("newView", newView);
-
-      saveData({
+      const payload: Partial<IWorkspaceViewProps> = {
         issueView: newView,
-      });
+      };
+
+      if (newView === "kanban" && groupBy === null) payload.groupByProperty = "state_detail.group";
+
+      saveData(payload);
     },
-    [saveData]
+    [groupBy, saveData]
   );
 
-  const groupBy = (myWorkspace?.view_props ?? initialValues).groupByProperty;
   const setGroupBy = useCallback(
     (newGroup: TIssueGroupByOptions) => {
       saveData({
@@ -109,7 +115,6 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
     [saveData]
   );
 
-  const orderBy = (myWorkspace?.view_props ?? initialValues).orderBy;
   const setOrderBy = useCallback(
     (newOrderBy: TIssueOrderByOptions) => {
       saveData({
@@ -119,7 +124,6 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
     [saveData]
   );
 
-  const showEmptyGroups = (myWorkspace?.view_props ?? initialValues).showEmptyGroups;
   const setShowEmptyGroups = useCallback(() => {
     if (!myWorkspace) return;
 
@@ -142,9 +146,8 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
     [myWorkspace, saveData]
   );
 
-  const filters = (myWorkspace?.view_props ?? initialValues).filters;
   const setFilters = useCallback(
-    (updatedFilter: Partial<IIssueFilterOptions & { state_group: string[] | null }>) => {
+    (updatedFilter: Partial<IIssueFilterOptions>) => {
       if (!myWorkspace) return;
 
       saveData({
