@@ -10,3 +10,4 @@ export * from "./sidebar";
 export * from "./issues-view";
 export * from "./image-picker-popover";
 export * from "./feeds";
+export * from "./reaction-selector";
