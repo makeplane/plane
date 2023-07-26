@@ -56,16 +56,23 @@ export const MyIssuesView: React.FC<Props> = ({
 
   const { user } = useUserAuth();
 
-  const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString());
-
-  const { data: labels } = useSWR(
-    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
-  );
-
   const { groupedIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
   const { filters, setFilters, issueView, groupBy, orderBy, properties, showEmptyGroups } =
     useMyIssuesFilters(workspaceSlug?.toString());
+
+  const { workspaceMembers: members } = useWorkspaceMembers(
+    workspaceSlug?.toString(),
+    (filters.assignees ?? []).length > 0 || (filters.created_by ?? []).length > 0
+  );
+
+  const { data: labels } = useSWR(
+    workspaceSlug && (filters.labels ?? []).length > 0
+      ? WORKSPACE_LABELS(workspaceSlug.toString())
+      : null,
+    workspaceSlug && (filters.labels ?? []).length > 0
+      ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
+      : null
+  );
 
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {
@@ -189,6 +196,7 @@ export const MyIssuesView: React.FC<Props> = ({
                   assignees: null,
                   created_by: null,
                   labels: null,
+                  priority: null,
                   state_group: null,
                   target_date: null,
                   type: null,

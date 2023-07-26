@@ -5,32 +5,22 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/state.service";
-import projectService from "services/project.service";
 import issuesService from "services/issues.service";
 // components
 import { DueDateFilterModal } from "components/core";
 // ui
-import { Avatar, MultiLevelDropdown } from "components/ui";
+import { MultiLevelDropdown } from "components/ui";
 // icons
 import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
-import { getStatesList } from "helpers/state.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { IIssueFilterOptions, IQuery } from "types";
 // fetch-keys
-import {
-  PROJECT_ISSUE_LABELS,
-  PROJECT_MEMBERS,
-  STATES_LIST,
-  WORKSPACE_LABELS,
-} from "constants/fetch-keys";
+import { WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES, PRIORITIES } from "constants/project";
 import { DUE_DATES } from "constants/due-dates";
-import useWorkspaceMembers from "hooks/use-workspace-members";
-import useUser from "hooks/use-user";
 
 type Props = {
   filters: Partial<IIssueFilterOptions> | IQuery;
@@ -46,17 +36,16 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
   height = "md",
 }) => {
   const [isDueDateFilterModalOpen, setIsDueDateFilterModalOpen] = useState(false);
+  const [fetchLabels, setFetchLabels] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { user } = useUser();
-
-  const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString());
-
   const { data: labels } = useSWR(
-    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug && fetchLabels ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
+    workspaceSlug && fetchLabels
+      ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
+      : null
   );
 
   return (
@@ -77,6 +66,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
             id: "priority",
             label: "Priority",
             value: PRIORITIES,
+            hasChildren: true,
             children: [
               ...PRIORITIES.map((priority) => ({
                 id: priority === null ? "null" : priority,
@@ -97,6 +87,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
             id: "state_group",
             label: "State groups",
             value: GROUP_CHOICES,
+            hasChildren: true,
             children: [
               ...Object.keys(GROUP_CHOICES).map((key) => ({
                 id: key,
@@ -115,86 +106,36 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
             ],
           },
           {
-            id: "assignees",
-            label: "Assignees",
-            value: members,
-            children: [
-              ...(members
-                ?.filter((m) => m.member.id !== user?.id)
-                .map((member) => ({
-                  id: member.member.id,
-                  label: (
-                    <div className="flex items-center gap-2">
-                      <Avatar user={member.member} />
-                      {member.member.first_name && member.member.first_name !== ""
-                        ? member.member.first_name
-                        : member.member.email}
-                    </div>
-                  ),
-                  value: {
-                    key: "assignees",
-                    value: member.member.id,
-                  },
-                  selected: filters?.assignees?.includes(member.member.id),
-                })) ?? []),
-            ],
-          },
-          {
-            id: "created_by",
-            label: "Created by",
-            value: members,
-            children: [
-              ...(members
-                ?.filter((m) => m.member.id !== user?.id)
-                .map((member) => ({
-                  id: member.member.id,
-                  label: (
-                    <div className="flex items-center gap-2">
-                      <Avatar user={member.member} />
-                      {member.member.first_name && member.member.first_name !== ""
-                        ? member.member.first_name
-                        : member.member.email}
-                    </div>
-                  ),
-                  value: {
-                    key: "created_by",
-                    value: member.member.id,
-                  },
-                  selected: filters?.created_by?.includes(member.member.id),
-                })) ?? []),
-            ],
-          },
-          {
             id: "labels",
             label: "Labels",
+            onClick: () => setFetchLabels(true),
             value: labels,
-            children: [
-              ...(labels?.map((label) => ({
-                id: label.id,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="h-2 w-2 rounded-full"
-                      style={{
-                        backgroundColor:
-                          label.color && label.color !== "" ? label.color : "#000000",
-                      }}
-                    />
-                    {label.name}
-                  </div>
-                ),
-                value: {
-                  key: "labels",
-                  value: label.id,
-                },
-                selected: filters?.labels?.includes(label.id),
-              })) ?? []),
-            ],
+            hasChildren: true,
+            children: labels?.map((label) => ({
+              id: label.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-2 w-2 rounded-full"
+                    style={{
+                      backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
+                    }}
+                  />
+                  {label.name}
+                </div>
+              ),
+              value: {
+                key: "labels",
+                value: label.id,
+              },
+              selected: filters?.labels?.includes(label.id),
+            })),
           },
           {
             id: "target_date",
             label: "Due date",
             value: DUE_DATES,
+            hasChildren: true,
             children: [
               ...(DUE_DATES?.map((option) => ({
                 id: option.name,

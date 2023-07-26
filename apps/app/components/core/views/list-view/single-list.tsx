@@ -18,6 +18,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import {
   ICurrentUserResponse,
@@ -118,6 +119,16 @@ export const SingleList: React.FC<Props> = ({
         break;
       case "priority":
         icon = getPriorityIcon(groupTitle, "text-lg");
+        break;
+      case "project":
+        const project = projects?.find((p) => p.id === groupTitle);
+        icon =
+          project &&
+          (project.emoji !== null
+            ? renderEmoji(project.emoji)
+            : project.icon_prop !== null
+            ? renderEmoji(project.icon_prop)
+            : null);
         break;
       case "labels":
         const labelColor =

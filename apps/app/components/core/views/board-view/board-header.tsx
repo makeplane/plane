@@ -16,8 +16,9 @@ import { ArrowsPointingInIcon, ArrowsPointingOutIcon, PlusIcon } from "@heroicon
 import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IIssueLabels, IIssueViewProps, IState } from "types";
+import { IIssueViewProps, IState } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -45,17 +46,21 @@ export const BoardHeader: React.FC<Props> = ({
 
   const { groupedIssues, groupByProperty: selectedGroup } = viewProps;
 
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+  const { data: issueLabels } = useSWR(
+    workspaceSlug && projectId && selectedGroup === "labels"
+      ? PROJECT_ISSUE_LABELS(projectId.toString())
+      : null,
+    workspaceSlug && projectId && selectedGroup === "labels"
+      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+    workspaceSlug && projectId && selectedGroup === "created_by"
+      ? PROJECT_MEMBERS(projectId.toString())
+      : null,
+    workspaceSlug && projectId && selectedGroup === "created_by"
+      ? () => projectService.projectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -100,6 +105,16 @@ export const BoardHeader: React.FC<Props> = ({
       case "priority":
         icon = getPriorityIcon(groupTitle, "text-lg");
         break;
+      case "project":
+        const project = projects?.find((p) => p.id === groupTitle);
+        icon =
+          project &&
+          (project.emoji !== null
+            ? renderEmoji(project.emoji)
+            : project.icon_prop !== null
+            ? renderEmoji(project.icon_prop)
+            : null);
+        break;
       case "labels":
         const labelColor =
           issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
@@ -126,7 +141,7 @@ export const BoardHeader: React.FC<Props> = ({
         !isCollapsed ? "flex-col rounded-md bg-custom-background-90" : ""
       }`}
     >
-      <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
+      <div className={`flex items-center ${isCollapsed ? "gap-1" : "flex-col gap-2"}`}>
         <div
           className={`flex cursor-pointer items-center gap-x-3 max-w-[316px] ${
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
@@ -136,7 +151,7 @@ export const BoardHeader: React.FC<Props> = ({
           <h2
             className="text-lg font-semibold capitalize truncate"
             style={{
-              writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
+              writingMode: isCollapsed ? "horizontal-tb" : "vertical-rl",
             }}
           >
             {getGroupTitle()}
