@@ -155,6 +155,7 @@ class IssueViewSet(BaseViewSet):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
+            .prefetch_related(Prefetch("issue_reactions", queryset=IssueReaction.objects.select_related("actor")))
         )
 
     @method_decorator(gzip_page)
