@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -19,6 +19,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
+import RemirrorRichTextEditor, { IRemirrorRichTextEditor } from "components/rich-text-editor";
 // ui
 import { CustomMenu, TextArea } from "components/ui";
 // icons
@@ -46,6 +47,13 @@ type Props = {
   index: number;
   user: ICurrentUserResponse | undefined;
 };
+
+const WrappedRemirrorRichTextEditor = React.forwardRef<
+  IRemirrorRichTextEditor,
+  IRemirrorRichTextEditor
+>((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+
+WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 export const SinglePageBlock: React.FC<Props> = ({
   block,
@@ -447,15 +455,21 @@ export const SinglePageBlock: React.FC<Props> = ({
                       noPadding
                     />
                   </div>
-                  {block?.description_stripped.length > 0 && (
-                    <p
-                      className={`mt-3 text-sm font-normal text-custom-text-200 ${
-                        showBlockDetails ? "" : "h-5 truncate"
-                      }`}
-                    >
-                      {block.description_stripped}
-                    </p>
-                  )}
+
+                  {showBlockDetails
+                    ? block.description_html.length > 7 && (
+                        <WrappedRemirrorRichTextEditor
+                          value={block.description_html}
+                          customClassName="text-sm"
+                          noBorder
+                          borderOnFocus={false}
+                        />
+                      )
+                    : block.description_stripped.length > 0 && (
+                        <p className="mt-3 text-sm font-normal text-custom-text-200 h-5 truncate">
+                          {block.description_stripped}
+                        </p>
+                      )}
                 </div>
               </div>
               <GptAssistantModal
