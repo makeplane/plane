@@ -16,7 +16,7 @@ import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { FilterList, AllViews } from "components/core";
+import { FiltersList, AllViews } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // ui
@@ -459,7 +459,7 @@ export const IssuesView: React.FC<Props> = ({
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
-            <FilterList
+            <FiltersList
               filters={filters}
               setFilters={setFilters}
               labels={labels}

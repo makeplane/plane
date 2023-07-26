@@ -23,7 +23,7 @@ type Props = {
   states: IState[] | undefined;
 };
 
-export const FilterList: React.FC<Props> = ({
+export const FiltersList: React.FC<Props> = ({
   filters,
   setFilters,
   clearAllFilters,

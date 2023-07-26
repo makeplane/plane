@@ -232,8 +232,6 @@ export interface IIssueFilterOptions {
   target_date: string[] | null;
   state: string[] | null;
   labels: string[] | null;
-  issue__assignees__id: string[] | null;
-  issue__labels__id: string[] | null;
   priority: string[] | null;
   created_by: string[] | null;
 }

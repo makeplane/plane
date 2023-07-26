@@ -14,7 +14,7 @@ import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 import useUserAuth from "hooks/use-user-auth";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
-import { FilterList, AllViews } from "components/core";
+import { FiltersList, AllViews } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // types
@@ -185,7 +185,7 @@ export const MyIssuesView: React.FC<Props> = ({
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
-            <FilterList
+            <FiltersList
               filters={filters}
               setFilters={setFilters}
               labels={labels}
