@@ -8,7 +8,7 @@ import { Popover, Transition } from "@headlessui/react";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 import useEstimateOption from "hooks/use-estimate-option";
 // components
-import { MyIssuesSelectFilters } from "components/core";
+import { MyIssuesSelectFilters } from "components/issues";
 // ui
 import { CustomMenu, ToggleSwitch, Tooltip } from "components/ui";
 // icons
@@ -33,7 +33,7 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   },
 ];
 
-export const MyIssuesViewFilter: React.FC = () => {
+export const MyIssuesViewOptions: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

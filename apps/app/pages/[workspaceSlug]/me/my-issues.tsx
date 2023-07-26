@@ -10,8 +10,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import useProjects from "hooks/use-projects";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // components
-import { MyIssuesViewFilter } from "components/core";
-import { MyIssuesView } from "components/issues";
+import { MyIssuesView, MyIssuesViewOptions } from "components/issues";
 // ui
 import { PrimaryButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
@@ -73,7 +72,7 @@ const MyIssuesPage: NextPage = () => {
       }
       right={
         <div className="flex items-center gap-2">
-          <MyIssuesViewFilter />
+          <MyIssuesViewOptions />
           <PrimaryButton
             className="flex items-center gap-2"
             onClick={() => {
@@ -88,21 +87,23 @@ const MyIssuesPage: NextPage = () => {
       }
     >
       <div className="h-full w-full flex flex-col overflow-hidden">
-        <div className="flex items-center overflow-x-scroll border-b border-custom-border-300">
-          {tabsList.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={tab.onClick}
-              className={`border-b-2 p-4 text-sm font-medium outline-none ${
-                tab.selected
-                  ? "border-custom-primary-100 text-custom-primary-100"
-                  : "border-transparent"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="border-b border-custom-border-300">
+          <div className="flex items-center overflow-x-scroll">
+            {tabsList.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={tab.onClick}
+                className={`border-b-2 p-4 text-sm font-medium outline-none whitespace-nowrap ${
+                  tab.selected
+                    ? "border-custom-primary-100 text-custom-primary-100"
+                    : "border-transparent"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
         <MyIssuesView />
       </div>

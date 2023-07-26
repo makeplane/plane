@@ -132,7 +132,7 @@ export const MyIssuesView: React.FC<Props> = ({
             },
             user
           )
-          .then(() => mutate(USER_ISSUES(workspaceSlug.toString(), params)));
+          .catch(() => mutate(USER_ISSUES(workspaceSlug.toString(), params)));
       }
     },
     [groupBy, groupedIssues, handleDeleteIssue, orderBy, params, user, workspaceSlug]
