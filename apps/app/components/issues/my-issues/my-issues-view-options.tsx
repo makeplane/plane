@@ -5,22 +5,15 @@ import { useRouter } from "next/router";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // hooks
-import useIssuesProperties from "hooks/use-issue-properties";
-import useIssuesView from "hooks/use-issues-view";
+import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 import useEstimateOption from "hooks/use-estimate-option";
 // components
-import { SelectFilters } from "components/views";
+import { MyIssuesSelectFilters } from "components/issues";
 // ui
 import { CustomMenu, ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import {
-  CalendarMonthOutlined,
-  FormatListBulletedOutlined,
-  GridViewOutlined,
-  TableChartOutlined,
-  WaterfallChartOutlined,
-} from "@mui/icons-material";
+import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -38,89 +31,67 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
     type: "kanban",
     Icon: GridViewOutlined,
   },
-  {
-    type: "calendar",
-    Icon: CalendarMonthOutlined,
-  },
-  {
-    type: "spreadsheet",
-    Icon: TableChartOutlined,
-  },
-  {
-    type: "gantt_chart",
-    Icon: WaterfallChartOutlined,
-  },
 ];
 
-export const IssuesFilterView: React.FC = () => {
+export const MyIssuesViewOptions: React.FC = () => {
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
-  const isArchivedIssues = router.pathname.includes("archived-issues");
+  const { workspaceSlug } = router.query;
 
   const {
     issueView,
     setIssueView,
-    groupByProperty,
-    setGroupByProperty,
+    groupBy,
+    setGroupBy,
     orderBy,
     setOrderBy,
     showEmptyGroups,
-    showSubIssues,
-    setShowSubIssues,
     setShowEmptyGroups,
+    properties,
+    setProperty,
     filters,
     setFilters,
-    resetFilterToDefault,
-    setNewFilterDefaultView,
-  } = useIssuesView();
-
-  const [properties, setProperties] = useIssuesProperties(
-    workspaceSlug as string,
-    projectId as string
-  );
+  } = useMyIssuesFilters(workspaceSlug?.toString());
 
   const { isEstimateActive } = useEstimateOption();
 
   return (
     <div className="flex items-center gap-2">
-      {!isArchivedIssues && (
-        <div className="flex items-center gap-x-1">
-          {issueViewOptions.map((option) => (
-            <Tooltip
-              key={option.type}
-              tooltipContent={
-                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
-              }
-              position="bottom"
+      <div className="flex items-center gap-x-1">
+        {issueViewOptions.map((option) => (
+          <Tooltip
+            key={option.type}
+            tooltipContent={
+              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
+            }
+            position="bottom"
+          >
+            <button
+              type="button"
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                issueView === option.type
+                  ? "bg-custom-sidebar-background-80"
+                  : "text-custom-sidebar-text-200"
+              }`}
+              onClick={() => setIssueView(option.type)}
             >
-              <button
-                type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
-                  issueView === option.type
-                    ? "bg-custom-sidebar-background-80"
-                    : "text-custom-sidebar-text-200"
-                }`}
-                onClick={() => setIssueView(option.type)}
-              >
-                <option.Icon
-                  sx={{
-                    fontSize: 16,
-                  }}
-                  className={option.type === "gantt_chart" ? "rotate-90" : ""}
-                />
-              </button>
-            </Tooltip>
-          ))}
-        </div>
-      )}
-      <SelectFilters
+              <option.Icon
+                sx={{
+                  fontSize: 16,
+                }}
+                className={option.type === "gantt_chart" ? "rotate-90" : ""}
+              />
+            </button>
+          </Tooltip>
+        ))}
+      </div>
+      <MyIssuesSelectFilters
         filters={filters}
         onSelect={(option) => {
           const key = option.key as keyof typeof filters;
 
           if (key === "target_date") {
             const valueExists = checkIfArraysHaveSameElements(
-              filters.target_date ?? [],
+              filters?.target_date ?? [],
               option.value
             );
 
@@ -131,21 +102,15 @@ export const IssuesFilterView: React.FC = () => {
             const valueExists = filters[key]?.includes(option.value);
 
             if (valueExists)
-              setFilters(
-                {
-                  [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                    (val) => val !== option.value
-                  ),
-                },
-                !Boolean(viewId)
-              );
+              setFilters({
+                [option.key]: ((filters[key] ?? []) as any[])?.filter(
+                  (val) => val !== option.value
+                ),
+              });
             else
-              setFilters(
-                {
-                  [option.key]: [...((filters[key] ?? []) as any[]), option.value],
-                },
-                !Boolean(viewId)
-              );
+              setFilters({
+                [option.key]: [...((filters[key] ?? []) as any[]), option.value],
+              });
           }
         }}
         direction="left"
@@ -183,18 +148,21 @@ export const IssuesFilterView: React.FC = () => {
                           <h4 className="text-custom-text-200">Group by</h4>
                           <CustomMenu
                             label={
-                              GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
-                                ?.name ?? "Select"
+                              groupBy === "project"
+                                ? "Project"
+                                : GROUP_BY_OPTIONS.find((option) => option.key === groupBy)?.name ??
+                                  "Select"
                             }
                           >
                             {GROUP_BY_OPTIONS.map((option) => {
                               if (issueView === "kanban" && option.key === null) return null;
-                              if (option.key === "project") return null;
+                              if (option.key === "state" || option.key === "created_by")
+                                return null;
 
                               return (
                                 <CustomMenu.MenuItem
                                   key={option.key}
-                                  onClick={() => setGroupByProperty(option.key)}
+                                  onClick={() => setGroupBy(option.key)}
                                 >
                                   {option.name}
                                 </CustomMenu.MenuItem>
@@ -210,8 +178,11 @@ export const IssuesFilterView: React.FC = () => {
                               "Select"
                             }
                           >
-                            {ORDER_BY_OPTIONS.map((option) =>
-                              groupByProperty === "priority" && option.key === "priority" ? null : (
+                            {ORDER_BY_OPTIONS.map((option) => {
+                              if (groupBy === "priority" && option.key === "priority") return null;
+                              if (option.key === "sort_order") return null;
+
+                              return (
                                 <CustomMenu.MenuItem
                                   key={option.key}
                                   onClick={() => {
@@ -220,8 +191,8 @@ export const IssuesFilterView: React.FC = () => {
                                 >
                                   {option.name}
                                 </CustomMenu.MenuItem>
-                              )
-                            )}
+                              );
+                            })}
                           </CustomMenu>
                         </div>
                       </>
@@ -230,7 +201,7 @@ export const IssuesFilterView: React.FC = () => {
                       <h4 className="text-custom-text-200">Issue type</h4>
                       <CustomMenu
                         label={
-                          FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
+                          FILTER_ISSUE_OPTIONS.find((option) => option.key === filters?.type)
                             ?.name ?? "Select"
                         }
                       >
@@ -252,20 +223,10 @@ export const IssuesFilterView: React.FC = () => {
                     {issueView !== "calendar" && issueView !== "spreadsheet" && (
                       <>
                         <div className="flex items-center justify-between">
-                          <h4 className="text-custom-text-200">Show sub-issues</h4>
-                          <ToggleSwitch
-                            value={showSubIssues}
-                            onChange={() => setShowSubIssues(!showSubIssues)}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
                           <h4 className="text-custom-text-200">Show empty states</h4>
-                          <ToggleSwitch
-                            value={showEmptyGroups}
-                            onChange={() => setShowEmptyGroups(!showEmptyGroups)}
-                          />
+                          <ToggleSwitch value={showEmptyGroups} onChange={setShowEmptyGroups} />
                         </div>
-                        <div className="relative flex justify-end gap-x-3">
+                        {/* <div className="relative flex justify-end gap-x-3">
                           <button type="button" onClick={() => resetFilterToDefault()}>
                             Reset to default
                           </button>
@@ -276,7 +237,7 @@ export const IssuesFilterView: React.FC = () => {
                           >
                             Set as default
                           </button>
-                        </div>
+                        </div> */}
                       </>
                     )}
                   </div>
@@ -310,7 +271,7 @@ export const IssuesFilterView: React.FC = () => {
                                 ? "border-custom-primary bg-custom-primary text-white"
                                 : "border-custom-border-200"
                             }`}
-                            onClick={() => setProperties(key as keyof Properties)}
+                            onClick={() => setProperty(key as keyof Properties)}
                           >
                             {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
                           </button>

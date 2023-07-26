@@ -1,6 +1,6 @@
 import React from "react";
+
 import { useRouter } from "next/router";
-import useSWR from "swr";
 
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -8,42 +8,31 @@ import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // ui
 import { Avatar } from "components/ui";
 // helpers
-import { getStatesList } from "helpers/state.helper";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-// services
-import issuesService from "services/issues.service";
-import projectService from "services/project.service";
-import stateService from "services/state.service";
-// types
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
-import { IIssueFilterOptions } from "types";
+// helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+// types
+import { IIssueFilterOptions, IIssueLabels, IState, IUserLite } from "types";
 
-export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
+type Props = {
+  filters: any;
+  setFilters: any;
+  clearAllFilters: (...args: any) => void;
+  labels: IIssueLabels[] | undefined;
+  members: IUserLite[] | undefined;
+  states: IState[] | undefined;
+};
+
+export const FiltersList: React.FC<Props> = ({
+  filters,
+  setFilters,
+  clearAllFilters,
+  labels,
+  members,
+  states,
+}) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
-
-  const { data: members } = useSWR(
-    projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: issueLabels } = useSWR(
-    projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId.toString())
-      : null
-  );
-
-  const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
-  const states = getStatesList(stateGroups ?? {});
+  const { viewId } = router.query;
 
   if (!filters) return <></>;
 
@@ -166,7 +155,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                   ) : key === "assignees" ? (
                     <div className="flex flex-wrap items-center gap-1">
                       {filters.assignees?.map((memberId: string) => {
-                        const member = members?.find((m) => m.member.id === memberId)?.member;
+                        const member = members?.find((m) => m.id === memberId);
 
                         return (
                           <div
@@ -207,7 +196,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                   ) : key === "created_by" ? (
                     <div className="flex flex-wrap items-center gap-1">
                       {filters.created_by?.map((memberId: string) => {
-                        const member = members?.find((m) => m.member.id === memberId)?.member;
+                        const member = members?.find((m) => m.id === memberId);
 
                         return (
                           <div
@@ -248,7 +237,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                   ) : key === "labels" ? (
                     <div className="flex flex-wrap items-center gap-1">
                       {filters.labels?.map((labelId: string) => {
-                        const label = issueLabels?.find((l) => l.id === labelId);
+                        const label = labels?.find((l) => l.id === labelId);
 
                         if (!label) return null;
                         const color = label.color !== "" ? label.color : "#0f172a";
@@ -370,17 +359,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
       {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
         <button
           type="button"
-          onClick={() =>
-            setFilters({
-              type: null,
-              state: null,
-              priority: null,
-              assignees: null,
-              labels: null,
-              created_by: null,
-              target_date: null,
-            })
-          }
+          onClick={clearAllFilters}
           className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-xs"
         >
           <span>Clear all filters</span>

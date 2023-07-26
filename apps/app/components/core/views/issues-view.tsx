@@ -5,38 +5,26 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // react-beautiful-dnd
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import modulesService from "services/modules.service";
 import trackEventServices from "services/track-event.service";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useUserAuth from "hooks/use-user-auth";
+import useIssuesProperties from "hooks/use-issue-properties";
+import useProjectMembers from "hooks/use-project-members";
 // components
-import {
-  AllLists,
-  AllBoards,
-  FilterList,
-  CalendarView,
-  GanttChartView,
-  SpreadsheetView,
-} from "components/core";
+import { FiltersList, AllViews } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
-import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
-import { EmptyState, PrimaryButton, Spinner, SecondaryButton } from "components/ui";
+import { PrimaryButton } from "components/ui";
 // icons
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-// images
-import emptyIssue from "public/empty-state/issue.svg";
-import emptyIssueArchive from "public/empty-state/issue-archive.svg";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
@@ -49,19 +37,18 @@ import {
   MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  PROJECT_ISSUE_LABELS,
   STATES_LIST,
 } from "constants/fetch-keys";
 
 type Props = {
-  type?: "issue" | "cycle" | "module";
   openIssuesListModal?: () => void;
-  isCompleted?: boolean;
+  disableUserActions?: boolean;
 };
 
 export const IssuesView: React.FC<Props> = ({
-  type = "issue",
   openIssuesListModal,
-  isCompleted = false,
+  disableUserActions = false,
 }) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
@@ -83,13 +70,8 @@ export const IssuesView: React.FC<Props> = ({
   // trash box
   const [trashBox, setTrashBox] = useState(false);
 
-  // transfer issue
-  const [transferIssuesModal, setTransferIssuesModal] = useState(false);
-
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
-
-  const { memberRole } = useProjectMyMembership();
 
   const { user } = useUserAuth();
 
@@ -104,7 +86,9 @@ export const IssuesView: React.FC<Props> = ({
     isEmpty,
     setFilters,
     params,
+    showEmptyGroups,
   } = useIssuesView();
+  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
@@ -113,6 +97,15 @@ export const IssuesView: React.FC<Props> = ({
       : null
   );
   const states = getStatesList(stateGroups ?? {});
+
+  const { data: labels } = useSWR(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
 
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {
@@ -123,7 +116,7 @@ export const IssuesView: React.FC<Props> = ({
   );
 
   const handleOnDragEnd = useCallback(
-    (result: DropResult) => {
+    async (result: DropResult) => {
       setTrashBox(false);
 
       if (!result.destination || !workspaceSlug || !projectId || !groupedByIssues) return;
@@ -281,7 +274,7 @@ export const IssuesView: React.FC<Props> = ({
     ]
   );
 
-  const addIssueToState = useCallback(
+  const addIssueToGroup = useCallback(
     (groupTitle: string) => {
       setCreateIssueModal(true);
 
@@ -333,6 +326,15 @@ export const IssuesView: React.FC<Props> = ({
       });
     },
     [setEditIssueModal, setIssueToEdit]
+  );
+
+  const handleIssueAction = useCallback(
+    (issue: IIssue, action: "copy" | "edit" | "delete") => {
+      if (action === "copy") makeIssueCopy(issue);
+      else if (action === "edit") handleEditIssue(issue);
+      else if (action === "delete") handleDeleteIssue(issue);
+    },
+    [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
 
   const removeIssueFromCycle = useCallback(
@@ -421,13 +423,6 @@ export const IssuesView: React.FC<Props> = ({
     [workspaceSlug, projectId, moduleId, params, selectedGroup, setToastAlert]
   );
 
-  const handleTrashBox = useCallback(
-    (isDragging: boolean) => {
-      if (isDragging && !trashBox) setTrashBox(true);
-    },
-    [trashBox, setTrashBox]
-  );
-
   const nullFilters = Object.keys(filters).filter(
     (key) => filters[key as keyof IIssueFilterOptions] === null
   );
@@ -461,14 +456,27 @@ export const IssuesView: React.FC<Props> = ({
         data={issueToDelete}
         user={user}
       />
-      <TransferIssuesModal
-        handleClose={() => setTransferIssuesModal(false)}
-        isOpen={transferIssuesModal}
-      />
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
-            <FilterList filters={filters} setFilters={setFilters} />
+            <FiltersList
+              filters={filters}
+              setFilters={setFilters}
+              labels={labels}
+              members={members?.map((m) => m.member)}
+              states={states}
+              clearAllFilters={() =>
+                setFilters({
+                  assignees: null,
+                  created_by: null,
+                  labels: null,
+                  priority: null,
+                  state: null,
+                  target_date: null,
+                  type: null,
+                })
+              }
+            />
             <PrimaryButton
               onClick={() => {
                 if (viewId) {
@@ -492,140 +500,32 @@ export const IssuesView: React.FC<Props> = ({
           {<div className="mt-3 border-t border-custom-border-200" />}
         </>
       )}
-
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <StrictModeDroppable droppableId="trashBox">
-          {(provided, snapshot) => (
-            <div
-              className={`${
-                trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-              } fixed top-4 left-1/2 -translate-x-1/2 z-40 w-72 flex items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-                snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
-              } transition duration-300`}
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              <TrashIcon className="h-4 w-4" />
-              Drop here to delete the issue.
-            </div>
-          )}
-        </StrictModeDroppable>
-        {groupedByIssues ? (
-          !isEmpty || issueView === "kanban" || issueView === "calendar" ? (
-            <>
-              {isCompleted && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
-              {issueView === "list" ? (
-                <AllLists
-                  type={type}
-                  states={states}
-                  addIssueToState={addIssueToState}
-                  makeIssueCopy={makeIssueCopy}
-                  handleEditIssue={handleEditIssue}
-                  handleDeleteIssue={handleDeleteIssue}
-                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-                  removeIssue={
-                    type === "cycle"
-                      ? removeIssueFromCycle
-                      : type === "module"
-                      ? removeIssueFromModule
-                      : null
-                  }
-                  isCompleted={isCompleted}
-                  user={user}
-                  userAuth={memberRole}
-                />
-              ) : issueView === "kanban" ? (
-                <AllBoards
-                  type={type}
-                  states={states}
-                  addIssueToState={addIssueToState}
-                  makeIssueCopy={makeIssueCopy}
-                  handleEditIssue={handleEditIssue}
-                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-                  handleDeleteIssue={handleDeleteIssue}
-                  handleTrashBox={handleTrashBox}
-                  removeIssue={
-                    type === "cycle"
-                      ? removeIssueFromCycle
-                      : type === "module"
-                      ? removeIssueFromModule
-                      : null
-                  }
-                  isCompleted={isCompleted}
-                  user={user}
-                  userAuth={memberRole}
-                />
-              ) : issueView === "calendar" ? (
-                <CalendarView
-                  handleEditIssue={handleEditIssue}
-                  handleDeleteIssue={handleDeleteIssue}
-                  addIssueToDate={addIssueToDate}
-                  isCompleted={isCompleted}
-                  user={user}
-                  userAuth={memberRole}
-                />
-              ) : issueView === "spreadsheet" ? (
-                <SpreadsheetView
-                  type={type}
-                  handleEditIssue={handleEditIssue}
-                  handleDeleteIssue={handleDeleteIssue}
-                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-                  isCompleted={isCompleted}
-                  user={user}
-                  userAuth={memberRole}
-                />
-              ) : (
-                issueView === "gantt_chart" && <GanttChartView />
-              )}
-            </>
-          ) : router.pathname.includes("archived-issues") ? (
-            <EmptyState
-              title="Archived Issues will be shown here"
-              description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
-              image={emptyIssueArchive}
-              buttonText="Go to Automation Settings"
-              onClick={() => {
-                router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
-              }}
-            />
-          ) : (
-            <EmptyState
-              title={
-                cycleId
-                  ? "Cycle issues will appear here"
-                  : moduleId
-                  ? "Module issues will appear here"
-                  : "Project issues will appear here"
-              }
-              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-              image={emptyIssue}
-              buttonText="New Issue"
-              buttonIcon={<PlusIcon className="h-4 w-4" />}
-              secondaryButton={
-                cycleId || moduleId ? (
-                  <SecondaryButton
-                    className="flex items-center gap-1.5"
-                    onClick={openIssuesListModal}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    Add an existing issue
-                  </SecondaryButton>
-                ) : null
-              }
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "c",
-                });
-                document.dispatchEvent(e);
-              }}
-            />
-          )
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-      </DragDropContext>
+      <AllViews
+        addIssueToDate={addIssueToDate}
+        addIssueToGroup={addIssueToGroup}
+        disableUserActions={disableUserActions}
+        dragDisabled={
+          selectedGroup === "created_by" ||
+          selectedGroup === "labels" ||
+          selectedGroup === "state_detail.group"
+        }
+        handleOnDragEnd={handleOnDragEnd}
+        handleIssueAction={handleIssueAction}
+        openIssuesListModal={openIssuesListModal ? openIssuesListModal : null}
+        removeIssue={cycleId ? removeIssueFromCycle : moduleId ? removeIssueFromModule : null}
+        trashBox={trashBox}
+        setTrashBox={setTrashBox}
+        viewProps={{
+          groupByProperty: selectedGroup,
+          groupedIssues: groupedByIssues,
+          isEmpty,
+          issueView,
+          orderBy,
+          params,
+          properties,
+          showEmptyGroups,
+        }}
+      />
     </>
   );
 };

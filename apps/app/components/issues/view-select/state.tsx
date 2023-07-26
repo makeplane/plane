@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -39,12 +41,14 @@ export const ViewStateSelect: React.FC<Props> = ({
   user,
   isNotAllowed,
 }) => {
+  const [fetchStates, setFetchStates] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && issue ? STATES_LIST(issue.project) : null,
-    workspaceSlug && issue
+    workspaceSlug && issue && fetchStates ? STATES_LIST(issue.project) : null,
+    workspaceSlug && issue && fetchStates
       ? () => stateService.getStates(workspaceSlug as string, issue.project)
       : null
   );
@@ -61,7 +65,7 @@ export const ViewStateSelect: React.FC<Props> = ({
     ),
   }));
 
-  const selectedOption = states?.find((s) => s.id === issue.state);
+  const selectedOption = issue.state_detail;
 
   const stateLabel = (
     <Tooltip
@@ -126,6 +130,7 @@ export const ViewStateSelect: React.FC<Props> = ({
       {...(customButton ? { customButton: stateLabel } : { label: stateLabel })}
       position={position}
       disabled={isNotAllowed}
+      onOpen={() => setFetchStates(true)}
       noChevron
     />
   );

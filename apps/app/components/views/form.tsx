@@ -1,14 +1,28 @@
 import { useEffect } from "react";
 
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
+// react-hook-form
 import { useForm } from "react-hook-form";
+// services
+import stateService from "services/state.service";
+// hooks
+import useProjectMembers from "hooks/use-project-members";
+// components
+import { FiltersList } from "components/core";
+import { SelectFilters } from "components/views";
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-// components
-import { FilterList } from "components/core";
+// helpers
+import { checkIfArraysHaveSameElements } from "helpers/array.helper";
+import { getStatesList } from "helpers/state.helper";
 // types
-import { IView } from "types";
-// components
-import { SelectFilters } from "components/views";
+import { IQuery, IView } from "types";
+import issuesService from "services/issues.service";
+// fetch-keys
+import { PROJECT_ISSUE_LABELS, STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   handleFormSubmit: (values: IView) => Promise<void>;
@@ -30,6 +44,9 @@ export const ViewForm: React.FC<Props> = ({
   data,
   preLoadedData,
 }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
   const {
     register,
     formState: { errors, isSubmitting },
@@ -42,11 +59,43 @@ export const ViewForm: React.FC<Props> = ({
   });
   const filters = watch("query");
 
+  const { data: stateGroups } = useSWR(
+    workspaceSlug && projectId && (filters.state ?? []).length > 0
+      ? STATES_LIST(projectId as string)
+      : null,
+    workspaceSlug && (filters.state ?? []).length > 0
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
+  const states = getStatesList(stateGroups ?? {});
+
+  const { data: labels } = useSWR(
+    workspaceSlug && projectId && (filters.labels ?? []).length > 0
+      ? PROJECT_ISSUE_LABELS(projectId.toString())
+      : null,
+    workspaceSlug && projectId && (filters.labels ?? []).length > 0
+      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+  const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
+
   const handleCreateUpdateView = async (formData: IView) => {
     await handleFormSubmit(formData);
 
     reset({
       ...defaultValues,
+    });
+  };
+
+  const clearAllFilters = () => {
+    setValue("query", {
+      assignees: null,
+      created_by: null,
+      labels: null,
+      priority: null,
+      state: null,
+      target_date: null,
+      type: null,
     });
   };
 
@@ -106,23 +155,38 @@ export const ViewForm: React.FC<Props> = ({
               onSelect={(option) => {
                 const key = option.key as keyof typeof filters;
 
-                if (!filters?.[key]?.includes(option.value))
+                if (key === "target_date") {
+                  const valueExists = checkIfArraysHaveSameElements(
+                    filters?.target_date ?? [],
+                    option.value
+                  );
+
                   setValue("query", {
-                    ...filters,
-                    [key]: [...((filters?.[key] as any[]) ?? []), option.value],
-                  });
-                else {
-                  setValue("query", {
-                    ...filters,
-                    [key]: (filters?.[key] as any[])?.filter((item) => item !== option.value),
-                  });
+                    target_date: valueExists ? null : option.value,
+                  } as IQuery);
+                } else {
+                  if (!filters?.[key]?.includes(option.value))
+                    setValue("query", {
+                      ...filters,
+                      [key]: [...((filters?.[key] as any[]) ?? []), option.value],
+                    });
+                  else {
+                    setValue("query", {
+                      ...filters,
+                      [key]: (filters?.[key] as any[])?.filter((item) => item !== option.value),
+                    });
+                  }
                 }
               }}
             />
           </div>
           <div>
-            <FilterList
+            <FiltersList
               filters={filters}
+              labels={labels}
+              members={members?.map((m) => m.member)}
+              states={states}
+              clearAllFilters={clearAllFilters}
               setFilters={(query: any) => {
                 setValue("query", {
                   ...filters,

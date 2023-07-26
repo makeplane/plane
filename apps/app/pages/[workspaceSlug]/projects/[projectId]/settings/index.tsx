@@ -195,22 +195,7 @@ const GeneralSettings: NextPage = () => {
                     name="emoji_and_icon"
                     render={({ field: { value, onChange } }) => (
                       <EmojiIconPicker
-                        label={
-                          value ? (
-                            typeof value === "object" ? (
-                              <span
-                                style={{ color: value.color }}
-                                className="material-symbols-rounded text-lg"
-                              >
-                                {value.name}
-                              </span>
-                            ) : (
-                              renderEmoji(value)
-                            )
-                          ) : (
-                            "Icon"
-                          )
-                        }
+                        label={value ? renderEmoji(value) : "Icon"}
                         value={value}
                         onChange={onChange}
                       />

@@ -232,15 +232,20 @@ export interface IIssueFilterOptions {
   target_date: string[] | null;
   state: string[] | null;
   labels: string[] | null;
-  issue__assignees__id: string[] | null;
-  issue__labels__id: string[] | null;
   priority: string[] | null;
   created_by: string[] | null;
 }
 
 export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
-export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
+export type TIssueGroupByOptions =
+  | "state"
+  | "priority"
+  | "labels"
+  | "created_by"
+  | "state_detail.group"
+  | "project"
+  | null;
 
 export type TIssueOrderByOptions =
   | "-created_at"
@@ -278,4 +283,15 @@ export interface IIssueAttachment {
   updated_at: string;
   updated_by: string;
   workspace: string;
+}
+
+export interface IIssueViewProps {
+  groupedIssues: { [key: string]: IIssue[] } | undefined;
+  groupByProperty: TIssueGroupByOptions;
+  isEmpty: boolean;
+  issueView: TIssueViewOptions;
+  orderBy: TIssueOrderByOptions;
+  params: any;
+  properties: Properties;
+  showEmptyGroups: boolean;
 }
