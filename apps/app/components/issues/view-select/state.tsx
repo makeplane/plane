@@ -52,7 +52,7 @@ export const ViewStateSelect: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, issue.project)
       : null
   );
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const options = states?.map((state) => ({
     value: state.id,
@@ -88,11 +88,13 @@ export const ViewStateSelect: React.FC<Props> = ({
       className={className}
       value={issue.state}
       onChange={(data: string) => {
+        const oldState = states?.find((s) => s.id === issue.state);
+        const newState = states?.find((s) => s.id === data);
+
         partialUpdateIssue(
           {
             state: data,
-            priority: issue.priority,
-            target_date: issue.target_date,
+            state_detail: newState,
           },
           issue
         );
@@ -108,9 +110,6 @@ export const ViewStateSelect: React.FC<Props> = ({
           "ISSUE_PROPERTY_UPDATE_STATE",
           user
         );
-
-        const oldState = states.find((s) => s.id === issue.state);
-        const newState = states.find((s) => s.id === data);
 
         if (oldState?.group !== "completed" && newState?.group !== "completed") {
           trackEventServices.trackIssueMarkedAsDoneEvent(

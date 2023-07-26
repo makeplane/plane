@@ -49,7 +49,7 @@ export const SelectFilters: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const statesList = getStatesList(states ?? {});
+  const statesList = getStatesList(states);
 
   const { data: members } = useSWR(
     projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -103,7 +103,7 @@ export const SelectFilters: React.FC<Props> = ({
             label: "State",
             value: statesList,
             hasChildren: true,
-            children: statesList.map((state) => ({
+            children: statesList?.map((state) => ({
               id: state.id,
               label: (
                 <div className="flex items-center gap-2">
