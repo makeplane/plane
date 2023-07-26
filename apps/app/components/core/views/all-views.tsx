@@ -75,7 +75,7 @@ export const AllViews: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const handleTrashBox = useCallback(
     (isDragging: boolean) => {

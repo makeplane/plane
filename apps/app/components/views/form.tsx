@@ -67,7 +67,7 @@ export const ViewForm: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const { data: labels } = useSWR(
     workspaceSlug && projectId && (filters.labels ?? []).length > 0

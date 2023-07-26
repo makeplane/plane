@@ -29,7 +29,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, IIssueFilterOptions } from "types";
+import { IIssue, IIssueFilterOptions, IState } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -96,7 +96,7 @@ export const IssuesView: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const { data: labels } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
@@ -184,7 +184,10 @@ export const IssuesView: React.FC<Props> = ({
           // dragged item(or issue)
 
           if (selectedGroup === "priority") draggedItem.priority = destinationGroup;
-          else if (selectedGroup === "state") draggedItem.state = destinationGroup;
+          else if (selectedGroup === "state") {
+            draggedItem.state = destinationGroup;
+            draggedItem.state_detail = states?.find((s) => s.id === destinationGroup) as IState;
+          }
         }
 
         const sourceGroup = source.droppableId; // source group id
@@ -200,8 +203,8 @@ export const IssuesView: React.FC<Props> = ({
           (prevData) => {
             if (!prevData) return prevData;
 
-            const sourceGroupArray = prevData[sourceGroup];
-            const destinationGroupArray = groupedByIssues[destinationGroup];
+            const sourceGroupArray = [...groupedByIssues[sourceGroup]];
+            const destinationGroupArray = [...groupedByIssues[destinationGroup]];
 
             sourceGroupArray.splice(source.index, 1);
             destinationGroupArray.splice(destination.index, 0, draggedItem);
@@ -229,7 +232,9 @@ export const IssuesView: React.FC<Props> = ({
             user
           )
           .then((response) => {
-            const sourceStateBeforeDrag = states.find((state) => state.name === source.droppableId);
+            const sourceStateBeforeDrag = states?.find(
+              (state) => state.name === source.droppableId
+            );
 
             if (
               sourceStateBeforeDrag?.group !== "completed" &&
