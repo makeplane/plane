@@ -1,3 +1,4 @@
+import { objToQueryParams } from "helpers/string.helper";
 import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "types";
 
 const paramsToKey = (params: any) => {
@@ -230,16 +231,42 @@ export const USER_WORKSPACE_NOTIFICATIONS = (
 ) => {
   const { type, snoozed, archived, read } = params;
 
-  return `USER_WORKSPACE_NOTIFICATIONS_${workspaceSlug.toUpperCase()}_TYPE_${(
+  return `USER_WORKSPACE_NOTIFICATIONS_${workspaceSlug?.toUpperCase()}_TYPE_${(
     type ?? "assigned"
-  ).toUpperCase()}_SNOOZED_${snoozed}_ARCHIVED_${archived}_READ_${read}`;
+  )?.toUpperCase()}_SNOOZED_${snoozed}_ARCHIVED_${archived}_READ_${read}`;
 };
 
 export const USER_WORKSPACE_NOTIFICATIONS_DETAILS = (
   workspaceSlug: string,
   notificationId: string
 ) =>
-  `USER_WORKSPACE_NOTIFICATIONS_DETAILS_${workspaceSlug.toUpperCase()}_${notificationId.toUpperCase()}`;
+  `USER_WORKSPACE_NOTIFICATIONS_DETAILS_${workspaceSlug?.toUpperCase()}_${notificationId?.toUpperCase()}`;
 
 export const UNREAD_NOTIFICATIONS_COUNT = (workspaceSlug: string) =>
-  `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug.toUpperCase()}`;
+  `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug?.toUpperCase()}`;
+
+export const getPaginatedNotificationKey = (
+  index: number,
+  prevData: any,
+  workspaceSlug: string,
+  params: any
+) => {
+  if (prevData && !prevData?.results?.length) return null;
+
+  if (index === 0)
+    return `/api/workspaces/${workspaceSlug}/users/notifications?${objToQueryParams({
+      ...params,
+      // TODO: change to '100:0:0'
+      cursor: "2:0:0",
+    })}`;
+
+  const cursor = prevData?.next_cursor;
+  const nextPageResults = prevData?.next_page_results;
+
+  if (!nextPageResults) return null;
+
+  return `/api/workspaces/${workspaceSlug}/users/notifications?${objToQueryParams({
+    ...params,
+    cursor,
+  })}`;
+};

@@ -1,5 +1,16 @@
 import type { IUserLite } from "./users";
 
+export interface PaginatedUserNotification {
+  next_cursor: string;
+  prev_cursor: string;
+  next_page_results: boolean;
+  prev_page_results: boolean;
+  count: number;
+  total_pages: number;
+  extra_stats: null;
+  results: IUserNotification[];
+}
+
 export interface IUserNotification {
   id: string;
   created_at: Date;
@@ -54,3 +65,9 @@ export interface INotificationParams {
   archived?: boolean;
   read?: boolean;
 }
+
+export type NotificationCount = {
+  created_issues: number;
+  my_issues: number;
+  watching_issues: number;
+};
