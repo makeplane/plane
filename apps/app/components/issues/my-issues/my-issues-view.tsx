@@ -90,6 +90,8 @@ export const MyIssuesView: React.FC<Props> = ({
 
       const draggedItem = groupedIssues[source.droppableId][source.index];
 
+      if (!draggedItem) return;
+
       if (destination.droppableId === "trashBox") handleDeleteIssue(draggedItem);
       else {
         const sourceGroup = source.droppableId;
