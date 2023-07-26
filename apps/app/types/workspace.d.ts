@@ -77,6 +77,7 @@ export interface IWorkspaceDefaultSearchResult {
   id: string;
   name: string;
   project_id: string;
+  project__identifier: string;
   workspace__slug: string;
 }
 export interface IWorkspaceSearchResult {
