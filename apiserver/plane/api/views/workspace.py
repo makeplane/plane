@@ -1035,6 +1035,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
+            
+
             created_issues = Issue.issue_objects.filter(
                 workspace__slug=slug,
                 assignees__in=[user_id],
@@ -1109,3 +1111,7 @@ class UserProfilePageProjectSegregationEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceEntityPermission,
     ]
+
+    def get(self, request, slug, user_id):
+        try:
+
