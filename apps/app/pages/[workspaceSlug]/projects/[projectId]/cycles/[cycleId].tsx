@@ -110,6 +110,7 @@ const SingleCycle: React.FC = () => {
             <BreadcrumbItem
               title={`${cycleDetails?.project_detail.name ?? "Project"} Cycles`}
               link={`/${workspaceSlug}/projects/${projectId}/cycles`}
+              linkTruncate
             />
           </Breadcrumbs>
         }
@@ -121,7 +122,7 @@ const SingleCycle: React.FC = () => {
                 {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
               </>
             }
-            className="ml-1.5"
+            className="ml-1.5 flex-shrink-0"
             width="auto"
           >
             {cycles?.map((cycle) => (
@@ -136,7 +137,7 @@ const SingleCycle: React.FC = () => {
           </CustomMenu>
         }
         right={
-          <div className={`flex items-center gap-2 duration-300`}>
+          <div className={`flex flex-shrink-0 items-center gap-2 duration-300`}>
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}

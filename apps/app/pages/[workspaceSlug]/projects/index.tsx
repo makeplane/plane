@@ -44,7 +44,10 @@ const ProjectsPage: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Projects`} />
+          <BreadcrumbItem
+            title={`${activeWorkspace?.name ?? "Workspace"} Projects`}
+            unshrinkTitle={false}
+          />
         </Breadcrumbs>
       }
       right={

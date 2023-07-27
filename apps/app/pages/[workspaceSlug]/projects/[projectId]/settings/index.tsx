@@ -163,8 +163,9 @@ const GeneralSettings: NextPage = () => {
           <BreadcrumbItem
             title={`${projectDetails?.name ?? "Project"}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+            linkTruncate
           />
-          <BreadcrumbItem title="General Settings" />
+          <BreadcrumbItem title="General Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >

@@ -114,6 +114,7 @@ const SingleModule: React.FC = () => {
             <BreadcrumbItem
               title={`${moduleDetails?.project_detail.name ?? "Project"} Modules`}
               link={`/${workspaceSlug}/projects/${projectId}/modules`}
+              linkTruncate
             />
           </Breadcrumbs>
         }

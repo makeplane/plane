@@ -40,8 +40,9 @@ const WorkspaceIntegrations: NextPage = () => {
           <BreadcrumbItem
             title={`${activeWorkspace?.name ?? "Workspace"}`}
             link={`/${workspaceSlug}`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Integrations" />
+          <BreadcrumbItem title="Integrations" unshrinkTitle />
         </Breadcrumbs>
       }
     >

@@ -112,11 +112,13 @@ const IssueDetailsPage: NextPage = () => {
           <Breadcrumbs.BreadcrumbItem
             title={`${issueDetails?.project_detail.name ?? "Project"} Issues`}
             link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
+            linkTruncate
           />
           <Breadcrumbs.BreadcrumbItem
             title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
               issueDetails?.sequence_id ?? "..."
             } Details`}
+            unshrinkTitle
           />
         </Breadcrumbs>
       }

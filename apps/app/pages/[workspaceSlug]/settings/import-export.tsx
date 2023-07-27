@@ -19,8 +19,12 @@ const ImportExport: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title={`${workspaceSlug ?? "Workspace"}`} link={`/${workspaceSlug}`} />
-          <BreadcrumbItem title="Import/ Export Settings" />
+          <BreadcrumbItem
+            title={`${workspaceSlug ?? "Workspace"}`}
+            link={`/${workspaceSlug}`}
+            linkTruncate
+          />
+          <BreadcrumbItem title="Import/ Export Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >

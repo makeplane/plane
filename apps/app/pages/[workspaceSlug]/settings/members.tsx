@@ -91,8 +91,9 @@ const MembersSettings: NextPage = () => {
           <BreadcrumbItem
             title={`${activeWorkspace?.name ?? "Workspace"}`}
             link={`/${workspaceSlug}`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Members Settings" />
+          <BreadcrumbItem title="Members Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >

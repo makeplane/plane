@@ -66,8 +66,9 @@ const StatesSettings: NextPage = () => {
             <BreadcrumbItem
               title={`${projectDetails?.name ?? "Project"}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+              linkTruncate
             />
-            <BreadcrumbItem title="States Settings" />
+            <BreadcrumbItem title="States Settings" unshrinkTitle />
           </Breadcrumbs>
         }
       >

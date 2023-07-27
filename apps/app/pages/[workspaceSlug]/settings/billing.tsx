@@ -34,8 +34,9 @@ const BillingSettings: NextPage = () => {
           <BreadcrumbItem
             title={`${activeWorkspace?.name ?? "Workspace"}`}
             link={`/${workspaceSlug}`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Billing & Plans Settings" />
+          <BreadcrumbItem title="Billing & Plans Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >

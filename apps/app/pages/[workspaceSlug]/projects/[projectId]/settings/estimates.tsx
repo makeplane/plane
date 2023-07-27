@@ -117,8 +117,9 @@ const EstimatesSettings: NextPage = () => {
             <BreadcrumbItem
               title={`${projectDetails?.name ?? "Project"}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+              linkTruncate
             />
-            <BreadcrumbItem title="Estimates Settings" />
+            <BreadcrumbItem title="Estimates Settings" unshrinkTitle />
           </Breadcrumbs>
         }
       >
