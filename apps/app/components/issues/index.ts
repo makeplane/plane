@@ -14,3 +14,4 @@ export * from "./parent-issues-list-modal";
 export * from "./sidebar";
 export * from "./sub-issues-list";
 export * from "./label";
+export * from "./issue-reaction";
