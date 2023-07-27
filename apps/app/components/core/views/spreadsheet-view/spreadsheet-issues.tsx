@@ -8,32 +8,28 @@ import useSubIssue from "hooks/use-sub-issue";
 import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
 
 type Props = {
-  key: string;
   issue: IIssue;
   index: number;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: Properties;
-  handleEditIssue: (issue: IIssue) => void;
-  handleDeleteIssue: (issue: IIssue) => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   gridTemplateColumns: string;
-  isCompleted?: boolean;
+  disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   nestingLevel?: number;
 };
 
 export const SpreadsheetIssues: React.FC<Props> = ({
-  key,
   index,
   issue,
   expandedIssues,
   setExpandedIssues,
   gridTemplateColumns,
   properties,
-  handleEditIssue,
-  handleDeleteIssue,
-  isCompleted = false,
+  handleIssueAction,
+  disableUserActions,
   user,
   userAuth,
   nestingLevel = 0,
@@ -64,9 +60,9 @@ export const SpreadsheetIssues: React.FC<Props> = ({
         handleToggleExpand={handleToggleExpand}
         gridTemplateColumns={gridTemplateColumns}
         properties={properties}
-        handleEditIssue={handleEditIssue}
-        handleDeleteIssue={handleDeleteIssue}
-        isCompleted={isCompleted}
+        handleEditIssue={() => handleIssueAction(issue, "edit")}
+        handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+        disableUserActions={disableUserActions}
         user={user}
         userAuth={userAuth}
         nestingLevel={nestingLevel}
@@ -76,7 +72,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue, subIndex: number) => (
+        subIssues.map((subIssue: IIssue) => (
           <SpreadsheetIssues
             key={subIssue.id}
             issue={subIssue}
@@ -85,9 +81,8 @@ export const SpreadsheetIssues: React.FC<Props> = ({
             setExpandedIssues={setExpandedIssues}
             gridTemplateColumns={gridTemplateColumns}
             properties={properties}
-            handleEditIssue={handleEditIssue}
-            handleDeleteIssue={handleDeleteIssue}
-            isCompleted={isCompleted}
+            handleIssueAction={handleIssueAction}
+            disableUserActions={disableUserActions}
             user={user}
             userAuth={userAuth}
             nestingLevel={nestingLevel + 1}

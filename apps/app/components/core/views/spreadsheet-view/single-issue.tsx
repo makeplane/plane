@@ -53,7 +53,7 @@ type Props = {
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   gridTemplateColumns: string;
-  isCompleted?: boolean;
+  disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   nestingLevel: number;
@@ -68,7 +68,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   handleEditIssue,
   handleDeleteIssue,
   gridTemplateColumns,
-  isCompleted = false,
+  disableUserActions,
   user,
   userAuth,
   nestingLevel,
@@ -190,7 +190,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                 {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
             )}
-            {!isNotAllowed && !isCompleted && (
+            {!isNotAllowed && !disableUserActions && (
               <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">
                 <Popover2
                   isOpen={isOpen}

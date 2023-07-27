@@ -187,16 +187,19 @@ export const IssuesFilterView: React.FC = () => {
                                 ?.name ?? "Select"
                             }
                           >
-                            {GROUP_BY_OPTIONS.map((option) =>
-                              issueView === "kanban" && option.key === null ? null : (
+                            {GROUP_BY_OPTIONS.map((option) => {
+                              if (issueView === "kanban" && option.key === null) return null;
+                              if (option.key === "project") return null;
+
+                              return (
                                 <CustomMenu.MenuItem
                                   key={option.key}
                                   onClick={() => setGroupByProperty(option.key)}
                                 >
                                   {option.name}
                                 </CustomMenu.MenuItem>
-                              )
-                            )}
+                              );
+                            })}
                           </CustomMenu>
                         </div>
                         <div className="flex items-center justify-between">

@@ -14,6 +14,7 @@ import {
   IProductUpdateResponse,
   ICurrentUserResponse,
   IWorkspaceBulkInviteFormData,
+  IWorkspaceViewProps,
 } from "types";
 
 const trackEvent =
@@ -169,7 +170,10 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async updateWorkspaceView(workspaceSlug: string, data: any): Promise<any> {
+  async updateWorkspaceView(
+    workspaceSlug: string,
+    data: { view_props: IWorkspaceViewProps }
+  ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/workspace-views/`, data)
       .then((response) => response?.data)
       .catch((error) => {

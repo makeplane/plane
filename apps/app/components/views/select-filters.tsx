@@ -49,7 +49,7 @@ export const SelectFilters: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const statesList = getStatesList(states ?? {});
+  const statesList = getStatesList(states);
 
   const { data: members } = useSWR(
     projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -83,121 +83,116 @@ export const SelectFilters: React.FC<Props> = ({
             id: "priority",
             label: "Priority",
             value: PRIORITIES,
-            children: [
-              ...PRIORITIES.map((priority) => ({
-                id: priority === null ? "null" : priority,
-                label: (
-                  <div className="flex items-center gap-2 capitalize">
-                    {getPriorityIcon(priority)} {priority ?? "None"}
-                  </div>
-                ),
-                value: {
-                  key: "priority",
-                  value: priority === null ? "null" : priority,
-                },
-                selected: filters?.priority?.includes(priority === null ? "null" : priority),
-              })),
-            ],
+            hasChildren: true,
+            children: PRIORITIES.map((priority) => ({
+              id: priority === null ? "null" : priority,
+              label: (
+                <div className="flex items-center gap-2 capitalize">
+                  {getPriorityIcon(priority)} {priority ?? "None"}
+                </div>
+              ),
+              value: {
+                key: "priority",
+                value: priority === null ? "null" : priority,
+              },
+              selected: filters?.priority?.includes(priority === null ? "null" : priority),
+            })),
           },
           {
             id: "state",
             label: "State",
             value: statesList,
-            children: [
-              ...statesList.map((state) => ({
-                id: state.id,
-                label: (
-                  <div className="flex items-center gap-2">
-                    {getStateGroupIcon(state.group, "16", "16", state.color)} {state.name}
-                  </div>
-                ),
-                value: {
-                  key: "state",
-                  value: state.id,
-                },
-                selected: filters?.state?.includes(state.id),
-              })),
-            ],
+            hasChildren: true,
+            children: statesList?.map((state) => ({
+              id: state.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  {getStateGroupIcon(state.group, "16", "16", state.color)} {state.name}
+                </div>
+              ),
+              value: {
+                key: "state",
+                value: state.id,
+              },
+              selected: filters?.state?.includes(state.id),
+            })),
           },
           {
             id: "assignees",
             label: "Assignees",
             value: members,
-            children: [
-              ...(members?.map((member) => ({
-                id: member.member.id,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <Avatar user={member.member} />
-                    {member.member.first_name && member.member.first_name !== ""
-                      ? member.member.first_name
-                      : member.member.email}
-                  </div>
-                ),
-                value: {
-                  key: "assignees",
-                  value: member.member.id,
-                },
-                selected: filters?.assignees?.includes(member.member.id),
-              })) ?? []),
-            ],
+            hasChildren: true,
+            children: members?.map((member) => ({
+              id: member.member.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <Avatar user={member.member} />
+                  {member.member.first_name && member.member.first_name !== ""
+                    ? member.member.first_name
+                    : member.member.email}
+                </div>
+              ),
+              value: {
+                key: "assignees",
+                value: member.member.id,
+              },
+              selected: filters?.assignees?.includes(member.member.id),
+            })),
           },
           {
             id: "created_by",
             label: "Created by",
             value: members,
-            children: [
-              ...(members?.map((member) => ({
-                id: member.member.id,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <Avatar user={member.member} />
-                    {member.member.first_name && member.member.first_name !== ""
-                      ? member.member.first_name
-                      : member.member.email}
-                  </div>
-                ),
-                value: {
-                  key: "created_by",
-                  value: member.member.id,
-                },
-                selected: filters?.created_by?.includes(member.member.id),
-              })) ?? []),
-            ],
+            hasChildren: true,
+            children: members?.map((member) => ({
+              id: member.member.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <Avatar user={member.member} />
+                  {member.member.first_name && member.member.first_name !== ""
+                    ? member.member.first_name
+                    : member.member.email}
+                </div>
+              ),
+              value: {
+                key: "created_by",
+                value: member.member.id,
+              },
+              selected: filters?.created_by?.includes(member.member.id),
+            })),
           },
           {
             id: "labels",
             label: "Labels",
             value: issueLabels,
-            children: [
-              ...(issueLabels?.map((label) => ({
-                id: label.id,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="h-2 w-2 rounded-full"
-                      style={{
-                        backgroundColor:
-                          label.color && label.color !== "" ? label.color : "#000000",
-                      }}
-                    />
-                    {label.name}
-                  </div>
-                ),
-                value: {
-                  key: "labels",
-                  value: label.id,
-                },
-                selected: filters?.labels?.includes(label.id),
-              })) ?? []),
-            ],
+            hasChildren: true,
+            children: issueLabels?.map((label) => ({
+              id: label.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-2 w-2 rounded-full"
+                    style={{
+                      backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
+                    }}
+                  />
+                  {label.name}
+                </div>
+              ),
+              value: {
+                key: "labels",
+                value: label.id,
+              },
+              selected: filters?.labels?.includes(label.id),
+            })),
           },
           {
             id: "target_date",
             label: "Due date",
             value: DUE_DATES,
+            hasChildren: true,
             children: [
-              ...(DUE_DATES?.map((option) => ({
+              ...DUE_DATES.map((option) => ({
                 id: option.name,
                 label: option.name,
                 value: {
@@ -205,7 +200,7 @@ export const SelectFilters: React.FC<Props> = ({
                   value: option.value,
                 },
                 selected: checkIfArraysHaveSameElements(filters?.target_date ?? [], option.value),
-              })) ?? []),
+              })),
               {
                 id: "custom",
                 label: "Custom",
