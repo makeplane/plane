@@ -42,6 +42,7 @@ const restrictedUrls = [
   "invitations",
   "magic-sign-in",
   "onboarding",
+  "profile",
   "reset-password",
   "sign-up",
   "workspace-member-invitation",

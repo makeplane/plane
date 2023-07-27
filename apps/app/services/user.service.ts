@@ -7,6 +7,7 @@ import type {
   IIssue,
   IUser,
   IUserActivityResponse,
+  IUserProfileData,
   IUserWorkspaceDashboard,
 } from "types";
 
@@ -139,6 +140,28 @@ class UserService extends APIService {
     }
   ): Promise<any> {
     return this.post(`/api/reset-password/${uidb64}/${token}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getUserWorkspaceProfileData(
+    workspaceSlug: string,
+    userId: string
+  ): Promise<IUserProfileData> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-profile/${userId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getUserWorkspaceProfileActivity(
+    workspaceSlug: string,
+    userId: string
+  ): Promise<IUserActivityResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

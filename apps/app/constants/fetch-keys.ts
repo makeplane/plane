@@ -301,3 +301,9 @@ export const getPaginatedNotificationKey = (
     cursor,
   })}`;
 };
+
+// profile
+export const USER_WORKSPACE_PROFILE = (workspaceSlug: string, userId: string) =>
+  `USER_WORKSPACE_PROFILE_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
+export const USER_WORKSPACE_PROFILE_ACTIVITY = (workspaceSlug: string, userId: string) =>
+  `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
