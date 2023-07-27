@@ -8,18 +8,22 @@ const tabsList = [
   {
     route: "",
     label: "Overview",
+    selected: "/[workspaceSlug]/profile/[userId]",
   },
   {
     route: "assigned",
     label: "Assigned",
+    selected: "/[workspaceSlug]/profile/[userId]/assigned",
   },
   {
     route: "created",
     label: "Created",
+    selected: "/[workspaceSlug]/profile/[userId]/created",
   },
   {
     route: "subscribed",
     label: "Subscribed",
+    selected: "/[workspaceSlug]/profile/[userId]/subscribed",
   },
 ];
 
@@ -34,7 +38,7 @@ export const ProfileNavbar = () => {
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
             <a
               className={`border-b-2 p-4 text-sm font-medium outline-none whitespace-nowrap ${
-                router.pathname.includes(tab.route)
+                router.pathname === tab.selected
                   ? "border-custom-primary-100 text-custom-primary-100"
                   : "border-transparent"
               }`}

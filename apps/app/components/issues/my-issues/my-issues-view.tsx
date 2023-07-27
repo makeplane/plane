@@ -55,7 +55,7 @@ export const MyIssuesView: React.FC<Props> = ({
 
   const { user } = useUserAuth();
 
-  const { groupedIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
+  const { groupedIssues, mutateMyIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
   const { filters, setFilters, issueView, groupBy, orderBy, properties, showEmptyGroups } =
     useMyIssuesFilters(workspaceSlug?.toString());
 
@@ -216,11 +216,17 @@ export const MyIssuesView: React.FC<Props> = ({
         prePopulateData={{
           ...preloadedData,
         }}
+        onSubmit={async () => {
+          mutateMyIssues();
+        }}
       />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
         handleClose={() => setEditIssueModal(false)}
         data={issueToEdit}
+        onSubmit={async () => {
+          mutateMyIssues();
+        }}
       />
       <DeleteIssueModal
         handleClose={() => setDeleteIssueModal(false)}

@@ -170,7 +170,7 @@ class UserService extends APIService {
     workspaceSlug: string,
     userId: string
   ): Promise<IUserActivityResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/?per_page=15`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

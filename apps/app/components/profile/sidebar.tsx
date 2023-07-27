@@ -7,7 +7,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // services
 import userService from "services/user.service";
 // ui
-import { Icon } from "components/ui";
+import { Icon, Loader } from "components/ui";
 // helpers
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -83,7 +83,7 @@ export const ProfileSidebar = () => {
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
-                <div className="flex items-center gap-4 text-sm">
+                <div key={detail.label} className="flex items-center gap-4 text-sm">
                   <div className="text-custom-text-200 w-2/5">{detail.label}</div>
                   <div className="font-medium">{detail.value}</div>
                 </div>
@@ -99,8 +99,8 @@ export const ProfileSidebar = () => {
 
                 return (
                   <Disclosure
-                    as="div"
                     key={project.id}
+                    as="div"
                     className={`${index === 0 ? "pb-3" : "py-3"}`}
                   >
                     {({ open }) => (
@@ -218,7 +218,18 @@ export const ProfileSidebar = () => {
             </div>
           </div>
         </>
-      ) : null}
+      ) : (
+        <Loader className="px-5 space-y-7">
+          <Loader.Item height="130px" />
+          <div className="space-y-5">
+            <Loader.Item height="20px" />
+            <Loader.Item height="20px" />
+            <Loader.Item height="20px" />
+            <Loader.Item height="20px" />
+            <Loader.Item height="20px" />
+          </div>
+        </Loader>
+      )}
     </div>
   );
 };

@@ -203,11 +203,17 @@ export const ProfileIssuesView = () => {
         prePopulateData={{
           ...preloadedData,
         }}
+        onSubmit={async () => {
+          mutateProfileIssues();
+        }}
       />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
         handleClose={() => setEditIssueModal(false)}
         data={issueToEdit}
+        onSubmit={async () => {
+          mutateProfileIssues();
+        }}
       />
       <DeleteIssueModal
         handleClose={() => setDeleteIssueModal(false)}
