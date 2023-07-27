@@ -1180,15 +1180,7 @@ class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
 
     def get(self, request, slug, user_id):
         try:
-            user_data = User.objects.get(pk=user_id).values(
-                "email",
-                "first_name",
-                "last_name",
-                "avatar",
-                "cover_image",
-                "date_joined",
-                "user_timezone",
-            )
+            user_data = User.objects.get(pk=user_id)
 
             created_issues = (
                 Issue.issue_objects.filter(
@@ -1242,7 +1234,15 @@ class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
                     "assigned_issues": assigned_issues,
                     "completed_issues": completed_issues,
                     "pending_issues": pending_issues,
-                    "user_data": user_data,
+                    "user_data": {
+                        "email": user_data.email,
+                        "first_name": user_data.first_name,
+                        "last_name": user_data.last_name,
+                        "avatar": user_data.avatar,
+                        "cover_image": user_data.cover_image,
+                        "date_joined": user_data.date_joined,
+                        "user_timezone": user_data.user_timezone,
+                    },
                 },
                 status=status.HTTP_200_OK,
             )
