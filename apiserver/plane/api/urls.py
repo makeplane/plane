@@ -45,9 +45,9 @@ from plane.api.views import (
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    WorkspaceUserProfileEndpoint,
+    WorkspaceUserProfileStatsEndpoint,
     WorkspaceUserActivityEndpoint,
-    WorkspaceUserProfilePageProjectSegregationEndpoint,
+    WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     ## End Workspaces
     # File Assets
@@ -391,7 +391,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/user-stats/<uuid:user_id>/",
-        WorkspaceUserProfileEndpoint.as_view(),
+        WorkspaceUserProfileStatsEndpoint.as_view(),
         name="workspace-user-stats",
     ),
     path(
@@ -400,14 +400,14 @@ urlpatterns = [
         name="workspace-user-activity",
     ),
     path(
-        "   /<uuid:user_id>/",
-        WorkspaceUserProfilePageProjectSegregationEndpoint.as_view(),
+        "workspaces/<str:slug>/user-profile/<uuid:user_id>/",
+        WorkspaceUserProfileEndpoint.as_view(),
         name="workspace-user-profile-page",
     ),
     path(
         "workspaces/<str:slug>/user-issues/<uuid:user_id>/",
         WorkspaceUserProfileIssuesEndpoint.as_view(),
-        name="workspace-user-profile-page",
+        name="workspace-user-profile-issues",
     ),
     ## End Workspaces ##
     # Projects

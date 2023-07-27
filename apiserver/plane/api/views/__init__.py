@@ -42,9 +42,9 @@ from .workspace import (
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    WorkspaceUserProfileEndpoint,
+    WorkspaceUserProfileStatsEndpoint,
     WorkspaceUserActivityEndpoint,
-    WorkspaceUserProfilePageProjectSegregationEndpoint,
+    WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
 )
 from .state import StateViewSet

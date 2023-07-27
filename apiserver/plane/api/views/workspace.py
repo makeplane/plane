@@ -1029,7 +1029,7 @@ class WorkspaceThemeViewSet(BaseViewSet):
             )
 
 
-class WorkspaceUserProfileEndpoint(BaseAPIView):
+class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -1154,11 +1154,18 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
 
     def get(self, request, slug, user_id):
         try:
+
+            projects = request.query_params.getlist("project", [])
+
             queryset = IssueActivity.objects.filter(
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
                 actor=user_id,
             ).select_related("actor", "workspace")
+
+            if projects:
+                queryset = queryset.filter(project__in=projects)
+
             return self.paginate(
                 request=request,
                 queryset=queryset,
@@ -1174,7 +1181,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             )
 
 
-class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
+class WorkspaceUserProfileEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceEntityPermission,
     ]
