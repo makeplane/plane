@@ -5,9 +5,6 @@ import { useRouter } from "next/router";
 // react-beautiful-dnd
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable } from "react-beautiful-dnd";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
-import useIssuesProperties from "hooks/use-issue-properties";
 // components
 import { BoardHeader, SingleBoardIssue } from "components/core";
 // ui
@@ -17,64 +14,63 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, IState, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, IIssueViewProps, IState, UserAuth } from "types";
 
 type Props = {
-  type?: "issue" | "cycle" | "module";
+  addIssueToGroup: () => void;
   currentState?: IState | null;
+  disableUserActions: boolean;
+  dragDisabled: boolean;
   groupTitle: string;
-  handleEditIssue: (issue: IIssue) => void;
-  makeIssueCopy: (issue: IIssue) => void;
-  addIssueToState: () => void;
-  handleDeleteIssue: (issue: IIssue) => void;
-  openIssuesListModal?: (() => void) | null;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleTrashBox: (isDragging: boolean) => void;
+  openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
-  isCompleted?: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
+  viewProps: IIssueViewProps;
 };
 
 export const SingleBoard: React.FC<Props> = ({
-  type,
+  addIssueToGroup,
   currentState,
   groupTitle,
-  handleEditIssue,
-  makeIssueCopy,
-  addIssueToState,
-  handleDeleteIssue,
-  openIssuesListModal,
+  disableUserActions,
+  dragDisabled,
+  handleIssueAction,
   handleTrashBox,
+  openIssuesListModal,
   removeIssue,
-  isCompleted = false,
   user,
   userAuth,
+  viewProps,
 }) => {
   // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useIssuesView();
+  const { groupedIssues, groupByProperty: selectedGroup, orderBy, properties } = viewProps;
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { cycleId, moduleId } = router.query;
 
-  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
+  const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   // Check if it has at least 4 tickets since it is enough to accommodate the Calendar height
-  const issuesLength = groupedByIssues?.[groupTitle].length;
+  const issuesLength = groupedIssues?.[groupTitle].length;
   const hasMinimumNumberOfCards = issuesLength ? issuesLength >= 4 : false;
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
   return (
     <div className={`flex-shrink-0 ${!isCollapsed ? "" : "flex h-full flex-col w-96"}`}>
       <BoardHeader
-        addIssueToState={addIssueToState}
+        addIssueToGroup={addIssueToGroup}
         currentState={currentState}
         groupTitle={groupTitle}
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
-        isCompleted={isCompleted}
+        disableUserActions={disableUserActions}
+        viewProps={viewProps}
       />
       {isCollapsed && (
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
@@ -112,14 +108,12 @@ export const SingleBoard: React.FC<Props> = ({
                   hasMinimumNumberOfCards ? "overflow-hidden overflow-y-scroll" : ""
                 } `}
               >
-                {groupedByIssues?.[groupTitle].map((issue, index) => (
+                {groupedIssues?.[groupTitle].map((issue, index) => (
                   <Draggable
                     key={issue.id}
                     draggableId={issue.id}
                     index={index}
-                    isDragDisabled={
-                      isNotAllowed || selectedGroup === "created_by" || selectedGroup === "labels"
-                    }
+                    isDragDisabled={isNotAllowed || dragDisabled}
                   >
                     {(provided, snapshot) => (
                       <SingleBoardIssue
@@ -128,21 +122,20 @@ export const SingleBoard: React.FC<Props> = ({
                         snapshot={snapshot}
                         type={type}
                         index={index}
-                        selectedGroup={selectedGroup}
                         issue={issue}
                         groupTitle={groupTitle}
-                        properties={properties}
-                        editIssue={() => handleEditIssue(issue)}
-                        makeIssueCopy={() => makeIssueCopy(issue)}
-                        handleDeleteIssue={handleDeleteIssue}
+                        editIssue={() => handleIssueAction(issue, "edit")}
+                        makeIssueCopy={() => handleIssueAction(issue, "copy")}
+                        handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                         handleTrashBox={handleTrashBox}
                         removeIssue={() => {
                           if (removeIssue && issue.bridge_id)
                             removeIssue(issue.bridge_id, issue.id);
                         }}
-                        isCompleted={isCompleted}
+                        disableUserActions={disableUserActions}
                         user={user}
                         userAuth={userAuth}
+                        viewProps={viewProps}
                       />
                     )}
                   </Draggable>
@@ -161,18 +154,18 @@ export const SingleBoard: React.FC<Props> = ({
                     <button
                       type="button"
                       className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
-                      onClick={addIssueToState}
+                      onClick={addIssueToGroup}
                     >
                       <PlusIcon className="h-4 w-4" />
                       Add Issue
                     </button>
                   ) : (
-                    !isCompleted && (
+                    !disableUserActions && (
                       <CustomMenu
                         customButton={
                           <button
                             type="button"
-                            className="flex items-center gap-2 font-medium text-custom-primary outline-none"
+                            className="flex items-center gap-2 font-medium text-custom-primary outline-none whitespace-nowrap"
                           >
                             <PlusIcon className="h-4 w-4" />
                             Add Issue
@@ -181,7 +174,7 @@ export const SingleBoard: React.FC<Props> = ({
                         position="left"
                         noBorder
                       >
-                        <CustomMenu.MenuItem onClick={addIssueToState}>
+                        <CustomMenu.MenuItem onClick={addIssueToGroup}>
                           Create new
                         </CustomMenu.MenuItem>
                         {openIssuesListModal && (

@@ -2,6 +2,8 @@ import { Fragment, useState } from "react";
 
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
+// ui
+import { Loader } from "components/ui";
 // icons
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
@@ -10,9 +12,6 @@ type MultiLevelDropdownProps = {
   label: string;
   options: {
     id: string;
-    label: string;
-    value: any;
-    selected?: boolean;
     children?: {
       id: string;
       label: string | JSX.Element;
@@ -20,6 +19,11 @@ type MultiLevelDropdownProps = {
       selected?: boolean;
       element?: JSX.Element;
     }[];
+    hasChildren: boolean;
+    label: string;
+    onClick?: () => void;
+    selected?: boolean;
+    value: any;
   }[];
   onSelect: (value: any) => void;
   direction?: "left" | "right";
@@ -69,15 +73,15 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     <Menu.Item
                       as="button"
                       onClick={(e: any) => {
-                        if (option.children) {
+                        if (option.hasChildren) {
                           e.stopPropagation();
                           e.preventDefault();
 
+                          if (option.onClick) option.onClick();
+
                           if (openChildFor === option.id) setOpenChildFor(null);
                           else setOpenChildFor(option.id);
-                        } else {
-                          onSelect(option.value);
-                        }
+                        } else onSelect(option.value);
                       }}
                       className="w-full"
                     >
@@ -90,18 +94,18 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                               direction === "right" ? "justify-between" : ""
                             }`}
                           >
-                            {direction === "left" && option.children && (
+                            {direction === "left" && option.hasChildren && (
                               <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
                             )}
                             <span>{option.label}</span>
-                            {direction === "right" && option.children && (
+                            {direction === "right" && option.hasChildren && (
                               <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
                             )}
                           </div>
                         </>
                       )}
                     </Menu.Item>
-                    {option.children && option.id === openChildFor && (
+                    {option.hasChildren && option.id === openChildFor && (
                       <div
                         className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 shadow-lg focus:outline-none ${
                           direction === "left"
@@ -119,29 +123,38 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                             : ""
                         }`}
                       >
-                        <div className="space-y-1 p-1">
-                          {option.children.map((child) => {
-                            if (child.element) return child.element;
-                            else
-                              return (
-                                <button
-                                  key={child.id}
-                                  type="button"
-                                  onClick={() => onSelect(child.value)}
-                                  className={`${
-                                    child.selected ? "bg-custom-background-80" : ""
-                                  } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
-                                >
-                                  {child.label}{" "}
-                                  <CheckIcon
-                                    className={`h-3.5 w-3.5 opacity-0 ${
-                                      child.selected ? "opacity-100" : ""
-                                    }`}
-                                  />
-                                </button>
-                              );
-                          })}
-                        </div>
+                        {option.children ? (
+                          <div className="space-y-1 p-1">
+                            {option.children.map((child) => {
+                              if (child.element) return child.element;
+                              else
+                                return (
+                                  <button
+                                    key={child.id}
+                                    type="button"
+                                    onClick={() => onSelect(child.value)}
+                                    className={`${
+                                      child.selected ? "bg-custom-background-80" : ""
+                                    } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
+                                  >
+                                    {child.label}{" "}
+                                    <CheckIcon
+                                      className={`h-3.5 w-3.5 opacity-0 ${
+                                        child.selected ? "opacity-100" : ""
+                                      }`}
+                                    />
+                                  </button>
+                                );
+                            })}
+                          </div>
+                        ) : (
+                          <Loader className="p-1 space-y-2">
+                            <Loader.Item height="20px" />
+                            <Loader.Item height="20px" />
+                            <Loader.Item height="20px" />
+                            <Loader.Item height="20px" />
+                          </Loader>
+                        )}
                       </div>
                     )}
                   </div>

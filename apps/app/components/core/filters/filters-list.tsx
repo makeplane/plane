@@ -1,6 +1,4 @@
 import React from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
 
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -8,43 +6,31 @@ import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // ui
 import { Avatar } from "components/ui";
 // helpers
-import { getStatesList } from "helpers/state.helper";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-// services
-import issuesService from "services/issues.service";
-import projectService from "services/project.service";
-import stateService from "services/state.service";
-// types
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
-import { IIssueFilterOptions } from "types";
+// helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+// types
+import { IIssueFilterOptions, IIssueLabels, IState, IUserLite, TStateGroups } from "types";
+// constants
+import { STATE_GROUP_COLORS } from "constants/state";
 
-export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
+type Props = {
+  filters: Partial<IIssueFilterOptions>;
+  setFilters: (updatedFilter: Partial<IIssueFilterOptions>) => void;
+  clearAllFilters: (...args: any) => void;
+  labels: IIssueLabels[] | undefined;
+  members: IUserLite[] | undefined;
+  states: IState[] | undefined;
+};
 
-  const { data: members } = useSWR(
-    projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: issueLabels } = useSWR(
-    projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId.toString())
-      : null
-  );
-
-  const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
-  const states = getStatesList(stateGroups ?? {});
-
+export const FiltersList: React.FC<Props> = ({
+  filters,
+  setFilters,
+  clearAllFilters,
+  labels,
+  members,
+  states,
+}) => {
   if (!filters) return <></>;
 
   const nullFilters = Object.keys(filters).filter(
@@ -53,24 +39,26 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
 
   return (
     <div className="flex flex-1 flex-wrap items-center gap-2 text-xs">
-      {Object.keys(filters).map((key) => {
-        if (filters[key as keyof typeof filters] !== null)
-          return (
-            <div
-              key={key}
-              className="flex items-center gap-x-2 rounded-full border border-custom-border-200 bg-custom-background-80 px-2 py-1"
-            >
-              <span className="capitalize text-custom-text-200">
-                {key === "target_date" ? "Due Date" : replaceUnderscoreIfSnakeCase(key)}:
-              </span>
-              {filters[key as keyof IIssueFilterOptions] === null ||
-              (filters[key as keyof IIssueFilterOptions]?.length ?? 0) <= 0 ? (
-                <span className="inline-flex items-center px-2 py-0.5 font-medium">None</span>
-              ) : Array.isArray(filters[key as keyof IIssueFilterOptions]) ? (
-                <div className="space-x-2">
-                  {key === "state" ? (
-                    <div className="flex flex-wrap items-center gap-1">
-                      {filters.state?.map((stateId: any) => {
+      {Object.keys(filters).map((filterKey) => {
+        const key = filterKey as keyof typeof filters;
+
+        if (filters[key] === null) return null;
+
+        return (
+          <div
+            key={key}
+            className="flex items-center gap-x-2 rounded-full border border-custom-border-200 bg-custom-background-80 px-2 py-1"
+          >
+            <span className="capitalize text-custom-text-200">
+              {key === "target_date" ? "Due Date" : replaceUnderscoreIfSnakeCase(key)}:
+            </span>
+            {filters[key] === null || (filters[key]?.length ?? 0) <= 0 ? (
+              <span className="inline-flex items-center px-2 py-0.5 font-medium">None</span>
+            ) : Array.isArray(filters[key]) ? (
+              <div className="space-x-2">
+                <div className="flex flex-wrap items-center gap-1">
+                  {key === "state"
+                    ? filters.state?.map((stateId: string) => {
                         const state = states?.find((s) => s.id === stateId);
 
                         return (
@@ -94,33 +82,46 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                             <span
                               className="cursor-pointer"
                               onClick={() =>
-                                setFilters(
-                                  {
-                                    state: filters.state?.filter((s: any) => s !== stateId),
-                                  },
-                                  !Boolean(viewId)
-                                )
+                                setFilters({
+                                  state: filters.state?.filter((s: any) => s !== stateId),
+                                })
                               }
                             >
                               <XMarkIcon className="h-3 w-3" />
                             </span>
                           </p>
                         );
-                      })}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFilters({
-                            state: null,
-                          })
-                        }
-                      >
-                        <XMarkIcon className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ) : key === "priority" ? (
-                    <div className="flex flex-wrap items-center gap-1">
-                      {filters.priority?.map((priority: any) => (
+                      })
+                    : key === "state_group"
+                    ? filters.state_group?.map((stateGroup) => {
+                        const group = stateGroup as TStateGroups;
+
+                        return (
+                          <p
+                            key={group}
+                            className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize"
+                            style={{
+                              color: STATE_GROUP_COLORS[group],
+                              backgroundColor: `${STATE_GROUP_COLORS[group]}20`,
+                            }}
+                          >
+                            <span>{getStateGroupIcon(group, "16", "16")}</span>
+                            <span>{group}</span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setFilters({
+                                  state_group: filters.state_group?.filter((g) => g !== group),
+                                })
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3" />
+                            </span>
+                          </p>
+                        );
+                      })
+                    : key === "priority"
+                    ? filters.priority?.map((priority: any) => (
                         <p
                           key={priority}
                           className={`inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize ${
@@ -140,33 +141,18 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                           <span
                             className="cursor-pointer"
                             onClick={() =>
-                              setFilters(
-                                {
-                                  priority: filters.priority?.filter((p: any) => p !== priority),
-                                },
-                                !Boolean(viewId)
-                              )
+                              setFilters({
+                                priority: filters.priority?.filter((p: any) => p !== priority),
+                              })
                             }
                           >
                             <XMarkIcon className="h-3 w-3" />
                           </span>
                         </p>
-                      ))}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFilters({
-                            priority: null,
-                          })
-                        }
-                      >
-                        <XMarkIcon className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ) : key === "assignees" ? (
-                    <div className="flex flex-wrap items-center gap-1">
-                      {filters.assignees?.map((memberId: string) => {
-                        const member = members?.find((m) => m.member.id === memberId)?.member;
+                      ))
+                    : key === "assignees"
+                    ? filters.assignees?.map((memberId: string) => {
+                        const member = members?.find((m) => m.id === memberId);
 
                         return (
                           <div
@@ -178,36 +164,19 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                             <span
                               className="cursor-pointer"
                               onClick={() =>
-                                setFilters(
-                                  {
-                                    assignees: filters.assignees?.filter(
-                                      (p: any) => p !== memberId
-                                    ),
-                                  },
-                                  !Boolean(viewId)
-                                )
+                                setFilters({
+                                  assignees: filters.assignees?.filter((p: any) => p !== memberId),
+                                })
                               }
                             >
                               <XMarkIcon className="h-3 w-3" />
                             </span>
                           </div>
                         );
-                      })}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFilters({
-                            assignees: null,
-                          })
-                        }
-                      >
-                        <XMarkIcon className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ) : key === "created_by" ? (
-                    <div className="flex flex-wrap items-center gap-1">
-                      {filters.created_by?.map((memberId: string) => {
-                        const member = members?.find((m) => m.member.id === memberId)?.member;
+                      })
+                    : key === "created_by"
+                    ? filters.created_by?.map((memberId: string) => {
+                        const member = members?.find((m) => m.id === memberId);
 
                         return (
                           <div
@@ -219,36 +188,21 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                             <span
                               className="cursor-pointer"
                               onClick={() =>
-                                setFilters(
-                                  {
-                                    created_by: filters.created_by?.filter(
-                                      (p: any) => p !== memberId
-                                    ),
-                                  },
-                                  !Boolean(viewId)
-                                )
+                                setFilters({
+                                  created_by: filters.created_by?.filter(
+                                    (p: any) => p !== memberId
+                                  ),
+                                })
                               }
                             >
                               <XMarkIcon className="h-3 w-3" />
                             </span>
                           </div>
                         );
-                      })}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFilters({
-                            created_by: null,
-                          })
-                        }
-                      >
-                        <XMarkIcon className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ) : key === "labels" ? (
-                    <div className="flex flex-wrap items-center gap-1">
-                      {filters.labels?.map((labelId: string) => {
-                        const label = issueLabels?.find((l) => l.id === labelId);
+                      })
+                    : key === "labels"
+                    ? filters.labels?.map((labelId: string) => {
+                        const label = labels?.find((l) => l.id === labelId);
 
                         if (!label) return null;
                         const color = label.color !== "" ? label.color : "#0f172a";
@@ -271,12 +225,9 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                             <span
                               className="cursor-pointer"
                               onClick={() =>
-                                setFilters(
-                                  {
-                                    labels: filters.labels?.filter((l: any) => l !== labelId),
-                                  },
-                                  !Boolean(viewId)
-                                )
+                                setFilters({
+                                  labels: filters.labels?.filter((l: any) => l !== labelId),
+                                })
                               }
                             >
                               <XMarkIcon
@@ -288,22 +239,10 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                             </span>
                           </div>
                         );
-                      })}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFilters({
-                            labels: null,
-                          })
-                        }
-                      >
-                        <XMarkIcon className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ) : key === "target_date" ? (
-                    <div className="flex flex-wrap items-center gap-1">
-                      {filters.target_date?.map((date: string) => {
-                        if (filters.target_date.length <= 0) return null;
+                      })
+                    : key === "target_date"
+                    ? filters.target_date?.map((date: string) => {
+                        if (filters.target_date && filters.target_date.length <= 0) return null;
 
                         const splitDate = date.split(";");
 
@@ -319,39 +258,17 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                             <span
                               className="cursor-pointer"
                               onClick={() =>
-                                setFilters(
-                                  {
-                                    target_date: filters.target_date?.filter(
-                                      (d: any) => d !== date
-                                    ),
-                                  },
-                                  !Boolean(viewId)
-                                )
+                                setFilters({
+                                  target_date: filters.target_date?.filter((d: any) => d !== date),
+                                })
                               }
                             >
                               <XMarkIcon className="h-3 w-3" />
                             </span>
                           </div>
                         );
-                      })}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFilters({
-                            target_date: null,
-                          })
-                        }
-                      >
-                        <XMarkIcon className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ) : (
-                    (filters[key as keyof IIssueFilterOptions] as any)?.join(", ")
-                  )}
-                </div>
-              ) : (
-                <div className="flex items-center gap-x-1 capitalize">
-                  {filters[key as keyof typeof filters]}
+                      })
+                    : (filters[key] as any)?.join(", ")}
                   <button
                     type="button"
                     onClick={() =>
@@ -363,24 +280,29 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                     <XMarkIcon className="h-3 w-3" />
                   </button>
                 </div>
-              )}
-            </div>
-          );
+              </div>
+            ) : (
+              <div className="flex items-center gap-x-1 capitalize">
+                {filters[key as keyof typeof filters]}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFilters({
+                      [key]: null,
+                    })
+                  }
+                >
+                  <XMarkIcon className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+          </div>
+        );
       })}
       {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
         <button
           type="button"
-          onClick={() =>
-            setFilters({
-              type: null,
-              state: null,
-              priority: null,
-              assignees: null,
-              labels: null,
-              created_by: null,
-              target_date: null,
-            })
-          }
+          onClick={clearAllFilters}
           className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-xs"
         >
           <span>Clear all filters</span>

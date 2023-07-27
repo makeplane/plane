@@ -4,6 +4,7 @@ import trackEventServices from "services/track-event.service";
 
 import type {
   ICurrentUserResponse,
+  IIssue,
   IUser,
   IUserActivityResponse,
   IUserWorkspaceDashboard,
@@ -26,8 +27,18 @@ class UserService extends APIService {
     };
   }
 
-  async userIssues(workspaceSlug: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/my-issues/`)
+  async userIssues(
+    workspaceSlug: string,
+    params: any
+  ): Promise<
+    | {
+        [key: string]: IIssue[];
+      }
+    | IIssue[]
+  > {
+    return this.get(`/api/workspaces/${workspaceSlug}/my-issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

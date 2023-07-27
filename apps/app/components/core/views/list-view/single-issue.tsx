@@ -18,8 +18,6 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues";
-// hooks
-import useIssueView from "hooks/use-issues-view";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons
@@ -37,7 +35,14 @@ import { LayerDiagonalIcon } from "components/icons";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { handleIssuesMutation } from "constants/issue";
 // types
-import { ICurrentUserResponse, IIssue, ISubIssueResponse, Properties, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  IIssueViewProps,
+  ISubIssueResponse,
+  Properties,
+  UserAuth,
+} from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -46,37 +51,38 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   SUB_ISSUES,
+  USER_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 type Props = {
   type?: string;
   issue: IIssue;
-  properties: Properties;
   groupTitle?: string;
   editIssue: () => void;
   index: number;
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
-  isCompleted?: boolean;
+  disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
+  viewProps: IIssueViewProps;
 };
 
 export const SingleListIssue: React.FC<Props> = ({
   type,
   issue,
-  properties,
   editIssue,
   index,
   makeIssueCopy,
   removeIssue,
   groupTitle,
   handleDeleteIssue,
-  isCompleted = false,
+  disableUserActions,
   user,
   userAuth,
+  viewProps,
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
@@ -88,11 +94,11 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const { groupByProperty: selectedGroup, orderBy, params } = useIssueView();
+  const { groupByProperty: selectedGroup, orderBy, params, properties } = viewProps;
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>, issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !issue) return;
 
       const fetchKey = cycleId
         ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
@@ -100,7 +106,9 @@ export const SingleListIssue: React.FC<Props> = ({
         ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
         : viewId
         ? VIEW_ISSUES(viewId.toString(), params)
-        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
+        : router.pathname.includes("my-issues")
+        ? USER_ISSUES(workspaceSlug.toString(), params)
+        : PROJECT_ISSUES_LIST_WITH_PARAMS(issue.project.toString(), params);
 
       if (issue.parent) {
         mutate<ISubIssueResponse>(
@@ -145,7 +153,7 @@ export const SingleListIssue: React.FC<Props> = ({
       }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData, user)
+        .patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
         .then(() => {
           mutate(fetchKey);
 
@@ -155,7 +163,6 @@ export const SingleListIssue: React.FC<Props> = ({
     },
     [
       workspaceSlug,
-      projectId,
       cycleId,
       moduleId,
       viewId,
@@ -164,6 +171,7 @@ export const SingleListIssue: React.FC<Props> = ({
       selectedGroup,
       orderBy,
       params,
+      router,
       user,
     ]
   );
@@ -186,7 +194,8 @@ export const SingleListIssue: React.FC<Props> = ({
     ? `/${workspaceSlug}/projects/${projectId}/archived-issues/${issue.id}`
     : `/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`;
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted || isArchivedIssues;
+  const isNotAllowed =
+    userAuth.isGuest || userAuth.isViewer || disableUserActions || isArchivedIssues;
 
   return (
     <>

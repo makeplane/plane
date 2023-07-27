@@ -2,8 +2,10 @@ export const GROUP_BY_OPTIONS: Array<{
   name: string;
   key: TIssueGroupByOptions;
 }> = [
-  { name: "State", key: "state" },
+  { name: "States", key: "state" },
+  { name: "State Groups", key: "state_detail.group" },
   { name: "Priority", key: "priority" },
+  { name: "Project", key: "project" },
   { name: "Labels", key: "labels" },
   { name: "Created by", key: "created_by" },
   { name: "None", key: null },

@@ -1,5 +1,6 @@
 export * from "./attachment";
 export * from "./comment";
+export * from "./my-issues";
 export * from "./sidebar-select";
 export * from "./view-select";
 export * from "./activity";
@@ -9,7 +10,6 @@ export * from "./form";
 export * from "./gantt-chart";
 export * from "./main-content";
 export * from "./modal";
-export * from "./my-issues-list-item";
 export * from "./parent-issues-list-modal";
 export * from "./sidebar";
 export * from "./sub-issues-list";

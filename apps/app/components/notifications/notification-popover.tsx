@@ -131,7 +131,7 @@ export const NotificationPopover = () => {
                         ))}
                       </div>
                       {isLoadingMore && (
-                        <div className="mt-6 flex justify-center items-center text-sm">
+                        <div className="my-6 flex justify-center items-center text-sm">
                           <div role="status">
                             <svg
                               aria-hidden="true"
@@ -157,7 +157,7 @@ export const NotificationPopover = () => {
                       {hasMore && !isLoadingMore && (
                         <button
                           type="button"
-                          className="text-custom-primary-100 mt-6 flex justify-center items-center w-full text-sm font-medium"
+                          className="text-custom-primary-100 my-6 flex justify-center items-center w-full text-sm font-medium"
                           disabled={isLoadingMore}
                           onClick={() => {
                             setSize((prev) => prev + 1);

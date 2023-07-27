@@ -15,7 +15,6 @@ import {
 // services
 import issuesService from "services/issues.service";
 // hooks
-import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
@@ -45,14 +44,7 @@ import { LayerDiagonalIcon } from "components/icons";
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import {
-  ICurrentUserResponse,
-  IIssue,
-  ISubIssueResponse,
-  Properties,
-  TIssueGroupByOptions,
-  UserAuth,
-} from "types";
+import { ICurrentUserResponse, IIssue, IIssueViewProps, ISubIssueResponse, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -61,6 +53,7 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   SUB_ISSUES,
+  USER_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
@@ -69,18 +62,17 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
-  properties: Properties;
   groupTitle?: string;
   index: number;
-  selectedGroup: TIssueGroupByOptions;
   editIssue: () => void;
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
-  isCompleted?: boolean;
+  disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
+  viewProps: IIssueViewProps;
 };
 
 export const SingleBoardIssue: React.FC<Props> = ({
@@ -88,18 +80,17 @@ export const SingleBoardIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
-  properties,
   index,
-  selectedGroup,
   editIssue,
   makeIssueCopy,
   removeIssue,
   groupTitle,
   handleDeleteIssue,
   handleTrashBox,
-  isCompleted = false,
+  disableUserActions,
   user,
   userAuth,
+  viewProps,
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
@@ -108,7 +99,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const { orderBy, params } = useIssuesView();
+  const { groupByProperty: selectedGroup, orderBy, params, properties } = viewProps;
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
@@ -117,7 +108,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>, issue: IIssue) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !issue) return;
 
       const fetchKey = cycleId
         ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
@@ -125,7 +116,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
         ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
         : viewId
         ? VIEW_ISSUES(viewId.toString(), params)
-        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
+        : router.pathname.includes("my-issues")
+        ? USER_ISSUES(workspaceSlug.toString(), params)
+        : PROJECT_ISSUES_LIST_WITH_PARAMS(issue.project.toString(), params);
 
       if (issue.parent) {
         mutate<ISubIssueResponse>(
@@ -170,7 +163,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       }
 
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData, user)
+        .patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
         .then(() => {
           mutate(fetchKey);
 
@@ -180,7 +173,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
     },
     [
       workspaceSlug,
-      projectId,
       cycleId,
       moduleId,
       viewId,
@@ -189,6 +181,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       selectedGroup,
       orderBy,
       params,
+      router,
       user,
     ]
   );
@@ -228,7 +221,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
   return (
     <>

@@ -150,12 +150,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     </span>
                   ) : project.icon_prop ? (
                     <div className="h-7 w-7 grid place-items-center">
-                      <span
-                        style={{ color: project.icon_prop.color }}
-                        className="material-symbols-rounded text-lg"
-                      >
-                        {project.icon_prop.name}
-                      </span>
+                      {renderEmoji(project.icon_prop)}
                     </div>
                   ) : (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
