@@ -1,5 +1,3 @@
-import { useRouter } from "next/router";
-
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useIssueReaction from "hooks/use-issue-reaction";
@@ -8,9 +6,15 @@ import { ReactionSelector } from "components/core";
 // string helpers
 import { renderEmoji } from "helpers/emoji.helper";
 
-export const IssueReaction: React.FC = () => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+// types
+type Props = {
+  workspaceSlug?: string | string[];
+  projectId?: string | string[];
+  issueId?: string | string[];
+};
+
+export const IssueReaction: React.FC<Props> = (props) => {
+  const { workspaceSlug, projectId, issueId } = props;
 
   const { user } = useUserAuth();
 

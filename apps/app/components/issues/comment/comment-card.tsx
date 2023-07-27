@@ -140,7 +140,11 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               ref={showEditorRef}
             />
 
-            <CommentReaction commentId={comment.id} />
+            <CommentReaction
+              workspaceSlug={comment?.workspace_detail?.slug}
+              projectId={comment.project}
+              commentId={comment.id}
+            />
           </div>
         </div>
       </div>

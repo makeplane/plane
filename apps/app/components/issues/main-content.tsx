@@ -119,7 +119,7 @@ export const IssueMainContent: React.FC<Props> = ({
           isAllowed={memberRole.isMember || memberRole.isOwner || !uneditable}
         />
 
-        <IssueReaction />
+        <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />
 
         <div className="mt-2 space-y-2">
           <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} />
