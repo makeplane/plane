@@ -1202,7 +1202,10 @@ class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
                 .annotate(
                     completed_issues=Count(
                         "project_issue",
-                        filter=Q(project_issue__completed_at__isnull=False),
+                        filter=Q(
+                            project_issue__completed_at__isnull=False,
+                            project_issue__assignees__in=[user_id],
+                        ),
                     )
                 )
                 .annotate(
@@ -1213,7 +1216,8 @@ class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
                                 "backlog",
                                 "unstarted",
                                 "started",
-                            ]
+                            ],
+                            project_issue__assignees__in=[user_id],
                         ),
                     )
                 )
@@ -1221,7 +1225,7 @@ class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
                     "id",
                     "name",
                     "identifier",
-                    "cover_image",
+                    "emoji",
                     "icon_prop",
                     "created_issues",
                     "assigned_issues",
