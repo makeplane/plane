@@ -25,6 +25,7 @@ from django.db.models import (
     When,
     Exists,
     Max,
+    IntegerField,
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
@@ -1049,6 +1050,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
+            priority_order = ["urgent", "high", "medium", "low", None]
+
             priority_distribution = (
                 Issue.objects.filter(
                     workspace__slug=slug,
@@ -1058,7 +1061,14 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 .filter(**filters)
                 .values("priority")
                 .annotate(priority_count=Count("priority"))
-                .order_by("priority")
+                .annotate(
+                    priority_order=Case(
+                        *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
+                        default=Value(len(priority_order)),
+                        output_field=IntegerField(),
+                    )
+                )
+                .order_by("priority_order")
             )
 
             created_issues = Issue.issue_objects.filter(
@@ -1124,7 +1134,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
                 actor=user_id,
-            )
+            ).select_related("actor", "workspace")
             return self.paginate(
                 request=request,
                 queryset=queryset,
