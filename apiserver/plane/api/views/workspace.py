@@ -1056,6 +1056,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     project__project_projectmember__member=request.user,
                 )
                 .filter(**filters)
+                .values("priority")
                 .annotate(priority_count=Count("priority"))
                 .order_by("priority")
             )
