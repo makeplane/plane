@@ -1,34 +1,34 @@
 import { Fragment } from "react";
 
+// headless ui
 import { Popover, Transition } from "@headlessui/react";
 
+// helper
 import { renderEmoji } from "helpers/emoji.helper";
 
+// icons
 import { Icon } from "components/ui";
 
-const emojis = ["128077", "128078", "128516", "128165", "128533", "129505", "9992", "128064"];
+const reactionEmojis = [
+  "128077",
+  "128078",
+  "128516",
+  "128165",
+  "128533",
+  "129505",
+  "9992",
+  "128064",
+];
 
-interface CommonProps {
-  position?: "top" | "bottom";
+interface Props {
   size?: "sm" | "md" | "lg";
-}
-
-interface SingleEmojiProps extends CommonProps {
-  multiple?: false;
-  value?: string | null;
+  position?: "top" | "bottom";
+  value?: string | string[] | null;
   onSelect: (emoji: string) => void;
 }
 
-interface MultipleEmojiProps extends CommonProps {
-  multiple: true;
-  value?: string[] | null;
-  onSelect: (emoji: string[]) => void;
-}
-
-type Props = SingleEmojiProps | MultipleEmojiProps;
-
 export const ReactionSelector: React.FC<Props> = (props) => {
-  const { value, onSelect, multiple, position, size } = props;
+  const { value, onSelect, position, size } = props;
 
   return (
     <Popover className="relative">
@@ -37,24 +37,14 @@ export const ReactionSelector: React.FC<Props> = (props) => {
           <Popover.Button
             className={`${
               open ? "" : "text-opacity-90"
-            } group inline-flex items-center rounded-md px-3 py-2 focus:outline-none`}
+            } group inline-flex items-center rounded-md bg-custom-background-80 focus:outline-none`}
           >
             <span
-              className={`flex justify-center items-center rounded-full border ${
+              className={`flex justify-center items-center rounded-md ${
                 size === "sm" ? "w-6 h-6" : size === "md" ? "w-8 h-8" : "w-10 h-10"
               }`}
             >
-              {value ? (
-                <span
-                  className={`rounded-full ${
-                    size === "sm" ? "w-6 h-6" : size === "md" ? "w-8 h-8" : "w-10 h-10"
-                  }`}
-                >
-                  {renderEmoji(Array.isArray(value) ? value[value.length - 1] : value)}
-                </span>
-              ) : (
-                <Icon iconName="add_reaction" className="text-custom-text-100 scale-125" />
-              )}
+              <Icon iconName="add_reaction" className="text-custom-text-100 scale-125" />
             </span>
           </Popover.Button>
           <Transition
@@ -67,20 +57,16 @@ export const ReactionSelector: React.FC<Props> = (props) => {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel
-              className={`absolute left-1 z-10 ${
-                position === "top" ? "top-0 -translate-y-full" : "bottom-0 translate-y-full"
-              }`}
+              className={`absolute -left-2 z-10 ${position === "top" ? "-top-12" : "-bottom-12"}`}
             >
-              <div className="bg-custom-background-80 border rounded-md p-4 py-2">
-                <div className="flex gap-x-3">
-                  {emojis.map((emoji) => (
+              <div className="bg-custom-background-0 border rounded-md px-2 py-1.5">
+                <div className="flex gap-x-2">
+                  {reactionEmojis.map((emoji) => (
                     <button
                       key={emoji}
                       type="button"
                       onClick={() => {
-                        if (multiple) {
-                          onSelect([...(value || []).filter((e) => e !== emoji), emoji]);
-                        } else onSelect(emoji);
+                        onSelect(emoji);
                         closePopover();
                       }}
                       className="flex h-5 w-5 select-none items-center justify-between text-sm"

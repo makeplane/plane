@@ -243,3 +243,13 @@ export const USER_WORKSPACE_NOTIFICATIONS_DETAILS = (
 
 export const UNREAD_NOTIFICATIONS_COUNT = (workspaceSlug: string) =>
   `UNREAD_NOTIFICATIONS_COUNT_${workspaceSlug.toUpperCase()}`;
+
+export const ISSUE_REACTION_LIST = (workspaceSlug: string, projectId: string, issueId: string) =>
+  `ISSUE_REACTION_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${issueId.toUpperCase()}`;
+
+export const COMMENT_REACTION_LIST = (
+  workspaceSlug: string,
+  projectId: string,
+  commendId: string
+) =>
+  `COMMENT_REACTION_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${commendId.toUpperCase()}`;
