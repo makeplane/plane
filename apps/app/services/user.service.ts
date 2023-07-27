@@ -8,6 +8,7 @@ import type {
   IUser,
   IUserActivityResponse,
   IUserProfileData,
+  IUserProfileProjectSegregation,
   IUserWorkspaceDashboard,
 } from "types";
 
@@ -140,6 +141,17 @@ class UserService extends APIService {
     }
   ): Promise<any> {
     return this.post(`/api/reset-password/${uidb64}/${token}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getUserWorkspaceProfileProjectsSegregation(
+    workspaceSlug: string,
+    userId: string
+  ): Promise<IUserProfileProjectSegregation> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-projects-segregate/${userId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

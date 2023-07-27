@@ -156,3 +156,26 @@ export interface IUserProfileData {
   state_distribution: IUserStateDistribution[];
   subscribed_issues: number;
 }
+
+export interface IUserProfileProjectSegregation {
+  project_data: {
+    assigned_issues: number;
+    completed_issues: number;
+    created_issues: number;
+    emoji: string | null;
+    icon_prop: null;
+    id: string;
+    identifier: string;
+    name: string;
+    pending_issues: number;
+  }[];
+  user_data: {
+    avatar: string;
+    cover_image: string | null;
+    date_joined: Date;
+    email: string;
+    first_name: string;
+    last_name: string;
+    user_timezone: string;
+  };
+}
