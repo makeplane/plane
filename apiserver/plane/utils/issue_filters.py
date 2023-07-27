@@ -268,6 +268,17 @@ def filter_sub_issue_toggle(params, filter, method):
     return filter
 
 
+def filter_subscribed_issues(params, filter, method):
+    if method == "GET":
+        subscribers = params.getlist("subscriber")
+        if len(subscribers) and "" not in subscribers:
+            filter["issue_subscribers__subscriber_id__in"] = subscribers
+    else:
+        if params.get("subscriber", None) and len(params.get("subscriber")):
+            filter["issue_subscribers__subscriber_id__in"] = params.get("subscriber")
+    return filter
+
+
 def issue_filters(query_params, method):
     filter = dict()
 
@@ -291,6 +302,7 @@ def issue_filters(query_params, method):
         "module": filter_module,
         "inbox_status": filter_inbox_status,
         "sub_issue": filter_sub_issue_toggle,
+        "subscriber":  filter_subscribed_issues,
     }
 
     for key, value in ISSUE_FILTER.items():
