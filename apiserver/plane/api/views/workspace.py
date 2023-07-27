@@ -71,6 +71,7 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     IssueSubscriber,
+    Project,
 )
 from plane.api.permissions import (
     WorkSpaceBasePermission,
@@ -1182,58 +1183,56 @@ class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
         try:
             user_data = User.objects.get(pk=user_id)
 
-            created_issues = (
-                Issue.issue_objects.filter(
+            projects = (
+                Project.objects.filter(
                     workspace__slug=slug,
-                    created_by_id=user_id,
-                    project__project_projectmember__member=request.user,
+                    project_projectmember__member=request.user,
                 )
-                .values("project_id", "project__name", "project__identifier")
-                .annotate(issue_count=Count("project_id"))
-                .order_by("project_id")
-            )
-
-            assigned_issues = (
-                Issue.issue_objects.filter(
-                    workspace__slug=slug,
-                    assignees__in=[user_id],
-                    project__project_projectmember__member=request.user,
+                .annotate(
+                    created_issues=Count(
+                        "project_issue", filter=Q(project_issue__created_by_id=user_id)
+                    )
                 )
-                .values("project_id", "project__name", "project__identifier")
-                .annotate(issue_count=Count("project_id"))
-                .order_by("project_id")
-            )
-
-            completed_issues = (
-                Issue.objects.filter(
-                    workspace__slug=slug,
-                    project__project_projectmember__member=request.user,
-                    assignees__in=[user_id],
-                    state__group="completed",
+                .annotate(
+                    assigned_issues=Count(
+                        "project_issue",
+                        filter=Q(project_issue__assignees__in=[user_id]),
+                    )
                 )
-                .values("project_id", "project__name", "project__identifier")
-                .annotate(issue_count=Count("project_id"))
-                .order_by("project_id")
-            )
-
-            pending_issues = (
-                Issue.issue_objects.filter(
-                    ~Q(state__group__in=["completed", "cancelled"]),
-                    workspace__slug=slug,
-                    assignees__in=[user_id],
-                    project__project_projectmember__member=request.user,
+                .annotate(
+                    completed_issues=Count(
+                        "project_issue",
+                        filter=Q(project_issue__completed_at__isnull=False),
+                    )
                 )
-                .values("project_id", "project__name", "project__identifier")
-                .annotate(issue_count=Count("project_id"))
-                .order_by("project_id")
+                .annotate(
+                    pending_issues=Count(
+                        "project_issue",
+                        filter=Q(
+                            project_issue__state__group__in=[
+                                "backlog",
+                                "unstarted",
+                                "started",
+                            ]
+                        ),
+                    )
+                )
+                .values(
+                    "id",
+                    "name",
+                    "identifier",
+                    "cover_image",
+                    "icon_prop",
+                    "created_issues",
+                    "assigned_issues",
+                    "completed_issues",
+                    "pending_issues",
+                )
             )
 
             return Response(
                 {
-                    "created_issues": created_issues,
-                    "assigned_issues": assigned_issues,
-                    "completed_issues": completed_issues,
-                    "pending_issues": pending_issues,
+                    "project_data": projects,
                     "user_data": {
                         "email": user_data.email,
                         "first_name": user_data.first_name,
@@ -1247,7 +1246,7 @@ class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
