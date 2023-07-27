@@ -3,7 +3,7 @@ from django.utils.dateparse import parse_datetime
 
 def filter_state(params, filter, method):
     if method == "GET":
-        states = params.get("state").split(",")
+        states = params.getlist("state")
         if len(states) and "" not in states:
             filter["state__in"] = states
     else:
@@ -14,7 +14,7 @@ def filter_state(params, filter, method):
 
 def filter_state_group(params, filter, method):
     if method == "GET":
-        state_group = params.get("state_group").split(",")
+        state_group = params.getlist("state_group")
         if len(state_group) and "" not in state_group:
             filter["state__group__in"] = state_group
     else:
@@ -26,7 +26,7 @@ def filter_state_group(params, filter, method):
 
 def filter_estimate_point(params, filter, method):
     if method == "GET":
-        estimate_points = params.get("estimate_point").split(",")
+        estimate_points = params.getlist("estimate_point")
         if len(estimate_points) and "" not in estimate_points:
             filter["estimate_point__in"] = estimate_points
     else:
@@ -37,7 +37,7 @@ def filter_estimate_point(params, filter, method):
 
 def filter_priority(params, filter, method):
     if method == "GET":
-        priorities = params.get("priority").split(",")
+        priorities = params.getlist("priority")
         if len(priorities) and "" not in priorities:
             if len(priorities) == 1 and "null" in priorities:
                 filter["priority__isnull"] = True
@@ -63,7 +63,7 @@ def filter_priority(params, filter, method):
 
 def filter_parent(params, filter, method):
     if method == "GET":
-        parents = params.get("parent").split(",")
+        parents = params.getlist("parent")
         if len(parents) and "" not in parents:
             filter["parent__in"] = parents
     else:
@@ -74,7 +74,7 @@ def filter_parent(params, filter, method):
 
 def filter_labels(params, filter, method):
     if method == "GET":
-        labels = params.get("labels").split(",")
+        labels = params.getlist("labels")
         if len(labels) and "" not in labels:
             filter["labels__in"] = labels
     else:
@@ -85,7 +85,7 @@ def filter_labels(params, filter, method):
 
 def filter_assignees(params, filter, method):
     if method == "GET":
-        assignees = params.get("assignees").split(",")
+        assignees = params.getlist("assignees")
         if len(assignees) and "" not in assignees:
             filter["assignees__in"] = assignees
     else:
@@ -96,7 +96,7 @@ def filter_assignees(params, filter, method):
 
 def filter_created_by(params, filter, method):
     if method == "GET":
-        created_bys = params.get("created_by").split(",")
+        created_bys = params.getlist("created_by")
         if len(created_bys) and "" not in created_bys:
             filter["created_by__in"] = created_bys
     else:
@@ -113,7 +113,7 @@ def filter_name(params, filter, method):
 
 def filter_created_at(params, filter, method):
     if method == "GET":
-        created_ats = params.get("created_at").split(",")
+        created_ats = params.getlist("created_at")
         if len(created_ats) and "" not in created_ats:
             for query in created_ats:
                 created_at_query = query.split(";")
@@ -133,7 +133,7 @@ def filter_created_at(params, filter, method):
 
 def filter_updated_at(params, filter, method):
     if method == "GET":
-        updated_ats = params.get("updated_at").split(",")
+        updated_ats = params.getlist("updated_at")
         if len(updated_ats) and "" not in updated_ats:
             for query in updated_ats:
                 updated_at_query = query.split(";")
@@ -153,7 +153,7 @@ def filter_updated_at(params, filter, method):
 
 def filter_start_date(params, filter, method):
     if method == "GET":
-        start_dates = params.get("start_date").split(",")
+        start_dates = params.getlist("start_date")
         if len(start_dates) and "" not in start_dates:
             for query in start_dates:
                 start_date_query = query.split(";")
@@ -173,7 +173,7 @@ def filter_start_date(params, filter, method):
 
 def filter_target_date(params, filter, method):
     if method == "GET":
-        target_dates = params.get("target_date").split(",")
+        target_dates = params.getlist("target_date")
         if len(target_dates) and "" not in target_dates:
             for query in target_dates:
                 target_date_query = query.split(";")
@@ -194,7 +194,7 @@ def filter_target_date(params, filter, method):
 
 def filter_completed_at(params, filter, method):
     if method == "GET":
-        completed_ats = params.get("completed_at").split(",")
+        completed_ats = params.getlist("completed_at")
         if len(completed_ats) and "" not in completed_ats:
             for query in completed_ats:
                 completed_at_query = query.split(";")
@@ -227,7 +227,7 @@ def filter_issue_state_type(params, filter, method):
 
 def filter_project(params, filter, method):
     if method == "GET":
-        projects = params.get("project").split(",")
+        projects = params.getlist("project")
         if len(projects) and "" not in projects:
             filter["project__in"] = projects
     else:
@@ -238,7 +238,7 @@ def filter_project(params, filter, method):
 
 def filter_cycle(params, filter, method):
     if method == "GET":
-        cycles = params.get("cycle").split(",")
+        cycles = params.getlist("cycle")
         if len(cycles) and "" not in cycles:
             filter["issue_cycle__cycle_id__in"] = cycles
     else:
@@ -249,7 +249,7 @@ def filter_cycle(params, filter, method):
 
 def filter_module(params, filter, method):
     if method == "GET":
-        modules = params.get("module").split(",")
+        modules = params.getlist("module")
         if len(modules) and "" not in modules:
             filter["issue_module__module_id__in"] = modules
     else:
@@ -260,7 +260,7 @@ def filter_module(params, filter, method):
 
 def filter_inbox_status(params, filter, method):
     if method == "GET":
-        status = params.get("inbox_status").split(",")
+        status = params.getlist("inbox_status")
         if len(status) and "" not in status:
             filter["issue_inbox__status__in"] = status
     else:
