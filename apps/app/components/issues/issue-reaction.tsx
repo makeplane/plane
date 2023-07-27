@@ -61,7 +61,15 @@ export const IssueReaction: React.FC<Props> = (props) => {
               }`}
             >
               <span>{renderEmoji(reaction)}</span>
-              <span>{groupedReactions?.[reaction].length} </span>
+              <span
+                className={
+                  reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                    ? "text-custom-primary-100"
+                    : ""
+                }
+              >
+                {groupedReactions?.[reaction].length}{" "}
+              </span>
             </button>
           )
       )}
