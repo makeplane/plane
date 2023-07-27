@@ -70,6 +70,7 @@ from plane.db.models import (
     IssueViewFavorite,
     IssueLink,
     IssueAttachment,
+    IssueSubscriber,
 )
 from plane.api.permissions import (
     WorkSpaceBasePermission,
@@ -1082,6 +1083,12 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 project__project_projectmember__member=request.user,
             ).count()
 
+            subscribed_issues_count = IssueSubscriber.objects.filter(
+                workspace__slug=slug,
+                subscriber_id=user_id,
+                project__project_projectmember__member=request.user,
+            ).count()
+
             return Response(
                 {
                     "state_distribution": state_distribution,
@@ -1090,6 +1097,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     "completed_issues": completed_issues_count,
                     "pending_issues": pending_issues_count,
                     "priority_distribution": priority_distribution,
+                    "subscribed_issues": subscribed_issues_count
                 }
             )
         except Exception as e:
