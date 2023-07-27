@@ -531,7 +531,7 @@ class CommentReactionLiteSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
     class Meta:
-        model = IssueReaction
+        model = CommentReaction
         fields = [
             "id",
             "reaction",
