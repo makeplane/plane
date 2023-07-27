@@ -12,7 +12,7 @@ import { Icon } from "components/ui";
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
-import { USER_WORKSPACE_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 
 export const ProfileSidebar = () => {
   const router = useRouter();
@@ -20,14 +20,11 @@ export const ProfileSidebar = () => {
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId
-      ? USER_WORKSPACE_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
+      ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
       : null,
     workspaceSlug && userId
       ? () =>
-          userService.getUserWorkspaceProfileProjectsSegregation(
-            workspaceSlug.toString(),
-            userId.toString()
-          )
+          userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
       : null
   );
 

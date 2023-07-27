@@ -2,16 +2,15 @@ import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
 // hooks
-import useMyIssues from "hooks/my-issues/use-my-issues";
-import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
-import useUserAuth from "hooks/use-user-auth";
+import useProfileIssues from "hooks/use-profile-issues";
+import useUser from "hooks/use-user";
 // components
 import { AllViews, FiltersList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -20,17 +19,9 @@ import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue, IIssueFilterOptions } from "types";
 // fetch-keys
-import { USER_ISSUES, WORKSPACE_LABELS } from "constants/fetch-keys";
+import { WORKSPACE_LABELS } from "constants/fetch-keys";
 
-type Props = {
-  openIssuesListModal?: () => void;
-  disableUserActions?: false;
-};
-
-export const MyIssuesView: React.FC<Props> = ({
-  openIssuesListModal,
-  disableUserActions = false,
-}) => {
+export const ProfileIssuesView = () => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [preloadedData, setPreloadedData] = useState<
@@ -51,13 +42,22 @@ export const MyIssuesView: React.FC<Props> = ({
   const [trashBox, setTrashBox] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, userId } = router.query;
 
-  const { user } = useUserAuth();
+  const { user } = useUser();
 
-  const { groupedIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
-  const { filters, setFilters, issueView, groupBy, orderBy, properties, showEmptyGroups } =
-    useMyIssuesFilters(workspaceSlug?.toString());
+  const {
+    groupedIssues,
+    issueView,
+    groupByProperty,
+    orderBy,
+    isEmpty,
+    showEmptyGroups,
+    filters,
+    setFilters,
+    params,
+    mutateProfileIssues,
+  } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
 
   const { data: labels } = useSWR(
     workspaceSlug && (filters?.labels ?? []).length > 0
@@ -80,7 +80,8 @@ export const MyIssuesView: React.FC<Props> = ({
     async (result: DropResult) => {
       setTrashBox(false);
 
-      if (!result.destination || !workspaceSlug || !groupedIssues || groupBy !== "priority") return;
+      if (!result.destination || !workspaceSlug || !groupedIssues || groupByProperty !== "priority")
+        return;
 
       const { source, destination } = result;
 
@@ -95,29 +96,23 @@ export const MyIssuesView: React.FC<Props> = ({
         const sourceGroup = source.droppableId;
         const destinationGroup = destination.droppableId;
 
-        draggedItem[groupBy] = destinationGroup;
+        draggedItem[groupByProperty] = destinationGroup;
 
-        mutate<{
-          [key: string]: IIssue[];
-        }>(
-          USER_ISSUES(workspaceSlug.toString(), params),
-          (prevData) => {
-            if (!prevData) return prevData;
+        mutateProfileIssues((prevData) => {
+          if (!prevData) return prevData;
 
-            const sourceGroupArray = [...groupedIssues[sourceGroup]];
-            const destinationGroupArray = [...groupedIssues[destinationGroup]];
+          const sourceGroupArray = [...groupedIssues[sourceGroup]];
+          const destinationGroupArray = [...groupedIssues[destinationGroup]];
 
-            sourceGroupArray.splice(source.index, 1);
-            destinationGroupArray.splice(destination.index, 0, draggedItem);
+          sourceGroupArray.splice(source.index, 1);
+          destinationGroupArray.splice(destination.index, 0, draggedItem);
 
-            return {
-              ...prevData,
-              [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
-              [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
-            };
-          },
-          false
-        );
+          return {
+            ...prevData,
+            [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
+            [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
+          };
+        }, false);
 
         // patch request
         issuesService
@@ -130,32 +125,24 @@ export const MyIssuesView: React.FC<Props> = ({
             },
             user
           )
-          .catch(() => mutate(USER_ISSUES(workspaceSlug.toString(), params)));
+          .catch(() => mutateProfileIssues());
       }
     },
-    [groupBy, groupedIssues, handleDeleteIssue, orderBy, params, user, workspaceSlug]
+    [
+      groupByProperty,
+      groupedIssues,
+      handleDeleteIssue,
+      mutateProfileIssues,
+      orderBy,
+      user,
+      workspaceSlug,
+    ]
   );
 
-  const addIssueToGroup = useCallback(
-    (groupTitle: string) => {
-      setCreateIssueModal(true);
-
-      let preloadedValue: string | string[] = groupTitle;
-
-      if (groupBy === "labels") {
-        if (groupTitle === "None") preloadedValue = [];
-        else preloadedValue = [groupTitle];
-      }
-
-      if (groupBy)
-        setPreloadedData({
-          [groupBy]: preloadedValue,
-          actionType: "createIssue",
-        });
-      else setPreloadedData({ actionType: "createIssue" });
-    },
-    [setCreateIssueModal, setPreloadedData, groupBy]
-  );
+  const addIssueToGroup = useCallback((groupTitle: string) => {
+    setCreateIssueModal(true);
+    return;
+  }, []);
 
   const addIssueToDate = useCallback(
     (date: string) => {
@@ -254,22 +241,35 @@ export const MyIssuesView: React.FC<Props> = ({
       <AllViews
         addIssueToDate={addIssueToDate}
         addIssueToGroup={addIssueToGroup}
-        disableUserActions={disableUserActions}
-        dragDisabled={groupBy !== "priority"}
+        disableUserActions={false}
+        dragDisabled={groupByProperty !== "priority"}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
-        openIssuesListModal={openIssuesListModal ? openIssuesListModal : null}
+        openIssuesListModal={null}
         removeIssue={null}
         trashBox={trashBox}
         setTrashBox={setTrashBox}
         viewProps={{
-          groupByProperty: groupBy,
+          groupByProperty,
           groupedIssues,
           isEmpty,
           issueView,
           orderBy,
           params,
-          properties,
+          properties: {
+            assignee: true,
+            due_date: true,
+            key: true,
+            labels: true,
+            priority: true,
+            state: true,
+            sub_issue_count: true,
+            attachment_count: true,
+            link: true,
+            estimate: true,
+            created_on: true,
+            updated_on: true,
+          },
           showEmptyGroups,
         }}
       />

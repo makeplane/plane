@@ -1,6 +1,9 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 
+// components
+import { ProfileIssuesViewOptions } from "components/profile";
+
 const tabsList = [
   {
     route: "",
@@ -22,13 +25,13 @@ const tabsList = [
 
 export const ProfileNavbar = () => {
   const router = useRouter();
-  const { userId } = router.query;
+  const { workspaceSlug, userId } = router.query;
 
   return (
-    <div className="px-4 sm:px-5 border-b border-custom-border-300">
+    <div className="px-4 sm:px-5 flex items-center justify-between gap-4 border-b border-custom-border-300">
       <div className="flex items-center overflow-x-scroll">
         {tabsList.map((tab) => (
-          <Link key={tab.route} href={`/profile/${userId}/${tab.route}`}>
+          <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
             <a
               className={`border-b-2 p-4 text-sm font-medium outline-none whitespace-nowrap ${
                 router.pathname.includes(tab.route)
@@ -41,6 +44,7 @@ export const ProfileNavbar = () => {
           </Link>
         ))}
       </div>
+      <ProfileIssuesViewOptions />
     </div>
   );
 };

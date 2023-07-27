@@ -28,7 +28,7 @@ import { timeAgo } from "helpers/date-time.helper";
 import type { NextPage } from "next";
 import { IUserStateDistribution, TStateGroups } from "types";
 // constants
-import { USER_WORKSPACE_PROFILE, USER_WORKSPACE_PROFILE_ACTIVITY } from "constants/fetch-keys";
+import { USER_PROFILE_DATA, USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
 import { GROUP_CHOICES } from "constants/project";
 
 const ProfileOverview: NextPage = () => {
@@ -36,21 +36,18 @@ const ProfileOverview: NextPage = () => {
   const { workspaceSlug, userId } = router.query;
 
   const { data: userProfile } = useSWR(
+    workspaceSlug && userId ? USER_PROFILE_DATA(workspaceSlug.toString(), userId.toString()) : null,
     workspaceSlug && userId
-      ? USER_WORKSPACE_PROFILE(workspaceSlug.toString(), userId.toString())
-      : null,
-    workspaceSlug && userId
-      ? () => userService.getUserWorkspaceProfileData(workspaceSlug.toString(), userId.toString())
+      ? () => userService.getUserProfileData(workspaceSlug.toString(), userId.toString())
       : null
   );
 
   const { data: userProfileActivity } = useSWR(
     workspaceSlug && userId
-      ? USER_WORKSPACE_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString())
+      ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString())
       : null,
     workspaceSlug && userId
-      ? () =>
-          userService.getUserWorkspaceProfileActivity(workspaceSlug.toString(), userId.toString())
+      ? () => userService.getUserProfileActivity(workspaceSlug.toString(), userId.toString())
       : null
   );
 

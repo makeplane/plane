@@ -15,7 +15,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import type { NextPage } from "next";
 
-const ProfileCreatedIssues: NextPage = () => {
+const ProfileSubscribedIssues: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -45,4 +45,4 @@ const ProfileCreatedIssues: NextPage = () => {
   );
 };
 
-export default ProfileCreatedIssues;
+export default ProfileSubscribedIssues;

@@ -147,21 +147,18 @@ class UserService extends APIService {
       });
   }
 
-  async getUserWorkspaceProfileProjectsSegregation(
-    workspaceSlug: string,
-    userId: string
-  ): Promise<IUserProfileProjectSegregation> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-projects-segregate/${userId}/`)
+  async getUserProfileData(workspaceSlug: string, userId: string): Promise<IUserProfileData> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-stats/${userId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getUserWorkspaceProfileData(
+  async getUserProfileProjectsSegregation(
     workspaceSlug: string,
     userId: string
-  ): Promise<IUserProfileData> {
+  ): Promise<IUserProfileProjectSegregation> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-profile/${userId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -169,11 +166,30 @@ class UserService extends APIService {
       });
   }
 
-  async getUserWorkspaceProfileActivity(
+  async getUserProfileActivity(
     workspaceSlug: string,
     userId: string
   ): Promise<IUserActivityResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getUserProfileIssues(
+    workspaceSlug: string,
+    userId: string,
+    params: any
+  ): Promise<
+    | {
+        [key: string]: IIssue[];
+      }
+    | IIssue[]
+  > {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
