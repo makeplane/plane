@@ -155,7 +155,12 @@ class IssueViewSet(BaseViewSet):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
-            .prefetch_related(Prefetch("issue_reactions", queryset=IssueReaction.objects.select_related("actor")))
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
         )
 
     @method_decorator(gzip_page)
@@ -1278,6 +1283,18 @@ class IssueReactionViewSet(BaseViewSet):
         ProjectLitePermission,
     ]
 
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
+            .distinct()
+        )
+
     def perform_create(self, serializer):
         serializer.save(
             issue_id=self.kwargs.get("issue_id"),
@@ -1314,6 +1331,18 @@ class CommentReactionViewSet(BaseViewSet):
     permission_classes = [
         ProjectLitePermission,
     ]
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(comment_id=self.kwargs.get("comment_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
+            .distinct()
+        )
 
     def perform_create(self, serializer):
         serializer.save(
