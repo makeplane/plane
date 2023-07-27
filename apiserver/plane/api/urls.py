@@ -390,17 +390,17 @@ urlpatterns = [
         name="workspace-themes",
     ),
     path(
-        "workspaces/<str:slug>/user-profile/<uuid:user_id>/",
+        "workspaces/<str:slug>/user-stats/<uuid:user_id>/",
         WorkspaceUserProfileEndpoint.as_view(),
-        name="workspace-user-profile",
+        name="workspace-user-stats",
     ),
     path(
         "workspaces/<str:slug>/user-activity/<uuid:user_id>/",
         WorkspaceUserActivityEndpoint.as_view(),
-        name="workspace-user-profile",
+        name="workspace-user-activity",
     ),
     path(
-        "workspaces/<str:slug>/user-projects-segregate/<uuid:user_id>/",
+        "   /<uuid:user_id>/",
         WorkspaceUserProfilePageProjectSegregationEndpoint.as_view(),
         name="workspace-user-profile-page",
     ),
