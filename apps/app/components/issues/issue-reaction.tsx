@@ -60,8 +60,8 @@ export const IssueReaction: React.FC<Props> = (props) => {
                   : "bg-custom-background-80"
               }`}
             >
-              <span>{groupedReactions?.[reaction].length} </span>
               <span>{renderEmoji(reaction)}</span>
+              <span>{groupedReactions?.[reaction].length} </span>
             </button>
           )
       )}
