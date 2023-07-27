@@ -168,7 +168,7 @@ const SingleModule: React.FC = () => {
             analyticsModal ? "mr-[50%]" : ""
           } duration-300`}
         >
-          <IssuesView type="module" openIssuesListModal={openIssuesListModal} />
+          <IssuesView openIssuesListModal={openIssuesListModal} />
         </div>
 
         <ModuleDetailsSidebar

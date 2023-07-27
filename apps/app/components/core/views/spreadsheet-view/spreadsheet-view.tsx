@@ -17,28 +17,26 @@ import { SPREADSHEET_COLUMN } from "constants/spreadsheet";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 type Props = {
-  type: "issue" | "cycle" | "module";
-  handleEditIssue: (issue: IIssue) => void;
-  handleDeleteIssue: (issue: IIssue) => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   openIssuesListModal?: (() => void) | null;
-  isCompleted?: boolean;
+  disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
 };
 
 export const SpreadsheetView: React.FC<Props> = ({
-  type,
-  handleEditIssue,
-  handleDeleteIssue,
+  handleIssueAction,
   openIssuesListModal,
-  isCompleted = false,
+  disableUserActions,
   user,
   userAuth,
 }) => {
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   const { spreadsheetIssues } = useSpreadsheetIssuesView();
 
@@ -76,9 +74,8 @@ export const SpreadsheetView: React.FC<Props> = ({
               setExpandedIssues={setExpandedIssues}
               gridTemplateColumns={gridTemplateColumns}
               properties={properties}
-              handleEditIssue={handleEditIssue}
-              handleDeleteIssue={handleDeleteIssue}
-              isCompleted={isCompleted}
+              handleIssueAction={handleIssueAction}
+              disableUserActions={disableUserActions}
               user={user}
               userAuth={userAuth}
             />
@@ -99,7 +96,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                 Add Issue
               </button>
             ) : (
-              !isCompleted && (
+              !disableUserActions && (
                 <CustomMenu
                   className="sticky left-0 z-[1]"
                   customButton={

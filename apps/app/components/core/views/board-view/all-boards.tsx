@@ -1,75 +1,66 @@
-// hooks
-import useProjectIssuesView from "hooks/use-issues-view";
 // components
-import { SingleBoard } from "components/core/board-view/single-board";
+import { SingleBoard } from "components/core/views/board-view/single-board";
 // icons
 import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, IState, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, IIssueViewProps, IState, UserAuth } from "types";
 
 type Props = {
-  type: "issue" | "cycle" | "module";
-  states: IState[] | undefined;
-  addIssueToState: (groupTitle: string) => void;
-  makeIssueCopy: (issue: IIssue) => void;
-  handleEditIssue: (issue: IIssue) => void;
-  openIssuesListModal?: (() => void) | null;
-  handleDeleteIssue: (issue: IIssue) => void;
+  addIssueToGroup: (groupTitle: string) => void;
+  disableUserActions: boolean;
+  dragDisabled: boolean;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleTrashBox: (isDragging: boolean) => void;
+  openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
-  isCompleted?: boolean;
+  states: IState[] | undefined;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
+  viewProps: IIssueViewProps;
 };
 
 export const AllBoards: React.FC<Props> = ({
-  type,
-  states,
-  addIssueToState,
-  makeIssueCopy,
-  handleEditIssue,
-  openIssuesListModal,
-  handleDeleteIssue,
+  addIssueToGroup,
+  disableUserActions,
+  dragDisabled,
+  handleIssueAction,
   handleTrashBox,
+  openIssuesListModal,
   removeIssue,
-  isCompleted = false,
+  states,
   user,
   userAuth,
+  viewProps,
 }) => {
-  const {
-    groupedByIssues,
-    groupByProperty: selectedGroup,
-    showEmptyGroups,
-  } = useProjectIssuesView();
+  const { groupByProperty: selectedGroup, groupedIssues, showEmptyGroups } = viewProps;
 
   return (
     <>
-      {groupedByIssues ? (
+      {groupedIssues ? (
         <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8">
-          {Object.keys(groupedByIssues).map((singleGroup, index) => {
+          {Object.keys(groupedIssues).map((singleGroup, index) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-            if (!showEmptyGroups && groupedByIssues[singleGroup].length === 0) return null;
+            if (!showEmptyGroups && groupedIssues[singleGroup].length === 0) return null;
 
             return (
               <SingleBoard
                 key={index}
-                type={type}
+                addIssueToGroup={() => addIssueToGroup(singleGroup)}
                 currentState={currentState}
+                disableUserActions={disableUserActions}
+                dragDisabled={dragDisabled}
                 groupTitle={singleGroup}
-                handleEditIssue={handleEditIssue}
-                makeIssueCopy={makeIssueCopy}
-                addIssueToState={() => addIssueToState(singleGroup)}
-                handleDeleteIssue={handleDeleteIssue}
-                openIssuesListModal={openIssuesListModal ?? null}
+                handleIssueAction={handleIssueAction}
                 handleTrashBox={handleTrashBox}
+                openIssuesListModal={openIssuesListModal ?? null}
                 removeIssue={removeIssue}
-                isCompleted={isCompleted}
                 user={user}
                 userAuth={userAuth}
+                viewProps={viewProps}
               />
             );
           })}
@@ -77,11 +68,11 @@ export const AllBoards: React.FC<Props> = ({
             <div className="h-full w-96 flex-shrink-0 space-y-2 p-1">
               <h2 className="text-lg font-semibold">Hidden groups</h2>
               <div className="space-y-3">
-                {Object.keys(groupedByIssues).map((singleGroup, index) => {
+                {Object.keys(groupedIssues).map((singleGroup, index) => {
                   const currentState =
                     selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-                  if (groupedByIssues[singleGroup].length === 0)
+                  if (groupedIssues[singleGroup].length === 0)
                     return (
                       <div
                         key={index}

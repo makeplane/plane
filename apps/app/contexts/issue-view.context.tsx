@@ -83,7 +83,7 @@ export const initialState: StateType = {
   groupByProperty: null,
   orderBy: "-created_at",
   showEmptyGroups: true,
-  showSubIssues: false,
+  showSubIssues: true,
   calendarDateRange: "",
   filters: {
     type: null,
@@ -91,8 +91,7 @@ export const initialState: StateType = {
     assignees: null,
     labels: null,
     state: null,
-    issue__assignees__id: null,
-    issue__labels__id: null,
+    state_group: null,
     created_by: null,
     target_date: null,
   },
@@ -160,7 +159,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
     case "SET_SHOW_SUB_ISSUES": {
       const newState = {
         ...state,
-        showSubIssues: payload?.showSubIssues || false,
+        showSubIssues: payload?.showSubIssues || true,
       };
 
       return {

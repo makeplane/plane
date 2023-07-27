@@ -48,6 +48,7 @@ from plane.api.serializers import (
     ProjectMemberLiteSerializer,
 )
 from plane.api.permissions import (
+    WorkspaceEntityPermission,
     ProjectEntityPermission,
     WorkSpaceAdminPermission,
     ProjectMemberPermission,
@@ -157,7 +158,7 @@ class IssueViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         try:
             filters = issue_filters(request.query_params, "GET")
-            show_sub_issues = request.GET.get("show_sub_issues", "true")
+            print(filters)
 
             # Custom ordering for priority and state
             priority_order = ["urgent", "high", "medium", "low", None]
@@ -244,12 +245,6 @@ class IssueViewSet(BaseViewSet):
             else:
                 issue_queryset = issue_queryset.order_by(order_by_param)
 
-            issue_queryset = (
-                issue_queryset
-                if show_sub_issues == "true"
-                else issue_queryset.filter(parent__isnull=True)
-            )
-
             issues = IssueLiteSerializer(issue_queryset, many=True).data
 
             ## Grouping the results
@@ -317,9 +312,17 @@ class UserWorkSpaceIssues(BaseAPIView):
     @method_decorator(gzip_page)
     def get(self, request, slug):
         try:
-            issues = (
+            filters = issue_filters(request.query_params, "GET")
+            # Custom ordering for priority and state
+            priority_order = ["urgent", "high", "medium", "low", None]
+            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+            order_by_param = request.GET.get("order_by", "-created_at")
+
+            issue_queryset = (
                 Issue.issue_objects.filter(
-                    assignees__in=[request.user], workspace__slug=slug
+                    (Q(assignees__in=[request.user]) | Q(created_by=request.user)),
+                    workspace__slug=slug,
                 )
                 .annotate(
                     sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
@@ -333,7 +336,7 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
-                .order_by("-created_at")
+                .order_by(order_by_param)
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                     .order_by()
@@ -348,9 +351,77 @@ class UserWorkSpaceIssues(BaseAPIView):
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
+                .filter(**filters)
             )
-            serializer = IssueLiteSerializer(issues, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+
+            # Priority Ordering
+            if order_by_param == "priority" or order_by_param == "-priority":
+                priority_order = (
+                    priority_order
+                    if order_by_param == "priority"
+                    else priority_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    priority_order=Case(
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
+                        output_field=CharField(),
+                    )
+                ).order_by("priority_order")
+
+            # State Ordering
+            elif order_by_param in [
+                "state__name",
+                "state__group",
+                "-state__name",
+                "-state__group",
+            ]:
+                state_order = (
+                    state_order
+                    if order_by_param in ["state__name", "state__group"]
+                    else state_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    state_order=Case(
+                        *[
+                            When(state__group=state_group, then=Value(i))
+                            for i, state_group in enumerate(state_order)
+                        ],
+                        default=Value(len(state_order)),
+                        output_field=CharField(),
+                    )
+                ).order_by("state_order")
+            # assignee and label ordering
+            elif order_by_param in [
+                "labels__name",
+                "-labels__name",
+                "assignees__first_name",
+                "-assignees__first_name",
+            ]:
+                issue_queryset = issue_queryset.annotate(
+                    max_values=Max(
+                        order_by_param[1::]
+                        if order_by_param.startswith("-")
+                        else order_by_param
+                    )
+                ).order_by(
+                    "-max_values" if order_by_param.startswith("-") else "max_values"
+                )
+            else:
+                issue_queryset = issue_queryset.order_by(order_by_param)
+
+            issues = IssueLiteSerializer(issue_queryset, many=True).data
+
+            ## Grouping the results
+            group_by = request.GET.get("group_by", False)
+            if group_by:
+                return Response(
+                    group_results(issues, group_by), status=status.HTTP_200_OK
+                )
+
+            return Response(issues, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -635,9 +706,7 @@ class SubIssuesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, issue_id):
         try:
             sub_issues = (
-                Issue.issue_objects.filter(
-                    parent_id=issue_id, workspace__slug=slug
-                )
+                Issue.issue_objects.filter(parent_id=issue_id, workspace__slug=slug)
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("state")
@@ -667,9 +736,7 @@ class SubIssuesEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                State.objects.filter(
-                    ~Q(name="Triage"), workspace__slug=slug
-                )
+                State.objects.filter(~Q(name="Triage"), workspace__slug=slug)
                 .annotate(
                     state_count=Count(
                         "state_issue",
