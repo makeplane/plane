@@ -47,7 +47,7 @@ from plane.api.views import (
     WorkspaceThemeViewSet,
     WorkspaceUserProfileEndpoint,
     WorkspaceUserActivityEndpoint,
-    UserProfilePageProjectSegregationEndpoint,
+    WorkspaceUserProfilePageProjectSegregationEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     ## End Workspaces
     # File Assets
@@ -401,7 +401,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/user-projects-segregate/<uuid:user_id>/",
-        UserProfilePageProjectSegregationEndpoint.as_view(),
+        WorkspaceUserProfilePageProjectSegregationEndpoint.as_view(),
         name="workspace-user-profile-page",
     ),
     path(

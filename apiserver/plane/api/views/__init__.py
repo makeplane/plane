@@ -44,7 +44,7 @@ from .workspace import (
     WorkspaceThemeViewSet,
     WorkspaceUserProfileEndpoint,
     WorkspaceUserActivityEndpoint,
-    UserProfilePageProjectSegregationEndpoint,
+    WorkspaceUserProfilePageProjectSegregationEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
 )
 from .state import StateViewSet

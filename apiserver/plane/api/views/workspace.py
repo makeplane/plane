@@ -23,7 +23,6 @@ from django.db.models import (
     Value,
     CharField,
     When,
-    Exists,
     Max,
     IntegerField,
 )
@@ -81,6 +80,7 @@ from plane.api.permissions import (
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.utils.grouper import group_results
+
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -1063,7 +1063,10 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 .annotate(priority_count=Count("priority"))
                 .annotate(
                     priority_order=Case(
-                        *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
                         default=Value(len(priority_order)),
                         output_field=IntegerField(),
                     )
@@ -1071,38 +1074,58 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 .order_by("priority_order")
             )
 
-            created_issues = Issue.issue_objects.filter(
-                workspace__slug=slug,
-                assignees__in=[user_id],
-                project__project_projectmember__member=request.user,
-                created_by_id=user_id,
-            ).filter(**filters).count()
+            created_issues = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                    created_by_id=user_id,
+                )
+                .filter(**filters)
+                .count()
+            )
 
-            assigned_issues_count = Issue.issue_objects.filter(
-                workspace__slug=slug,
-                assignees__in=[user_id],
-                project__project_projectmember__member=request.user,
-            ).filter(**filters).count()
+            assigned_issues_count = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
 
-            pending_issues_count = Issue.issue_objects.filter(
-                ~Q(state__group__in=["completed", "cancelled"]),
-                workspace__slug=slug,
-                assignees__in=[user_id],
-                project__project_projectmember__member=request.user,
-            ).filter(**filters).count()
+            pending_issues_count = (
+                Issue.issue_objects.filter(
+                    ~Q(state__group__in=["completed", "cancelled"]),
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
 
-            completed_issues_count = Issue.issue_objects.filter(
-                workspace__slug=slug,
-                assignees__in=[user_id],
-                state__group="completed",
-                project__project_projectmember__member=request.user,
-            ).filter(**filters).count()
+            completed_issues_count = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    state__group="completed",
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
 
-            subscribed_issues_count = IssueSubscriber.objects.filter(
-                workspace__slug=slug,
-                subscriber_id=user_id,
-                project__project_projectmember__member=request.user,
-            ).filter(**filters).count()
+            subscribed_issues_count = (
+                IssueSubscriber.objects.filter(
+                    workspace__slug=slug,
+                    subscriber_id=user_id,
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
 
             return Response(
                 {
@@ -1112,7 +1135,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     "assigned_issues": assigned_issues_count,
                     "completed_issues": completed_issues_count,
                     "pending_issues": pending_issues_count,
-                    "subscribed_issues": subscribed_issues_count
+                    "subscribed_issues": subscribed_issues_count,
                 }
             )
         except Exception as e:
@@ -1150,13 +1173,23 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             )
 
 
-class UserProfilePageProjectSegregationEndpoint(BaseAPIView):
+class WorkspaceUserProfilePageProjectSegregationEndpoint(BaseAPIView):
     permission_classes = [
         WorkspaceEntityPermission,
     ]
 
     def get(self, request, slug, user_id):
         try:
+            user_data = User.objects.get(pk=user_id).values(
+                "email",
+                "first_name",
+                "last_name",
+                "avatar",
+                "cover_image",
+                "date_joined",
+                "user_timezone",
+            )
+
             created_issues = (
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
@@ -1209,6 +1242,7 @@ class UserProfilePageProjectSegregationEndpoint(BaseAPIView):
                     "assigned_issues": assigned_issues,
                     "completed_issues": completed_issues,
                     "pending_issues": pending_issues,
+                    "user_data": user_data,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -1231,10 +1265,11 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
             order_by_param = request.GET.get("order_by", "-created_at")
             issue_queryset = (
                 Issue.issue_objects.filter(
-                    Q(assignees__in=[user_id]) | Q(created_by_id=user_id) | Q(issue_subscribers__subscriber_id=user_id),
+                    Q(assignees__in=[user_id])
+                    | Q(created_by_id=user_id)
+                    | Q(issue_subscribers__subscriber_id=user_id),
                     workspace__slug=slug,
                     project__project_projectmember__member=request.user,
-
                 )
                 .filter(**filters)
                 .annotate(
