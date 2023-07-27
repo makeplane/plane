@@ -1034,12 +1034,15 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
 
     def get(self, request, slug, user_id):
         try:
+            filters = issue_filters(request.query_params, "GET")
+
             state_distribution = (
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
                     assignees__in=[user_id],
                     project__project_projectmember__member=request.user,
                 )
+                .filter(**filters)
                 .annotate(state_group=F("state__group"))
                 .values("state_group")
                 .annotate(state_count=Count("state_group"))
@@ -1052,6 +1055,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     assignees__in=[user_id],
                     project__project_projectmember__member=request.user,
                 )
+                .filter(**filters)
                 .annotate(priority_count=Count("priority"))
                 .order_by("priority")
             )
@@ -1061,42 +1065,42 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
                 created_by_id=user_id,
-            ).count()
+            ).filter(**filters).count()
 
             assigned_issues_count = Issue.issue_objects.filter(
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
-            ).count()
+            ).filter(**filters).count()
 
             pending_issues_count = Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
-            ).count()
+            ).filter(**filters).count()
 
             completed_issues_count = Issue.issue_objects.filter(
                 workspace__slug=slug,
                 assignees__in=[user_id],
                 state__group="completed",
                 project__project_projectmember__member=request.user,
-            ).count()
+            ).filter(**filters).count()
 
             subscribed_issues_count = IssueSubscriber.objects.filter(
                 workspace__slug=slug,
                 subscriber_id=user_id,
                 project__project_projectmember__member=request.user,
-            ).count()
+            ).filter(**filters).count()
 
             return Response(
                 {
                     "state_distribution": state_distribution,
+                    "priority_distribution": priority_distribution,
                     "created_issues": created_issues,
                     "assigned_issues": assigned_issues_count,
                     "completed_issues": completed_issues_count,
                     "pending_issues": pending_issues_count,
-                    "priority_distribution": priority_distribution,
                     "subscribed_issues": subscribed_issues_count
                 }
             )
