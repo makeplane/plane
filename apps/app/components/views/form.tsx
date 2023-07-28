@@ -60,20 +60,20 @@ export const ViewForm: React.FC<Props> = ({
   const filters = watch("query");
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId && (filters.state ?? []).length > 0
+    workspaceSlug && projectId && (filters?.state ?? []).length > 0
       ? STATES_LIST(projectId as string)
       : null,
-    workspaceSlug && (filters.state ?? []).length > 0
+    workspaceSlug && (filters?.state ?? []).length > 0
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
   const states = getStatesList(stateGroups);
 
   const { data: labels } = useSWR(
-    workspaceSlug && projectId && (filters.labels ?? []).length > 0
+    workspaceSlug && projectId && (filters?.labels ?? []).length > 0
       ? PROJECT_ISSUE_LABELS(projectId.toString())
       : null,
-    workspaceSlug && projectId && (filters.labels ?? []).length > 0
+    workspaceSlug && projectId && (filters?.labels ?? []).length > 0
       ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
       : null
   );

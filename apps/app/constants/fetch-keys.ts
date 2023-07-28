@@ -301,3 +301,13 @@ export const getPaginatedNotificationKey = (
     cursor,
   })}`;
 };
+
+export const ISSUE_REACTION_LIST = (workspaceSlug: string, projectId: string, issueId: string) =>
+  `ISSUE_REACTION_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${issueId.toUpperCase()}`;
+
+export const COMMENT_REACTION_LIST = (
+  workspaceSlug: string,
+  projectId: string,
+  commendId: string
+) =>
+  `COMMENT_REACTION_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${commendId.toUpperCase()}`;
