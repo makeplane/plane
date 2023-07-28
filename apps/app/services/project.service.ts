@@ -28,7 +28,7 @@ class ProjectServices extends APIService {
   async createProject(
     workspaceSlug: string,
     data: Partial<IProject>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IProject> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
       .then((response) => {
@@ -79,7 +79,7 @@ class ProjectServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: Partial<IProject>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IProject> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
       .then((response) => {
@@ -94,7 +94,7 @@ class ProjectServices extends APIService {
   async deleteProject(
     workspaceSlug: string,
     projectId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
       .then((response) => {
@@ -110,7 +110,7 @@ class ProjectServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: IProjectBulkInviteFormData,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
       .then((response) => {
@@ -340,4 +340,6 @@ class ProjectServices extends APIService {
   }
 }
 
-export default new ProjectServices();
+const projectServices = new ProjectServices();
+
+export default projectServices;

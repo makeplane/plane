@@ -19,7 +19,7 @@ class AiServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: { prompt: string; task: string },
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IGptResponse> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/ai-assistant/`, data)
       .then((response) => {
@@ -32,4 +32,6 @@ class AiServices extends APIService {
   }
 }
 
-export default new AiServices();
+const aiServices = new AiServices();
+
+export default aiServices;

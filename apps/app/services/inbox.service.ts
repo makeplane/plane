@@ -90,7 +90,7 @@ class InboxServices extends APIService {
     projectId: string,
     inboxId: string,
     inboxIssueId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
@@ -111,7 +111,7 @@ class InboxServices extends APIService {
     inboxId: string,
     inboxIssueId: string,
     data: TInboxStatus,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IInboxIssue> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
@@ -140,7 +140,7 @@ class InboxServices extends APIService {
     inboxId: string,
     inboxIssueId: string,
     data: { issue: Partial<IInboxIssue> },
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IInboxIssue> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
@@ -161,7 +161,7 @@ class InboxServices extends APIService {
     projectId: string,
     inboxId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IInboxIssueDetail> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`,

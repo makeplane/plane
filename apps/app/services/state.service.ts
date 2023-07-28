@@ -19,7 +19,7 @@ class ProjectStateServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`, data)
       .then((response) => {
@@ -61,7 +61,7 @@ class ProjectStateServices extends APIService {
     projectId: string,
     stateId: string,
     data: IState,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.put(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
@@ -81,7 +81,7 @@ class ProjectStateServices extends APIService {
     projectId: string,
     stateId: string,
     data: Partial<IState>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
@@ -100,7 +100,7 @@ class ProjectStateServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     stateId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
       .then((response) => {
@@ -113,4 +113,6 @@ class ProjectStateServices extends APIService {
   }
 }
 
-export default new ProjectStateServices();
+const projectStateServices = new ProjectStateServices();
+
+export default projectStateServices;

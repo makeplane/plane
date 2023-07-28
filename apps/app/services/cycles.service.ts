@@ -19,7 +19,7 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
       .then((response) => {
@@ -94,7 +94,7 @@ class ProjectCycleServices extends APIService {
     projectId: string,
     cycleId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.put(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
@@ -114,7 +114,7 @@ class ProjectCycleServices extends APIService {
     projectId: string,
     cycleId: string,
     data: Partial<ICycle>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
@@ -133,7 +133,7 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
       .then((response) => {
@@ -210,4 +210,6 @@ class ProjectCycleServices extends APIService {
   }
 }
 
-export default new ProjectCycleServices();
+const projectCycleServices = new ProjectCycleServices();
+
+export default projectCycleServices;

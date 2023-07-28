@@ -126,7 +126,7 @@ class TrackEventServices extends APIService {
   async trackWorkspaceEvent(
     data: IWorkspace | any,
     eventName: WorkspaceEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (
@@ -158,7 +158,7 @@ class TrackEventServices extends APIService {
   async trackProjectEvent(
     data: Partial<IProject> | any,
     eventName: ProjectEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "DELETE_PROJECT" && eventName !== "PROJECT_MEMBER_INVITE")
@@ -184,10 +184,7 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackUserOnboardingCompleteEvent(
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async trackUserOnboardingCompleteEvent(data: any, user: ICurrentUserResponse): Promise<any> {
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -201,10 +198,7 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackUserTourCompleteEvent(
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async trackUserTourCompleteEvent(data: any, user: ICurrentUserResponse): Promise<any> {
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -221,7 +215,7 @@ class TrackEventServices extends APIService {
   async trackIssueEvent(
     data: IIssue | any,
     eventName: IssueEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "ISSUE_DELETE")
@@ -249,10 +243,7 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackIssueMarkedAsDoneEvent(
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async trackIssueMarkedAsDoneEvent(data: any, user: ICurrentUserResponse): Promise<any> {
     if (!trackEvent) return;
     return this.request({
       url: "/api/track-event",
@@ -275,7 +266,7 @@ class TrackEventServices extends APIService {
       | "ISSUE_PROPERTY_UPDATE_ASSIGNEE"
       | "ISSUE_PROPERTY_UPDATE_DUE_DATE"
       | "ISSUE_PROPERTY_UPDATE_ESTIMATE",
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     if (!trackEvent) return;
     return this.request({
@@ -294,7 +285,7 @@ class TrackEventServices extends APIService {
   async trackIssueCommentEvent(
     data: Partial<IIssueComment> | any,
     eventName: IssueCommentEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "ISSUE_COMMENT_DELETE")
@@ -328,7 +319,7 @@ class TrackEventServices extends APIService {
       | "ISSUE_MOVED_TO_MODULE"
       | "ISSUE_MOVED_TO_CYCLE_IN_BULK"
       | "ISSUE_MOVED_TO_MODULE_IN_BULK",
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.request({
       url: "/api/track-event",
@@ -360,7 +351,7 @@ class TrackEventServices extends APIService {
   async trackIssueLabelEvent(
     data: any,
     eventName: IssueLabelEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.request({
       url: "/api/track-event",
@@ -378,7 +369,7 @@ class TrackEventServices extends APIService {
   async trackStateEvent(
     data: IState | any,
     eventName: StateEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "STATE_DELETE")
@@ -409,7 +400,7 @@ class TrackEventServices extends APIService {
   async trackCycleEvent(
     data: ICycle | any,
     eventName: CycleEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "CYCLE_DELETE")
@@ -440,7 +431,7 @@ class TrackEventServices extends APIService {
   async trackModuleEvent(
     data: IModule | any,
     eventName: ModuleEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "MODULE_DELETE")
@@ -471,7 +462,7 @@ class TrackEventServices extends APIService {
   async trackPageEvent(
     data: Partial<IPage> | any,
     eventName: PagesEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "PAGE_DELETE")
@@ -502,7 +493,7 @@ class TrackEventServices extends APIService {
   async trackPageBlockEvent(
     data: Partial<IPageBlock> | IIssue,
     eventName: PageBlocksEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "PAGE_BLOCK_DELETE" && eventName !== "PAGE_BLOCK_CONVERTED_TO_ISSUE")
@@ -544,7 +535,7 @@ class TrackEventServices extends APIService {
   async trackAskGptEvent(
     data: IGptResponse,
     eventName: GptEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     const payload = {
       workspaceId: data?.workspace_detail?.id,
@@ -571,7 +562,7 @@ class TrackEventServices extends APIService {
   async trackUseGPTResponseEvent(
     data: IIssue | IPageBlock,
     eventName: GptEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     if (!trackEvent) return;
 
@@ -616,7 +607,7 @@ class TrackEventServices extends APIService {
   async trackViewEvent(
     data: IView,
     eventName: ViewEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName === "VIEW_DELETE") payload = data;
@@ -645,7 +636,7 @@ class TrackEventServices extends APIService {
   async trackMiscellaneousEvent(
     data: any,
     eventName: MiscellaneousEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.request({
       url: "/api/track-event",
@@ -663,7 +654,7 @@ class TrackEventServices extends APIService {
   async trackAppIntegrationEvent(
     data: any,
     eventName: IntegrationEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.request({
       url: "/api/track-event",
@@ -681,7 +672,7 @@ class TrackEventServices extends APIService {
   async trackGitHubSyncEvent(
     data: any,
     eventName: GitHubSyncEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.request({
       url: "/api/track-event",
@@ -699,7 +690,7 @@ class TrackEventServices extends APIService {
   async trackIssueEstimateEvent(
     data: { estimate: IEstimate },
     eventName: IssueEstimateEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName === "ESTIMATE_DELETE") payload = data;
@@ -730,7 +721,7 @@ class TrackEventServices extends APIService {
   async trackImporterEvent(
     data: any,
     eventName: ImporterEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName === "GITHUB_IMPORTER_DELETE" || eventName === "JIRA_IMPORTER_DELETE")
@@ -761,7 +752,7 @@ class TrackEventServices extends APIService {
   async trackAnalyticsEvent(
     data: any,
     eventName: AnalyticsEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     const payload = { ...data };
 
@@ -780,7 +771,7 @@ class TrackEventServices extends APIService {
   async trackInboxEvent(
     data: any,
     eventName: InboxEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName !== "INBOX_DELETE")
@@ -811,7 +802,7 @@ class TrackEventServices extends APIService {
   async trackReactionEvent(
     data: IssueReaction | IssueCommentReaction,
     eventName: ReactionEventType,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     let payload: any;
     if (eventName === "ISSUE_REACTION_DELETE" || eventName === "ISSUE_COMMENT_REACTION_DELETE")

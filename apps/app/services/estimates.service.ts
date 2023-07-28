@@ -18,7 +18,7 @@ class ProjectEstimateServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: IEstimateFormData,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/`, data)
       .then((response) => {
@@ -36,7 +36,7 @@ class ProjectEstimateServices extends APIService {
     projectId: string,
     estimateId: string,
     data: IEstimateFormData,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`,
@@ -78,7 +78,7 @@ class ProjectEstimateServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     estimateId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`
@@ -94,4 +94,4 @@ class ProjectEstimateServices extends APIService {
   }
 }
 
-export default new ProjectEstimateServices();
+const projectEstimateServices = new ProjectEstimateServices();

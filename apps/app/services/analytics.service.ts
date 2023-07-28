@@ -62,4 +62,6 @@ class AnalyticsServices extends APIService {
   }
 }
 
-export default new AnalyticsServices();
+const analyticsServices = new AnalyticsServices();
+
+export default analyticsServices;

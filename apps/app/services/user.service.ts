@@ -61,7 +61,7 @@ class UserService extends APIService {
       });
   }
 
-  async updateUserOnBoard({ userRole }: any, user: ICurrentUserResponse | undefined): Promise<any> {
+  async updateUserOnBoard({ userRole }: any, user: ICurrentUserResponse): Promise<any> {
     return this.patch("/api/users/me/onboard/", {
       is_onboarded: true,
     })
@@ -146,4 +146,6 @@ class UserService extends APIService {
   }
 }
 
-export default new UserService();
+const userService = new UserService();
+
+export default userService;

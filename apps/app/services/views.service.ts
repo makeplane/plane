@@ -20,7 +20,7 @@ class ViewServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: IView,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
       .then((response) => {
@@ -37,7 +37,7 @@ class ViewServices extends APIService {
     projectId: string,
     viewId: string,
     data: IView,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
       .then((response) => {
@@ -54,7 +54,7 @@ class ViewServices extends APIService {
     projectId: string,
     viewId: string,
     data: Partial<IView>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`,
@@ -73,7 +73,7 @@ class ViewServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     viewId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => {
@@ -143,4 +143,6 @@ class ViewServices extends APIService {
   }
 }
 
-export default new ViewServices();
+const viewServices = new ViewServices();
+
+export default viewServices;

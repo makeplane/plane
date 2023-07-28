@@ -27,7 +27,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
       .then((response) => {
@@ -44,7 +44,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     moduleId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.put(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
@@ -76,7 +76,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     moduleId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
@@ -95,7 +95,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`
@@ -149,7 +149,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     moduleId: string,
     data: { issues: string[] },
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
@@ -259,4 +259,6 @@ class ProjectIssuesServices extends APIService {
   }
 }
 
-export default new ProjectIssuesServices();
+const projectIssuesServices = new ProjectIssuesServices();
+
+export default projectIssuesServices;

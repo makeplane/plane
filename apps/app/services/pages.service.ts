@@ -19,7 +19,7 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: Partial<IPage>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, data)
       .then((response) => {
@@ -36,7 +36,7 @@ class PageServices extends APIService {
     projectId: string,
     pageId: string,
     data: Partial<IPage>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IPage> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`,
@@ -55,7 +55,7 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`)
       .then((response) => {
@@ -135,7 +135,7 @@ class PageServices extends APIService {
     projectId: string,
     pageId: string,
     data: Partial<IPageBlock>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IPageBlock> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`,
@@ -172,7 +172,7 @@ class PageServices extends APIService {
     pageId: string,
     pageBlockId: string,
     data: Partial<IPageBlock>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IPage> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${pageBlockId}/`,
@@ -193,7 +193,7 @@ class PageServices extends APIService {
     projectId: string,
     pageId: string,
     pageBlockId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${pageBlockId}/`
@@ -227,7 +227,7 @@ class PageServices extends APIService {
     projectId: string,
     pageId: string,
     blockId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IIssue> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${blockId}/issues/`
@@ -247,4 +247,6 @@ class PageServices extends APIService {
   }
 }
 
-export default new PageServices();
+const pageServices = new PageServices();
+
+export default pageServices;

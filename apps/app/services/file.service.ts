@@ -89,4 +89,6 @@ class FileServices extends APIService {
   }
 }
 
-export default new FileServices();
+const fileServices = new FileServices();
+
+export default fileServices;

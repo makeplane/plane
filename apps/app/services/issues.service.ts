@@ -26,7 +26,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
       .then((response) => {
@@ -107,7 +107,7 @@ class ProjectIssuesServices extends APIService {
     data: {
       issues: string[];
     },
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ) {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
@@ -183,7 +183,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     issueId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`,
@@ -205,7 +205,7 @@ class ProjectIssuesServices extends APIService {
     issueId: string,
     commentId: string,
     data: IIssueComment,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
@@ -226,7 +226,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     issueId: string,
     commentId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`
@@ -268,7 +268,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IIssueLabels> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`, data)
       .then((response: { data: IIssueLabels; [key: string]: any }) => {
@@ -299,7 +299,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     labelId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`,
@@ -332,7 +332,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     labelId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`
@@ -359,7 +359,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     issueId: string,
     data: Partial<IIssue>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
@@ -378,7 +378,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     issuesId: string,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
       .then((response) => {
@@ -394,7 +394,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`,
@@ -566,4 +566,6 @@ class ProjectIssuesServices extends APIService {
   }
 }
 
-export default new ProjectIssuesServices();
+const projectIssuesServices = new ProjectIssuesServices();
+
+export default projectIssuesServices;

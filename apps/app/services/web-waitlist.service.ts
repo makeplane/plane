@@ -4,7 +4,7 @@ import APIService from "services/api.service";
 // types
 import { IWebWaitListResponse } from "types";
 
-class WebWailtListServices extends APIService {
+class WebWaitListServices extends APIService {
   constructor() {
     const origin = typeof window !== "undefined" ? window.location.origin || "" : "";
     super(origin);
@@ -19,4 +19,6 @@ class WebWailtListServices extends APIService {
   }
 }
 
-export default new WebWailtListServices();
+const webWaitListService = new WebWaitListServices();
+
+export default webWaitListService;

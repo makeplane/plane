@@ -43,7 +43,7 @@ class WorkspaceService extends APIService {
 
   async createWorkspace(
     data: Partial<IWorkspace>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IWorkspace> {
     return this.post("/api/workspaces/", data)
       .then((response) => {
@@ -59,7 +59,7 @@ class WorkspaceService extends APIService {
   async updateWorkspace(
     workspaceSlug: string,
     data: Partial<IWorkspace>,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<IWorkspace> {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
       .then((response) => {
@@ -72,10 +72,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async deleteWorkspace(
-    workspaceSlug: string,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async deleteWorkspace(workspaceSlug: string, user: ICurrentUserResponse): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/`)
       .then((response) => {
         if (trackEvent)
@@ -90,7 +87,7 @@ class WorkspaceService extends APIService {
   async inviteWorkspace(
     workspaceSlug: string,
     data: IWorkspaceBulkInviteFormData,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
       .then((response) => {
@@ -107,7 +104,7 @@ class WorkspaceService extends APIService {
     workspaceSlug: string,
     invitationId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(
       `/api/users/me/invitations/workspaces/${workspaceSlug}/${invitationId}/join/`,
@@ -258,4 +255,6 @@ class WorkspaceService extends APIService {
   }
 }
 
-export default new WorkspaceService();
+const workspaceService = new WorkspaceService();
+
+export default workspaceService;

@@ -26,7 +26,7 @@ class ReactionService extends APIService {
     projectId: string,
     issueId: string,
     data: IssueReactionForm,
-    user?: ICurrentUserResponse
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`,
@@ -61,7 +61,7 @@ class ReactionService extends APIService {
     projectId: string,
     issueId: string,
     reaction: string,
-    user?: ICurrentUserResponse
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/${reaction}/`
@@ -81,7 +81,7 @@ class ReactionService extends APIService {
     projectId: string,
     commentId: string,
     data: IssueCommentReactionForm,
-    user?: ICurrentUserResponse
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`,
@@ -120,7 +120,7 @@ class ReactionService extends APIService {
     projectId: string,
     commentId: string,
     reaction: string,
-    user?: ICurrentUserResponse
+    user: ICurrentUserResponse
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/${reaction}/`
