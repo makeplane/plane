@@ -270,7 +270,7 @@ def filter_sub_issue_toggle(params, filter, method):
 
 def filter_subscribed_issues(params, filter, method):
     if method == "GET":
-        subscribers = params.getlist("subscriber")
+        subscribers = params.get("subscriber").split(",")
         if len(subscribers) and "" not in subscribers:
             filter["issue_subscribers__subscriber_id__in"] = subscribers
     else:
