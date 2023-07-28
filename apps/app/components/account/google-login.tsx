@@ -20,17 +20,21 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = ({ handleSignIn }) => {
       callback: handleSignIn,
     });
 
-    window?.google?.accounts.id.renderButton(
-      googleSignInButton.current,
-      {
-        type: "standard",
-        theme: "outline",
-        size: "large",
-        logo_alignment: "center",
-        width: "360",
-        text: "signin_with",
-      } as GsiButtonConfiguration // customization attributes
-    );
+    try {
+      window?.google?.accounts.id.renderButton(
+        googleSignInButton.current,
+        {
+          type: "standard",
+          theme: "outline",
+          size: "large",
+          logo_alignment: "center",
+          // width: "360",
+          text: "signin_with",
+        } as GsiButtonConfiguration // customization attributes
+      );
+    } catch (err) {
+      console.log(err);
+    }
 
     window?.google?.accounts.id.prompt(); // also display the One Tap dialog
 
@@ -49,11 +53,13 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = ({ handleSignIn }) => {
   return (
     <>
       <Script src="https://accounts.google.com/gsi/client" async defer onLoad={loadScript} />
-      <div
-        className="overflow-hidden rounded w-full flex justify-center items-center !text-sm !font-medium !text-custom-text-100"
-        id="googleSignInButton"
-        ref={googleSignInButton}
-      />
+      <div className="text-center mx-auto">
+        <div
+          className="overflow-hidden rounded w-full"
+          id="googleSignInButton"
+          ref={googleSignInButton}
+        />
+      </div>
     </>
   );
 };
