@@ -13,12 +13,18 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import (
-    CharField,
-    Count,
+    Prefetch,
     OuterRef,
     Func,
     F,
     Q,
+    Count,
+    Case,
+    Value,
+    CharField,
+    When,
+    Max,
+    IntegerField,
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
@@ -39,6 +45,8 @@ from plane.api.serializers import (
     UserLiteSerializer,
     ProjectMemberSerializer,
     WorkspaceThemeSerializer,
+    IssueActivitySerializer,
+    IssueLiteSerializer,
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -60,6 +68,10 @@ from plane.db.models import (
     PageFavorite,
     Page,
     IssueViewFavorite,
+    IssueLink,
+    IssueAttachment,
+    IssueSubscriber,
+    Project,
     Label,
     State,
 )
@@ -69,6 +81,8 @@ from plane.api.permissions import (
     WorkspaceEntityPermission,
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
+from plane.utils.issue_filters import issue_filters
+from plane.utils.grouper import group_results
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -1029,6 +1043,356 @@ class WorkspaceThemeViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
+class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
+
+    def get(self, request, slug, user_id):
+        try:
+            filters = issue_filters(request.query_params, "GET")
+
+            state_distribution = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .annotate(state_group=F("state__group"))
+                .values("state_group")
+                .annotate(state_count=Count("state_group"))
+                .order_by("state_group")
+            )
+
+            priority_order = ["urgent", "high", "medium", "low", None]
+
+            priority_distribution = (
+                Issue.objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .values("priority")
+                .annotate(priority_count=Count("priority"))
+                .annotate(
+                    priority_order=Case(
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
+                        default=Value(len(priority_order)),
+                        output_field=IntegerField(),
+                    )
+                )
+                .order_by("priority_order")
+            )
+
+            created_issues = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                    created_by_id=user_id,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            assigned_issues_count = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            pending_issues_count = (
+                Issue.issue_objects.filter(
+                    ~Q(state__group__in=["completed", "cancelled"]),
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            completed_issues_count = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    state__group="completed",
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            subscribed_issues_count = (
+                IssueSubscriber.objects.filter(
+                    workspace__slug=slug,
+                    subscriber_id=user_id,
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            return Response(
+                {
+                    "state_distribution": state_distribution,
+                    "priority_distribution": priority_distribution,
+                    "created_issues": created_issues,
+                    "assigned_issues": assigned_issues_count,
+                    "completed_issues": completed_issues_count,
+                    "pending_issues": pending_issues_count,
+                    "subscribed_issues": subscribed_issues_count,
+                }
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceUserActivityEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug, user_id):
+        try:
+
+            projects = request.query_params.getlist("project", [])
+
+            queryset = IssueActivity.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+                actor=user_id,
+            ).select_related("actor", "workspace")
+
+            if projects:
+                queryset = queryset.filter(project__in=projects)
+
+            return self.paginate(
+                request=request,
+                queryset=queryset,
+                on_results=lambda issue_activities: IssueActivitySerializer(
+                    issue_activities, many=True
+                ).data,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceUserProfileEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug, user_id):
+        try:
+            user_data = User.objects.get(pk=user_id)
+
+            projects = (
+                Project.objects.filter(
+                    workspace__slug=slug,
+                    project_projectmember__member=request.user,
+                )
+                .annotate(
+                    created_issues=Count(
+                        "project_issue", filter=Q(project_issue__created_by_id=user_id)
+                    )
+                )
+                .annotate(
+                    assigned_issues=Count(
+                        "project_issue",
+                        filter=Q(project_issue__assignees__in=[user_id]),
+                    )
+                )
+                .annotate(
+                    completed_issues=Count(
+                        "project_issue",
+                        filter=Q(
+                            project_issue__completed_at__isnull=False,
+                            project_issue__assignees__in=[user_id],
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_issues=Count(
+                        "project_issue",
+                        filter=Q(
+                            project_issue__state__group__in=[
+                                "backlog",
+                                "unstarted",
+                                "started",
+                            ],
+                            project_issue__assignees__in=[user_id],
+                        ),
+                    )
+                )
+                .values(
+                    "id",
+                    "name",
+                    "identifier",
+                    "emoji",
+                    "icon_prop",
+                    "created_issues",
+                    "assigned_issues",
+                    "completed_issues",
+                    "pending_issues",
+                )
+            )
+
+            return Response(
+                {
+                    "project_data": projects,
+                    "user_data": {
+                        "email": user_data.email,
+                        "first_name": user_data.first_name,
+                        "last_name": user_data.last_name,
+                        "avatar": user_data.avatar,
+                        "cover_image": user_data.cover_image,
+                        "date_joined": user_data.date_joined,
+                        "user_timezone": user_data.user_timezone,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug, user_id):
+        try:
+            filters = issue_filters(request.query_params, "GET")
+            order_by_param = request.GET.get("order_by", "-created_at")
+            issue_queryset = (
+                Issue.issue_objects.filter(
+                    Q(assignees__in=[user_id])
+                    | Q(created_by_id=user_id)
+                    | Q(issue_subscribers__subscriber_id=user_id),
+                    workspace__slug=slug,
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .select_related("project", "workspace", "state", "parent")
+                .prefetch_related("assignees", "labels")
+                .order_by("-created_at")
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+            )
+
+            # Priority Ordering
+            if order_by_param == "priority" or order_by_param == "-priority":
+                priority_order = (
+                    priority_order
+                    if order_by_param == "priority"
+                    else priority_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    priority_order=Case(
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
+                        output_field=CharField(),
+                    )
+                ).order_by("priority_order")
+
+            # State Ordering
+            elif order_by_param in [
+                "state__name",
+                "state__group",
+                "-state__name",
+                "-state__group",
+            ]:
+                state_order = (
+                    state_order
+                    if order_by_param in ["state__name", "state__group"]
+                    else state_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    state_order=Case(
+                        *[
+                            When(state__group=state_group, then=Value(i))
+                            for i, state_group in enumerate(state_order)
+                        ],
+                        default=Value(len(state_order)),
+                        output_field=CharField(),
+                    )
+                ).order_by("state_order")
+            # assignee and label ordering
+            elif order_by_param in [
+                "labels__name",
+                "-labels__name",
+                "assignees__first_name",
+                "-assignees__first_name",
+            ]:
+                issue_queryset = issue_queryset.annotate(
+                    max_values=Max(
+                        order_by_param[1::]
+                        if order_by_param.startswith("-")
+                        else order_by_param
+                    )
+                ).order_by(
+                    "-max_values" if order_by_param.startswith("-") else "max_values"
+                )
+            else:
+                issue_queryset = issue_queryset.order_by(order_by_param)
+
+            issues = IssueLiteSerializer(issue_queryset, many=True).data
+
+            ## Grouping the results
+            group_by = request.GET.get("group_by", False)
+            if group_by:
+                return Response(
+                    group_results(issues, group_by), status=status.HTTP_200_OK
+                )
+
+            return Response(issues, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
     permission_classes = [
