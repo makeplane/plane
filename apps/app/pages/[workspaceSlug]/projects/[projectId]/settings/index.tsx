@@ -29,6 +29,7 @@ import {
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
+import { truncateText } from "helpers/string.helper";
 // types
 import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -161,7 +162,7 @@ const GeneralSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
             linkTruncate
           />

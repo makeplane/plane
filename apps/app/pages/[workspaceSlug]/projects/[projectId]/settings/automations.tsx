@@ -22,6 +22,8 @@ import type { NextPage } from "next";
 import { IProject } from "types";
 // constant
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const AutomationsSettings: NextPage = () => {
   const router = useRouter();
@@ -65,7 +67,7 @@ const AutomationsSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
             linkTruncate
           />

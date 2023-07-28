@@ -53,7 +53,9 @@ const ProjectIssues: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
+            <BreadcrumbItem
+              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`}
+            />
           </Breadcrumbs>
         }
         right={

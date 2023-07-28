@@ -4,6 +4,8 @@ import useSWR from "swr";
 
 // services
 import projectService from "services/project.service";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
@@ -21,8 +23,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
-import useIssuesView from "hooks/use-issues-view";
-import { useEffect } from "react";
 
 const ProjectArchivedIssues: NextPage = () => {
   const router = useRouter();
@@ -44,7 +44,7 @@ const ProjectArchivedIssues: NextPage = () => {
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 12)} Archived Issues`}
+              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Archived Issues`}
             />
           </Breadcrumbs>
         }

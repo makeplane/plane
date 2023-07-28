@@ -26,6 +26,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getStatesList, orderStateGroups } from "helpers/state.helper";
+import { truncateText } from "helpers/string.helper";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -64,7 +65,7 @@ const StatesSettings: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${projectDetails?.name ?? "Project"}`}
+              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
               linkTruncate
             />

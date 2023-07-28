@@ -112,7 +112,7 @@ const SingleModule: React.FC = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${moduleDetails?.project_detail.name ?? "Project"} Modules`}
+              title={`${truncateText(moduleDetails?.project_detail.name ?? "Project", 32)} Modules`}
               link={`/${workspaceSlug}/projects/${projectId}/modules`}
               linkTruncate
             />

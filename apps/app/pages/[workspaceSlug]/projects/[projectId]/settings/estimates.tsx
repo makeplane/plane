@@ -29,6 +29,8 @@ import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -115,7 +117,7 @@ const EstimatesSettings: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${projectDetails?.name ?? "Project"}`}
+              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
               linkTruncate
             />

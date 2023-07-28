@@ -16,6 +16,8 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import type { NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const BillingSettings: NextPage = () => {
   const {
@@ -32,7 +34,7 @@ const BillingSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeWorkspace?.name ?? "Workspace"}`}
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
             link={`/${workspaceSlug}`}
             linkTruncate
           />

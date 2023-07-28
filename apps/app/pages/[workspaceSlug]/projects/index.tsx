@@ -26,6 +26,8 @@ import emptyProject from "public/empty-state/project.svg";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const ProjectsPage: NextPage = () => {
   // router
@@ -45,7 +47,7 @@ const ProjectsPage: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeWorkspace?.name ?? "Workspace"} Projects`}
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Projects`}
             unshrinkTitle={false}
           />
         </Breadcrumbs>

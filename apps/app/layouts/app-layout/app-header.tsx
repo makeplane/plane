@@ -15,7 +15,7 @@ const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar, n
       noHeader ? "md:hidden" : ""
     }`}
   >
-    <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-hidden overflow-ellipsis">
+    <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
       <div className="block md:hidden">
         <button
           type="button"
