@@ -9,12 +9,14 @@ import { Disclosure, Transition } from "@headlessui/react";
 // services
 import userService from "services/user.service";
 // ui
-import { Icon, Loader } from "components/ui";
+import { Icon, Loader, Tooltip } from "components/ui";
 // helpers
-import { renderLongDetailDateFormat } from "helpers/date-time.helper";
+import { render12HourFormatTime, renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import Link from "next/link";
+import { EditOutlined } from "@mui/icons-material";
 
 export const ProfileSidebar = () => {
   const router = useRouter();
@@ -34,20 +36,17 @@ export const ProfileSidebar = () => {
 
   const userDetails = [
     {
-      label: "Username",
-      value: "",
-    },
-    {
       label: "Joined on",
       value: renderLongDetailDateFormat(userProjectsData?.user_data.date_joined ?? ""),
     },
     {
       label: "Timezone",
-      value: userProjectsData?.user_data.user_timezone,
-    },
-    {
-      label: "Status",
-      value: "Online",
+      value: (
+        <span>
+          {render12HourFormatTime(new Date())}{" "}
+          <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
+        </span>
+      ),
     },
   ];
 
@@ -64,10 +63,21 @@ export const ProfileSidebar = () => {
       {userProjectsData ? (
         <>
           <div className="relative h-32">
+            <div className="absolute top-3.5 right-3.5 h-[18px] w-[18px] bg-white rounded grid place-items-center">
+              <Link href={`/${workspaceSlug}/me/profile`}>
+                <a className="grid place-items-center text-black">
+                  <EditOutlined
+                    sx={{
+                      fontSize: 12,
+                    }}
+                  />
+                </a>
+              </Link>
+            </div>
             <img
               src={
                 userProjectsData.user_data.cover_image ??
-                "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
               }
               alt={userProjectsData.user_data.first_name}
               className="h-32 w-full object-cover"
@@ -96,8 +106,8 @@ export const ProfileSidebar = () => {
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
                 <div key={detail.label} className="flex items-center gap-4 text-sm">
-                  <div className="text-custom-text-200 w-2/5">{detail.label}</div>
-                  <div className="font-medium">{detail.value}</div>
+                  <div className="flex-shrink-0 text-custom-text-200 w-2/5">{detail.label}</div>
+                  <div className="font-medium w-3/5 break-words">{detail.value}</div>
                 </div>
               ))}
             </div>
@@ -143,17 +153,19 @@ export const ProfileSidebar = () => {
                             </div>
                           </div>
                           <div className="flex-shrink-0 flex items-center gap-2">
-                            <div
-                              className={`px-1 py-0.5 text-xs font-medium rounded ${
-                                completedIssuePercentage <= 35
-                                  ? "bg-red-500/10 text-red-500"
-                                  : completedIssuePercentage <= 70
-                                  ? "bg-yellow-500/10 text-yellow-500"
-                                  : "bg-green-500/10 text-green-500"
-                              }`}
-                            >
-                              {completedIssuePercentage}%
-                            </div>
+                            <Tooltip tooltipContent="Completion percentage" position="left">
+                              <div
+                                className={`px-1 py-0.5 text-xs font-medium rounded ${
+                                  completedIssuePercentage <= 35
+                                    ? "bg-red-500/10 text-red-500"
+                                    : completedIssuePercentage <= 70
+                                    ? "bg-yellow-500/10 text-yellow-500"
+                                    : "bg-green-500/10 text-green-500"
+                                }`}
+                              >
+                                {completedIssuePercentage}%
+                              </div>
+                            </Tooltip>
                             <Icon iconName="arrow_drop_down" className="!text-lg" />
                           </div>
                         </Disclosure.Button>
