@@ -60,8 +60,16 @@ export const IssueReaction: React.FC<Props> = (props) => {
                   : "bg-custom-background-80"
               }`}
             >
-              <span>{groupedReactions?.[reaction].length} </span>
               <span>{renderEmoji(reaction)}</span>
+              <span
+                className={
+                  reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                    ? "text-custom-primary-100"
+                    : ""
+                }
+              >
+                {groupedReactions?.[reaction].length}{" "}
+              </span>
             </button>
           )
       )}

@@ -52,7 +52,8 @@ const useCommentReaction = (
       workspaceSlug.toString(),
       projectId.toString(),
       commendId.toString(),
-      { reaction }
+      { reaction },
+      user.user
     );
 
     mutateCommentReactions((prev) => [...(prev || []), data]);
@@ -76,7 +77,8 @@ const useCommentReaction = (
       workspaceSlug.toString(),
       projectId.toString(),
       commendId.toString(),
-      reaction
+      reaction,
+      user.user
     );
 
     mutateCommentReactions();
