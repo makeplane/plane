@@ -28,7 +28,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = ({ handleSignIn }) => {
           theme: "outline",
           size: "large",
           logo_alignment: "center",
-          // width: "360",
+          width: 360,
           text: "signin_with",
         } as GsiButtonConfiguration // customization attributes
       );
@@ -53,13 +53,11 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = ({ handleSignIn }) => {
   return (
     <>
       <Script src="https://accounts.google.com/gsi/client" async defer onLoad={loadScript} />
-      <div className="text-center mx-auto">
-        <div
-          className="overflow-hidden rounded w-full"
-          id="googleSignInButton"
-          ref={googleSignInButton}
-        />
-      </div>
+      <div
+        className="overflow-hidden rounded w-full"
+        id="googleSignInButton"
+        ref={googleSignInButton}
+      />
     </>
   );
 };
