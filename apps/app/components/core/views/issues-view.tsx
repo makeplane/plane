@@ -79,6 +79,7 @@ export const IssuesView: React.FC<Props> = ({
 
   const {
     groupedByIssues,
+    mutateIssues,
     issueView,
     groupByProperty: selectedGroup,
     orderBy,
@@ -525,6 +526,7 @@ export const IssuesView: React.FC<Props> = ({
           groupedIssues: groupedByIssues,
           isEmpty,
           issueView,
+          mutateIssues,
           orderBy,
           params,
           properties,

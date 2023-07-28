@@ -75,7 +75,10 @@ const ProfileOverview: NextPage = () => {
             <ProfileWorkload stateDistribution={stateDistribution} />
             <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch gap-5">
               <ProfilePriorityDistribution userProfile={userProfile} />
-              <ProfileStateDistribution stateDistribution={stateDistribution} />
+              <ProfileStateDistribution
+                stateDistribution={stateDistribution}
+                userProfile={userProfile}
+              />
             </div>
             <div className="space-y-2">
               <h3 className="text-lg font-medium">Recent Activity</h3>

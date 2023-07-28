@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// next-themes
+import { useTheme } from "next-themes";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
@@ -17,6 +19,8 @@ import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 export const ProfileSidebar = () => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
+
+  const { theme } = useTheme();
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId
@@ -48,7 +52,15 @@ export const ProfileSidebar = () => {
   ];
 
   return (
-    <div className="flex-shrink-0 h-full w-80 overflow-y-auto">
+    <div
+      className="flex-shrink-0 h-full w-80 overflow-y-auto"
+      style={{
+        boxShadow:
+          theme === "light"
+            ? "0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02), 0px 1px 12px 0px rgba(0, 0, 0, 0.12)"
+            : "0px 0px 4px 0px rgba(0, 0, 0, 0.20), 0px 2px 6px 0px rgba(0, 0, 0, 0.50)",
+      }}
+    >
       {userProjectsData ? (
         <>
           <div className="relative h-32">
@@ -96,6 +108,12 @@ export const ProfileSidebar = () => {
                   project.assigned_issues +
                   project.pending_issues +
                   project.completed_issues;
+                const totalAssignedIssues = totalIssues - project.created_issues;
+
+                const completedIssuePercentage =
+                  totalAssignedIssues === 0
+                    ? 0
+                    : Math.round((project.completed_issues / totalAssignedIssues) * 100);
 
                 return (
                   <Disclosure
@@ -125,15 +143,16 @@ export const ProfileSidebar = () => {
                             </div>
                           </div>
                           <div className="flex-shrink-0 flex items-center gap-2">
-                            <div className="px-1 text-xs font-medium">
-                              {(
-                                (project.completed_issues /
-                                  (project.assigned_issues +
-                                    project.completed_issues +
-                                    project.pending_issues)) *
-                                100
-                              ).toFixed(0)}
-                              %
+                            <div
+                              className={`px-1 py-0.5 text-xs font-medium rounded ${
+                                completedIssuePercentage <= 35
+                                  ? "bg-red-500/10 text-red-500"
+                                  : completedIssuePercentage <= 70
+                                  ? "bg-yellow-500/10 text-yellow-500"
+                                  : "bg-green-500/10 text-green-500"
+                              }`}
+                            >
+                              {completedIssuePercentage}%
                             </div>
                             <Icon iconName="arrow_drop_down" className="!text-lg" />
                           </div>
@@ -148,36 +167,38 @@ export const ProfileSidebar = () => {
                           leaveTo="transform opacity-0"
                         >
                           <Disclosure.Panel className="pl-9 mt-5">
-                            <div className="flex items-center gap-0.5">
-                              <div
-                                className="h-1 rounded"
-                                style={{
-                                  backgroundColor: "#203b80",
-                                  width: `${(project.created_issues / totalIssues) * 100}%`,
-                                }}
-                              />
-                              <div
-                                className="h-1 rounded"
-                                style={{
-                                  backgroundColor: "#3f76ff",
-                                  width: `${(project.assigned_issues / totalIssues) * 100}%`,
-                                }}
-                              />
-                              <div
-                                className="h-1 rounded"
-                                style={{
-                                  backgroundColor: "#f59e0b",
-                                  width: `${(project.pending_issues / totalIssues) * 100}%`,
-                                }}
-                              />
-                              <div
-                                className="h-1 rounded"
-                                style={{
-                                  backgroundColor: "#16a34a",
-                                  width: `${(project.completed_issues / totalIssues) * 100}%`,
-                                }}
-                              />
-                            </div>
+                            {totalIssues > 0 && (
+                              <div className="flex items-center gap-0.5">
+                                <div
+                                  className="h-1 rounded"
+                                  style={{
+                                    backgroundColor: "#203b80",
+                                    width: `${(project.created_issues / totalIssues) * 100}%`,
+                                  }}
+                                />
+                                <div
+                                  className="h-1 rounded"
+                                  style={{
+                                    backgroundColor: "#3f76ff",
+                                    width: `${(project.assigned_issues / totalIssues) * 100}%`,
+                                  }}
+                                />
+                                <div
+                                  className="h-1 rounded"
+                                  style={{
+                                    backgroundColor: "#f59e0b",
+                                    width: `${(project.pending_issues / totalIssues) * 100}%`,
+                                  }}
+                                />
+                                <div
+                                  className="h-1 rounded"
+                                  style={{
+                                    backgroundColor: "#16a34a",
+                                    width: `${(project.completed_issues / totalIssues) * 100}%`,
+                                  }}
+                                />
+                              </div>
+                            )}
                             <div className="mt-7 space-y-5 text-sm text-custom-text-200">
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
