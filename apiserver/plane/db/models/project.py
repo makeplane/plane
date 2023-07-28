@@ -91,6 +91,7 @@ class Project(BaseModel):
     default_state = models.ForeignKey(
         "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
     )
+    sort_order = models.FloatField(default=65535)
 
     def __str__(self):
         """Return name of the project"""
