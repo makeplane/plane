@@ -1,4 +1,12 @@
-import { IIssue, IIssueLite, IWorkspace, NestedKeyOf, Properties } from "./";
+import {
+  IIssue,
+  IIssueLite,
+  IWorkspace,
+  IWorkspaceLite,
+  NestedKeyOf,
+  Properties,
+  TStateGroups,
+} from "./";
 
 export interface IUser {
   avatar: string;
@@ -51,7 +59,6 @@ export interface ICurrentUserResponse extends IUser {
     last_workspace_slug: string | null;
   };
 }
-
 export interface IUserLite {
   avatar: string;
   created_at: Date;
@@ -67,8 +74,13 @@ export interface IUserActivity {
   activity_count: number;
 }
 
+export interface IUserPriorityDistribution {
+  priority: string;
+  priority_count: number;
+}
+
 export interface IUserStateDistribution {
-  state_group: string;
+  state_group: TStateGroups;
   state_count: number;
 }
 
@@ -107,6 +119,7 @@ export interface IUserDetailedActivity {
   updated_by: string | null;
   verb: string;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
 }
 
 export interface IUserActivityResponse {
@@ -133,3 +146,36 @@ export type OnboardingSteps = {
   workspace_invite: boolean;
   workspace_join: boolean;
 };
+
+export interface IUserProfileData {
+  assigned_issues: number;
+  completed_issues: number;
+  created_issues: number;
+  pending_issues: number;
+  priority_distribution: IUserPriorityDistribution[];
+  state_distribution: IUserStateDistribution[];
+  subscribed_issues: number;
+}
+
+export interface IUserProfileProjectSegregation {
+  project_data: {
+    assigned_issues: number;
+    completed_issues: number;
+    created_issues: number;
+    emoji: string | null;
+    icon_prop: null;
+    id: string;
+    identifier: string;
+    name: string;
+    pending_issues: number;
+  }[];
+  user_data: {
+    avatar: string;
+    cover_image: string | null;
+    date_joined: Date;
+    email: string;
+    first_name: string;
+    last_name: string;
+    user_timezone: string;
+  };
+}

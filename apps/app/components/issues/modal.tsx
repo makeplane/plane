@@ -25,7 +25,6 @@ import type { IIssue } from "types";
 // fetch-keys
 import {
   PROJECT_ISSUES_DETAILS,
-  PROJECT_ISSUES_LIST,
   USER_ISSUE,
   SUB_ISSUES,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
@@ -40,11 +39,11 @@ import {
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
 export interface IssuesModalProps {
-  isOpen: boolean;
-  handleClose: () => void;
   data?: IIssue | null;
-  prePopulateData?: Partial<IIssue>;
+  handleClose: () => void;
+  isOpen: boolean;
   isUpdatingSingleIssue?: boolean;
+  prePopulateData?: Partial<IIssue>;
   fieldsToShow?: (
     | "project"
     | "name"
@@ -58,15 +57,17 @@ export interface IssuesModalProps {
     | "parent"
     | "all"
   )[];
+  onSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
-  isOpen,
-  handleClose,
   data,
-  prePopulateData,
+  handleClose,
+  isOpen,
   isUpdatingSingleIssue = false,
+  prePopulateData,
   fieldsToShow = ["all"],
+  onSubmit,
 }) => {
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -95,9 +96,14 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     };
 
   useEffect(() => {
+    if (data && data.project) {
+      setActiveProject(data.project);
+      return;
+    }
+
     if (projects && projects.length > 0 && !activeProject)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [activeProject, projectId, projects]);
+  }, [activeProject, data, projectId, projects]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -306,6 +312,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     if (!data) await createIssue(payload);
     else await updateIssue(payload);
+
+    if (onSubmit) await onSubmit(payload);
   };
 
   if (!projects || projects.length === 0) return null;

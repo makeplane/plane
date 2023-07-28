@@ -6,11 +6,20 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // hooks
 import useUser from "./use-user";
 
-const useProjectMembers = (workspaceSlug: string, projectId: string) => {
+const useProjectMembers = (
+  workspaceSlug: string | undefined,
+  projectId: string | undefined,
+  fetchCondition?: boolean
+) => {
+  fetchCondition = fetchCondition ?? true;
+
   const { user } = useUser();
   // fetching project members
-  const { data: members } = useSWR(PROJECT_MEMBERS(projectId), () =>
-    projectService.projectMembers(workspaceSlug, projectId)
+  const { data: members } = useSWR(
+    workspaceSlug && projectId && fetchCondition ? PROJECT_MEMBERS(projectId) : null,
+    workspaceSlug && projectId && fetchCondition
+      ? () => projectService.projectMembers(workspaceSlug, projectId)
+      : null
   );
 
   const hasJoined = members?.some((item: any) => item.member.id === (user as any)?.id);

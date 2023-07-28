@@ -72,6 +72,8 @@ from plane.db.models import (
     IssueAttachment,
     IssueSubscriber,
     Project,
+    Label,
+    State,
 )
 from plane.api.permissions import (
     WorkSpaceBasePermission,
@@ -615,6 +617,19 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Check for the only member in the workspace
+            if (
+                workspace_member.role == 20
+                and WorkspaceMember.objects.filter(
+                    workspace__slug=slug, role=20
+                ).count()
+                == 1
+            ):
+                return Response(
+                    {"error": "Cannot delete the only Admin for the workspace"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Delete the user also from all the projects
             ProjectMember.objects.filter(
                 workspace__slug=slug, member=workspace_member.member
@@ -1030,9 +1045,6 @@ class WorkspaceThemeViewSet(BaseViewSet):
 
 
 class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
 
     def get(self, request, slug, user_id):
         try:
@@ -1375,6 +1387,25 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 )
 
             return Response(issues, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+class WorkspaceLabelsEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        try:
+            labels = Label.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+            ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
+            return Response(labels, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

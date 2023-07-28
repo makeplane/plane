@@ -49,6 +49,7 @@ from plane.api.views import (
     WorkspaceUserActivityEndpoint,
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
+    WorkspaceLabelsEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -408,6 +409,11 @@ urlpatterns = [
         "workspaces/<str:slug>/user-issues/<uuid:user_id>/",
         WorkspaceUserProfileIssuesEndpoint.as_view(),
         name="workspace-user-profile-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/labels/",
+        WorkspaceLabelsEndpoint.as_view(),
+        name="workspace-labels",
     ),
     ## End Workspaces ##
     # Projects

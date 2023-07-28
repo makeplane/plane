@@ -17,6 +17,7 @@ import {
   IssueAttachments,
   IssueDescriptionForm,
   SubIssuesList,
+  IssueReaction,
 } from "components/issues";
 // ui
 import { CustomMenu } from "components/ui";
@@ -117,6 +118,9 @@ export const IssueMainContent: React.FC<Props> = ({
           handleFormSubmit={submitChanges}
           isAllowed={memberRole.isMember || memberRole.isOwner || !uneditable}
         />
+
+        <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />
+
         <div className="mt-2 space-y-2">
           <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} />
         </div>

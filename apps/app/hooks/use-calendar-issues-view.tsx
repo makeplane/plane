@@ -41,12 +41,6 @@ const useCalendarIssuesView = () => {
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
     type: filters?.type ? filters?.type : undefined,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
-    issue__assignees__id: filters?.issue__assignees__id
-      ? filters?.issue__assignees__id.join(",")
-      : undefined,
-    issue__labels__id: filters?.issue__labels__id
-      ? filters?.issue__labels__id.join(",")
-      : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     target_date: calendarDateRange,
   };

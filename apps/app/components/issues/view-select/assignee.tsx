@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -15,6 +15,7 @@ import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { ICurrentUserResponse, IIssue } from "types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import useProjectMembers from "hooks/use-project-members";
 
 type Props = {
   issue: IIssue;
@@ -37,15 +38,12 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
   isNotAllowed,
   customButton = false,
 }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const [fetchAssignees, setFetchAssignees] = useState(false);
 
-  const { data: members } = useSWR(
-    projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { members } = useProjectMembers(workspaceSlug?.toString(), issue.project, fetchAssignees);
 
   const options = members?.map((member) => ({
     value: member.member.id,
@@ -129,6 +127,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       noChevron
       position={position}
       disabled={isNotAllowed}
+      onOpen={() => setFetchAssignees(true)}
       selfPositioned={selfPositioned}
       width="w-full min-w-[12rem]"
     />

@@ -52,7 +52,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [searchParams, setSearchParams] = useState("");
   const [formData, setFormData] = useState({
     search: "",
