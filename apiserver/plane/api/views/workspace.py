@@ -603,6 +603,19 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Check for the only member in the workspace
+            if (
+                workspace_member.role == 20
+                and WorkspaceMember.objects.filter(
+                    workspace__slug=slug, role=20
+                ).count()
+                == 1
+            ):
+                return Response(
+                    {"error": "Cannot delete the only Admin for the workspace"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Delete the user also from all the projects
             ProjectMember.objects.filter(
                 workspace__slug=slug, member=workspace_member.member
@@ -1035,4 +1048,3 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
