@@ -20,7 +20,6 @@ import fileService from "services/file.service";
 import { Input, Spinner, PrimaryButton, SecondaryButton } from "components/ui";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 const unsplashEnabled =
   process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "true" ||
@@ -63,10 +62,6 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
   );
 
   const { workspaceDetails } = useWorkspaceDetails();
-
-  // useOutsideClickDetector(ref, () => {
-  //   setIsOpen(false);
-  // });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setImage(acceptedFiles[0]);
