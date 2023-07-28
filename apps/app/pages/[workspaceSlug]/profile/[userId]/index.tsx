@@ -4,22 +4,18 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // services
 import userService from "services/user.service";
+// layouts
+import { ProfileLayout } from "layouts/profile-layout";
 // components
 import {
   ProfileActivity,
-  ProfileNavbar,
   ProfilePriorityDistribution,
-  ProfileSidebar,
   ProfileStateDistribution,
   ProfileStats,
   ProfileWorkload,
 } from "components/profile";
-// ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import type { NextPage } from "next";
 import { IUserStateDistribution, TStateGroups } from "types";
@@ -46,33 +42,20 @@ const ProfileOverview: NextPage = () => {
   });
 
   return (
-    <WorkspaceAuthorizationLayout
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`User Name`} />
-        </Breadcrumbs>
-      }
-    >
-      <div className="h-full w-full flex overflow-hidden">
-        <div className="h-full w-full flex flex-col overflow-hidden">
-          <ProfileNavbar />
-          <div className="h-full w-full overflow-y-auto px-9 py-5 space-y-7">
-            <ProfileStats userProfile={userProfile} />
-            <ProfileWorkload stateDistribution={stateDistribution} />
-            <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch gap-5">
-              <ProfilePriorityDistribution userProfile={userProfile} />
-              <ProfileStateDistribution
-                stateDistribution={stateDistribution}
-                userProfile={userProfile}
-              />
-            </div>
-            <ProfileActivity />
-          </div>
+    <ProfileLayout>
+      <div className="h-full w-full px-5 md:px-9 py-5 space-y-7 overflow-y-auto">
+        <ProfileStats userProfile={userProfile} />
+        <ProfileWorkload stateDistribution={stateDistribution} />
+        <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch gap-5">
+          <ProfilePriorityDistribution userProfile={userProfile} />
+          <ProfileStateDistribution
+            stateDistribution={stateDistribution}
+            userProfile={userProfile}
+          />
         </div>
-        <ProfileSidebar />
+        <ProfileActivity />
       </div>
-    </WorkspaceAuthorizationLayout>
+    </ProfileLayout>
   );
 };
 
