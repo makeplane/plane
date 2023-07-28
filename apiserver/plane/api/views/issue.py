@@ -1309,6 +1309,7 @@ class IssueReactionViewSet(BaseViewSet):
                 project_id=project_id,
                 issue_id=issue_id,
                 reaction=reaction_code,
+                actor=request.user,
             )
             issue_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1358,6 +1359,7 @@ class CommentReactionViewSet(BaseViewSet):
                 project_id=project_id,
                 comment_id=comment_id,
                 reaction=reaction_code,
+                actor=request.user,
             )
             comment_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
