@@ -310,7 +310,9 @@ export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: 
 export const USER_PROFILE_ISSUES = (workspaceSlug: string, userId: string, params: any) => {
   const paramsKey = myIssuesParamsToKey(params);
 
-  return `USER_PROFILE_ISSUES_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${paramsKey}`;
+  const subscriberKey = params.subscriber ? params.subscriber.toUpperCase() : "NULL";
+
+  return `USER_PROFILE_ISSUES_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${paramsKey}_${subscriberKey}`;
 };
 
 // reactions

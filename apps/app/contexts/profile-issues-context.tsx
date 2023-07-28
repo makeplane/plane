@@ -8,6 +8,7 @@ import {
   TIssueViewOptions,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
+  Properties,
 } from "types";
 
 export const profileIssuesContext = createContext<ContextType>({} as ContextType);
@@ -18,7 +19,8 @@ type IssueViewProps = {
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
   showSubIssues: boolean;
-  filters: IIssueFilterOptions;
+  filters: IIssueFilterOptions & { subscriber: string | null };
+  properties: Properties;
 };
 
 type ReducerActionType = {
@@ -27,6 +29,7 @@ type ReducerActionType = {
     | "SET_ORDER_BY_PROPERTY"
     | "SET_SHOW_EMPTY_STATES"
     | "SET_FILTERS"
+    | "SET_PROPERTIES"
     | "SET_GROUP_BY_PROPERTY"
     | "RESET_TO_DEFAULT"
     | "SET_SHOW_SUB_ISSUES";
@@ -38,7 +41,8 @@ type ContextType = IssueViewProps & {
   setOrderBy: (property: TIssueOrderByOptions) => void;
   setShowEmptyGroups: (property: boolean) => void;
   setShowSubIssues: (value: boolean) => void;
-  setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
+  setFilters: (filters: Partial<IIssueFilterOptions & { subscriber: string | null }>) => void;
+  setProperties: (key: keyof Properties) => void;
   setIssueView: (property: TIssueViewOptions) => void;
 };
 
@@ -48,7 +52,8 @@ type StateType = {
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
   showSubIssues: boolean;
-  filters: IIssueFilterOptions;
+  filters: IIssueFilterOptions & { subscriber: string | null };
+  properties: Properties;
 };
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
 
@@ -65,8 +70,23 @@ export const initialState: StateType = {
     labels: null,
     state: null,
     state_group: null,
+    subscriber: null,
     created_by: null,
     target_date: null,
+  },
+  properties: {
+    assignee: true,
+    attachment_count: true,
+    created_on: true,
+    due_date: true,
+    estimate: true,
+    key: true,
+    labels: true,
+    link: true,
+    priority: true,
+    state: true,
+    sub_issue_count: true,
+    updated_on: true,
   },
 };
 
@@ -149,6 +169,21 @@ export const reducer: ReducerFunctionType = (state, action) => {
       };
     }
 
+    case "SET_PROPERTIES": {
+      const newState = {
+        ...state,
+        properties: {
+          ...state.properties,
+          ...payload?.properties,
+        },
+      };
+
+      return {
+        ...state,
+        ...newState,
+      };
+    }
+
     default: {
       return state;
     }
@@ -215,7 +250,7 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
   }, []);
 
   const setFilters = useCallback(
-    (property: Partial<IIssueFilterOptions>, saveToServer = true) => {
+    (property: Partial<IIssueFilterOptions>) => {
       Object.keys(property).forEach((key) => {
         if (property[key as keyof typeof property]?.length === 0)
           property[key as keyof typeof property] = null;
@@ -234,21 +269,38 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
     [state]
   );
 
+  const setProperties = useCallback(
+    (key: keyof Properties) => {
+      dispatch({
+        type: "SET_PROPERTIES",
+        payload: {
+          properties: {
+            ...state.properties,
+            [key]: !state.properties[key],
+          },
+        },
+      });
+    },
+    [state]
+  );
+
   return (
     <profileIssuesContext.Provider
       value={{
         issueView: state.issueView,
+        setIssueView,
         groupByProperty: state.groupByProperty,
         setGroupByProperty,
         orderBy: state.orderBy,
-        showEmptyGroups: state.showEmptyGroups,
-        showSubIssues: state.showSubIssues,
         setOrderBy,
+        showEmptyGroups: state.showEmptyGroups,
         setShowEmptyGroups,
+        showSubIssues: state.showSubIssues,
         setShowSubIssues,
         filters: state.filters,
         setFilters,
-        setIssueView,
+        properties: state.properties,
+        setProperties,
       }}
     >
       <ToastAlert />

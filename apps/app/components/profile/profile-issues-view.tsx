@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -48,6 +48,7 @@ export const ProfileIssuesView = () => {
 
   const {
     groupedIssues,
+    mutateProfileIssues,
     issueView,
     groupByProperty,
     orderBy,
@@ -55,8 +56,8 @@ export const ProfileIssuesView = () => {
     showEmptyGroups,
     filters,
     setFilters,
+    properties,
     params,
-    mutateProfileIssues,
   } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
 
   const { data: labels } = useSWR(
@@ -186,7 +187,7 @@ export const ProfileIssuesView = () => {
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
 
-  const filtersToDisplay = { ...filters, assignees: null, created_by: null };
+  const filtersToDisplay = { ...filters, assignees: null, created_by: null, subscriber: null };
 
   const nullFilters = Object.keys(filtersToDisplay).filter(
     (key) => filtersToDisplay[key as keyof IIssueFilterOptions] === null
@@ -260,22 +261,10 @@ export const ProfileIssuesView = () => {
           groupedIssues,
           isEmpty,
           issueView,
+          mutateIssues: mutateProfileIssues,
           orderBy,
           params,
-          properties: {
-            assignee: true,
-            due_date: true,
-            key: true,
-            labels: true,
-            priority: true,
-            state: true,
-            sub_issue_count: true,
-            attachment_count: true,
-            link: true,
-            estimate: true,
-            created_on: true,
-            updated_on: true,
-          },
+          properties,
           showEmptyGroups,
         }}
       />

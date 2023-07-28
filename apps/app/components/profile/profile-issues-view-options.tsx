@@ -47,8 +47,12 @@ export const ProfileIssuesViewOptions: React.FC = () => {
     showEmptyGroups,
     setShowEmptyGroups,
     filters,
+    properties,
+    setProperties,
     setFilters,
   } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
+
+  const { isEstimateActive } = useEstimateOption();
 
   if (
     !router.pathname.includes("assigned") &&
@@ -248,7 +252,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
 
                   <div className="space-y-2 py-3">
                     <h4 className="text-sm text-custom-text-200">Display Properties</h4>
-                    {/* <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {Object.keys(properties).map((key) => {
                         if (key === "estimate" && !isEstimateActive) return null;
 
@@ -275,13 +279,13 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                                 ? "border-custom-primary bg-custom-primary text-white"
                                 : "border-custom-border-200"
                             }`}
-                            onClick={() => setProperty(key as keyof Properties)}
+                            onClick={() => setProperties(key as keyof Properties)}
                           >
                             {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
                           </button>
                         );
                       })}
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </Popover.Panel>

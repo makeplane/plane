@@ -46,16 +46,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssue, IIssueViewProps, ISubIssueResponse, UserAuth } from "types";
 // fetch-keys
-import {
-  CYCLE_DETAILS,
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_DETAILS,
-  MODULE_ISSUES_WITH_PARAMS,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
-  SUB_ISSUES,
-  USER_ISSUES,
-  VIEW_ISSUES,
-} from "constants/fetch-keys";
+import { CYCLE_DETAILS, MODULE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   type?: string;
@@ -99,26 +90,16 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const { groupByProperty: selectedGroup, orderBy, params, properties } = viewProps;
+  const { groupByProperty: selectedGroup, orderBy, properties, mutateIssues } = viewProps;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug || !issue) return;
-
-      const fetchKey = cycleId
-        ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
-        : moduleId
-        ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
-        : viewId
-        ? VIEW_ISSUES(viewId.toString(), params)
-        : router.pathname.includes("my-issues")
-        ? USER_ISSUES(workspaceSlug.toString(), params)
-        : PROJECT_ISSUES_LIST_WITH_PARAMS(issue.project.toString(), params);
 
       if (issue.parent) {
         mutate<ISubIssueResponse>(
@@ -142,13 +123,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           false
         );
       } else {
-        mutate<
-          | {
-              [key: string]: IIssue[];
-            }
-          | IIssue[]
-        >(
-          fetchKey,
+        mutateIssues(
           (prevData) =>
             handleIssuesMutation(
               formData,
@@ -165,7 +140,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       issuesService
         .patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
         .then(() => {
-          mutate(fetchKey);
+          mutateIssues();
 
           if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
           if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
@@ -175,13 +150,11 @@ export const SingleBoardIssue: React.FC<Props> = ({
       workspaceSlug,
       cycleId,
       moduleId,
-      viewId,
       groupTitle,
       index,
       selectedGroup,
+      mutateIssues,
       orderBy,
-      params,
-      router,
       user,
     ]
   );

@@ -1,4 +1,6 @@
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
+
+import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
@@ -14,18 +16,22 @@ import { USER_PROFILE_ISSUES } from "constants/fetch-keys";
 const useProfileIssues = (workspaceSlug: string | undefined, userId: string | undefined) => {
   const {
     issueView,
+    setIssueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
     setOrderBy,
     showEmptyGroups,
-    showSubIssues,
     setShowEmptyGroups,
+    showSubIssues,
     setShowSubIssues,
     filters,
     setFilters,
-    setIssueView,
+    properties,
+    setProperties,
   } = useContext(profileIssuesContext);
+
+  const router = useRouter();
 
   const params: any = {
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
@@ -37,6 +43,7 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
     state_group: filters?.state_group ? filters?.state_group.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
     type: filters?.type ? filters?.type : undefined,
+    subscriber: filters?.subscriber ? filters?.subscriber : undefined,
   };
 
   const { data: userProfileIssues, mutate: mutateProfileIssues } = useSWR(
@@ -63,6 +70,33 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
     return userProfileIssues;
   }, [userProfileIssues]);
 
+  useEffect(() => {
+    if (!userId || !filters) return;
+
+    console.log("Triggered");
+
+    if (
+      router.pathname.includes("assigned") &&
+      (!filters.assignees || !filters.assignees.includes(userId))
+    ) {
+      setFilters({ assignees: [...(filters.assignees ?? []), userId] });
+      return;
+    }
+
+    if (
+      router.pathname.includes("created") &&
+      (!filters.created_by || !filters.created_by.includes(userId))
+    ) {
+      setFilters({ created_by: [...(filters.created_by ?? []), userId] });
+      return;
+    }
+
+    if (router.pathname.includes("subscribed") && filters.subscriber === null) {
+      setFilters({ subscriber: userId });
+      return;
+    }
+  }, [filters, router, setFilters, userId]);
+
   const isEmpty =
     Object.values(groupedIssues ?? {}).every((group) => group.length === 0) ||
     Object.keys(groupedIssues ?? {}).length === 0;
@@ -81,6 +115,8 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
     setShowSubIssues,
     filters,
     setFilters,
+    properties,
+    setProperties,
     isEmpty,
     mutateProfileIssues,
     params,

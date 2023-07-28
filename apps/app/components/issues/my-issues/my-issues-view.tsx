@@ -273,6 +273,7 @@ export const MyIssuesView: React.FC<Props> = ({
           groupedIssues,
           isEmpty,
           issueView,
+          mutateIssues: mutateMyIssues,
           orderBy,
           params,
           properties,
