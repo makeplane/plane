@@ -43,6 +43,7 @@ const Onboarding: NextPage = () => {
     workspaceService.userWorkspaceInvitations()
   );
 
+  // update last active workspace details
   const updateLastWorkspace = async () => {
     if (!userWorkspaces) return;
 
@@ -69,6 +70,7 @@ const Onboarding: NextPage = () => {
     await userService.updateUser({ last_workspace_id: userWorkspaces?.[0]?.id });
   };
 
+  // handle step change
   const stepChange = async (steps: Partial<OnboardingSteps>) => {
     if (!user) return;
 
@@ -95,6 +97,26 @@ const Onboarding: NextPage = () => {
     await userService.updateUser(payload);
   };
 
+  // complete onboarding
+  const finishOnboarding = async () => {
+    if (!user) return;
+
+    mutate<ICurrentUserResponse>(
+      CURRENT_USER,
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          is_onboarded: true,
+        };
+      },
+      false
+    );
+
+    await userService.updateUserOnBoard({ userRole: user.role }, user);
+  };
+
   useEffect(() => {
     const handleStepChange = async () => {
       if (!user || !userWorkspaces || !invitations) return;
@@ -103,8 +125,16 @@ const Onboarding: NextPage = () => {
 
       if (!onboardingStep.profile_complete && step !== 1) setStep(1);
 
-      if (onboardingStep.profile_complete && !onboardingStep.workspace_create && step !== 2)
-        setStep(2);
+      if (onboardingStep.profile_complete) {
+        if (!onboardingStep.workspace_join && invitations.length > 0 && step !== 2 && step !== 4)
+          setStep(4);
+        else if (
+          !onboardingStep.workspace_create &&
+          (step !== 4 || onboardingStep.workspace_join) &&
+          step !== 2
+        )
+          setStep(2);
+      }
 
       if (
         onboardingStep.profile_complete &&
@@ -114,16 +144,16 @@ const Onboarding: NextPage = () => {
       )
         setStep(3);
 
-      if (
-        onboardingStep.profile_complete &&
-        onboardingStep.workspace_create &&
-        onboardingStep.workspace_invite &&
-        !onboardingStep.workspace_join &&
-        step !== 4
-      ) {
-        if (invitations.length > 0) setStep(4);
-        else await Router.push("/");
-      }
+      // if (
+      //   onboardingStep.profile_complete &&
+      //   onboardingStep.workspace_create &&
+      //   onboardingStep.workspace_invite &&
+      //   !onboardingStep.workspace_join &&
+      //   step !== 4
+      // ) {
+      //   if (invitations.length > 0) setStep(4);
+      //   else await Router.push("/");
+      // }
     };
 
     handleStepChange();
@@ -167,14 +197,16 @@ const Onboarding: NextPage = () => {
             <UserDetails user={user} />
           ) : step === 2 ? (
             <Workspace
-              user={user}
-              updateLastWorkspace={updateLastWorkspace}
               stepChange={stepChange}
+              updateLastWorkspace={updateLastWorkspace}
+              user={user}
             />
           ) : step === 3 ? (
             <InviteMembers workspace={userWorkspaces?.[0]} user={user} stepChange={stepChange} />
           ) : (
-            step === 4 && <JoinWorkspaces stepChange={stepChange} />
+            step === 4 && (
+              <JoinWorkspaces finishOnboarding={finishOnboarding} stepChange={stepChange} />
+            )
           )}
         </div>
         {step !== 4 && (

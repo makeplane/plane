@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 // services
 import workspaceService from "services/workspace.service";
-import userService from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
@@ -14,17 +13,18 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IUser, IWorkspaceMemberInvitation, OnboardingSteps } from "types";
+import { IWorkspaceMemberInvitation, OnboardingSteps } from "types";
 // fetch-keys
-import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
 type Props = {
+  finishOnboarding: () => Promise<void>;
   stepChange: (steps: Partial<OnboardingSteps>) => Promise<void>;
 };
 
-export const JoinWorkspaces: React.FC<Props> = ({ stepChange }) => {
+export const JoinWorkspaces: React.FC<Props> = ({ finishOnboarding, stepChange }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
@@ -47,25 +47,13 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange }) => {
     }
   };
 
-  // complete onboarding
-  const finishOnboarding = async () => {
+  const handleNextStep = async () => {
     if (!user) return;
 
-    mutate<ICurrentUserResponse>(
-      CURRENT_USER,
-      (prevData) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          is_onboarded: true,
-        };
-      },
-      false
-    );
-
-    await userService.updateUserOnBoard({ userRole: user.role }, user);
     await stepChange({ workspace_join: true });
+
+    if (user.onboarding_step.workspace_create && user.onboarding_step.workspace_invite)
+      await finishOnboarding();
   };
 
   const submitInvitations = async () => {
@@ -79,9 +67,9 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange }) => {
         await mutateInvitations();
         await finishOnboarding();
 
-        setIsJoiningWorkspaces(false);
+        await handleNextStep();
       })
-      .catch(() => setIsJoiningWorkspaces(false));
+      .finally(() => setIsJoiningWorkspaces(false));
   };
 
   return (
@@ -142,14 +130,15 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange }) => {
           type="submit"
           size="md"
           onClick={submitInvitations}
-          disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
+          disabled={invitationsRespond.length === 0}
+          loading={isJoiningWorkspaces}
         >
           Accept & Join
         </PrimaryButton>
         <SecondaryButton
           className="border border-none bg-transparent"
           size="md"
-          onClick={finishOnboarding}
+          onClick={handleNextStep}
         >
           Skip for now
         </SecondaryButton>
