@@ -1,3 +1,4 @@
+import { KeyedMutator } from "swr";
 import type {
   IState,
   IUser,
@@ -292,6 +293,12 @@ export interface IIssueViewProps {
   groupByProperty: TIssueGroupByOptions;
   isEmpty: boolean;
   issueView: TIssueViewOptions;
+  mutateIssues: KeyedMutator<
+    | IIssue[]
+    | {
+        [key: string]: IIssue[];
+      }
+  >;
   orderBy: TIssueOrderByOptions;
   params: any;
   properties: Properties;

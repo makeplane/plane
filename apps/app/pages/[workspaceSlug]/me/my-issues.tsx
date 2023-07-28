@@ -87,7 +87,7 @@ const MyIssuesPage: NextPage = () => {
       }
     >
       <div className="h-full w-full flex flex-col overflow-hidden">
-        <div className="border-b border-custom-border-300">
+        <div className="px-4 sm:px-5 border-b border-custom-border-300">
           <div className="flex items-center overflow-x-scroll">
             {tabsList.map((tab) => (
               <button

@@ -62,7 +62,7 @@ const useIssuesView = () => {
     sub_issue: showSubIssues,
   };
 
-  const { data: projectIssues } = useSWR(
+  const { data: projectIssues, mutate: mutateProjectIssues } = useSWR(
     workspaceSlug && projectId && params
       ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
       : null,
@@ -72,7 +72,7 @@ const useIssuesView = () => {
       : null
   );
 
-  const { data: projectArchivedIssues } = useSWR(
+  const { data: projectArchivedIssues, mutate: mutateProjectArchivedIssues } = useSWR(
     workspaceSlug && projectId && params && isArchivedIssues && !archivedIssueId
       ? PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
       : null,
@@ -81,7 +81,7 @@ const useIssuesView = () => {
       : null
   );
 
-  const { data: cycleIssues } = useSWR(
+  const { data: cycleIssues, mutate: mutateCycleIssues } = useSWR(
     workspaceSlug && projectId && cycleId && params
       ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params)
       : null,
@@ -96,7 +96,7 @@ const useIssuesView = () => {
       : null
   );
 
-  const { data: moduleIssues } = useSWR(
+  const { data: moduleIssues, mutate: mutateModuleIssues } = useSWR(
     workspaceSlug && projectId && moduleId && params
       ? MODULE_ISSUES_WITH_PARAMS(moduleId as string, params)
       : null,
@@ -111,7 +111,7 @@ const useIssuesView = () => {
       : null
   );
 
-  const { data: viewIssues } = useSWR(
+  const { data: viewIssues, mutate: mutateViewIssues } = useSWR(
     workspaceSlug && projectId && viewId && params ? VIEW_ISSUES(viewId.toString(), params) : null,
     workspaceSlug && projectId && viewId && params
       ? () =>
@@ -187,6 +187,15 @@ const useIssuesView = () => {
 
   return {
     groupedByIssues,
+    mutateIssues: cycleId
+      ? mutateCycleIssues
+      : moduleId
+      ? mutateModuleIssues
+      : viewId
+      ? mutateViewIssues
+      : isArchivedIssues
+      ? mutateProjectArchivedIssues
+      : mutateProjectIssues,
     issueView: isArchivedIssues ? "list" : issueView,
     groupByProperty,
     setGroupByProperty,
