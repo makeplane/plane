@@ -54,7 +54,7 @@ export const IssueReaction: React.FC<Props> = (props) => {
                 handleReactionClick(reaction);
               }}
               key={reaction}
-              className={`flex items-center gap-1 text-custom-text-100 h-full px-2 py-1 rounded-md ${
+              className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
                 reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
                   ? "bg-custom-primary-100/10"
                   : "bg-custom-background-80"

@@ -40,8 +40,8 @@ export const ReactionSelector: React.FC<Props> = (props) => {
             } group inline-flex items-center rounded-md bg-custom-background-80 focus:outline-none`}
           >
             <span
-              className={`flex justify-center items-center rounded-md ${
-                size === "sm" ? "w-6 h-6" : size === "md" ? "w-8 h-8" : "w-10 h-10"
+              className={`flex justify-center items-center rounded-md px-2 ${
+                size === "sm" ? "w-6 h-6" : size === "md" ? "w-7 h-7" : "w-8 h-8"
               }`}
             >
               <Icon iconName="add_reaction" className="text-custom-text-100 scale-125" />
@@ -57,10 +57,12 @@ export const ReactionSelector: React.FC<Props> = (props) => {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel
-              className={`absolute -left-2 z-10 ${position === "top" ? "-top-12" : "-bottom-12"}`}
+              className={`bg-custom-sidebar-background-100 absolute -left-2 z-10 ${
+                position === "top" ? "-top-12" : "-bottom-12"
+              }`}
             >
-              <div className="bg-custom-background-0 border rounded-md px-2 py-1.5">
-                <div className="flex gap-x-2">
+              <div className="bg-custom-sidebar-background-100 border border-custom-border-200 rounded-md p-1">
+                <div className="flex gap-x-1">
                   {reactionEmojis.map((emoji) => (
                     <button
                       key={emoji}
@@ -69,7 +71,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                         onSelect(emoji);
                         closePopover();
                       }}
-                      className="flex h-5 w-5 select-none items-center justify-between text-sm"
+                      className="flex select-none items-center justify-between rounded-md text-sm p-1 hover:bg-custom-sidebar-background-90"
                     >
                       {renderEmoji(emoji)}
                     </button>
