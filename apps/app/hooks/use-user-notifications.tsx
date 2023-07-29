@@ -25,6 +25,7 @@ const useUserNotification = () => {
   const [snoozed, setSnoozed] = useState<boolean>(false);
   const [archived, setArchived] = useState<boolean>(false);
   const [readNotification, setReadNotification] = useState<boolean>(false);
+  const [fetchNotifications, setFetchNotifications] = useState<boolean>(false);
   const [selectedNotificationForSnooze, setSelectedNotificationForSnooze] = useState<string | null>(
     null
   );
@@ -49,7 +50,7 @@ const useUserNotification = () => {
     isValidating,
     mutate: notificationMutate,
   } = useSWRInfinite(
-    workspaceSlug
+    fetchNotifications && workspaceSlug
       ? (index, prevData) =>
           getPaginatedNotificationKey(index, prevData, workspaceSlug.toString(), params)
       : () => null,
@@ -282,6 +283,7 @@ const useUserNotification = () => {
     isLoadingMore,
     hasMore,
     isRefreshing,
+    setFetchNotifications,
   };
 };
 
