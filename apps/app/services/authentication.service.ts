@@ -44,6 +44,18 @@ class AuthService extends APIService {
       });
   }
 
+  async oidcAuth(data: any) {
+    return this.post("/api/oidc-auth/", data, { headers: {} })
+      .then((response) => {
+        this.setAccessToken(response?.data?.access_token);
+        this.setRefreshToken(response?.data?.refresh_token);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async emailCode(data: any) {
     return this.post("/api/magic-generate/", data, { headers: {} })
       .then((response) => response?.data)

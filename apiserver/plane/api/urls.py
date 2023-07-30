@@ -11,6 +11,7 @@ from plane.api.views import (
     MagicSignInEndpoint,
     MagicSignInGenerateEndpoint,
     OauthEndpoint,
+    OIDCEndpoint,
     ## End Authentication
     # Auth Extended
     ForgotPasswordEndpoint,
@@ -166,6 +167,8 @@ from plane.api.views import (
 urlpatterns = [
     #  Social Auth
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
+    # OIDC Auth
+    path("oidc-auth/", OIDCEndpoint.as_view(), name="oidc"),
     # Auth
     path("sign-up/", SignUpEndpoint.as_view(), name="sign-up"),
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),

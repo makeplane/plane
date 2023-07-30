@@ -15,6 +15,7 @@ import useToast from "hooks/use-toast";
 import {
   GoogleLoginButton,
   GithubLoginButton,
+  OidcLoginButton,
   EmailCodeForm,
   EmailPasswordForm,
 } from "components/account";
@@ -80,6 +81,30 @@ const HomePage: NextPage = () => {
     }
   };
 
+  const handleOidcSignIn = async (credential: string) => {
+    try {
+      if (process.env.NEXT_PUBLIC_OIDC_CLIENT_ID && credential) {
+        const oidcAuthPayload = {
+          credential,
+          clientId: process.env.NEXT_PUBLIC_OIDC_CLIENT_ID,
+        };
+        const response = await authenticationService.oidcAuth(oidcAuthPayload);
+        if (response && response?.user) mutateUser();
+      } else {
+        throw Error("Cant find credentials");
+      }
+    } catch (error: any) {
+      console.log(error);
+      setToastAlert({
+        title: "Error signing in!",
+        type: "error",
+        message:
+          error?.error ||
+          "Something went wrong. Please try again later or contact the support team.",
+      });
+    }
+  };
+
   const handlePasswordSignIn = async (formData: EmailPasswordFormValues) => {
     await authenticationService
       .emailLogin(formData)
@@ -138,41 +163,58 @@ const HomePage: NextPage = () => {
               </div>
             </div>
           </>
-          <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
-            <div>
-              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
-                <>
-                  <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-                    Sign in to Plane
-                  </h1>
-                  <div className="flex flex-col divide-y divide-custom-border-200">
-                    <div className="pb-7">
-                      <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+          <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">                
+              <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
+                  
+                {(parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") || parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0")) ? (
+                  <>
+                    <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+                      Sign in to Plane
+                    </h1>
+                    <div className="flex flex-col divide-y divide-custom-border-200">
+                          
+                      {parseInt(process.env.NEXT_PUBLIC_AUTO_OIDC || "0") ? (
+                        <></>
+                      ) : (
+                        <div className="pb-7">
+                          <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                        </div>
+                          )}
+                          
+                          {parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
+                            <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
+                              <OidcLoginButton handleSignIn={handleOidcSignIn} />
+                            </div>
+                          ) : null}
+                        
+                      <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
+                        {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                          <>
+                            <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
+                            <GithubLoginButton handleSignIn={handleGitHubSignIn} />
+                          </>
+                        ) : <></>}
+                      </div>
                     </div>
-                    <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
-                      <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                      <GithubLoginButton handleSignIn={handleGitHubSignIn} />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <EmailPasswordForm onSubmit={handlePasswordSignIn} />
-              )}
+                  </>
+                ) : (
+                  <EmailPasswordForm onSubmit={handlePasswordSignIn} />
+                )}
 
-              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
-                <p className="pt-16 text-custom-text-200 text-sm text-center">
-                  By signing up, you agree to the{" "}
-                  <a
-                    href="https://plane.so/terms-and-conditions"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium underline"
-                  >
-                    Terms & Conditions
-                  </a>
-                </p>
-              ) : null}
-            </div>
+                {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                  <p className="pt-16 text-custom-text-200 text-sm text-center">
+                    By signing up, you agree to the{" "}
+                    <a
+                      href="https://plane.so/terms-and-conditions"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium underline"
+                    >
+                      Terms & Conditions
+                    </a>
+                  </p>
+                ) : null}
+              </div>
           </div>
         </>
       )}
