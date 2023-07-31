@@ -43,7 +43,7 @@ import {
 import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
 import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage } from "next";
@@ -346,7 +346,7 @@ const SinglePage: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Pages`} />
+          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project",32)} Pages`} />
         </Breadcrumbs>
       }
     >
