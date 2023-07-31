@@ -67,8 +67,12 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
     setImage(acceptedFiles[0]);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
+    accept: {
+      "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
+    },
+    maxSize: 5 * 1024 * 1024,
   });
 
   const handleSubmit = async () => {
@@ -224,6 +228,13 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                         <input {...getInputProps()} type="text" />
                       </div>
                     </div>
+                    {fileRejections.length > 0 && (
+                      <p className="text-sm text-red-500">
+                        {fileRejections[0].errors[0].code === "file-too-large"
+                          ? "The image size cannot exceed 5 MB."
+                          : "Please upload a file in a valid format."}
+                      </p>
+                    )}
 
                     <div className="sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                       <SecondaryButton
