@@ -27,7 +27,7 @@ export interface IUser {
     properties: Properties;
     groupBy: NestedKeyOf<IIssue> | null;
   } | null;
-  onboarding_step: OnboardingSteps;
+  onboarding_step: TOnboardingSteps;
   role: string;
   token: string;
   theme: ICustomTheme;
@@ -140,7 +140,7 @@ export type UserAuth = {
   isGuest: boolean;
 };
 
-export type OnboardingSteps = {
+export type TOnboardingSteps = {
   profile_complete: boolean;
   workspace_create: boolean;
   workspace_invite: boolean;

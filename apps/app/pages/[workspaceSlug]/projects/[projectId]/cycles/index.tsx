@@ -29,6 +29,8 @@ import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { SelectCycleType } from "types";
 import type { NextPage } from "next";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
 
@@ -91,7 +93,7 @@ const ProjectCycles: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Cycles`} />
+          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Cycles`} />
         </Breadcrumbs>
       }
       right={

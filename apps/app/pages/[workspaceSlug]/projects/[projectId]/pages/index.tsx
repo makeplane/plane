@@ -11,6 +11,7 @@ import { Tab } from "@headlessui/react";
 import projectService from "services/project.service";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
+import useUserAuth from "hooks/use-user-auth";
 // icons
 import { PlusIcon } from "components/icons";
 // layouts
@@ -27,7 +28,8 @@ import { TPageViewProps } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
-import useUserAuth from "hooks/use-user-auth";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const AllPagesList = dynamic<TPagesListProps>(
   () => import("components/pages").then((a) => a.AllPagesList),
@@ -107,7 +109,9 @@ const ProjectPages: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Pages`} />
+            <BreadcrumbItem
+              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`}
+            />
           </Breadcrumbs>
         }
         right={
