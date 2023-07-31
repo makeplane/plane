@@ -12,6 +12,7 @@ import { profileIssuesContext } from "contexts/profile-issues-context";
 import { IIssue } from "types";
 // fetch-keys
 import { USER_PROFILE_ISSUES } from "constants/fetch-keys";
+import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 
 const useProfileIssues = (workspaceSlug: string | undefined, userId: string | undefined) => {
   const {
@@ -33,6 +34,8 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
 
   const router = useRouter();
 
+  const { memberRole } = useWorkspaceMyMembership();
+
   const params: any = {
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
@@ -47,13 +50,15 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
   };
 
   const { data: userProfileIssues, mutate: mutateProfileIssues } = useSWR(
-    workspaceSlug && userId
+    workspaceSlug && userId && (memberRole.isOwner || memberRole.isMember || memberRole.isViewer)
       ? USER_PROFILE_ISSUES(workspaceSlug.toString(), userId.toString(), params)
       : null,
-    workspaceSlug && userId
+    workspaceSlug && userId && (memberRole.isOwner || memberRole.isMember || memberRole.isViewer)
       ? () => userService.getUserProfileIssues(workspaceSlug.toString(), userId.toString(), params)
       : null
   );
+
+  console.log(memberRole);
 
   const groupedIssues:
     | {
