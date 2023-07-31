@@ -73,12 +73,13 @@ from plane.db.models import (
     IssueSubscriber,
     Project,
     Label,
-    State,
+    WorkspaceMember,
 )
 from plane.api.permissions import (
     WorkSpaceBasePermission,
     WorkSpaceAdminPermission,
     WorkspaceEntityPermission,
+    WorkspaceViewerPermission,
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
@@ -1194,64 +1195,64 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
 
 
 class WorkspaceUserProfileEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
 
     def get(self, request, slug, user_id):
         try:
             user_data = User.objects.get(pk=user_id)
 
-            projects = (
-                Project.objects.filter(
-                    workspace__slug=slug,
-                    project_projectmember__member=request.user,
-                )
-                .annotate(
-                    created_issues=Count(
-                        "project_issue", filter=Q(project_issue__created_by_id=user_id)
+            requesting_workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
+            projects = {}
+            if requesting_workspace_member.role >= 10:
+                projects = (
+                    Project.objects.filter(
+                        workspace__slug=slug,
+                        project_projectmember__member=request.user,
+                    )
+                    .annotate(
+                        created_issues=Count(
+                            "project_issue", filter=Q(project_issue__created_by_id=user_id)
+                        )
+                    )
+                    .annotate(
+                        assigned_issues=Count(
+                            "project_issue",
+                            filter=Q(project_issue__assignees__in=[user_id]),
+                        )
+                    )
+                    .annotate(
+                        completed_issues=Count(
+                            "project_issue",
+                            filter=Q(
+                                project_issue__completed_at__isnull=False,
+                                project_issue__assignees__in=[user_id],
+                            ),
+                        )
+                    )
+                    .annotate(
+                        pending_issues=Count(
+                            "project_issue",
+                            filter=Q(
+                                project_issue__state__group__in=[
+                                    "backlog",
+                                    "unstarted",
+                                    "started",
+                                ],
+                                project_issue__assignees__in=[user_id],
+                            ),
+                        )
+                    )
+                    .values(
+                        "id",
+                        "name",
+                        "identifier",
+                        "emoji",
+                        "icon_prop",
+                        "created_issues",
+                        "assigned_issues",
+                        "completed_issues",
+                        "pending_issues",
                     )
                 )
-                .annotate(
-                    assigned_issues=Count(
-                        "project_issue",
-                        filter=Q(project_issue__assignees__in=[user_id]),
-                    )
-                )
-                .annotate(
-                    completed_issues=Count(
-                        "project_issue",
-                        filter=Q(
-                            project_issue__completed_at__isnull=False,
-                            project_issue__assignees__in=[user_id],
-                        ),
-                    )
-                )
-                .annotate(
-                    pending_issues=Count(
-                        "project_issue",
-                        filter=Q(
-                            project_issue__state__group__in=[
-                                "backlog",
-                                "unstarted",
-                                "started",
-                            ],
-                            project_issue__assignees__in=[user_id],
-                        ),
-                    )
-                )
-                .values(
-                    "id",
-                    "name",
-                    "identifier",
-                    "emoji",
-                    "icon_prop",
-                    "created_issues",
-                    "assigned_issues",
-                    "completed_issues",
-                    "pending_issues",
-                )
-            )
 
             return Response(
                 {
@@ -1268,6 +1269,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_200_OK,
             )
+        except WorkspaceMember.DoesNotExist:
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -1278,7 +1281,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
 
 class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     permission_classes = [
-        WorkspaceEntityPermission,
+        WorkspaceViewerPermission,
     ]
 
     def get(self, request, slug, user_id):
@@ -1396,7 +1399,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
     permission_classes = [
-        WorkspaceEntityPermission,
+        WorkspaceViewerPermission,
     ]
 
     def get(self, request, slug):
