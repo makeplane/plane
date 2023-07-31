@@ -5,7 +5,7 @@ from datetime import datetime
 # Django imports
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Q, Exists, OuterRef, Func, F, Subquery
+from django.db.models import Q, Exists, OuterRef, Func, F, Min, Subquery
 from django.core.validators import validate_email
 from django.conf import settings
 
@@ -598,17 +598,26 @@ class AddMemberToProjectEndpoint(BaseAPIView):
                     {"error": "Atleast one member is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            bulk_project_members = []
 
-            project_members = ProjectMember.objects.bulk_create(
-                [
+            project_members = ProjectMember.objects.filter(
+                workspace=self.workspace, member_id__in=[member.get("member_id") for member in members]
+            ).values("member_id").annotate(sort_order_min=Min("sort_order"))
+
+            for member in members:
+                sort_order = [project_member.get("sort_order") for project_member in project_members]
+                bulk_project_members.append(
                     ProjectMember(
                         member_id=member.get("member_id"),
                         role=member.get("role", 10),
                         project_id=project_id,
                         workspace_id=project.workspace_id,
+                        sort_order=sort_order[0] - 10000 if len(sort_order) else 65535
                     )
-                    for member in members
-                ],
+                )
+
+            project_members = ProjectMember.objects.bulk_create(
+                bulk_project_members,
                 batch_size=10,
                 ignore_conflicts=True,
             )
