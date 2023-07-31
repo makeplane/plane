@@ -194,15 +194,15 @@ export const SingleListIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className="flex flex-wrap items-center justify-between px-4 py-2.5 gap-2 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0"
+        className="flex items-center justify-between px-4 py-2.5 gap-10 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
           setContextMenuPosition({ x: e.pageX, y: e.pageY });
         }}
       >
-        <Link href={singleIssuePath}>
-          <div className="flex-grow cursor-pointer">
+        <div className="flex-grow cursor-pointer min-w-[200px] whitespace-nowrap overflow-hidden overflow-ellipsis">
+          <Link href={singleIssuePath}>
             <a className="group relative flex items-center gap-2">
               {properties.key && (
                 <Tooltip
@@ -215,16 +215,14 @@ export const SingleListIssue: React.FC<Props> = ({
                 </Tooltip>
               )}
               <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                <span className="text-[0.825rem] text-custom-text-100">
-                  {truncateText(issue.name, 50)}
-                </span>
+                <span className="truncate text-[0.825rem] text-custom-text-100">{issue.name}</span>
               </Tooltip>
             </a>
-          </div>
-        </Link>
+          </Link>
+        </div>
 
         <div
-          className={`flex w-full flex-shrink flex-wrap items-center gap-2 text-xs sm:w-auto ${
+          className={`flex flex-shrink-0 items-center gap-2 text-xs ${
             isArchivedIssues ? "opacity-60" : ""
           }`}
         >

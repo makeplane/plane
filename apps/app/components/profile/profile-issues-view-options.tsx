@@ -10,7 +10,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { MyIssuesSelectFilters } from "components/issues";
 // ui
-import { CustomMenu, ToggleSwitch, Tooltip } from "components/ui";
+import { CustomMenu, CustomSearchSelect, ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";
@@ -21,6 +21,7 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { Properties, TIssueViewOptions } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
+import useProjects from "hooks/use-projects";
 
 const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   {
@@ -36,6 +37,8 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
 export const ProfileIssuesViewOptions: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
+
+  const { projects } = useProjects();
 
   const {
     issueView,
@@ -54,12 +57,28 @@ export const ProfileIssuesViewOptions: React.FC = () => {
 
   const { isEstimateActive } = useEstimateOption();
 
+  const options = projects?.map((project) => ({
+    value: project.id,
+    query: project.name + " " + project.identifier,
+    content: project.name,
+  }));
+
   if (
     !router.pathname.includes("assigned") &&
     !router.pathname.includes("created") &&
     !router.pathname.includes("subscribed")
   )
     return null;
+  // return (
+  //   <CustomSearchSelect
+  //     value={projects ?? null}
+  //     onChange={(val: string[] | null) => console.log(val)}
+  //     label="Filters"
+  //     options={options}
+  //     position="right"
+  //     multiple
+  //   />
+  // );
 
   return (
     <div className="flex items-center gap-2">

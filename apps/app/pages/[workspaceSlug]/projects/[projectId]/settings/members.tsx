@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
@@ -28,6 +29,8 @@ import type { NextPage } from "next";
 import { PROJECT_INVITATIONS, PROJECT_MEMBERS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);
@@ -93,10 +96,11 @@ const MembersSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Members Settings" />
+          <BreadcrumbItem title="Members Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -187,9 +191,17 @@ const MembersSettings: NextPage = () => {
                           )}
                         </div>
                         <div>
-                          <h4 className="text-sm">
-                            {member.first_name} {member.last_name}
-                          </h4>
+                          {member.member ? (
+                            <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
+                              <a className="text-sm">
+                                {member.first_name} {member.last_name}
+                              </a>
+                            </Link>
+                          ) : (
+                            <h4 className="text-sm">
+                              {member.first_name} {member.last_name}
+                            </h4>
+                          )}
                           <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
                         </div>
                       </div>

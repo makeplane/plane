@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+// swr
+import { mutate } from "swr";
 // react-hook-form
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 // headless
@@ -13,9 +15,10 @@ import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IWorkspace, IWorkspaceMemberInvitation } from "types";
+import { ICurrentUserResponse } from "types";
 // constants
 import { ROLE } from "constants/workspace";
+import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -94,7 +97,10 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
         });
         console.log(err);
       })
-      .finally(() => reset(defaultValues));
+      .finally(() => {
+        reset(defaultValues);
+        mutate(WORKSPACE_INVITATIONS);
+      });
   };
 
   const appendField = () => {

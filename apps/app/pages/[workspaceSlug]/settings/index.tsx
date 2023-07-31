@@ -14,7 +14,6 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal, SettingsHeader } from "components/workspace";
@@ -24,7 +23,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import type { IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -147,7 +146,9 @@ const WorkspaceSettings: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
+          <BreadcrumbItem
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`}
+          />
         </Breadcrumbs>
       }
     >
