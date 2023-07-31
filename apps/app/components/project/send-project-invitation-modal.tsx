@@ -96,7 +96,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
         setToastAlert({
           title: "Success",
           type: "success",
-          message: "Member invited successfully",
+          message: "Member added successfully",
         });
       })
       .catch((error) => {
