@@ -29,6 +29,8 @@ import { IModule, SelectModuleType } from "types/modules";
 import type { NextPage } from "next";
 // fetch-keys
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const ProjectModules: NextPage = () => {
   const [selectedModule, setSelectedModule] = useState<SelectModuleType>();
@@ -73,7 +75,7 @@ const ProjectModules: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Modules`} />
+          <BreadcrumbItem title={`${truncateText(activeProject?.name ?? "Project", 32)} Modules`} />
         </Breadcrumbs>
       }
       right={

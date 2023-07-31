@@ -23,6 +23,8 @@ import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const ProjectIntegrations: NextPage = () => {
   const router = useRouter();
@@ -48,10 +50,11 @@ const ProjectIntegrations: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectId}/issues`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Integrations" />
+          <BreadcrumbItem title="Integrations" unshrinkTitle />
         </Breadcrumbs>
       }
     >

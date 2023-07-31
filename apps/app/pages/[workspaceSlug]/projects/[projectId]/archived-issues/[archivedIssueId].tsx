@@ -23,6 +23,8 @@ import { IIssue } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const defaultValues = {
   name: "",
@@ -146,13 +148,15 @@ const ArchivedIssueDetailsPage: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
-            title={`${issueDetails?.project_detail.name ?? "Project"} Issues`}
+            title={`${truncateText(issueDetails?.project_detail.name ?? "Project", 32)} Issues`}
             link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
+            linkTruncate
           />
           <Breadcrumbs.BreadcrumbItem
             title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
               issueDetails?.sequence_id ?? "..."
             } Details`}
+            unshrinkTitle
           />
         </Breadcrumbs>
       }

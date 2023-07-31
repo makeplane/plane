@@ -29,6 +29,8 @@ import type { NextPage } from "next";
 import { PROJECT_INVITATIONS, PROJECT_MEMBERS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);
@@ -94,10 +96,11 @@ const MembersSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Members Settings" />
+          <BreadcrumbItem title="Members Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >

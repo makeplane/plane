@@ -27,6 +27,8 @@ import type { NextPage } from "next";
 import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const MembersSettings: NextPage = () => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
@@ -89,10 +91,11 @@ const MembersSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeWorkspace?.name ?? "Workspace"}`}
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
             link={`/${workspaceSlug}`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Members Settings" />
+          <BreadcrumbItem title="Members Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >

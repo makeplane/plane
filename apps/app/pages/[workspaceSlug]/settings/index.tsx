@@ -23,7 +23,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import type { IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -146,7 +146,9 @@ const WorkspaceSettings: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
+          <BreadcrumbItem
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`}
+          />
         </Breadcrumbs>
       }
     >
