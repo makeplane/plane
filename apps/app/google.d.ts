@@ -37,7 +37,7 @@ interface GsiButtonConfiguration {
   text?: "signin_with" | "signup_with" | "continue_with" | "signup_with";
   shape?: "rectangular" | "pill" | "circle" | "square";
   logo_alignment?: "left" | "center";
-  width?: string;
+  width?: number;
   local?: string;
 }
 

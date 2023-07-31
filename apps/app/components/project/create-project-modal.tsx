@@ -227,7 +227,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                       <XMarkIcon className="h-5 w-5 text-white" />
                     </button>
                   </div>
-                  <div className="hidden group-hover:block absolute bottom-2 right-2">
+                  <div className="absolute bottom-2 right-2">
                     <ImagePickerPopover
                       label="Change Cover"
                       onChange={(image) => {

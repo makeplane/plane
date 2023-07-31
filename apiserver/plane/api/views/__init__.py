@@ -42,6 +42,10 @@ from .workspace import (
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
+    WorkspaceUserProfileStatsEndpoint,
+    WorkspaceUserActivityEndpoint,
+    WorkspaceUserProfileEndpoint,
+    WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
 )
 from .state import StateViewSet
@@ -69,6 +73,8 @@ from .issue import (
     IssueAttachmentEndpoint,
     IssueArchiveViewSet,
     IssueSubscriberViewSet,
+    CommentReactionViewSet,
+    IssueReactionViewSet,
 )
 
 from .auth_extended import (

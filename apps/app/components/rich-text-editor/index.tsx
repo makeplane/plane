@@ -105,7 +105,7 @@ const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
               align: "left",
               alt: "Not Found",
               height: "100%",
-              width: "100%",
+              width: "35%",
               src: imageUrl,
             });
           }),
@@ -146,7 +146,7 @@ const RemirrorRichTextEditor: React.FC<IRemirrorRichTextEditor> = (props) => {
         createPlaceholder() {
           const div = document.createElement("div");
           div.className =
-            "w-full aspect-video bg-custom-background-80 text-custom-text-200 animate-pulse";
+            "w-[35%] aspect-video bg-custom-background-80 text-custom-text-200 animate-pulse";
           return div;
         },
       }),

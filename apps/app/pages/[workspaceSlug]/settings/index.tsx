@@ -223,19 +223,21 @@ const WorkspaceSettings: NextPage = () => {
                 <p className="text-sm text-custom-text-200">Your workspace URL.</p>
               </div>
               <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
-                <Input
-                  id="url"
-                  name="url"
-                  autoComplete="off"
-                  register={register}
-                  error={errors.name}
-                  className="w-full"
-                  value={`${
-                    typeof window !== "undefined" &&
-                    window.location.origin.replace("http://", "").replace("https://", "")
-                  }/${activeWorkspace.slug}`}
-                  disabled
-                />
+                <div className="flex flex-col gap-1">
+                  <Input
+                    id="url"
+                    name="url"
+                    autoComplete="off"
+                    register={register}
+                    error={errors.url}
+                    className="w-full"
+                    value={`${
+                      typeof window !== "undefined" &&
+                      window.location.origin.replace("http://", "").replace("https://", "")
+                    }/${activeWorkspace.slug}`}
+                    disabled
+                  />
+                </div>
                 <SecondaryButton
                   className="h-min"
                   onClick={() =>
@@ -272,6 +274,10 @@ const WorkspaceSettings: NextPage = () => {
                   error={errors.name}
                   validations={{
                     required: "Name is required",
+                    maxLength: {
+                      value: 80,
+                      message: "Workspace name should not exceed 80 characters",
+                    },
                   }}
                 />
               </div>
