@@ -1201,7 +1201,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
             user_data = User.objects.get(pk=user_id)
 
             requesting_workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
-            projects = {}
+            projects = []
             if requesting_workspace_member.role >= 10:
                 projects = (
                     Project.objects.filter(
