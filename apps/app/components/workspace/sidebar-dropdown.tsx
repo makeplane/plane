@@ -25,7 +25,7 @@ import { truncateText } from "helpers/string.helper";
 import { IWorkspace } from "types";
 
 // Static Data
-const userLinks = (workspaceSlug: string) => [
+const userLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "Workspace Settings",
     href: `/${workspaceSlug}/settings`,
@@ -36,7 +36,7 @@ const userLinks = (workspaceSlug: string) => [
   },
   {
     name: "My Profile",
-    href: `/${workspaceSlug}/me/profile`,
+    href: `/${workspaceSlug}/profile/${userId}`,
   },
 ];
 
@@ -119,7 +119,7 @@ export const WorkspaceSidebarDropdown = () => {
         </Menu.Button>
 
         {!sidebarCollapse && (
-          <Link href={`/${workspaceSlug}/me/profile`}>
+          <Link href={`/${workspaceSlug}/profile/${user?.id}`}>
             <a>
               <div className="flex flex-grow justify-end">
                 <Avatar user={user} height="28px" width="28px" fontSize="14px" />
@@ -215,7 +215,7 @@ export const WorkspaceSidebarDropdown = () => {
             )}
           </div>
           <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-custom-sidebar-border-200 px-3 py-2 text-sm">
-            {userLinks(workspaceSlug as string).map((link, index) => (
+            {userLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map((link, index) => (
               <Menu.Item
                 key={index}
                 as="div"
