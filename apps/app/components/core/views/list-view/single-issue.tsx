@@ -156,9 +156,9 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
-  const singleIssuePath = isArchivedIssues
-    ? `/${workspaceSlug}/projects/${projectId}/archived-issues/${issue.id}`
-    : `/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`;
+  const issuePath = isArchivedIssues
+    ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
+    : `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`;
 
   const isNotAllowed =
     userAuth.isGuest || userAuth.isViewer || disableUserActions || isArchivedIssues;
@@ -187,7 +187,7 @@ export const SingleListIssue: React.FC<Props> = ({
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
-        <a href={singleIssuePath} target="_blank" rel="noreferrer noopener">
+        <a href={issuePath} target="_blank" rel="noreferrer noopener">
           <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
             Open issue in new tab
           </ContextMenu.Item>
@@ -202,7 +202,7 @@ export const SingleListIssue: React.FC<Props> = ({
         }}
       >
         <div className="flex-grow cursor-pointer min-w-[200px] whitespace-nowrap overflow-hidden overflow-ellipsis">
-          <Link href={singleIssuePath}>
+          <Link href={issuePath}>
             <a className="group relative flex items-center gap-2">
               {properties.key && (
                 <Tooltip

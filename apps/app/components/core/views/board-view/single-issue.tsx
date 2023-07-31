@@ -221,7 +221,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           Copy issue link
         </ContextMenu.Item>
         <a
-          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+          href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
           target="_blank"
           rel="noreferrer noopener"
         >
