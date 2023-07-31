@@ -7,7 +7,7 @@ import useSWR from "swr";
 // services
 import userService from "services/user.service";
 // layouts
-import { ProfileLayout } from "layouts/profile-layout";
+import { ProfileAuthWrapper } from "layouts/profile-layout";
 // components
 import {
   ProfileActivity,
@@ -42,7 +42,7 @@ const ProfileOverview: NextPage = () => {
   });
 
   return (
-    <ProfileLayout>
+    <ProfileAuthWrapper>
       <div className="h-full w-full px-5 md:px-9 py-5 space-y-7 overflow-y-auto">
         <ProfileStats userProfile={userProfile} />
         <ProfileWorkload stateDistribution={stateDistribution} />
@@ -55,7 +55,7 @@ const ProfileOverview: NextPage = () => {
         </div>
         <ProfileActivity />
       </div>
-    </ProfileLayout>
+    </ProfileAuthWrapper>
   );
 };
 

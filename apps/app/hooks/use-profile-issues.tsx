@@ -73,8 +73,6 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
   useEffect(() => {
     if (!userId || !filters) return;
 
-    console.log("Triggered");
-
     if (
       router.pathname.includes("assigned") &&
       (!filters.assignees || !filters.assignees.includes(userId))

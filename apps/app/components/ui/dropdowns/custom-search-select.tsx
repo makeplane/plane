@@ -68,7 +68,7 @@ export const CustomSearchSelect = ({
       className={`${selfPositioned ? "" : "relative"} flex-shrink-0 text-left ${className}`}
       {...props}
     >
-      {({ open }) => {
+      {({ open }: { open: boolean }) => {
         if (open && onOpen) onOpen();
 
         return (

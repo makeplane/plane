@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
@@ -8,21 +9,25 @@ import { useTheme } from "next-themes";
 import { Disclosure, Transition } from "@headlessui/react";
 // services
 import userService from "services/user.service";
+// hooks
+import useUser from "hooks/use-user";
 // ui
 import { Icon, Loader, Tooltip } from "components/ui";
+// icons
+import { EditOutlined } from "@mui/icons-material";
 // helpers
 import { render12HourFormatTime, renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
-import Link from "next/link";
-import { EditOutlined } from "@mui/icons-material";
 
 export const ProfileSidebar = () => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
   const { theme } = useTheme();
+
+  const { user } = useUser();
 
   const { data: userProjectsData } = useSWR(
     workspaceSlug && userId
@@ -63,17 +68,19 @@ export const ProfileSidebar = () => {
       {userProjectsData ? (
         <>
           <div className="relative h-32">
-            <div className="absolute top-3.5 right-3.5 h-5 w-5 bg-white rounded grid place-items-center">
-              <Link href={`/${workspaceSlug}/me/profile`}>
-                <a className="grid place-items-center text-black">
-                  <EditOutlined
-                    sx={{
-                      fontSize: 12,
-                    }}
-                  />
-                </a>
-              </Link>
-            </div>
+            {user?.id === userId && (
+              <div className="absolute top-3.5 right-3.5 h-5 w-5 bg-white rounded grid place-items-center">
+                <Link href={`/${workspaceSlug}/me/profile`}>
+                  <a className="grid place-items-center text-black">
+                    <EditOutlined
+                      sx={{
+                        fontSize: 12,
+                      }}
+                    />
+                  </a>
+                </Link>
+              </div>
+            )}
             <img
               src={
                 userProjectsData.user_data.cover_image ??
