@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// react-beautiful-dnd
+import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
@@ -12,7 +14,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
-import { LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { EllipsisVerticalIcon, LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   ArchiveOutlined,
   ArticleOutlined,
@@ -34,6 +36,8 @@ import { PROJECTS_LIST } from "constants/fetch-keys";
 type Props = {
   project: IProject;
   sidebarCollapse: boolean;
+  provided: DraggableProvided;
+  snapshot: DraggableStateSnapshot;
   handleDeleteProject: () => void;
   handleCopyText: () => void;
   shortContextMenu?: boolean;
@@ -75,6 +79,8 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 export const SingleSidebarProject: React.FC<Props> = ({
   project,
   sidebarCollapse,
+  provided,
+  snapshot,
   handleDeleteProject,
   handleCopyText,
   shortContextMenu = false,
@@ -130,7 +136,19 @@ export const SingleSidebarProject: React.FC<Props> = ({
     <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
       {({ open }) => (
         <>
-          <div className="flex items-center gap-x-1 text-custom-sidebar-text-100">
+          <div
+            className={`group relative flex items-center gap-x-1 text-custom-sidebar-text-100 ${
+              snapshot.isDragging ? "opacity-60" : ""
+            }`}
+          >
+            <button
+              type="button"
+              className="absolute top-2 left-0 hidden rounded p-0.5 group-hover:!flex"
+              {...provided.dragHandleProps}
+            >
+              <EllipsisVerticalIcon className="h-4" />
+              <EllipsisVerticalIcon className="-ml-5 h-4" />
+            </button>
             <Tooltip
               tooltipContent={`${project?.name}`}
               position="right"
@@ -139,7 +157,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
             >
               <Disclosure.Button
                 as="div"
-                className={`flex w-full cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
+                className={`flex w-full ml-4 cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
                   sidebarCollapse ? "justify-center" : "justify-between"
                 }`}
               >
