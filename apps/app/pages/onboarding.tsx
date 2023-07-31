@@ -24,7 +24,7 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { ICurrentUserResponse, IUser, OnboardingSteps } from "types";
+import { ICurrentUserResponse, IUser, TOnboardingSteps } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
@@ -45,33 +45,33 @@ const Onboarding: NextPage = () => {
 
   // update last active workspace details
   const updateLastWorkspace = async () => {
-    if (!userWorkspaces) return;
+    if (!workspaces) return;
 
-    mutate<ICurrentUserResponse>(
+    await mutate<ICurrentUserResponse>(
       CURRENT_USER,
       (prevData) => {
         if (!prevData) return prevData;
 
         return {
           ...prevData,
-          last_workspace_id: userWorkspaces[0]?.id,
+          last_workspace_id: workspaces[0]?.id,
           workspace: {
             ...prevData.workspace,
-            fallback_workspace_id: userWorkspaces[0]?.id,
-            fallback_workspace_slug: userWorkspaces[0]?.slug,
-            last_workspace_id: userWorkspaces[0]?.id,
-            last_workspace_slug: userWorkspaces[0]?.slug,
+            fallback_workspace_id: workspaces[0]?.id,
+            fallback_workspace_slug: workspaces[0]?.slug,
+            last_workspace_id: workspaces[0]?.id,
+            last_workspace_slug: workspaces[0]?.slug,
           },
         };
       },
       false
     );
 
-    await userService.updateUser({ last_workspace_id: userWorkspaces?.[0]?.id });
+    await userService.updateUser({ last_workspace_id: workspaces?.[0]?.id });
   };
 
   // handle step change
-  const stepChange = async (steps: Partial<OnboardingSteps>) => {
+  const stepChange = async (steps: Partial<TOnboardingSteps>) => {
     if (!user) return;
 
     const payload: Partial<IUser> = {
@@ -119,7 +119,7 @@ const Onboarding: NextPage = () => {
 
   useEffect(() => {
     const handleStepChange = async () => {
-      if (!user || !userWorkspaces || !invitations) return;
+      if (!user || !invitations) return;
 
       const onboardingStep = user.onboarding_step;
 
@@ -143,21 +143,10 @@ const Onboarding: NextPage = () => {
         step !== 3
       )
         setStep(3);
-
-      // if (
-      //   onboardingStep.profile_complete &&
-      //   onboardingStep.workspace_create &&
-      //   onboardingStep.workspace_invite &&
-      //   !onboardingStep.workspace_join &&
-      //   step !== 4
-      // ) {
-      //   if (invitations.length > 0) setStep(4);
-      //   else await Router.push("/");
-      // }
     };
 
     handleStepChange();
-  }, [user, invitations, userWorkspaces, step]);
+  }, [user, invitations, step]);
 
   if (userLoading || step === null)
     return (
@@ -197,15 +186,26 @@ const Onboarding: NextPage = () => {
             <UserDetails user={user} />
           ) : step === 2 ? (
             <Workspace
+              finishOnboarding={finishOnboarding}
               stepChange={stepChange}
               updateLastWorkspace={updateLastWorkspace}
               user={user}
+              workspaces={workspaces}
             />
           ) : step === 3 ? (
-            <InviteMembers workspace={userWorkspaces?.[0]} user={user} stepChange={stepChange} />
+            <InviteMembers
+              finishOnboarding={finishOnboarding}
+              stepChange={stepChange}
+              user={user}
+              workspace={userWorkspaces?.[0]}
+            />
           ) : (
             step === 4 && (
-              <JoinWorkspaces finishOnboarding={finishOnboarding} stepChange={stepChange} />
+              <JoinWorkspaces
+                finishOnboarding={finishOnboarding}
+                stepChange={stepChange}
+                updateLastWorkspace={updateLastWorkspace}
+              />
             )
           )}
         </div>

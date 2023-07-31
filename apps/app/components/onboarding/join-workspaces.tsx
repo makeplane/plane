@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import workspaceService from "services/workspace.service";
@@ -13,18 +13,23 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceMemberInvitation, OnboardingSteps } from "types";
+import { IWorkspaceMemberInvitation, TOnboardingSteps } from "types";
 // fetch-keys
-import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
-  stepChange: (steps: Partial<OnboardingSteps>) => Promise<void>;
+  stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
+  updateLastWorkspace: () => Promise<void>;
 };
 
-export const JoinWorkspaces: React.FC<Props> = ({ finishOnboarding, stepChange }) => {
+export const JoinWorkspaces: React.FC<Props> = ({
+  finishOnboarding,
+  stepChange,
+  updateLastWorkspace,
+}) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
@@ -65,7 +70,8 @@ export const JoinWorkspaces: React.FC<Props> = ({ finishOnboarding, stepChange }
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async () => {
         await mutateInvitations();
-        await finishOnboarding();
+        await mutate(USER_WORKSPACES);
+        await updateLastWorkspace();
 
         await handleNextStep();
       })

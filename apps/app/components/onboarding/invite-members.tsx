@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
 
-import useSWR, { mutate } from "swr";
-
 // react-hook-form
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 // services
 import workspaceService from "services/workspace.service";
-import userService from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -14,16 +11,15 @@ import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IWorkspace, OnboardingSteps } from "types";
-// fetch-keys
-import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+import { ICurrentUserResponse, IWorkspace, TOnboardingSteps } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 
 type Props = {
-  workspace: IWorkspace | undefined;
+  finishOnboarding: () => Promise<void>;
+  stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
   user: ICurrentUserResponse | undefined;
-  stepChange: (steps: Partial<OnboardingSteps>) => Promise<void>;
+  workspace: IWorkspace | undefined;
 };
 
 type EmailRole = {
@@ -35,7 +31,12 @@ type FormValues = {
   emails: EmailRole[];
 };
 
-export const InviteMembers: React.FC<Props> = ({ workspace, user, stepChange }) => {
+export const InviteMembers: React.FC<Props> = ({
+  finishOnboarding,
+  stepChange,
+  user,
+  workspace,
+}) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -49,38 +50,14 @@ export const InviteMembers: React.FC<Props> = ({ workspace, user, stepChange }) 
     name: "emails",
   });
 
-  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
-    workspaceService.userWorkspaceInvitations()
-  );
-
   const nextStep = async () => {
-    if (!user || !invitations) return;
-
-    const payload: Partial<OnboardingSteps> = {
+    const payload: Partial<TOnboardingSteps> = {
       workspace_invite: true,
+      workspace_join: true,
     };
 
-    // update onboarding status from this step if no invitations are present
-    if (invitations.length === 0) {
-      payload.workspace_join = true;
-
-      mutate<ICurrentUserResponse>(
-        CURRENT_USER,
-        (prevData) => {
-          if (!prevData) return prevData;
-
-          return {
-            ...prevData,
-            is_onboarded: true,
-          };
-        },
-        false
-      );
-
-      await userService.updateUserOnBoard({ userRole: user.role }, user);
-    }
-
     await stepChange(payload);
+    await finishOnboarding();
   };
 
   const onSubmit = async (formData: FormValues) => {
