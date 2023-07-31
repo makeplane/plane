@@ -189,7 +189,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                   )}
                 </Tab.Panel>
                 <Tab.Panel className="h-full w-full pt-5">
-                  <div className="w-full h-full flex flex-col gap-y-5 sm:gap-y-5">
+                  <div className="w-full h-full flex flex-col gap-y-2">
                     <div className="flex items-center gap-3 w-full flex-1">
                       <div
                         {...getRootProps()}
@@ -236,7 +236,11 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                       </p>
                     )}
 
-                    <div className="sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                    <p className="text-custom-text-200 text-sm">
+                      File formats supported- .jpeg, .jpg, .png, .webp, .svg
+                    </p>
+
+                    <div className="flex items-center justify-end gap-2">
                       <SecondaryButton
                         className="w-full"
                         onClick={() => {

@@ -179,7 +179,10 @@ export const ImageUploadModal: React.FC<Props> = ({
                     )}
                   </div>
                 </div>
-                <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                <p className="my-4 text-custom-text-200 text-sm">
+                  File formats supported- .jpeg, .jpg, .png, .webp, .svg
+                </p>
+                <div className="flex items-center justify-end gap-2">
                   <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                   <PrimaryButton
                     onClick={handleSubmit}
