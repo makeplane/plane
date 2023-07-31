@@ -36,8 +36,8 @@ import { PROJECTS_LIST } from "constants/fetch-keys";
 type Props = {
   project: IProject;
   sidebarCollapse: boolean;
-  provided: DraggableProvided;
-  snapshot: DraggableStateSnapshot;
+  provided?: DraggableProvided;
+  snapshot?: DraggableStateSnapshot;
   handleDeleteProject: () => void;
   handleCopyText: () => void;
   shortContextMenu?: boolean;
@@ -137,20 +137,22 @@ export const SingleSidebarProject: React.FC<Props> = ({
       {({ open }) => (
         <>
           <div
-            className={`group relative flex items-center gap-x-1 text-custom-sidebar-text-100 ${
-              snapshot.isDragging ? "opacity-60" : ""
+            className={`group relative flex items-center gap-x-1 text-custom-sidebar-text-100 z-50 ${
+              snapshot?.isDragging ? "opacity-60" : ""
             }`}
           >
-            <button
-              type="button"
-              className={`absolute top-2 left-0 hidden rounded p-0.5 ${
-                sidebarCollapse ? "" : "group-hover:!flex"
-              }`}
-              {...provided.dragHandleProps}
-            >
-              <EllipsisVerticalIcon className="h-4" />
-              <EllipsisVerticalIcon className="-ml-5 h-4" />
-            </button>
+            {provided && (
+              <button
+                type="button"
+                className={`absolute top-2 left-0 hidden rounded p-0.5 ${
+                  sidebarCollapse ? "" : "group-hover:!flex"
+                }`}
+                {...provided?.dragHandleProps}
+              >
+                <EllipsisVerticalIcon className="h-4" />
+                <EllipsisVerticalIcon className="-ml-5 h-4" />
+              </button>
+            )}
             <Tooltip
               tooltipContent={`${project?.name}`}
               position="right"
@@ -160,7 +162,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
               <Disclosure.Button
                 as="div"
                 className={`flex w-full cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
-                  sidebarCollapse ? "justify-center" : "justify-between ml-4"
+                  sidebarCollapse ? "justify-center" : `justify-between ${provided ? "ml-4" : ""}`
                 }`}
               >
                 <div className="flex items-center gap-x-2">
