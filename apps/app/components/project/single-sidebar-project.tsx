@@ -143,7 +143,9 @@ export const SingleSidebarProject: React.FC<Props> = ({
           >
             <button
               type="button"
-              className="absolute top-2 left-0 hidden rounded p-0.5 group-hover:!flex"
+              className={`absolute top-2 left-0 hidden rounded p-0.5 ${
+                sidebarCollapse ? "" : "group-hover:!flex"
+              }`}
               {...provided.dragHandleProps}
             >
               <EllipsisVerticalIcon className="h-4" />
@@ -157,8 +159,8 @@ export const SingleSidebarProject: React.FC<Props> = ({
             >
               <Disclosure.Button
                 as="div"
-                className={`flex w-full ml-4 cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
-                  sidebarCollapse ? "justify-center" : "justify-between"
+                className={`flex w-full cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
+                  sidebarCollapse ? "justify-center" : "justify-between ml-4"
                 }`}
               >
                 <div className="flex items-center gap-x-2">
