@@ -67,8 +67,12 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
     setImage(acceptedFiles[0]);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
+    accept: {
+      "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
+    },
+    maxSize: 5 * 1024 * 1024,
   });
 
   const handleSubmit = async () => {
@@ -185,7 +189,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                   )}
                 </Tab.Panel>
                 <Tab.Panel className="h-full w-full pt-5">
-                  <div className="w-full h-full flex flex-col gap-y-5 sm:gap-y-5">
+                  <div className="w-full h-full flex flex-col gap-y-2">
                     <div className="flex items-center gap-3 w-full flex-1">
                       <div
                         {...getRootProps()}
@@ -224,8 +228,19 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                         <input {...getInputProps()} type="text" />
                       </div>
                     </div>
+                    {fileRejections.length > 0 && (
+                      <p className="text-sm text-red-500">
+                        {fileRejections[0].errors[0].code === "file-too-large"
+                          ? "The image size cannot exceed 5 MB."
+                          : "Please upload a file in a valid format."}
+                      </p>
+                    )}
 
-                    <div className="sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                    <p className="text-custom-text-200 text-sm">
+                      File formats supported- .jpeg, .jpg, .png, .webp, .svg
+                    </p>
+
+                    <div className="flex items-center justify-end gap-2">
                       <SecondaryButton
                         className="w-full"
                         onClick={() => {
