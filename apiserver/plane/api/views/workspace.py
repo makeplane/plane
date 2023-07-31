@@ -1336,7 +1336,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
-            )
+            ).distinct()
 
             # Priority Ordering
             if order_by_param == "priority" or order_by_param == "-priority":
