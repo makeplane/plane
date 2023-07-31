@@ -73,7 +73,7 @@ from plane.db.models import (
     IssueSubscriber,
     Project,
     Label,
-    State,
+    CycleIssue,
 )
 from plane.api.permissions import (
     WorkSpaceBasePermission,
@@ -1140,6 +1140,19 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 .count()
             )
 
+            upcoming_cycles = CycleIssue.objects.filter(
+                workspace__slug=slug,
+                cycle__start_date__gt=timezone.now().date(),
+                issue__assignees__in=[user_id,]
+            ).values("cycle__name", "cycle__id", "cycle__project_id")
+
+            present_cycle = CycleIssue.objects.filter(
+                workspace__slug=slug,
+                cycle__start_date__lt=timezone.now().date(),
+                cycle__end_date__gt=timezone.now().date(),
+                issue__assignees__in=[user_id,]
+            ).values("cycle__name", "cycle__id", "cycle__project_id")
+
             return Response(
                 {
                     "state_distribution": state_distribution,
@@ -1149,6 +1162,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                     "completed_issues": completed_issues_count,
                     "pending_issues": pending_issues_count,
                     "subscribed_issues": subscribed_issues_count,
+                    "present_cycles": present_cycle,
+                    "upcoming_cycles": upcoming_cycles, 
                 }
             )
         except Exception as e:
@@ -1393,6 +1408,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
     permission_classes = [
