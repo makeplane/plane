@@ -120,15 +120,15 @@ class ProjectViewSet(BaseViewSet):
                 project_id=OuterRef("pk"),
                 workspace__slug=self.kwargs.get("slug"),
             )
-            sort_order = ProjectMember.objects.filter(
-                user=self.request.user,
+            sort_order_query = ProjectMember.objects.filter(
+                member=request.user,
                 project_id=OuterRef("pk"),
                 workspace__slug=self.kwargs.get("slug"),   
             ).values("sort_order")
             projects = (
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
-                .annotate(sort_order=Subquery(sort_order))
+                .annotate(sort_order=Subquery(sort_order_query))
                 .order_by("sort_order", "name")
                 .annotate(
                     total_members=ProjectMember.objects.filter(

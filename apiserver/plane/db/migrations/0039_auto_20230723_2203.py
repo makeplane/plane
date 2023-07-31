@@ -93,5 +93,5 @@ class Migration(migrations.Migration):
             name='sort_order',
             field=models.FloatField(default=65535),
         ),
-        migrations.RunPython(update_project_sort_order),
+        migrations.RunPython(update_project_member_sort_order),
     ]
