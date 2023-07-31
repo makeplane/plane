@@ -14,6 +14,7 @@ import useUser from "hooks/use-user";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { SettingsHeader } from "components/workspace";
 // components
+import OnlyAdminDeleteAlert from "components/workspace/only-admin-alert";
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 // ui
@@ -96,8 +97,30 @@ const MembersSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
+      <OnlyAdminDeleteAlert
+        isOpen={
+          Boolean(selectedRemoveMember) &&
+          members.filter((item) => item.id === selectedRemoveMember || item.role === 20).length <= 1
+        }
+        memberName={
+          selectedRemoveMember
+            ? members.find((item) => item.id === selectedRemoveMember)?.first_name
+            : selectedInviteRemoveMember
+            ? members.find((item) => item.id === selectedInviteRemoveMember)?.first_name
+            : null
+        }
+        onClose={() => {
+          setSelectedRemoveMember(null);
+          setSelectedInviteRemoveMember(null);
+        }}
+      />
       <ConfirmWorkspaceMemberRemove
-        isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
+        isOpen={
+          Boolean(selectedInviteRemoveMember) ||
+          (Boolean(selectedRemoveMember) &&
+            members.filter((item) => item.id === selectedRemoveMember || item.role === 20).length >
+              1)
+        }
         onClose={() => {
           setSelectedRemoveMember(null);
           setSelectedInviteRemoveMember(null);
@@ -229,6 +252,9 @@ const MembersSettings: NextPage = () => {
                                   message:
                                     "An error occurred while updating member role. Please try again.",
                                 });
+                              })
+                              .finally(() => {
+                                mutateMembers();
                               });
                           }}
                           position="right"
