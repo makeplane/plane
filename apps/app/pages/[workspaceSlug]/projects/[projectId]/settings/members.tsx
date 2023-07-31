@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
@@ -187,9 +188,17 @@ const MembersSettings: NextPage = () => {
                           )}
                         </div>
                         <div>
-                          <h4 className="text-sm">
-                            {member.first_name} {member.last_name}
-                          </h4>
+                          {member.member ? (
+                            <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
+                              <a className="text-sm">
+                                {member.first_name} {member.last_name}
+                              </a>
+                            </Link>
+                          ) : (
+                            <h4 className="text-sm">
+                              {member.first_name} {member.last_name}
+                            </h4>
+                          )}
                           <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
                         </div>
                       </div>

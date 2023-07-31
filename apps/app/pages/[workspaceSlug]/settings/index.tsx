@@ -14,7 +14,6 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal, SettingsHeader } from "components/workspace";

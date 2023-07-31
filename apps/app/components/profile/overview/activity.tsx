@@ -59,14 +59,15 @@ export const ProfileActivity = () => {
                     ) : (
                       <span>
                         created this{" "}
-                        <Link
+                        <a
                           href={`/${activity.workspace_detail.slug}/projects/${activity.project}/issues/${activity.issue}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
                         >
-                          <a className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline">
-                            Issue
-                            <Icon iconName="launch" className="!text-xs" />
-                          </a>
-                        </Link>
+                          Issue
+                          <Icon iconName="launch" className="!text-xs" />
+                        </a>
                       </span>
                     )}
                   </p>
