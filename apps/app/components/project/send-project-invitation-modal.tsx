@@ -93,7 +93,6 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
       .inviteProject(workspaceSlug as string, projectId as string, payload, user)
       .then(() => {
         setIsOpen(false);
-        mutate(PROJECT_MEMBERS(projectId as string));
         setToastAlert({
           title: "Success",
           type: "success",
@@ -105,6 +104,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
       })
       .finally(() => {
         reset(defaultValues);
+        mutate(PROJECT_MEMBERS(projectId.toString()));
       });
   };
 
