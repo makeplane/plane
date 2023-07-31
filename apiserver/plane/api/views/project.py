@@ -123,7 +123,7 @@ class ProjectViewSet(BaseViewSet):
             projects = (
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
-                .order_by("-is_favorite", "name")
+                .order_by("sort_order", "name")
                 .annotate(
                     total_members=ProjectMember.objects.filter(
                         project_id=OuterRef("id")
