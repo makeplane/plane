@@ -140,6 +140,10 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
               validate: (value) =>
                 /^[\w\s-]*$/.test(value) ||
                 `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+              maxLength: {
+                value: 80,
+                message: "Workspace name should not exceed 80 characters",
+              },
             }}
             placeholder="Enter workspace name..."
             error={errors.name}

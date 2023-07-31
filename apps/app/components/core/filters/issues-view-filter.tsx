@@ -186,6 +186,8 @@ export const IssuesFilterView: React.FC = () => {
                               GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
                                 ?.name ?? "Select"
                             }
+                            className="w-28"
+                            buttonClassName="w-full"
                           >
                             {GROUP_BY_OPTIONS.map((option) => {
                               if (issueView === "kanban" && option.key === null) return null;
@@ -209,6 +211,8 @@ export const IssuesFilterView: React.FC = () => {
                               ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
                               "Select"
                             }
+                            className="w-28"
+                            buttonClassName="w-full"
                           >
                             {ORDER_BY_OPTIONS.map((option) =>
                               groupByProperty === "priority" && option.key === "priority" ? null : (
@@ -233,6 +237,8 @@ export const IssuesFilterView: React.FC = () => {
                           FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
                             ?.name ?? "Select"
                         }
+                        className="w-28"
+                        buttonClassName="w-full"
                       >
                         {FILTER_ISSUE_OPTIONS.map((option) => (
                           <CustomMenu.MenuItem
@@ -253,17 +259,21 @@ export const IssuesFilterView: React.FC = () => {
                       <>
                         <div className="flex items-center justify-between">
                           <h4 className="text-custom-text-200">Show sub-issues</h4>
-                          <ToggleSwitch
-                            value={showSubIssues}
-                            onChange={() => setShowSubIssues(!showSubIssues)}
-                          />
+                          <div className="w-28">
+                            <ToggleSwitch
+                              value={showSubIssues}
+                              onChange={() => setShowSubIssues(!showSubIssues)}
+                            />
+                          </div>
                         </div>
                         <div className="flex items-center justify-between">
                           <h4 className="text-custom-text-200">Show empty states</h4>
-                          <ToggleSwitch
-                            value={showEmptyGroups}
-                            onChange={() => setShowEmptyGroups(!showEmptyGroups)}
-                          />
+                          <div className="w-28">
+                            <ToggleSwitch
+                              value={showEmptyGroups}
+                              onChange={() => setShowEmptyGroups(!showEmptyGroups)}
+                            />
+                          </div>
                         </div>
                         <div className="relative flex justify-end gap-x-3">
                           <button type="button" onClick={() => resetFilterToDefault()}>
@@ -283,7 +293,7 @@ export const IssuesFilterView: React.FC = () => {
 
                   <div className="space-y-2 py-3">
                     <h4 className="text-sm text-custom-text-200">Display Properties</h4>
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 text-custom-text-200">
                       {Object.keys(properties).map((key) => {
                         if (key === "estimate" && !isEstimateActive) return null;
 

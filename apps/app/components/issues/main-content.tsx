@@ -21,6 +21,9 @@ import {
 } from "components/issues";
 // ui
 import { CustomMenu } from "components/ui";
+// icons
+import { LayerDiagonalIcon } from "components/icons";
+import { MinusCircleIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
 // fetch-keys
@@ -60,32 +63,36 @@ export const IssueMainContent: React.FC<Props> = ({
     <>
       <div className="rounded-lg">
         {issueDetails?.parent ? (
-          <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-90 p-2 text-xs">
+          <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md bg-custom-background-80 border border-custom-border-300 py-1 px-2.5 text-xs">
             <Link
               href={`/${workspaceSlug}/projects/${issueDetails.parent_detail?.project_detail.id}/issues/${issueDetails.parent}`}
             >
-              <a className="flex items-center gap-2 text-custom-text-200">
-                <span
-                  className="block h-1.5 w-1.5 rounded-full"
-                  style={{
-                    backgroundColor: issueDetails.parent_detail?.state_detail.color,
-                  }}
-                />
-                <span className="flex-shrink-0">
-                  {issueDetails.parent_detail?.project_detail.identifier}-
-                  {issueDetails.parent_detail?.sequence_id}
-                </span>
-                <span className="truncate">
+              <a className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className="block h-2 w-2 rounded-full"
+                    style={{
+                      backgroundColor: issueDetails.parent_detail?.state_detail.color,
+                    }}
+                  />
+                  <span className="flex-shrink-0 text-custom-text-200">
+                    {issueDetails.parent_detail?.project_detail.identifier}-
+                    {issueDetails.parent_detail?.sequence_id}
+                  </span>
+                </div>
+                <span className="truncate text-custom-text-100">
                   {issueDetails.parent_detail?.name.substring(0, 50)}
                 </span>
               </a>
             </Link>
 
-            <CustomMenu position="left" ellipsis>
+            <CustomMenu position="left" ellipsis optionsClassName="px-1.5">
               {siblingIssuesList ? (
                 siblingIssuesList.length > 0 ? (
                   <>
-                    <h2 className="text-custom-text-200 px-1 mb-2">Sibling issues</h2>
+                    <h2 className="mb-1 text-custom-text-200 text-xs font-medium px-2 pb-1 border-b border-custom-border-300">
+                      Sibling issues
+                    </h2>
                     {siblingIssuesList.map((issue) => (
                       <CustomMenu.MenuItem
                         key={issue.id}
@@ -93,7 +100,9 @@ export const IssueMainContent: React.FC<Props> = ({
                         href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
                           issue.id
                         }`}
+                        className="flex items-center gap-2 py-2"
                       >
+                        <LayerDiagonalIcon className="h-4 w-4" />
                         {issueDetails.project_detail.identifier}-{issue.sequence_id}
                       </CustomMenu.MenuItem>
                     ))}
@@ -107,8 +116,10 @@ export const IssueMainContent: React.FC<Props> = ({
               <CustomMenu.MenuItem
                 renderAs="button"
                 onClick={() => submitChanges({ parent: null })}
+                className="flex items-center gap-2 text-red-500 py-2"
               >
-                Remove parent issue
+                <MinusCircleIcon className="h-4 w-4" />
+                <span> Remove Parent Issue</span>
               </CustomMenu.MenuItem>
             </CustomMenu>
           </div>

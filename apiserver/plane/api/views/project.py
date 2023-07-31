@@ -123,7 +123,7 @@ class ProjectViewSet(BaseViewSet):
             projects = (
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
-                .order_by("-is_favorite", "name")
+                .order_by("sort_order", "name")
                 .annotate(
                     total_members=ProjectMember.objects.filter(
                         project_id=OuterRef("id")
@@ -844,11 +844,13 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 
             view_props = project_member.view_props
             default_props = project_member.default_props
+            preferences = project_member.preferences
 
             project_member.view_props = request.data.get("view_props", view_props)
             project_member.default_props = request.data.get(
                 "default_props", default_props
             )
+            project_member.preferences = request.data.get("preferences", preferences)
 
             project_member.save()
 

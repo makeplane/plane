@@ -17,10 +17,9 @@ import { Tab, Transition, Popover } from "@headlessui/react";
 import fileService from "services/file.service";
 
 // components
-import { Input, Spinner, PrimaryButton } from "components/ui";
+import { Input, Spinner, PrimaryButton, SecondaryButton } from "components/ui";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 const unsplashEnabled =
   process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "true" ||
@@ -64,10 +63,6 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
 
   const { workspaceDetails } = useWorkspaceDetails();
 
-  useOutsideClickDetector(ref, () => {
-    setIsOpen(false);
-  });
-
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setImage(acceptedFiles[0]);
   }, []);
@@ -95,6 +90,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
         onChange(imageUrl);
         setIsImageUploading(false);
         setImage(null);
+        setIsOpen(false);
 
         if (isUnsplashImage) return;
 
@@ -130,7 +126,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
         leaveTo="transform opacity-0 scale-95"
       >
         <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
-          <div className="h-96 flex flex-col w-80 overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl sm:max-w-2xl md:w-96 lg:w-[40rem]">
+          <div className="h-96 md:h-[28rem] w-80 md:w-[36rem] flex flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl">
             <Tab.Group>
               <div>
                 <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
@@ -188,12 +184,12 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                     </div>
                   )}
                 </Tab.Panel>
-                <Tab.Panel className="h-full w-full flex flex-col items-center justify-center">
-                  <div className="w-full h-full flex flex-col py-5">
+                <Tab.Panel className="h-full w-full pt-5">
+                  <div className="w-full h-full flex flex-col gap-y-5 sm:gap-y-5">
                     <div className="flex items-center gap-3 w-full flex-1">
                       <div
                         {...getRootProps()}
-                        className={`relative grid h-80 w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
+                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
                             ? "border-2 border-dashed border-custom-border-200 hover:bg-custom-background-90"
                             : ""
@@ -229,8 +225,18 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                       </div>
                     </div>
 
-                    <div className="mt-5 sm:mt-6 flex justify-end flex-auto">
+                    <div className="sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                      <SecondaryButton
+                        className="w-full"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setImage(null);
+                        }}
+                      >
+                        Cancel
+                      </SecondaryButton>
                       <PrimaryButton
+                        className="w-full"
                         onClick={handleSubmit}
                         disabled={!image}
                         loading={isImageUploading}
