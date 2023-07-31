@@ -88,7 +88,6 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
           title: "Success!",
           message: "Invitations sent successfully.",
         });
-        mutate(WORKSPACE_INVITATIONS);
       })
       .catch((err) => {
         setToastAlert({
@@ -98,7 +97,10 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
         });
         console.log(err);
       })
-      .finally(() => reset(defaultValues));
+      .finally(() => {
+        reset(defaultValues);
+        mutate(WORKSPACE_INVITATIONS);
+      });
   };
 
   const appendField = () => {
