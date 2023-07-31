@@ -29,6 +29,8 @@ from plane.db.models import (
     ModuleIssue,
     IssueLink,
     IssueAttachment,
+    IssueReaction,
+    CommentReaction,
 )
 
 
@@ -500,6 +502,74 @@ class IssueAttachmentSerializer(BaseSerializer):
         ]
 
 
+class IssueReactionSerializer(BaseSerializer):
+    class Meta:
+        model = IssueReaction
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "issue",
+            "actor",
+        ]
+
+
+class IssueReactionLiteSerializer(BaseSerializer):
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+
+    class Meta:
+        model = IssueReaction
+        fields = [
+            "id",
+            "reaction",
+            "issue",
+            "actor_detail",
+        ]
+
+
+class CommentReactionLiteSerializer(BaseSerializer):
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+
+    class Meta:
+        model = CommentReaction
+        fields = [
+            "id",
+            "reaction",
+            "comment",
+            "actor_detail",
+        ]
+
+
+class CommentReactionSerializer(BaseSerializer):
+    class Meta:
+        model = CommentReaction
+        fields = "__all__"
+        read_only_fields = ["workspace", "project", "comment", "actor"]
+
+
+
+class IssueCommentSerializer(BaseSerializer):
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    comment_reactions = CommentReactionLiteSerializer(read_only=True, many=True)
+
+
+    class Meta:
+        model = IssueComment
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+
 class IssueStateFlatSerializer(BaseSerializer):
     state_detail = StateLiteSerializer(read_only=True, source="state")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
@@ -546,6 +616,7 @@ class IssueSerializer(BaseSerializer):
     issue_link = IssueLinkSerializer(read_only=True, many=True)
     issue_attachment = IssueAttachmentSerializer(read_only=True, many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
+    issue_reactions = IssueReactionLiteSerializer(read_only=True, many=True)
 
     class Meta:
         model = Issue
@@ -571,6 +642,7 @@ class IssueLiteSerializer(BaseSerializer):
     module_id = serializers.UUIDField(read_only=True)
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
+    issue_reactions = IssueReactionLiteSerializer(read_only=True, many=True)
 
     class Meta:
         model = Issue
