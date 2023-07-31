@@ -254,6 +254,7 @@ class ProjectServices extends APIService {
       view_props?: ProjectViewTheme;
       default_props?: ProjectViewTheme;
       preferences?: ProjectPreferences;
+      sort_order?: number;
     }
   ): Promise<any> {
     await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-views/`, data)
