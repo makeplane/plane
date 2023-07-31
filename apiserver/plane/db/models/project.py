@@ -91,7 +91,6 @@ class Project(BaseModel):
     default_state = models.ForeignKey(
         "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
     )
-    sort_order = models.FloatField(default=65535)
 
     def __str__(self):
         """Return name of the project"""
@@ -156,6 +155,8 @@ class ProjectMember(ProjectBaseModel):
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
+    sort_order = models.FloatField(default=65535)
+
 
     class Meta:
         unique_together = ["project", "member"]

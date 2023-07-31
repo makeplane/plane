@@ -5,7 +5,7 @@ from datetime import datetime
 # Django imports
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Q, Exists, OuterRef, Func, F
+from django.db.models import Q, Exists, OuterRef, Func, F, Subquery
 from django.core.validators import validate_email
 from django.conf import settings
 
@@ -120,9 +120,15 @@ class ProjectViewSet(BaseViewSet):
                 project_id=OuterRef("pk"),
                 workspace__slug=self.kwargs.get("slug"),
             )
+            sort_order = ProjectMember.objects.filter(
+                user=self.request.user,
+                project_id=OuterRef("pk"),
+                workspace__slug=self.kwargs.get("slug"),   
+            ).values("sort_order")
             projects = (
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
+                .annotate(sort_order=Subquery(sort_order))
                 .order_by("sort_order", "name")
                 .annotate(
                     total_members=ProjectMember.objects.filter(
