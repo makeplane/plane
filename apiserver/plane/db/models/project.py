@@ -91,7 +91,6 @@ class Project(BaseModel):
     default_state = models.ForeignKey(
         "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
     )
-    sort_order = models.FloatField(default=65535)
 
     def __str__(self):
         """Return name of the project"""
@@ -156,6 +155,20 @@ class ProjectMember(ProjectBaseModel):
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
+    sort_order = models.FloatField(default=65535)
+
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            smallest_sort_order = ProjectMember.objects.filter(
+                workspace=self.workspace, member=self.member
+            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+
+            # Project ordering
+            if smallest_sort_order is not None:
+                self.sort_order = smallest_sort_order - 10000
+
+        super(ProjectMember, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = ["project", "member"]

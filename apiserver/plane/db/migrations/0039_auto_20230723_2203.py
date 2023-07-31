@@ -58,16 +58,16 @@ def update_workspace_member_props(apps, schema_editor):
     Model.objects.bulk_update(updated_workspace_member, ["view_props"], batch_size=100)
 
 
-def update_project_sort_order(apps, schema_editor):
-    Model = apps.get_model("db", "Project")
+def update_project_member_sort_order(apps, schema_editor):
+    Model = apps.get_model("db", "ProjectMember")
 
-    updated_projects = []
+    updated_project_members = []
 
     for obj in Model.objects.all():
         obj.sort_order = random.randint(1, 65536)
-        updated_projects.append(obj)
+        updated_project_members.append(obj)
 
-    Model.objects.bulk_update(updated_projects, ["sort_order"], batch_size=100)
+    Model.objects.bulk_update(updated_project_members, ["sort_order"], batch_size=100)
 
 
 class Migration(migrations.Migration):
@@ -93,5 +93,5 @@ class Migration(migrations.Migration):
             name='sort_order',
             field=models.FloatField(default=65535),
         ),
-        migrations.RunPython(update_project_sort_order),
+        migrations.RunPython(update_project_member_sort_order),
     ]
