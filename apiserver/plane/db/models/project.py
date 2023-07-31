@@ -161,7 +161,7 @@ class ProjectMember(ProjectBaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             smallest_sort_order = ProjectMember.objects.filter(
-                workspace_id=self.workspace_id, member_id=self.member_id
+                workspace_id=self.project.workspace_id, member_id=self.member_id
             ).aggregate(smallest=models.Min("sort_order"))["smallest"]
 
             # Project ordering
