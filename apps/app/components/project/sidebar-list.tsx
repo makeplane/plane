@@ -130,13 +130,13 @@ export const ProjectSidebarList: FC = () => {
         data={projectToDelete}
         user={user}
       />
-      <div className="h-full overflow-y-auto px-4">
+      <div className="h-full overflow-y-auto px-4 space-y-3 mt-5">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedFavProjects && orderedFavProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col space-y-2 mt-5">
+                  <Disclosure as="div" className="flex flex-col space-y-2">
                     {({ open }) => (
                       <>
                         {!sidebarCollapse && (
@@ -191,7 +191,7 @@ export const ProjectSidebarList: FC = () => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col space-y-2 mt-5">
+                  <Disclosure as="div" className="flex flex-col space-y-2">
                     {({ open }) => (
                       <>
                         {!sidebarCollapse && (
@@ -235,7 +235,7 @@ export const ProjectSidebarList: FC = () => {
             )}
           </Droppable>
         </DragDropContext>
-        <Disclosure as="div" className="flex flex-col space-y-2 mt-5">
+        <Disclosure as="div" className="flex flex-col space-y-2">
           {({ open }) => (
             <>
               {!sidebarCollapse && (

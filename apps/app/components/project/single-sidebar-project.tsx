@@ -137,7 +137,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
       {({ open }) => (
         <>
           <div
-            className={`group relative flex items-center gap-x-1 text-custom-sidebar-text-100 z-50 ${
+            className={`group relative flex items-center gap-x-1 text-custom-sidebar-text-100 ${
               snapshot?.isDragging ? "opacity-60" : ""
             }`}
           >
