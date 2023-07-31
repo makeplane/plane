@@ -22,7 +22,7 @@ export type CustomSearchSelectProps = DropdownProps & {
     | { multiple?: false; value: any } // if multiple is false, value can be anything
     | {
         multiple?: true;
-        value: any[]; // if multiple is true, value should be an array
+        value: any[] | null; // if multiple is true, value should be an array
       }
   );
 
@@ -68,7 +68,7 @@ export const CustomSearchSelect = ({
       className={`${selfPositioned ? "" : "relative"} flex-shrink-0 text-left ${className}`}
       {...props}
     >
-      {({ open }: any) => {
+      {({ open }: { open: boolean }) => {
         if (open && onOpen) onOpen();
 
         return (

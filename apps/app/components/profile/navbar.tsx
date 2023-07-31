@@ -1,15 +1,26 @@
+import React from "react";
+
 import { useRouter } from "next/router";
 import Link from "next/link";
 
 // components
 import { ProfileIssuesViewOptions } from "components/profile";
+// types
+import { UserAuth } from "types";
 
-const tabsList = [
+type Props = {
+  memberRole: UserAuth;
+};
+
+const viewerTabs = [
   {
     route: "",
     label: "Overview",
     selected: "/[workspaceSlug]/profile/[userId]",
   },
+];
+
+const adminTabs = [
   {
     route: "assigned",
     label: "Assigned",
@@ -27,12 +38,17 @@ const tabsList = [
   },
 ];
 
-export const ProfileNavbar = () => {
+export const ProfileNavbar: React.FC<Props> = ({ memberRole }) => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
+  const tabsList =
+    memberRole.isOwner || memberRole.isMember || memberRole.isViewer
+      ? [...viewerTabs, ...adminTabs]
+      : viewerTabs;
+
   return (
-    <div className="px-4 sm:px-5 flex items-center justify-between gap-4 border-b border-custom-border-300">
+    <div className="sticky -top-0.5 z-[1] md:static px-4 sm:px-5 flex items-center justify-between gap-4 bg-custom-background-100 border-b border-custom-border-300">
       <div className="flex items-center overflow-x-scroll">
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
