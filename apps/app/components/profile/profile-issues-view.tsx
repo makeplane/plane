@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -140,10 +140,26 @@ export const ProfileIssuesView = () => {
     ]
   );
 
-  const addIssueToGroup = useCallback((groupTitle: string) => {
-    setCreateIssueModal(true);
-    return;
-  }, []);
+  const addIssueToGroup = useCallback(
+    (groupTitle: string) => {
+      setCreateIssueModal(true);
+
+      let preloadedValue: string | string[] = groupTitle;
+
+      if (groupByProperty === "labels") {
+        if (groupTitle === "None") preloadedValue = [];
+        else preloadedValue = [groupTitle];
+      }
+
+      if (groupByProperty)
+        setPreloadedData({
+          [groupByProperty]: preloadedValue,
+          actionType: "createIssue",
+        });
+      else setPreloadedData({ actionType: "createIssue" });
+    },
+    [setCreateIssueModal, setPreloadedData, groupByProperty]
+  );
 
   const addIssueToDate = useCallback(
     (date: string) => {
@@ -250,6 +266,13 @@ export const ProfileIssuesView = () => {
         addIssueToGroup={addIssueToGroup}
         disableUserActions={false}
         dragDisabled={groupByProperty !== "priority"}
+        emptyState={{
+          title: router.pathname.includes("assigned")
+            ? `Issues assigned to ${user?.first_name} ${user?.last_name} will appear here`
+            : router.pathname.includes("created")
+            ? `Issues created by ${user?.first_name} ${user?.last_name} will appear here`
+            : `Issues subscribed by ${user?.first_name} ${user?.last_name} will appear here`,
+        }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
         openIssuesListModal={null}

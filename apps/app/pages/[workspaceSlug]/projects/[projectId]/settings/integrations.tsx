@@ -78,8 +78,10 @@ const ProjectIntegrations: NextPage = () => {
               title="You haven't configured integrations"
               description="Configure GitHub and other integrations to sync your project issues."
               image={emptyIntegration}
-              buttonText="Configure now"
-              onClick={() => router.push(`/${workspaceSlug}/settings/integrations`)}
+              primaryButton={{
+                text: "Configure now",
+                onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
+              }}
             />
           )
         ) : (

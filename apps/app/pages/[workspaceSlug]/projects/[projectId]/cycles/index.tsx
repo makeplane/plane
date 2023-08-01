@@ -121,13 +121,15 @@ const ProjectCycles: NextPage = () => {
             title="Plan your project with cycles"
             description="Cycle is a custom time period in which a team works to complete items on their backlog."
             image={emptyCycle}
-            buttonText="New Cycle"
-            buttonIcon={<PlusIcon className="h-4 w-4" />}
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "q",
-              });
-              document.dispatchEvent(e);
+            primaryButton={{
+              icon: <PlusIcon className="h-4 w-4" />,
+              text: "New Cycle",
+              onClick: () => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "q",
+                });
+                document.dispatchEvent(e);
+              },
             }}
           />
         </div>
