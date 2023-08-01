@@ -71,12 +71,14 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               title="No such project exists"
               description="Try creating a new project"
               image={emptyProject}
-              buttonText="Create Project"
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "p",
-                });
-                document.dispatchEvent(e);
+              primaryButton={{
+                text: "Create Project",
+                onClick: () => {
+                  const e = new KeyboardEvent("keydown", {
+                    key: "p",
+                  });
+                  document.dispatchEvent(e);
+                },
               }}
             />
           </div>

@@ -250,6 +250,9 @@ export const ProfileIssuesView = () => {
         addIssueToGroup={addIssueToGroup}
         disableUserActions={false}
         dragDisabled={groupByProperty !== "priority"}
+        emptyState={{
+          title: `Issues assigned to ${user?.first_name} ${user?.last_name} will appear here`,
+        }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
         openIssuesListModal={null}

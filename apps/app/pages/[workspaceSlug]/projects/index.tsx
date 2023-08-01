@@ -111,13 +111,15 @@ const ProjectsPage: NextPage = () => {
               image={emptyProject}
               title="No projects yet"
               description="Get started by creating your first project"
-              buttonText="New Project"
-              buttonIcon={<PlusIcon className="h-4 w-4" />}
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "p",
-                });
-                document.dispatchEvent(e);
+              primaryButton={{
+                icon: <PlusIcon className="h-4 w-4" />,
+                text: "New Project",
+                onClick: () => {
+                  const e = new KeyboardEvent("keydown", {
+                    key: "p",
+                  });
+                  document.dispatchEvent(e);
+                },
               }}
             />
           )}

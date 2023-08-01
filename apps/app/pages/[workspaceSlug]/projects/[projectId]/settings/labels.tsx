@@ -181,8 +181,10 @@ const LabelsSettings: NextPage = () => {
                       title="No labels yet"
                       description="Create labels to help organize and filter issues in you project"
                       image={emptyLabel}
-                      buttonText="Add label"
-                      onClick={newLabel}
+                      primaryButton={{
+                        text: "Add label",
+                        onClick: () => newLabel(),
+                      }}
                       isFullScreen={false}
                     />
                   )

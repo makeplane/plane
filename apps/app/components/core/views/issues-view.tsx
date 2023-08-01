@@ -22,7 +22,7 @@ import { FiltersList, AllViews } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // ui
-import { PrimaryButton } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -515,6 +515,35 @@ export const IssuesView: React.FC<Props> = ({
           selectedGroup === "labels" ||
           selectedGroup === "state_detail.group"
         }
+        emptyState={{
+          title: cycleId
+            ? "Cycle issues will appear here"
+            : moduleId
+            ? "Module issues will appear here"
+            : "Project issues will appear here",
+          description:
+            "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
+          primaryButton: {
+            icon: <PlusIcon className="h-4 w-4" />,
+            text: "New Issue",
+            onClick: () => {
+              const e = new KeyboardEvent("keydown", {
+                key: "c",
+              });
+              document.dispatchEvent(e);
+            },
+          },
+          secondaryButton:
+            cycleId || moduleId ? (
+              <SecondaryButton
+                className="flex items-center gap-1.5"
+                onClick={openIssuesListModal ?? (() => {})}
+              >
+                <PlusIcon className="h-4 w-4" />
+                Add an existing issue
+              </SecondaryButton>
+            ) : null,
+        }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
         openIssuesListModal={openIssuesListModal ? openIssuesListModal : null}

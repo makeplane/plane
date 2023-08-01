@@ -166,11 +166,13 @@ const EstimatesSettings: NextPage = () => {
                   title="No estimates yet"
                   description="Estimates help you communicate the complexity of an issue."
                   image={emptyEstimate}
-                  buttonText="Add Estimate"
-                  buttonIcon={<PlusIcon className="h-4 w-4" />}
-                  onClick={() => {
-                    setEstimateToUpdate(undefined);
-                    setEstimateFormOpen(true);
+                  primaryButton={{
+                    icon: <PlusIcon className="h-4 w-4" />,
+                    text: "Add Estimate",
+                    onClick: () => {
+                      setEstimateToUpdate(undefined);
+                      setEstimateFormOpen(true);
+                    },
                   }}
                 />
               </div>

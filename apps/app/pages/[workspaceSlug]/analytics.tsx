@@ -134,13 +134,15 @@ const Analytics = () => {
             title="You can see your all projects' analytics here"
             description="Let's create your first project and analyse the stats with various graphs."
             image={emptyAnalytics}
-            buttonText="New Project"
-            buttonIcon={<PlusIcon className="h-4 w-4" />}
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "p",
-              });
-              document.dispatchEvent(e);
+            primaryButton={{
+              icon: <PlusIcon className="h-4 w-4" />,
+              text: "New Project",
+              onClick: () => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "p",
+                });
+                document.dispatchEvent(e);
+              },
             }}
           />
         )
