@@ -137,7 +137,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
       {({ open }) => (
         <>
           <div
-            className={`group relative text-custom-sidebar-text-10 px-2 py-1 w-full flex items-center hover:bg-custom-sidebar-background-80 rounded-md ${
+            className={`group relative text-custom-sidebar-text-10 px-2 py-1 ml-1.5 w-full flex items-center hover:bg-custom-sidebar-background-80 rounded-md ${
               snapshot?.isDragging ? "opacity-60" : ""
             }`}
           >
