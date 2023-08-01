@@ -1,14 +1,14 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 import useSWR from "swr";
 
 // services
 import userService from "services/user.service";
+// components
+import { ActivityMessage } from "components/core";
 // ui
 import { Icon, Loader } from "components/ui";
 // helpers
-import { activityDetails } from "helpers/activity.helper";
 import { timeAgo } from "helpers/date-time.helper";
 // fetch-keys
 import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
@@ -55,12 +55,12 @@ export const ProfileActivity = () => {
                       {activity.actor_detail.first_name} {activity.actor_detail.last_name}{" "}
                     </span>
                     {activity.field ? (
-                      activityDetails[activity.field]?.message(activity as any)
+                      <ActivityMessage activity={activity} showIssue />
                     ) : (
                       <span>
                         created this{" "}
                         <a
-                          href={`/${activity.workspace_detail.slug}/projects/${activity.project}/issues/${activity.issue}`}
+                          href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"

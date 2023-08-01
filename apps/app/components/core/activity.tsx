@@ -1,5 +1,7 @@
+import { useRouter } from "next/router";
+
 // icons
-import { Icon } from "components/ui";
+import { Icon, Tooltip } from "components/ui";
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon } from "components/icons";
 // helpers
@@ -8,26 +10,65 @@ import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "types";
 
-export const activityDetails: {
+const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  return (
+    <Tooltip
+      tooltipContent={
+        activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"
+      }
+    >
+      <a
+        href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+      >
+        {activity.issue_detail
+          ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
+          : "Issue"}
+        <Icon iconName="launch" className="!text-xs" />
+      </a>
+    </Tooltip>
+  );
+};
+
+const activityDetails: {
   [key: string]: {
-    message: (activity: IIssueActivity) => React.ReactNode;
+    message: (activity: IIssueActivity, showIssue: boolean) => React.ReactNode;
     icon: React.ReactNode;
   };
 } = {
   assignees: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.old_value === "")
         return (
           <>
             added a new assignee{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            {showIssue && (
+              <>
+                {" "}
+                to <IssueLink activity={activity} />
+              </>
+            )}
+            .
           </>
         );
       else
         return (
           <>
             removed the assignee{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
           </>
         );
     },
@@ -41,7 +82,7 @@ export const activityDetails: {
     icon: <Icon iconName="archive" className="!text-sm" aria-hidden="true" />,
   },
   attachment: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.verb === "created")
         return (
           <>
@@ -55,9 +96,27 @@ export const activityDetails: {
               attachment
               <Icon iconName="launch" className="!text-xs" />
             </a>
+            {showIssue && (
+              <>
+                {" "}
+                to <IssueLink activity={activity} />
+              </>
+            )}
           </>
         );
-      else return "removed an attachment.";
+      else
+        return (
+          <>
+            removed an attachment
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
+          </>
+        );
     },
     icon: <Icon iconName="attach_file" className="!text-sm" aria-hidden="true" />,
   },
@@ -126,17 +185,47 @@ export const activityDetails: {
     icon: <Icon iconName="contrast" className="!text-sm" aria-hidden="true" />,
   },
   description: {
-    message: (activity) => "updated the description.",
+    message: (activity, showIssue) => (
+      <>
+        updated the description
+        {showIssue && (
+          <>
+            {" "}
+            of <IssueLink activity={activity} />
+          </>
+        )}
+        .
+      </>
+    ),
     icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
   },
   estimate_point: {
-    message: (activity) => {
-      if (!activity.new_value) return "removed the estimate point.";
+    message: (activity, showIssue) => {
+      if (!activity.new_value)
+        return (
+          <>
+            removed the estimate point
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
+          </>
+        );
       else
         return (
           <>
             set the estimate point to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            {showIssue && (
+              <>
+                {" "}
+                for <IssueLink activity={activity} />
+              </>
+            )}
+            .
           </>
         );
     },
@@ -150,7 +239,7 @@ export const activityDetails: {
     icon: <Icon iconName="stack" className="!text-sm" aria-hidden="true" />,
   },
   labels: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.old_value === "")
         return (
           <>
@@ -165,6 +254,12 @@ export const activityDetails: {
               />
               <span className="font-medium text-custom-text-100">{activity.new_value}</span>
             </span>
+            {showIssue && (
+              <>
+                {" "}
+                to <IssueLink activity={activity} />
+              </>
+            )}
           </>
         );
       else
@@ -181,13 +276,19 @@ export const activityDetails: {
               />
               <span className="font-medium text-custom-text-100">{activity.old_value}</span>
             </span>
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
           </>
         );
     },
     icon: <Icon iconName="sell" className="!text-sm" aria-hidden="true" />,
   },
   link: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (activity.verb === "created")
         return (
           <>
@@ -200,8 +301,14 @@ export const activityDetails: {
             >
               link
               <Icon iconName="launch" className="!text-xs" />
-            </a>{" "}
-            to the issue.
+            </a>
+            {showIssue && (
+              <>
+                {" "}
+                to <IssueLink activity={activity} />
+              </>
+            )}
+            .
           </>
         );
       else
@@ -216,8 +323,14 @@ export const activityDetails: {
             >
               link
               <Icon iconName="launch" className="!text-xs" />
-            </a>{" "}
-            from the issue.
+            </a>
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
           </>
         );
     },
@@ -250,52 +363,102 @@ export const activityDetails: {
     icon: <Icon iconName="dataset" className="!text-sm" aria-hidden="true" />,
   },
   name: {
-    message: (activity) => `set the name to ${activity.new_value}.`,
+    message: (activity, showIssue) => (
+      <>
+        set the name to {activity.new_value}
+        {showIssue && (
+          <>
+            {" "}
+            of <IssueLink activity={activity} />
+          </>
+        )}
+        .
+      </>
+    ),
     icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
   },
   parent: {
-    message: (activity) => {
+    message: (activity, showIssue) => {
       if (!activity.new_value)
         return (
           <>
             removed the parent{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
           </>
         );
       else
         return (
           <>
             set the parent to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            {showIssue && (
+              <>
+                {" "}
+                for <IssueLink activity={activity} />
+              </>
+            )}
+            .
           </>
         );
     },
     icon: <Icon iconName="supervised_user_circle" className="!text-sm" aria-hidden="true" />,
   },
   priority: {
-    message: (activity) => (
+    message: (activity, showIssue) => (
       <>
         set the priority to{" "}
         <span className="font-medium text-custom-text-100">
           {activity.new_value ? capitalizeFirstLetter(activity.new_value) : "None"}
         </span>
+        {showIssue && (
+          <>
+            {" "}
+            for <IssueLink activity={activity} />
+          </>
+        )}
         .
       </>
     ),
     icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
   },
   state: {
-    message: (activity) => (
+    message: (activity, showIssue) => (
       <>
         set the state to{" "}
-        <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+        <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        {showIssue && (
+          <>
+            {" "}
+            for <IssueLink activity={activity} />
+          </>
+        )}
+        .
       </>
     ),
     icon: <Squares2X2Icon className="h-3 w-3" aria-hidden="true" />,
   },
   target_date: {
-    message: (activity) => {
-      if (!activity.new_value) return "removed the due date.";
+    message: (activity, showIssue) => {
+      if (!activity.new_value)
+        return (
+          <>
+            removed the due date
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
+          </>
+        );
       else
         return (
           <>
@@ -303,6 +466,12 @@ export const activityDetails: {
             <span className="font-medium text-custom-text-100">
               {renderShortDateWithYearFormat(activity.new_value)}
             </span>
+            {showIssue && (
+              <>
+                {" "}
+                for <IssueLink activity={activity} />
+              </>
+            )}
             .
           </>
         );
@@ -310,3 +479,19 @@ export const activityDetails: {
     icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
   },
 };
+
+export const ActivityIcon = ({ activity }: { activity: IIssueActivity }) => (
+  <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>
+);
+
+export const ActivityMessage = ({
+  activity,
+  showIssue = false,
+}: {
+  activity: IIssueActivity;
+  showIssue?: boolean;
+}) => (
+  <>
+    {activityDetails[activity.field as keyof typeof activityDetails]?.message(activity, showIssue)}
+  </>
+);

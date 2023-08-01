@@ -18,6 +18,7 @@ import useToast from "hooks/use-toast";
 import useInboxView from "hooks/use-inbox-view";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useProjects from "hooks/use-projects";
+import useMyIssues from "hooks/my-issues/use-my-issues";
 // components
 import { IssueForm } from "components/issues";
 // types
@@ -84,6 +85,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const { user } = useUser();
   const { projects } = useProjects();
+
+  const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
 
   const { setToastAlert } = useToast();
 
@@ -243,6 +246,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           if (issueView === "calendar") mutate(calendarFetchKey);
           if (issueView === "gantt_chart") mutate(ganttFetchKey);
           if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
+          if (groupedIssues) mutateMyIssues();
 
           setToastAlert({
             type: "success",

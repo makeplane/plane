@@ -284,7 +284,7 @@ export const WorkspaceSidebarDropdown = () => {
                   onClick={handleSignOut}
                 >
                   <Icon iconName="logout" className="!text-base" />
-                  Log out
+                  Sign out
                 </Menu.Item>
               </div>
             </Menu.Items>

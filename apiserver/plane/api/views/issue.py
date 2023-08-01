@@ -477,7 +477,7 @@ class IssueActivityEndpoint(BaseAPIView):
                     ~Q(field="comment"),
                     project__project_projectmember__member=self.request.user,
                 )
-                .select_related("actor", "workspace")
+                .select_related("actor", "workspace", "issue", "project")
             ).order_by("created_at")
             issue_comments = (
                 IssueComment.objects.filter(issue_id=issue_id)

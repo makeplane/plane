@@ -67,5 +67,15 @@ class Migration(migrations.Migration):
                 'ordering': ('-created_at',),
                 'unique_together': {('comment', 'actor', 'reaction')},
             },
+        ),       
+        migrations.AlterField(
+            model_name='project',
+            name='identifier',
+            field=models.CharField(max_length=12, verbose_name='Project Identifier'),
+        ),
+        migrations.AlterField(
+            model_name='projectidentifier',
+            name='name',
+            field=models.CharField(max_length=12),
         ),
     ]

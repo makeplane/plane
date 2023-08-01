@@ -1,5 +1,7 @@
 import React from "react";
 
+import { useRouter } from "next/router";
+
 // hooks
 import useUser from "hooks/use-user";
 import useCommentReaction from "hooks/use-comment-reaction";
@@ -9,13 +11,15 @@ import { ReactionSelector } from "components/core";
 import { renderEmoji } from "helpers/emoji.helper";
 
 type Props = {
-  workspaceSlug?: string | string[];
   projectId?: string | string[];
   commentId: string;
 };
 
 export const CommentReaction: React.FC<Props> = (props) => {
-  const { workspaceSlug, projectId, commentId } = props;
+  const { projectId, commentId } = props;
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { user } = useUser();
 
