@@ -267,7 +267,7 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
         except Exception as e:
-            pr(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
