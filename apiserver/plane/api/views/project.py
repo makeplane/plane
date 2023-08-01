@@ -176,7 +176,7 @@ class ProjectViewSet(BaseViewSet):
                 serializer.save()
 
                 # Add the user as Administrator to the project
-                ProjectMember.objects.create(
+                project_member = ProjectMember.objects.create(
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
 
@@ -238,9 +238,11 @@ class ProjectViewSet(BaseViewSet):
                     ]
                 )
 
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                data = serializer.data
+                data["sort_order"] = project_member.sort_order
+                return Response(data, status=status.HTTP_201_CREATED)
             return Response(
-                [serializer.errors[error][0] for error in serializer.errors],
+                serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except IntegrityError as e:
@@ -265,7 +267,7 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
         except Exception as e:
-            capture_exception(e)
+            pr(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
