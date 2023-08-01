@@ -42,7 +42,7 @@ const userLinks = (workspaceSlug: string, userId: string) => [
 
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
-    name: "View Profile",
+    name: "View profile",
     icon: "account_circle",
     link: `/${workspaceSlug}/profile/${userId}`,
   },
@@ -260,9 +260,9 @@ export const WorkspaceSidebarDropdown = () => {
           >
             <Menu.Items
               className="absolute left-0 z-20 mt-1.5 flex flex-col w-52 origin-top-left rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 p-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-sm outline-none"
+          border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 p-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-xs outline-none"
             >
-              <div className="flex flex-col space-y-2.5 pb-2.5">
+              <div className="flex flex-col space-y-2 pb-2">
                 {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map(
                   (link, index) => (
                     <Menu.Item key={index} as="button" type="button">
@@ -276,7 +276,7 @@ export const WorkspaceSidebarDropdown = () => {
                   )
                 )}
               </div>
-              <div className="pt-2.5">
+              <div className="pt-2">
                 <Menu.Item
                   as="button"
                   type="button"
@@ -284,7 +284,7 @@ export const WorkspaceSidebarDropdown = () => {
                   onClick={handleSignOut}
                 >
                   <Icon iconName="logout" className="!text-base" />
-                  Log Out
+                  Log out
                 </Menu.Item>
               </div>
             </Menu.Items>
