@@ -84,7 +84,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             # Created issues
             if type == "created":
                 if WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role__lt=15).exists():
-                    return Response([], status=status.HTTP_200_OK)
+                    notifications = Notification.objects.none()
                 else:
                     issue_ids = Issue.objects.filter(
                         workspace__slug=slug, created_by=request.user
