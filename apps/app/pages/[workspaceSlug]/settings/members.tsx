@@ -115,30 +115,48 @@ const MembersSettings: NextPage = () => {
         handleDelete={async () => {
           if (!workspaceSlug) return;
           if (selectedRemoveMember) {
-            await workspaceService.deleteWorkspaceMember(
-              workspaceSlug as string,
-              selectedRemoveMember
-            );
-            mutateMembers(
-              (prevData) => prevData?.filter((item) => item.id !== selectedRemoveMember),
-              false
-            );
+            workspaceService
+              .deleteWorkspaceMember(workspaceSlug as string, selectedRemoveMember)
+              .catch((err) => {
+                const error = err?.error;
+                setToastAlert({
+                  type: "error",
+                  title: "Error",
+                  message: error || "Something went wrong",
+                });
+              })
+              .finally(() => {
+                mutateMembers((prevData) =>
+                  prevData?.filter((item) => item.id !== selectedRemoveMember)
+                );
+              });
           }
           if (selectedInviteRemoveMember) {
-            await workspaceService.deleteWorkspaceInvitations(
-              workspaceSlug as string,
-              selectedInviteRemoveMember
-            );
             mutateInvitations(
               (prevData) => prevData?.filter((item) => item.id !== selectedInviteRemoveMember),
               false
             );
+            workspaceService
+              .deleteWorkspaceInvitations(workspaceSlug as string, selectedInviteRemoveMember)
+              .then(() => {
+                setToastAlert({
+                  type: "success",
+                  title: "Success",
+                  message: "Member removed successfully",
+                });
+              })
+              .catch((err) => {
+                const error = err?.error;
+                setToastAlert({
+                  type: "error",
+                  title: "Error",
+                  message: error || "Something went wrong",
+                });
+              })
+              .finally(() => {
+                mutateInvitations();
+              });
           }
-          setToastAlert({
-            type: "success",
-            title: "Success",
-            message: "Member removed successfully",
-          });
           setSelectedRemoveMember(null);
           setSelectedInviteRemoveMember(null);
         }}
@@ -276,7 +294,7 @@ const MembersSettings: NextPage = () => {
                               }
                             }}
                           >
-                            Remove member
+                            {user?.id === member.memberId ? "Leave" : "Remove member"}
                           </CustomMenu.MenuItem>
                         </CustomMenu>
                       </div>
