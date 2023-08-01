@@ -20,7 +20,7 @@ class GlobalSearchEndpoint(BaseAPIView):
     also show related workspace if found
     """
 
-    def filter_workspaces(self, query, slug, project_id):
+    def filter_workspaces(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
         for field in fields:
@@ -31,8 +31,8 @@ class GlobalSearchEndpoint(BaseAPIView):
             .values("name", "id", "slug")
         )
 
-    def filter_projects(self, query, slug, project_id):
-        fields = ["name"]
+    def filter_projects(self, query, slug, project_id, workspace_search):
+        fields = ["name", "identifier"]
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
@@ -46,8 +46,8 @@ class GlobalSearchEndpoint(BaseAPIView):
             .values("name", "id", "identifier", "workspace__slug")
         )
 
-    def filter_issues(self, query, slug, project_id):
-        fields = ["name", "sequence_id"]
+    def filter_issues(self, query, slug, project_id, workspace_search):
+        fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
         for field in fields:
             if field == "sequence_id":
@@ -56,111 +56,123 @@ class GlobalSearchEndpoint(BaseAPIView):
                     q |= Q(**{"sequence_id": sequence_id})
             else:
                 q |= Q(**{f"{field}__icontains": query})
-        return (
-            Issue.issue_objects.filter(
-                q,
-                project__project_projectmember__member=self.request.user,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .distinct()
-            .values(
-                "name",
-                "id",
-                "sequence_id",
-                "project__identifier",
-                "project_id",
-                "workspace__slug",
-            )
+
+        issues = Issue.issue_objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            workspace__slug=slug,
         )
 
-    def filter_cycles(self, query, slug, project_id):
+        if workspace_search == "false" and project_id:
+            issues = issues.filter(project_id=project_id)
+
+        return issues.distinct().values(
+            "name",
+            "id",
+            "sequence_id",
+            "project__identifier",
+            "project_id",
+            "workspace__slug",
+        )
+
+    def filter_cycles(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return (
-            Cycle.objects.filter(
-                q,
-                project__project_projectmember__member=self.request.user,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .distinct()
-            .values(
-                "name",
-                "id",
-                "project_id",
-                "workspace__slug",
-            )
+
+        cycles = Cycle.objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            workspace__slug=slug,
         )
 
-    def filter_modules(self, query, slug, project_id):
+        if workspace_search == "false" and project_id:
+            cycles = cycles.filter(project_id=project_id)
+
+        return cycles.distinct().values(
+            "name",
+            "id",
+            "project_id",
+            "project__identifier",
+            "workspace__slug",
+        )
+
+    def filter_modules(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return (
-            Module.objects.filter(
-                q,
-                project__project_projectmember__member=self.request.user,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .distinct()
-            .values(
-                "name",
-                "id",
-                "project_id",
-                "workspace__slug",
-            )
+
+        modules = Module.objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            workspace__slug=slug,
         )
 
-    def filter_pages(self, query, slug, project_id):
+        if workspace_search == "false" and project_id:
+            modules = modules.filter(project_id=project_id)
+
+        return modules.distinct().values(
+            "name",
+            "id",
+            "project_id",
+            "project__identifier",
+            "workspace__slug",
+        )
+
+    def filter_pages(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return (
-            Page.objects.filter(
-                q,
-                project__project_projectmember__member=self.request.user,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .distinct()
-            .values(
-                "name",
-                "id",
-                "project_id",
-                "workspace__slug",
-            )
+
+        pages = Page.objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            workspace__slug=slug,
         )
 
-    def filter_views(self, query, slug, project_id):
+        if workspace_search == "false" and project_id:
+            pages = pages.filter(project_id=project_id)
+
+        return pages.distinct().values(
+            "name",
+            "id",
+            "project_id",
+            "project__identifier",
+            "workspace__slug",
+        )
+
+    def filter_views(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
-        return (
-            IssueView.objects.filter(
-                q,
-                project__project_projectmember__member=self.request.user,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .distinct()
-            .values(
-                "name",
-                "id",
-                "project_id",
-                "workspace__slug",
-            )
+
+        issue_views = IssueView.objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            workspace__slug=slug,
         )
 
-    def get(self, request, slug, project_id):
+        if workspace_search == "false" and project_id:
+            issue_views = issue_views.filter(project_id=project_id)
+
+        return issue_views.distinct().values(
+            "name",
+            "id",
+            "project_id",
+            "project__identifier",
+            "workspace__slug",
+        )
+
+    def get(self, request, slug):
         try:
             query = request.query_params.get("search", False)
+            workspace_search = request.query_params.get("workspace_search", "false")
+            project_id = request.query_params.get("project_id", False)
+
             if not query:
                 return Response(
                     {
@@ -191,7 +203,7 @@ class GlobalSearchEndpoint(BaseAPIView):
 
             for model in MODELS_MAPPER.keys():
                 func = MODELS_MAPPER.get(model, None)
-                results[model] = func(query, slug, project_id)
+                results[model] = func(query, slug, project_id, workspace_search)
             return Response({"results": results}, status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -206,6 +218,7 @@ class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
             query = request.query_params.get("search", False)
+            workspace_search = request.query_params.get("workspace_search", "false")
             parent = request.query_params.get("parent", "false")
             blocker_blocked_by = request.query_params.get("blocker_blocked_by", "false")
             cycle = request.query_params.get("cycle", "false")
@@ -216,9 +229,11 @@ class IssueSearchEndpoint(BaseAPIView):
 
             issues = Issue.issue_objects.filter(
                 workspace__slug=slug,
-                project_id=project_id,
                 project__project_projectmember__member=self.request.user,
             )
+
+            if workspace_search == "false":
+                issues = issues.filter(project_id=project_id)
 
             if query:
                 issues = search_issues(query, issues)
@@ -251,12 +266,12 @@ class IssueSearchEndpoint(BaseAPIView):
             if module == "true":
                 issues = issues.exclude(issue_module__isnull=False)
 
-
             return Response(
                 issues.values(
                     "name",
                     "id",
                     "sequence_id",
+                    "project__name",
                     "project__identifier",
                     "project_id",
                     "workspace__slug",

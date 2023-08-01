@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -39,16 +41,18 @@ export const ViewStateSelect: React.FC<Props> = ({
   user,
   isNotAllowed,
 }) => {
+  const [fetchStates, setFetchStates] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && issue ? STATES_LIST(issue.project) : null,
-    workspaceSlug && issue
+    workspaceSlug && issue && fetchStates ? STATES_LIST(issue.project) : null,
+    workspaceSlug && issue && fetchStates
       ? () => stateService.getStates(workspaceSlug as string, issue.project)
       : null
   );
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const options = states?.map((state) => ({
     value: state.id,
@@ -61,7 +65,7 @@ export const ViewStateSelect: React.FC<Props> = ({
     ),
   }));
 
-  const selectedOption = states?.find((s) => s.id === issue.state);
+  const selectedOption = issue.state_detail;
 
   const stateLabel = (
     <Tooltip
@@ -84,11 +88,13 @@ export const ViewStateSelect: React.FC<Props> = ({
       className={className}
       value={issue.state}
       onChange={(data: string) => {
+        const oldState = states?.find((s) => s.id === issue.state);
+        const newState = states?.find((s) => s.id === data);
+
         partialUpdateIssue(
           {
             state: data,
-            priority: issue.priority,
-            target_date: issue.target_date,
+            state_detail: newState,
           },
           issue
         );
@@ -104,9 +110,6 @@ export const ViewStateSelect: React.FC<Props> = ({
           "ISSUE_PROPERTY_UPDATE_STATE",
           user
         );
-
-        const oldState = states.find((s) => s.id === issue.state);
-        const newState = states.find((s) => s.id === data);
 
         if (oldState?.group !== "completed" && newState?.group !== "completed") {
           trackEventServices.trackIssueMarkedAsDoneEvent(
@@ -126,6 +129,7 @@ export const ViewStateSelect: React.FC<Props> = ({
       {...(customButton ? { customButton: stateLabel } : { label: stateLabel })}
       position={position}
       disabled={isNotAllowed}
+      onOpen={() => setFetchStates(true)}
       noChevron
     />
   );

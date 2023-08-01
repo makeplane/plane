@@ -10,6 +10,7 @@ import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon } from "@heroicons/rea
 import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "components/ui";
+import { CommentReaction } from "components/issues";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
@@ -52,8 +53,8 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
   const onEnter = (formData: IIssueComment) => {
     if (isSubmitting) return;
     setIsEditing(false);
+
     onSubmit(formData);
-    console.log(formData);
 
     editorRef.current?.setEditorValue(formData.comment_json);
     showEditorRef.current?.setEditorValue(formData.comment_json);
@@ -138,6 +139,8 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
               ref={showEditorRef}
             />
+
+            <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>
         </div>
       </div>

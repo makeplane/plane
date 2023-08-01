@@ -19,6 +19,7 @@ import {
   IssueActivitySection,
   IssueDescriptionForm,
   IssueDetailsSidebar,
+  IssueReaction,
 } from "components/issues";
 // ui
 import { Loader } from "components/ui";
@@ -303,6 +304,13 @@ export const InboxMainContent: React.FC = () => {
                 }
               />
             </div>
+
+            <IssueReaction
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              issueId={issueDetails.id}
+            />
+
             <div className="space-y-5">
               <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
               <IssueActivitySection issueId={issueDetails.id} user={user} />

@@ -18,12 +18,10 @@ import { CreateUpdateIssueModal } from "components/issues";
 import { CustomMenu } from "components/ui";
 // icons
 import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { ICurrentUserResponse, IIssue, ISearchIssueResponse, ISubIssueResponse } from "types";
 // fetch-keys
-import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
+import { SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   parentIssue: IIssue;
@@ -38,146 +36,68 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
   const [preloadedData, setPreloadedData] = useState<Partial<IIssue> | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { memberRole } = useProjectMyMembership();
 
-  const { data: subIssuesResponse } = useSWR<ISubIssueResponse>(
-    workspaceSlug && projectId && issueId ? SUB_ISSUES(issueId as string) : null,
-    workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.subIssues(workspaceSlug as string, projectId as string, issueId as string)
-      : null
-  );
-
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
+  const { data: subIssuesResponse } = useSWR(
+    workspaceSlug && parentIssue ? SUB_ISSUES(parentIssue.id) : null,
+    workspaceSlug && parentIssue
+      ? () => issuesService.subIssues(workspaceSlug as string, parentIssue.project, parentIssue.id)
       : null
   );
 
   const addAsSubIssue = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !parentIssue) return;
 
     const payload = {
       sub_issue_ids: data.map((i) => i.id),
     };
 
     await issuesService
-      .addSubIssues(workspaceSlug as string, projectId as string, parentIssue?.id ?? "", payload)
-      .then(() => {
-        mutate<ISubIssueResponse>(
-          SUB_ISSUES(parentIssue?.id ?? ""),
-          (prevData) => {
-            if (!prevData) return prevData;
-            let newSubIssues = prevData.sub_issues as IIssue[];
-
-            const stateDistribution = { ...prevData.state_distribution };
-
-            payload.sub_issue_ids.forEach((issueId: string) => {
-              const issue = issues?.find((i) => i.id === issueId);
-
-              if (issue) {
-                newSubIssues.push(issue);
-
-                const issueGroup = issue.state_detail.group;
-                stateDistribution[issueGroup] = stateDistribution[issueGroup] + 1;
-              }
-            });
-
-            newSubIssues = orderArrayBy(newSubIssues, "created_at", "descending");
-            return {
-              state_distribution: stateDistribution,
-              sub_issues: newSubIssues,
-            };
-          },
-          false
-        );
-
-        mutate<IIssue[]>(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (payload.sub_issue_ids.includes(p.id))
-                return {
-                  ...p,
-                  parent: parentIssue.id,
-                };
-
-              return p;
-            }),
-          false
-        );
-
-        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      .addSubIssues(workspaceSlug as string, parentIssue.project, parentIssue.id, payload)
+      .finally(() => mutate(SUB_ISSUES(parentIssue.id)));
   };
 
-  const handleSubIssueRemove = (issueId: string) => {
-    if (!workspaceSlug || !projectId) return;
+  const handleSubIssueRemove = (issue: IIssue) => {
+    if (!workspaceSlug || !parentIssue) return;
 
     mutate<ISubIssueResponse>(
-      SUB_ISSUES(parentIssue.id ?? ""),
+      SUB_ISSUES(parentIssue.id),
       (prevData) => {
         if (!prevData) return prevData;
-        const updatedArray = (prevData.sub_issues ?? []).filter((i) => i.id !== issueId);
 
         const stateDistribution = { ...prevData.state_distribution };
-        const issueGroup = issues?.find((i) => i.id === issueId)?.state_detail.group ?? "backlog";
+
+        const issueGroup = issue.state_detail.group;
         stateDistribution[issueGroup] = stateDistribution[issueGroup] - 1;
+
         return {
           state_distribution: stateDistribution,
-          sub_issues: updatedArray,
+          sub_issues: prevData.sub_issues.filter((i) => i.id !== issue.id),
         };
       },
       false
     );
 
     issuesService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issueId, { parent: null }, user)
-      .then((res) => {
-        mutate(SUB_ISSUES(parentIssue.id ?? ""));
-
-        mutate<IIssue[]>(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (p.id === res.id)
-                return {
-                  ...p,
-                  ...res,
-                };
-
-              return p;
-            }),
-          false
-        );
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+      .patchIssue(workspaceSlug.toString(), issue.project, issue.id, { parent: null }, user)
+      .finally(() => mutate(SUB_ISSUES(parentIssue.id)));
   };
 
   const handleCreateIssueModal = () => {
     setCreateIssueModal(true);
+
     setPreloadedData({
       parent: parentIssue.id,
     });
   };
 
   const completedSubIssues = subIssuesResponse
-    ? subIssuesResponse?.state_distribution.completed +
-      subIssuesResponse?.state_distribution.cancelled
+    ? subIssuesResponse.state_distribution.completed +
+      subIssuesResponse.state_distribution.cancelled
     : 0;
-
-  const totalSubIssues =
-    subIssuesResponse && subIssuesResponse.sub_issues ? subIssuesResponse?.sub_issues.length : 0;
+  const totalSubIssues = subIssuesResponse ? subIssuesResponse.sub_issues.length : 0;
 
   const completionPercentage = (completedSubIssues / totalSubIssues) * 100;
 
@@ -195,55 +115,52 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
         handleClose={() => setSubIssuesListModal(false)}
         searchParams={{ sub_issue: true, issue_id: parentIssue?.id }}
         handleOnSubmit={addAsSubIssue}
+        workspaceLevelToggle
       />
-      {subIssuesResponse &&
-      subIssuesResponse.sub_issues &&
-      subIssuesResponse.sub_issues.length > 0 ? (
+      {subIssuesResponse && subIssuesResponse.sub_issues.length > 0 ? (
         <Disclosure defaultOpen={true}>
           {({ open }) => (
             <>
               <div className="flex items-center justify-between">
-                <div className="flex items-center justify-start gap-3">
-                  <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-custom-background-90">
+                <div className="flex items-center justify-start gap-3 text-custom-text-200">
+                  <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs text-custom-text-100 hover:bg-custom-background-80">
                     <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
                     Sub-issues{" "}
                     <span className="ml-1 text-custom-text-200">
                       {subIssuesResponse.sub_issues.length}
                     </span>
                   </Disclosure.Button>
-                  {subIssuesResponse.state_distribution && (
-                    <div className="flex w-60 items-center gap-2 text-custom-text-100">
-                      <div className="bar relative h-1.5 w-full rounded bg-custom-background-80">
-                        <div
-                          className="absolute top-0 left-0 h-1.5 rounded bg-green-500 duration-300"
-                          style={{
-                            width: `${
-                              isNaN(completionPercentage)
-                                ? 0
-                                : completionPercentage > 100
-                                ? 100
-                                : completionPercentage.toFixed(0)
-                            }%`,
-                          }}
-                        />
-                      </div>
-                      <span className="whitespace-nowrap text-xs">
-                        {isNaN(completionPercentage)
-                          ? 0
-                          : completionPercentage > 100
-                          ? 100
-                          : completionPercentage.toFixed(0)}
-                        % Done
-                      </span>
+                  <div className="flex w-60 items-center gap-2">
+                    <div className="bar relative h-1.5 w-full rounded bg-custom-background-80">
+                      <div
+                        className="absolute top-0 left-0 h-1.5 rounded bg-green-500 duration-300"
+                        style={{
+                          width: `${
+                            isNaN(completionPercentage)
+                              ? 0
+                              : completionPercentage > 100
+                              ? 100
+                              : completionPercentage.toFixed(0)
+                          }%`,
+                        }}
+                      />
                     </div>
-                  )}
+                    <span className="whitespace-nowrap text-xs">
+                      {isNaN(completionPercentage)
+                        ? 0
+                        : completionPercentage > 100
+                        ? 100
+                        : completionPercentage.toFixed(0)}
+                      % Done
+                    </span>
+                  </div>
                 </div>
 
                 {open && !isNotAllowed ? (
                   <div className="flex items-center">
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-custom-background-90"
+                      className="flex items-center gap-1 rounded px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80"
                       onClick={handleCreateIssueModal}
                     >
                       <PlusIcon className="h-3 w-3" />
@@ -270,7 +187,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
                   {subIssuesResponse.sub_issues.map((issue) => (
                     <Link
                       key={issue.id}
-                      href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+                      href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
                     >
                       <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-custom-background-90">
                         <div className="flex items-center gap-2 rounded text-xs">
@@ -293,7 +210,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              handleSubIssueRemove(issue.id);
+                              handleSubIssueRemove(issue);
                             }}
                           >
                             <XMarkIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />

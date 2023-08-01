@@ -19,6 +19,8 @@ import type {
   IState,
   IView,
   IWorkspace,
+  IssueCommentReaction,
+  IssueReaction,
 } from "types";
 
 type WorkspaceEventType =
@@ -109,6 +111,12 @@ type AnalyticsEventType =
   | "MODULE_SCOPE_AND_DEMAND_ANALYTICS"
   | "MODULE_CUSTOM_ANALYTICS"
   | "MODULE_ANALYTICS_EXPORT";
+
+type ReactionEventType =
+  | "ISSUE_REACTION_CREATE"
+  | "ISSUE_COMMENT_REACTION_CREATE"
+  | "ISSUE_REACTION_DELETE"
+  | "ISSUE_COMMENT_REACTION_DELETE";
 
 class TrackEventServices extends APIService {
   constructor() {
@@ -795,6 +803,32 @@ class TrackEventServices extends APIService {
         extra: {
           ...payload,
         },
+        user: user,
+      },
+    });
+  }
+
+  async trackReactionEvent(
+    data: IssueReaction | IssueCommentReaction,
+    eventName: ReactionEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    let payload: any;
+    if (eventName === "ISSUE_REACTION_DELETE" || eventName === "ISSUE_COMMENT_REACTION_DELETE")
+      payload = data;
+    else
+      payload = {
+        workspaceId: data?.workspace,
+        projectId: data?.project,
+        reaction: data?.reaction,
+      };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: payload,
         user: user,
       },
     });

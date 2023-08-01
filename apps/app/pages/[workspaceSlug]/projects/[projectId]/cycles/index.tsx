@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
-
 // headless ui
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
-// services
-import projectService from "services/project.service";
+import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -23,17 +20,34 @@ import {
   UpcomingCyclesList,
 } from "components/cycles";
 // ui
-import { PrimaryButton } from "components/ui";
+import { EmptyState, Icon, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ListBulletIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
+// images
+import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { SelectCycleType } from "types";
 import type { NextPage } from "next";
-// fetch-keys
-import { PROJECT_DETAILS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
+
+const cycleViews = [
+  {
+    key: "list",
+    icon: "list",
+  },
+  {
+    key: "board",
+    icon: "dataset",
+  },
+  {
+    key: "gantt",
+    icon: "view_timeline",
+  },
+];
 
 const ProjectCycles: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
@@ -60,19 +74,14 @@ const ProjectCycles: NextPage = () => {
   };
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { user } = useUserAuth();
-
-  const { data: activeProject } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { projectDetails } = useProjectDetails();
 
   useEffect(() => {
     if (createUpdateCycleModal) return;
+
     const timer = setTimeout(() => {
       setSelectedCycle(undefined);
       clearTimeout(timer);
@@ -84,7 +93,7 @@ const ProjectCycles: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Cycles`} />
+          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Cycles`} />
         </Breadcrumbs>
       }
       right={
@@ -106,46 +115,28 @@ const ProjectCycles: NextPage = () => {
         data={selectedCycle}
         user={user}
       />
-      <div className="space-y-5 p-8 h-full flex flex-col overflow-hidden">
-        <div className="flex gap-4 justify-between">
-          <h3 className="text-2xl font-semibold text-custom-text-100">Cycles</h3>
-          <div className="flex items-center gap-x-1">
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                cyclesView === "list" ? "bg-custom-background-80" : ""
-              }`}
-              onClick={() => setCyclesView("list")}
-            >
-              <ListBulletIcon className="h-4 w-4 text-custom-text-200" />
-            </button>
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                cyclesView === "board" ? "bg-custom-background-80" : ""
-              }`}
-              onClick={() => setCyclesView("board")}
-            >
-              <Squares2X2Icon className="h-4 w-4 text-custom-text-200" />
-            </button>
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-custom-background-80 ${
-                cyclesView === "gantt_chart" ? "bg-custom-background-80" : ""
-              }`}
-              onClick={() => {
-                setCyclesView("gantt_chart");
-                setCycleTab("All");
-              }}
-            >
-              <span className="material-symbols-rounded text-custom-text-200 text-[18px] rotate-90">
-                waterfall_chart
-              </span>
-            </button>
-          </div>
+      {projectDetails?.total_cycles === 0 ? (
+        <div className="h-full grid place-items-center">
+          <EmptyState
+            title="Plan your project with cycles"
+            description="Cycle is a custom time period in which a team works to complete items on their backlog."
+            image={emptyCycle}
+            primaryButton={{
+              icon: <PlusIcon className="h-4 w-4" />,
+              text: "New Cycle",
+              onClick: () => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "q",
+                });
+                document.dispatchEvent(e);
+              },
+            }}
+          />
         </div>
+      ) : (
         <Tab.Group
-          as={React.Fragment}
+          as="div"
+          className="h-full flex flex-col overflow-hidden"
           defaultIndex={currentTabValue(cycleTab)}
           selectedIndex={currentTabValue(cycleTab)}
           onChange={(i) => {
@@ -165,50 +156,73 @@ const ProjectCycles: NextPage = () => {
             }
           }}
         >
-          <Tab.List as="div" className="flex flex-wrap items-center justify-start gap-4 text-base">
-            {tabsList.map((tab, index) => {
-              if (cyclesView === "gantt_chart" && (tab === "Active" || tab === "Drafts"))
-                return null;
+          <div className="flex flex-col sm:flex-row gap-4 justify-between border-b border-custom-border-300 px-4 sm:px-5 pb-4 sm:pb-0">
+            <Tab.List as="div" className="flex items-center overflow-x-scroll">
+              {tabsList.map((tab, index) => {
+                if (cyclesView === "gantt_chart" && (tab === "Active" || tab === "Drafts"))
+                  return null;
 
-              return (
-                <Tab
-                  key={index}
-                  className={({ selected }) =>
-                    `rounded-3xl border px-6 py-1 outline-none ${
-                      selected
-                        ? "border-custom-primary bg-custom-primary text-white font-medium"
-                        : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-80"
-                    }`
-                  }
-                >
-                  {tab}
-                </Tab>
-              );
-            })}
-          </Tab.List>
+                return (
+                  <Tab
+                    key={index}
+                    className={({ selected }) =>
+                      `border-b-2 p-4 text-sm font-medium outline-none ${
+                        selected
+                          ? "border-custom-primary-100 text-custom-primary-100"
+                          : "border-transparent"
+                      }`
+                    }
+                  >
+                    {tab}
+                  </Tab>
+                );
+              })}
+            </Tab.List>
+            <div className="justify-end sm:justify-start flex items-center gap-x-1">
+              {cycleViews.map((view) => {
+                if (cycleTab === "Active") return null;
+                if (view.key === "gantt" && cycleTab === "Drafts") return null;
+
+                return (
+                  <button
+                    key={view.key}
+                    type="button"
+                    className={`grid h-8 w-8 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
+                      cyclesView === view.key
+                        ? "bg-custom-background-80 text-custom-text-100"
+                        : "text-custom-text-200"
+                    }`}
+                    onClick={() => setCyclesView(view.key)}
+                  >
+                    <Icon iconName={view.icon} className="!text-base" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <Tab.Panels as={React.Fragment}>
-            <Tab.Panel as="div" className="h-full overflow-y-auto">
+            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
               <AllCyclesList viewType={cyclesView} />
             </Tab.Panel>
             {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="mt-7 space-y-5 h-full overflow-y-auto">
+              <Tab.Panel as="div" className="p-4 sm:p-5 space-y-5 h-full overflow-y-auto">
                 <ActiveCycleDetails />
               </Tab.Panel>
             )}
-            <Tab.Panel as="div" className="h-full overflow-y-auto">
+            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
               <UpcomingCyclesList viewType={cyclesView} />
             </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-y-auto">
+            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
               <CompletedCyclesList viewType={cyclesView} />
             </Tab.Panel>
             {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="h-full overflow-y-auto">
+              <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
                 <DraftCyclesList viewType={cyclesView} />
               </Tab.Panel>
             )}
           </Tab.Panels>
         </Tab.Group>
-      </div>
+      )}
     </ProjectAuthorizationWrapper>
   );
 };

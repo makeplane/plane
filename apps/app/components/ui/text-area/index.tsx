@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Props } from "./types";
 
 // Updates the height of a <textarea> when the value changes.
-const useAutosizeTextArea = (textAreaRef: HTMLTextAreaElement | null, value: any) => {
+const useAutoSizeTextArea = (textAreaRef: HTMLTextAreaElement | null, value: any) => {
   useEffect(() => {
     if (textAreaRef) {
       // We need to reset the height momentarily to get the correct scrollHeight for the textarea
@@ -40,7 +40,7 @@ export const TextArea: React.FC<Props> = ({
 
   const textAreaRef = useRef<any>(null);
 
-  useAutosizeTextArea(textAreaRef.current, textareaValue);
+  useAutoSizeTextArea(textAreaRef.current, textareaValue);
 
   return (
     <>

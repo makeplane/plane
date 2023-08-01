@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .issue import IssueFlatSerializer, LabelSerializer
+from .issue import IssueFlatSerializer, LabelLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
 from plane.db.models import Page, PageBlock, PageFavorite, PageLabel, Label
@@ -23,16 +23,22 @@ class PageBlockSerializer(BaseSerializer):
             "page",
         ]
 
+class PageBlockLiteSerializer(BaseSerializer):
+
+    class Meta:
+        model = PageBlock
+        fields = "__all__"
+
 
 class PageSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
-    label_details = LabelSerializer(read_only=True, source="labels", many=True)
+    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
     labels_list = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
         required=False,
     )
-    blocks = PageBlockSerializer(read_only=True, many=True)
+    blocks = PageBlockLiteSerializer(read_only=True, many=True)
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
 

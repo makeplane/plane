@@ -33,7 +33,9 @@ const useIssuesView = () => {
     orderBy,
     setOrderBy,
     showEmptyGroups,
+    showSubIssues,
     setShowEmptyGroups,
+    setShowSubIssues,
     calendarDateRange,
     setCalendarDateRange,
     filters,
@@ -55,17 +57,12 @@ const useIssuesView = () => {
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
     type: filters?.type ? filters?.type : undefined,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
-    issue__assignees__id: filters?.issue__assignees__id
-      ? filters?.issue__assignees__id.join(",")
-      : undefined,
-    issue__labels__id: filters?.issue__labels__id
-      ? filters?.issue__labels__id.join(",")
-      : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
+    sub_issue: showSubIssues,
   };
 
-  const { data: projectIssues } = useSWR(
+  const { data: projectIssues, mutate: mutateProjectIssues } = useSWR(
     workspaceSlug && projectId && params
       ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
       : null,
@@ -75,7 +72,7 @@ const useIssuesView = () => {
       : null
   );
 
-  const { data: projectArchivedIssues } = useSWR(
+  const { data: projectArchivedIssues, mutate: mutateProjectArchivedIssues } = useSWR(
     workspaceSlug && projectId && params && isArchivedIssues && !archivedIssueId
       ? PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
       : null,
@@ -84,7 +81,7 @@ const useIssuesView = () => {
       : null
   );
 
-  const { data: cycleIssues } = useSWR(
+  const { data: cycleIssues, mutate: mutateCycleIssues } = useSWR(
     workspaceSlug && projectId && cycleId && params
       ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params)
       : null,
@@ -99,7 +96,7 @@ const useIssuesView = () => {
       : null
   );
 
-  const { data: moduleIssues } = useSWR(
+  const { data: moduleIssues, mutate: mutateModuleIssues } = useSWR(
     workspaceSlug && projectId && moduleId && params
       ? MODULE_ISSUES_WITH_PARAMS(moduleId as string, params)
       : null,
@@ -114,7 +111,7 @@ const useIssuesView = () => {
       : null
   );
 
-  const { data: viewIssues } = useSWR(
+  const { data: viewIssues, mutate: mutateViewIssues } = useSWR(
     workspaceSlug && projectId && viewId && params ? VIEW_ISSUES(viewId.toString(), params) : null,
     workspaceSlug && projectId && viewId && params
       ? () =>
@@ -128,21 +125,22 @@ const useIssuesView = () => {
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const statesList = getStatesList(states ?? {});
-  const activeStatesList = statesList.filter(
+  const statesList = getStatesList(states);
+  const activeStatesList = statesList?.filter(
     (state) => state.group === "started" || state.group === "unstarted"
   );
-  const backlogStatesList = statesList.filter((state) => state.group === "backlog");
+  const backlogStatesList = statesList?.filter((state) => state.group === "backlog");
 
   const stateIds =
     filters && filters?.type === "active"
-      ? activeStatesList.map((state) => state.id)
+      ? activeStatesList?.map((state) => state.id)
       : filters?.type === "backlog"
-      ? backlogStatesList.map((state) => state.id)
-      : statesList.map((state) => state.id);
+      ? backlogStatesList?.map((state) => state.id)
+      : statesList?.map((state) => state.id);
 
   const filteredStateIds =
-    filters && filters?.state ? stateIds.filter((s) => filters.state?.includes(s)) : stateIds;
+    (filters && filters?.state ? stateIds?.filter((s) => filters.state?.includes(s)) : stateIds) ??
+    [];
 
   const emptyStatesObject: { [key: string]: [] } = {};
   for (let i = 0; i < filteredStateIds.length; i++) {
@@ -189,13 +187,24 @@ const useIssuesView = () => {
 
   return {
     groupedByIssues,
+    mutateIssues: cycleId
+      ? mutateCycleIssues
+      : moduleId
+      ? mutateModuleIssues
+      : viewId
+      ? mutateViewIssues
+      : isArchivedIssues
+      ? mutateProjectArchivedIssues
+      : mutateProjectIssues,
     issueView: isArchivedIssues ? "list" : issueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
     setOrderBy,
     showEmptyGroups: isArchivedIssues ? false : showEmptyGroups,
+    showSubIssues,
     setShowEmptyGroups,
+    setShowSubIssues,
     calendarDateRange,
     setCalendarDateRange,
     filters,

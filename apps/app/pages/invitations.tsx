@@ -186,8 +186,10 @@ const OnBoard: NextPage = () => {
                   title="No pending invites"
                   description="You can see here if someone invites you to a workspace."
                   image={emptyInvitation}
-                  buttonText="Back to Dashboard"
-                  onClick={() => router.push("/")}
+                  primaryButton={{
+                    text: "Back to Dashboard",
+                    onClick: () => router.push("/"),
+                  }}
                 />
               </div>
             )

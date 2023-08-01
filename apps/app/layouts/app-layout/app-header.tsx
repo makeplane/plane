@@ -11,11 +11,11 @@ type Props = {
 
 const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar, noHeader }) => (
   <div
-    className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 px-5 py-4 ${
+    className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 px-5 py-4 ${
       noHeader ? "md:hidden" : ""
     }`}
   >
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
       <div className="block md:hidden">
         <button
           type="button"
@@ -26,9 +26,9 @@ const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar, n
         </button>
       </div>
       {breadcrumbs}
-      {left}
+      <div className="flex-shrink-0">{left}</div>
     </div>
-    {right}
+    <div className="flex-shrink-0">{right}</div>
   </div>
 );
 

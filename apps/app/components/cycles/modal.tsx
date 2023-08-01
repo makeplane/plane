@@ -13,9 +13,9 @@ import useToast from "hooks/use-toast";
 // components
 import { CycleForm } from "components/cycles";
 // helper
-import { getDateRangeStatus, isDateGreaterThanToday } from "helpers/date-time.helper";
+import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
-import type { ICurrentUserResponse, ICycle } from "types";
+import type { CycleDateCheckData, ICurrentUserResponse, ICycle, IProject } from "types";
 // fetch keys
 import {
   COMPLETED_CYCLES_LIST,
@@ -23,6 +23,7 @@ import {
   CYCLES_LIST,
   DRAFT_CYCLES_LIST,
   INCOMPLETE_CYCLES_LIST,
+  PROJECT_DETAILS,
   UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 
@@ -65,7 +66,20 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
         }
         mutate(INCOMPLETE_CYCLES_LIST(projectId.toString()));
         mutate(CYCLES_LIST(projectId.toString()));
-        handleClose();
+
+        // update total cycles count in the project details
+        mutate<IProject>(
+          PROJECT_DETAILS(projectId.toString()),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              total_cycles: prevData.total_cycles + 1,
+            };
+          },
+          false
+        );
 
         setToastAlert({
           type: "success",
@@ -121,8 +135,6 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           }
         }
 
-        handleClose();
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -138,19 +150,16 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
       });
   };
 
-  const dateChecker = async (payload: any) => {
-    try {
-      const res = await cycleService.cycleDateCheck(
-        workspaceSlug as string,
-        projectId as string,
-        payload
-      );
-      console.log(res);
-      return res.status;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
+  const dateChecker = async (payload: CycleDateCheckData) => {
+    let status = false;
+
+    await cycleService
+      .cycleDateCheck(workspaceSlug as string, projectId as string, payload)
+      .then((res) => {
+        status = res.status;
+      });
+
+    return status;
   };
 
   const handleFormSubmit = async (formData: Partial<ICycle>) => {
@@ -160,66 +169,34 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
       ...formData,
     };
 
-    if (payload.start_date && payload.end_date) {
-      if (!isDateGreaterThanToday(payload.end_date)) {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Unable to create cycle in past date. Please enter a valid date.",
-        });
-        handleClose();
-        return;
-      }
+    let isDateValid: boolean = true;
 
-      if (data?.start_date && data?.end_date) {
-        const isDateValidForExistingCycle = await dateChecker({
+    if (payload.start_date && payload.end_date) {
+      if (data?.start_date && data?.end_date)
+        isDateValid = await dateChecker({
           start_date: payload.start_date,
           end_date: payload.end_date,
           cycle_id: data.id,
         });
-
-        if (isDateValidForExistingCycle) {
-          await updateCycle(data.id, payload);
-          return;
-        } else {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message:
-              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-          });
-          handleClose();
-          return;
-        }
-      }
-
-      const isDateValid = await dateChecker({
-        start_date: payload.start_date,
-        end_date: payload.end_date,
-      });
-
-      if (isDateValid) {
-        if (data) {
-          await updateCycle(data.id, payload);
-        } else {
-          await createCycle(payload);
-        }
-      } else {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message:
-            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+      else
+        isDateValid = await dateChecker({
+          start_date: payload.start_date,
+          end_date: payload.end_date,
         });
-        handleClose();
-      }
-    } else {
-      if (data) {
-        await updateCycle(data.id, payload);
-      } else {
-        await createCycle(payload);
-      }
     }
+
+    if (isDateValid) {
+      if (data) await updateCycle(data.id, payload);
+      else await createCycle(payload);
+
+      handleClose();
+    } else
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message:
+          "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
+      });
   };
 
   return (
