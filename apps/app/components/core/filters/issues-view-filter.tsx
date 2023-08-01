@@ -181,78 +181,85 @@ export const IssuesFilterView: React.FC = () => {
                       <>
                         <div className="flex items-center justify-between">
                           <h4 className="text-custom-text-200">Group by</h4>
-                          <CustomMenu
-                            label={
-                              GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
-                                ?.name ?? "Select"
-                            }
-                            className="w-28"
-                            buttonClassName="w-full"
-                          >
-                            {GROUP_BY_OPTIONS.map((option) => {
-                              if (issueView === "kanban" && option.key === null) return null;
-                              if (option.key === "project") return null;
+                          <div className="w-28">
+                            <CustomMenu
+                              label={
+                                GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
+                                  ?.name ?? "Select"
+                              }
+                              className="!w-full"
+                              buttonClassName="w-full"
+                            >
+                              {GROUP_BY_OPTIONS.map((option) => {
+                                if (issueView === "kanban" && option.key === null) return null;
+                                if (option.key === "project") return null;
 
-                              return (
-                                <CustomMenu.MenuItem
-                                  key={option.key}
-                                  onClick={() => setGroupByProperty(option.key)}
-                                >
-                                  {option.name}
-                                </CustomMenu.MenuItem>
-                              );
-                            })}
-                          </CustomMenu>
+                                return (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => setGroupByProperty(option.key)}
+                                  >
+                                    {option.name}
+                                  </CustomMenu.MenuItem>
+                                );
+                              })}
+                            </CustomMenu>
+                          </div>
                         </div>
                         <div className="flex items-center justify-between">
                           <h4 className="text-custom-text-200">Order by</h4>
-                          <CustomMenu
-                            label={
-                              ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
-                              "Select"
-                            }
-                            className="w-28"
-                            buttonClassName="w-full"
-                          >
-                            {ORDER_BY_OPTIONS.map((option) =>
-                              groupByProperty === "priority" && option.key === "priority" ? null : (
-                                <CustomMenu.MenuItem
-                                  key={option.key}
-                                  onClick={() => {
-                                    setOrderBy(option.key);
-                                  }}
-                                >
-                                  {option.name}
-                                </CustomMenu.MenuItem>
-                              )
-                            )}
-                          </CustomMenu>
+                          <div className="w-28">
+                            <CustomMenu
+                              label={
+                                ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
+                                "Select"
+                              }
+                              className="!w-full"
+                              buttonClassName="w-full"
+                            >
+                              {ORDER_BY_OPTIONS.map((option) =>
+                                groupByProperty === "priority" &&
+                                option.key === "priority" ? null : (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => {
+                                      setOrderBy(option.key);
+                                    }}
+                                  >
+                                    {option.name}
+                                  </CustomMenu.MenuItem>
+                                )
+                              )}
+                            </CustomMenu>
+                          </div>
                         </div>
                       </>
                     )}
                     <div className="flex items-center justify-between">
                       <h4 className="text-custom-text-200">Issue type</h4>
-                      <CustomMenu
-                        label={
-                          FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
-                            ?.name ?? "Select"
-                        }
-                        className="w-28"
-                        buttonClassName="w-full"
-                      >
-                        {FILTER_ISSUE_OPTIONS.map((option) => (
-                          <CustomMenu.MenuItem
-                            key={option.key}
-                            onClick={() =>
-                              setFilters({
-                                type: option.key,
-                              })
-                            }
-                          >
-                            {option.name}
-                          </CustomMenu.MenuItem>
-                        ))}
-                      </CustomMenu>
+                      <div className="w-28">
+                        <CustomMenu
+                          label={
+                            FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
+                              ?.name ?? "Select"
+                          }
+                          className="!w-full"
+                          buttonClassName="w-full"
+                        >
+                          {FILTER_ISSUE_OPTIONS.map((option) => (
+                            <CustomMenu.MenuItem
+                              key={option.key}
+                              onClick={() =>
+                                setFilters({
+                                  type: option.key,
+                                })
+                              }
+                            >
+                              {option.name}
+                            </CustomMenu.MenuItem>
+                          ))}
+                        </CustomMenu>
+                      </div>
                     </div>
 
                     {issueView !== "calendar" && issueView !== "spreadsheet" && (
