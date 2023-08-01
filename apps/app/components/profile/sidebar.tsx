@@ -97,7 +97,7 @@ export const ProfileSidebar = () => {
                   className="rounded"
                 />
               ) : (
-                <div className="bg-custom-background-90 text-custom-text-100">
+                <div className="bg-custom-background-90 flex justify-center items-center w-[52px] h-[52px] rounded text-custom-text-100">
                   {userProjectsData.user_data.first_name[0]}
                 </div>
               )}
