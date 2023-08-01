@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
 
 // services
@@ -12,6 +14,8 @@ import { IIssue } from "types";
 import { USER_ISSUES } from "constants/fetch-keys";
 
 const useMyIssues = (workspaceSlug: string | undefined) => {
+  const router = useRouter();
+
   const { filters, groupBy, orderBy } = useMyIssuesFilters(workspaceSlug);
 
   const params: any = {
@@ -27,8 +31,12 @@ const useMyIssues = (workspaceSlug: string | undefined) => {
   };
 
   const { data: myIssues, mutate: mutateMyIssues } = useSWR(
-    workspaceSlug ? USER_ISSUES(workspaceSlug.toString(), params) : null,
-    workspaceSlug ? () => userService.userIssues(workspaceSlug.toString(), params) : null
+    workspaceSlug && router.pathname.includes("my-issues")
+      ? USER_ISSUES(workspaceSlug.toString(), params)
+      : null,
+    workspaceSlug && router.pathname.includes("my-issues")
+      ? () => userService.userIssues(workspaceSlug.toString(), params)
+      : null
   );
 
   const groupedIssues:

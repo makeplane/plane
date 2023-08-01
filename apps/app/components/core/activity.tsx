@@ -481,7 +481,7 @@ const activityDetails: {
 };
 
 export const ActivityIcon = ({ activity }: { activity: IIssueActivity }) => (
-  <>{activityDetails[activity.field as keyof typeof activityDetails].icon}</>
+  <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>
 );
 
 export const ActivityMessage = ({
@@ -492,6 +492,6 @@ export const ActivityMessage = ({
   showIssue?: boolean;
 }) => (
   <>
-    {activityDetails[activity.field as keyof typeof activityDetails].message(activity, showIssue)}
+    {activityDetails[activity.field as keyof typeof activityDetails]?.message(activity, showIssue)}
   </>
 );
