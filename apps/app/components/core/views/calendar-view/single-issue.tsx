@@ -192,7 +192,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
             </CustomMenu>
           </div>
         )}
-        <Link href={`/${workspaceSlug}/projects/${issue?.project_detail.id}/issues/${issue.id}`}>
+        <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
           <a className="flex w-full cursor-pointer flex-col items-start justify-center gap-1.5">
             {properties.key && (
               <Tooltip
