@@ -8,12 +8,12 @@ import useSWR from "swr";
 // services
 import issuesService from "services/issues.service";
 // components
+import { ActivityIcon, ActivityMessage } from "components/core";
 import { CommentCard } from "components/issues/comment";
 // ui
 import { Icon, Loader } from "components/ui";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
-import { activityDetails } from "helpers/activity.helper";
 // types
 import { ICurrentUserResponse, IIssueComment } from "types";
 // fetch-keys
@@ -91,11 +91,11 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
       <ul role="list" className="-mb-4">
         {issueActivities.map((activityItem, index) => {
           // determines what type of action is performed
-          const message = activityItem.field
-            ? activityDetails[activityItem.field as keyof typeof activityDetails]?.message(
-                activityItem
-              )
-            : "created the issue.";
+          const message = activityItem.field ? (
+            <ActivityMessage activity={activityItem} />
+          ) : (
+            "created the issue."
+          );
 
           if ("field" in activityItem && activityItem.field !== "updated_by") {
             return (
@@ -116,8 +116,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                               activityItem.new_value === "restore" ? (
                                 <Icon iconName="history" className="text-sm text-custom-text-200" />
                               ) : (
-                                activityDetails[activityItem.field as keyof typeof activityDetails]
-                                  ?.icon
+                                <ActivityIcon activity={activityItem} />
                               )
                             ) : activityItem.actor_detail.avatar &&
                               activityItem.actor_detail.avatar !== "" ? (
