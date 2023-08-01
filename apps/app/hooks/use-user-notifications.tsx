@@ -15,8 +15,7 @@ import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constan
 // type
 import type { NotificationType, NotificationCount } from "types";
 
-// TODO: change to 100
-const PER_PAGE = 2;
+const PER_PAGE = 30;
 
 const useUserNotification = () => {
   const router = useRouter();

@@ -285,8 +285,7 @@ export const getPaginatedNotificationKey = (
   if (index === 0)
     return `/api/workspaces/${workspaceSlug}/users/notifications?${objToQueryParams({
       ...params,
-      // TODO: change to '100:0:0'
-      cursor: "2:0:0",
+      cursor: "30:0:0",
     })}`;
 
   const cursor = prevData?.next_cursor;
