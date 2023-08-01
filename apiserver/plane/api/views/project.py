@@ -123,7 +123,7 @@ class ProjectViewSet(BaseViewSet):
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
-                workspace__slug=self.kwargs.get("slug"),   
+                workspace__slug=self.kwargs.get("slug"),
             ).values("sort_order")
             projects = (
                 self.get_queryset()
@@ -602,19 +602,29 @@ class AddMemberToProjectEndpoint(BaseAPIView):
                 )
             bulk_project_members = []
 
-            project_members = ProjectMember.objects.filter(
-                workspace=self.workspace, member_id__in=[member.get("member_id") for member in members]
-            ).values("member_id").annotate(sort_order_min=Min("sort_order"))
+            project_members = (
+                ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    member_id__in=[member.get("member_id") for member in members],
+                )
+                .values("member_id", "sort_order")
+                .order_by("sort_order")
+            )
 
             for member in members:
-                sort_order = [project_member.get("sort_order") for project_member in project_members]
+                sort_order = [
+                    project_member.get("sort_order")
+                    for project_member in project_members
+                    if str(project_member.get("member_id"))
+                    == str(member.get("member_id"))
+                ]
                 bulk_project_members.append(
                     ProjectMember(
                         member_id=member.get("member_id"),
                         role=member.get("role", 10),
                         project_id=project_id,
                         workspace_id=project.workspace_id,
-                        sort_order=sort_order[0] - 10000 if len(sort_order) else 65535
+                        sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
                     )
                 )
 
