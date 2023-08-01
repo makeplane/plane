@@ -823,8 +823,13 @@ class ProjectJoinEndpoint(BaseAPIView):
                 )
                 .aggregate(smallest=Min("sort_order"))
                 .get("smallest", 65535)
-                - 10000
             )
+
+            if smallest_sort_order is None:
+                smallest_sort_order = 55535
+            else:
+                smallest_sort_order = smallest_sort_order - 10000
+
 
             workspace_role = workspace_member.role
             workspace = workspace_member.workspace
