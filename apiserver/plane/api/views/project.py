@@ -819,7 +819,7 @@ class ProjectJoinEndpoint(BaseAPIView):
 
             smallest_sort_order = (
                 ProjectMember.objects.filter(
-                    workspace_id=self.project.workspace_id, member=self.member
+                    workspace__slug=slug, member=self.member
                 )
                 .aggregate(smallest=Min("sort_order"))
                 .get("smallest", 65535)
