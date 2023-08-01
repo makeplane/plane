@@ -73,4 +73,9 @@ class Migration(migrations.Migration):
             name='identifier',
             field=models.CharField(max_length=12, verbose_name='Project Identifier'),
         ),
+        migrations.AlterField(
+            model_name='projectidentifier',
+            name='name',
+            field=models.CharField(max_length=12),
+        ),
     ]
