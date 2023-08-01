@@ -58,8 +58,6 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
       : null
   );
 
-  console.log(memberRole);
-
   const groupedIssues:
     | {
         [key: string]: IIssue[];
