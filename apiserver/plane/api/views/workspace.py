@@ -1190,7 +1190,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
                 actor=user_id,
-            ).select_related("actor", "workspace")
+            ).select_related("actor", "workspace", "issue", "project")
 
             if projects:
                 queryset = queryset.filter(project__in=projects)

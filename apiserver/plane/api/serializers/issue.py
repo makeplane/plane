@@ -291,7 +291,8 @@ class IssueCreateSerializer(BaseSerializer):
 
 class IssueActivitySerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
     class Meta:
         model = IssueActivity
