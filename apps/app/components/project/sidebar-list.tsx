@@ -33,7 +33,7 @@ export const ProjectSidebarList: FC = () => {
 
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { user } = useUserAuth();
 
@@ -130,20 +130,26 @@ export const ProjectSidebarList: FC = () => {
         data={projectToDelete}
         user={user}
       />
-      <div className="h-full overflow-y-auto px-4 space-y-3 mt-5">
+      <div className="h-full overflow-y-auto px-5 space-y-3 pt-3 border-t border-custom-sidebar-border-300">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedFavProjects && orderedFavProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col space-y-2">
+                  <Disclosure
+                    as="div"
+                    className="flex flex-col space-y-2"
+                    defaultOpen={
+                      projectId && orderedFavProjects.find((p) => p.id === projectId) ? true : false
+                    }
+                  >
                     {({ open }) => (
                       <>
                         {!sidebarCollapse && (
                           <Disclosure.Button
                             as="button"
                             type="button"
-                            className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-200 text-left hover:bg-custom-background-80 rounded w-min whitespace-nowrap"
+                            className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-200 text-left hover:bg-custom-sidebar-background-80 rounded w-min whitespace-nowrap"
                           >
                             Favorites
                             <Icon
@@ -191,14 +197,22 @@ export const ProjectSidebarList: FC = () => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col space-y-2">
+                  <Disclosure
+                    as="div"
+                    className="flex flex-col space-y-2"
+                    defaultOpen={
+                      projectId && orderedJoinedProjects.find((p) => p.id === projectId)
+                        ? true
+                        : false
+                    }
+                  >
                     {({ open }) => (
                       <>
                         {!sidebarCollapse && (
                           <Disclosure.Button
                             as="button"
                             type="button"
-                            className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-200 text-left hover:bg-custom-background-80 rounded w-min whitespace-nowrap"
+                            className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-200 text-left hover:bg-custom-sidebar-background-80 rounded w-min whitespace-nowrap"
                           >
                             Projects
                             <Icon
@@ -235,37 +249,43 @@ export const ProjectSidebarList: FC = () => {
             )}
           </Droppable>
         </DragDropContext>
-        <Disclosure as="div" className="flex flex-col space-y-2">
-          {({ open }) => (
-            <>
-              {!sidebarCollapse && (
-                <Disclosure.Button
-                  as="button"
-                  type="button"
-                  className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-200 text-left hover:bg-custom-background-80 rounded w-min whitespace-nowrap"
-                >
-                  Other Projects
-                  <Icon
-                    iconName={open ? "arrow_drop_down" : "arrow_right"}
-                    className="group-hover:opacity-100 opacity-0 !text-lg"
-                  />
-                </Disclosure.Button>
-              )}
-              <Disclosure.Panel as="div" className="space-y-2">
-                {otherProjects?.map((project, index) => (
-                  <SingleSidebarProject
-                    key={project.id}
-                    project={project}
-                    sidebarCollapse={sidebarCollapse}
-                    handleDeleteProject={() => handleDeleteProject(project)}
-                    handleCopyText={() => handleCopyText(project.id)}
-                    shortContextMenu
-                  />
-                ))}
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure>
+        {otherProjects && otherProjects.length > 0 && (
+          <Disclosure
+            as="div"
+            className="flex flex-col space-y-2"
+            defaultOpen={projectId && otherProjects.find((p) => p.id === projectId) ? true : false}
+          >
+            {({ open }) => (
+              <>
+                {!sidebarCollapse && (
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-200 text-left hover:bg-custom-sidebar-background-80 rounded w-min whitespace-nowrap"
+                  >
+                    Other Projects
+                    <Icon
+                      iconName={open ? "arrow_drop_down" : "arrow_right"}
+                      className="group-hover:opacity-100 opacity-0 !text-lg"
+                    />
+                  </Disclosure.Button>
+                )}
+                <Disclosure.Panel as="div" className="space-y-2">
+                  {otherProjects?.map((project, index) => (
+                    <SingleSidebarProject
+                      key={project.id}
+                      project={project}
+                      sidebarCollapse={sidebarCollapse}
+                      handleDeleteProject={() => handleDeleteProject(project)}
+                      handleCopyText={() => handleCopyText(project.id)}
+                      shortContextMenu
+                    />
+                  ))}
+                </Disclosure.Panel>
+              </>
+            )}
+          </Disclosure>
+        )}
         {allProjects && allProjects.length === 0 && (
           <button
             type="button"

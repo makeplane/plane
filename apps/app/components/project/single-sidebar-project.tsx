@@ -133,18 +133,18 @@ export const SingleSidebarProject: React.FC<Props> = ({
   };
 
   return (
-    <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
+    <Disclosure key={project.id} defaultOpen={projectId === project.id}>
       {({ open }) => (
         <>
           <div
-            className={`group relative flex items-center gap-x-1 text-custom-sidebar-text-100 ${
+            className={`group relative text-custom-sidebar-text-10 px-2 py-1 w-full flex items-center hover:bg-custom-sidebar-background-80 rounded-md ${
               snapshot?.isDragging ? "opacity-60" : ""
             }`}
           >
             {provided && (
               <button
                 type="button"
-                className={`absolute top-2 left-0 hidden rounded p-0.5 ${
+                className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 ${
                   sidebarCollapse ? "" : "group-hover:!flex"
                 }`}
                 {...provided?.dragHandleProps}
@@ -154,15 +154,15 @@ export const SingleSidebarProject: React.FC<Props> = ({
               </button>
             )}
             <Tooltip
-              tooltipContent={`${project?.name}`}
+              tooltipContent={`${project.name}`}
               position="right"
               className="ml-2"
               disabled={!sidebarCollapse}
             >
               <Disclosure.Button
                 as="div"
-                className={`flex w-full cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
-                  sidebarCollapse ? "justify-center" : `justify-between ${provided ? "ml-4" : ""}`
+                className={`flex items-center w-full cursor-pointer select-none text-left text-sm font-medium ${
+                  sidebarCollapse ? "justify-center" : `justify-between`
                 }`}
               >
                 <div className="flex items-center gap-x-2">
@@ -186,21 +186,23 @@ export const SingleSidebarProject: React.FC<Props> = ({
                         open ? "" : "text-custom-sidebar-text-200"
                       }`}
                     >
-                      {truncateText(project?.name, 14)}
+                      {truncateText(project.name, 15)}
                     </p>
                   )}
                 </div>
                 {!sidebarCollapse && (
                   <ExpandMoreOutlined
                     fontSize="small"
-                    className={`${open ? "rotate-180" : ""} text-custom-text-200 duration-300`}
+                    className={`${
+                      open ? "rotate-180" : ""
+                    } !hidden group-hover:!block text-custom-sidebar-text-200 duration-300`}
                   />
                 )}
               </Disclosure.Button>
             </Tooltip>
 
             {!sidebarCollapse && (
-              <CustomMenu ellipsis>
+              <CustomMenu className="hidden group-hover:block" ellipsis>
                 {!shortContextMenu && (
                   <CustomMenu.MenuItem onClick={handleDeleteProject}>
                     <span className="flex items-center justify-start gap-2 ">
