@@ -123,7 +123,7 @@ class ProjectViewSet(BaseViewSet):
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
-                workspace__slug=self.kwargs.get("slug"),   
+                workspace__slug=self.kwargs.get("slug"),
             ).values("sort_order")
             projects = (
                 self.get_queryset()
@@ -602,19 +602,27 @@ class AddMemberToProjectEndpoint(BaseAPIView):
                 )
             bulk_project_members = []
 
-            project_members = ProjectMember.objects.filter(
-                workspace=self.workspace, member_id__in=[member.get("member_id") for member in members]
-            ).values("member_id").annotate(sort_order_min=Min("sort_order"))
+            project_members = (
+                ProjectMember.objects.filter(
+                    workspace=self.workspace,
+                    member_id__in=[member.get("member_id") for member in members],
+                )
+                .values("member_id")
+                .annotate(sort_order_min=Min("sort_order"))
+            )
 
             for member in members:
-                sort_order = [project_member.get("sort_order") for project_member in project_members]
+                sort_order = [
+                    project_member.get("sort_order")
+                    for project_member in project_members
+                ]
                 bulk_project_members.append(
                     ProjectMember(
                         member_id=member.get("member_id"),
                         role=member.get("role", 10),
                         project_id=project_id,
                         workspace_id=project.workspace_id,
-                        sort_order=sort_order[0] - 10000 if len(sort_order) else 65535
+                        sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
                     )
                 )
 
@@ -809,11 +817,21 @@ class ProjectJoinEndpoint(BaseAPIView):
                 member=request.user, workspace__slug=slug
             )
 
+            smallest_sort_order = (
+                ProjectMember.objects.filter(
+                    workspace_id=self.project.workspace_id, member=self.member
+                )
+                .aggregate(smallest=Min("sort_order"))
+                .get("smallest", 65535)
+                - 10000
+            )
+
             workspace_role = workspace_member.role
             workspace = workspace_member.workspace
 
-            ProjectMember.objects.bulk_create(
-                [
+            bulk_project_members = []
+            for project_id in project_ids:
+                bulk_project_members.append(
                     ProjectMember(
                         project_id=project_id,
                         member=request.user,
@@ -822,9 +840,14 @@ class ProjectJoinEndpoint(BaseAPIView):
                         else (15 if workspace_role == 10 else workspace_role),
                         workspace=workspace,
                         created_by=request.user,
+                        sort_order=smallest_sort_order,
                     )
-                    for project_id in project_ids
-                ],
+                )
+
+                smallest_sort_order = smallest_sort_order - 10000
+
+            ProjectMember.objects.bulk_create(
+                bulk_project_members,
                 ignore_conflicts=True,
             )
 
