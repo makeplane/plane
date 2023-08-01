@@ -603,7 +603,7 @@ class AddMemberToProjectEndpoint(BaseAPIView):
             bulk_project_members = []
 
             project_members = ProjectMember.objects.filter(
-                workspace=self.workspace, member_id__in=[member.get("member_id") for member in members]
+                workspace__slug=slug, member_id__in=[member.get("member_id") for member in members]
             ).values("member_id").annotate(sort_order_min=Min("sort_order"))
 
             for member in members:
