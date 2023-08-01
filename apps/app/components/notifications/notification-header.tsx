@@ -1,10 +1,5 @@
 import React from "react";
 
-import { useRouter } from "next/router";
-
-// hooks
-import useWorkspaceMembers from "hooks/use-workspace-members";
-
 // components
 import { Icon, Tooltip } from "components/ui";
 // helpers
@@ -43,11 +38,6 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
     setReadNotification,
     setSelectedTab,
   } = props;
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const { isOwner, isMember } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
   const notificationTabs: Array<{
     label: string;
@@ -150,59 +140,31 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
           </button>
         ) : (
           <nav className="flex space-x-5 overflow-x-auto" aria-label="Tabs">
-            {notificationTabs.map((tab) =>
-              tab.value === "created" ? (
-                isMember || isOwner ? (
-                  <button
-                    type="button"
-                    key={tab.value}
-                    onClick={() => setSelectedTab(tab.value)}
-                    className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium outline-none ${
+            {notificationTabs.map((tab) => (
+              <button
+                type="button"
+                key={tab.value}
+                onClick={() => setSelectedTab(tab.value)}
+                className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium outline-none ${
+                  tab.value === selectedTab
+                    ? "border-custom-primary-100 text-custom-primary-100"
+                    : "border-transparent text-custom-text-200"
+                }`}
+              >
+                {tab.label}
+                {tab.unreadCount && tab.unreadCount > 0 ? (
+                  <span
+                    className={`ml-2 rounded-full text-xs px-2 py-0.5 ${
                       tab.value === selectedTab
-                        ? "border-custom-primary-100 text-custom-primary-100"
-                        : "border-transparent text-custom-text-200"
+                        ? "bg-custom-primary-100 text-white"
+                        : "bg-custom-background-80 text-custom-text-200"
                     }`}
                   >
-                    {tab.label}
-                    {tab.unreadCount && tab.unreadCount > 0 ? (
-                      <span
-                        className={`ml-2 rounded-full text-xs px-2 py-0.5 ${
-                          tab.value === selectedTab
-                            ? "bg-custom-primary-100 text-white"
-                            : "bg-custom-background-80 text-custom-text-200"
-                        }`}
-                      >
-                        {getNumberCount(tab.unreadCount)}
-                      </span>
-                    ) : null}
-                  </button>
-                ) : null
-              ) : (
-                <button
-                  type="button"
-                  key={tab.value}
-                  onClick={() => setSelectedTab(tab.value)}
-                  className={`whitespace-nowrap border-b-2 pb-4 px-1 text-sm font-medium ${
-                    tab.value === selectedTab
-                      ? "border-custom-primary-100 text-custom-primary-100"
-                      : "border-transparent text-custom-text-200"
-                  }`}
-                >
-                  {tab.label}
-                  {tab.unreadCount && tab.unreadCount > 0 ? (
-                    <span
-                      className={`ml-2 rounded-full text-xs px-2 py-0.5 ${
-                        tab.value === selectedTab
-                          ? "bg-custom-primary-100 text-white"
-                          : "bg-custom-background-80 text-custom-text-200"
-                      }`}
-                    >
-                      {getNumberCount(tab.unreadCount)}
-                    </span>
-                  ) : null}
-                </button>
-              )
-            )}
+                    {getNumberCount(tab.unreadCount)}
+                  </span>
+                ) : null}
+              </button>
+            ))}
           </nav>
         )}
       </div>

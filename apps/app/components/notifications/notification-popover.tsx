@@ -1,7 +1,11 @@
 import React, { Fragment } from "react";
 
+// next
+import { useRouter } from "next/router";
+
 // hooks
 import useTheme from "hooks/use-theme";
+import useWorkspaceMembers from "hooks/use-workspace-members";
 
 import { Popover, Transition } from "@headlessui/react";
 
@@ -50,6 +54,11 @@ export const NotificationPopover = () => {
 
   // theme context
   const { collapsed: sidebarCollapse } = useTheme();
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { isOwner, isMember } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
   return (
     <>
