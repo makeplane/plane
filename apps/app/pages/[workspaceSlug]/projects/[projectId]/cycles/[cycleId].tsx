@@ -12,7 +12,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
-import { CycleDetailsSidebar } from "components/cycles";
+import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
 // services
 import issuesService from "services/issues.service";
 import cycleServices from "services/cycles.service";
@@ -36,6 +36,7 @@ const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   const [cycleSidebar, setCycleSidebar] = useState(true);
   const [analyticsModal, setAnalyticsModal] = useState(false);
+  const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -108,8 +109,9 @@ const SingleCycle: React.FC = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${cycleDetails?.project_detail.name ?? "Project"} Cycles`}
+              title={`${truncateText(cycleDetails?.project_detail.name ?? "Project", 32)} Cycles`}
               link={`/${workspaceSlug}/projects/${projectId}/cycles`}
+              linkTruncate
             />
           </Breadcrumbs>
         }
@@ -121,7 +123,7 @@ const SingleCycle: React.FC = () => {
                 {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
               </>
             }
-            className="ml-1.5"
+            className="ml-1.5 flex-shrink-0"
             width="auto"
           >
             {cycles?.map((cycle) => (
@@ -136,7 +138,7 @@ const SingleCycle: React.FC = () => {
           </CustomMenu>
         }
         right={
-          <div className={`flex items-center gap-2 duration-300`}>
+          <div className={`flex flex-shrink-0 items-center gap-2 duration-300`}>
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
@@ -157,16 +159,22 @@ const SingleCycle: React.FC = () => {
           </div>
         }
       >
+        <TransferIssuesModal
+          handleClose={() => setTransferIssuesModal(false)}
+          isOpen={transferIssuesModal}
+        />
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <div
           className={`h-full flex flex-col ${cycleSidebar ? "mr-[24rem]" : ""} ${
             analyticsModal ? "mr-[50%]" : ""
           } duration-300`}
         >
+          {cycleStatus === "completed" && (
+            <TransferIssues handleClick={() => setTransferIssuesModal(true)} />
+          )}
           <IssuesView
-            type="cycle"
             openIssuesListModal={openIssuesListModal}
-            isCompleted={cycleStatus === "completed" ?? false}
+            disableUserActions={cycleStatus === "completed" ?? false}
           />
         </div>
         <CycleDetailsSidebar

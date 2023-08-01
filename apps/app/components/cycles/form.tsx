@@ -29,16 +29,13 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
     handleSubmit,
     control,
     reset,
+    watch,
   } = useForm<ICycle>({
     defaultValues,
   });
 
   const handleCreateUpdateCycle = async (formData: Partial<ICycle>) => {
     await handleFormSubmit(formData);
-
-    reset({
-      ...defaultValues,
-    });
   };
 
   useEffect(() => {
@@ -47,6 +44,15 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
       ...data,
     });
   }, [data, reset]);
+
+  const startDate = watch("start_date");
+  const endDate = watch("end_date");
+
+  const minDate = startDate ? new Date(startDate) : new Date();
+  minDate.setDate(minDate.getDate() + 1);
+
+  const maxDate = endDate ? new Date(endDate) : null;
+  maxDate?.setDate(maxDate.getDate() - 1);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateCycle)}>
@@ -91,7 +97,13 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 control={control}
                 name="start_date"
                 render={({ field: { value, onChange } }) => (
-                  <DateSelect label="Start date" value={value} onChange={(val) => onChange(val)} />
+                  <DateSelect
+                    label="Start date"
+                    value={value}
+                    onChange={(val) => onChange(val)}
+                    minDate={new Date()}
+                    maxDate={maxDate ?? undefined}
+                  />
                 )}
               />
             </div>
@@ -100,7 +112,12 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 control={control}
                 name="end_date"
                 render={({ field: { value, onChange } }) => (
-                  <DateSelect label="End date" value={value} onChange={(val) => onChange(val)} />
+                  <DateSelect
+                    label="End date"
+                    value={value}
+                    onChange={(val) => onChange(val)}
+                    minDate={minDate}
+                  />
                 )}
               />
             </div>

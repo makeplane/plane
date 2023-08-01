@@ -56,13 +56,15 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
             title="Have your thoughts in place"
             description="You can think of Pages as an AI-powered notepad."
             image={emptyPage}
-            buttonText="New Page"
-            buttonIcon={<PlusIcon className="h-4 w-4" />}
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "d",
-              });
-              document.dispatchEvent(e);
+            primaryButton={{
+              icon: <PlusIcon className="h-4 w-4" />,
+              text: "New Page",
+              onClick: () => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "d",
+                });
+                document.dispatchEvent(e);
+              },
             }}
           />
         )

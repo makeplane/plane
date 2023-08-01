@@ -12,6 +12,12 @@ from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
 from plane.db.models import Cycle, CycleIssue, CycleFavorite
 
+class CycleWriteSerializer(BaseSerializer):
+
+    class Meta:
+        model = Cycle
+        fields = "__all__"
+
 
 class CycleSerializer(BaseSerializer):
     owned_by = UserLiteSerializer(read_only=True)

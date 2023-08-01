@@ -26,6 +26,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getStatesList, orderStateGroups } from "helpers/state.helper";
+import { truncateText } from "helpers/string.helper";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -49,8 +50,8 @@ const StatesSettings: NextPage = () => {
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const orderedStateGroups = orderStateGroups(states ?? {});
-  const statesList = getStatesList(orderedStateGroups ?? {});
+  const orderedStateGroups = orderStateGroups(states);
+  const statesList = getStatesList(orderedStateGroups);
 
   return (
     <>
@@ -64,10 +65,11 @@ const StatesSettings: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${projectDetails?.name ?? "Project"}`}
+              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+              linkTruncate
             />
-            <BreadcrumbItem title="States Settings" />
+            <BreadcrumbItem title="States Settings" unshrinkTitle />
           </Breadcrumbs>
         }
       >
@@ -79,7 +81,7 @@ const StatesSettings: NextPage = () => {
               <p className="text-custom-text-200">Manage the states of this project.</p>
             </div>
             <div className="col-span-12 space-y-8 sm:col-span-7">
-              {states && projectDetails ? (
+              {states && projectDetails && orderedStateGroups ? (
                 Object.keys(orderedStateGroups).map((key) => {
                   if (orderedStateGroups[key].length !== 0)
                     return (
@@ -114,7 +116,7 @@ const StatesSettings: NextPage = () => {
                                 key={state.id}
                                 index={index}
                                 state={state}
-                                statesList={statesList}
+                                statesList={statesList ?? []}
                                 handleEditState={() => setSelectedState(state.id)}
                                 handleDeleteState={() => setSelectDeleteState(state.id)}
                                 user={user}

@@ -37,8 +37,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const options = states
     ?.filter((state) => state.group === "cancelled")
@@ -53,14 +52,14 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
       ),
     }));
 
-  const multipleOptions = options.length > 1;
+  const multipleOptions = (options ?? []).length > 1;
 
   const defaultState = stateGroups && stateGroups.cancelled ? stateGroups.cancelled[0].id : null;
 
   const selectedOption = states?.find(
     (s) => s.id === projectDetails?.default_state ?? defaultState
   );
-  const currentDefaultState = states.find((s) => s.id === defaultState);
+  const currentDefaultState = states?.find((s) => s.id === defaultState);
 
   const initialValues: Partial<IProject> = {
     close_in: 1,
@@ -77,7 +76,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
         handleChange={handleChange}
       />
 
-      <div className="flex flex-col gap-7 px-6 py-5 rounded-[10px] border border-custom-border-100 bg-custom-background-90">
+      <div className="flex flex-col gap-7 px-6 py-5 rounded-[10px] border border-custom-border-300 bg-custom-background-90">
         <div className="flex items-center justify-between gap-x-8 gap-y-2 ">
           <div className="flex flex-col gap-2.5">
             <h4 className="text-lg font-semibold">Auto-close inactive issues</h4>

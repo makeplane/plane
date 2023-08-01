@@ -112,3 +112,13 @@ export const getNumberCount = (number: number): string => {
   }
   return number.toString();
 };
+
+export const objToQueryParams = (obj: any) => {
+  const params = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined && value !== null) params.append(key, value as string);
+  }
+
+  return params.toString();
+};

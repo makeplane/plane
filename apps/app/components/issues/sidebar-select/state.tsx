@@ -41,7 +41,7 @@ export const SidebarStateSelect: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const selectedState = states?.find((s) => s.id === value);
 

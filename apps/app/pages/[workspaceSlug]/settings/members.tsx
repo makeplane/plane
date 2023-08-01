@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -27,6 +27,8 @@ import type { NextPage } from "next";
 import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const MembersSettings: NextPage = () => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
@@ -89,10 +91,11 @@ const MembersSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeWorkspace?.name ?? "Workspace"}`}
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
             link={`/${workspaceSlug}`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Members Settings" />
+          <BreadcrumbItem title="Members Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -112,30 +115,48 @@ const MembersSettings: NextPage = () => {
         handleDelete={async () => {
           if (!workspaceSlug) return;
           if (selectedRemoveMember) {
-            await workspaceService.deleteWorkspaceMember(
-              workspaceSlug as string,
-              selectedRemoveMember
-            );
-            mutateMembers(
-              (prevData) => prevData?.filter((item) => item.id !== selectedRemoveMember),
-              false
-            );
+            workspaceService
+              .deleteWorkspaceMember(workspaceSlug as string, selectedRemoveMember)
+              .catch((err) => {
+                const error = err?.error;
+                setToastAlert({
+                  type: "error",
+                  title: "Error",
+                  message: error || "Something went wrong",
+                });
+              })
+              .finally(() => {
+                mutateMembers((prevData) =>
+                  prevData?.filter((item) => item.id !== selectedRemoveMember)
+                );
+              });
           }
           if (selectedInviteRemoveMember) {
-            await workspaceService.deleteWorkspaceInvitations(
-              workspaceSlug as string,
-              selectedInviteRemoveMember
-            );
             mutateInvitations(
               (prevData) => prevData?.filter((item) => item.id !== selectedInviteRemoveMember),
               false
             );
+            workspaceService
+              .deleteWorkspaceInvitations(workspaceSlug as string, selectedInviteRemoveMember)
+              .then(() => {
+                setToastAlert({
+                  type: "success",
+                  title: "Success",
+                  message: "Member removed successfully",
+                });
+              })
+              .catch((err) => {
+                const error = err?.error;
+                setToastAlert({
+                  type: "error",
+                  title: "Error",
+                  message: error || "Something went wrong",
+                });
+              })
+              .finally(() => {
+                mutateInvitations();
+              });
           }
-          setToastAlert({
-            type: "success",
-            title: "Success",
-            message: "Member removed successfully",
-          });
           setSelectedRemoveMember(null);
           setSelectedInviteRemoveMember(null);
         }}
@@ -144,7 +165,6 @@ const MembersSettings: NextPage = () => {
         isOpen={inviteModal}
         setIsOpen={setInviteModal}
         workspace_slug={workspaceSlug as string}
-        members={members}
         user={user}
       />
       <div className="p-8">
@@ -188,9 +208,17 @@ const MembersSettings: NextPage = () => {
                           )}
                         </div>
                         <div>
-                          <h4 className="text-sm">
-                            {member.first_name} {member.last_name}
-                          </h4>
+                          {member.member ? (
+                            <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
+                              <a className="text-sm">
+                                {member.first_name} {member.last_name}
+                              </a>
+                            </Link>
+                          ) : (
+                            <h4 className="text-sm">
+                              {member.first_name} {member.last_name}
+                            </h4>
+                          )}
                           <p className="text-xs text-custom-text-200">{member.email}</p>
                         </div>
                       </div>
@@ -266,7 +294,7 @@ const MembersSettings: NextPage = () => {
                               }
                             }}
                           >
-                            Remove member
+                            {user?.id === member.memberId ? "Leave" : "Remove member"}
                           </CustomMenu.MenuItem>
                         </CustomMenu>
                       </div>

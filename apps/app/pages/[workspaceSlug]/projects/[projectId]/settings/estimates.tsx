@@ -29,6 +29,8 @@ import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -115,10 +117,11 @@ const EstimatesSettings: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${projectDetails?.name ?? "Project"}`}
+              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+              linkTruncate
             />
-            <BreadcrumbItem title="Estimates Settings" />
+            <BreadcrumbItem title="Estimates Settings" unshrinkTitle />
           </Breadcrumbs>
         }
       >
@@ -163,11 +166,13 @@ const EstimatesSettings: NextPage = () => {
                   title="No estimates yet"
                   description="Estimates help you communicate the complexity of an issue."
                   image={emptyEstimate}
-                  buttonText="Add Estimate"
-                  buttonIcon={<PlusIcon className="h-4 w-4" />}
-                  onClick={() => {
-                    setEstimateToUpdate(undefined);
-                    setEstimateFormOpen(true);
+                  primaryButton={{
+                    icon: <PlusIcon className="h-4 w-4" />,
+                    text: "Add Estimate",
+                    onClick: () => {
+                      setEstimateToUpdate(undefined);
+                      setEstimateFormOpen(true);
+                    },
                   }}
                 />
               </div>

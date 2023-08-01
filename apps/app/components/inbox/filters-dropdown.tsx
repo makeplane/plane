@@ -37,37 +37,35 @@ export const FiltersDropdown: React.FC = () => {
             id: "priority",
             label: "Priority",
             value: PRIORITIES,
-            children: [
-              ...PRIORITIES.map((priority) => ({
-                id: priority === null ? "null" : priority,
-                label: (
-                  <div className="flex items-center gap-2 capitalize">
-                    {getPriorityIcon(priority)} {priority ?? "None"}
-                  </div>
-                ),
-                value: {
-                  key: "priority",
-                  value: priority === null ? "null" : priority,
-                },
-                selected: filters?.priority?.includes(priority === null ? "null" : priority),
-              })),
-            ],
+            hasChildren: true,
+            children: PRIORITIES.map((priority) => ({
+              id: priority === null ? "null" : priority,
+              label: (
+                <div className="flex items-center gap-2 capitalize">
+                  {getPriorityIcon(priority)} {priority ?? "None"}
+                </div>
+              ),
+              value: {
+                key: "priority",
+                value: priority === null ? "null" : priority,
+              },
+              selected: filters?.priority?.includes(priority === null ? "null" : priority),
+            })),
           },
           {
             id: "inbox_status",
             label: "Status",
             value: INBOX_STATUS.map((status) => status.value),
-            children: [
-              ...INBOX_STATUS.map((status) => ({
-                id: status.key,
-                label: status.label,
-                value: {
-                  key: "inbox_status",
-                  value: status.value,
-                },
-                selected: filters?.inbox_status?.includes(status.value),
-              })),
-            ],
+            hasChildren: true,
+            children: INBOX_STATUS.map((status) => ({
+              id: status.key,
+              label: status.label,
+              value: {
+                key: "inbox_status",
+                value: status.value,
+              },
+              selected: filters?.inbox_status?.includes(status.value),
+            })),
           },
         ]}
       />
