@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
             field=models.JSONField(default=plane.db.models.workspace.get_default_props),
         ),
         migrations.AddField(
-            model_name='project',
+            model_name='projectmember',
             name='sort_order',
             field=models.FloatField(default=65535),
         ),
