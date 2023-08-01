@@ -136,13 +136,7 @@ export const ProjectSidebarList: FC = () => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedFavProjects && orderedFavProjects.length > 0 && (
-                  <Disclosure
-                    as="div"
-                    className="flex flex-col space-y-2"
-                    defaultOpen={
-                      projectId && orderedFavProjects.find((p) => p.id === projectId) ? true : false
-                    }
-                  >
+                  <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
                         {!sidebarCollapse && (
@@ -197,15 +191,7 @@ export const ProjectSidebarList: FC = () => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
-                  <Disclosure
-                    as="div"
-                    className="flex flex-col space-y-2"
-                    defaultOpen={
-                      projectId && orderedJoinedProjects.find((p) => p.id === projectId)
-                        ? true
-                        : false
-                    }
-                  >
+                  <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
                         {!sidebarCollapse && (
