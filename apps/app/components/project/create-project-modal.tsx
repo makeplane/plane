@@ -47,7 +47,7 @@ type Props = {
 
 const defaultValues: Partial<IProject> = {
   cover_image:
-    "https://images.unsplash.com/photo-1575116464504-9e7652fddcb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODUyNTV8MHwxfHNlYXJjaHwxOHx8cGxhbmV8ZW58MHx8fHwxNjgxNDY4NTY5&ixlib=rb-4.0.3&q=80&w=1080",
+    "https://images.unsplash.com/photo-1531045535792-b515d59c3d1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
   description: "",
   emoji_and_icon: getRandomEmoji(),
   identifier: "",
@@ -213,7 +213,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="transform rounded-lg bg-custom-background-100 text-left shadow-xl transition-all p-3 w-full sm:w-3/5 lg:w-1/2 xl:w-2/5">
-                <div className="group relative h-36 w-full rounded-lg bg-custom-background-80">
+                <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
                   {watch("cover_image") !== null && (
                     <img
                       src={watch("cover_image")!}
@@ -310,7 +310,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                         <TextArea
                           id="description"
                           name="description"
-                          className="text-sm !h-[8rem]"
+                          className="text-sm !h-24"
                           placeholder="Description..."
                           error={errors.description}
                           register={register}
@@ -327,6 +327,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                             <CustomSelect
                               value={value}
                               onChange={onChange}
+                              buttonClassName="border-[0.5px] !px-2 shadow-md"
                               label={
                                 <div className="flex items-center gap-2 -mb-0.5 py-1">
                                   {currentNetwork ? (
@@ -369,6 +370,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                                 value={value}
                                 onChange={onChange}
                                 options={options}
+                                buttonClassName="!px-2 shadow-md"
                                 label={
                                   <div className="flex items-center justify-center gap-2 py-[1px]">
                                     {value ? (
