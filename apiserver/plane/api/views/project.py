@@ -238,9 +238,13 @@ class ProjectViewSet(BaseViewSet):
                     ]
                 )
 
+
+                project = Project.objects.get(pk=serializer.data["id"], workspace__slug=slug)
+                serializer = ProjectDetailSerializer(project)
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
-                [serializer.errors[error][0] for error in serializer.errors],
+                serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except IntegrityError as e:
