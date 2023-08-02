@@ -130,7 +130,7 @@ export const ProjectSidebarList: FC = () => {
         data={projectToDelete}
         user={user}
       />
-      <div className="h-full overflow-y-auto px-5 space-y-3 pt-3 border-t border-custom-sidebar-border-300">
+      <div className="h-full overflow-y-auto px-4 space-y-3 pt-3 border-t border-custom-sidebar-border-300">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
             {(provided) => (

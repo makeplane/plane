@@ -170,17 +170,17 @@ export const SingleSidebarProject: React.FC<Props> = ({
             >
               <Disclosure.Button
                 as="div"
-                className={`flex items-center w-full cursor-pointer select-none text-left text-sm font-medium ${
+                className={`flex items-center flex-grow truncate cursor-pointer select-none text-left text-sm font-medium ${
                   sidebarCollapse ? "justify-center" : `justify-between`
                 }`}
               >
-                <div className="flex items-center gap-x-2">
+                <div className="flex items-center flex-grow w-full truncate gap-x-2">
                   {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
                       {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
-                    <div className="h-7 w-7 grid place-items-center">
+                    <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
                       {renderEmoji(project.icon_prop)}
                     </div>
                   ) : (
@@ -190,19 +190,15 @@ export const SingleSidebarProject: React.FC<Props> = ({
                   )}
 
                   {!sidebarCollapse && (
-                    <p
-                      className={`overflow-hidden text-ellipsis ${
-                        open ? "" : "text-custom-sidebar-text-200"
-                      }`}
-                    >
-                      {truncateText(project.name, 15)}
+                    <p className={`truncate ${open ? "" : "text-custom-sidebar-text-200"}`}>
+                      {project.name}
                     </p>
                   )}
                 </div>
                 {!sidebarCollapse && (
                   <ExpandMoreOutlined
                     fontSize="small"
-                    className={`${
+                    className={`flex-shrink-0 ${
                       open ? "rotate-180" : ""
                     } !hidden group-hover:!block text-custom-sidebar-text-200 duration-300`}
                   />
@@ -211,7 +207,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
             </Tooltip>
 
             {!sidebarCollapse && (
-              <CustomMenu className="hidden group-hover:block" ellipsis>
+              <CustomMenu className="hidden group-hover:block flex-shrink-0" ellipsis>
                 {!shortContextMenu && (
                   <CustomMenu.MenuItem onClick={handleDeleteProject}>
                     <span className="flex items-center justify-start gap-2 ">
