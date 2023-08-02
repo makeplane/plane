@@ -146,13 +146,15 @@ const ProjectModules: NextPage = () => {
             title="Manage your project with modules"
             description="Modules are smaller, focused projects that help you group and organize issues."
             image={emptyModule}
-            buttonText="New Module"
-            buttonIcon={<PlusIcon className="h-4 w-4" />}
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "m",
-              });
-              document.dispatchEvent(e);
+            primaryButton={{
+              icon: <PlusIcon className="h-4 w-4" />,
+              text: "New Module",
+              onClick: () => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "m",
+                });
+                document.dispatchEvent(e);
+              },
             }}
           />
         )

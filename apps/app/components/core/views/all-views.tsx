@@ -21,9 +21,9 @@ import {
   GanttChartView,
 } from "components/core";
 // ui
-import { EmptyState, SecondaryButton, Spinner } from "components/ui";
+import { EmptyState, Spinner } from "components/ui";
 // icons
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 import emptyIssueArchive from "public/empty-state/issue-archive.svg";
@@ -39,6 +39,16 @@ type Props = {
   addIssueToGroup: (groupTitle: string) => void;
   disableUserActions: boolean;
   dragDisabled?: boolean;
+  emptyState: {
+    title: string;
+    description?: string;
+    primaryButton?: {
+      icon: any;
+      text: string;
+      onClick: () => void;
+    };
+    secondaryButton?: React.ReactNode;
+  };
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleOnDragEnd: (result: DropResult) => Promise<void>;
   openIssuesListModal: (() => void) | null;
@@ -53,6 +63,7 @@ export const AllViews: React.FC<Props> = ({
   addIssueToGroup,
   disableUserActions,
   dragDisabled = false,
+  emptyState,
   handleIssueAction,
   handleOnDragEnd,
   openIssuesListModal,
@@ -156,41 +167,28 @@ export const AllViews: React.FC<Props> = ({
             title="Archived Issues will be shown here"
             description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
             image={emptyIssueArchive}
-            buttonText="Go to Automation Settings"
-            onClick={() => {
-              router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
+            primaryButton={{
+              text: "Go to Automation Settings",
+              onClick: () => {
+                router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
+              },
             }}
           />
         ) : (
           <EmptyState
-            title={
-              cycleId
-                ? "Cycle issues will appear here"
-                : moduleId
-                ? "Module issues will appear here"
-                : "Project issues will appear here"
-            }
-            description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+            title={emptyState.title}
+            description={emptyState.description}
             image={emptyIssue}
-            buttonText="New Issue"
-            buttonIcon={<PlusIcon className="h-4 w-4" />}
-            secondaryButton={
-              cycleId || moduleId ? (
-                <SecondaryButton
-                  className="flex items-center gap-1.5"
-                  onClick={openIssuesListModal ?? (() => {})}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  Add an existing issue
-                </SecondaryButton>
-              ) : null
+            primaryButton={
+              emptyState.primaryButton
+                ? {
+                    icon: emptyState.primaryButton.icon,
+                    text: emptyState.primaryButton.text,
+                    onClick: emptyState.primaryButton.onClick,
+                  }
+                : undefined
             }
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            }}
+            secondaryButton={emptyState.secondaryButton}
           />
         )
       ) : (

@@ -25,6 +25,25 @@
   :root {
     color-scheme: light !important;
 
+    --color-primary-10: 236, 241, 255;
+    --color-primary-20: 217, 228, 255;
+    --color-primary-30: 197, 214, 255;
+    --color-primary-40: 178, 200, 255;
+    --color-primary-50: 159, 187, 255;
+    --color-primary-60: 140, 173, 255;
+    --color-primary-70: 121, 159, 255;
+    --color-primary-80: 101, 145, 255;
+    --color-primary-90: 82, 132, 255;
+    --color-primary-100: 63, 118, 255;
+    --color-primary-200: 57, 106, 230;
+    --color-primary-300: 50, 94, 204;
+    --color-primary-400: 44, 83, 179;
+    --color-primary-500: 38, 71, 153;
+    --color-primary-600: 32, 59, 128;
+    --color-primary-700: 25, 47, 102;
+    --color-primary-800: 19, 35, 76;
+    --color-primary-900: 13, 24, 51;
+
     --color-background-100: 255, 255, 255; /* primary bg */
     --color-background-90: 250, 250, 250; /* secondary bg */
     --color-background-80: 245, 245, 245; /* tertiary bg */

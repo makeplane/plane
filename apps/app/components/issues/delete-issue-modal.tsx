@@ -59,8 +59,9 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
   };
 
   const handleDeletion = async () => {
+    if (!workspaceSlug || !data) return;
+
     setIsDeleteLoading(true);
-    if (!workspaceSlug || !projectId || !data) return;
 
     await issueServices
       .deleteIssue(workspaceSlug as string, data.project, data.id, user)
@@ -112,7 +113,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
         } else {
           if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, params));
         }
 
         handleClose();

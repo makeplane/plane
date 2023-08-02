@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
+import userService from "services/user.service";
 // hooks
 import useProfileIssues from "hooks/use-profile-issues";
 import useUser from "hooks/use-user";
@@ -19,7 +20,7 @@ import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue, IIssueFilterOptions } from "types";
 // fetch-keys
-import { WORKSPACE_LABELS } from "constants/fetch-keys";
+import { USER_PROFILE_PROJECT_SEGREGATION, WORKSPACE_LABELS } from "constants/fetch-keys";
 
 export const ProfileIssuesView = () => {
   // create issue modal
@@ -59,6 +60,16 @@ export const ProfileIssuesView = () => {
     properties,
     params,
   } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
+
+  const { data: profileData } = useSWR(
+    workspaceSlug && userId
+      ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
+      : null,
+    workspaceSlug && userId
+      ? () =>
+          userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
+      : null
+  );
 
   const { data: labels } = useSWR(
     workspaceSlug && (filters?.labels ?? []).length > 0
@@ -140,10 +151,26 @@ export const ProfileIssuesView = () => {
     ]
   );
 
-  const addIssueToGroup = useCallback((groupTitle: string) => {
-    setCreateIssueModal(true);
-    return;
-  }, []);
+  const addIssueToGroup = useCallback(
+    (groupTitle: string) => {
+      setCreateIssueModal(true);
+
+      let preloadedValue: string | string[] = groupTitle;
+
+      if (groupByProperty === "labels") {
+        if (groupTitle === "None") preloadedValue = [];
+        else preloadedValue = [groupTitle];
+      }
+
+      if (groupByProperty)
+        setPreloadedData({
+          [groupByProperty]: preloadedValue,
+          actionType: "createIssue",
+        });
+      else setPreloadedData({ actionType: "createIssue" });
+    },
+    [setCreateIssueModal, setPreloadedData, groupByProperty]
+  );
 
   const addIssueToDate = useCallback(
     (date: string) => {
@@ -250,6 +277,13 @@ export const ProfileIssuesView = () => {
         addIssueToGroup={addIssueToGroup}
         disableUserActions={false}
         dragDisabled={groupByProperty !== "priority"}
+        emptyState={{
+          title: router.pathname.includes("assigned")
+            ? `Issues assigned to ${profileData?.user_data.first_name} ${profileData?.user_data.last_name} will appear here`
+            : router.pathname.includes("created")
+            ? `Issues created by ${profileData?.user_data.first_name} ${profileData?.user_data.last_name} will appear here`
+            : `Issues subscribed by ${profileData?.user_data.first_name} ${profileData?.user_data.last_name} will appear here`,
+        }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
         openIssuesListModal={null}
