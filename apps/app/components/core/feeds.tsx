@@ -16,7 +16,7 @@ import { Icon } from "components/ui";
 import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import RemirrorRichTextEditor from "components/rich-text-editor";
+// import RemirrorRichTextEditor from "components/rich-text-editor";
 
 const activityDetails: {
   [key: string]: {
@@ -250,18 +250,18 @@ export const Feeds: React.FC<any> = ({ activities }) => {
                         Commented {timeAgo(activity.created_at)}
                       </p>
                     </div>
-                    <div className="issue-comments-section p-0">
-                      <RemirrorRichTextEditor
-                        value={
-                          activity.new_value && activity.new_value !== ""
-                            ? activity.new_value
-                            : activity.old_value
-                        }
-                        editable={false}
-                        noBorder
-                        customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-                      />
-                    </div>
+                    {/* <div className="issue-comments-section p-0"> */}
+                    {/*   <RemirrorRichTextEditor */}
+                    {/*     value={ */}
+                    {/*       activity.new_value && activity.new_value !== "" */}
+                    {/*         ? activity.new_value */}
+                    {/*         : activity.old_value */}
+                    {/*     } */}
+                    {/*     editable={false} */}
+                    {/*     noBorder */}
+                    {/*     customClassName="text-xs border border-custom-border-200 bg-custom-background-100" */}
+                    {/*   /> */}
+                    {/* </div> */}
                   </div>
                 </div>
               </div>

@@ -18,23 +18,23 @@ import type { ICurrentUserResponse, IIssueComment } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="mb-5">
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-
-const WrappedRemirrorRichTextEditor = React.forwardRef<
-  IRemirrorRichTextEditor,
-  IRemirrorRichTextEditor
->((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
-
+// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+//   ssr: false,
+//   loading: () => (
+//     <Loader className="mb-5">
+//       <Loader.Item height="12rem" width="100%" />
+//     </Loader>
+//   ),
+// });
+// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+//
+// const WrappedRemirrorRichTextEditor = React.forwardRef<
+//   IRemirrorRichTextEditor,
+//   IRemirrorRichTextEditor
+// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+//
+// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+//
 const defaultValues: Partial<IIssueComment> = {
   comment_json: "",
   comment_html: "",
@@ -98,19 +98,19 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="issue-comments-section">
-          <Controller
-            name="comment_json"
-            control={control}
-            render={({ field: { value } }) => (
-              <WrappedRemirrorRichTextEditor
-                value={value}
-                onJSONChange={(jsonValue) => setValue("comment_json", jsonValue)}
-                onHTMLChange={(htmlValue) => setValue("comment_html", htmlValue)}
-                placeholder="Enter your comment..."
-                ref={editorRef}
-              />
-            )}
-          />
+          {/* <Controller */}
+          {/*   name="comment_json" */}
+          {/*   control={control} */}
+          {/*   render={({ field: { value } }) => ( */}
+          {/*     <WrappedRemirrorRichTextEditor */}
+          {/*       value={value} */}
+          {/*       onJSONChange={(jsonValue) => setValue("comment_json", jsonValue)} */}
+          {/*       onHTMLChange={(htmlValue) => setValue("comment_html", htmlValue)} */}
+          {/*       placeholder="Enter your comment..." */}
+          {/*       ref={editorRef} */}
+          {/*     /> */}
+          {/*   )} */}
+          {/* /> */}
 
           <SecondaryButton type="submit" disabled={isSubmitting || disabled} className="mt-2">
             {isSubmitting ? "Adding..." : "Comment"}

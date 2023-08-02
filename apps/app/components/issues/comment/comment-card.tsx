@@ -16,17 +16,17 @@ import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
-
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-
-const WrappedRemirrorRichTextEditor = React.forwardRef<
-  IRemirrorRichTextEditor,
-  IRemirrorRichTextEditor
->((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
-
+// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
+//
+// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+//
+// const WrappedRemirrorRichTextEditor = React.forwardRef<
+//   IRemirrorRichTextEditor,
+//   IRemirrorRichTextEditor
+// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+//
+// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+//
 type Props = {
   comment: IIssueComment;
   onSubmit: (comment: IIssueComment) => void;
@@ -132,13 +132,13 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <WrappedRemirrorRichTextEditor
-              value={comment.comment_html}
-              editable={false}
-              noBorder
-              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              ref={showEditorRef}
-            />
+            {/* <WrappedRemirrorRichTextEditor */}
+            {/*   value={comment.comment_html} */}
+            {/*   editable={false} */}
+            {/*   noBorder */}
+            {/*   customClassName="text-xs border border-custom-border-200 bg-custom-background-100" */}
+            {/*   ref={showEditorRef} */}
+            {/* /> */}
 
             <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>

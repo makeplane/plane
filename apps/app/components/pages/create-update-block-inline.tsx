@@ -39,22 +39,22 @@ const defaultValues = {
   description_html: null,
 };
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="mx-4 mt-6">
-      <Loader.Item height="100px" width="100%" />
-    </Loader>
-  ),
-});
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-
-const WrappedRemirrorRichTextEditor = React.forwardRef<
-  IRemirrorRichTextEditor,
-  IRemirrorRichTextEditor
->((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+//   ssr: false,
+//   loading: () => (
+//     <Loader className="mx-4 mt-6">
+//       <Loader.Item height="100px" width="100%" />
+//     </Loader>
+//   ),
+// });
+// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+//
+// const WrappedRemirrorRichTextEditor = React.forwardRef<
+//   IRemirrorRichTextEditor,
+//   IRemirrorRichTextEditor
+// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+//
+// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 export const CreateUpdateBlockInline: React.FC<Props> = ({
   handleClose,
@@ -296,51 +296,51 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
             />
           </div>
           <div className="page-block-section relative -mt-2 text-custom-text-200">
-            <Controller
-              name="description"
-              control={control}
-              render={({ field: { value } }) => {
-                if (!data)
-                  return (
-                    <WrappedRemirrorRichTextEditor
-                      value={{
-                        type: "doc",
-                        content: [{ type: "paragraph" }],
-                      }}
-                      onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                      onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                      placeholder="Write something..."
-                      customClassName="text-sm"
-                      noBorder
-                      borderOnFocus={false}
-                      ref={editorRef}
-                    />
-                  );
-                else if (!value || !watch("description_html"))
-                  return (
-                    <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" />
-                  );
-
-                return (
-                  <WrappedRemirrorRichTextEditor
-                    value={
-                      value && value !== "" && Object.keys(value).length > 0
-                        ? value
-                        : watch("description_html") && watch("description_html") !== ""
-                        ? watch("description_html")
-                        : { type: "doc", content: [{ type: "paragraph" }] }
-                    }
-                    onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                    onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                    placeholder="Write something..."
-                    customClassName="text-sm"
-                    noBorder
-                    borderOnFocus={false}
-                    ref={editorRef}
-                  />
-                );
-              }}
-            />
+            {/* <Controller */}
+            {/*   name="description" */}
+            {/*   control={control} */}
+            {/*   render={({ field: { value } }) => { */}
+            {/*     if (!data) */}
+            {/*       return ( */}
+            {/*         <WrappedRemirrorRichTextEditor */}
+            {/*           value={{ */}
+            {/*             type: "doc", */}
+            {/*             content: [{ type: "paragraph" }], */}
+            {/*           }} */}
+            {/*           onJSONChange={(jsonValue) => setValue("description", jsonValue)} */}
+            {/*           onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)} */}
+            {/*           placeholder="Write something..." */}
+            {/*           customClassName="text-sm" */}
+            {/*           noBorder */}
+            {/*           borderOnFocus={false} */}
+            {/*           ref={editorRef} */}
+            {/*         /> */}
+            {/*       ); */}
+            {/*     else if (!value || !watch("description_html")) */}
+            {/*       return ( */}
+            {/*         <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" /> */}
+            {/*       ); */}
+            {/**/}
+            {/*     return ( */}
+            {/*       <WrappedRemirrorRichTextEditor */}
+            {/*         value={ */}
+            {/*           value && value !== "" && Object.keys(value).length > 0 */}
+            {/*             ? value */}
+            {/*             : watch("description_html") && watch("description_html") !== "" */}
+            {/*             ? watch("description_html") */}
+            {/*             : { type: "doc", content: [{ type: "paragraph" }] } */}
+            {/*         } */}
+            {/*         onJSONChange={(jsonValue) => setValue("description", jsonValue)} */}
+            {/*         onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)} */}
+            {/*         placeholder="Write something..." */}
+            {/*         customClassName="text-sm" */}
+            {/*         noBorder */}
+            {/*         borderOnFocus={false} */}
+            {/*         ref={editorRef} */}
+            {/*       /> */}
+            {/*     ); */}
+            {/*   }} */}
+            {/* /> */}
             <div className="m-2 mt-6 flex">
               <button
                 type="button"

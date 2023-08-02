@@ -17,14 +17,14 @@ type Props = {
 };
 
 // rich-text-editor
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader>
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
+// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+//   ssr: false,
+//   loading: () => (
+//     <Loader>
+//       <Loader.Item height="12rem" width="100%" />
+//     </Loader>
+//   ),
+// });
 
 const defaultValues = {
   name: "",

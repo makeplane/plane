@@ -50,11 +50,11 @@ export const IssueMainContent: React.FC<Props> = ({
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
     workspaceSlug && projectId && issueDetails?.parent
       ? () =>
-          issuesService.subIssues(
-            workspaceSlug as string,
-            projectId as string,
-            issueDetails.parent ?? ""
-          )
+        issuesService.subIssues(
+          workspaceSlug as string,
+          projectId as string,
+          issueDetails.parent ?? ""
+        )
       : null
   );
   const siblingIssuesList = siblingIssues?.sub_issues.filter((i) => i.id !== issueDetails.id);
@@ -97,9 +97,8 @@ export const IssueMainContent: React.FC<Props> = ({
                       <CustomMenu.MenuItem
                         key={issue.id}
                         renderAs="a"
-                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
-                          issue.id
-                        }`}
+                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id
+                          }`}
                         className="flex items-center gap-2 py-2"
                       >
                         <LayerDiagonalIcon className="h-4 w-4" />
@@ -130,30 +129,30 @@ export const IssueMainContent: React.FC<Props> = ({
           isAllowed={memberRole.isMember || memberRole.isOwner || !uneditable}
         />
 
-        <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />
-
-        <div className="mt-2 space-y-2">
-          <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} />
-        </div>
-      </div>
-      <div className="flex flex-col gap-3 py-3">
-        <h3 className="text-lg">Attachments</h3>
-        <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          <IssueAttachmentUpload disabled={uneditable} />
-          <IssueAttachments />
-        </div>
-      </div>
-      <div className="space-y-5 pt-3">
-        <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
-        <IssueActivitySection
-          issueId={(archivedIssueId as string) ?? (issueId as string)}
-          user={user}
-        />
-        <AddComment
-          issueId={(archivedIssueId as string) ?? (issueId as string)}
-          user={user}
-          disabled={uneditable}
-        />
+        {/*   <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} /> */}
+        {/**/}
+        {/*   <div className="mt-2 space-y-2"> */}
+        {/*     <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} /> */}
+        {/*   </div> */}
+        {/* </div> */}
+        {/* <div className="flex flex-col gap-3 py-3"> */}
+        {/*   <h3 className="text-lg">Attachments</h3> */}
+        {/*   <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"> */}
+        {/*     <IssueAttachmentUpload disabled={uneditable} /> */}
+        {/*     <IssueAttachments /> */}
+        {/*   </div> */}
+        {/* </div> */}
+        {/* <div className="space-y-5 pt-3"> */}
+        {/*   <h3 className="text-lg text-custom-text-100">Comments/Activity</h3> */}
+        {/*   <IssueActivitySection */}
+        {/*     issueId={(archivedIssueId as string) ?? (issueId as string)} */}
+        {/*     user={user} */}
+        {/*   /> */}
+        {/*   <AddComment */}
+        {/*     issueId={(archivedIssueId as string) ?? (issueId as string)} */}
+        {/*     user={user} */}
+        {/*     disabled={uneditable} */}
+        {/*   /> */}
       </div>
     </>
   );

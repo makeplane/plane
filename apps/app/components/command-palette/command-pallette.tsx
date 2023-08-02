@@ -49,7 +49,7 @@ export const CommandPalette: React.FC = () => {
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
-          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+        issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -81,7 +81,8 @@ export const CommandPalette: React.FC = () => {
       if (
         !(e.target instanceof HTMLTextAreaElement) &&
         !(e.target instanceof HTMLInputElement) &&
-        !(e.target as Element).classList?.contains("remirror-editor")
+        // !(e.target as Element).classList?.contains("remirror-editor") &&
+        !(e.target as Element).closest(".tiptap-editor-container")
       ) {
         if ((ctrlKey || metaKey) && keyPressed === "k") {
           e.preventDefault();
