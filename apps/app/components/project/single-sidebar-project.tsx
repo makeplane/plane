@@ -137,21 +137,30 @@ export const SingleSidebarProject: React.FC<Props> = ({
       {({ open }) => (
         <>
           <div
-            className={`group relative text-custom-sidebar-text-10 px-2 py-1 ml-1.5 w-full flex items-center hover:bg-custom-sidebar-background-80 rounded-md ${
+            className={`group relative text-custom-sidebar-text-10 px-2 py-1 w-full flex items-center hover:bg-custom-sidebar-background-80 rounded-md ${
               snapshot?.isDragging ? "opacity-60" : ""
             }`}
           >
             {provided && (
-              <button
-                type="button"
-                className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 ${
-                  sidebarCollapse ? "" : "group-hover:!flex"
-                }`}
-                {...provided?.dragHandleProps}
+              <Tooltip
+                tooltipContent={
+                  project.sort_order === null
+                    ? "Join the project to rearrange"
+                    : "Drag to rearrange"
+                }
+                position="top-right"
               >
-                <EllipsisVerticalIcon className="h-4" />
-                <EllipsisVerticalIcon className="-ml-5 h-4" />
-              </button>
+                <button
+                  type="button"
+                  className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 ${
+                    sidebarCollapse ? "" : "group-hover:!flex"
+                  } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
+                  {...provided?.dragHandleProps}
+                >
+                  <EllipsisVerticalIcon className="h-4" />
+                  <EllipsisVerticalIcon className="-ml-5 h-4" />
+                </button>
+              </Tooltip>
             )}
             <Tooltip
               tooltipContent={`${project.name}`}
