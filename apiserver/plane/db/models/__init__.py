@@ -18,6 +18,7 @@ from .project import (
     ProjectMemberInvite,
     ProjectIdentifier,
     ProjectFavorite,
+    ProjectDeployBoard,
 )
 
 from .issue import (

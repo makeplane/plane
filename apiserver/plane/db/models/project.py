@@ -1,3 +1,6 @@
+# Python imports
+from uuid import uuid4
+
 # Django imports
 from django.db import models
 from django.conf import settings
@@ -217,3 +220,23 @@ class ProjectFavorite(ProjectBaseModel):
     def __str__(self):
         """Return user of the project"""
         return f"{self.user.email} <{self.project.name}>"
+
+
+def get_anchor():
+    return uuid4().hex
+
+class ProjectDeployBoard(ProjectBaseModel):
+    anchor = models.CharField(max_length=255, default=get_anchor, unique=True, db_index=True)
+    comments = models.BooleanField(default=False)
+    reactions = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ["project", "anchor"]
+        verbose_name = "Project Deploy Board"
+        verbose_name_plural = "Project Deploy Boards"
+        db_table = "project_deploy_boards"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return project and anchor"""
+        return f"{self.anchor} <{self.project.name}>"

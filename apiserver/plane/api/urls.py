@@ -162,6 +162,10 @@ from plane.api.views import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     ## End Notification
+    # Public Boards
+    ProjectDeployBoardViewSet,
+    ProjectDeployBoardPublicEndpoint,
+    ## End Public Boards
 )
 
 
@@ -1463,4 +1467,32 @@ urlpatterns = [
         name="unread-notifications",
     ),
     ## End Notification
+    # Public Boards
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",
+        ProjectDeployBoardViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/<uuid:pk>/",
+        ProjectDeployBoardViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/project-board/<str:anchor>/",
+        ProjectDeployBoardPublicEndpoint.as_view(),
+        name="project-deploy-board",
+    ),
+    ## End Public Boards
 ]
