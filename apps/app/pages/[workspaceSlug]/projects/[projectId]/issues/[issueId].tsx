@@ -15,8 +15,10 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { Loader } from "components/ui";
+import { EmptyState, Loader } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
+// images
+import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { IIssue } from "types";
 import type { NextPage } from "next";
@@ -45,7 +47,11 @@ const IssueDetailsPage: NextPage = () => {
 
   const { user } = useUserAuth();
 
-  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
+  const {
+    data: issueDetails,
+    mutate: mutateIssueDetails,
+    error,
+  } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
@@ -125,7 +131,17 @@ const IssueDetailsPage: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      {issueDetails && projectId ? (
+      {error ? (
+        <EmptyState
+          image={emptyIssue}
+          title="Issue does not exist"
+          description="The issue you are looking for does not exist, has been archived, or has been deleted."
+          primaryButton={{
+            text: "View other issues",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/issues`),
+          }}
+        />
+      ) : issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
           <div className="w-2/3 h-full overflow-y-auto space-y-5 divide-y-2 divide-custom-border-300 p-5">
             <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
