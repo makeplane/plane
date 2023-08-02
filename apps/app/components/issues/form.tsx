@@ -202,18 +202,21 @@ export const IssueForm: FC<IssueFormProps> = ({
         else handleAiAssistance(res.response_html);
       })
       .catch((err) => {
+        const error = err?.data?.error;
+
         if (err.status === 429)
           setToastAlert({
             type: "error",
             title: "Error!",
             message:
+              error ||
               "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
             type: "error",
             title: "Error!",
-            message: "Some error occurred. Please try again.",
+            message: error || "Some error occurred. Please try again.",
           });
       })
       .finally(() => setIAmFeelingLucky(false));
@@ -225,9 +228,16 @@ export const IssueForm: FC<IssueFormProps> = ({
     reset({
       ...defaultValues,
       ...initialData,
+    });
+  }, [setFocus, initialData, reset]);
+
+  // update projectId in form when projectId changes
+  useEffect(() => {
+    reset({
+      ...getValues(),
       project: projectId,
     });
-  }, [setFocus, initialData, reset, projectId]);
+  }, [getValues, projectId, reset]);
 
   return (
     <>
@@ -261,8 +271,10 @@ export const IssueForm: FC<IssueFormProps> = ({
                 render={({ field: { value, onChange } }) => (
                   <IssueProjectSelect
                     value={value}
-                    onChange={onChange}
-                    setActiveProject={setActiveProject}
+                    onChange={(val: string) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
                   />
                 )}
               />

@@ -7,6 +7,7 @@ export type DropdownProps = {
   label?: string | JSX.Element;
   maxHeight?: "sm" | "rg" | "md" | "lg";
   noChevron?: boolean;
+  onOpen?: () => void;
   optionsClassName?: string;
   position?: "right" | "left";
   selfPositioned?: boolean;

@@ -209,7 +209,7 @@ class IssueAssignee(ProjectBaseModel):
 
 
 class IssueLink(ProjectBaseModel):
-    title = models.CharField(max_length=255, null=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
     url = models.URLField()
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_link"
@@ -422,6 +422,49 @@ class IssueSubscriber(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.subscriber.email}"
+
+
+class IssueReaction(ProjectBaseModel):
+
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_reactions",
+    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_reactions")
+    reaction = models.CharField(max_length=20)
+
+    class Meta:
+        unique_together = ["issue", "actor", "reaction"]
+        verbose_name = "Issue Reaction"
+        verbose_name_plural = "Issue Reactions"
+        db_table = "issue_reactions"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.actor.email}"
+
+
+class CommentReaction(ProjectBaseModel):
+
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="comment_reactions",
+    )
+    comment = models.ForeignKey(IssueComment, on_delete=models.CASCADE, related_name="comment_reactions")
+    reaction = models.CharField(max_length=20)
+
+    class Meta:
+        unique_together = ["comment", "actor", "reaction"]
+        verbose_name = "Comment Reaction"
+        verbose_name_plural = "Comment Reactions"
+        db_table = "comment_reactions"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.actor.email}"
+
 
 
 # TODO: Find a better method to save the model

@@ -22,7 +22,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({
     } ${disabled ? "cursor-not-allowed border-custom-border-200 bg-custom-background-90" : ""} ${
       outline
         ? "bg-transparent hover:bg-custom-background-80"
-        : "bg-custom-background-80 hover:border-opacity-70 hover:bg-opacity-70"
+        : "bg-custom-background-100 hover:border-opacity-70 hover:bg-opacity-70"
     } ${loading ? "cursor-wait" : ""}`}
     onClick={onClick}
     disabled={disabled || loading}

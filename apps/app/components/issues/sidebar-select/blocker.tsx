@@ -82,6 +82,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
         handleClose={() => setIsBlockerModalOpen(false)}
         searchParams={{ blocker_blocked_by: true, issue_id: issueId }}
         handleOnSubmit={onSubmit}
+        workspaceLevelToggle
       />
       <div className="flex flex-wrap items-start py-2">
         <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">

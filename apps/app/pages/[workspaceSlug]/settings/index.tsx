@@ -14,7 +14,6 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal, SettingsHeader } from "components/workspace";
@@ -24,7 +23,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import type { IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -147,7 +146,9 @@ const WorkspaceSettings: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
+          <BreadcrumbItem
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`}
+          />
         </Breadcrumbs>
       }
     >
@@ -224,19 +225,21 @@ const WorkspaceSettings: NextPage = () => {
                 <p className="text-sm text-custom-text-200">Your workspace URL.</p>
               </div>
               <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
-                <Input
-                  id="url"
-                  name="url"
-                  autoComplete="off"
-                  register={register}
-                  error={errors.name}
-                  className="w-full"
-                  value={`${
-                    typeof window !== "undefined" &&
-                    window.location.origin.replace("http://", "").replace("https://", "")
-                  }/${activeWorkspace.slug}`}
-                  disabled
-                />
+                <div className="flex flex-col gap-1">
+                  <Input
+                    id="url"
+                    name="url"
+                    autoComplete="off"
+                    register={register}
+                    error={errors.url}
+                    className="w-full"
+                    value={`${
+                      typeof window !== "undefined" &&
+                      window.location.origin.replace("http://", "").replace("https://", "")
+                    }/${activeWorkspace.slug}`}
+                    disabled
+                  />
+                </div>
                 <SecondaryButton
                   className="h-min"
                   onClick={() =>
@@ -273,6 +276,10 @@ const WorkspaceSettings: NextPage = () => {
                   error={errors.name}
                   validations={{
                     required: "Name is required",
+                    maxLength: {
+                      value: 80,
+                      message: "Workspace name should not exceed 80 characters",
+                    },
                   }}
                 />
               </div>

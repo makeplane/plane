@@ -138,7 +138,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   alt={project.name}
                   className="absolute top-0 left-0 h-full w-full object-cover rounded-t-[10px]"
                 />
-                <div className="absolute left-7 bottom-4 flex items-center gap-3 text-white">
+                <div className="absolute bottom-4 left-4 flex items-center gap-3 text-white">
                   {!hasJoined ? (
                     <button
                       type="button"
@@ -176,12 +176,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                       {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
-                    <span
-                      style={{ color: project.icon_prop.color }}
-                      className="material-symbols-rounded text-lg"
-                    >
-                      {project.icon_prop.name}
-                    </span>
+                    renderEmoji(project.icon_prop)
                   ) : null}
                 </div>
                 <p className="mt-3.5 mb-7 break-words">

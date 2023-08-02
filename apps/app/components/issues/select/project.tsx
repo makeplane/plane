@@ -8,14 +8,9 @@ import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 export interface IssueProjectSelectProps {
   value: string;
   onChange: (value: string) => void;
-  setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({
-  value,
-  onChange,
-  setActiveProject,
-}) => {
+export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({ value, onChange }) => {
   const { projects } = useProjects();
 
   return (
@@ -29,10 +24,7 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({
           </span>
         </>
       }
-      onChange={(val: string) => {
-        onChange(val);
-        setActiveProject(val);
-      }}
+      onChange={(val: string) => onChange(val)}
       noChevron
     >
       {projects ? (

@@ -28,7 +28,7 @@ import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { CustomSearchSelect, Loader, PrimaryButton, TextArea, Tooltip } from "components/ui";
+import { CustomSearchSelect, Loader, TextArea, ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import {
   ArrowLeftIcon,
@@ -38,26 +38,29 @@ import {
   StarIcon,
   LinkIcon,
   XMarkIcon,
+  ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
 import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage } from "next";
-import { IIssueLabels, IPage, IPageBlock } from "types";
+import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
   PAGE_DETAILS,
   PROJECT_DETAILS,
   PROJECT_ISSUE_LABELS,
+  USER_PROJECT_VIEW,
 } from "constants/fetch-keys";
 
 const SinglePage: NextPage = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
+  const [showBlock, setShowBlock] = useState(false);
 
   const scrollToRef = useRef<HTMLDivElement>(null);
 
@@ -107,6 +110,13 @@ const SinglePage: NextPage = () => {
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -264,6 +274,43 @@ const SinglePage: NextPage = () => {
     });
   }, [setCreateBlockForm, scrollToRef]);
 
+  const handleShowBlockToggle = async () => {
+    if (!workspaceSlug || !projectId) return;
+
+    const payload: Partial<IProjectMember> = {
+      preferences: {
+        pages: {
+          block_display: !showBlock,
+        },
+      },
+    };
+
+    mutate<IProjectMember>(
+      (workspaceSlug as string) && (projectId as string)
+        ? USER_PROJECT_VIEW(projectId as string)
+        : null,
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          ...payload,
+        };
+      },
+      false
+    );
+
+    await projectService
+      .setProjectView(workspaceSlug as string, projectId as string, payload)
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
+      });
+  };
+
   const options =
     labels?.map((label) => ({
       value: label.id,
@@ -289,12 +336,17 @@ const SinglePage: NextPage = () => {
     });
   }, [reset, pageDetails]);
 
+  useEffect(() => {
+    if (!memberDetails) return;
+    setShowBlock(memberDetails.preferences.pages.block_display);
+  }, [memberDetails]);
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Pages`} />
+          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project",32)} Pages`} />
         </Breadcrumbs>
       }
     >
@@ -403,6 +455,49 @@ const SinglePage: NextPage = () => {
                   >
                     <p className="text-sm">{render24HourFormatTime(pageDetails.updated_at)}</p>
                   </Tooltip>
+                  <Popover className="relative">
+                    {({ open }) => (
+                      <>
+                        <Popover.Button
+                          className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-200 bg-transparent px-2 py-1 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
+                            open
+                              ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
+                              : "text-custom-sidebar-text-200"
+                          }`}
+                        >
+                          View
+                          <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                        </Popover.Button>
+
+                        <Transition
+                          as={React.Fragment}
+                          enter="transition ease-out duration-200"
+                          enterFrom="opacity-0 translate-y-1"
+                          enterTo="opacity-100 translate-y-0"
+                          leave="transition ease-in duration-150"
+                          leaveFrom="opacity-100 translate-y-0"
+                          leaveTo="opacity-0 translate-y-1"
+                        >
+                          <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
+                            <div className="relative divide-y-2 divide-custom-border-200">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-custom-text-200">
+                                  Show full block content
+                                </span>
+                                <ToggleSwitch
+                                  value={showBlock}
+                                  onChange={(value) => {
+                                    setShowBlock(value);
+                                    handleShowBlockToggle();
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </Popover.Panel>
+                        </Transition>
+                      </>
+                    )}
+                  </Popover>
                   <button className="flex items-center gap-2" onClick={handleCopyText}>
                     <LinkIcon className="h-4 w-4" />
                   </button>
@@ -528,6 +623,7 @@ const SinglePage: NextPage = () => {
                                 key={block.id}
                                 block={block}
                                 projectDetails={projectDetails}
+                                showBlockDetails={showBlock}
                                 index={index}
                                 user={user}
                               />

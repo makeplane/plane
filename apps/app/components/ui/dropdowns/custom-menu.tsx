@@ -40,7 +40,7 @@ const CustomMenu = ({
     {({ open }) => (
       <>
         {customButton ? (
-          <Menu.Button as="button" onClick={menuButtonOnClick}>
+          <Menu.Button as="button" type="button" onClick={menuButtonOnClick}>
             {customButton}
           </Menu.Button>
         ) : (

@@ -4,7 +4,12 @@ import APIService from "services/api.service";
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
 // types
-import { IUserNotification, INotificationParams } from "types";
+import type {
+  IUserNotification,
+  INotificationParams,
+  NotificationCount,
+  PaginatedUserNotification,
+} from "types";
 
 class UserNotificationsServices extends APIService {
   constructor() {
@@ -152,12 +157,16 @@ class UserNotificationsServices extends APIService {
       });
   }
 
-  async getUnreadNotificationsCount(workspaceSlug: string): Promise<{
-    created_issues: number;
-    my_issues: number;
-    watching_issues: number;
-  }> {
+  async getUnreadNotificationsCount(workspaceSlug: string): Promise<NotificationCount> {
     return this.get(`/api/workspaces/${workspaceSlug}/users/notifications/unread/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getNotifications(url: string): Promise<PaginatedUserNotification> {
+    return this.get(url)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

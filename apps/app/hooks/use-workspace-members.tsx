@@ -6,12 +6,14 @@ import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hooks
 import useUser from "./use-user";
 
-const useWorkspaceMembers = (workspaceSlug?: string) => {
+const useWorkspaceMembers = (workspaceSlug: string | undefined, fetchCondition?: boolean) => {
+  fetchCondition = fetchCondition ?? true;
+
   const { user } = useUser();
 
   const { data: workspaceMembers, error: workspaceMemberErrors } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug) : null
+    workspaceSlug && fetchCondition ? WORKSPACE_MEMBERS(workspaceSlug) : null,
+    workspaceSlug && fetchCondition ? () => workspaceService.workspaceMembers(workspaceSlug) : null
   );
 
   const hasJoined = workspaceMembers?.some((item: any) => item.member.id === (user as any)?.id);

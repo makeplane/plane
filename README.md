@@ -2,7 +2,7 @@
 
 <p align="center">
 <a href="https://plane.so">
-  <img src="https://res.cloudinary.com/toolspacedev/image/upload/v1680596414/Plane/Plane_Icon_Blue_on_White_150x150_muysa3.jpg" alt="Plane Logo" width="70">
+  <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_logo_.webp" alt="Plane Logo" width="70">
 </a>
 </p>
 
@@ -11,22 +11,22 @@
 
 <p align="center">
 <a href="https://discord.com/invite/A92xrEGCge">
-<img alt="Discord" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
+<img alt="Discord online members" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
 </a>
-<img alt="Discord" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
+<img alt="Commit activity per month" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
 </p>
 
 <p>
     <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Screen.png"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_screen.webp"
         alt="Plane Screens"
         width="100%"
       />
     </a>
     <a href="https://app.plane.so/#gh-dark-mode-only" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Screens+Dark+Mode.png"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_screens_dark_mode.webp"
         alt="Plane Screens"
         width="100%"
       />
@@ -86,7 +86,7 @@ docker compose up -d
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Views+Dark+Mode.png"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_views_dark_mode.webp"
         alt="Plane Views"
         width="100%"
       />
@@ -95,7 +95,7 @@ docker compose up -d
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Issue+Detail+Dark+Mode.png"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_issue_detail_dark_mode.webp"
         alt="Plane Issue Details"
         width="100%"
       />
@@ -104,7 +104,7 @@ docker compose up -d
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Cycles+%26+Modules+Dark+Mode.png"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_cycles_modules_dark_mode.webp"
         alt="Plane Cycles and Modules"
         width="100%"
       />
@@ -113,7 +113,7 @@ docker compose up -d
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Analytics+Dark+Mode.png"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_analytics_dark_mode.webp"
         alt="Plane Analytics"
         width="100%"
       />
@@ -122,7 +122,7 @@ docker compose up -d
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Pages+Dark+Mode.png"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_pages_dark_mode.webp"
         alt="Plane Pages"
         width="100%"
       />
@@ -132,7 +132,7 @@ docker compose up -d
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/Plane+Commad+K+Dark+Mode.png"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_commad_k_dark_mode.webp"
         alt="Plane Command Menu"
         width="100%"
       />

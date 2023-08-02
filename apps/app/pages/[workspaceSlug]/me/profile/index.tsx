@@ -29,11 +29,10 @@ const defaultValues: Partial<IUser> = {
   first_name: "",
   last_name: "",
   email: "",
-  role: "",
+  role: "Product / Project Manager",
 };
 
 const Profile: NextPage = () => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
@@ -55,6 +54,16 @@ const Profile: NextPage = () => {
   }, [myProfile, reset]);
 
   const onSubmit = async (formData: IUser) => {
+    if (formData.first_name === "" || formData.last_name === "") {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "First and last names are required.",
+      });
+
+      return;
+    }
+
     const payload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
@@ -67,9 +76,9 @@ const Profile: NextPage = () => {
       .then((res) => {
         mutateUser((prevData) => {
           if (!prevData) return prevData;
+
           return { ...prevData, ...res };
         }, false);
-        setIsEditing(false);
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -146,7 +155,7 @@ const Profile: NextPage = () => {
             </div>
             <SettingsNavbar profilePage />
           </div>
-          <div className="space-y-8 sm:space-y-12">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 sm:space-y-12">
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold text-custom-text-100">Profile Picture</h4>
@@ -207,9 +216,6 @@ const Profile: NextPage = () => {
                   error={errors.first_name}
                   placeholder="Enter your first name"
                   autoComplete="off"
-                  validations={{
-                    required: "This field is required.",
-                  }}
                 />
                 <Input
                   name="last_name"
@@ -255,6 +261,7 @@ const Profile: NextPage = () => {
                       value={value}
                       onChange={onChange}
                       label={value ? value.toString() : "Select your role"}
+                      buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : ""}
                       width="w-full"
                       input
                       position="right"
@@ -267,14 +274,15 @@ const Profile: NextPage = () => {
                     </CustomSelect>
                   )}
                 />
+                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
               </div>
             </div>
             <div className="sm:text-right">
-              <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+              <SecondaryButton type="submit" loading={isSubmitting}>
                 {isSubmitting ? "Updating..." : "Update profile"}
               </SecondaryButton>
             </div>
-          </div>
+          </form>
         </div>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">

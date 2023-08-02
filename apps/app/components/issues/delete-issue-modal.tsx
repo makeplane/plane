@@ -59,11 +59,12 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
   };
 
   const handleDeletion = async () => {
+    if (!workspaceSlug || !data) return;
+
     setIsDeleteLoading(true);
-    if (!workspaceSlug || !projectId || !data) return;
 
     await issueServices
-      .deleteIssue(workspaceSlug as string, projectId as string, data.id, user)
+      .deleteIssue(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         if (issueView === "calendar") {
           const calendarFetchKey = cycleId
@@ -72,7 +73,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
             ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
             : viewId
             ? VIEW_ISSUES(viewId.toString(), calendarParams)
-            : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), calendarParams);
+            : PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, calendarParams);
 
           mutate<IIssue[]>(
             calendarFetchKey,
@@ -86,7 +87,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
             ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
             : viewId
             ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
-            : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", spreadsheetParams);
+            : PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, spreadsheetParams);
           if (data.parent) {
             mutate<ISubIssueResponse>(
               SUB_ISSUES(data.parent.toString()),
@@ -112,7 +113,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
         } else {
           if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, params));
         }
 
         handleClose();

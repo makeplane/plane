@@ -60,7 +60,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<IIssue> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -243,6 +243,14 @@ class ProjectIssuesServices extends APIService {
           );
         return response?.data;
       })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getWorkspaceLabels(workspaceSlug: string): Promise<IIssueLabels[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/labels/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

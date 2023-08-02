@@ -227,12 +227,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                               </span>
                             ) : project.icon_prop ? (
                               <div className="h-6 w-6 grid place-items-center flex-shrink-0">
-                                <span
-                                  style={{ color: project.icon_prop.color }}
-                                  className="material-symbols-rounded text-lg"
-                                >
-                                  {project.icon_prop.name}
-                                </span>
+                                {renderEmoji(project.icon_prop)}
                               </div>
                             ) : (
                               <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
@@ -342,12 +337,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                       </div>
                     ) : projectDetails?.icon_prop ? (
                       <div className="h-6 w-6 grid place-items-center flex-shrink-0">
-                        <span
-                          style={{ color: projectDetails.icon_prop.color }}
-                          className="material-symbols-rounded text-lg"
-                        >
-                          {projectDetails.icon_prop.name}
-                        </span>
+                        {renderEmoji(projectDetails.icon_prop)}
                       </div>
                     ) : (
                       <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
@@ -360,11 +350,8 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Network</h6>
                       <span>
-                        {
-                          NETWORK_CHOICES[
-                            `${projectDetails?.network}` as keyof typeof NETWORK_CHOICES
-                          ]
-                        }
+                        {NETWORK_CHOICES.find((n) => n.key === projectDetails?.network)?.label ??
+                          ""}
                       </span>
                     </div>
                   </div>

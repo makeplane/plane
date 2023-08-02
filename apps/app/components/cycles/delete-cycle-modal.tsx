@@ -14,7 +14,7 @@ import { DangerButton, SecondaryButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, ICycle } from "types";
+import type { ICurrentUserResponse, ICycle, IProject } from "types";
 type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,6 +27,7 @@ import {
   CURRENT_CYCLE_LIST,
   CYCLES_LIST,
   DRAFT_CYCLES_LIST,
+  PROJECT_DETAILS,
   UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 import { getDateRangeStatus } from "helpers/date-time.helper";
@@ -50,7 +51,7 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
   };
 
   const handleDeletion = async () => {
-    if (!data || !workspaceSlug) return;
+    if (!data || !workspaceSlug || !projectId) return;
 
     setIsDeleteLoading(true);
 
@@ -85,6 +86,21 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
           },
           false
         );
+
+        // update total cycles count in the project details
+        mutate<IProject>(
+          PROJECT_DETAILS(projectId.toString()),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              total_cycles: prevData.total_cycles - 1,
+            };
+          },
+          false
+        );
+
         handleClose();
 
         setToastAlert({

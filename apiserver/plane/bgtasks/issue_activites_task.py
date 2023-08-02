@@ -70,7 +70,7 @@ def track_parent(
                     issue_id=issue_id,
                     actor=actor,
                     verb="updated",
-                    old_value=f"{project.identifier}-{old_parent.sequence_id}",
+                    old_value=f"{old_parent.project.identifier}-{old_parent.sequence_id}",
                     new_value=None,
                     field="parent",
                     project=project,
@@ -88,10 +88,10 @@ def track_parent(
                     issue_id=issue_id,
                     actor=actor,
                     verb="updated",
-                    old_value=f"{project.identifier}-{old_parent.sequence_id}"
+                    old_value=f"{old_parent.project.identifier}-{old_parent.sequence_id}"
                     if old_parent is not None
                     else None,
-                    new_value=f"{project.identifier}-{new_parent.sequence_id}",
+                    new_value=f"{new_parent.project.identifier}-{new_parent.sequence_id}",
                     field="parent",
                     project=project,
                     workspace=project.workspace,
@@ -376,7 +376,7 @@ def track_assignees(
                         verb="updated",
                         old_value=assignee.email,
                         new_value="",
-                        field="assignee",
+                        field="assignees",
                         project=project,
                         workspace=project.workspace,
                         comment=f"{actor.email} removed assignee {assignee.email}",
@@ -415,11 +415,11 @@ def track_blocks(
                         actor=actor,
                         verb="updated",
                         old_value="",
-                        new_value=f"{project.identifier}-{issue.sequence_id}",
+                        new_value=f"{issue.project.identifier}-{issue.sequence_id}",
                         field="blocks",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added blocking issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"{actor.email} added blocking issue {issue.project.identifier}-{issue.sequence_id}",
                         new_identifier=issue.id,
                     )
                 )
@@ -436,12 +436,12 @@ def track_blocks(
                         issue_id=issue_id,
                         actor=actor,
                         verb="updated",
-                        old_value=f"{project.identifier}-{issue.sequence_id}",
+                        old_value=f"{issue.project.identifier}-{issue.sequence_id}",
                         new_value="",
                         field="blocks",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed blocking issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"{actor.email} removed blocking issue {issue.project.identifier}-{issue.sequence_id}",
                         old_identifier=issue.id,
                     )
                 )
@@ -477,11 +477,11 @@ def track_blockings(
                         actor=actor,
                         verb="updated",
                         old_value="",
-                        new_value=f"{project.identifier}-{issue.sequence_id}",
+                        new_value=f"{issue.project.identifier}-{issue.sequence_id}",
                         field="blocking",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added blocked by issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"{actor.email} added blocked by issue {issue.project.identifier}-{issue.sequence_id}",
                         new_identifier=issue.id,
                     )
                 )
@@ -498,12 +498,12 @@ def track_blockings(
                         issue_id=issue_id,
                         actor=actor,
                         verb="updated",
-                        old_value=f"{project.identifier}-{issue.sequence_id}",
+                        old_value=f"{issue.project.identifier}-{issue.sequence_id}",
                         new_value="",
                         field="blocking",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed blocked by issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"{actor.email} removed blocked by issue {issue.project.identifier}-{issue.sequence_id}",
                         old_identifier=issue.id,
                     )
                 )
@@ -959,6 +959,11 @@ def update_link_activity(
 def delete_link_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
+
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -968,6 +973,8 @@ def delete_link_activity(
             verb="deleted",
             actor=actor,
             field="link",
+            old_value=current_instance.get("url", ""),
+            new_value=""
         )
     )
 
@@ -989,7 +996,7 @@ def create_attachment_activity(
             verb="created",
             actor=actor,
             field="attachment",
-            new_value=current_instance.get("access", ""),
+            new_value=current_instance.get("asset", ""),
             new_identifier=current_instance.get("id", None),
         )
     )
@@ -1034,11 +1041,14 @@ def issue_activity(
             "module.activity.created",
             "module.activity.deleted",
         ]:
-            issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+            issue = Issue.objects.filter(pk=issue_id).first()
 
             if issue is not None:
-                issue.updated_at = timezone.now()
-                issue.save(update_fields=["updated_at"])
+                try:
+                    issue.updated_at = timezone.now()
+                    issue.save(update_fields=["updated_at"])
+                except Exception as e:
+                    pass
 
             if subscriber:
                 # add the user to issue subscriber
@@ -1122,7 +1132,7 @@ def issue_activity(
 
             issue_subscribers = issue_subscribers + issue_assignees
 
-            issue = Issue.objects.filter(pk=issue_id, project_id=project_id).first()
+            issue = Issue.objects.filter(pk=issue_id).first()
 
             # Add bot filtering
             if (
@@ -1149,7 +1159,7 @@ def issue_activity(
                                 "issue": {
                                     "id": str(issue_id),
                                     "name": str(issue.name),
-                                    "identifier": str(project.identifier),
+                                    "identifier": str(issue.project.identifier),
                                     "sequence_id": issue.sequence_id,
                                     "state_name": issue.state.name,
                                     "state_group": issue.state.group,

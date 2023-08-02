@@ -112,8 +112,9 @@ const SingleModule: React.FC = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${moduleDetails?.project_detail.name ?? "Project"} Modules`}
+              title={`${truncateText(moduleDetails?.project_detail.name ?? "Project", 32)} Modules`}
               link={`/${workspaceSlug}/projects/${projectId}/modules`}
+              linkTruncate
             />
           </Breadcrumbs>
         }
@@ -168,7 +169,7 @@ const SingleModule: React.FC = () => {
             analyticsModal ? "mr-[50%]" : ""
           } duration-300`}
         >
-          <IssuesView type="module" openIssuesListModal={openIssuesListModal} />
+          <IssuesView openIssuesListModal={openIssuesListModal} />
         </div>
 
         <ModuleDetailsSidebar

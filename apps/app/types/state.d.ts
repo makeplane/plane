@@ -1,6 +1,6 @@
 import { IProject, IProjectLite, IWorkspaceLite } from "types";
 
-export type TStateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
+export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
 export interface IState {
   readonly id: string;
@@ -9,7 +9,7 @@ export interface IState {
   readonly created_by: string;
   default: boolean;
   description: string;
-  group: TStateGroup;
+  group: TStateGroups;
   name: string;
   project: string;
   readonly project_detail: IProjectLite;
@@ -23,7 +23,7 @@ export interface IState {
 
 export interface IStateLite {
   color: string;
-  group: TStateGroup;
+  group: TStateGroups;
   id: string;
   name: string;
 }
