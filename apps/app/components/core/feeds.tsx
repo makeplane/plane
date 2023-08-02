@@ -231,7 +231,7 @@ export const Feeds: React.FC<any> = ({ activities }) => {
                       </div>
                     )}
 
-                    <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
+                    <span className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
                       <ChatBubbleLeftEllipsisIcon
                         className="h-3.5 w-3.5 text-custom-text-200"
                         aria-hidden="true"
