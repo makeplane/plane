@@ -99,9 +99,9 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // set theme based on user theme
   useEffect(() => {
     if (user) {
-      const userTheme = user.theme.theme ?? "system";
+      const userTheme = user.theme.theme;
 
-      setTheme(userTheme);
+      setTheme(userTheme ?? "system");
 
       if (userTheme === "custom") {
         if (user.theme.palette) applyTheme(user.theme.palette, user.theme.darkPalette ?? false);
