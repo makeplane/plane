@@ -9,13 +9,100 @@
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
-  color: rgb(var(--color-text-400));
   content: attr(data-placeholder);
   float: left;
-  height: 0;
+  color: rgb(var(--color-text-400));
   pointer-events: none;
+  height: 0;
 }
 
+.ProseMirror .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: rgb(var(--color-text-400));
+  pointer-events: none;
+  height: 0;
+}
+
+/* Custom image styles */
+
+.ProseMirror img {
+  transition: filter 0.1s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    filter: brightness(90%);
+  }
+
+  &.ProseMirror-selectednode {
+    outline: 3px solid #5abbf7;
+    filter: brightness(90%);
+  }
+}
+
+/* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
+
+ul[data-type="taskList"] li > label {
+  margin-right: 0.2rem;
+  user-select: none;
+}
+
+@media screen and (max-width: 768px) {
+  ul[data-type="taskList"] li > label {
+    margin-right: 0.5rem;
+  }
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--novel-white);
+  margin: 0;
+  cursor: pointer;
+  width: 1.2em;
+  height: 1.2em;
+  position: relative;
+  top: 5px;
+  border: 2px solid var(--novel-stone-900);
+  margin-right: 0.3rem;
+  display: grid;
+  place-content: center;
+
+  &:hover {
+    background-color: var(--novel-stone-50);
+  }
+
+  &:active {
+    background-color: var(--novel-stone-200);
+  }
+
+  &::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em;
+    transform-origin: center;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  &:checked::before {
+    transform: scale(1);
+  }
+}
+
+ul[data-type="taskList"] li[data-checked="true"] > div > p {
+  color: var(--novel-stone-400);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+/* Overwrite tippy-box original max-width */
+
+.tippy-box {
+  max-width: 400px !important;
+}
 .ProseMirror {
   position: relative;
   word-wrap: break-word;

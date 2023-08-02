@@ -2,6 +2,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorBubbleMenu } from './EditorBubbleMenu';
+import { TiptapExtensions } from './extensions';
 import { TiptapEditorProps } from "./props";
 
 type TiptapProps = {
@@ -14,12 +15,13 @@ type TiptapProps = {
 const Tiptap = ({ value, noBorder, borderOnFocus, customClassName }: TiptapProps) => {
   const editor = useEditor({
     editorProps: TiptapEditorProps,
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: 'Description...',
-      })
-    ],
+    extensions: TiptapExtensions,
+    // extensions: [
+    //   StarterKit,
+    //   Placeholder.configure({
+    //     placeholder: 'Description...',
+    //   })
+    // ],
     content: value,
   });
 
@@ -35,6 +37,7 @@ const Tiptap = ({ value, noBorder, borderOnFocus, customClassName }: TiptapProps
       }}
       className={`tiptap-editor-container relative min-h-[150px] ${editorClassNames}`}
     >
+      {editor && <EditorBubbleMenu editor={editor} />}
       <EditorContent editor={editor} />
     </div>
   );
