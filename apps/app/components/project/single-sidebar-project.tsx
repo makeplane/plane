@@ -174,7 +174,11 @@ export const SingleSidebarProject: React.FC<Props> = ({
                   sidebarCollapse ? "justify-center" : `justify-between`
                 }`}
               >
-                <div className="flex items-center flex-grow w-full truncate gap-x-2">
+                <div
+                  className={`flex items-center flex-grow w-full truncate gap-x-2 ${
+                    sidebarCollapse ? "justify-center" : ""
+                  }`}
+                >
                   {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
                       {renderEmoji(project.emoji)}
@@ -262,7 +266,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Disclosure.Panel className={`space-y-2 ${sidebarCollapse ? "" : "ml-[2.25rem]"}`}>
+            <Disclosure.Panel className={`space-y-2 mt-1 ${sidebarCollapse ? "" : "ml-[2.25rem]"}`}>
               {navigation(workspaceSlug as string, project?.id).map((item) => {
                 if (
                   (item.name === "Cycles" && !project.cycle_view) ||
