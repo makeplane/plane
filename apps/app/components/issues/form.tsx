@@ -37,23 +37,23 @@ import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
 // rich-text-editor
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="mt-4">
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
+// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+//   ssr: false,
+//   loading: () => (
+//     <Loader className="mt-4">
+//       <Loader.Item height="12rem" width="100%" />
+//     </Loader>
+//   ),
+// });
 
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
 
-const WrappedRemirrorRichTextEditor = React.forwardRef<
-  IRemirrorRichTextEditor,
-  IRemirrorRichTextEditor
->((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+// const WrappedRemirrorRichTextEditor = React.forwardRef<
+//   IRemirrorRichTextEditor,
+//   IRemirrorRichTextEditor
+// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
+//
+// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -362,23 +362,23 @@ export const IssueForm: FC<IssueFormProps> = ({
                       AI
                     </button>
                   </div>
-                  <Controller
-                    name="description"
-                    control={control}
-                    render={({ field: { value } }) => (
-                      <WrappedRemirrorRichTextEditor
-                        value={
-                          !value || (typeof value === "object" && Object.keys(value).length === 0)
-                            ? watch("description_html")
-                            : value
-                        }
-                        onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                        onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                        placeholder="Description"
-                        ref={editorRef}
-                      />
-                    )}
-                  />
+                  {/* <Controller */}
+                  {/*   name="description" */}
+                  {/*   control={control} */}
+                  {/*   render={({ field: { value } }) => ( */}
+                  {/*     <WrappedRemirrorRichTextEditor */}
+                  {/*       value={ */}
+                  {/*         !value || (typeof value === "object" && Object.keys(value).length === 0) */}
+                  {/*           ? watch("description_html") */}
+                  {/*           : value */}
+                  {/*       } */}
+                  {/*       onJSONChange={(jsonValue) => setValue("description", jsonValue)} */}
+                  {/*       onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)} */}
+                  {/*       placeholder="Description" */}
+                  {/*       ref={editorRef} */}
+                  {/*     /> */}
+                  {/*   )} */}
+                  {/* /> */}
                   <GptAssistantModal
                     isOpen={gptAssistantModal}
                     handleClose={() => {

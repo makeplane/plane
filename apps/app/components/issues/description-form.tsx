@@ -8,14 +8,16 @@ import { Controller, useForm } from "react-hook-form";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import { Loader, TextArea } from "components/ui";
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader>
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
+// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+//   ssr: false,
+//   loading: () => (
+//     <Loader>
+//       <Loader.Item height="12rem" width="100%" />
+//     </Loader>
+//   ),
+// });
+
+import Tiptap from "./tiptap";
 // types
 import { IIssue } from "types";
 
@@ -106,9 +108,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         {characterLimit && (
           <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
             <span
-              className={`${
-                watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
-              }`}
+              className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
+                }`}
             >
               {watch("name").length}
             </span>
@@ -125,31 +126,39 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             if (!value && !watch("description_html")) return <></>;
 
             return (
-              <RemirrorRichTextEditor
-                value={
-                  !value ||
+              <Tiptap value={
+                !value ||
                   value === "" ||
                   (typeof value === "object" && Object.keys(value).length === 0)
-                    ? watch("description_html")
-                    : value
-                }
-                onJSONChange={(jsonValue) => {
-                  setShowAlert(true);
-                  setValue("description", jsonValue);
-                }}
-                onHTMLChange={(htmlValue) => {
-                  setShowAlert(true);
-                  setValue("description_html", htmlValue);
-                }}
-                onBlur={() => {
-                  setIsSubmitting(true);
-                  handleSubmit(handleDescriptionFormSubmit)()
-                    .then(() => setShowAlert(false))
-                    .finally(() => setIsSubmitting(false));
-                }}
-                placeholder="Description"
-                editable={isAllowed}
+                  ? watch("description_html")
+                  : value
+              }
               />
+              // <RemirrorRichTextEditor
+              //       value = {
+              //         !value ||
+              //     value === "" ||
+              //     (typeof value === "object" && Object.keys(value).length === 0)
+              //     ? watch("description_html")
+              //     : value
+              // }
+              //   onJSONChange={(jsonValue) => {
+              //     setShowAlert(true);
+              //     setValue("description", jsonValue);
+              //   }}
+              //   onHTMLChange={(htmlValue) => {
+              //     setShowAlert(true);
+              //     setValue("description_html", htmlValue);
+              //   }}
+              //   onBlur={() => {
+              //     setIsSubmitting(true);
+              //     handleSubmit(handleDescriptionFormSubmit)()
+              //       .then(() => setShowAlert(false))
+              //       .finally(() => setIsSubmitting(false));
+              //   }}
+              //   placeholder="Description"
+              //   editable={isAllowed}
+              // />
             );
           }}
         />

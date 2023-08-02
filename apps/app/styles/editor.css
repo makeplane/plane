@@ -8,6 +8,14 @@
   margin-left: 1px;
 }
 
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: rgb(var(--color-text-400));
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 .ProseMirror {
   position: relative;
   word-wrap: break-word;
