@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
 
+// next-themes
+import { useTheme } from "next-themes";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -15,10 +16,12 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ICustomTheme } from "types";
 
 const ProfilePreferences = () => {
-  const { user: myProfile } = useUserAuth();
-  const { theme } = useTheme();
   const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
   const [preLoadedData, setPreLoadedData] = useState<ICustomTheme | null>(null);
+
+  const { theme } = useTheme();
+
+  const { user: myProfile } = useUserAuth();
 
   useEffect(() => {
     if (theme === "custom") {
@@ -37,6 +40,7 @@ const ProfilePreferences = () => {
             myProfile.theme.palette !== ",,,,"
               ? myProfile.theme.palette
               : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+          theme: "custom",
         });
       if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
     }
@@ -71,7 +75,6 @@ const ProfilePreferences = () => {
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <ThemeSwitch
-                  user={myProfile}
                   setPreLoadedData={setPreLoadedData}
                   customThemeSelectorOptions={customThemeSelectorOptions}
                   setCustomThemeSelectorOptions={setCustomThemeSelectorOptions}

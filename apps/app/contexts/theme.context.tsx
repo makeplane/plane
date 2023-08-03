@@ -11,7 +11,7 @@ import projectService from "services/project.service";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 // helper
-import { applyTheme } from "helpers/theme.helper";
+import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 // constants
 
 export const themeContext = createContext<ContextType>({} as ContextType);
@@ -92,15 +92,18 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   useEffect(() => {
     const theme = localStorage.getItem("theme");
-    if (theme && theme === "custom") {
-      if (user && user.theme.palette) {
-        applyTheme(
-          user.theme.palette !== ",,,,"
-            ? user.theme.palette
-            : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
-          user.theme.darkPalette
-        );
-      }
+
+    if (theme) {
+      if (theme === "custom") {
+        if (user && user.theme.palette) {
+          applyTheme(
+            user.theme.palette !== ",,,,"
+              ? user.theme.palette
+              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+            user.theme.darkPalette
+          );
+        }
+      } else unsetCustomCssVariables();
     }
   }, [user]);
 

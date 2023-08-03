@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
+// next-themes
+import { useTheme } from "next-themes";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // hooks
@@ -30,6 +32,8 @@ const ResetPasswordPage: NextPage = () => {
   const { uidb64, token } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { setTheme } = useTheme();
 
   const {
     register,
@@ -75,6 +79,10 @@ const ResetPasswordPage: NextPage = () => {
         })
       );
   };
+
+  useEffect(() => {
+    setTheme("system");
+  }, [setTheme]);
 
   useEffect(() => {
     if (parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");

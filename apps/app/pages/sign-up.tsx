@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+// next-themes
+import { useTheme } from "next-themes";
 // services
 import authenticationService from "services/authentication.service";
 // hooks
@@ -30,6 +32,8 @@ const SignUp: NextPage = () => {
   const router = useRouter();
 
   const { setToastAlert } = useToast();
+
+  const { setTheme } = useTheme();
 
   const { mutateUser } = useUserAuth("sign-in");
 
@@ -61,6 +65,10 @@ const SignUp: NextPage = () => {
         })
       );
   };
+
+  useEffect(() => {
+    setTheme("system");
+  }, [setTheme]);
 
   useEffect(() => {
     if (parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");
