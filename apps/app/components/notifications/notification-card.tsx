@@ -27,6 +27,7 @@ import { snoozeOptions } from "constants/notification";
 type NotificationCardProps = {
   notification: IUserNotification;
   markNotificationReadStatus: (notificationId: string) => Promise<void>;
+  markNotificationReadStatusToggle: (notificationId: string) => Promise<void>;
   markNotificationArchivedStatus: (notificationId: string) => Promise<void>;
   setSelectedNotificationForSnooze: (notificationId: string) => void;
   markSnoozeNotification: (notificationId: string, dateTime?: Date | undefined) => Promise<void>;
@@ -36,6 +37,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const {
     notification,
     markNotificationReadStatus,
+    markNotificationReadStatusToggle,
     markNotificationArchivedStatus,
     setSelectedNotificationForSnooze,
     markSnoozeNotification,
@@ -159,7 +161,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             name: notification.read_at ? "Mark as unread" : "Mark as read",
             icon: "chat_bubble",
             onClick: () => {
-              markNotificationReadStatus(notification.id).then(() => {
+              markNotificationReadStatusToggle(notification.id).then(() => {
                 setToastAlert({
                   title: notification.read_at
                     ? "Notification marked as unread"

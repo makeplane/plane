@@ -75,6 +75,7 @@ from plane.db.models import (
     Label,
     WorkspaceMember,
     CycleIssue,
+    IssueReaction,
 )
 from plane.api.permissions import (
     WorkSpaceBasePermission,
@@ -1321,6 +1322,12 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 )
                 .select_related("project", "workspace", "state", "parent")
                 .prefetch_related("assignees", "labels")
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related("actor"),
+                    )
+                )
                 .order_by("-created_at")
                 .annotate(
                     link_count=IssueLink.objects.filter(issue=OuterRef("id"))

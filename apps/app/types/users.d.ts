@@ -46,6 +46,7 @@ export interface ICustomTheme {
   sidebarText: string;
   darkPalette: boolean;
   palette: string;
+  theme: string;
 }
 
 export interface ICurrentUserResponse extends IUser {

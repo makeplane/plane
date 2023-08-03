@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { useRouter } from "next/router";
 
@@ -98,20 +98,36 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
     };
 
+  const onClose = useCallback(() => {
+    handleClose();
+    setActiveProject(null);
+  }, [handleClose]);
+
   useEffect(() => {
+    // if modal is closed, reset active project to null
+    // and return to avoid activeProject being set to some other project
+    if (!isOpen) {
+      setActiveProject(null);
+      return;
+    }
+
+    // if data is present, set active project to the project of the
+    // issue. This has more priority than the project in the url.
     if (data && data.project) {
       setActiveProject(data.project);
       return;
     }
 
+    // if data is not present, set active project to the project
+    // in the url. This has the least priority.
     if (projects && projects.length > 0 && !activeProject)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [activeProject, data, projectId, projects]);
+  }, [activeProject, data, projectId, projects, isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        handleClose();
+        onClose();
       }
     };
 
@@ -119,7 +135,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleClose]);
+  }, [onClose]);
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
@@ -267,7 +283,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           });
         });
 
-    if (!createMore) handleClose();
+    if (!createMore) onClose();
   };
 
   const updateIssue = async (payload: Partial<IIssue>) => {
@@ -286,7 +302,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
-        if (!createMore) handleClose();
+        if (!createMore) onClose();
 
         setToastAlert({
           type: "success",
@@ -324,7 +340,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => handleClose()}>
+      <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -354,7 +370,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                   initialData={data ?? prePopulateData}
                   createMore={createMore}
                   setCreateMore={setCreateMore}
-                  handleClose={handleClose}
+                  handleClose={onClose}
                   projectId={activeProject ?? ""}
                   setActiveProject={setActiveProject}
                   status={data ? true : false}
