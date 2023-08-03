@@ -34,6 +34,8 @@ export const ThemeSwitch: React.FC<Props> = ({
   const updateUserTheme = (newTheme: string) => {
     if (!user) return;
 
+    setTheme(newTheme);
+
     mutateUser((prevData) => {
       if (!prevData) return prevData;
 
@@ -121,7 +123,6 @@ export const ThemeSwitch: React.FC<Props> = ({
         }
 
         updateUserTheme(value);
-        setTheme(value);
         document.documentElement.style.setProperty("--color-scheme", type);
       }}
       input
