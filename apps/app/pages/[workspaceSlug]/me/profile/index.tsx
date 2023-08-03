@@ -30,6 +30,9 @@ const defaultValues: Partial<IUser> = {
   last_name: "",
   email: "",
   role: "Product / Project Manager",
+  old_password: "",
+  new_password: "",
+  confirm_password: ""
 };
 
 const Profile: NextPage = () => {
@@ -60,8 +63,61 @@ const Profile: NextPage = () => {
         title: "Error!",
         message: "First and last names are required.",
       });
-
       return;
+    }
+
+    if (
+      formData.old_password ||
+      formData.new_password ||
+      formData.confirm_password
+    ){
+      if (
+        !formData.old_password ||
+        !formData.new_password ||
+        !formData.confirm_password
+      ) {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Current password, new password, and password confirmation is required."
+        })
+        return;
+      }
+      if (formData.new_password !== formData.confirm_password){
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Please make sure new password and confirmation password match!"
+        })
+        return;
+      }
+      const payload = {
+        old_password: formData.old_password,
+        new_password: formData.new_password
+      }
+      await userService
+        .updateUserPassword(payload)
+        .then(()=> {
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Password updated successfully"
+          });
+        })
+        .catch((error) => {
+          if ("old_password" in error) {
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "Current password is incorrect. Please try again."
+            })
+          } else {
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "There was some error in updating your profile. Please try again.",
+            })
+          }        })
     }
 
     const payload: Partial<IUser> = {
@@ -160,7 +216,7 @@ const Profile: NextPage = () => {
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold text-custom-text-100">Profile Picture</h4>
                 <p className="text-sm text-custom-text-200">
-                  Max file size is 5MB. Supported file types are .jpg and .png.
+                  Supported file types are .jpg and .png.
                 </p>
               </div>
               <div className="col-span-12 sm:col-span-6">
@@ -275,6 +331,44 @@ const Profile: NextPage = () => {
                   )}
                 />
                 {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-custom-text-100">Password</h4>
+                <p className="text-sm text-custom-text-200">Update your password</p>
+              </div>
+              <div className="col-span-12 sm:col-span-6 grid grid-rows-3 gap-4 sm:gap-16">
+                <Input
+                  id="old_password"
+                  name="old_password"
+                  type="password"
+                  placeholder="Current Password"
+                  autoComplete="off"
+                  register={register}
+                  error={errors.currentPassword}
+                  className="w-full"
+                />
+                <Input
+                  id="new_password"
+                  name="new_password"
+                  type="password"
+                  placeholder="New Password"
+                  autoComplete="off"
+                  register={register}
+                  error={errors.newPassword}
+                  className="w-full"
+                />
+                <Input
+                  id="confirm_password"
+                  name="confirm_password"
+                  type="password"
+                  placeholder="Confirm New Password"
+                  autoComplete="off"
+                  register={register}
+                  error={errors.confirmPassword}
+                  className="w-full"
+                />
               </div>
             </div>
             <div className="sm:text-right">

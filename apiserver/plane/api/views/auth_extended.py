@@ -134,14 +134,14 @@ class ChangePasswordEndpoint(BaseAPIView):
             user = User.objects.get(pk=request.user.id)
             if serializer.is_valid():
                 # Check old password
-                if not user.object.check_password(serializer.data.get("old_password")):
+                if not user.check_password(serializer.data.get("old_password")):
                     return Response(
                         {"old_password": ["Wrong password."]},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 # set_password also hashes the password that the user will get
-                self.object.set_password(serializer.data.get("new_password"))
-                self.object.save()
+                user.set_password(serializer.data.get("new_password"))
+                user.save()
                 response = {
                     "status": "success",
                     "code": status.HTTP_200_OK,

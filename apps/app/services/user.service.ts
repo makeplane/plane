@@ -63,6 +63,14 @@ class UserService extends APIService {
       });
   }
 
+  async updateUserPassword(data: Partial<IUser>): Promise<any> {
+    return this.post("/api/users/me/change-password/", data)
+      .then((response) => response?.data)
+      .catch((error)=> {
+        throw error?.response?.data;
+      })
+  }
+
   async updateUserOnBoard({ userRole }: any, user: ICurrentUserResponse | undefined): Promise<any> {
     return this.patch("/api/users/me/onboard/", {
       is_onboarded: true,
