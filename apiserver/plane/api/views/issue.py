@@ -1499,7 +1499,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def update(self, request, slug, anchor, issue_id, pk):
+    def partial_update(self, request, slug, anchor, issue_id, pk):
         try:
             project_deploy_board = ProjectDeployBoard.objects.get(
                 workspace__slug=slug, anchor=anchor
@@ -1510,6 +1510,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 comment, data=request.data, partial=True
             )
             if serializer.is_valid():
+                serializer.save()
                 issue_activity.delay(
                     type="comment.activity.updated",
                     requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),

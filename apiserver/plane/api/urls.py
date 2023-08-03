@@ -1493,7 +1493,7 @@ urlpatterns = [
         name="project-deploy-board",
     ),
     path(
-        "workspaces/<str:slug>/<str:anchor>/project-boards/<uuid:issue_id>/comments/",
+        "workspaces/<str:slug>/project-boards/<str:anchor>/issues/<uuid:issue_id>/comments/",
         IssueCommentPublicViewSet.as_view(
             {
                 "get": "list",
@@ -1503,11 +1503,12 @@ urlpatterns = [
         name="issue-comments-project-board",
     ),
     path(
-        "workspaces/<str:slug>/<str:anchor>/project-boards/<uuid:issue_id>/comments/<uuid:pk>/",
+        "workspaces/<str:slug>/project-boards/<str:anchor>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
         IssueCommentPublicViewSet.as_view(
             {
-                "get": "list",
-                "post": "create",
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
             }
         ),
         name="issue-comments-project-board",
