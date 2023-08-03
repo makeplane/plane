@@ -165,6 +165,8 @@ from plane.api.views import (
     # Public Boards
     ProjectDeployBoardViewSet,
     ProjectDeployBoardPublicEndpoint,
+    IssueReactionPublicViewSet,
+    CommentReactionPublicViewSet,
     ## End Public Boards
 )
 
@@ -1493,6 +1495,44 @@ urlpatterns = [
         "workspaces/<str:slug>/project-board/<str:anchor>/",
         ProjectDeployBoardPublicEndpoint.as_view(),
         name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/project-boards/<str:anchor>/issues/<uuid:issue_id>/reactions/",
+        IssueReactionPublicViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="issue-reactions-project-board",
+    ),
+    path(
+        "workspaces/<str:slug>/project-boards/<str:anchor>/issues/<uuid:issue_id>/reactions/<str:reaction_code>/",
+        IssueReactionPublicViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="issue-reactions-project-board",
+    ),
+    path(
+        "workspaces/<str:slug>/project-boards/<str:anchor>/comments/<uuid:comment_id>/reactions/",
+        CommentReactionPublicViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="comment-reactions-project-board",
+    ),
+    path(
+        "workspaces/<str:slug>/project-boards/<str:anchor>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
+        CommentReactionPublicViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="comment-reactions-project-board",
     ),
     ## End Public Boards
 ]

@@ -77,6 +77,8 @@ from .issue import (
     IssueSubscriberViewSet,
     CommentReactionViewSet,
     IssueReactionViewSet,
+    IssueReactionPublicViewSet,
+    CommentReactionPublicViewSet,
 )
 
 from .auth_extended import (

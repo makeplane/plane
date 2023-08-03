@@ -70,6 +70,7 @@ from plane.db.models import (
     ProjectMember,
     IssueReaction,
     CommentReaction,
+    ProjectDeployBoard,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -1428,6 +1429,114 @@ class CommentReactionViewSet(BaseViewSet):
             comment_reaction = CommentReaction.objects.get(
                 workspace__slug=slug,
                 project_id=project_id,
+                comment_id=comment_id,
+                reaction=reaction_code,
+                actor=request.user,
+            )
+            comment_reaction.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except CommentReaction.DoesNotExist:
+            return Response(
+                {"error": "Comment reaction does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class IssueReactionPublicViewSet(BaseViewSet):
+    serializer_class = IssueReactionSerializer
+    model = IssueReaction
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .order_by("-created_at")
+            .distinct()
+        )
+
+    def create(self, request, slug, anchor, issue_id):
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, anchor=anchor)
+            project_id = project_deploy_board.project_id
+            serializer = IssueReactionSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ProjectDeployBoard.DoesNotExist:
+            return Response({"error": "Project board does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+ 
+    def destroy(self, request, slug, anchor, issue_id, reaction_code):
+        try:
+            issue_reaction = IssueReaction.objects.get(
+                workspace__slug=slug,
+                issue_id=issue_id,
+                reaction=reaction_code,
+                actor=request.user,
+            )
+            issue_reaction.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except IssueReaction.DoesNotExist:
+            return Response(
+                {"error": "Issue reaction does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class CommentReactionPublicViewSet(BaseViewSet):
+    serializer_class = CommentReactionSerializer
+    model = CommentReaction
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(comment_id=self.kwargs.get("comment_id"))
+            .order_by("-created_at")
+            .distinct()
+        )
+
+    def create(self, request, slug, anchor, comment_id):
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, anchor=anchor)
+            project_id = project_deploy_board.project_id
+            serializer = CommentReactionSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id, comment_id=comment_id, actor=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ProjectDeployBoard.DoesNotExist:
+            return Response({"error": "Project board does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, slug, anchor, comment_id, reaction_code):
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, anchor=anchor)
+            project_id = project_deploy_board.project_id
+
+            comment_reaction = CommentReaction.objects.get(
+                project_id=project_id,
+                workspace__slug=slug,
                 comment_id=comment_id,
                 reaction=reaction_code,
                 actor=request.user,
