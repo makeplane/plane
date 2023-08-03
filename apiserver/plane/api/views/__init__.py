@@ -75,6 +75,7 @@ from .issue import (
     IssueAttachmentEndpoint,
     IssueArchiveViewSet,
     IssueSubscriberViewSet,
+    IssueCommentPublicViewSet,
     CommentReactionViewSet,
     IssueReactionViewSet,
     IssueReactionPublicViewSet,

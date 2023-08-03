@@ -84,6 +84,7 @@ from plane.api.views import (
     IssueAttachmentEndpoint,
     IssueArchiveViewSet,
     IssueSubscriberViewSet,
+    IssueCommentPublicViewSet,
     IssueReactionViewSet,
     CommentReactionViewSet,
     ## End Issues
@@ -1490,6 +1491,26 @@ urlpatterns = [
             }
         ),
         name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/<str:anchor>/project-boards/<uuid:issue_id>/comments/",
+        IssueCommentPublicViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="issue-comments-project-board",
+    ),
+    path(
+        "workspaces/<str:slug>/<str:anchor>/project-boards/<uuid:issue_id>/comments/<uuid:pk>/",
+        IssueCommentPublicViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="issue-comments-project-board",
     ),
     path(
         "workspaces/<str:slug>/project-board/<str:anchor>/",
