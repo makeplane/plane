@@ -103,10 +103,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
             user.theme.darkPalette
           );
         }
-      } else {
-        console.log("Unsetting...");
-        unsetCustomCssVariables();
-      }
+      } else unsetCustomCssVariables();
     }
   }, [user]);
 
