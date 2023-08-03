@@ -20,8 +20,10 @@ import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "component
 import { ModuleDetailsSidebar } from "components/modules";
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu, SecondaryButton } from "components/ui";
+import { CustomMenu, EmptyState, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// images
+import emptyModule from "public/empty-state/module.svg";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -60,7 +62,7 @@ const SingleModule: React.FC = () => {
       : null
   );
 
-  const { data: moduleDetails } = useSWR(
+  const { data: moduleDetails, error } = useSWR(
     moduleId ? MODULE_DETAILS(moduleId as string) : null,
     workspaceSlug && projectId
       ? () =>
@@ -162,22 +164,37 @@ const SingleModule: React.FC = () => {
           </div>
         }
       >
-        <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
-
-        <div
-          className={`h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
-            analyticsModal ? "mr-[50%]" : ""
-          } duration-300`}
-        >
-          <IssuesView openIssuesListModal={openIssuesListModal} />
-        </div>
-
-        <ModuleDetailsSidebar
-          module={moduleDetails}
-          isOpen={moduleSidebar}
-          moduleIssues={moduleIssues}
-          user={user}
-        />
+        {error ? (
+          <EmptyState
+            image={emptyModule}
+            title="Module does not exist"
+            description="The module you are looking for does not exist or has been deleted."
+            primaryButton={{
+              text: "View other modules",
+              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
+            }}
+          />
+        ) : (
+          <>
+            <AnalyticsProjectModal
+              isOpen={analyticsModal}
+              onClose={() => setAnalyticsModal(false)}
+            />
+            <div
+              className={`h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
+                analyticsModal ? "mr-[50%]" : ""
+              } duration-300`}
+            >
+              <IssuesView openIssuesListModal={openIssuesListModal} />
+            </div>
+            <ModuleDetailsSidebar
+              module={moduleDetails}
+              isOpen={moduleSidebar}
+              moduleIssues={moduleIssues}
+              user={user}
+            />
+          </>
+        )}
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );

@@ -2,6 +2,16 @@ export const THEMES = ["light", "dark", "light-contrast", "dark-contrast", "cust
 
 export const THEMES_OBJ = [
   {
+    value: "system",
+    label: "System Preference",
+    type: "light",
+    icon: {
+      border: "#DEE2E6",
+      color1: "#FAFAFA",
+      color2: "#3F76FF",
+    },
+  },
+  {
     value: "light",
     label: "Light",
     type: "light",

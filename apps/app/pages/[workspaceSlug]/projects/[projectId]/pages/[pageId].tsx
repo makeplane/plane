@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -28,7 +28,16 @@ import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { CustomSearchSelect, Loader, TextArea, ToggleSwitch, Tooltip } from "components/ui";
+import {
+  CustomSearchSelect,
+  EmptyState,
+  Loader,
+  TextArea,
+  ToggleSwitch,
+  Tooltip,
+} from "components/ui";
+// images
+import emptyPage from "public/empty-state/page.svg";
 // icons
 import {
   ArrowLeftIcon,
@@ -40,7 +49,7 @@ import {
   XMarkIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
+import { ColorPalletteIcon } from "components/icons";
 // helpers
 import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -82,7 +91,7 @@ const SinglePage: NextPage = () => {
       : null
   );
 
-  const { data: pageDetails } = useSWR(
+  const { data: pageDetails, error } = useSWR(
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
@@ -267,13 +276,6 @@ const SinglePage: NextPage = () => {
     );
   };
 
-  const handleNewBlock = useCallback(() => {
-    setCreateBlockForm(true);
-    scrollToRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [setCreateBlockForm, scrollToRef]);
-
   const handleShowBlockToggle = async () => {
     if (!workspaceSlug || !projectId) return;
 
@@ -311,22 +313,21 @@ const SinglePage: NextPage = () => {
       });
   };
 
-  const options =
-    labels?.map((label) => ({
-      value: label.id,
-      query: label.name,
-      content: (
-        <div className="flex items-center gap-2">
-          <span
-            className="h-2 w-2 flex-shrink-0 rounded-full"
-            style={{
-              backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
-            }}
-          />
-          {label.name}
-        </div>
-      ),
-    })) ?? [];
+  const options = labels?.map((label) => ({
+    value: label.id,
+    query: label.name,
+    content: (
+      <div className="flex items-center gap-2">
+        <span
+          className="h-2 w-2 flex-shrink-0 rounded-full"
+          style={{
+            backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
+          }}
+        />
+        {label.name}
+      </div>
+    ),
+  }));
 
   useEffect(() => {
     if (!pageDetails) return;
@@ -346,11 +347,21 @@ const SinglePage: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project",32)} Pages`} />
+          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
         </Breadcrumbs>
       }
     >
-      {pageDetails ? (
+      {error ? (
+        <EmptyState
+          image={emptyPage}
+          title="Page does not exist"
+          description="The page you are looking for does not exist or has been deleted."
+          primaryButton={{
+            text: "View other pages",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/pages`),
+          }}
+        />
+      ) : pageDetails ? (
         <div className="flex h-full flex-col justify-between space-y-4 overflow-hidden p-4">
           <div className="h-full w-full overflow-y-auto">
             <div className="flex items-start justify-between gap-2">

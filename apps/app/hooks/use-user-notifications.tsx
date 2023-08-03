@@ -185,6 +185,26 @@ const useUserNotification = () => {
     }
   };
 
+  const markNotificationAsRead = async (notificationId: string) => {
+    if (!workspaceSlug) return;
+
+    const isRead =
+      notifications?.find((notification) => notification.id === notificationId)?.read_at !== null;
+
+    if (isRead) return;
+
+    mutateNotification(notificationId, { read_at: new Date() });
+    handleReadMutation("read");
+
+    await userNotificationServices
+      .markUserNotificationAsRead(workspaceSlug.toString(), notificationId)
+      .catch(() => {
+        throw new Error("Something went wrong");
+      });
+
+    mutateNotificationCount();
+  };
+
   const markNotificationArchivedStatus = async (notificationId: string) => {
     if (!workspaceSlug) return;
     const isArchived =
@@ -283,6 +303,7 @@ const useUserNotification = () => {
     hasMore,
     isRefreshing,
     setFetchNotifications,
+    markNotificationAsRead,
   };
 };
 
