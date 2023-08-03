@@ -28,6 +28,7 @@ const defaultValues: ICustomTheme = {
   sidebarText: "#c5c5c5",
   darkPalette: false,
   palette: "",
+  theme: "custom",
 };
 
 export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
@@ -56,6 +57,7 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
       sidebarText: formData.sidebarText,
       darkPalette: darkPalette,
       palette: `${formData.background},${formData.text},${formData.primary},${formData.sidebarBackground},${formData.sidebarText}`,
+      theme: "custom",
     };
 
     await userService

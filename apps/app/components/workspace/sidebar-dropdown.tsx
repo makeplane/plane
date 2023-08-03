@@ -3,10 +3,10 @@ import { Fragment } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-// next-themes
-import { useTheme } from "next-themes";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
+// next-themes
+import { useTheme } from "next-themes";
 // hooks
 import useUser from "hooks/use-user";
 import useThemeHook from "hooks/use-theme";
@@ -91,7 +91,7 @@ export const WorkspaceSidebarDropdown = () => {
       .then(() => {
         mutateUser(undefined);
         router.push("/");
-        setTheme("dark");
+        setTheme("system");
       })
       .catch(() =>
         setToastAlert({

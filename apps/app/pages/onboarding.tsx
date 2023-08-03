@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Router from "next/router";
 import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
@@ -32,7 +31,7 @@ import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState<number | null>(null);
 
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const { user, isLoading: userLoading } = useUserAuth("onboarding");
 
@@ -116,6 +115,10 @@ const Onboarding: NextPage = () => {
 
     await userService.updateUserOnBoard({ userRole: user.role }, user);
   };
+
+  useEffect(() => {
+    setTheme("system");
+  }, [setTheme]);
 
   useEffect(() => {
     const handleStepChange = async () => {
