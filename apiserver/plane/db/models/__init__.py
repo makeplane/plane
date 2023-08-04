@@ -34,6 +34,8 @@ from .issue import (
     IssueSequence,
     IssueAttachment,
     IssueSubscriber,
+    IssueReaction,
+    CommentReaction,
 )
 
 from .asset import FileAsset

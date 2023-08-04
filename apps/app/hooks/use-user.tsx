@@ -18,7 +18,6 @@ export default function useUser({ redirectTo = "", redirectIfFound = false, opti
   );
 
   const user = error ? undefined : data;
-  // console.log("useUser", user);
 
   useEffect(() => {
     // if no redirect needed, just return (example: already on /dashboard)

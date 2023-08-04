@@ -36,6 +36,7 @@ type IssueViewProps = {
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
+  showSubIssues: boolean;
   calendarDateRange: string;
   filters: IIssueFilterOptions;
 };
@@ -49,7 +50,8 @@ type ReducerActionType = {
     | "SET_CALENDAR_DATE_RANGE"
     | "SET_FILTERS"
     | "SET_GROUP_BY_PROPERTY"
-    | "RESET_TO_DEFAULT";
+    | "RESET_TO_DEFAULT"
+    | "SET_SHOW_SUB_ISSUES";
   payload?: Partial<IssueViewProps>;
 };
 
@@ -57,6 +59,7 @@ type ContextType = IssueViewProps & {
   setGroupByProperty: (property: TIssueGroupByOptions) => void;
   setOrderBy: (property: TIssueOrderByOptions) => void;
   setShowEmptyGroups: (property: boolean) => void;
+  setShowSubIssues: (value: boolean) => void;
   setCalendarDateRange: (property: string) => void;
   setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
   resetFilterToDefault: () => void;
@@ -69,6 +72,7 @@ type StateType = {
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
+  showSubIssues: boolean;
   calendarDateRange: string;
   filters: IIssueFilterOptions;
 };
@@ -79,6 +83,7 @@ export const initialState: StateType = {
   groupByProperty: null,
   orderBy: "-created_at",
   showEmptyGroups: true,
+  showSubIssues: true,
   calendarDateRange: "",
   filters: {
     type: null,
@@ -86,8 +91,7 @@ export const initialState: StateType = {
     assignees: null,
     labels: null,
     state: null,
-    issue__assignees__id: null,
-    issue__labels__id: null,
+    state_group: null,
     created_by: null,
     target_date: null,
   },
@@ -144,6 +148,18 @@ export const reducer: ReducerFunctionType = (state, action) => {
       const newState = {
         ...state,
         showEmptyGroups: payload?.showEmptyGroups || true,
+      };
+
+      return {
+        ...state,
+        ...newState,
+      };
+    }
+
+    case "SET_SHOW_SUB_ISSUES": {
+      const newState = {
+        ...state,
+        showSubIssues: payload?.showSubIssues || true,
       };
 
       return {
@@ -466,6 +482,37 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
+  const setShowSubIssues = useCallback(
+    (property: boolean) => {
+      dispatch({
+        type: "SET_SHOW_SUB_ISSUES",
+        payload: {
+          showSubIssues: property,
+        },
+      });
+
+      if (!workspaceSlug || !projectId) return;
+
+      mutateMyViewProps((prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          view_props: {
+            ...state,
+            showSubIssues: property,
+          },
+        };
+      }, false);
+
+      saveDataToServer(workspaceSlug as string, projectId as string, {
+        ...state,
+        showSubIssues: property,
+      });
+    },
+    [projectId, workspaceSlug, state, mutateMyViewProps]
+  );
+
   const setCalendarDateRange = useCallback(
     (value: string) => {
       dispatch({
@@ -683,10 +730,12 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         setGroupByProperty,
         orderBy: state.orderBy,
         showEmptyGroups: state.showEmptyGroups,
+        showSubIssues: state.showSubIssues,
         calendarDateRange: state.calendarDateRange,
         setCalendarDateRange,
         setOrderBy,
         setShowEmptyGroups,
+        setShowSubIssues,
         filters: state.filters,
         setFilters,
         resetFilterToDefault: resetToDefault,

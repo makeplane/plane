@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// react-beautiful-dnd
+import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
@@ -12,7 +14,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
-import { LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { EllipsisVerticalIcon, LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   ArchiveOutlined,
   ArticleOutlined,
@@ -34,6 +36,8 @@ import { PROJECTS_LIST } from "constants/fetch-keys";
 type Props = {
   project: IProject;
   sidebarCollapse: boolean;
+  provided?: DraggableProvided;
+  snapshot?: DraggableStateSnapshot;
   handleDeleteProject: () => void;
   handleCopyText: () => void;
   shortContextMenu?: boolean;
@@ -75,6 +79,8 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 export const SingleSidebarProject: React.FC<Props> = ({
   project,
   sidebarCollapse,
+  provided,
+  snapshot,
   handleDeleteProject,
   handleCopyText,
   shortContextMenu = false,
@@ -127,35 +133,59 @@ export const SingleSidebarProject: React.FC<Props> = ({
   };
 
   return (
-    <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
+    <Disclosure key={project.id} defaultOpen={projectId === project.id}>
       {({ open }) => (
         <>
-          <div className="flex items-center gap-x-1 text-custom-sidebar-text-100">
+          <div
+            className={`group relative text-custom-sidebar-text-10 px-2 py-1 w-full flex items-center hover:bg-custom-sidebar-background-80 rounded-md ${
+              snapshot?.isDragging ? "opacity-60" : ""
+            }`}
+          >
+            {provided && (
+              <Tooltip
+                tooltipContent={
+                  project.sort_order === null
+                    ? "Join the project to rearrange"
+                    : "Drag to rearrange"
+                }
+                position="top-right"
+              >
+                <button
+                  type="button"
+                  className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 ${
+                    sidebarCollapse ? "" : "group-hover:!flex"
+                  } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
+                  {...provided?.dragHandleProps}
+                >
+                  <EllipsisVerticalIcon className="h-4" />
+                  <EllipsisVerticalIcon className="-ml-5 h-4" />
+                </button>
+              </Tooltip>
+            )}
             <Tooltip
-              tooltipContent={`${project?.name}`}
+              tooltipContent={`${project.name}`}
               position="right"
               className="ml-2"
               disabled={!sidebarCollapse}
             >
               <Disclosure.Button
                 as="div"
-                className={`flex w-full cursor-pointer select-none items-center rounded-sm py-1 text-left text-sm font-medium ${
-                  sidebarCollapse ? "justify-center" : "justify-between"
+                className={`flex items-center flex-grow truncate cursor-pointer select-none text-left text-sm font-medium ${
+                  sidebarCollapse ? "justify-center" : `justify-between`
                 }`}
               >
-                <div className="flex items-center gap-x-2">
+                <div
+                  className={`flex items-center flex-grow w-full truncate gap-x-2 ${
+                    sidebarCollapse ? "justify-center" : ""
+                  }`}
+                >
                   {project.emoji ? (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
                       {renderEmoji(project.emoji)}
                     </span>
                   ) : project.icon_prop ? (
-                    <div className="h-7 w-7 grid place-items-center">
-                      <span
-                        style={{ color: project.icon_prop.color }}
-                        className="material-symbols-rounded text-lg"
-                      >
-                        {project.icon_prop.name}
-                      </span>
+                    <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                      {renderEmoji(project.icon_prop)}
                     </div>
                   ) : (
                     <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
@@ -164,26 +194,24 @@ export const SingleSidebarProject: React.FC<Props> = ({
                   )}
 
                   {!sidebarCollapse && (
-                    <p
-                      className={`overflow-hidden text-ellipsis ${
-                        open ? "" : "text-custom-sidebar-text-200"
-                      }`}
-                    >
-                      {truncateText(project?.name, 14)}
+                    <p className={`truncate ${open ? "" : "text-custom-sidebar-text-200"}`}>
+                      {project.name}
                     </p>
                   )}
                 </div>
                 {!sidebarCollapse && (
                   <ExpandMoreOutlined
                     fontSize="small"
-                    className={`${open ? "rotate-180" : ""} text-custom-text-200 duration-300`}
+                    className={`flex-shrink-0 ${
+                      open ? "rotate-180" : ""
+                    } !hidden group-hover:!block text-custom-sidebar-text-200 duration-300`}
                   />
                 )}
               </Disclosure.Button>
             </Tooltip>
 
             {!sidebarCollapse && (
-              <CustomMenu ellipsis>
+              <CustomMenu className="hidden group-hover:block flex-shrink-0" ellipsis>
                 {!shortContextMenu && (
                   <CustomMenu.MenuItem onClick={handleDeleteProject}>
                     <span className="flex items-center justify-start gap-2 ">
@@ -238,7 +266,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Disclosure.Panel className={`space-y-2 ${sidebarCollapse ? "" : "ml-[2.25rem]"}`}>
+            <Disclosure.Panel className={`space-y-2 mt-1 ${sidebarCollapse ? "" : "ml-[2.25rem]"}`}>
               {navigation(workspaceSlug as string, project?.id).map((item) => {
                 if (
                   (item.name === "Cycles" && !project.cycle_view) ||

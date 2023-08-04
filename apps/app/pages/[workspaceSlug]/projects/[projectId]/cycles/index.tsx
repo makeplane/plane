@@ -29,6 +29,8 @@ import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { SelectCycleType } from "types";
 import type { NextPage } from "next";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
 
@@ -91,7 +93,7 @@ const ProjectCycles: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Cycles`} />
+          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Cycles`} />
         </Breadcrumbs>
       }
       right={
@@ -119,13 +121,15 @@ const ProjectCycles: NextPage = () => {
             title="Plan your project with cycles"
             description="Cycle is a custom time period in which a team works to complete items on their backlog."
             image={emptyCycle}
-            buttonText="New Cycle"
-            buttonIcon={<PlusIcon className="h-4 w-4" />}
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "q",
-              });
-              document.dispatchEvent(e);
+            primaryButton={{
+              icon: <PlusIcon className="h-4 w-4" />,
+              text: "New Cycle",
+              onClick: () => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "q",
+                });
+                document.dispatchEvent(e);
+              },
             }}
           />
         </div>

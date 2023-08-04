@@ -29,6 +29,7 @@ import {
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
+import { truncateText } from "helpers/string.helper";
 // types
 import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -145,6 +146,15 @@ const GeneralSettings: NextPage = () => {
     else await updateProject(payload);
   };
 
+  const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+
+    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    const formattedValue = alphanumericValue.toUpperCase();
+
+    setValue("identifier", formattedValue);
+  };
+
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
 
   return (
@@ -152,10 +162,11 @@ const GeneralSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+            linkTruncate
           />
-          <BreadcrumbItem title="General Settings" />
+          <BreadcrumbItem title="General Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -186,22 +197,7 @@ const GeneralSettings: NextPage = () => {
                     name="emoji_and_icon"
                     render={({ field: { value, onChange } }) => (
                       <EmojiIconPicker
-                        label={
-                          value ? (
-                            typeof value === "object" ? (
-                              <span
-                                style={{ color: value.color }}
-                                className="material-symbols-rounded text-lg"
-                              >
-                                {value.name}
-                              </span>
-                            ) : (
-                              renderEmoji(value)
-                            )
-                          ) : (
-                            "Icon"
-                          )
-                        }
+                        label={value ? renderEmoji(value) : "Icon"}
                         value={value}
                         onChange={onChange}
                       />
@@ -303,10 +299,11 @@ const GeneralSettings: NextPage = () => {
                   error={errors.identifier}
                   register={register}
                   placeholder="Enter identifier"
+                  onChange={handleIdentifierChange}
                   validations={{
                     required: "Identifier is required",
                     validate: (value) =>
-                      /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
+                      /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
                     minLength: {
                       value: 1,
                       message: "Identifier must at least be of 1 character",

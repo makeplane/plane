@@ -60,6 +60,7 @@ const calculateShades = (hexValue: string): TShades => {
 };
 
 export const applyTheme = (palette: string, isDarkPalette: boolean) => {
+  const dom = document?.querySelector<HTMLElement>("[data-theme='custom']");
   // palette: [bg, text, primary, sidebarBg, sidebarText]
   const values: string[] = palette.split(",");
   values.push(isDarkPalette ? "dark" : "light");
@@ -79,41 +80,40 @@ export const applyTheme = (palette: string, isDarkPalette: boolean) => {
     const sidebarBackgroundRgbValues = `${sidebarBackgroundShades[shade].r}, ${sidebarBackgroundShades[shade].g}, ${sidebarBackgroundShades[shade].b}`;
     const sidebarTextRgbValues = `${sidebarTextShades[shade].r}, ${sidebarTextShades[shade].g}, ${sidebarTextShades[shade].b}`;
 
-    document
-      .querySelector<HTMLElement>("[data-theme='custom']")
-      ?.style.setProperty(`--color-background-${shade}`, bgRgbValues);
-    document
-      .querySelector<HTMLElement>("[data-theme='custom']")
-      ?.style.setProperty(`--color-text-${shade}`, textRgbValues);
-    document
-      .querySelector<HTMLElement>("[data-theme='custom']")
-      ?.style.setProperty(`--color-primary-${shade}`, primaryRgbValues);
-    document
-      .querySelector<HTMLElement>("[data-theme='custom']")
-      ?.style.setProperty(`--color-sidebar-background-${shade}`, sidebarBackgroundRgbValues);
-    document
-      .querySelector<HTMLElement>("[data-theme='custom']")
-      ?.style.setProperty(`--color-sidebar-text-${shade}`, sidebarTextRgbValues);
+    dom?.style.setProperty(`--color-background-${shade}`, bgRgbValues);
+    dom?.style.setProperty(`--color-text-${shade}`, textRgbValues);
+    dom?.style.setProperty(`--color-primary-${shade}`, primaryRgbValues);
+    dom?.style.setProperty(`--color-sidebar-background-${shade}`, sidebarBackgroundRgbValues);
+    dom?.style.setProperty(`--color-sidebar-text-${shade}`, sidebarTextRgbValues);
 
     if (i >= 100 && i <= 400) {
       const borderShade = i === 100 ? 70 : i === 200 ? 80 : i === 300 ? 90 : 100;
 
-      document
-        .querySelector<HTMLElement>("[data-theme='custom']")
-        ?.style.setProperty(
-          `--color-border-${shade}`,
-          `${bgShades[borderShade].r}, ${bgShades[borderShade].g}, ${bgShades[borderShade].b}`
-        );
-      document
-        .querySelector<HTMLElement>("[data-theme='custom']")
-        ?.style.setProperty(
-          `--color-sidebar-border-${shade}`,
-          `${sidebarBackgroundShades[borderShade].r}, ${sidebarBackgroundShades[borderShade].g}, ${sidebarBackgroundShades[borderShade].b}`
-        );
+      dom?.style.setProperty(
+        `--color-border-${shade}`,
+        `${bgShades[borderShade].r}, ${bgShades[borderShade].g}, ${bgShades[borderShade].b}`
+      );
+      dom?.style.setProperty(
+        `--color-sidebar-border-${shade}`,
+        `${sidebarBackgroundShades[borderShade].r}, ${sidebarBackgroundShades[borderShade].g}, ${sidebarBackgroundShades[borderShade].b}`
+      );
     }
   }
 
-  document
-    .querySelector<HTMLElement>("[data-theme='custom']")
-    ?.style.setProperty("--color-scheme", values[5]);
+  dom?.style.setProperty("--color-scheme", values[5]);
+};
+
+export const unsetCustomCssVariables = () => {
+  for (let i = 10; i <= 900; i >= 100 ? (i += 100) : (i += 10)) {
+    const dom = document.querySelector<HTMLElement>("[data-theme='custom']");
+
+    dom?.style.removeProperty(`--color-background-${i}`);
+    dom?.style.removeProperty(`--color-text-${i}`);
+    dom?.style.removeProperty(`--color-border-${i}`);
+    dom?.style.removeProperty(`--color-primary-${i}`);
+    dom?.style.removeProperty(`--color-sidebar-background-${i}`);
+    dom?.style.removeProperty(`--color-sidebar-text-${i}`);
+    dom?.style.removeProperty(`--color-sidebar-border-${i}`);
+    dom?.style.removeProperty("--color-scheme");
+  }
 };

@@ -21,46 +21,23 @@ import {
 
 // type
 import type { IUserNotification } from "types";
+// constants
+import { snoozeOptions } from "constants/notification";
 
 type NotificationCardProps = {
   notification: IUserNotification;
   markNotificationReadStatus: (notificationId: string) => Promise<void>;
+  markNotificationReadStatusToggle: (notificationId: string) => Promise<void>;
   markNotificationArchivedStatus: (notificationId: string) => Promise<void>;
   setSelectedNotificationForSnooze: (notificationId: string) => void;
   markSnoozeNotification: (notificationId: string, dateTime?: Date | undefined) => Promise<void>;
 };
 
-const snoozeOptions = [
-  {
-    label: "1 day",
-    value: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
-  },
-  {
-    label: "3 days",
-    value: new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000),
-  },
-  {
-    label: "5 days",
-    value: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
-  },
-  {
-    label: "1 week",
-    value: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
-  },
-  {
-    label: "2 weeks",
-    value: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000),
-  },
-  {
-    label: "Custom",
-    value: null,
-  },
-];
-
 export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const {
     notification,
     markNotificationReadStatus,
+    markNotificationReadStatusToggle,
     markNotificationArchivedStatus,
     setSelectedNotificationForSnooze,
     markSnoozeNotification,
@@ -101,7 +78,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         ) : (
           <div className="w-12 h-12 bg-custom-background-80 rounded-full flex justify-center items-center">
             <span className="text-custom-text-100 font-medium text-lg">
-              {notification.triggered_by_details.first_name[0].toUpperCase()}
+              {notification.triggered_by_details.first_name?.[0] ? (
+                notification.triggered_by_details.first_name?.[0]?.toUpperCase()
+              ) : (
+                <Icon iconName="person" className="h-6 w-6" />
+              )}
             </span>
           </div>
         )}
@@ -180,7 +161,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             name: notification.read_at ? "Mark as unread" : "Mark as read",
             icon: "chat_bubble",
             onClick: () => {
-              markNotificationReadStatus(notification.id).then(() => {
+              markNotificationReadStatusToggle(notification.id).then(() => {
                 setToastAlert({
                   title: notification.read_at
                     ? "Notification marked as unread"

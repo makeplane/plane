@@ -26,6 +26,8 @@ import emptyProject from "public/empty-state/project.svg";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const ProjectsPage: NextPage = () => {
   // router
@@ -44,7 +46,10 @@ const ProjectsPage: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Projects`} />
+          <BreadcrumbItem
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Projects`}
+            unshrinkTitle={false}
+          />
         </Breadcrumbs>
       }
       right={
@@ -106,13 +111,15 @@ const ProjectsPage: NextPage = () => {
               image={emptyProject}
               title="No projects yet"
               description="Get started by creating your first project"
-              buttonText="New Project"
-              buttonIcon={<PlusIcon className="h-4 w-4" />}
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "p",
-                });
-                document.dispatchEvent(e);
+              primaryButton={{
+                icon: <PlusIcon className="h-4 w-4" />,
+                text: "New Project",
+                onClick: () => {
+                  const e = new KeyboardEvent("keydown", {
+                    key: "p",
+                  });
+                  document.dispatchEvent(e);
+                },
               }}
             />
           )}

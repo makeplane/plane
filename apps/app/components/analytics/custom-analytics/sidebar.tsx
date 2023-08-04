@@ -227,12 +227,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                               </span>
                             ) : project.icon_prop ? (
                               <div className="h-6 w-6 grid place-items-center flex-shrink-0">
-                                <span
-                                  style={{ color: project.icon_prop.color }}
-                                  className="material-symbols-rounded text-lg"
-                                >
-                                  {project.icon_prop.name}
-                                </span>
+                                {renderEmoji(project.icon_prop)}
                               </div>
                             ) : (
                               <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
@@ -342,12 +337,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                       </div>
                     ) : projectDetails?.icon_prop ? (
                       <div className="h-6 w-6 grid place-items-center flex-shrink-0">
-                        <span
-                          style={{ color: projectDetails.icon_prop.color }}
-                          className="material-symbols-rounded text-lg"
-                        >
-                          {projectDetails.icon_prop.name}
-                        </span>
+                        {renderEmoji(projectDetails.icon_prop)}
                       </div>
                     ) : (
                       <span className="grid h-6 w-6 mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">

@@ -96,16 +96,16 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
   return (
     <div className="relative">
       <form
-        className="flex flex-col items-center justify-between rounded border-2 border-custom-border-200 p-2"
+        className="relative flex flex-col items-center justify-between h-32 rounded border-2 border-custom-border-200 p-2"
         onSubmit={handleSubmit(createPageBlock)}
       >
-        <div className="flex min-h-[75px] w-full">
+        <div className="flex min-h-full w-full">
           <TextArea
             id="name"
             name="name"
             placeholder="Title"
             register={register}
-            className="min-h-[20px] block max-h-24 w-full resize-none overflow-hidden border-none bg-transparent px-1 py-1 text-sm font-medium"
+            className="min-h-full block w-full resize-none overflow-hidden border-none bg-transparent px-1 py-1 text-sm font-medium"
             role="textbox"
             onKeyDown={handleKeyDown}
             maxLength={255}
@@ -113,7 +113,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
           />
         </div>
 
-        <div className="flex w-full items-center justify-end gap-2 p-1">
+        <div className="absolute right-2 bottom-2 flex items-center p-1">
           <button type="submit">
             <PaperAirplaneIcon className="h-5 w-5 text-custom-text-100" />
           </button>

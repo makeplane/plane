@@ -37,8 +37,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const options = states
     ?.filter((state) => state.group === "cancelled")
@@ -53,14 +52,14 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
       ),
     }));
 
-  const multipleOptions = options.length > 1;
+  const multipleOptions = (options ?? []).length > 1;
 
   const defaultState = stateGroups && stateGroups.cancelled ? stateGroups.cancelled[0].id : null;
 
   const selectedOption = states?.find(
     (s) => s.id === projectDetails?.default_state ?? defaultState
   );
-  const currentDefaultState = states.find((s) => s.id === defaultState);
+  const currentDefaultState = states?.find((s) => s.id === defaultState);
 
   const initialValues: Partial<IProject> = {
     close_in: 1,

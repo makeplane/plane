@@ -32,6 +32,8 @@ import { IIssueLabels } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const LabelsSettings: NextPage = () => {
   // create/edit label form
@@ -103,10 +105,11 @@ const LabelsSettings: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${projectDetails?.name ?? "Project"}`}
+              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+              linkTruncate
             />
-            <BreadcrumbItem title="Labels Settings" />
+            <BreadcrumbItem title="Labels Settings" unshrinkTitle />
           </Breadcrumbs>
         }
       >
@@ -178,8 +181,10 @@ const LabelsSettings: NextPage = () => {
                       title="No labels yet"
                       description="Create labels to help organize and filter issues in you project"
                       image={emptyLabel}
-                      buttonText="Add label"
-                      onClick={newLabel}
+                      primaryButton={{
+                        text: "Add label",
+                        onClick: () => newLabel(),
+                      }}
                       isFullScreen={false}
                     />
                   )

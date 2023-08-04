@@ -10,7 +10,7 @@ from plane.utils.paginator import BasePaginator
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
-from plane.db.models import Notification, IssueAssignee, IssueSubscriber, Issue
+from plane.db.models import Notification, IssueAssignee, IssueSubscriber, Issue, WorkspaceMember
 from plane.api.serializers import NotificationSerializer
 
 
@@ -83,10 +83,13 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
             # Created issues
             if type == "created":
-                issue_ids = Issue.objects.filter(
-                    workspace__slug=slug, created_by=request.user
-                ).values_list("pk", flat=True)
-                notifications = notifications.filter(entity_identifier__in=issue_ids)
+                if WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role__lt=15).exists():
+                    notifications = Notification.objects.none()
+                else:
+                    issue_ids = Issue.objects.filter(
+                        workspace__slug=slug, created_by=request.user
+                    ).values_list("pk", flat=True)
+                    notifications = notifications.filter(entity_identifier__in=issue_ids)
 
             # Pagination
             if request.GET.get("per_page", False) and request.GET.get("cursor", False):

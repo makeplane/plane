@@ -47,7 +47,7 @@ type Props = {
 
 const defaultValues: Partial<IProject> = {
   cover_image:
-    "https://images.unsplash.com/photo-1575116464504-9e7652fddcb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODUyNTV8MHwxfHNlYXJjaHwxOHx8cGxhbmV8ZW58MHx8fHwxNjgxNDY4NTY5&ixlib=rb-4.0.3&q=80&w=1080",
+    "https://images.unsplash.com/photo-1531045535792-b515d59c3d1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
   description: "",
   emoji_and_icon: getRandomEmoji(),
   identifier: "",
@@ -75,7 +75,7 @@ const IsGuestCondition: React.FC<{
 };
 
 export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user }) => {
-  const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
+  const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
 
   const { setToastAlert } = useToast();
 
@@ -98,18 +98,9 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
     reValidateMode: "onChange",
   });
 
-  const projectName = watch("name");
-  const projectIdentifier = watch("identifier");
-
-  useEffect(() => {
-    if (projectName && isChangeIdentifierRequired)
-      setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
-  }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
-
-  useEffect(() => () => setIsChangeIdentifierRequired(true), [isOpen]);
-
   const handleClose = () => {
     setIsOpen(false);
+    setIsChangeInIdentifierRequired(true);
     reset(defaultValues);
   };
 
@@ -145,6 +136,29 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
           })
         );
       });
+  };
+
+  const changeIdentifierOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isChangeInIdentifierRequired) return;
+
+    if (e.target.value === "") setValue("identifier", "");
+    else
+      setValue(
+        "identifier",
+        e.target.value
+          .replace(/[^a-zA-Z0-9]/g, "")
+          .toUpperCase()
+          .substring(0, 5)
+      );
+  };
+
+  const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+
+    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
+
+    setValue("identifier", alphanumericValue.toUpperCase());
+    setIsChangeInIdentifierRequired(false);
   };
 
   const options = workspaceMembers?.map((member) => ({
@@ -199,7 +213,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="transform rounded-lg bg-custom-background-100 text-left shadow-xl transition-all p-3 w-full sm:w-3/5 lg:w-1/2 xl:w-2/5">
-                <div className="group relative h-36 w-full rounded-lg bg-custom-background-80">
+                <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
                   {watch("cover_image") !== null && (
                     <img
                       src={watch("cover_image")!}
@@ -213,7 +227,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                       <XMarkIcon className="h-5 w-5 text-white" />
                     </button>
                   </div>
-                  <div className="hidden group-hover:block absolute bottom-2 right-2">
+                  <div className="absolute bottom-2 right-2">
                     <ImagePickerPopover
                       label="Change Cover"
                       onChange={(image) => {
@@ -230,20 +244,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                         <EmojiIconPicker
                           label={
                             <div className="h-[44px] w-[44px] grid place-items-center rounded-md bg-custom-background-80 outline-none text-lg">
-                              {value ? (
-                                typeof value === "object" ? (
-                                  <span
-                                    style={{ color: value.color }}
-                                    className="material-symbols-rounded text-lg"
-                                  >
-                                    {value.name}
-                                  </span>
-                                ) : (
-                                  renderEmoji(value)
-                                )
-                              ) : (
-                                "Icon"
-                              )}
+                              {value ? renderEmoji(value) : "Icon"}
                             </div>
                           }
                           onChange={onChange}
@@ -265,6 +266,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                           name="name"
                           type="name"
                           placeholder="Project Title"
+                          onChange={changeIdentifierOnNameChange}
                           error={errors.name}
                           register={register}
                           validations={{
@@ -287,11 +289,12 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                           placeholder="Identifier"
                           error={errors.identifier}
                           register={register}
-                          onChange={() => setIsChangeIdentifierRequired(false)}
+                          onChange={handleIdentifierChange}
                           validations={{
                             required: "Identifier is required",
                             validate: (value) =>
-                              /^[A-Z]+$/.test(value) || "Identifier must be in uppercase.",
+                              /^[A-Z0-9]+$/.test(value.toUpperCase()) ||
+                              "Identifier must be in uppercase.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
@@ -307,7 +310,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                         <TextArea
                           id="description"
                           name="description"
-                          className="text-sm !h-[8rem]"
+                          className="text-sm !h-24"
                           placeholder="Description..."
                           error={errors.description}
                           register={register}
@@ -324,6 +327,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                             <CustomSelect
                               value={value}
                               onChange={onChange}
+                              buttonClassName="border-[0.5px] !px-2 shadow-md"
                               label={
                                 <div className="flex items-center gap-2 -mb-0.5 py-1">
                                   {currentNetwork ? (
@@ -366,6 +370,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                                 value={value}
                                 onChange={onChange}
                                 options={options}
+                                buttonClassName="!px-2 shadow-md"
                                 label={
                                   <div className="flex items-center justify-center gap-2 py-[1px]">
                                     {value ? (

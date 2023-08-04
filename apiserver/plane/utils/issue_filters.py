@@ -12,6 +12,18 @@ def filter_state(params, filter, method):
     return filter
 
 
+def filter_state_group(params, filter, method):
+    if method == "GET":
+        state_group = params.get("state_group").split(",")
+        if len(state_group) and "" not in state_group:
+            filter["state__group__in"] = state_group
+    else:
+        if params.get("state_group", None) and len(params.get("state_group")):
+            filter["state__group__in"] = params.get("state_group")
+    return filter
+
+
+
 def filter_estimate_point(params, filter, method):
     if method == "GET":
         estimate_points = params.get("estimate_point").split(",")
@@ -212,6 +224,7 @@ def filter_issue_state_type(params, filter, method):
     return filter
 
 
+
 def filter_project(params, filter, method):
     if method == "GET":
         projects = params.get("project").split(",")
@@ -268,11 +281,24 @@ def filter_sub_issue_toggle(params, filter, method):
     return filter
 
 
+def filter_subscribed_issues(params, filter, method):
+    if method == "GET":
+        subscribers = params.get("subscriber").split(",")
+        if len(subscribers) and "" not in subscribers:
+            filter["issue_subscribers__subscriber_id__in"] = subscribers
+    else:
+        if params.get("subscriber", None) and len(params.get("subscriber")):
+            filter["issue_subscribers__subscriber_id__in"] = params.get("subscriber")
+    return filter
+
+
 def issue_filters(query_params, method):
     filter = dict()
+    print(query_params)
 
     ISSUE_FILTER = {
         "state": filter_state,
+        "state_group": filter_state_group,
         "estimate_point": filter_estimate_point,
         "priority": filter_priority,
         "parent": filter_parent,
@@ -291,6 +317,7 @@ def issue_filters(query_params, method):
         "module": filter_module,
         "inbox_status": filter_inbox_status,
         "sub_issue": filter_sub_issue_toggle,
+        "subscriber":  filter_subscribed_issues,
     }
 
     for key, value in ISSUE_FILTER.items():

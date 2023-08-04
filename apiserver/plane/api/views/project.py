@@ -5,7 +5,7 @@ from datetime import datetime
 # Django imports
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Q, Exists, OuterRef, Func, F
+from django.db.models import Q, Exists, OuterRef, Func, F, Min, Subquery
 from django.core.validators import validate_email
 from django.conf import settings
 
@@ -120,10 +120,16 @@ class ProjectViewSet(BaseViewSet):
                 project_id=OuterRef("pk"),
                 workspace__slug=self.kwargs.get("slug"),
             )
+            sort_order_query = ProjectMember.objects.filter(
+                member=request.user,
+                project_id=OuterRef("pk"),
+                workspace__slug=self.kwargs.get("slug"),
+            ).values("sort_order")
             projects = (
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
-                .order_by("-is_favorite", "name")
+                .annotate(sort_order=Subquery(sort_order_query))
+                .order_by("sort_order", "name")
                 .annotate(
                     total_members=ProjectMember.objects.filter(
                         project_id=OuterRef("id")
@@ -170,7 +176,7 @@ class ProjectViewSet(BaseViewSet):
                 serializer.save()
 
                 # Add the user as Administrator to the project
-                ProjectMember.objects.create(
+                project_member = ProjectMember.objects.create(
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
 
@@ -232,9 +238,11 @@ class ProjectViewSet(BaseViewSet):
                     ]
                 )
 
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                data = serializer.data
+                data["sort_order"] = project_member.sort_order
+                return Response(data, status=status.HTTP_201_CREATED)
             return Response(
-                [serializer.errors[error][0] for error in serializer.errors],
+                serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except IntegrityError as e:
@@ -592,17 +600,36 @@ class AddMemberToProjectEndpoint(BaseAPIView):
                     {"error": "Atleast one member is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            bulk_project_members = []
 
-            project_members = ProjectMember.objects.bulk_create(
-                [
+            project_members = (
+                ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    member_id__in=[member.get("member_id") for member in members],
+                )
+                .values("member_id", "sort_order")
+                .order_by("sort_order")
+            )
+
+            for member in members:
+                sort_order = [
+                    project_member.get("sort_order")
+                    for project_member in project_members
+                    if str(project_member.get("member_id"))
+                    == str(member.get("member_id"))
+                ]
+                bulk_project_members.append(
                     ProjectMember(
                         member_id=member.get("member_id"),
                         role=member.get("role", 10),
                         project_id=project_id,
                         workspace_id=project.workspace_id,
+                        sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
                     )
-                    for member in members
-                ],
+                )
+
+            project_members = ProjectMember.objects.bulk_create(
+                bulk_project_members,
                 batch_size=10,
                 ignore_conflicts=True,
             )
@@ -844,11 +871,15 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 
             view_props = project_member.view_props
             default_props = project_member.default_props
+            preferences = project_member.preferences
+            sort_order = project_member.sort_order
 
             project_member.view_props = request.data.get("view_props", view_props)
             project_member.default_props = request.data.get(
                 "default_props", default_props
             )
+            project_member.preferences = request.data.get("preferences", preferences)
+            project_member.sort_order = request.data.get("sort_order", sort_order)
 
             project_member.save()
 

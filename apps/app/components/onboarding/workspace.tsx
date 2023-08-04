@@ -3,17 +3,25 @@ import { useState } from "react";
 // ui
 import { SecondaryButton } from "components/ui";
 // types
-import { ICurrentUserResponse, OnboardingSteps } from "types";
+import { ICurrentUserResponse, IWorkspace, TOnboardingSteps } from "types";
 // constants
 import { CreateWorkspaceForm } from "components/workspace";
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  finishOnboarding: () => Promise<void>;
+  stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
   updateLastWorkspace: () => Promise<void>;
-  stepChange: (steps: Partial<OnboardingSteps>) => Promise<void>;
+  user: ICurrentUserResponse | undefined;
+  workspaces: IWorkspace[] | undefined;
 };
 
-export const Workspace: React.FC<Props> = ({ user, updateLastWorkspace, stepChange }) => {
+export const Workspace: React.FC<Props> = ({
+  finishOnboarding,
+  stepChange,
+  updateLastWorkspace,
+  user,
+  workspaces,
+}) => {
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     slug: "",
@@ -23,10 +31,19 @@ export const Workspace: React.FC<Props> = ({ user, updateLastWorkspace, stepChan
   const completeStep = async () => {
     if (!user) return;
 
-    await stepChange({
+    const payload: Partial<TOnboardingSteps> = {
       workspace_create: true,
-    });
+    };
+
+    await stepChange(payload);
     await updateLastWorkspace();
+  };
+
+  const secondaryButtonAction = async () => {
+    if (workspaces && workspaces.length > 0) {
+      await stepChange({ workspace_create: true, workspace_invite: true, workspace_join: true });
+      await finishOnboarding();
+    } else await stepChange({ profile_complete: false, workspace_join: false });
   };
 
   return (
@@ -43,9 +60,11 @@ export const Workspace: React.FC<Props> = ({ user, updateLastWorkspace, stepChan
             default: "Continue",
           }}
           secondaryButton={
-            <SecondaryButton onClick={() => stepChange({ profile_complete: false })}>
-              Back
-            </SecondaryButton>
+            workspaces ? (
+              <SecondaryButton onClick={secondaryButtonAction}>
+                {workspaces.length > 0 ? "Skip & continue" : "Back"}
+              </SecondaryButton>
+            ) : undefined
           }
         />
       </div>

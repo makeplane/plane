@@ -47,7 +47,7 @@ export const WorkspaceSidebarMenu = () => {
   const { collapsed: sidebarCollapse } = useTheme();
 
   return (
-    <div className="w-full cursor-pointer space-y-2 px-4 mt-5">
+    <div className="w-full cursor-pointer space-y-2 px-4 mt-5 pb-5">
       {workspaceLinks(workspaceSlug as string).map((link, index) => {
         const isActive =
           link.name === "Settings"

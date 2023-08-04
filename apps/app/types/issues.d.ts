@@ -1,3 +1,4 @@
+import { KeyedMutator } from "swr";
 import type {
   IState,
   IUser,
@@ -8,6 +9,7 @@ import type {
   IProjectLite,
   IWorkspaceLite,
   IStateLite,
+  TStateGroups,
 } from "types";
 
 export interface IIssueCycle {
@@ -30,19 +32,6 @@ export interface IIssueModule {
   issue: string;
   module: string;
   module_detail: IModule;
-  project: string;
-  updated_at: Date;
-  updated_by: string;
-  workspace: string;
-}
-
-export interface IIssueCycle {
-  created_at: Date;
-  created_by: string;
-  cycle: string;
-  cycle_detail: ICycle;
-  id: string;
-  issue: string;
   project: string;
   updated_at: Date;
   updated_by: string;
@@ -198,18 +187,26 @@ export interface IIssueActivity {
   created_by: string;
   field: string | null;
   id: string;
-  issue: string;
+  issue: string | null;
   issue_comment: string | null;
+  issue_detail: {
+    description: any;
+    description_html: string;
+    id: string;
+    name: string;
+    priority: string | null;
+    sequence_id: string;
+  } | null;
   new_identifier: string | null;
   new_value: string | null;
   old_identifier: string | null;
   old_value: string | null;
   project: string;
+  project_detail: IProjectLite;
   updated_at: Date;
   updated_by: string;
   verb: string;
   workspace: string;
-  workspace_detail: IWorkspaceLite;
 }
 
 export interface IIssueComment extends IIssueActivity {
@@ -231,16 +228,22 @@ export interface IIssueFilterOptions {
   assignees: string[] | null;
   target_date: string[] | null;
   state: string[] | null;
+  state_group: TStateGroups[] | null;
   labels: string[] | null;
-  issue__assignees__id: string[] | null;
-  issue__labels__id: string[] | null;
   priority: string[] | null;
   created_by: string[] | null;
 }
 
 export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
-export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
+export type TIssueGroupByOptions =
+  | "state"
+  | "priority"
+  | "labels"
+  | "created_by"
+  | "state_detail.group"
+  | "project"
+  | null;
 
 export type TIssueOrderByOptions =
   | "-created_at"
@@ -278,4 +281,21 @@ export interface IIssueAttachment {
   updated_at: string;
   updated_by: string;
   workspace: string;
+}
+
+export interface IIssueViewProps {
+  groupedIssues: { [key: string]: IIssue[] } | undefined;
+  groupByProperty: TIssueGroupByOptions;
+  isEmpty: boolean;
+  issueView: TIssueViewOptions;
+  mutateIssues: KeyedMutator<
+    | IIssue[]
+    | {
+        [key: string]: IIssue[];
+      }
+  >;
+  orderBy: TIssueOrderByOptions;
+  params: any;
+  properties: Properties;
+  showEmptyGroups: boolean;
 }

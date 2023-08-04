@@ -1,5 +1,6 @@
 // services
 import APIService from "services/api.service";
+import { ICurrentUserResponse } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -32,7 +33,11 @@ class AuthService extends APIService {
       });
   }
 
-  async socialAuth(data: any) {
+  async socialAuth(data: any): Promise<{
+    access_token: string;
+    refresh_toke: string;
+    user: ICurrentUserResponse;
+  }> {
     return this.post("/api/social-auth/", data, { headers: {} })
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
