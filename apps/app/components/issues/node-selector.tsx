@@ -14,6 +14,7 @@ import {
 import { Dispatch, FC, SetStateAction } from "react";
 
 import { BubbleMenuItem } from "./EditorBubbleMenu";
+import { cn } from "./utils";
 
 interface NodeSelectorProps {
   editor: Editor;
@@ -32,26 +33,25 @@ export const NodeSelector: FC<NodeSelectorProps> = ({
       icon: TextIcon,
       command: () =>
         editor.chain().focus().toggleNode("paragraph", "paragraph").run(),
-      // I feel like there has to be a more efficient way to do this – feel free to PR if you know how!
       isActive: () =>
         editor.isActive("paragraph") &&
         !editor.isActive("bulletList") &&
         !editor.isActive("orderedList"),
     },
     {
-      name: "Heading 1",
+      name: "H1",
       icon: Heading1,
       command: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
       isActive: () => editor.isActive("heading", { level: 1 }),
     },
     {
-      name: "Heading 2",
+      name: "H2",
       icon: Heading2,
       command: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
       isActive: () => editor.isActive("heading", { level: 2 }),
     },
     {
-      name: "Heading 3",
+      name: "H3",
       icon: Heading3,
       command: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
       isActive: () => editor.isActive("heading", { level: 3 }),
@@ -101,7 +101,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({
   return (
     <div className="relative h-full">
       <button
-        className="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-stone-600 hover:bg-stone-100 active:bg-stone-200"
+        className="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-custom-text-200 hover:bg-custom-background-80 active:bg-custom-background-80"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{activeItem?.name}</span>
@@ -109,7 +109,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({
       </button>
 
       {isOpen && (
-        <section className="fixed top-full z-[99999] mt-1 flex w-48 flex-col overflow-hidden rounded border border-stone-200 bg-white p-1 shadow-xl animate-in fade-in slide-in-from-top-1">
+        <section className="fixed top-full z-[99999] mt-1 flex w-48 flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 p-1 shadow-xl animate-in fade-in slide-in-from-top-1">
           {items.map((item, index) => (
             <button
               key={index}
@@ -117,10 +117,10 @@ export const NodeSelector: FC<NodeSelectorProps> = ({
                 item.command();
                 setIsOpen(false);
               }}
-              className="flex items-center justify-between rounded-sm px-2 py-1 text-sm text-stone-600 hover:bg-stone-100"
+              className={cn("flex items-center justify-between rounded-sm px-2 py-1 text-sm text-custom-text-200 hover:bg-gray-800 hover:text-custom-text-100", { "bg-gray-800": activeItem.name === item.name })}
             >
               <div className="flex items-center space-x-2">
-                <div className="rounded-sm border border-stone-200 p-1">
+                <div className="rounded-sm border border-custom-border-300 p-1" >
                   <item.icon className="h-3 w-3" />
                 </div>
                 <span>{item.name}</span>
@@ -129,7 +129,8 @@ export const NodeSelector: FC<NodeSelectorProps> = ({
             </button>
           ))}
         </section>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };

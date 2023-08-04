@@ -10,9 +10,16 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Highlight from "@tiptap/extension-highlight";
-
-// import SlashCommand from "./slash-command";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { lowlight } from 'lowlight/lib/core'
+import SlashCommand from "./slash-command";
 import { InputRule } from "@tiptap/core";
+
+import ts from 'highlight.js/lib/languages/typescript'
+
+import 'highlight.js/styles/github-dark.css';
+
+lowlight.registerLanguage('ts', ts)
 
 export const TiptapExtensions = [
   StarterKit.configure({
@@ -36,25 +43,23 @@ export const TiptapExtensions = [
         class: "border-l-4 border-stone-700",
       },
     },
-    codeBlock: {
-      HTMLAttributes: {
-        class:
-          "rounded-sm bg-stone-100 p-5 font-mono font-medium text-stone-800",
-      },
-    },
     code: {
       HTMLAttributes: {
         class:
-          "rounded-md bg-stone-200 px-1.5 py-1 font-mono font-medium text-stone-900",
+          "rounded-md bg-stone-200 px-1 py-1 font-mono font-medium text-stone-900",
         spellcheck: "false",
       },
     },
+    codeBlock: false,
     horizontalRule: false,
     dropcursor: {
       color: "#DBEAFE",
       width: 4,
     },
     gapcursor: false,
+  }),
+  CodeBlockLowlight.configure({
+    lowlight,
   }),
   HorizontalRule.extend({
     addInputRules() {
@@ -78,7 +83,7 @@ export const TiptapExtensions = [
     },
   }).configure({
     HTMLAttributes: {
-      class: "mt-4 mb-6 border-t border-stone-300",
+      class: "mb-6 border-t border-custom-border-400",
     },
   }),
   TiptapLink.configure({
@@ -98,11 +103,12 @@ export const TiptapExtensions = [
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
       }
-      return "Press '/' for commands, or '++' for AI autocomplete...";
+
+      return "Press '/' for commands, or 'Ctrl + Space' for AI autocomplete...";
     },
     includeChildren: true,
   }),
-  // SlashCommand,
+  SlashCommand,
   TiptapUnderline,
   TextStyle,
   Color,
