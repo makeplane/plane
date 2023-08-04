@@ -361,6 +361,12 @@ class UserWorkSpaceIssues(BaseAPIView):
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
                 )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related("actor"),
+                    )
+                )
                 .filter(**filters)
             )
 
@@ -742,6 +748,12 @@ class SubIssuesEndpoint(BaseAPIView):
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related("actor"),
+                    )
                 )
             )
 
