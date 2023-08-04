@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Image from "next/image";
 
@@ -22,6 +22,8 @@ import {
 import { Spinner } from "components/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import { useTheme } from "next-themes";
+import { ICurrentUserResponse, IUser } from "types";
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -34,6 +36,12 @@ const HomePage: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
+  const { setTheme } = useTheme();
+
+  const changeTheme = (user: IUser) => {
+    setTheme(user.theme.theme ?? "system");
+  };
+
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
       if (clientId && credential) {
@@ -43,7 +51,10 @@ const HomePage: NextPage = () => {
           clientId,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
-        if (response && response?.user) mutateUser();
+        if (response && response?.user) {
+          mutateUser();
+          changeTheme(response.user);
+        }
       } else {
         throw Error("Cant find credentials");
       }
@@ -66,7 +77,10 @@ const HomePage: NextPage = () => {
           clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
-        if (response && response?.user) mutateUser();
+        if (response && response?.user) {
+          mutateUser();
+          changeTheme(response.user);
+        }
       } else {
         throw Error("Cant find credentials");
       }
@@ -85,7 +99,10 @@ const HomePage: NextPage = () => {
       .emailLogin(formData)
       .then((response) => {
         try {
-          if (response) mutateUser();
+          if (response) {
+            mutateUser();
+            changeTheme(response.user);
+          }
         } catch (err: any) {
           setToastAlert({
             type: "error",
@@ -109,7 +126,10 @@ const HomePage: NextPage = () => {
 
   const handleEmailCodeSignIn = async (response: any) => {
     try {
-      if (response) mutateUser();
+      if (response) {
+        mutateUser();
+        changeTheme(response.user);
+      }
     } catch (err: any) {
       setToastAlert({
         type: "error",
@@ -119,6 +139,10 @@ const HomePage: NextPage = () => {
       });
     }
   };
+
+  useEffect(() => {
+    setTheme("system");
+  }, [setTheme]);
 
   return (
     <DefaultLayout>

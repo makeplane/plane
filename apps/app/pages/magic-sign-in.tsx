@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-// next imports
+
 import { useRouter } from "next/router";
+
+// next-themes
+import { useTheme } from "next-themes";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // services
@@ -17,10 +20,16 @@ const MagicSignIn: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
-  const { user, isLoading, mutateUser } = useUserAuth("sign-in");
+  const { setTheme } = useTheme();
+
+  const { mutateUser } = useUserAuth("sign-in");
 
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [errorSigningIn, setErrorSignIn] = useState<string | undefined>();
+
+  useEffect(() => {
+    setTheme("system");
+  }, [setTheme]);
 
   useEffect(() => {
     setIsSigningIn(() => false);

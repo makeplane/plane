@@ -70,7 +70,8 @@ const useCommentReaction = (
 
     mutateCommentReactions(
       (prevData) =>
-        prevData?.filter((r) => r.actor !== user?.user?.id || r.reaction !== reaction) || []
+        prevData?.filter((r) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
+      false
     );
 
     await reactionService.deleteIssueCommentReaction(

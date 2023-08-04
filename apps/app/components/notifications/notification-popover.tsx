@@ -38,6 +38,7 @@ export const NotificationPopover = () => {
     notificationMutate,
     markNotificationArchivedStatus,
     markNotificationReadStatus,
+    markNotificationAsRead,
     markSnoozeNotification,
     notificationCount,
     totalNotificationCount,
@@ -128,7 +129,8 @@ export const NotificationPopover = () => {
                               key={notification.id}
                               notification={notification}
                               markNotificationArchivedStatus={markNotificationArchivedStatus}
-                              markNotificationReadStatus={markNotificationReadStatus}
+                              markNotificationReadStatus={markNotificationAsRead}
+                              markNotificationReadStatusToggle={markNotificationReadStatus}
                               setSelectedNotificationForSnooze={setSelectedNotificationForSnooze}
                               markSnoozeNotification={markSnoozeNotification}
                             />

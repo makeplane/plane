@@ -12,11 +12,13 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { CustomMenu, PrimaryButton } from "components/ui";
+import { CustomMenu, EmptyState, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { StackedLayersIcon } from "components/icons";
+// images
+import emptyView from "public/empty-state/view.svg";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // fetch-keys
@@ -40,7 +42,7 @@ const SingleView: React.FC = () => {
       : null
   );
 
-  const { data: viewDetails } = useSWR(
+  const { data: viewDetails, error } = useSWR(
     workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
     workspaceSlug && projectId && viewId
       ? () =>
@@ -101,9 +103,21 @@ const SingleView: React.FC = () => {
           </div>
         }
       >
-        <div className="h-full w-full flex flex-col">
-          <IssuesView />
-        </div>
+        {error ? (
+          <EmptyState
+            image={emptyView}
+            title="View does not exist"
+            description="The view you are looking for does not exist or has been deleted."
+            primaryButton={{
+              text: "View other views",
+              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
+            }}
+          />
+        ) : (
+          <div className="h-full w-full flex flex-col">
+            <IssuesView />
+          </div>
+        )}
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );
