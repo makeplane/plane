@@ -79,7 +79,7 @@ class AnalyticsEndpoint(BaseAPIView):
                 )
 
             assignee_details = {}
-            if x_axis in ["assignees__display_name"] or segment in ["assignees__display_name"]:
+            if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
                 assignee_details = (
                     Issue.issue_objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
                     .order_by("assignees__id")
