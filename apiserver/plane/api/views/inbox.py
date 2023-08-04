@@ -22,6 +22,7 @@ from plane.db.models import (
     IssueLink,
     IssueAttachment,
     ProjectMember,
+    ProjectDeployBoard,
 )
 from plane.api.serializers import (
     IssueSerializer,
@@ -394,14 +395,15 @@ class InboxIssuePublicViewSet(BaseViewSet):
             .filter(
                 Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
                 inbox_id=self.kwargs.get("inbox_id"),
             )
             .select_related("issue", "workspace", "project")
         )
 
-    def list(self, request, slug, project_id, inbox_id):
+    def list(self, request, slug, anchor, inbox_id):
         try:
+            project_id = ProjectDeployBoard.objects.get(workspace__slug=slug, anchor=anchor)
+
             filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.objects.filter(
@@ -448,7 +450,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 issues_data,
                 status=status.HTTP_200_OK,
             )
-
+        except ProjectDeployBoard.DoesNotExist:
+            return Response({"error": "Project Deploy Board does not exist"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             capture_exception(e)
             return Response(
