@@ -43,6 +43,7 @@ class UserLiteSerializer(BaseSerializer):
             "avatar",
             "is_bot",
             "display_name",
+            "email",
         ]
         read_only_fields = [
             "id",
