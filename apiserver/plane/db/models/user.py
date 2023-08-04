@@ -20,14 +20,6 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 
-def generate_display_name(instance):
-    return (
-        instance.email.split("@")[0]
-        if len(instance.email.split("@"))
-        else "".join(random.choice(string.ascii_letters) for _ in range(6))
-    )
-
-
 def get_default_onboarding():
     return {
         "profile_complete": False,
@@ -92,7 +84,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=300, null=True, blank=True)
     is_bot = models.BooleanField(default=False)
     theme = models.JSONField(default=dict)
-    display_name = models.CharField(max_length=255, default=generate_display_name)
+    display_name = models.CharField(max_length=255)
     is_tour_completed = models.BooleanField(default=False)
     onboarding_step = models.JSONField(default=get_default_onboarding)
 
@@ -120,7 +112,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.token_updated_at = timezone.now()
 
         if not self.display_name:
-            self.display_name = generate_display_name(self)
+            self.display_name = (
+                self.email.split("@")[0]
+                if len(self.email.split("@"))
+                else "".join(random.choice(string.ascii_letters) for _ in range(6))
+            )
 
         if self.is_superuser:
             self.is_staff = True
