@@ -1,6 +1,5 @@
-import Placeholder from '@tiptap/extension-placeholder';
 import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { useDebouncedCallback } from 'use-debounce';
 import { EditorBubbleMenu } from './EditorBubbleMenu';
 import { TiptapExtensions } from './extensions';
 import { TiptapEditorProps } from "./props";
@@ -10,20 +9,28 @@ type TiptapProps = {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
+  onChange?: (json: any, html: string) => void;
+  setIsSubmitting?: (isSubmitting: boolean) => void;
 }
 
-const Tiptap = ({ value, noBorder, borderOnFocus, customClassName }: TiptapProps) => {
+const Tiptap = ({ onChange, setIsSubmitting, value, noBorder, borderOnFocus, customClassName }: TiptapProps) => {
   const editor = useEditor({
     editorProps: TiptapEditorProps,
     extensions: TiptapExtensions,
-    // extensions: [
-    //   StarterKit,
-    //   Placeholder.configure({
-    //     placeholder: 'Description...',
-    //   })
-    // ],
     content: value,
+    onUpdate: async ({ editor }) => {
+      setIsSubmitting(true);
+      debouncedUpdates({ onChange, editor });
+    }
   });
+
+  const debouncedUpdates = useDebouncedCallback(async ({ onChange, editor }) => {
+    setTimeout(async () => {
+      if (onChange) {
+        onChange(editor.getJSON(), editor.getHTML());
+      }
+    }, 500);
+  }, 1000);
 
   const editorClassNames = `mt-2 p-3 relative focus:outline-none rounded-md focus:border-custom-border-200 
       ${noBorder ? '' : 'border border-custom-border-200'
