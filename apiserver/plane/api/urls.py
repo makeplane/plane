@@ -168,6 +168,7 @@ from plane.api.views import (
     ProjectDeployBoardPublicEndpoint,
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
+    InboxIssuePublicViewSet,
     ## End Public Boards
 )
 
@@ -1493,7 +1494,12 @@ urlpatterns = [
         name="project-deploy-board",
     ),
     path(
-        "workspaces/<str:slug>/project-boards/<str:anchor>/issues/<uuid:issue_id>/comments/",
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/",
+        ProjectDeployBoardPublicEndpoint.as_view(),
+        name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/comments/",
         IssueCommentPublicViewSet.as_view(
             {
                 "get": "list",
@@ -1503,7 +1509,7 @@ urlpatterns = [
         name="issue-comments-project-board",
     ),
     path(
-        "workspaces/<str:slug>/project-boards/<str:anchor>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
         IssueCommentPublicViewSet.as_view(
             {
                 "get": "retrieve",
@@ -1514,12 +1520,7 @@ urlpatterns = [
         name="issue-comments-project-board",
     ),
     path(
-        "workspaces/<str:slug>/project-board/<str:anchor>/",
-        ProjectDeployBoardPublicEndpoint.as_view(),
-        name="project-deploy-board",
-    ),
-    path(
-        "workspaces/<str:slug>/project-boards/<str:anchor>/issues/<uuid:issue_id>/reactions/",
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/reactions/",
         IssueReactionPublicViewSet.as_view(
             {
                 "get": "list",
@@ -1529,7 +1530,7 @@ urlpatterns = [
         name="issue-reactions-project-board",
     ),
     path(
-        "workspaces/<str:slug>/project-boards/<str:anchor>/issues/<uuid:issue_id>/reactions/<str:reaction_code>/",
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/reactions/<str:reaction_code>/",
         IssueReactionPublicViewSet.as_view(
             {
                 "delete": "destroy",
@@ -1538,7 +1539,7 @@ urlpatterns = [
         name="issue-reactions-project-board",
     ),
     path(
-        "workspaces/<str:slug>/project-boards/<str:anchor>/comments/<uuid:comment_id>/reactions/",
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/comments/<uuid:comment_id>/reactions/",
         CommentReactionPublicViewSet.as_view(
             {
                 "get": "list",
@@ -1548,13 +1549,34 @@ urlpatterns = [
         name="comment-reactions-project-board",
     ),
     path(
-        "workspaces/<str:slug>/project-boards/<str:anchor>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
         CommentReactionPublicViewSet.as_view(
             {
                 "delete": "destroy",
             }
         ),
         name="comment-reactions-project-board",
+    ),
+    path(
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/",
+        InboxIssueViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="inbox-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/project-boards/<uuid:project_id>/inboxes/<uuid:inbox_id>/inbox-issues/<uuid:pk>/",
+        InboxIssueViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="inbox-issue",
     ),
     ## End Public Boards
 ]

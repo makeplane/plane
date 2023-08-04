@@ -34,12 +34,9 @@ def get_default_props():
         "showEmptyGroups": True,
     }
 
+
 def get_default_preferences():
-    return {
-        "pages": {
-            "block_display": True
-        }
-    }
+    return {"pages": {"block_display": True}}
 
 
 class Project(BaseModel):
@@ -160,7 +157,6 @@ class ProjectMember(ProjectBaseModel):
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
 
-
     def save(self, *args, **kwargs):
         if self._state.adding:
             smallest_sort_order = ProjectMember.objects.filter(
@@ -225,11 +221,16 @@ class ProjectFavorite(ProjectBaseModel):
 def get_anchor():
     return uuid4().hex
 
+
 class ProjectDeployBoard(ProjectBaseModel):
-    anchor = models.CharField(max_length=255, default=get_anchor, unique=True, db_index=True)
+    anchor = models.CharField(
+        max_length=255, default=get_anchor, unique=True, db_index=True
+    )
     comments = models.BooleanField(default=False)
     reactions = models.BooleanField(default=False)
-    inbox = models.BooleanField(default=False)
+    inbox = models.ForeignKey(
+        "db.Inbox", related_name="bord_inbox", on_delete=models.SET_NULL, null=True
+    )
 
     class Meta:
         unique_together = ["project", "anchor"]

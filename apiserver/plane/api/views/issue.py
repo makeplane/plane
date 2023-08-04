@@ -1458,23 +1458,36 @@ class IssueCommentPublicViewSet(BaseViewSet):
     ]
 
     def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(issue_id=self.kwargs.get("issue_id"))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("issue")
-            .distinct()
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
         )
+        if project_deploy_board.comments:
+            return self.filter_queryset(
+                super()
+                .get_queryset()
+                .filter(workspace__slug=self.kwargs.get("slug"))
+                .filter(issue_id=self.kwargs.get("issue_id"))
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("issue")
+                .distinct()
+            )
+        else:
+            return IssueComment.objects.none()
 
-    def create(self, request, slug, anchor, issue_id):
+    def create(self, request, slug, project_id, issue_id):
         try:
             project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, anchor=anchor
+                workspace__slug=slug, project_id=project_id
             )
-            project_id = project_deploy_board.project_id
+
+            if not project_deploy_board.comments:
+                return Response(
+                    {"error": "Comments are not enabled for this project"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             serializer = IssueCommentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
@@ -1493,19 +1506,26 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def partial_update(self, request, slug, anchor, issue_id, pk):
+    def partial_update(self, request, slug, project_id, issue_id, pk):
         try:
             project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, anchor=anchor
+                workspace__slug=slug, project_id=project_id
             )
-            project_id = project_deploy_board.project_id
-            comment = IssueComment.objects.get(workspace__slug=slug, pk=pk, actor=request.user)
+
+            if not project_deploy_board.comments:
+                return Response(
+                    {"error": "Comments are not enabled for this project"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            comment = IssueComment.objects.get(
+                workspace__slug=slug, pk=pk, actor=request.user
+            )
             serializer = IssueCommentSerializer(
                 comment, data=request.data, partial=True
             )
@@ -1536,20 +1556,23 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def destroy(self, request, slug, anchor, issue_id, pk):
+    def destroy(self, request, slug, project_id, issue_id, pk):
         try:
             project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, anchor=anchor
+                workspace__slug=slug, project_id=project_id
             )
-            project_id = project_deploy_board.project_id
+
+            if not project_deploy_board.comments:
+                return Response(
+                    {"error": "Comments are not enabled for this project"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             comment = IssueComment.objects.get(
                 workspace__slug=slug, pk=pk, project_id=project_id, actor=request.user
             )
             issue_activity.delay(
                 type="comment.activity.deleted",
-                requested_data=json.dumps(
-                    {"comment_id": str(pk)}
-                ),
+                requested_data=json.dumps({"comment_id": str(pk)}),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_id),
@@ -1578,21 +1601,35 @@ class IssueReactionPublicViewSet(BaseViewSet):
     model = IssueReaction
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(issue_id=self.kwargs.get("issue_id"))
-            .order_by("-created_at")
-            .distinct()
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
         )
+        if project_deploy_board.reactions:
+            return (
+                super()
+                .get_queryset()
+                .filter(workspace__slug=self.kwargs.get("slug"))
+                .filter(project_id=self.kwargs.get("project_id"))
+                .filter(issue_id=self.kwargs.get("issue_id"))
+                .order_by("-created_at")
+                .distinct()
+            )
+        else:
+            return IssueReaction.objects.none()
 
-    def create(self, request, slug, anchor, issue_id):
+    def create(self, request, slug, project_id, issue_id):
         try:
             project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, anchor=anchor
+                workspace__slug=slug, project_id=project_id
             )
-            project_id = project_deploy_board.project_id
+
+            if not project_deploy_board.reactions:
+                return Response(
+                    {"error": "Reactions are not enabled for this project board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             serializer = IssueReactionSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
@@ -1612,8 +1649,17 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def destroy(self, request, slug, anchor, issue_id, reaction_code):
+    def destroy(self, request, slug, project_id, issue_id, reaction_code):
         try:
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
+
+            if not project_deploy_board.reactions:
+                return Response(
+                    {"error": "Reactions are not enabled for this project board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             issue_reaction = IssueReaction.objects.get(
                 workspace__slug=slug,
                 issue_id=issue_id,
@@ -1640,21 +1686,35 @@ class CommentReactionPublicViewSet(BaseViewSet):
     model = CommentReaction
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(comment_id=self.kwargs.get("comment_id"))
-            .order_by("-created_at")
-            .distinct()
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
         )
+        if project_deploy_board.reactions:
+            return (
+                super()
+                .get_queryset()
+                .filter(workspace__slug=self.kwargs.get("slug"))
+                .filter(project_id=self.kwargs.get("project_id"))
+                .filter(comment_id=self.kwargs.get("comment_id"))
+                .order_by("-created_at")
+                .distinct()
+            )
+        else:
+            return CommentReaction.objects.none()
 
-    def create(self, request, slug, anchor, comment_id):
+    def create(self, request, slug, project_id, comment_id):
         try:
             project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, anchor=anchor
+                workspace__slug=slug, project_id=project_id
             )
-            project_id = project_deploy_board.project_id
+
+            if not project_deploy_board.reactions:
+                return Response(
+                    {"error": "Reactions are not enabled for this board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             serializer = CommentReactionSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
@@ -1674,12 +1734,16 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def destroy(self, request, slug, anchor, comment_id, reaction_code):
+    def destroy(self, request, slug, project_id, comment_id, reaction_code):
         try:
             project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, anchor=anchor
+                workspace__slug=slug, project_id=project_id
             )
-            project_id = project_deploy_board.project_id
+            if not project_deploy_board.reactions:
+                return Response(
+                    {"error": "Reactions are not enabled for this board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             comment_reaction = CommentReaction.objects.get(
                 project_id=project_id,

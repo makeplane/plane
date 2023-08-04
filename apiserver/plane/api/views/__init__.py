@@ -147,7 +147,7 @@ from .estimate import (
 
 from .release import ReleaseNotesEndpoint
 
-from .inbox import InboxViewSet, InboxIssueViewSet
+from .inbox import InboxViewSet, InboxIssueViewSet, InboxIssuePublicViewSet
 
 from .analytic import (
     AnalyticsEndpoint,
