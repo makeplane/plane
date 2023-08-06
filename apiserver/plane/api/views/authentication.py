@@ -391,12 +391,20 @@ class MagicSignInEndpoint(BaseAPIView):
                                 },
                             )
                     else:
-                        user = User.objects.create(
-                            email=email,
-                            username=uuid.uuid4().hex,
-                            password=make_password(uuid.uuid4().hex),
-                            is_password_autoset=True,
-                        )
+                        if settings.ENABLE_SIGNUP:
+                            user = User.objects.create(
+                                email=email,
+                                username=uuid.uuid4().hex,
+                                password=make_password(uuid.uuid4().hex),
+                                is_password_autoset=True,
+                            )
+                        else:
+                            return Response(
+                                {
+                                    "error": "The email you enter does not exist in our system. Contact the site admin to be invited."
+                                },
+                                status=status.HTTP_400_BAD_REQUEST,
+                            )
                         # Send event to Jitsu for tracking
                         if settings.ANALYTICS_BASE_API:
                             _ = requests.post(
