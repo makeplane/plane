@@ -337,7 +337,7 @@ urlpatterns = [
         name="workspace",
     ),
     path(
-        "workspaces/<str:slug>/workspace-members",
+        "workspaces/<str:slug>/workspace-members/",
         WorkspaceMembersEndpoint.as_view(),
         name="workspace-members",
     ),
