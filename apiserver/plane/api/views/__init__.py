@@ -75,6 +75,7 @@ from .issue import (
     IssueSubscriberViewSet,
     CommentReactionViewSet,
     IssueReactionViewSet,
+    ExportIssuesEndpoint
 )
 
 from .auth_extended import (
