@@ -55,8 +55,8 @@ class WorkSpaceMemberSerializer(BaseSerializer):
 
 
 class WorkspaceMemberAdminSerializer(BaseSerializer):
-    member = UserAdminLiteSerializer
-    workspace = WorkspaceLiteSerializer
+    member = UserAdminLiteSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
 
     class Meta:
         model = WorkspaceMember
