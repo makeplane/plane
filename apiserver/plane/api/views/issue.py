@@ -1458,7 +1458,7 @@ class ExportIssuesEndpoint(BaseAPIView):
         try:
 
             issue_export_task.delay(
-                email=request.user.email, data=request.data, slug=slug
+                email=request.user.email, data=request.data, slug=slug ,exporter_name=request.user.first_name
             )
 
             return Response(

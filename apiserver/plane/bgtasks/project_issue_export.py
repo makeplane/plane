@@ -1,4 +1,3 @@
-
 # Python imports
 import csv
 import io
@@ -8,6 +7,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+from django.utils import timezone
 
 # Third party imports
 from celery import shared_task
@@ -17,40 +17,70 @@ from sentry_sdk import capture_exception
 from plane.db.models import Issue
 
 @shared_task
-def issue_export_task(email, data, slug):
+def issue_export_task(email, data, slug, exporter_name):
     try:
-        project_ids = data.get("project_id")
 
-        # If project_ids is empty, fetch all issues
-        if not project_ids:
-            issues = Issue.objects.filter(workspace__slug=slug)
-        else:
-            issues = Issue.objects.filter(workspace__slug=slug, project_id__in=project_ids)
+        project_ids = data.get("project_id", [])
+        issues_filter = {"workspace__slug": slug}
+
+        if project_ids:
+            issues_filter["project_id__in"] = project_ids
+
+        issues = (
+                Issue.objects.filter(**issues_filter)
+                .select_related("project", "workspace", "state", "parent", "created_by")
+                .prefetch_related(
+                    "assignees", "labels", "issue_cycle__cycle", "issue_module__module"
+                )
+                .values_list(
+                    "project__identifier",
+                    "sequence_id",
+                    "name",
+                    "description_stripped",
+                    "priority",
+                    "start_date",
+                    "target_date",
+                    "state__name",
+                    "project__name",
+                    "created_at",
+                    "updated_at",
+                    "completed_at",
+                    "archived_at",
+                    "issue_cycle__cycle__name",
+                    "issue_cycle__cycle__start_date",
+                    "issue_cycle__cycle__end_date",
+                    "issue_module__module__name",
+                    "issue_module__module__start_date",
+                    "issue_module__module__target_date",
+                    "created_by__first_name",
+                    "created_by__last_name",
+                    "assignees__first_name",
+                    "assignees__last_name",
+                    "labels__name",
+                )
+            )
 
         # CSV header
         header = [
             "Issue ID",
+            "Project",
             "Name",
             "Description",
-            "Priority",
-            "Start Date",
-            "Target Date",
             "State",
-            "Project",
-            "Created At"
-            "Updated At"
-            "Completed At"
-            "Sort Order"
-            "Archived At"
+            "Priority",
+            "Created By",
+            "Assignee",
+            "Labels",
             "Cycle Name",
             "Cycle Start Date",
             "Cycle End Date",
             "Module Name",
             "Module Start Date",
             "Module Target Date",
-            "Created By",
-            "Assignee",
-            "Labels"
+            "Created At"
+            "Updated At"
+            "Completed At"
+            "Archived At"
         ]
 
         # Prepare the CSV data
@@ -58,49 +88,75 @@ def issue_export_task(email, data, slug):
 
         # Write data for each issue
         for issue in issues:
-            created_by_fullname = f"{issue.created_by.first_name} {issue.created_by.last_name}" if issue.created_by else ""
-            assignees_names = ", ".join([f"{assignee.first_name} {assignee.last_name}" for assignee in issue.assignees.all()])
-            labels_names = ", ".join([label.name for label in issue.labels.all()])
-
-            cycle_name, cycle_start_date, cycle_end_date = None, None, None
-            if hasattr(issue, 'issue_cycle'):
-                cycle_info = issue.issue_cycle
-                cycle_name = cycle_info.cycle.name
-                cycle_start_date = cycle_info.cycle.start_date
-                cycle_end_date = cycle_info.cycle.end_date
-
-            module_name, module_start_date, module_target_date = None, None, None
-            if hasattr(issue, 'issue_module'):
-                module_info = issue.issue_module
-                module_name = module_info.module.name
-                module_start_date = module_info.module.start_date
-                module_target_date = module_info.module.target_date
-            
-            row = [
-                str(issue.project.identifier) + "-" + str(issue.sequence_id),
-                issue.name,
-                issue.description_stripped,
-                issue.priority,
-                issue.start_date,
-                issue.target_date,
-                issue.state.name,
-                issue.project.name,
-                issue.created_at,
-                issue.updated_at,
-                issue.completed_at,
-                issue.sort_order,
-                issue.archived_at,
+            (
+                project_identifier,
+                sequence_id,
+                name,
+                description,
+                priority,
+                start_date,
+                target_date,
+                state_name,
+                project_name,
+                created_at,
+                updated_at,
+                completed_at,
+                archived_at,
                 cycle_name,
                 cycle_start_date,
                 cycle_end_date,
                 module_name,
                 module_start_date,
                 module_target_date,
+                created_by_first_name,
+                created_by_last_name,
+                assignees_first_names,
+                assignees_last_names,
+                labels_names,
+            ) = issue
+            
+            created_by_fullname = (
+                f"{created_by_first_name} {created_by_last_name}"
+                if created_by_first_name and created_by_last_name
+                else ""
+            )
+
+            assignees_names = ""
+            if assignees_first_names and assignees_last_names:
+                assignees_names = ", ".join(
+                    [
+                        f"{assignees_first_name} {assignees_last_name}"
+                        for assignees_first_name, assignees_last_name in zip(
+                            assignees_first_names, assignees_last_names
+                        )
+                    ]
+                )
+
+            labels_names = ", ".join(labels_names) if labels_names else ""
+
+            row = [
+                f"{project_identifier}-{sequence_id}",
+                project_name,
+                name,
+                description,
+                state_name,
+                priority,
                 created_by_fullname,
                 assignees_names,
-                labels_names
+                labels_names,
+                cycle_name,
+                cycle_start_date,
+                cycle_end_date,
+                module_name,
+                module_start_date,
+                module_target_date,
+                start_date,
+                target_date,
+                created_at,
+                updated_at,
+                completed_at,
+                archived_at,
             ]
-            
             rows.append(row)
 
         # Create CSV file in-memory
@@ -113,14 +169,18 @@ def issue_export_task(email, data, slug):
 
         subject = "Your Issue Export is ready"
 
-        html_content = render_to_string("emails/exports/issues.html", {})
+        context = {
+            "username": exporter_name,
+        }
+
+        html_content = render_to_string("emails/exports/issues.html", context)
         text_content = strip_tags(html_content)
 
         csv_buffer.seek(0)
         msg = EmailMultiAlternatives(
             subject, text_content, settings.EMAIL_FROM, [email]
         )
-        msg.attach(f"{slug}-issues.csv", csv_buffer.read(), "text/csv")
+        msg.attach(f"{slug}-issues-{timezone.now().date()}.csv", csv_buffer.read(), "text/csv")
         msg.send(fail_silently=False)
 
     except Exception as e:
@@ -129,4 +189,3 @@ def issue_export_task(email, data, slug):
             print(e)
         capture_exception(e)
         return
-
