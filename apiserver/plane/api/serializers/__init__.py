@@ -1,5 +1,5 @@
 from .base import BaseSerializer
-from .user import UserSerializer, UserLiteSerializer, ChangePasswordSerializer, ResetPasswordSerializer
+from .user import UserSerializer, UserLiteSerializer, ChangePasswordSerializer, ResetPasswordSerializer, UserAdminLiteSerializer
 from .workspace import (
     WorkSpaceSerializer,
     WorkSpaceMemberSerializer,
@@ -7,6 +7,7 @@ from .workspace import (
     WorkSpaceMemberInviteSerializer,
     WorkspaceLiteSerializer,
     WorkspaceThemeSerializer,
+    WorkspaceMemberAdminSerializer,
 )
 from .project import (
     ProjectSerializer,

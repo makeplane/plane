@@ -25,7 +25,7 @@ from plane.api.serializers import (
     ProjectFavoriteSerializer,
 )
 
-from plane.api.permissions import ProjectBasePermission
+from plane.api.permissions import ProjectBasePermission, ProjectEntityPermission
 
 from plane.db.models import (
     Project,
@@ -978,6 +978,26 @@ class ProjectFavoritesViewSet(BaseViewSet):
                 {"error": "Project is not in favorites"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ProjectMemberEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id):
+        try:
+            project_members = ProjectMember.objects.filter(
+                project_id=project_id, workspace__slug=slug
+            ).select_related("project", "member")
+            serializer = ProjectMemberSerializer(project_members, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
