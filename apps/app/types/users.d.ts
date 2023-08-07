@@ -38,17 +38,6 @@ export interface IUser {
   [...rest: string]: any;
 }
 
-export interface ICustomTheme {
-  background: string;
-  text: string;
-  primary: string;
-  sidebarBackground: string;
-  sidebarText: string;
-  darkPalette: boolean;
-  palette: string;
-  theme: string;
-}
-
 export interface ICurrentUserResponse extends IUser {
   assigned_issues: number;
   last_workspace_id: string | null;
@@ -157,4 +146,34 @@ export interface IUserProfileProjectSegregation {
     last_name: string;
     user_timezone: string;
   };
+}
+
+export interface ICurrentUser {
+  id: readonly string;
+  avatar: string;
+  first_name: string;
+  last_name: string;
+  username: string;
+  email: string;
+  mobile_number: string;
+  is_email_verified: boolean;
+  is_tour_completed: boolean;
+  onboarding_step: TOnboardingSteps;
+  is_onboarded: boolean;
+  role: string;
+}
+
+export interface ICustomTheme {
+  background: string;
+  text: string;
+  primary: string;
+  sidebarBackground: string;
+  sidebarText: string;
+  darkPalette: boolean;
+  palette: string;
+  theme: string;
+}
+
+export interface ICurrentUserSettings {
+  theme: ICustomTheme;
 }
