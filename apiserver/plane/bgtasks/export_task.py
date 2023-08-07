@@ -77,10 +77,10 @@ def issue_export_task(email, data, slug, exporter_name):
             "Module Name",
             "Module Start Date",
             "Module Target Date",
-            "Created At"
-            "Updated At"
-            "Completed At"
-            "Archived At"
+            "Created At",
+            "Updated At",
+            "Completed At",
+            "Archived At",
         ]
 
         # Prepare the CSV data
@@ -131,6 +131,9 @@ def issue_export_task(email, data, slug, exporter_name):
                         )
                     ]
                 )
+
+            print(assignees_names,"assignees_names")   
+            print(created_by_fullname,"created_by_fullname")
 
             labels_names = ", ".join(labels_names) if labels_names else ""
 
