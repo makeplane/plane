@@ -158,6 +158,17 @@ class ProjectServices extends APIService {
       });
   }
 
+  async projectMembersWithEmail(
+    workspaceSlug: string,
+    projectId: string
+  ): Promise<IProjectMember[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async projectMemberMe(workspaceSlug: string, projectId: string): Promise<IProjectMember> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`)
       .then((response) => response?.data)
@@ -209,6 +220,17 @@ class ProjectServices extends APIService {
   }
 
   async projectInvitations(
+    workspaceSlug: string,
+    projectId: string
+  ): Promise<IProjectMemberInvitation[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async projectInvitationsWithEmail(
     workspaceSlug: string,
     projectId: string
   ): Promise<IProjectMemberInvitation[]> {

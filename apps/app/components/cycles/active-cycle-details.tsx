@@ -361,14 +361,14 @@ export const ActiveCycleDetails: React.FC = () => {
                       height={16}
                       width={16}
                       className="rounded-full"
-                      alt={cycle.owned_by.first_name}
+                      alt={cycle.owned_by.display_name}
                     />
                   ) : (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-background-100 capitalize">
-                      {cycle.owned_by.first_name.charAt(0)}
+                      {cycle.owned_by.display_name.charAt(0)}
                     </span>
                   )}
-                  <span className="text-custom-text-200">{cycle.owned_by.first_name}</span>
+                  <span className="text-custom-text-200">{cycle.owned_by.display_name}</span>
                 </div>
 
                 {cycle.assignees.length > 0 && (

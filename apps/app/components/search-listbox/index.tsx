@@ -71,9 +71,7 @@ const SearchListbox: React.FC<Props> = ({
     } else
       return (
         <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-          {user.member.first_name && user.member.first_name !== ""
-            ? user.member.first_name.charAt(0)
-            : user.member.email.charAt(0)}
+          {user.member.display_name.charAt(0)}
         </div>
       );
   };

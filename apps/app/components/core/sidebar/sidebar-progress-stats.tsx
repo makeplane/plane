@@ -133,9 +133,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
                           avatar: assignee.avatar ?? "",
                           first_name: assignee.first_name ?? "",
                           last_name: assignee.last_name ?? "",
+                          display_name: assignee.display_name ?? "",
                         }}
                       />
-                      <span>{assignee.first_name}</span>
+                      <span>{assignee.display_name}</span>
                     </div>
                   }
                   completed={assignee.completed_issues}

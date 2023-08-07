@@ -15,6 +15,7 @@ export interface IUser {
   created_location: readonly string;
   date_joined: readonly Date;
   email: string;
+  display_name: string;
   first_name: string;
   id: readonly string;
   is_email_verified: boolean;
@@ -64,11 +65,15 @@ export interface ICurrentUserResponse extends IUser {
 export interface IUserLite {
   avatar: string;
   created_at: Date;
-  email: string;
+  display_name: string;
   first_name: string;
   readonly id: string;
   is_bot: boolean;
   last_name: string;
+}
+
+export interface IUserMemberLite extends IUserLite {
+  email: string;
 }
 
 export interface IUserActivity {
@@ -152,7 +157,7 @@ export interface IUserProfileProjectSegregation {
     avatar: string;
     cover_image: string | null;
     date_joined: Date;
-    email: string;
+    display_name: string;
     first_name: string;
     last_name: string;
     user_timezone: string;

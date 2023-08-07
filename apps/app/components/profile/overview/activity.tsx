@@ -38,21 +38,21 @@ export const ProfileActivity = () => {
                   {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
                     <img
                       src={activity.actor_detail.avatar}
-                      alt={activity.actor_detail.first_name}
+                      alt={activity.actor_detail.display_name}
                       height={24}
                       width={24}
                       className="rounded"
                     />
                   ) : (
                     <div className="grid h-6 w-6 place-items-center rounded border-2 bg-gray-700 text-xs text-white">
-                      {activity.actor_detail.first_name.charAt(0)}
+                      {activity.actor_detail.display_name?.charAt(0)}
                     </div>
                   )}
                 </div>
                 <div className="-mt-1 w-4/5 break-words">
                   <p className="text-sm text-custom-text-200">
                     <span className="font-medium text-custom-text-100">
-                      {activity.actor_detail.first_name} {activity.actor_detail.last_name}{" "}
+                      {activity.actor_detail.display_name}{" "}
                     </span>
                     {activity.field ? (
                       <ActivityMessage activity={activity} showIssue />

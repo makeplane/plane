@@ -2,7 +2,7 @@ import type {
   IIssueFilterOptions,
   IProjectMember,
   IUser,
-  IUserLite,
+  IUserMemberLite,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueViewOptions,
@@ -73,9 +73,8 @@ export interface IWorkspaceViewProps {
 
 export interface IWorkspaceMember {
   readonly id: string;
-  user: IUserLite;
   workspace: IWorkspace;
-  member: IUserLite;
+  member: IUserMemberLite;
   role: 5 | 10 | 15 | 20;
   company_role: string | null;
   view_props: IWorkspaceViewProps;

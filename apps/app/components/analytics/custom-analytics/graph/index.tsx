@@ -70,17 +70,17 @@ export const AnalyticsGraph: React.FC<Props> = ({
       height={fullScreen ? "400px" : "300px"}
       margin={{
         right: 20,
-        bottom: params.x_axis === "assignees__email" ? 50 : longestXAxisLabel.length * 5 + 20,
+        bottom: params.x_axis === "assignees__id" ? 50 : longestXAxisLabel.length * 5 + 20,
       }}
       axisBottom={{
         tickSize: 0,
         tickPadding: 10,
         tickRotation: barGraphData.data.length > 7 ? -45 : 0,
         renderTick:
-          params.x_axis === "assignees__email"
+          params.x_axis === "assignees__id"
             ? (datum) => {
                 const avatar = analytics.extras.assignee_details?.find(
-                  (a) => a?.assignees__email === datum?.value
+                  (a) => a?.assignees__display_name === datum?.value
                 )?.assignees__avatar;
 
                 if (avatar && avatar !== "")
