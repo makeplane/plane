@@ -49,6 +49,7 @@
     "react-hook-form": "^7.38.0",
     "react-markdown": "^8.0.7",
     "remirror": "^2.0.23",
+    "sharp": "^0.32.1",
     "swr": "^2.1.3",
     "tlds": "^1.238.0",
     "uuid": "^9.0.0"
