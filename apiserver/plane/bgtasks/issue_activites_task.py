@@ -358,7 +358,7 @@ def track_assignees(
                         project=project,
                         workspace=project.workspace,
                         comment=f"added assignee {assignee.display_name}",
-                        new_identifier=assignee,
+                        new_identifier=assignee.id,
                     )
                 )
 
@@ -380,7 +380,7 @@ def track_assignees(
                         project=project,
                         workspace=project.workspace,
                         comment=f"removed assignee {assignee.display_name}",
-                        old_identifier=assignee,
+                        old_identifier=assignee.id,
                     )
                 )
 
