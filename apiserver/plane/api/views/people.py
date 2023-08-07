@@ -34,12 +34,6 @@ class UserEndpoint(BaseViewSet):
             workspace = Workspace.objects.get(
                 pk=request.user.last_workspace_id, workspace_member__member=request.user
             )
-            workspace_invites = WorkspaceMemberInvite.objects.filter(
-                email=request.user.email
-            ).count()
-            assigned_issues = Issue.issue_objects.filter(
-                assignees__in=[request.user]
-            ).count()
 
             serialized_data = UserSerializer(request.user).data
             serialized_data["workspace"] = {
@@ -47,11 +41,7 @@ class UserEndpoint(BaseViewSet):
                 "last_workspace_slug": workspace.slug,
                 "fallback_workspace_id": request.user.last_workspace_id,
                 "fallback_workspace_slug": workspace.slug,
-                "invites": workspace_invites,
             }
-            serialized_data.setdefault("issues", {})[
-                "assigned_issues"
-            ] = assigned_issues
 
             return Response(
                 serialized_data,
@@ -59,13 +49,6 @@ class UserEndpoint(BaseViewSet):
             )
         except Workspace.DoesNotExist:
             # This exception will be hit even when the `last_workspace_id` is None
-
-            workspace_invites = WorkspaceMemberInvite.objects.filter(
-                email=request.user.email
-            ).count()
-            assigned_issues = Issue.issue_objects.filter(
-                assignees__in=[request.user]
-            ).count()
 
             fallback_workspace = (
                 Workspace.objects.filter(workspace_member__member=request.user)
@@ -84,11 +67,7 @@ class UserEndpoint(BaseViewSet):
                 "fallback_workspace_slug": fallback_workspace.slug
                 if fallback_workspace is not None
                 else None,
-                "invites": workspace_invites,
             }
-            serialized_data.setdefault("issues", {})[
-                "assigned_issues"
-            ] = assigned_issues
 
             return Response(
                 serialized_data,
@@ -100,6 +79,7 @@ class UserEndpoint(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
 
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
