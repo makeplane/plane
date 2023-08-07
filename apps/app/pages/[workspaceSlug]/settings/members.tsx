@@ -218,12 +218,14 @@ const MembersSettings: NextPage = () => {
                         <div>
                           {member.member ? (
                             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-                              <a className="text-sm">{member.display_name}</a>
+                              <a className="text-sm">{member.display_name || member.email}</a>
                             </Link>
                           ) : (
                             <h4 className="text-sm">{member.display_name}</h4>
                           )}
-                          <p className="text-xs text-custom-text-200">{member.display_name}</p>
+                          <p className="text-xs text-custom-text-200">
+                            {member.display_name || member.email}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
