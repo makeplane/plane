@@ -1,4 +1,5 @@
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, generateText } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import { useDebouncedCallback } from 'use-debounce';
 import { EditorBubbleMenu } from './EditorBubbleMenu';
 import { TiptapExtensions } from './extensions';
@@ -10,7 +11,7 @@ type TiptapProps = {
   borderOnFocus?: boolean;
   customClassName?: string;
   onChange?: (json: any, html: string) => void;
-  setIsSubmitting?: (isSubmitting: boolean) => void;
+  setIsSubmitting: (isSubmitting: boolean) => void;
 }
 
 const Tiptap = ({ onChange, setIsSubmitting, value, noBorder, borderOnFocus, customClassName }: TiptapProps) => {
@@ -45,7 +46,9 @@ const Tiptap = ({ onChange, setIsSubmitting, value, noBorder, borderOnFocus, cus
       className={`tiptap-editor-container relative min-h-[150px] ${editorClassNames}`}
     >
       {editor && <EditorBubbleMenu editor={editor} />}
-      <EditorContent editor={editor} />
+      <div className="pt-8">
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 };

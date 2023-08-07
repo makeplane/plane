@@ -82,7 +82,7 @@ export const CommandPalette: React.FC = () => {
         !(e.target instanceof HTMLTextAreaElement) &&
         !(e.target instanceof HTMLInputElement) &&
         // !(e.target as Element).classList?.contains("remirror-editor") &&
-        !(e.target as Element).closest(".tiptap-editor-container")
+        !(e.target as Element)?.closest(".tiptap-editor-container")
       ) {
         if ((ctrlKey || metaKey) && keyPressed === "k") {
           e.preventDefault();

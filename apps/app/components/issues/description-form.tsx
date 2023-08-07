@@ -111,7 +111,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
       <span>{errors.name ? errors.name.message : null}</span>
       <div className="relative">
         <Controller
-          name="description"
+          name="description_html"
           control={control}
           render={({ field: { value, onChange } }) => {
             if (!value && !watch("description_html")) return <></>;
@@ -125,8 +125,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
                 }
                 setIsSubmitting={setIsSubmitting}
                 onChange={(description: Object, description_html: string) => {
-                  onChange(description);
-                  setValue("description_html", description_html);
+                  onChange(description_html);
+                  // setValue("description_html", description_html);
+                  setValue("description", description);
                   handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting(false));
                 }}
               />

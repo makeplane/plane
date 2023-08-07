@@ -104,7 +104,7 @@ export const TiptapExtensions = [
         return `Heading ${node.attrs.level}`;
       }
 
-      return "Press '/' for commands, or 'Ctrl + Space' for AI autocomplete...";
+      return "Press '/' for commands...";
     },
     includeChildren: true,
   }),
@@ -127,7 +127,7 @@ export const TiptapExtensions = [
     nested: true,
   }),
   Markdown.configure({
-    html: false,
+    html: true,
     transformCopiedText: true,
   }),
 ];
