@@ -151,7 +151,7 @@ class ProjectServices extends APIService {
   }
 
   async projectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

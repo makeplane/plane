@@ -155,7 +155,7 @@ class WorkspaceService extends APIService {
   }
 
   async workspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/members/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/workspace-members/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
