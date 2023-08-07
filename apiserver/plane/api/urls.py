@@ -476,7 +476,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/",
-        ProjectMemberEndpoint.as_view({"get": "list"}),
+        ProjectMemberEndpoint.as_view(),
         name="project",
     ),
     path(
