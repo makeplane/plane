@@ -229,6 +229,7 @@ export interface IIssueFilterOptions {
   target_date: string[] | null;
   state: string[] | null;
   state_group: TStateGroups[] | null;
+  subscriber: string[] | null;
   labels: string[] | null;
   priority: string[] | null;
   created_by: string[] | null;
