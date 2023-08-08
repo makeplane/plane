@@ -73,7 +73,7 @@ export const ViewStateSelect: React.FC<Props> = ({
       tooltipContent={selectedOption?.name ?? ""}
       position={tooltipPosition}
     >
-      <div className="flex items-center cursor-pointer w-full gap-2 px-1.5 py-1 text-custom-text-200 rounded shadow-sm border border-custom-border-300">
+      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
         <span className="h-3.5 w-3.5">
           {selectedOption &&
             getStateGroupIcon(selectedOption.group, "14", "14", selectedOption.color)}
@@ -131,6 +131,7 @@ export const ViewStateSelect: React.FC<Props> = ({
       disabled={isNotAllowed}
       onOpen={() => setFetchStates(true)}
       noChevron
+      selfPositioned
     />
   );
 };
