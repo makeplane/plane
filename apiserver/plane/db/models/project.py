@@ -231,6 +231,7 @@ class ProjectDeployBoard(ProjectBaseModel):
     inbox = models.ForeignKey(
         "db.Inbox", related_name="bord_inbox", on_delete=models.SET_NULL, null=True
     )
+    votes = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ["project", "anchor"]

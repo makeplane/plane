@@ -151,7 +151,8 @@ class ProjectMemberLiteSerializer(BaseSerializer):
 
 
 class ProjectDeployBoardSerializer(BaseSerializer):
-    
+    project_details = ProjectLiteSerializer(read_only=True, source="project")
+
     class Meta:
         model = ProjectDeployBoard
         fields = "__all__"

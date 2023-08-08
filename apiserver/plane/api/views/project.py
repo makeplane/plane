@@ -1025,42 +1025,73 @@ class ProjectDeployBoardViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
+            .select_related("project")
         )
 
     def create(self, request, slug, project_id):
         try:
             comments = request.data.get("comments", False)
             reactions = request.data.get("reactions", False)
+            inbox = request.data.get("inbox", None)
+            votes = request.data.get("votes", False)
 
             project_deploy_board, _ = ProjectDeployBoard.objects.get_or_create(
+                anchor=f"{slug}/{project_id}",
                 project_id=project_id,
-                comments=comments,
-                reactions=reactions,
             )
+            project_deploy_board.comments = comments
+            project_deploy_board.reactions = reactions
+            project_deploy_board.inbox = inbox
+            project_deploy_board.votes = votes
+
+            project_deploy_board.save()
 
             serializer = ProjectDeployBoardSerializer(project_deploy_board)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
 
-class ProjectDeployBoardPublicEndpoint(BaseAPIView):
+class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
 
-    def get(self, request, slug, anchor):
+    def get(self, request, slug, project_id):
         try:
             project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, anchor=anchor
+                workspace__slug=slug, project_id=project_id
+            )
+            serializer = ProjectDeployBoardSerializer(project_deploy_board)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ProjectDeployBoard.DoesNotExist:
+            return Response(
+                {"error": "Project Deploy Board does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            project_id = project_deploy_board.project_id
+
+class ProjectDeployBoardIssuesPublicEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request, slug, project_id):
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
 
             filters = issue_filters(request.query_params, "GET")
 
@@ -1070,36 +1101,40 @@ class ProjectDeployBoardPublicEndpoint(BaseAPIView):
 
             order_by_param = request.GET.get("order_by", "-created_at")
 
-            issue_queryset = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            ).filter(project_id=project_id).filter(workspace__slug=slug).select_related(
-                "project", "workspace", "state", "parent"
-            ).prefetch_related(
-                "assignees", "labels"
-            ).prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
+            issue_queryset = (
+                Issue.issue_objects.annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
                 )
-            ).filter(
-                **filters
-            ).annotate(
-                cycle_id=F("issue_cycle__cycle_id")
-            ).annotate(
-                module_id=F("issue_module__module_id")
-            ).annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            ).annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
+                .filter(project_id=project_id)
+                .filter(workspace__slug=slug)
+                .select_related("project", "workspace", "state", "parent")
+                .prefetch_related("assignees", "labels")
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related("actor"),
+                    )
+                )
+                .filter(**filters)
+                .annotate(cycle_id=F("issue_cycle__cycle_id"))
+                .annotate(module_id=F("issue_module__module_id"))
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
 
             # Priority Ordering
