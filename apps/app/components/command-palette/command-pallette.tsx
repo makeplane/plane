@@ -24,8 +24,12 @@ import issuesService from "services/issues.service";
 import inboxService from "services/inbox.service";
 // fetch keys
 import { INBOX_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const CommandPalette: React.FC = () => {
+  const store: any = useMobxStore();
+
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -96,7 +100,8 @@ export const CommandPalette: React.FC = () => {
           setIsIssueModalOpen(true);
         } else if ((ctrlKey || metaKey) && keyPressed === "b") {
           e.preventDefault();
-          toggleCollapsed();
+          // toggleCollapsed();
+          store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed);
         } else if (key === "Delete") {
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);
@@ -120,7 +125,7 @@ export const CommandPalette: React.FC = () => {
         }
       }
     },
-    [toggleCollapsed, copyIssueUrlToClipboard]
+    [copyIssueUrlToClipboard]
   );
 
   useEffect(() => {

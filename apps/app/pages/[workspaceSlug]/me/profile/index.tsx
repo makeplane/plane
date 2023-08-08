@@ -176,7 +176,7 @@ const Profile: NextPage = () => {
                           src={watch("avatar")}
                           className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
                           onClick={() => setIsImageUploadModalOpen(true)}
-                          alt={myProfile.first_name}
+                          alt={myProfile.display_name}
                         />
                       </div>
                     )}

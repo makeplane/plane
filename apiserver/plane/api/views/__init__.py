@@ -12,8 +12,9 @@ from .project import (
     ProjectUserViewsEndpoint,
     ProjectMemberUserEndpoint,
     ProjectFavoritesViewSet,
+    ProjectMemberEndpoint,
 )
-from .people import (
+from .user import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
@@ -47,6 +48,7 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    WorkspaceMembersEndpoint,
 )
 from .state import StateViewSet
 from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
@@ -75,6 +77,7 @@ from .issue import (
     IssueSubscriberViewSet,
     CommentReactionViewSet,
     IssueReactionViewSet,
+    ExportIssuesEndpoint
 )
 
 from .auth_extended import (
