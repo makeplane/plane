@@ -1,9 +1,8 @@
-import { useEditor, EditorContent, generateText } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { useEditor, EditorContent } from '@tiptap/react';
 import { useDebouncedCallback } from 'use-debounce';
 import { EditorBubbleMenu } from './EditorBubbleMenu';
 import { TiptapExtensions } from './extensions';
-import { TiptapEditorProps } from "./props";
+import { TiptapEditorProps } from './props';
 
 type TiptapProps = {
   value: string;

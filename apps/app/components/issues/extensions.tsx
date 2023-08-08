@@ -18,8 +18,15 @@ import { InputRule } from "@tiptap/core";
 import ts from 'highlight.js/lib/languages/typescript'
 
 import 'highlight.js/styles/github-dark.css';
+import UploadImagesPlugin from "./plugins/upload-image";
 
 lowlight.registerLanguage('ts', ts)
+
+const CustomImage = TiptapImage.extend({
+  addProseMirrorPlugins() {
+    return [UploadImagesPlugin()];
+  },
+});
 
 export const TiptapExtensions = [
   StarterKit.configure({
@@ -92,7 +99,7 @@ export const TiptapExtensions = [
         "text-stone-400 underline underline-offset-[3px] hover:text-stone-600 transition-colors cursor-pointer",
     },
   }),
-  TiptapImage.configure({
+  CustomImage.configure({
     allowBase64: true,
     HTMLAttributes: {
       class: "rounded-lg border border-stone-200",
