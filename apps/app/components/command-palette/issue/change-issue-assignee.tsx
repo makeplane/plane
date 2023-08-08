@@ -34,15 +34,12 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
   const options =
     members?.map(({ member }) => ({
       value: member.id,
-      query:
-        (member.first_name && member.first_name !== "" ? member.first_name : member.email) +
-          " " +
-          member.last_name ?? "",
+      query: member.display_name,
       content: (
         <>
           <div className="flex items-center gap-2">
             <Avatar user={member} />
-            {member.first_name && member.first_name !== "" ? member.first_name : member.email}
+            {member.display_name}
           </div>
           {issue.assignees.includes(member.id) && (
             <div>

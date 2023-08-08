@@ -47,20 +47,11 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
 
   const options = members?.map((member) => ({
     value: member.member.id,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {`${
-          member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name
-            : member.member.email
-        } ${member.member.last_name ?? ""}`}
+        {member.member.display_name}
       </div>
     ),
   }));
@@ -71,11 +62,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       tooltipHeading="Assignees"
       tooltipContent={
         issue.assignee_details.length > 0
-          ? issue.assignee_details
-              .map((assignee) =>
-                assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
-              )
-              .join(", ")
+          ? issue.assignee_details.map((assignee) => assignee?.display_name).join(", ")
           : "No Assignee"
       }
     >

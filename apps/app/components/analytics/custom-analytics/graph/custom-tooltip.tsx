@@ -16,15 +16,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
 
   if (params.segment) {
     if (DATE_KEYS.includes(params.segment)) tooltipValue = renderMonthAndYear(datum.id);
-    else if (params.segment === "assignees__email") {
-      const assignee = analytics.extras.assignee_details.find(
-        (a) => a.assignees__email === datum.id
-      );
-
-      if (assignee)
-        tooltipValue = assignee.assignees__first_name + " " + assignee.assignees__last_name;
-      else tooltipValue = "No assignees";
-    } else tooltipValue = datum.id;
+    else tooltipValue = datum.id;
   } else {
     if (DATE_KEYS.includes(params.x_axis)) tooltipValue = datum.indexValue;
     else tooltipValue = datum.id === "count" ? "Issue count" : "Estimate";

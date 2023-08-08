@@ -22,7 +22,7 @@ from sentry_sdk import capture_exception
 
 ## Module imports
 from . import BaseAPIView
-from plane.api.serializers.people import (
+from plane.api.serializers import (
     ChangePasswordSerializer,
     ResetPasswordSerializer,
 )

@@ -24,7 +24,11 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import {
+  WORKSPACE_DETAILS,
+  WORKSPACE_INVITATION_WITH_EMAIL,
+  WORKSPACE_MEMBERS_WITH_EMAIL,
+} from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 // helper
@@ -48,13 +52,17 @@ const MembersSettings: NextPage = () => {
   );
 
   const { data: workspaceMembers, mutate: mutateMembers } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug.toString()) : null,
+    workspaceSlug
+      ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug.toString())
+      : null
   );
 
   const { data: workspaceInvitations, mutate: mutateInvitations } = useSWR(
-    workspaceSlug ? WORKSPACE_INVITATIONS : null,
-    workspaceSlug ? () => workspaceService.workspaceInvitations(workspaceSlug.toString()) : null
+    workspaceSlug ? WORKSPACE_INVITATION_WITH_EMAIL(workspaceSlug.toString()) : null,
+    workspaceSlug
+      ? () => workspaceService.workspaceInvitationsWithEmail(workspaceSlug.toString())
+      : null
   );
 
   const members = [
@@ -65,6 +73,7 @@ const MembersSettings: NextPage = () => {
       first_name: item.member?.first_name,
       last_name: item.member?.last_name,
       email: item.member?.email,
+      display_name: item.member?.display_name,
       role: item.role,
       status: true,
       member: true,
@@ -77,6 +86,7 @@ const MembersSettings: NextPage = () => {
       first_name: item.email,
       last_name: "",
       email: item.email,
+      display_name: item.email,
       role: item.role,
       status: item.accepted,
       member: false,
@@ -199,27 +209,23 @@ const MembersSettings: NextPage = () => {
                             <img
                               src={member.avatar}
                               className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
-                              alt={member.first_name}
+                              alt={member.display_name || member.email}
                             />
-                          ) : member.first_name !== "" ? (
-                            member.first_name.charAt(0)
                           ) : (
-                            member.email.charAt(0)
+                            (member.display_name || member.email).charAt(0)
                           )}
                         </div>
                         <div>
                           {member.member ? (
                             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-                              <a className="text-sm">
-                                {member.first_name} {member.last_name}
-                              </a>
+                              <a className="text-sm">{member.display_name || member.email}</a>
                             </Link>
                           ) : (
-                            <h4 className="text-sm">
-                              {member.first_name} {member.last_name}
-                            </h4>
+                            <h4 className="text-sm">{member.display_name}</h4>
                           )}
-                          <p className="text-xs text-custom-text-200">{member.email}</p>
+                          <p className="text-xs text-custom-text-200">
+                            {member.display_name || member.email}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs">

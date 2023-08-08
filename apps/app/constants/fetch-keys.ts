@@ -38,11 +38,12 @@ const inboxParamsToKey = (params: any) => {
 };
 
 const myIssuesParamsToKey = (params: any) => {
-  const { assignees, created_by, labels, priority, state_group, target_date } = params;
+  const { assignees, created_by, labels, priority, state_group, subscriber, target_date } = params;
 
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
   let stateGroupKey = state_group ? state_group.split(",") : [];
+  let subscriberKey = subscriber ? subscriber.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
   const targetDateKey = target_date ?? "";
@@ -54,10 +55,11 @@ const myIssuesParamsToKey = (params: any) => {
   assigneesKey = assigneesKey.sort().join("_");
   createdByKey = createdByKey.sort().join("_");
   stateGroupKey = stateGroupKey.sort().join("_");
+  subscriberKey = subscriberKey.sort().join("_");
   priorityKey = priorityKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${assigneesKey}_${createdByKey}_${stateGroupKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+  return `${assigneesKey}_${createdByKey}_${stateGroupKey}_${subscriberKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";
@@ -69,9 +71,13 @@ export const WORKSPACE_DETAILS = (workspaceSlug: string) =>
 
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) =>
   `WORKSPACE_MEMBERS_${workspaceSlug.toUpperCase()}`;
+export const WORKSPACE_MEMBERS_WITH_EMAIL = (workspaceSlug: string) =>
+  `WORKSPACE_MEMBERS_WITH_EMAIL_${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_MEMBERS_ME = (workspaceSlug: string) =>
   `WORKSPACE_MEMBERS_ME${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_INVITATIONS = "WORKSPACE_INVITATIONS";
+export const WORKSPACE_INVITATION_WITH_EMAIL = (workspaceSlug: string) =>
+  `WORKSPACE_INVITATION_WITH_EMAIL_${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
 export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "LAST_ACTIVE_WORKSPACE_AND_PROJECTS";
 
@@ -90,7 +96,11 @@ export const PROJECTS_LIST = (
 export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId.toUpperCase()}`;
 
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId.toUpperCase()}`;
+export const PROJECT_MEMBERS_WITH_EMAIL = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_MEMBERS_WITH_EMAIL_${workspaceSlug}_${projectId.toUpperCase()}`;
 export const PROJECT_INVITATIONS = "PROJECT_INVITATIONS";
+export const PROJECT_INVITATIONS_WITH_EMAIL = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_INVITATIONS_WITH_EMAIL_${workspaceSlug}_${projectId.toUpperCase()}`;
 
 export const PROJECT_ISSUES_LIST = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ISSUES_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}`;
@@ -309,9 +319,7 @@ export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: 
 export const USER_PROFILE_ISSUES = (workspaceSlug: string, userId: string, params: any) => {
   const paramsKey = myIssuesParamsToKey(params);
 
-  const subscriberKey = params.subscriber ? params.subscriber.toUpperCase() : "NULL";
-
-  return `USER_PROFILE_ISSUES_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${paramsKey}_${subscriberKey}`;
+  return `USER_PROFILE_ISSUES_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${paramsKey}`;
 };
 
 // reactions

@@ -162,7 +162,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 position="top-right"
                 tooltipContent={`Created by ${
                   people?.find((person) => person.member.id === page.created_by)?.member
-                    .first_name ?? ""
+                    .display_name ?? ""
                 } on ${renderLongDateFormat(`${page.created_at}`)}`}
               >
                 <span>

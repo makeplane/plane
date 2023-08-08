@@ -131,7 +131,7 @@ const ControlSettings: NextPage = () => {
                       {...field}
                       label={
                         people?.find((person) => person.member.id === field.value)?.member
-                          .first_name ?? <span className="text-custom-text-200">Select lead</span>
+                          .display_name ?? <span className="text-custom-text-200">Select lead</span>
                       }
                       width="w-full"
                       input
@@ -153,14 +153,10 @@ const ControlSettings: NextPage = () => {
                               </div>
                             ) : (
                               <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                {person.member.first_name && person.member.first_name !== ""
-                                  ? person.member.first_name.charAt(0)
-                                  : person.member.email.charAt(0)}
+                                {person.member.display_name?.charAt(0)}
                               </div>
                             )}
-                            {person.member.first_name !== ""
-                              ? person.member.first_name
-                              : person.member.email}
+                            {person.member.display_name}
                           </div>
                         </CustomSelect.Option>
                       ))}
@@ -190,7 +186,7 @@ const ControlSettings: NextPage = () => {
                     <CustomSelect
                       {...field}
                       label={
-                        people?.find((p) => p.member.id === field.value)?.member.first_name ?? (
+                        people?.find((p) => p.member.id === field.value)?.member.display_name ?? (
                           <span className="text-custom-text-200">Select default assignee</span>
                         )
                       }
@@ -214,14 +210,10 @@ const ControlSettings: NextPage = () => {
                               </div>
                             ) : (
                               <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                {person.member.first_name && person.member.first_name !== ""
-                                  ? person.member.first_name.charAt(0)
-                                  : person.member.email.charAt(0)}
+                                {person.member.display_name?.charAt(0)}
                               </div>
                             )}
-                            {person.member.first_name !== ""
-                              ? person.member.first_name
-                              : person.member.email}
+                            {person.member.display_name}
                           </div>
                         </CustomSelect.Option>
                       ))}

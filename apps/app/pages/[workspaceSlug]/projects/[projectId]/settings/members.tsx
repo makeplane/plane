@@ -26,7 +26,11 @@ import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_INVITATIONS, PROJECT_MEMBERS, WORKSPACE_DETAILS } from "constants/fetch-keys";
+import {
+  PROJECT_INVITATIONS_WITH_EMAIL,
+  PROJECT_MEMBERS_WITH_EMAIL,
+  WORKSPACE_DETAILS,
+} from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 // helper
@@ -51,16 +55,21 @@ const MembersSettings: NextPage = () => {
   );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? PROJECT_MEMBERS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString())
+      : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembersWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
-    workspaceSlug && projectId ? PROJECT_INVITATIONS : null,
     workspaceSlug && projectId
-      ? () => projectService.projectInvitations(workspaceSlug as string, projectId as string)
+      ? PROJECT_INVITATIONS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString())
+      : null,
+    workspaceSlug && projectId
+      ? () =>
+          projectService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -71,7 +80,7 @@ const MembersSettings: NextPage = () => {
       avatar: item.member?.avatar,
       first_name: item.member?.first_name,
       last_name: item.member?.last_name,
-      email: item.member?.email,
+      display_name: item.member?.display_name,
       role: item.role,
       status: true,
       member: true,
@@ -82,7 +91,7 @@ const MembersSettings: NextPage = () => {
       avatar: item.avatar ?? "",
       first_name: item.first_name ?? item.email,
       last_name: item.last_name ?? "",
-      email: item.email,
+      display_name: item.email,
       role: item.role,
       status: item.accepted,
       member: false,
@@ -181,28 +190,24 @@ const MembersSettings: NextPage = () => {
                           {member.avatar && member.avatar !== "" ? (
                             <img
                               src={member.avatar}
-                              alt={member.first_name}
+                              alt={member.display_name}
                               className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                             />
-                          ) : member.first_name !== "" ? (
-                            member.first_name.charAt(0)
                           ) : (
-                            member.email.charAt(0)
+                            member.display_name.charAt(0)
                           )}
                         </div>
                         <div>
                           {member.member ? (
                             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-                              <a className="text-sm">
-                                {member.first_name} {member.last_name}
-                              </a>
+                              <a className="text-sm">{member.display_name}</a>
                             </Link>
                           ) : (
-                            <h4 className="text-sm">
-                              {member.first_name} {member.last_name}
-                            </h4>
+                            <h4 className="text-sm">{member.display_name}</h4>
                           )}
-                          <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
+                          <p className="mt-0.5 text-xs text-custom-text-200">
+                            {member.display_name}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
