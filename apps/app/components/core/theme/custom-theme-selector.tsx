@@ -15,6 +15,8 @@ import userService from "services/user.service";
 import { applyTheme } from "helpers/theme.helper";
 // types
 import { ICustomTheme } from "types";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   preLoadedData?: Partial<ICustomTheme> | null;
@@ -32,6 +34,8 @@ const defaultValues: ICustomTheme = {
 };
 
 export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
+  const store: any = useMobxStore();
+
   const [darkPalette, setDarkPalette] = useState(false);
 
   const {
@@ -60,21 +64,15 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
       theme: "custom",
     };
 
-    await userService
-      .updateUser({
-        theme: payload,
-      })
-      .then((res) => {
-        mutateUser((prevData) => {
-          if (!prevData) return prevData;
-
-          return { ...prevData, ...res };
-        }, false);
-
+    store.user
+      .updateCurrentUserSettings({ theme: payload })
+      .then((response: any) => {
         setTheme("custom");
         applyTheme(payload.palette, darkPalette);
       })
-      .catch((err) => console.log(err));
+      .catch((error: any) => {
+        console.log("error", error);
+      });
   };
 
   const handleUpdateTheme = async (formData: any) => {
