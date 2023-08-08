@@ -263,16 +263,17 @@ export const WorkspaceSidebarDropdown = () => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className="absolute left-0 z-20 mt-1.5 flex flex-col w-52 origin-top-left rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 p-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-xs outline-none"
+              className="absolute left-0 z-20 mt-1.5 flex flex-col w-52  origin-top-left rounded-md
+          border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-xs outline-none"
             >
-              <div className="flex flex-col space-y-2 pb-2">
+              <div className="flex flex-col gap-2.5 pb-2">
+                <span className="px-2 text-custom-sidebar-text-200">{user?.email}</span>
                 {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map(
                   (link, index) => (
                     <Menu.Item key={index} as="button" type="button">
                       <Link href={link.link}>
                         <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                          <Icon iconName={link.icon} className="!text-base" />
+                          <Icon iconName={link.icon} className="!text-lg !leading-5" />
                           {link.name}
                         </a>
                       </Link>
@@ -287,7 +288,7 @@ export const WorkspaceSidebarDropdown = () => {
                   className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
                   onClick={handleSignOut}
                 >
-                  <Icon iconName="logout" className="!text-base" />
+                  <Icon iconName="logout" className="!text-lg !leading-5" />
                   Sign out
                 </Menu.Item>
               </div>
