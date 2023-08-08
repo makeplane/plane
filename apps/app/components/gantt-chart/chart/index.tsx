@@ -41,7 +41,7 @@ type ChartViewRootProps = {
   title: null | string;
   loaderTitle: string;
   blocks: any;
-  blockUpdateHandler: (data: any) => void;
+  blockUpdateHandler: (block: any, payload: { start_date?: string; target_date?: string }) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
 };
@@ -325,6 +325,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               blocks={chartBlocks}
               sidebarBlockRender={sidebarBlockRender}
               blockRender={blockRender}
+              blockUpdateHandler={blockUpdateHandler}
             />
           )}
 

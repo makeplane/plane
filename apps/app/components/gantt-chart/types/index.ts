@@ -8,7 +8,7 @@ export type allViewsType = {
 export interface ChartContextData {
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
-  currentViewData: any;
+  currentViewData: ChartDataType | undefined;
   renderView: any;
 }
 

@@ -1,19 +1,20 @@
-import { FC } from "react";
 // next imports
 import Link from "next/link";
 import { useRouter } from "next/router";
 // components
 import { GanttChartRoot } from "components/gantt-chart";
 // ui
-import { Tooltip } from "components/ui";
+import { Icon, Tooltip } from "components/ui";
 // hooks
 import useGanttChartIssues from "hooks/gantt-chart/issue-view";
+import issuesService from "services/issues.service";
+import useUser from "hooks/use-user";
 
-type Props = {};
-
-export const IssueGanttChartView: FC<Props> = ({}) => {
+export const IssueGanttChartView = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUser();
 
   const { ganttIssues, mutateGanttIssues } = useGanttChartIssues(
     workspaceSlug as string,
@@ -33,26 +34,21 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
 
   // rendering issues on gantt card
   const GanttBlockView = ({ data }: any) => (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${data?.id}`}>
+    <Link href={`/${workspaceSlug}/projects/${data?.project}/issues/${data?.id}`}>
       <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm font-normal">
         <div
-          className="flex-shrink-0 w-[4px] h-full"
+          className="flex-shrink-0 w-1 h-full"
           style={{ backgroundColor: data?.state_detail?.color || "rgb(var(--color-primary-100))" }}
         />
         <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
-          <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
+          <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-1 px-2.5 overflow-hidden w-full">
             {data?.name}
           </div>
         </Tooltip>
         {data.infoToggle && (
-          <Tooltip
-            tooltipContent={`No due-date set, rendered according to last updated date.`}
-            className={`z-[999999]`}
-          >
-            <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center">
-              <span className="material-symbols-rounded text-custom-text-200 text-[18px]">
-                info
-              </span>
+          <Tooltip tooltipContent="No due-date set, rendered according to last updated date.">
+            <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center text-custom-text-200">
+              <Icon iconName="info" />
             </div>
           </Tooltip>
         )}
@@ -61,34 +57,35 @@ export const IssueGanttChartView: FC<Props> = ({}) => {
   );
 
   // handle gantt issue start date and target date
-  const handleUpdateDates = async (data: any) => {
-    const payload = {
-      id: data?.id,
-      start_date: data?.start_date,
-      target_date: data?.target_date,
-    };
+  const handleUpdateDates = async (
+    block: any,
+    payload: {
+      start_date?: string;
+      target_date?: string;
+    }
+  ) => {
+    if (!workspaceSlug || !projectId || !user) return;
+
+    await issuesService
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), block.id, payload, user)
+      .then(() => mutateGanttIssues());
   };
 
   const blockFormat = (blocks: any) =>
     blocks && blocks.length > 0
-      ? blocks.map((_block: any) => {
-          let startDate = new Date(_block.created_at);
-          let targetDate = new Date(_block.updated_at);
-          let infoToggle = true;
+      ? blocks
+          .filter((b: any) => b.start_date && b.target_date)
+          .map((block: any) => {
+            const startDate = new Date(block.start_date);
+            const targetDate = new Date(block.target_date);
 
-          if (_block?.start_date && _block.target_date) {
-            startDate = _block?.start_date;
-            targetDate = _block.target_date;
-            infoToggle = false;
-          }
-
-          return {
-            start_date: new Date(startDate),
-            target_date: new Date(targetDate),
-            infoToggle: infoToggle,
-            data: _block,
-          };
-        })
+            return {
+              start_date: new Date(startDate),
+              target_date: new Date(targetDate),
+              infoToggle: true,
+              data: block,
+            };
+          })
       : [];
 
   return (
