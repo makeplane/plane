@@ -149,7 +149,7 @@ export const WorkspaceSidebarDropdown = () => {
           border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 shadow-lg outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
-              <div className="text-sm text-custom-sidebar-text-200">{user?.email}</div>
+              <div className="text-sm text-custom-sidebar-text-200">{user?.display_name}</div>
               <span className="text-sm font-semibold text-custom-sidebar-text-200">Workspace</span>
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-3.5">

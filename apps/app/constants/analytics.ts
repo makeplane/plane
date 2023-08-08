@@ -19,7 +19,7 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
     label: "Label",
   },
   {
-    value: "assignees__email",
+    value: "assignees__id",
     label: "Assignee",
   },
   {

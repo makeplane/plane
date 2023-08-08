@@ -69,9 +69,13 @@ export const WORKSPACE_DETAILS = (workspaceSlug: string) =>
 
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) =>
   `WORKSPACE_MEMBERS_${workspaceSlug.toUpperCase()}`;
+export const WORKSPACE_MEMBERS_WITH_EMAIL = (workspaceSlug: string) =>
+  `WORKSPACE_MEMBERS_WITH_EMAIL_${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_MEMBERS_ME = (workspaceSlug: string) =>
   `WORKSPACE_MEMBERS_ME${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_INVITATIONS = "WORKSPACE_INVITATIONS";
+export const WORKSPACE_INVITATION_WITH_EMAIL = (workspaceSlug: string) =>
+  `WORKSPACE_INVITATION_WITH_EMAIL_${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
 export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "LAST_ACTIVE_WORKSPACE_AND_PROJECTS";
 
@@ -90,7 +94,11 @@ export const PROJECTS_LIST = (
 export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId.toUpperCase()}`;
 
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId.toUpperCase()}`;
+export const PROJECT_MEMBERS_WITH_EMAIL = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_MEMBERS_WITH_EMAIL_${workspaceSlug}_${projectId.toUpperCase()}`;
 export const PROJECT_INVITATIONS = "PROJECT_INVITATIONS";
+export const PROJECT_INVITATIONS_WITH_EMAIL = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_INVITATIONS_WITH_EMAIL_${workspaceSlug}_${projectId.toUpperCase()}`;
 
 export const PROJECT_ISSUES_LIST = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ISSUES_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}`;

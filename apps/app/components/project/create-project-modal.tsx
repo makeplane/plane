@@ -163,20 +163,11 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
 
   const options = workspaceMembers?.map((member) => ({
     value: member.member.id,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {`${
-          member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name
-            : member.member.email
-        } ${member.member.last_name ?? ""}`}
+        {member.member.display_name}
       </div>
     ),
   }));
@@ -376,10 +367,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                                     {value ? (
                                       <>
                                         <Avatar user={selectedMember?.member} />
-                                        <span>
-                                          {selectedMember?.member.first_name}{" "}
-                                          {selectedMember?.member.last_name}
-                                        </span>
+                                        <span>{selectedMember?.member.display_name} </span>
                                         <span onClick={() => onChange(null)}>
                                           <Icon
                                             iconName="close"

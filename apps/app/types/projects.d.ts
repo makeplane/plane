@@ -3,6 +3,7 @@ import type {
   IUserLite,
   IWorkspace,
   IWorkspaceLite,
+  IUserMemberLite,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueViewOptions,
@@ -78,7 +79,7 @@ type ProjectPreferences = {
 
 export interface IProjectMember {
   id: string;
-  member: IUserLite;
+  member: IUserMemberLite;
   project: IProjectLite;
   workspace: IWorkspaceLite;
   comment: string;

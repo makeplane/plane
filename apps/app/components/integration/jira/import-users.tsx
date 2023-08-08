@@ -34,18 +34,11 @@ export const JiraImportUsers: FC = () => {
 
   const options = members?.map((member) => ({
     value: member.member.email,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    query: member.member.display_name ?? "",
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name + " (" + member.member.email + ")"
-          : member.member.email}
+        {member.member.display_name}
       </div>
     ),
   }));

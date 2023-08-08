@@ -82,7 +82,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
   });
 
   const uninvitedPeople = people?.filter((person) => {
-    const isInvited = members?.find((member) => member.email === person.member.email);
+    const isInvited = members?.find((member) => member.display_name === person.member.display_name);
     return !isInvited;
   });
 
@@ -136,11 +136,11 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
 
   const options = uninvitedPeople?.map((person) => ({
     value: person.member.id,
-    query: person.member.email,
+    query: person.member.display_name,
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={person.member} />
-        {person.member.email}
+        {person.member.display_name}
       </div>
     ),
   }));
@@ -209,7 +209,10 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                               people?.find((p) => p.member.id === value)?.member
                                             }
                                           />
-                                          {people?.find((p) => p.member.id === value)?.member.email}
+                                          {
+                                            people?.find((p) => p.member.id === value)?.member
+                                              .display_name
+                                          }
                                         </div>
                                       ) : (
                                         <div>Select co-worker&rsquo;s email</div>

@@ -32,8 +32,8 @@ export const SPREADSHEET_COLUMN = [
     colName: "Assignees",
     colSize: "128px",
     icon: UserGroupIcon,
-    ascendingOrder: "assignees__first_name",
-    descendingOrder: "-assignees__first_name",
+    ascendingOrder: "assignees__id",
+    descendingOrder: "-assignees__id",
   },
   {
     propertyName: "labels",
