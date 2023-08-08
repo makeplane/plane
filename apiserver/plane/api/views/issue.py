@@ -1488,12 +1488,21 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            access = (
+                "INTERNAL"
+                if ProjectMember.objects.filter(
+                    project_id=project_id, member=request.user
+                ).exists()
+                else "EXTERNAL"
+            )
+
             serializer = IssueCommentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
                     project_id=project_id,
                     issue_id=issue_id,
                     actor=request.user,
+                    access=access,
                 )
                 issue_activity.delay(
                     type="comment.activity.created",
@@ -1506,7 +1515,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

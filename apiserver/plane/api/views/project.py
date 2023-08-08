@@ -1034,6 +1034,16 @@ class ProjectDeployBoardViewSet(BaseViewSet):
             reactions = request.data.get("reactions", False)
             inbox = request.data.get("inbox", None)
             votes = request.data.get("votes", False)
+            views = request.data.get(
+                "views",
+                {
+                    "list": True,
+                    "kanban": True,
+                    "calendar": True,
+                    "gantt": True,
+                    "spreadsheet": True,
+                },
+            )
 
             project_deploy_board, _ = ProjectDeployBoard.objects.get_or_create(
                 anchor=f"{slug}/{project_id}",
@@ -1043,6 +1053,7 @@ class ProjectDeployBoardViewSet(BaseViewSet):
             project_deploy_board.reactions = reactions
             project_deploy_board.inbox = inbox
             project_deploy_board.votes = votes
+            project_deploy_board.views = views
 
             project_deploy_board.save()
 

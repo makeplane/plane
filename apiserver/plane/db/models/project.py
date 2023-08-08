@@ -222,6 +222,16 @@ def get_anchor():
     return uuid4().hex
 
 
+def get_default_views():
+    return {
+        "list": True,
+        "kanban": True,
+        "calendar": True,
+        "gantt": True,
+        "spreadsheet": True,
+    }
+
+
 class ProjectDeployBoard(ProjectBaseModel):
     anchor = models.CharField(
         max_length=255, default=get_anchor, unique=True, db_index=True
@@ -232,6 +242,7 @@ class ProjectDeployBoard(ProjectBaseModel):
         "db.Inbox", related_name="bord_inbox", on_delete=models.SET_NULL, null=True
     )
     votes = models.BooleanField(default=False)
+    views = models.JSONField(default=get_default_views)
 
     class Meta:
         unique_together = ["project", "anchor"]

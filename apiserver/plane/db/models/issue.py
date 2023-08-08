@@ -310,6 +310,14 @@ class IssueComment(ProjectBaseModel):
         related_name="comments",
         null=True,
     )
+    access = models.CharField(
+        choices=(
+            ("INTERNAL", "INTERNAL"),
+            ("EXTERNAL", "EXTERNAL"),
+        ),
+        default="INTERNAL",
+        max_length=100,
+    )
 
     def save(self, *args, **kwargs):
         self.comment_stripped = (
@@ -425,13 +433,14 @@ class IssueSubscriber(ProjectBaseModel):
 
 
 class IssueReaction(ProjectBaseModel):
-
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="issue_reactions",
     )
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_reactions")
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="issue_reactions"
+    )
     reaction = models.CharField(max_length=20)
 
     class Meta:
@@ -446,13 +455,14 @@ class IssueReaction(ProjectBaseModel):
 
 
 class CommentReaction(ProjectBaseModel):
-
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="comment_reactions",
     )
-    comment = models.ForeignKey(IssueComment, on_delete=models.CASCADE, related_name="comment_reactions")
+    comment = models.ForeignKey(
+        IssueComment, on_delete=models.CASCADE, related_name="comment_reactions"
+    )
     reaction = models.CharField(max_length=20)
 
     class Meta:
@@ -464,7 +474,6 @@ class CommentReaction(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
-
 
 
 # TODO: Find a better method to save the model
