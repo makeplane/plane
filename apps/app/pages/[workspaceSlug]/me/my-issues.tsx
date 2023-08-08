@@ -29,7 +29,7 @@ const MyIssuesPage: NextPage = () => {
   const tabsList = [
     {
       key: "assigned",
-      label: "Assigned to me",
+      label: "Assigned",
       selected: (filters?.assignees ?? []).length > 0,
       onClick: () => {
         setFilters({
@@ -41,7 +41,7 @@ const MyIssuesPage: NextPage = () => {
     },
     {
       key: "created",
-      label: "Created by me",
+      label: "Created",
       selected: (filters?.created_by ?? []).length > 0,
       onClick: () => {
         setFilters({
@@ -53,7 +53,7 @@ const MyIssuesPage: NextPage = () => {
     },
     {
       key: "subscribed",
-      label: "Subscribed by me",
+      label: "Subscribed",
       selected: (filters?.subscriber ?? []).length > 0,
       onClick: () => {
         setFilters({
