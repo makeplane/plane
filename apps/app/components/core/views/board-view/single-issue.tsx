@@ -231,7 +231,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className={`mb-3 rounded bg-custom-background-90 shadow ${
+        className={`mb-3 rounded bg-custom-background-100 shadow ${
           snapshot.isDragging ? "border-2 border-custom-primary shadow-lg" : ""
         }`}
         ref={provided.innerRef}

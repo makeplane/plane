@@ -97,6 +97,7 @@ const ProjectIssues: NextPage = () => {
             </PrimaryButton>
           </div>
         }
+        bg="secondary"
       >
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <div className="h-full w-full flex flex-col">
