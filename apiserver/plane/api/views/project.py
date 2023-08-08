@@ -70,6 +70,7 @@ from plane.db.models import (
     IssueReaction,
     IssueLink,
     IssueAttachment,
+    Label,
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
@@ -1208,14 +1209,27 @@ class ProjectDeployBoardIssuesPublicEndpoint(BaseAPIView):
 
             issues = IssueLiteSerializer(issue_queryset, many=True).data
 
+            states = State.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values("name", "group", "color", "id")
+
+            labels = Label.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values("id", "name", "color", "parent")
+
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
             if group_by:
-                return Response(
-                    group_results(issues, group_by), status=status.HTTP_200_OK
-                )
+                issues = group_results(issues, group_by)
 
-            return Response(issues, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "issues": issues,
+                    "states": states,
+                    "labels": labels,
+                },
+                status=status.HTTP_200_OK,
+            )
         except ProjectDeployBoard.DoesNotExist:
             return Response(
                 {"error": "Board does not exists"}, status=status.HTTP_404_NOT_FOUND
