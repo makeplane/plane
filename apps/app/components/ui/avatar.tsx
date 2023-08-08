@@ -23,13 +23,13 @@ type AvatarProps = {
 export const Avatar: React.FC<AvatarProps> = ({
   user,
   index,
-  height = "20px",
-  width = "20px",
+  height = "24px",
+  width = "24px",
   fontSize = "12px",
 }) => (
   <div
     className={`relative rounded border-[0.5px] ${
-      index && index !== 0 ? "-ml-3.5 border-custom-border-0" : "border-transparent"
+      index && index !== 0 ? "-ml-3.5 border-custom-border-200" : "border-transparent"
     }`}
     style={{
       height: height,
@@ -39,7 +39,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     {user && user.avatar && user.avatar !== "" ? (
       <div
         className={`rounded border-[0.5px] ${
-          index ? "border-custom-border-0 bg-custom-background-100" : "border-transparent"
+          index ? "border-custom-border-200 bg-custom-background-100" : "border-transparent"
         }`}
         style={{
           height: height,
@@ -54,7 +54,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       </div>
     ) : (
       <div
-        className="grid place-items-center text-xs capitalize text-white rounded bg-gray-700  border-[0.5px] border-custom-border-0"
+        className="grid place-items-center text-xs capitalize text-white rounded bg-gray-700  border-[0.5px] border-custom-border-200"
         style={{
           height: height,
           width: width,
@@ -92,7 +92,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
 
   if ((users && users.length === 0) || (userIds && userIds.length === 0))
     return (
-      <div className="h-5 w-5 rounded border-[0.5px] border-custom-border-0 bg-custom-background-80">
+      <div className="h-5 w-5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-80">
         <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
       </div>
     );
@@ -105,8 +105,8 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
             <Avatar key={user?.id} user={user} index={index} />
           ))}
           {users.length > length ? (
-            <div className="-ml-3.5 relative h-5 w-5 rounded">
-              <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-5 w-5 text-custom-text-200 border-[0.5px] border-custom-border-300">
+            <div className="-ml-3.5 relative h-6 w-6 rounded">
+              <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
                 +{users.length - length}
               </div>
             </div>
@@ -122,8 +122,8 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           })}
           {showLength ? (
             userIds.length > length ? (
-              <div className="-ml-3.5 relative h-5 w-5 rounded">
-                <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-5 w-5 text-custom-text-200 border-[0.5px] border-custom-border-300">
+              <div className="-ml-3.5 relative h-6 w-6 rounded">
+                <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
                   +{userIds.length - length}
                 </div>
               </div>
