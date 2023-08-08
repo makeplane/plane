@@ -23,6 +23,7 @@ from plane.api.serializers import (
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
     ProjectFavoriteSerializer,
+    ProjectMemberAdminSerializer,
 )
 
 from plane.api.permissions import ProjectBasePermission, ProjectEntityPermission
@@ -451,7 +452,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
 
 
 class ProjectMemberViewSet(BaseViewSet):
-    serializer_class = ProjectMemberSerializer
+    serializer_class = ProjectMemberAdminSerializer
     model = ProjectMember
     permission_classes = [
         ProjectBasePermission,
