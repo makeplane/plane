@@ -7,9 +7,9 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import { TextArea } from "components/ui";
 
-import Tiptap from "./tiptap";
 // types
 import { IIssue } from "types";
+import Tiptap from "components/tiptap";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -126,7 +126,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
                 setIsSubmitting={setIsSubmitting}
                 onChange={(description: Object, description_html: string) => {
                   onChange(description_html);
-                  // setValue("description_html", description_html);
                   setValue("description", description);
                   handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting(false));
                 }}

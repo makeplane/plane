@@ -42,7 +42,7 @@ const UploadImagesPlugin = () =>
     props: {
       decorations(state) {
         return this.getState(state);
-      },
+      }
     },
   });
 

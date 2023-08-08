@@ -12,13 +12,14 @@ import { Markdown } from "tiptap-markdown";
 import Highlight from "@tiptap/extension-highlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { lowlight } from 'lowlight/lib/core'
-import SlashCommand from "./slash-command";
+import SlashCommand from "../slash-command";
 import { InputRule } from "@tiptap/core";
 
 import ts from 'highlight.js/lib/languages/typescript'
 
 import 'highlight.js/styles/github-dark.css';
-import UploadImagesPlugin from "./plugins/upload-image";
+import UploadImagesPlugin from "../plugins/upload-image";
+import UniqueID from "@tiptap-pro/extension-unique-id";
 
 lowlight.registerLanguage('ts', ts)
 
@@ -114,6 +115,9 @@ export const TiptapExtensions = [
       return "Press '/' for commands...";
     },
     includeChildren: true,
+  }),
+  UniqueID.configure({
+    types: ['heading', 'paragraph', 'image'],
   }),
   SlashCommand,
   TiptapUnderline,

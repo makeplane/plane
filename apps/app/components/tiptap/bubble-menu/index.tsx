@@ -10,7 +10,7 @@ import {
 
 import { NodeSelector } from "./node-selector";
 import { LinkSelector } from "./link-selector";
-import { cn } from "./utils";
+import { cn } from "../utils"
 
 export interface BubbleMenuItem {
   name: string;
