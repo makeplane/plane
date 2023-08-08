@@ -21,7 +21,7 @@ row_mapping = {
     "state__name": "State",
     "state__group": "State Group",
     "labels__name": "Label",
-    "assignees__email": "Assignee Name",
+    "assignees__display_name": "Assignee Name",
     "start_date": "Start Date",
     "target_date": "Due Date",
     "completed_at": "Completed At",
@@ -51,12 +51,12 @@ def analytic_export_task(email, data, slug):
         segmented = segment
 
         assignee_details = {}
-        if x_axis in ["assignees__email"] or segment in ["assignees__email"]:
+        if x_axis in ["assignees__display_name"] or segment in ["assignees__display_name"]:
             assignee_details = (
                 Issue.issue_objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
                 .order_by("assignees__id")
                 .distinct("assignees__id")
-                .values("assignees__avatar", "assignees__email", "assignees__first_name", "assignees__last_name")
+                .values("assignees__avatar", "assignees__display_name", "assignees__first_name", "assignees__last_name")
             )
 
         if segment:
@@ -93,17 +93,17 @@ def analytic_export_task(email, data, slug):
                     else:
                         generated_row.append("0")
                 # x-axis replacement for names
-                if x_axis in ["assignees__email"]:
-                    assignee = [user for user in assignee_details if str(user.get("assignees__email")) == str(item)]
+                if x_axis in ["assignees__display_name"]:
+                    assignee = [user for user in assignee_details if str(user.get("assignees__display_name")) == str(item)]
                     if len(assignee):
                         generated_row[0] = str(assignee[0].get("assignees__first_name")) + " " + str(assignee[0].get("assignees__last_name"))
                 rows.append(tuple(generated_row))
 
-            # If segment is ["assignees__email"] then replace segment_zero rows with first and last names
-            if segmented in ["assignees__email"]:
+            # If segment is ["assignees__display_name"] then replace segment_zero rows with first and last names
+            if segmented in ["assignees__display_name"]:
                 for index, segm in enumerate(row_zero[2:]):
                     # find the name of the user
-                    assignee = [user for user in assignee_details if str(user.get("assignees__email")) == str(segm)]
+                    assignee = [user for user in assignee_details if str(user.get("assignees__display_name")) == str(segm)]
                     if len(assignee):
                         row_zero[index] = str(assignee[0].get("assignees__first_name")) + " " + str(assignee[0].get("assignees__last_name"))
 
@@ -141,8 +141,8 @@ def analytic_export_task(email, data, slug):
                             else distribution.get(item)[0].get("estimate  "),
                         ]
                 # x-axis replacement to names
-                if x_axis in ["assignees__email"]:
-                    assignee = [user for user in assignee_details if str(user.get("assignees__email")) == str(item)]
+                if x_axis in ["assignees__display_name"]:
+                    assignee = [user for user in assignee_details if str(user.get("assignees__display_name")) == str(item)]
                     if len(assignee):
                         row[0] = str(assignee[0].get("assignees__first_name")) + " " + str(assignee[0].get("assignees__last_name"))
 

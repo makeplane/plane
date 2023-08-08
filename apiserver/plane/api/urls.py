@@ -32,6 +32,7 @@ from plane.api.views import (
     InviteWorkspaceEndpoint,
     JoinWorkspaceEndpoint,
     WorkSpaceMemberViewSet,
+    WorkspaceMembersEndpoint,
     WorkspaceInvitationsViewset,
     UserWorkspaceInvitationsEndpoint,
     WorkspaceMemberUserEndpoint,
@@ -59,6 +60,7 @@ from plane.api.views import (
     ProjectViewSet,
     InviteProjectEndpoint,
     ProjectMemberViewSet,
+    ProjectMemberEndpoint,
     ProjectMemberInvitationsViewset,
     ProjectMemberUserEndpoint,
     AddMemberToProjectEndpoint,
@@ -336,6 +338,11 @@ urlpatterns = [
         name="workspace",
     ),
     path(
+        "workspaces/<str:slug>/workspace-members/",
+        WorkspaceMembersEndpoint.as_view(),
+        name="workspace-members",
+    ),
+    path(
         "workspaces/<str:slug>/teams/",
         TeamMemberViewSet.as_view(
             {
@@ -466,6 +473,11 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/",
+        ProjectMemberEndpoint.as_view(),
         name="project",
     ),
     path(
