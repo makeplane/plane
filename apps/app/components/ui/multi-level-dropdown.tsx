@@ -66,7 +66,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             >
               <Menu.Items
                 static
-                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none"
+                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-custom-background-90 border border-custom-border-300 text-xs shadow-lg focus:outline-none"
               >
                 {options.map((option) => (
                   <div className="relative p-1" key={option.id}>
@@ -107,7 +107,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     </Menu.Item>
                     {option.hasChildren && option.id === openChildFor && (
                       <div
-                        className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 shadow-lg focus:outline-none ${
+                        className={`absolute top-0 min-w-36 whitespace-nowrap origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 border border-custom-border-300 shadow-lg focus:outline-none ${
                           direction === "left"
                             ? "right-full -translate-x-1"
                             : "left-full translate-x-1"
@@ -126,7 +126,9 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                         {option.children ? (
                           <div className="space-y-1 p-1">
                             {option.children.length === 0 ? (
-                              <p>No {option.label} found</p> //if no children found, show this message.
+                              <p className="text-custom-text-200 text-center px-1 py-1.5">
+                                No {option.label} found
+                              </p> //if no children found, show this message.
                             ) : (
                               option.children.map((child) => {
                                 if (child.element) return child.element;
