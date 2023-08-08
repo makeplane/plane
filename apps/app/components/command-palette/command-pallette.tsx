@@ -25,7 +25,7 @@ import inboxService from "services/inbox.service";
 // fetch keys
 import { INBOX_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 // mobx store
-import { useMobxStore } from "lib/mobx-store/store-provider";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const CommandPalette: React.FC = () => {
   const store: any = useMobxStore();
@@ -101,7 +101,7 @@ export const CommandPalette: React.FC = () => {
         } else if ((ctrlKey || metaKey) && keyPressed === "b") {
           e.preventDefault();
           // toggleCollapsed();
-          store.theme.setSidebarCollapsed(!store.theme.sidebarCollapsed);
+          store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed);
         } else if (key === "Delete") {
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);

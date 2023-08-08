@@ -22,7 +22,7 @@ import emptyNotification from "public/empty-state/notification.svg";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
 // mobx store
-import { useMobxStore } from "lib/mobx-store/store-provider";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const NotificationPopover = () => {
   const store: any = useMobxStore();
@@ -81,17 +81,17 @@ export const NotificationPopover = () => {
                 tooltipContent="Notifications"
                 position="right"
                 className="ml-2"
-                disabled={!store.theme.sidebarCollapsed}
+                disabled={!store?.theme?.sidebarCollapsed}
               >
                 <Popover.Button
                   className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                  } ${store.theme.sidebarCollapsed ? "justify-center" : ""}`}
+                  } ${store?.theme?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
                   <NotificationsOutlined fontSize="small" />
-                  {store.theme.sidebarCollapsed ? null : <span>Notifications</span>}
+                  {store?.theme?.sidebarCollapsed ? null : <span>Notifications</span>}
                   {totalNotificationCount && totalNotificationCount > 0 ? (
                     <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
                       {getNumberCount(totalNotificationCount)}

@@ -12,7 +12,7 @@ import { Bolt, HelpOutlineOutlined, WestOutlined } from "@mui/icons-material";
 import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import { DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
 // mobx store
-import { useMobxStore } from "lib/mobx-store/store-provider";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const helpOptions = [
   {
@@ -57,23 +57,23 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
     <>
       <div
         className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 py-2 px-4 ${
-          store.theme.sidebarCollapsed ? "flex-col" : ""
+          store?.theme?.sidebarCollapsed ? "flex-col" : ""
         }`}
       >
-        {!store.theme.sidebarCollapsed && (
+        {!store?.theme?.sidebarCollapsed && (
           <div className="w-1/2 text-center cursor-default rounded-md px-2.5 py-1.5 font-medium outline-none text-sm bg-green-500/10 text-green-500">
             Free Plan
           </div>
         )}
         <div
           className={`flex items-center gap-1 ${
-            store.theme.sidebarCollapsed ? "flex-col justify-center" : "justify-evenly w-1/2"
+            store?.theme?.sidebarCollapsed ? "flex-col justify-center" : "justify-evenly w-1/2"
           }`}
         >
           <button
             type="button"
             className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
-              store.theme.sidebarCollapsed ? "w-full" : ""
+              store?.theme?.sidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => {
               const e = new KeyboardEvent("keydown", {
@@ -87,7 +87,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
           <button
             type="button"
             className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
-              store.theme.sidebarCollapsed ? "w-full" : ""
+              store?.theme?.sidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
           >
@@ -103,13 +103,13 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
           <button
             type="button"
             className={`hidden md:grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
-              store.theme.sidebarCollapsed ? "w-full" : ""
+              store?.theme?.sidebarCollapsed ? "w-full" : ""
             }`}
-            onClick={() => store.theme.setSidebarCollapsed(!store.theme.sidebarCollapsed)}
+            onClick={() => store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed)}
           >
             <WestOutlined
               fontSize="small"
-              className={`duration-300 ${store.theme.sidebarCollapsed ? "rotate-180" : ""}`}
+              className={`duration-300 ${store?.theme?.sidebarCollapsed ? "rotate-180" : ""}`}
             />
           </button>
         </div>
@@ -126,7 +126,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
           >
             <div
               className={`absolute bottom-2 ${
-                store.theme.sidebarCollapsed ? "left-full" : "left-[-75px]"
+                store?.theme?.sidebarCollapsed ? "left-full" : "left-[-75px]"
               } space-y-2 rounded-sm bg-custom-background-80 p-1 shadow-md`}
               ref={helpOptionsRef}
             >

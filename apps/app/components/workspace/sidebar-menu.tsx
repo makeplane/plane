@@ -17,7 +17,7 @@ import {
   WorkOutlineOutlined,
 } from "@mui/icons-material";
 // mobx store
-import { useMobxStore } from "lib/mobx-store/store-provider";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {
@@ -65,17 +65,17 @@ export const WorkspaceSidebarMenu = () => {
                 tooltipContent={link.name}
                 position="right"
                 className="ml-2"
-                disabled={!store.theme.sidebarCollapsed}
+                disabled={!store?.theme?.sidebarCollapsed}
               >
                 <div
                   className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                  } ${store.theme.sidebarCollapsed ? "justify-center" : ""}`}
+                  } ${store?.theme?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
                   {<link.Icon fontSize="small" />}
-                  {!store.theme.sidebarCollapsed && link.name}
+                  {!store?.theme?.sidebarCollapsed && link.name}
                 </div>
               </Tooltip>
             </a>

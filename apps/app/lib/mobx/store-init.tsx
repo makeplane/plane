@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 // mobx store
-import { useMobxStore } from "lib/mobx-store/store-provider";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const MobxStoreInit = () => {
   const store: any = useMobxStore();
@@ -10,7 +10,7 @@ const MobxStoreInit = () => {
     if (
       localStorage &&
       localStorage.getItem("app_sidebar_collapsed") &&
-      store.theme.sidebarCollapsed === null
+      store?.theme?.sidebarCollapsed === null
     )
       store.theme.setSidebarCollapsed(
         localStorage.getItem("app_sidebar_collapsed")
@@ -25,7 +25,7 @@ const MobxStoreInit = () => {
       store.theme.setTheme(
         localStorage.getItem("theme") ? localStorage.getItem("theme") : "system"
       );
-  }, []);
+  }, [store?.theme]);
 
   return <></>;
 };

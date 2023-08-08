@@ -34,8 +34,8 @@ import {
   SITE_TITLE,
 } from "constants/seo-variables";
 // mobx store provider
-import { MobxStoreProvider } from "lib/mobx-store/store-provider";
-import MobxStoreInit from "lib/mobx-store/store-init";
+import { MobxStoreProvider } from "lib/mobx/store-provider";
+import MobxStoreInit from "lib/mobx/store-init";
 
 const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
 

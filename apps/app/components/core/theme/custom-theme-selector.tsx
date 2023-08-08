@@ -16,7 +16,7 @@ import { applyTheme } from "helpers/theme.helper";
 // types
 import { ICustomTheme } from "types";
 // mobx store
-import { useMobxStore } from "lib/mobx-store/store-provider";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   preLoadedData?: Partial<ICustomTheme> | null;
