@@ -28,7 +28,9 @@ export const Avatar: React.FC<AvatarProps> = ({
   fontSize = "12px",
 }) => (
   <div
-    className={`relative rounded-full ${index && index !== 0 ? "-ml-3.5" : ""}`}
+    className={`relative rounded border-[0.5px] ${
+      index && index !== 0 ? "-ml-3.5 border-custom-border-0" : "border-transparent"
+    }`}
     style={{
       height: height,
       width: width,
@@ -36,8 +38,8 @@ export const Avatar: React.FC<AvatarProps> = ({
   >
     {user && user.avatar && user.avatar !== "" ? (
       <div
-        className={`rounded-full border-2 ${
-          index ? "border-custom-border-200 bg-custom-background-80" : "border-transparent"
+        className={`rounded border-[0.5px] ${
+          index ? "border-custom-border-0 bg-custom-background-100" : "border-transparent"
         }`}
         style={{
           height: height,
@@ -46,13 +48,13 @@ export const Avatar: React.FC<AvatarProps> = ({
       >
         <img
           src={user.avatar}
-          className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+          className="absolute top-0 left-0 h-full w-full object-cover rounded"
           alt={user.first_name}
         />
       </div>
     ) : (
       <div
-        className="grid place-items-center rounded-full border-2 border-custom-border-200 bg-gray-700 text-xs capitalize text-white"
+        className="grid place-items-center text-xs capitalize text-white rounded bg-gray-700  border-[0.5px] border-custom-border-0"
         style={{
           height: height,
           width: width,
@@ -77,7 +79,7 @@ type AsigneesListProps = {
 export const AssigneesList: React.FC<AsigneesListProps> = ({
   users,
   userIds,
-  length = 5,
+  length = 3,
   showLength = true,
 }) => {
   const router = useRouter();
@@ -90,7 +92,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
 
   if ((users && users.length === 0) || (userIds && userIds.length === 0))
     return (
-      <div className="h-5 w-5 rounded-full border-2 border-white bg-custom-background-80">
+      <div className="h-5 w-5 rounded border-[0.5px] border-custom-border-0 bg-custom-background-80">
         <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
       </div>
     );
@@ -102,7 +104,13 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           {users.slice(0, length).map((user, index) => (
             <Avatar key={user?.id} user={user} index={index} />
           ))}
-          {users.length > length ? <span>+{users.length - length}</span> : null}
+          {users.length > length ? (
+            <div className="-ml-3.5 relative h-5 w-5 rounded">
+              <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-5 w-5 text-custom-text-200 border-[0.5px] border-custom-border-300">
+                +{users.length - length}
+              </div>
+            </div>
+          ) : null}
         </>
       )}
       {userIds && (
@@ -114,7 +122,11 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           })}
           {showLength ? (
             userIds.length > length ? (
-              <span>+{userIds.length - length}</span>
+              <div className="-ml-3.5 relative h-5 w-5 rounded">
+                <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-5 w-5 text-custom-text-200 border-[0.5px] border-custom-border-300">
+                  +{userIds.length - length}
+                </div>
+              </div>
             ) : null
           ) : (
             ""
