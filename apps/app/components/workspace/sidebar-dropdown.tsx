@@ -205,9 +205,9 @@ export const WorkspaceSidebarDropdown = () => {
                     onClick={() => {
                       router.push("/create-workspace");
                     }}
-                    className="flex w-full items-center gap-1 text-sm text-custom-sidebar-text-200"
+                    className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200"
                   >
-                    <PlusIcon className="h-3 w-3" />
+                    <PlusIcon className="h-4 w-4" />
                     Create Workspace
                   </Menu.Item>
                 </div>
