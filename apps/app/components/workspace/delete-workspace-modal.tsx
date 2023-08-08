@@ -50,8 +50,13 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
   const canDelete = confirmWorkspaceName === data?.name && confirmDeleteMyWorkspace;
 
   const handleClose = () => {
-    onClose();
     setIsDeleteLoading(false);
+    const timer = setTimeout(() => {
+      setConfirmWorkspaceName("");
+      setConfirmDeleteMyWorkspace(false);
+      clearTimeout(timer);
+    }, 350);
+    onClose();
   };
 
   const handleDeletion = async () => {
