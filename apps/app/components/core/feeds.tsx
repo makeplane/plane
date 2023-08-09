@@ -16,8 +16,6 @@ import { Icon } from "components/ui";
 import { renderShortDateWithYearFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import Tiptap from "components/tiptap";
-// types
-// import RemirrorRichTextEditor from "components/rich-text-editor";
 
 const activityDetails: {
   [key: string]: {
@@ -262,17 +260,6 @@ export const Feeds: React.FC<any> = ({ activities }) => {
                         noBorder
                         customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
                       />
-                      {/**/}
-                      {/* <RemirrorRichTextEditor */}
-                      {/*   value={ */}
-                      {/*     activity.new_value && activity.new_value !== "" */}
-                      {/*       ? activity.new_value */}
-                      {/*       : activity.old_value */}
-                      {/*   } */}
-                      {/*   editable={false} */}
-                      {/*   noBorder */}
-                      {/*   customClassName="text-xs border border-custom-border-200 bg-custom-background-100" */}
-                      {/* /> */}
                     </div>
                   </div>
                 </div>

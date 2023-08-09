@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import dynamic from "next/dynamic";
-
 // react-hook-form
 import { useForm } from "react-hook-form";
 // icons
@@ -16,17 +14,6 @@ import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
 import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
-
-// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
-//
-// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-//
-// const WrappedRemirrorRichTextEditor = React.forwardRef<
-//   IRemirrorRichTextEditor,
-//   IRemirrorRichTextEditor
-// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-//
-// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 const TiptapEditor = React.forwardRef<
   ITiptapRichTextEditor,
@@ -115,15 +102,6 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
             onSubmit={handleSubmit(onEnter)}
           >
-            {/* <WrappedRemirrorRichTextEditor */}
-            {/*   value={comment.comment_html} */}
-            {/*   onBlur={(jsonValue, htmlValue) => { */}
-            {/*     setValue("comment_json", jsonValue); */}
-            {/*     setValue("comment_html", htmlValue); */}
-            {/*   }} */}
-            {/*   placeholder="Enter Your comment..." */}
-            {/*   ref={editorRef} */}
-            {/* /> */}
             <TiptapEditor
               ref={editorRef}
               value={watch("comment_html")}
@@ -158,13 +136,6 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
-            {/* <WrappedRemirrorRichTextEditor */}
-            {/*   value={comment.comment_html} */}
-            {/*   editable={false} */}
-            {/*   noBorder */}
-            {/*   customClassName="text-xs border border-custom-border-200 bg-custom-background-100" */}
-            {/*   ref={showEditorRef} */}
-            {/* /> */}
             <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>
         </div>

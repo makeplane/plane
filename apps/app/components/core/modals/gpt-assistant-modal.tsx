@@ -1,7 +1,6 @@
 import React, { useEffect, useState, forwardRef, useRef } from "react";
 
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -33,25 +32,12 @@ type FormData = {
   task: string;
 };
 
-// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-//   ssr: false,
-// });
-//
-// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-//
-// const WrappedRemirrorRichTextEditor = forwardRef<IRemirrorRichTextEditor, IRemirrorRichTextEditor>(
-//   (props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />
-// );
-//
-// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
-
 const TiptapEditor = React.forwardRef<
   ITiptapRichTextEditor,
   ITiptapRichTextEditor
 >((props, ref) => <Tiptap {...props} forwardedRef={ref} />);
 
 TiptapEditor.displayName = "TiptapEditor";
-
 
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
@@ -169,14 +155,6 @@ export const GptAssistantModal: React.FC<Props> = ({
             editable={false}
             ref={editorRef}
           />
-          {/* <WrappedRemirrorRichTextEditor */}
-          {/*   value={htmlContent ?? <p>{content}</p>} */}
-          {/*   customClassName="-m-3" */}
-          {/*   noBorder */}
-          {/*   borderOnFocus={false} */}
-          {/*   editable={false} */}
-          {/*   ref={editorRef} */}
-          {/* /> */}
         </div>
       )}
       {response !== "" && (
@@ -189,14 +167,6 @@ export const GptAssistantModal: React.FC<Props> = ({
             borderOnFocus={false}
             editable={false}
           />
-
-          {/* <RemirrorRichTextEditor */}
-          {/*   value={`<p>${response}</p>`} */}
-          {/*   customClassName="-mx-3 -my-3" */}
-          {/*   noBorder */}
-          {/*   borderOnFocus={false} */}
-          {/*   editable={false} */}
-          {/* /> */}
         </div>
       )}
       {invalidResponse && (

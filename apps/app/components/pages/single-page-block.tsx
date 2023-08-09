@@ -19,7 +19,6 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
-// import RemirrorRichTextEditor, { IRemirrorRichTextEditor } from "components/rich-text-editor";
 // ui
 import { CustomMenu, TextArea } from "components/ui";
 // icons
@@ -49,12 +48,6 @@ type Props = {
   user: ICurrentUserResponse | undefined;
 };
 
-// const WrappedRemirrorRichTextEditor = React.forwardRef<
-//   IRemirrorRichTextEditor,
-//   IRemirrorRichTextEditor
-// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 const TiptapEditor = React.forwardRef<
   ITiptapRichTextEditor,
   ITiptapRichTextEditor

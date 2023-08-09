@@ -18,23 +18,6 @@ import type { ICurrentUserResponse, IIssueComment } from "types";
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
-// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-//   ssr: false,
-//   loading: () => (
-//     <Loader className="mb-5">
-//       <Loader.Item height="12rem" width="100%" />
-//     </Loader>
-//   ),
-// });
-// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-//
-// const WrappedRemirrorRichTextEditor = React.forwardRef<
-//   IRemirrorRichTextEditor,
-//   IRemirrorRichTextEditor
-// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-//
-// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
-
 const TiptapEditor = React.forwardRef<
   ITiptapRichTextEditor,
   ITiptapRichTextEditor

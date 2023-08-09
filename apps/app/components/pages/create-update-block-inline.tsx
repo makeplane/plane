@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 
 import { mutate } from "swr";
 
@@ -18,7 +17,7 @@ import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
 // ui
-import { Loader, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
@@ -39,23 +38,6 @@ const defaultValues = {
   description: null,
   description_html: null,
 };
-
-// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-//   ssr: false,
-//   loading: () => (
-//     <Loader className="mx-4 mt-6">
-//       <Loader.Item height="100px" width="100%" />
-//     </Loader>
-//   ),
-// });
-// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-//
-// const WrappedRemirrorRichTextEditor = React.forwardRef<
-//   IRemirrorRichTextEditor,
-//   IRemirrorRichTextEditor
-// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-//
-// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 const TiptapEditor = React.forwardRef<
   ITiptapRichTextEditor,
@@ -322,19 +304,6 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                         setValue("description", description);
                       }}
                     />
-                    // <WrappedRemirrorRichTextEditor
-                    //   value={{
-                    //     type: "doc",
-                    //     content: [{ type: "paragraph" }],
-                    //   }}
-                    //   onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                    //   onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                    //   placeholder="Write something..."
-                    //   customClassName="text-sm"
-                    //   noBorder
-                    //   borderOnFocus={false}
-                    //   ref={editorRef}
-                    // />
                   );
                 else if (!value || !watch("description_html"))
                   return (
@@ -360,22 +329,6 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                       setValue("description", description);
                     }}
                   />
-                  // <WrappedRemirrorRichTextEditor
-                  //   value={
-                  //     value && value !== "" && Object.keys(value).length > 0
-                  //       ? value
-                  //       : watch("description_html") && watch("description_html") !== ""
-                  //         ? watch("description_html")
-                  //         : { type: "doc", content: [{ type: "paragraph" }] }
-                  //   }
-                  //   onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                  //   onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                  //   placeholder="Write something..."
-                  //   customClassName="text-sm"
-                  //   noBorder
-                  //   borderOnFocus={false}
-                  //   ref={editorRef}
-                  // />
                 );
               }}
             />

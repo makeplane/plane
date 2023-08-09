@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from "react";
 
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 // react-hook-form
@@ -36,25 +35,8 @@ import {
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
-import Tiptap from "components/tiptap";
 // rich-text-editor
-// const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-//   ssr: false,
-//   loading: () => (
-//     <Loader className="mt-4">
-//       <Loader.Item height="12rem" width="100%" />
-//     </Loader>
-//   ),
-// });
-
-// import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-
-// const WrappedRemirrorRichTextEditor = React.forwardRef<
-//   IRemirrorRichTextEditor,
-//   IRemirrorRichTextEditor
-// >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-//
-// WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+import Tiptap from "components/tiptap";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
