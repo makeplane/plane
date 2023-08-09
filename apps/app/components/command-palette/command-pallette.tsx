@@ -103,14 +103,8 @@ export const CommandPalette: React.FC = () => {
           copyIssueUrlToClipboard();
         } else if (keyPressed === "b") {
           e.preventDefault();
-<<<<<<< HEAD
           toggleCollapsed();
         } else if (keyPressed === "backspace") {
-=======
-          // toggleCollapsed();
-          store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed);
-        } else if (key === "Delete") {
->>>>>>> be062ccd34e1150e8aa714e112a299721cedfd4a
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);
         }
