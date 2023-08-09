@@ -38,11 +38,12 @@ const inboxParamsToKey = (params: any) => {
 };
 
 const myIssuesParamsToKey = (params: any) => {
-  const { assignees, created_by, labels, priority, state_group, target_date } = params;
+  const { assignees, created_by, labels, priority, state_group, subscriber, target_date } = params;
 
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
   let stateGroupKey = state_group ? state_group.split(",") : [];
+  let subscriberKey = subscriber ? subscriber.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
   const targetDateKey = target_date ?? "";
@@ -54,10 +55,11 @@ const myIssuesParamsToKey = (params: any) => {
   assigneesKey = assigneesKey.sort().join("_");
   createdByKey = createdByKey.sort().join("_");
   stateGroupKey = stateGroupKey.sort().join("_");
+  subscriberKey = subscriberKey.sort().join("_");
   priorityKey = priorityKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${assigneesKey}_${createdByKey}_${stateGroupKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+  return `${assigneesKey}_${createdByKey}_${stateGroupKey}_${subscriberKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";
@@ -317,9 +319,7 @@ export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: 
 export const USER_PROFILE_ISSUES = (workspaceSlug: string, userId: string, params: any) => {
   const paramsKey = myIssuesParamsToKey(params);
 
-  const subscriberKey = params.subscriber ? params.subscriber.toUpperCase() : "NULL";
-
-  return `USER_PROFILE_ISSUES_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${paramsKey}_${subscriberKey}`;
+  return `USER_PROFILE_ISSUES_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${paramsKey}`;
 };
 
 // reactions

@@ -22,7 +22,6 @@ const MyIssuesPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { projects } = useProjects();
   const { user } = useUser();
 
   const { filters, setFilters } = useMyIssuesFilters(workspaceSlug?.toString());
@@ -30,23 +29,37 @@ const MyIssuesPage: NextPage = () => {
   const tabsList = [
     {
       key: "assigned",
-      label: "Assigned to me",
+      label: "Assigned",
       selected: (filters?.assignees ?? []).length > 0,
       onClick: () => {
         setFilters({
           assignees: [user?.id ?? ""],
           created_by: null,
+          subscriber: null,
         });
       },
     },
     {
       key: "created",
-      label: "Created by me",
+      label: "Created",
       selected: (filters?.created_by ?? []).length > 0,
       onClick: () => {
         setFilters({
-          created_by: [user?.id ?? ""],
           assignees: null,
+          created_by: [user?.id ?? ""],
+          subscriber: null,
+        });
+      },
+    },
+    {
+      key: "subscribed",
+      label: "Subscribed",
+      selected: (filters?.subscriber ?? []).length > 0,
+      onClick: () => {
+        setFilters({
+          assignees: null,
+          created_by: null,
+          subscriber: [user?.id ?? ""],
         });
       },
     },
@@ -55,7 +68,7 @@ const MyIssuesPage: NextPage = () => {
   useEffect(() => {
     if (!filters || !user) return;
 
-    if (!filters.assignees && !filters.created_by) {
+    if (!filters.assignees && !filters.created_by && !filters.subscriber) {
       setFilters({
         assignees: [user.id],
       });
