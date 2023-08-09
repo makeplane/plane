@@ -10,6 +10,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
+import useWorkspaceMembers from "hooks/use-workspace-members";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { SettingsHeader } from "components/workspace";
@@ -45,6 +46,8 @@ const MembersSettings: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const { user } = useUser();
+
+  const { isOwner } = useWorkspaceMembers(workspaceSlug?.toString(), Boolean(workspaceSlug));
 
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug.toString()) : null,
@@ -211,21 +214,30 @@ const MembersSettings: NextPage = () => {
                               className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                               alt={member.display_name || member.email}
                             />
+                          ) : member.display_name || member.email ? (
+                            (member.display_name || member.email)?.charAt(0)
                           ) : (
-                            (member.display_name || member.email).charAt(0)
+                            "?"
                           )}
                         </div>
                         <div>
                           {member.member ? (
                             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-                              <a className="text-sm">{member.display_name || member.email}</a>
+                              <a className="text-sm">
+                                <span>
+                                  {member.first_name} {member.last_name}
+                                </span>
+                                <span className="text-custom-text-300 text-sm ml-2">
+                                  ({member.display_name})
+                                </span>
+                              </a>
                             </Link>
                           ) : (
-                            <h4 className="text-sm">{member.display_name}</h4>
+                            <h4 className="text-sm">{member.display_name || member.email}</h4>
                           )}
-                          <p className="text-xs text-custom-text-200">
-                            {member.display_name || member.email}
-                          </p>
+                          {isOwner && (
+                            <p className="text-xs text-custom-text-200">{member.email}</p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
