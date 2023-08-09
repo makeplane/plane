@@ -22,7 +22,20 @@ export interface ITiptapRichTextEditor {
   debouncedUpdatesEnabled?: boolean;
 }
 
-const Tiptap = ({ onChange, debouncedUpdatesEnabled, forwardedRef, editable, setIsSubmitting, editorContentCustomClassNames, value, noBorder, borderOnFocus, customClassName }: ITiptapRichTextEditor) => {
+const Tiptap = (props: ITiptapRichTextEditor) => {
+  const {
+    onChange,
+    debouncedUpdatesEnabled,
+    forwardedRef,
+    editable,
+    setIsSubmitting,
+    editorContentCustomClassNames,
+    value,
+    noBorder,
+    borderOnFocus,
+    customClassName
+  } = props;
+
   const editor = useEditor({
     editable: editable ?? true,
     editorProps: TiptapEditorProps,
