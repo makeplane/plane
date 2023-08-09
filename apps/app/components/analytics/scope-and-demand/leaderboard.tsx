@@ -5,18 +5,23 @@ type Props = {
     firstName: string;
     lastName: string;
     count: number;
+    id: string;
   }[];
   title: string;
+  workspaceSlug: string;
 };
 
-export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
+export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title, workspaceSlug }) => (
   <div className="p-3 border border-custom-border-200 rounded-[10px]">
     <h6 className="text-base font-medium">{title}</h6>
     {users.length > 0 ? (
       <div className="mt-3 space-y-3">
         {users.map((user) => (
-          <div
+          <a
             key={user.display_name ?? "None"}
+            href={`/${workspaceSlug}/profile/${user.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-start justify-between gap-4 text-xs"
           >
             <div className="flex items-center gap-2">
@@ -38,7 +43,7 @@ export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title }) => (
               </span>
             </div>
             <span className="flex-shrink-0">{user.count}</span>
-          </div>
+          </a>
         ))}
       </div>
     ) : (
