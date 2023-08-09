@@ -35,11 +35,8 @@ export const ChartDraggable: React.FC<Props> = ({
     const blockInitialWidth = resizableDiv.clientWidth ?? parseInt(block?.position?.width, 10);
 
     let initialWidth = resizableDiv.clientWidth ?? parseInt(block?.position?.width, 10);
-    // let initialMarginLeft = (resizableDiv.style.marginLeft, 10);
+
     let initialMarginLeft = block?.position?.marginLeft;
-    // console.log("initial", initialMarginLeft);
-    // console.log("block", block.position.marginLeft);
-    // return;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!window) return;

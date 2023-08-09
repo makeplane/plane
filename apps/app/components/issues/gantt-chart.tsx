@@ -66,8 +66,6 @@ export const IssueGanttChartView = () => {
   ) => {
     if (!workspaceSlug || !projectId || !user) return;
 
-    console.log("payload", payload);
-
     await issuesService
       .patchIssue(workspaceSlug.toString(), projectId.toString(), block.id, payload, user)
       .then(() => mutateGanttIssues());

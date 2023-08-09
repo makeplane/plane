@@ -68,8 +68,6 @@ export const ViewIssuesGanttChartView: FC<Props> = ({}) => {
       start_date: data?.start_date,
       target_date: data?.target_date,
     };
-
-    console.log("payload", payload);
   };
 
   const blockFormat = (blocks: any) =>
