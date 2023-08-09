@@ -1793,8 +1793,9 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id, issue_id):
         try:
-            issue_vote = IssueVote.objects.get_or_create(
+            issue_vote, _ = IssueVote.objects.get_or_create(
                 actor_id=request.user.id,
+                project_id=project_id,
                 issue_id=issue_id,
                 vote=request.data.get("vote", 1),
             )
