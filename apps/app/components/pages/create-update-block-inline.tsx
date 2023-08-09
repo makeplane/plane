@@ -23,6 +23,7 @@ import { Loader, PrimaryButton, SecondaryButton, TextArea } from "components/ui"
 import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
 type Props = {
   handleClose: () => void;
@@ -55,6 +56,13 @@ const defaultValues = {
 // >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
 //
 // WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+
+const TiptapEditor = React.forwardRef<
+  ITiptapRichTextEditor,
+  ITiptapRichTextEditor
+>((props, ref) => <Tiptap {...props} forwardedRef={ref} />);
+
+TiptapEditor.displayName = "TiptapEditor";
 
 export const CreateUpdateBlockInline: React.FC<Props> = ({
   handleClose,
@@ -242,9 +250,9 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
       description:
         !data.description || data.description === ""
           ? {
-              type: "doc",
-              content: [{ type: "paragraph" }],
-            }
+            type: "doc",
+            content: [{ type: "paragraph" }],
+          }
           : data.description,
       description_html: data.description_html ?? "<p></p>",
     });
@@ -296,57 +304,86 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
             />
           </div>
           <div className="page-block-section relative -mt-2 text-custom-text-200">
-            {/* <Controller */}
-            {/*   name="description" */}
-            {/*   control={control} */}
-            {/*   render={({ field: { value } }) => { */}
-            {/*     if (!data) */}
-            {/*       return ( */}
-            {/*         <WrappedRemirrorRichTextEditor */}
-            {/*           value={{ */}
-            {/*             type: "doc", */}
-            {/*             content: [{ type: "paragraph" }], */}
-            {/*           }} */}
-            {/*           onJSONChange={(jsonValue) => setValue("description", jsonValue)} */}
-            {/*           onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)} */}
-            {/*           placeholder="Write something..." */}
-            {/*           customClassName="text-sm" */}
-            {/*           noBorder */}
-            {/*           borderOnFocus={false} */}
-            {/*           ref={editorRef} */}
-            {/*         /> */}
-            {/*       ); */}
-            {/*     else if (!value || !watch("description_html")) */}
-            {/*       return ( */}
-            {/*         <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" /> */}
-            {/*       ); */}
-            {/**/}
-            {/*     return ( */}
-            {/*       <WrappedRemirrorRichTextEditor */}
-            {/*         value={ */}
-            {/*           value && value !== "" && Object.keys(value).length > 0 */}
-            {/*             ? value */}
-            {/*             : watch("description_html") && watch("description_html") !== "" */}
-            {/*             ? watch("description_html") */}
-            {/*             : { type: "doc", content: [{ type: "paragraph" }] } */}
-            {/*         } */}
-            {/*         onJSONChange={(jsonValue) => setValue("description", jsonValue)} */}
-            {/*         onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)} */}
-            {/*         placeholder="Write something..." */}
-            {/*         customClassName="text-sm" */}
-            {/*         noBorder */}
-            {/*         borderOnFocus={false} */}
-            {/*         ref={editorRef} */}
-            {/*       /> */}
-            {/*     ); */}
-            {/*   }} */}
-            {/* /> */}
+            <Controller
+              name="description_html"
+              control={control}
+              render={({ field: { value, onChange } }) => {
+                if (!data)
+                  return (
+                    <TiptapEditor
+                      ref={editorRef}
+                      value={"<p></p>"}
+                      debouncedUpdatesEnabled={false}
+                      customClassName="text-sm"
+                      noBorder
+                      borderOnFocus={false}
+                      onChange={(description: Object, description_html: string) => {
+                        onChange(description_html);
+                        setValue("description", description);
+                      }}
+                    />
+                    // <WrappedRemirrorRichTextEditor
+                    //   value={{
+                    //     type: "doc",
+                    //     content: [{ type: "paragraph" }],
+                    //   }}
+                    //   onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                    //   onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                    //   placeholder="Write something..."
+                    //   customClassName="text-sm"
+                    //   noBorder
+                    //   borderOnFocus={false}
+                    //   ref={editorRef}
+                    // />
+                  );
+                else if (!value || !watch("description_html"))
+                  return (
+                    <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" />
+                  );
+
+                return (
+                  <TiptapEditor
+                    ref={editorRef}
+                    value={
+                      value && value !== "" && Object.keys(value).length > 0
+                        ? value
+                        : watch("description_html") && watch("description_html") !== ""
+                          ? watch("description_html")
+                          : { type: "doc", content: [{ type: "paragraph" }] }
+                    }
+                    debouncedUpdatesEnabled={false}
+                    customClassName="text-sm"
+                    noBorder
+                    borderOnFocus={false}
+                    onChange={(description: Object, description_html: string) => {
+                      onChange(description_html);
+                      setValue("description", description);
+                    }}
+                  />
+                  // <WrappedRemirrorRichTextEditor
+                  //   value={
+                  //     value && value !== "" && Object.keys(value).length > 0
+                  //       ? value
+                  //       : watch("description_html") && watch("description_html") !== ""
+                  //         ? watch("description_html")
+                  //         : { type: "doc", content: [{ type: "paragraph" }] }
+                  //   }
+                  //   onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                  //   onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                  //   placeholder="Write something..."
+                  //   customClassName="text-sm"
+                  //   noBorder
+                  //   borderOnFocus={false}
+                  //   ref={editorRef}
+                  // />
+                );
+              }}
+            />
             <div className="m-2 mt-6 flex">
               <button
                 type="button"
-                className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-80 ${
-                  iAmFeelingLucky ? "cursor-wait bg-custom-background-90" : ""
-                }`}
+                className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-80 ${iAmFeelingLucky ? "cursor-wait bg-custom-background-90" : ""
+                  }`}
                 onClick={handleAutoGenerateDescription}
                 disabled={iAmFeelingLucky}
               >
@@ -378,8 +415,8 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                 ? "Updating..."
                 : "Update block"
               : isSubmitting
-              ? "Adding..."
-              : "Add block"}
+                ? "Adding..."
+                : "Add block"}
           </PrimaryButton>
         </div>
       </form>
