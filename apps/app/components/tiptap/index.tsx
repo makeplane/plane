@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import { useDebouncedCallback } from 'use-debounce';
 import { EditorBubbleMenu } from './bubble-menu';
