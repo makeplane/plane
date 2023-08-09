@@ -45,7 +45,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
     >
       <div className="group flex-shrink-0 relative max-w-[6.5rem]">
         <CustomDatePicker
-          placeholder="Due date"
+          placeholder="Start date"
           value={issue?.start_date}
           onChange={(val) => {
             partialUpdateIssue(
