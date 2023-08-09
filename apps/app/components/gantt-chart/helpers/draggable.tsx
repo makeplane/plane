@@ -46,12 +46,20 @@ export const ChartDraggable: React.FC<Props> = ({
 
       let delWidth = 0;
 
+      const posFromLeft = e.clientX;
       const posFromRight = window.innerWidth - e.clientX;
+
+      const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
+      const appSidebar = document.querySelector("#app-sidebar") as HTMLElement;
+
+      if (posFromLeft - appSidebar.clientWidth <= 70) {
+        delWidth = dragDirection === "left" ? -5 : 5;
+
+        scrollContainer.scrollBy(-1 * Math.abs(delWidth), 0);
+      } else delWidth = dragDirection === "left" ? -1 * e.movementX : e.movementX;
 
       if (posFromRight <= 70) {
         delWidth = dragDirection === "left" ? -5 : 5;
-
-        const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
 
         scrollContainer.scrollBy(Math.abs(delWidth), 0);
       } else delWidth = dragDirection === "left" ? -1 * e.movementX : e.movementX;
