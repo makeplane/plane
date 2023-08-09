@@ -1,34 +1,58 @@
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import { useDebouncedCallback } from 'use-debounce';
 import { EditorBubbleMenu } from './bubble-menu';
 import { TiptapExtensions } from './extensions';
 import { TiptapEditorProps } from './props';
 import { Node } from "@tiptap/pm/model";
 import { Editor as CoreEditor } from "@tiptap/core";
-import { useCallback, useRef } from 'react';
+import { useCallback, useImperativeHandle, useRef } from 'react';
 import { EditorState } from '@tiptap/pm/state';
 import fileService from 'services/file.service';
 
-type TiptapProps = {
+export interface ITiptapRichTextEditor {
   value: string;
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
+  editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
   setIsSubmitting?: (isSubmitting: boolean) => void;
+  editable?: boolean;
+  forwardedRef?: any;
+  debouncedUpdatesEnabled?: boolean;
 }
 
-const Tiptap = ({ onChange, setIsSubmitting, value, noBorder, borderOnFocus, customClassName }: TiptapProps) => {
+const Tiptap = ({ onChange, debouncedUpdatesEnabled, forwardedRef, editable, setIsSubmitting, editorContentCustomClassNames, value, noBorder, borderOnFocus, customClassName }: ITiptapRichTextEditor) => {
   const editor = useEditor({
+    editable: editable ?? true,
     editorProps: TiptapEditorProps,
     extensions: TiptapExtensions,
     content: value,
     onUpdate: async ({ editor }) => {
+      // for instant feedback loop
       setIsSubmitting?.(true);
       checkForNodeDeletions(editor)
-      debouncedUpdates({ onChange, editor });
+      if (debouncedUpdatesEnabled) {
+        debouncedUpdates({ onChange, editor });
+      } else {
+        onChange?.(editor.getJSON(), editor.getHTML());
+      }
     }
   });
+
+  const editorRef: React.MutableRefObject<Editor | null> = useRef(null)
+
+  useImperativeHandle(forwardedRef, () => ({
+    clearEditor: () => {
+      console.log('clearContent')
+      console.log(editorRef)
+      editorRef.current?.commands.clearContent()
+    },
+    setEditorValue: (content: string) => {
+      console.log(editorRef, forwardedRef, content)
+      editorRef.current?.commands.setContent(content)
+    }
+  }))
 
   const previousState = useRef<EditorState>();
 
@@ -85,15 +109,18 @@ const Tiptap = ({ onChange, setIsSubmitting, value, noBorder, borderOnFocus, cus
     } ${borderOnFocus ? 'focus:border border-custom-border-200' : 'focus:border-0'
     } ${customClassName}`;
 
+  if (!editor) return null
+  editorRef.current = editor
+
   return (
     <div
       onClick={() => {
         editor?.chain().focus().run();
       }}
-      className={`tiptap-editor-container relative min-h-[150px] ${editorClassNames}`}
+      className={`tiptap-editor-container relative ${editorClassNames}`}
     >
       {editor && <EditorBubbleMenu editor={editor} />}
-      <div className="pt-9">
+      <div className={`${editorContentCustomClassNames}`}>
         <EditorContent editor={editor} />
       </div>
     </div>

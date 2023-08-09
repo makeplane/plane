@@ -58,6 +58,9 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
   const bubbleMenuProps: EditorBubbleMenuProps = {
     ...props,
     shouldShow: ({ editor }) => {
+      if (!editor.isEditable) {
+        return false;
+      }
       if (editor.isActive("image")) {
         return false;
       }
