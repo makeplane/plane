@@ -12,6 +12,8 @@ type GanttChartRootProps = {
   blockUpdateHandler: (block: any, payload: { start_date?: string; target_date?: string }) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
+  enableLeftDrag?: boolean;
+  enableRightDrag?: boolean;
 };
 
 export const GanttChartRoot: FC<GanttChartRootProps> = ({
@@ -22,6 +24,8 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
   blockUpdateHandler,
   sidebarBlockRender,
   blockRender,
+  enableLeftDrag = true,
+  enableRightDrag = true,
 }) => (
   <ChartContextProvider>
     <ChartViewRoot
@@ -32,6 +36,8 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
       blockUpdateHandler={blockUpdateHandler}
       sidebarBlockRender={sidebarBlockRender}
       blockRender={blockRender}
+      enableLeftDrag={enableLeftDrag}
+      enableRightDrag={enableRightDrag}
     />
   </ChartContextProvider>
 );

@@ -1,9 +1,7 @@
-import { FC } from "react";
+import { FC, useEffect, useRef } from "react";
 // helpers
 import { ChartDraggable } from "../helpers/draggable";
 import { renderDateFormat } from "helpers/date-time.helper";
-// data
-import { datePreview } from "../data";
 
 export const GanttChartBlocks: FC<{
   itemsContainerWidth: number;
@@ -17,7 +15,19 @@ export const GanttChartBlocks: FC<{
       target_date?: string;
     }
   ) => void;
-}> = ({ itemsContainerWidth, blocks, sidebarBlockRender, blockRender, blockUpdateHandler }) => {
+  enableLeftDrag: boolean;
+  enableRightDrag: boolean;
+}> = ({
+  itemsContainerWidth,
+  blocks,
+  sidebarBlockRender,
+  blockRender,
+  blockUpdateHandler,
+  enableLeftDrag,
+  enableRightDrag,
+}) => {
+  const draggableParentRef = useRef<HTMLDivElement>(null);
+
   const handleChartBlockPosition = (
     block: any,
     totalBlockShifts: number,
@@ -48,7 +58,7 @@ export const GanttChartBlocks: FC<{
 
   return (
     <div
-      className="relative z-[5] mt-[58px] h-full w-[4000px] divide-x divide-gray-300 overflow-hidden overflow-y-auto"
+      className="relative z-[5] mt-[58px] h-full divide-x divide-gray-300 overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
     >
       <div className="w-full">
@@ -60,22 +70,21 @@ export const GanttChartBlocks: FC<{
               block.target_date && (
                 <div key={`block-${index}`}>
                   <div
-                    className="relative group inline-flex cursor-pointer items-center font-medium transition-all"
-                    style={{ marginLeft: `${block?.position?.marginLeft}px` }}
+                    ref={draggableParentRef}
+                    className="relative group inline-flex cursor-pointer items-center font-medium h-10 transition-all"
+                    style={{
+                      marginLeft: `${block?.position?.marginLeft}px`,
+                    }}
                   >
-                    <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                      <div className="absolute right-[5px] rounded-sm bg-custom-background-90 px-2 py-0.5 text-xs font-medium">
-                        {block?.start_date ? datePreview(block?.start_date) : "-"}
-                      </div>
-                    </div>
-
                     <ChartDraggable
-                      key={`blocks-${index}`}
                       block={block}
                       handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                      parentDivRef={draggableParentRef}
+                      enableLeftDrag={enableLeftDrag}
+                      enableRightDrag={enableRightDrag}
                     >
                       <div
-                        className="rounded shadow-sm bg-custom-background-100 overflow-hidden relative flex items-center h-[34px] border border-custom-border-200"
+                        className="rounded shadow-sm bg-custom-background-100 overflow-hidden flex items-center h-[34px] border border-custom-border-200 transition-all"
                         style={{
                           width: `${block?.position?.width}px`,
                         }}
@@ -86,12 +95,6 @@ export const GanttChartBlocks: FC<{
                         })}
                       </div>
                     </ChartDraggable>
-
-                    <div className="flex-shrink-0 relative w-0 h-0 flex items-center invisible group-hover:visible whitespace-nowrap">
-                      <div className="absolute left-[5px] mr-[5px] rounded-sm bg-custom-background-90 px-2 py-0.5 text-xs font-medium">
-                        {block?.target_date ? datePreview(block?.target_date) : "-"}
-                      </div>
-                    </div>
                   </div>
                 </div>
               )

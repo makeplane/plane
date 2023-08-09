@@ -35,7 +35,7 @@ export const IssueGanttChartView = () => {
   // rendering issues on gantt card
   const GanttBlockView = ({ data }: any) => (
     <Link href={`/${workspaceSlug}/projects/${data?.project}/issues/${data?.id}`}>
-      <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm font-normal">
+      <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm font-normal transition-all duration-300">
         <div
           className="flex-shrink-0 w-1 h-full"
           style={{ backgroundColor: data?.state_detail?.color || "rgb(var(--color-primary-100))" }}
@@ -65,6 +65,8 @@ export const IssueGanttChartView = () => {
     }
   ) => {
     if (!workspaceSlug || !projectId || !user) return;
+
+    console.log("payload", payload);
 
     await issuesService
       .patchIssue(workspaceSlug.toString(), projectId.toString(), block.id, payload, user)

@@ -44,6 +44,8 @@ type ChartViewRootProps = {
   blockUpdateHandler: (block: any, payload: { start_date?: string; target_date?: string }) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
+  enableLeftDrag: boolean;
+  enableRightDrag: boolean;
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = ({
@@ -54,6 +56,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blockUpdateHandler,
   sidebarBlockRender,
   blockRender,
+  enableLeftDrag,
+  enableRightDrag,
 }) => {
   const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
@@ -326,6 +330,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               sidebarBlockRender={sidebarBlockRender}
               blockRender={blockRender}
               blockUpdateHandler={blockUpdateHandler}
+              enableLeftDrag={enableLeftDrag}
+              enableRightDrag={enableRightDrag}
             />
           )}
 
