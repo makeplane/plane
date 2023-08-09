@@ -53,6 +53,7 @@ export interface IssuesModalProps {
     | "priority"
     | "assignee"
     | "label"
+    | "startDate"
     | "dueDate"
     | "estimate"
     | "parent"

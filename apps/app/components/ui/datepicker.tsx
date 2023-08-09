@@ -15,6 +15,7 @@ type Props = {
   className?: string;
   isClearable?: boolean;
   disabled?: boolean;
+  maxDate?: Date;
   minDate?: Date;
 };
 
@@ -29,6 +30,7 @@ export const CustomDatePicker: React.FC<Props> = ({
   className = "",
   isClearable = true,
   disabled = false,
+  maxDate,
   minDate,
 }) => (
   <DatePicker
@@ -54,6 +56,7 @@ export const CustomDatePicker: React.FC<Props> = ({
     dateFormat="MMM dd, yyyy"
     isClearable={isClearable}
     disabled={disabled}
+    maxDate={maxDate}
     minDate={minDate}
   />
 );

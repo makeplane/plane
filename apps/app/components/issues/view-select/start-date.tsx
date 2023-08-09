@@ -19,7 +19,7 @@ type Props = {
   isNotAllowed: boolean;
 };
 
-export const ViewDueDateSelect: React.FC<Props> = ({
+export const ViewStartDateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   tooltipPosition = "top",
@@ -32,33 +32,25 @@ export const ViewDueDateSelect: React.FC<Props> = ({
 
   const { issueView } = useIssuesView();
 
-  const minDate = issue.start_date ? new Date(issue.start_date) : null;
-  minDate?.setDate(minDate.getDate());
+  const maxDate = issue.target_date ? new Date(issue.target_date) : null;
+  maxDate?.setDate(maxDate.getDate());
 
   return (
     <Tooltip
-      tooltipHeading="Due date"
+      tooltipHeading="Start date"
       tooltipContent={
-        issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"
+        issue.start_date ? renderShortDateWithYearFormat(issue.start_date) ?? "N/A" : "N/A"
       }
       position={tooltipPosition}
     >
-      <div
-        className={`group flex-shrink-0 relative max-w-[6.5rem] ${
-          issue.target_date === null
-            ? ""
-            : issue.target_date < new Date().toISOString()
-            ? "text-red-600"
-            : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
-        }`}
-      >
+      <div className="group flex-shrink-0 relative max-w-[6.5rem]">
         <CustomDatePicker
           placeholder="Due date"
-          value={issue?.target_date}
+          value={issue?.start_date}
           onChange={(val) => {
             partialUpdateIssue(
               {
-                target_date: val,
+                start_date: val,
               },
               issue
             );
@@ -75,10 +67,10 @@ export const ViewDueDateSelect: React.FC<Props> = ({
               user
             );
           }}
-          className={`${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
+          className={`${issue?.start_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
             issueView === "kanban" ? "bg-custom-background-90" : "bg-custom-background-100"
           }`}
-          minDate={minDate ?? undefined}
+          maxDate={maxDate ?? undefined}
           noBorder={noBorder}
           disabled={isNotAllowed}
         />
