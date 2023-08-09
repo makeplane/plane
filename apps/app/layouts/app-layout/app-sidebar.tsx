@@ -5,6 +5,7 @@ import {
   WorkspaceHelpSection,
   WorkspaceSidebarDropdown,
   WorkspaceSidebarMenu,
+  WorkspaceSidebarQuickAction,
 } from "components/workspace";
 import { ProjectSidebarList } from "components/project";
 // mobx react lite
@@ -30,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = observer(({ toggleSidebar, setToggleSide
     >
       <div className="flex h-full w-full flex-1 flex-col">
         <WorkspaceSidebarDropdown />
+        <WorkspaceSidebarQuickAction />
         <WorkspaceSidebarMenu />
         <ProjectSidebarList />
         <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />

@@ -152,7 +152,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
               >
                 <button
                   type="button"
-                  className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 ${
+                  className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 text-custom-sidebar-text-400 ${
                     sidebarCollapse ? "" : "group-hover:!flex"
                   } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
                   {...provided?.dragHandleProps}
@@ -204,14 +204,18 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     fontSize="small"
                     className={`flex-shrink-0 ${
                       open ? "rotate-180" : ""
-                    } !hidden group-hover:!block text-custom-sidebar-text-200 duration-300`}
+                    } !hidden group-hover:!block text-custom-sidebar-text-400 duration-300`}
                   />
                 )}
               </Disclosure.Button>
             </Tooltip>
 
             {!sidebarCollapse && (
-              <CustomMenu className="hidden group-hover:block flex-shrink-0" ellipsis>
+              <CustomMenu
+                className="hidden group-hover:block flex-shrink-0"
+                buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
+                ellipsis
+              >
                 {!shortContextMenu && (
                   <CustomMenu.MenuItem onClick={handleDeleteProject}>
                     <span className="flex items-center justify-start gap-2 ">
