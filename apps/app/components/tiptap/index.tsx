@@ -15,7 +15,7 @@ type TiptapProps = {
   borderOnFocus?: boolean;
   customClassName?: string;
   onChange?: (json: any, html: string) => void;
-  setIsSubmitting: (isSubmitting: boolean) => void;
+  setIsSubmitting?: (isSubmitting: boolean) => void;
 }
 
 const Tiptap = ({ onChange, setIsSubmitting, value, noBorder, borderOnFocus, customClassName }: TiptapProps) => {
@@ -24,20 +24,13 @@ const Tiptap = ({ onChange, setIsSubmitting, value, noBorder, borderOnFocus, cus
     extensions: TiptapExtensions,
     content: value,
     onUpdate: async ({ editor }) => {
-      setIsSubmitting(true);
+      setIsSubmitting?.(true);
       checkForNodeDeletions(editor)
       debouncedUpdates({ onChange, editor });
     }
   });
 
   const previousState = useRef<EditorState>();
-
-  const extractPath = useCallback((url: string, searchString: string) => {
-    if (url.startsWith(searchString)) {
-      console.log("chala", url, searchString)
-      return url.substring(searchString.length);
-    }
-  }, []);
 
   const onNodeDeleted = useCallback(
     async (node: Node) => {
@@ -100,7 +93,7 @@ const Tiptap = ({ onChange, setIsSubmitting, value, noBorder, borderOnFocus, cus
       className={`tiptap-editor-container relative min-h-[150px] ${editorClassNames}`}
     >
       {editor && <EditorBubbleMenu editor={editor} />}
-      <div className="pt-8">
+      <div className="pt-9">
         <EditorContent editor={editor} />
       </div>
     </div>

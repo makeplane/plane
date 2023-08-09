@@ -54,7 +54,7 @@ export const TiptapExtensions = [
     code: {
       HTMLAttributes: {
         class:
-          "rounded-md bg-stone-200 px-1 py-1 font-mono font-medium text-stone-900",
+          "rounded-md bg-custom-bg-1000 px-1 py-1 font-mono font-medium text-stone-900",
         spellcheck: "false",
       },
     },
@@ -62,7 +62,7 @@ export const TiptapExtensions = [
     horizontalRule: false,
     dropcursor: {
       color: "#DBEAFE",
-      width: 4,
+      width: 2,
     },
     gapcursor: false,
   }),
@@ -117,7 +117,7 @@ export const TiptapExtensions = [
     includeChildren: true,
   }),
   UniqueID.configure({
-    types: ['heading', 'paragraph', 'image'],
+    types: ['image'],
   }),
   SlashCommand,
   TiptapUnderline,
