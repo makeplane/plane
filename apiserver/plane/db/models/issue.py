@@ -476,6 +476,28 @@ class CommentReaction(ProjectBaseModel):
         return f"{self.issue.name} {self.actor.email}"
 
 
+class IssueVote(ProjectBaseModel):
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="votes")
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="votes"
+    )
+    vote = models.IntegerField(
+        choices=(
+            (-1, "DOWNVOTE"),
+            (1, "UPVOTE"),
+        )
+    )
+    class Meta:
+        unique_together = ["issue", "actor"]
+        verbose_name = "Issue Vote"
+        verbose_name_plural = "Issue Votes"
+        db_table = "issue_votes"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.actor.email}"
+
+
 # TODO: Find a better method to save the model
 @receiver(post_save, sender=Issue)
 def create_issue_sequence(sender, instance, created, **kwargs):

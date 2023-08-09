@@ -37,6 +37,7 @@ from .issue import (
     IssueSubscriber,
     IssueReaction,
     CommentReaction,
+    IssueVote,
 )
 
 from .asset import FileAsset

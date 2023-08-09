@@ -48,6 +48,7 @@ from plane.api.serializers import (
     ProjectMemberLiteSerializer,
     IssueReactionSerializer,
     CommentReactionSerializer,
+    IssueVoteSerializer,
 )
 from plane.api.permissions import (
     WorkspaceEntityPermission,
@@ -71,6 +72,7 @@ from plane.db.models import (
     IssueReaction,
     CommentReaction,
     ProjectDeployBoard,
+    IssueVote,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -1768,6 +1770,53 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 {"error": "Comment reaction does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class IssueVotePublicViewSet(BaseViewSet):
+    model = IssueVote
+    serializer_class = IssueVoteSerializer
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+        )
+
+    def create(self, request, slug, project_id, issue_id):
+        try:
+            issue_vote = IssueVote.objects.get_or_create(
+                actor_id=request.user.id,
+                issue_id=issue_id,
+                vote=request.data.get("vote", 1),
+            )
+            serializer = IssueVoteSerializer(issue_vote)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, project_id, issue_id):
+        try:
+            issue_vote = IssueVote.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=issue_id,
+                actor_id=request.user.id,
+            )
+            issue_vote.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             capture_exception(e)
             return Response(

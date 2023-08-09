@@ -170,6 +170,7 @@ from plane.api.views import (
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
     InboxIssuePublicViewSet,
+    IssueVotePublicViewSet,
     ## End Public Boards
 )
 
@@ -1583,6 +1584,17 @@ urlpatterns = [
             }
         ),
         name="inbox-issue",
+    ),
+    path(
+        "public/workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/votes/",
+        IssueVotePublicViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+                "delete": "destroy",
+            }
+        ),
+        name="issue-vote-project-board",
     ),
     ## End Public Boards
 ]
