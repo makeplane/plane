@@ -34,7 +34,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {member.member.display_name}
+        {member.member.is_bot ? member.member.first_name : member.member.display_name}
       </div>
     ),
   }));
