@@ -49,6 +49,7 @@ export interface IWorkspaceBulkInviteFormData {
 
 export type Properties = {
   assignee: boolean;
+  start_date: boolean;
   due_date: boolean;
   labels: boolean;
   key: boolean;

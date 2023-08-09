@@ -10,6 +10,7 @@ import type {
   IWorkspaceLite,
   IStateLite,
   TStateGroups,
+  Properties,
 } from "types";
 
 export interface IIssueCycle {
@@ -145,21 +146,6 @@ export type IssuePriorities = {
   created_by: number;
   updated_by: number;
   user: string;
-};
-
-export type Properties = {
-  assignee: boolean;
-  due_date: boolean;
-  labels: boolean;
-  key: boolean;
-  priority: boolean;
-  state: boolean;
-  sub_issue_count: boolean;
-  link: boolean;
-  attachment_count: boolean;
-  estimate: boolean;
-  created_on: boolean;
-  updated_on: boolean;
 };
 
 export interface IIssueLabels {
