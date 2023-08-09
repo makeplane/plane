@@ -75,18 +75,16 @@ export const TiptapExtensions = [
       return [
         new InputRule({
           find: /^(?:---|—-|___\s|\*\*\*\s)$/,
-          handler: ({ state, range }) => {
-            const attributes = {};
+          handler: ({ state, range, commands }) => {
+            commands.splitBlock();
 
+            const attributes = {};
             const { tr } = state;
             const start = range.from;
             const end = range.to;
-            const node = this.type.create(attributes) as unknown as ProseMirrorNode;
-            tr.insert(start - 1, node).delete(
-              tr.mapping.map(start),
-              tr.mapping.map(end),
-            );
-          },
+            // @ts-ignore
+            tr.replaceWith(start - 1, end, this.type.create(attributes));
+          }
         }),
       ];
     },
