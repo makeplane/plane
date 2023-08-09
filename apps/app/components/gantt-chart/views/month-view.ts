@@ -1,5 +1,5 @@
 // types
-import { ChartDataType, IBlock } from "../types";
+import { ChartDataType, IGanttBlock } from "../types";
 // data
 import { weeks, months } from "../data";
 // helpers
@@ -193,7 +193,7 @@ export const getNumberOfDaysBetweenTwoDatesInMonth = (startDate: Date, endDate: 
 // calc item scroll position and width
 export const getMonthChartItemPositionWidthInMonth = (
   chartData: ChartDataType,
-  itemData: IBlock
+  itemData: IGanttBlock
 ) => {
   let scrollPosition: number = 0;
   let scrollWidth: number = 0;

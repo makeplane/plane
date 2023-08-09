@@ -10,15 +10,23 @@ const useGanttChartModuleIssues = (
   projectId: string | undefined,
   moduleId: string | undefined
 ) => {
+  // fetch only the issues with a start date and a target date
+  const params = {
+    start_target_date: true,
+  };
+
   // all issues under the workspace and project
   const { data: ganttIssues, mutate: mutateGanttIssues } = useSWR(
-    workspaceSlug && projectId && moduleId ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString()) : null,
+    workspaceSlug && projectId && moduleId
+      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
+      : null,
     workspaceSlug && projectId && moduleId
       ? () =>
           modulesService.getModuleIssuesWithParams(
             workspaceSlug.toString(),
             projectId.toString(),
-            moduleId.toString()
+            moduleId.toString(),
+            params
           )
       : null
   );

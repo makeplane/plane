@@ -1,13 +1,8 @@
 import { FC, useEffect, useState } from "react";
 // icons
-import {
-  Bars4Icon,
-  XMarkIcon,
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-} from "@heroicons/react/20/solid";
+import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
-import { GanttChartBlocks } from "../blocks";
+import { GanttChartBlocks } from "components/gantt-chart";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
 // import { WeekChartView } from "./week";
@@ -30,9 +25,9 @@ import {
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
-import { ChartDataType, IBlock } from "../types";
+import { ChartDataType, IGanttBlock } from "../types";
 // data
-import { datePreview, currentViewDataWithView } from "../data";
+import { currentViewDataWithView } from "../data";
 // context
 import { useChart } from "../hooks";
 
@@ -40,7 +35,7 @@ type ChartViewRootProps = {
   border: boolean;
   title: null | string;
   loaderTitle: string;
-  blocks: IBlock[] | null;
+  blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: { start_date?: string; target_date?: string }) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
@@ -66,9 +61,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const [blocksSidebarView, setBlocksSidebarView] = useState<boolean>(false);
 
   // blocks state management starts
-  const [chartBlocks, setChartBlocks] = useState<IBlock[] | null>(null);
+  const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
 
-  const renderBlockStructure = (view: any, blocks: IBlock[]) =>
+  const renderBlockStructure = (view: any, blocks: IGanttBlock[]) =>
     blocks && blocks.length > 0
       ? blocks.map((block: any) => ({
           ...block,

@@ -1,11 +1,17 @@
 import { FC } from "react";
-// next imports
-import Link from "next/link";
+
 import { useRouter } from "next/router";
+
+import { KeyedMutator } from "swr";
+
+// services
+import modulesService from "services/modules.service";
+// hooks
+import useUser from "hooks/use-user";
 // components
-import { GanttChartRoot } from "components/gantt-chart";
-// ui
-import { Tooltip } from "components/ui";
+import { GanttChartRoot, ModuleGanttBlock } from "components/gantt-chart";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IModule } from "types";
 // constants
@@ -13,11 +19,14 @@ import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   modules: IModule[];
+  mutateModules: KeyedMutator<IModule[]>;
 };
 
-export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
+export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
+
+  const { user } = useUser();
 
   // rendering issues on gantt sidebar
   const GanttSidebarBlockView = ({ data }: any) => (
@@ -32,42 +41,38 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
     </div>
   );
 
-  // rendering issues on gantt card
-  const GanttBlockView = ({ data }: { data: IModule }) => (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/modules/${data?.id}`}>
-      <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm">
-        <div
-          className="flex-shrink-0 w-[4px] h-full"
-          style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color }}
-        />
-        <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
-          <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
-            {data?.name}
-          </div>
-        </Tooltip>
-      </a>
-    </Link>
-  );
+  const handleModuleUpdate = (
+    module: IModule,
+    payload: { sort_order?: number; start_date?: string; target_date?: string }
+  ) => {
+    if (!workspaceSlug || !user) return;
 
-  // handle gantt issue start date and target date
-  const handleUpdateDates = async (data: any) => {
-    const payload = {
-      id: data?.id,
-      start_date: data?.start_date,
-      target_date: data?.target_date,
-    };
+    mutateModules((prevData) => {
+      if (!prevData) return prevData;
+
+      const newList = prevData.map((p) => ({
+        ...p,
+        ...(p.id === module.id ? payload : {}),
+      }));
+
+      return payload.sort_order ? orderArrayBy(newList, "sort_order") : newList;
+    }, false);
+
+    modulesService
+      .patchModule(workspaceSlug.toString(), module.project, module.id, payload, user)
+      .finally(() => mutateModules());
   };
 
-  const blockFormat = (blocks: any) =>
+  const blockFormat = (blocks: IModule[]) =>
     blocks && blocks.length > 0
-      ? blocks.map((_block: any) => {
-          if (_block?.start_date && _block.target_date) console.log("_block", _block);
-          return {
-            start_date: new Date(_block.created_at),
-            target_date: new Date(_block.updated_at),
-            data: _block,
-          };
-        })
+      ? blocks
+          .filter((b) => b.start_date && b.target_date)
+          .map((block) => ({
+            data: block,
+            sort_order: block.sort_order,
+            start_date: new Date(block.start_date ?? ""),
+            target_date: new Date(block.target_date ?? ""),
+          }))
       : [];
 
   return (
@@ -76,9 +81,9 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules }) => {
         title="Modules"
         loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
-        blockUpdateHandler={handleUpdateDates}
+        blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
         sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
-        blockRender={(data: any) => <GanttBlockView data={data} />}
+        blockRender={(data: any) => <ModuleGanttBlock module={data as IModule} />}
       />
     </div>
   );

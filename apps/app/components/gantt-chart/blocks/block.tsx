@@ -1,0 +1,72 @@
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+// ui
+import { Tooltip } from "components/ui";
+// types
+import { ICycle, IIssue, IModule } from "types";
+// constants
+import { MODULE_STATUS } from "constants/module";
+
+export const IssueGanttBlock = ({ issue }: { issue: IIssue }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  return (
+    <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
+      <a className="relative flex items-center w-full h-full shadow-sm transition-all duration-300">
+        <div
+          className="flex-shrink-0 w-1 h-full"
+          style={{ backgroundColor: issue.state_detail?.color }}
+        />
+        <Tooltip tooltipContent={issue.name}>
+          <div className="text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
+            {issue.name}
+          </div>
+        </Tooltip>
+      </a>
+    </Link>
+  );
+};
+
+export const CycleGanttBlock = ({ cycle }: { cycle: ICycle }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  return (
+    <Link href={`/${workspaceSlug}/projects/${cycle.project}/cycles/${cycle.id}`}>
+      <a className="relative flex items-center w-full h-full shadow-sm transition-all duration-300">
+        <div
+          className="flex-shrink-0 w-1 h-full"
+          style={{ backgroundColor: "rgb(var(--color-primary-100))" }}
+        />
+        <Tooltip tooltipContent={cycle.name}>
+          <div className="text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
+            {cycle.name}
+          </div>
+        </Tooltip>
+      </a>
+    </Link>
+  );
+};
+
+export const ModuleGanttBlock = ({ module }: { module: IModule }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  return (
+    <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
+      <a className="relative flex items-center w-full h-full shadow-sm transition-all duration-300">
+        <div
+          className="flex-shrink-0 w-1 h-full"
+          style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color }}
+        />
+        <Tooltip tooltipContent={module.name}>
+          <div className="text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
+            {module.name}
+          </div>
+        </Tooltip>
+      </a>
+    </Link>
+  );
+};

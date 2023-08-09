@@ -5,7 +5,7 @@ export type allViewsType = {
   data: Object | null;
 };
 
-export interface IBlock {
+export interface IGanttBlock {
   data: any;
   position?: {
     marginLeft: number;

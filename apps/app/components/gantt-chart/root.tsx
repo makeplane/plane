@@ -4,14 +4,17 @@ import { ChartViewRoot } from "./chart";
 // context
 import { ChartContextProvider } from "./contexts";
 // types
-import { IBlock } from "./types";
+import { IGanttBlock } from "./types";
 
 type GanttChartRootProps = {
   border?: boolean;
   title: null | string;
   loaderTitle: string;
-  blocks: IBlock[] | null;
-  blockUpdateHandler: (block: any, payload: { start_date?: string; target_date?: string }) => void;
+  blocks: IGanttBlock[] | null;
+  blockUpdateHandler: (
+    block: any,
+    payload: { sort_order?: number; start_date?: string; target_date?: string }
+  ) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
   enableLeftDrag?: boolean;
