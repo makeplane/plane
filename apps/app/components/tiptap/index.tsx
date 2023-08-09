@@ -73,7 +73,7 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     async (node: Node) => {
       if (node.type.name === 'image') {
         const assetUrlWithWorkspaceId = new URL(node.attrs.src).pathname.substring(1);
-        const resStatus = await fileService.deleteFile(assetUrlWithWorkspaceId);
+        const resStatus = await fileService.deleteImage(assetUrlWithWorkspaceId);
         if (resStatus === 204) {
           console.log("file deleted successfully");
         }

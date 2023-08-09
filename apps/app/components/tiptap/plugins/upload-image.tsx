@@ -14,7 +14,7 @@ const UploadImagesPlugin = () =>
       apply(tr, set) {
         set = set.map(tr.mapping, tr.doc);
         // See if the transaction adds or removes any placeholders
-        const action = tr.getMeta(this);
+        const action = tr.getMeta(uploadKey);
         if (action && action.add) {
           const { id, pos, src } = action.add;
 
@@ -33,7 +33,7 @@ const UploadImagesPlugin = () =>
           set = set.add(tr.doc, [deco]);
         } else if (action && action.remove) {
           set = set.remove(
-            set.find(null, null, (spec) => spec.id == action.remove.id),
+            set.find(undefined, undefined, (spec) => spec.id == action.remove.id),
           );
         }
         return set;
@@ -50,7 +50,7 @@ export default UploadImagesPlugin;
 
 function findPlaceholder(state: EditorState, id: {}) {
   const decos = uploadKey.getState(state);
-  const found = decos.find(null, null, (spec) => spec.id == id);
+  const found = decos.find(undefined, undefined, (spec: { id: number | undefined }) => spec.id == id);
   return found.length ? found[0].from : null;
 }
 

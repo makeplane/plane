@@ -45,7 +45,9 @@ export const TiptapEditorProps: EditorProps = {
         top: event.clientY,
       });
       // here we deduct 1 from the pos or else the image will create an extra node
-      startImageUpload(file, view, coordinates.pos - 1);
+      if (coordinates) {
+        startImageUpload(file, view, coordinates.pos - 1);
+      }
       return true;
     }
     return false;
