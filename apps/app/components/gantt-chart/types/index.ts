@@ -5,6 +5,17 @@ export type allViewsType = {
   data: Object | null;
 };
 
+export interface IBlock {
+  data: any;
+  position?: {
+    marginLeft: number;
+    width: number;
+  };
+  sort_order: number;
+  start_date: Date;
+  target_date: Date;
+}
+
 export interface ChartContextData {
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";

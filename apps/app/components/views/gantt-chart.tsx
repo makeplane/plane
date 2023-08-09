@@ -45,18 +45,6 @@ export const ViewIssuesGanttChartView: FC<Props> = ({}) => {
             {data?.name}
           </div>
         </Tooltip>
-        {data.infoToggle && (
-          <Tooltip
-            tooltipContent={`No due-date set, rendered according to last updated date.`}
-            className={`z-[999999]`}
-          >
-            <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center">
-              <span className="material-symbols-rounded text-custom-text-200 text-[18px]">
-                info
-              </span>
-            </div>
-          </Tooltip>
-        )}
       </a>
     </Link>
   );
@@ -75,18 +63,15 @@ export const ViewIssuesGanttChartView: FC<Props> = ({}) => {
       ? blocks.map((_block: any) => {
           let startDate = new Date(_block.created_at);
           let targetDate = new Date(_block.updated_at);
-          let infoToggle = true;
 
           if (_block?.start_date && _block.target_date) {
             startDate = _block?.start_date;
             targetDate = _block.target_date;
-            infoToggle = false;
           }
 
           return {
             start_date: new Date(startDate),
             target_date: new Date(targetDate),
-            infoToggle: infoToggle,
             data: _block,
           };
         })

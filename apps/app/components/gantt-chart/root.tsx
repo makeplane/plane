@@ -3,12 +3,14 @@ import { FC } from "react";
 import { ChartViewRoot } from "./chart";
 // context
 import { ChartContextProvider } from "./contexts";
+// types
+import { IBlock } from "./types";
 
 type GanttChartRootProps = {
   border?: boolean;
   title: null | string;
   loaderTitle: string;
-  blocks: any;
+  blocks: IBlock[] | null;
   blockUpdateHandler: (block: any, payload: { start_date?: string; target_date?: string }) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;

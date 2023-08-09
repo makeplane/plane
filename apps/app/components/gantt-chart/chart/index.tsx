@@ -30,7 +30,7 @@ import {
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
-import { ChartDataType } from "../types";
+import { ChartDataType, IBlock } from "../types";
 // data
 import { datePreview, currentViewDataWithView } from "../data";
 // context
@@ -40,7 +40,7 @@ type ChartViewRootProps = {
   border: boolean;
   title: null | string;
   loaderTitle: string;
-  blocks: any;
+  blocks: IBlock[] | null;
   blockUpdateHandler: (block: any, payload: { start_date?: string; target_date?: string }) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
@@ -66,13 +66,13 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const [blocksSidebarView, setBlocksSidebarView] = useState<boolean>(false);
 
   // blocks state management starts
-  const [chartBlocks, setChartBlocks] = useState<any[] | null>(null);
+  const [chartBlocks, setChartBlocks] = useState<IBlock[] | null>(null);
 
-  const renderBlockStructure = (view: any, blocks: any) =>
+  const renderBlockStructure = (view: any, blocks: IBlock[]) =>
     blocks && blocks.length > 0
-      ? blocks.map((_block: any) => ({
-          ..._block,
-          position: getMonthChartItemPositionWidthInMonth(view, _block),
+      ? blocks.map((block: any) => ({
+          ...block,
+          position: getMonthChartItemPositionWidthInMonth(view, block),
         }))
       : [];
 

@@ -1,11 +1,13 @@
-import { FC, useEffect, useRef } from "react";
+import { FC } from "react";
 // helpers
 import { ChartDraggable } from "../helpers/draggable";
 import { renderDateFormat } from "helpers/date-time.helper";
+// types
+import { IBlock } from "../types";
 
 export const GanttChartBlocks: FC<{
   itemsContainerWidth: number;
-  blocks: null | any[];
+  blocks: IBlock[] | null;
   sidebarBlockRender: FC;
   blockRender: FC;
   blockUpdateHandler: (
@@ -26,10 +28,8 @@ export const GanttChartBlocks: FC<{
   enableLeftDrag,
   enableRightDrag,
 }) => {
-  const draggableParentRef = useRef<HTMLDivElement>(null);
-
   const handleChartBlockPosition = (
-    block: any,
+    block: IBlock,
     totalBlockShifts: number,
     dragDirection: "left" | "right"
   ) => {
@@ -65,37 +65,27 @@ export const GanttChartBlocks: FC<{
         {blocks &&
           blocks.length > 0 &&
           blocks.map(
-            (block: any, index: number) =>
+            (block, index: number) =>
               block.start_date &&
               block.target_date && (
                 <div key={`block-${index}`}>
-                  <div
-                    ref={draggableParentRef}
-                    className="relative group inline-flex cursor-pointer items-center font-medium h-10 transition-all"
-                    style={{
-                      marginLeft: `${block?.position?.marginLeft}px`,
-                    }}
+                  <ChartDraggable
+                    block={block}
+                    handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                    enableLeftDrag={enableLeftDrag}
+                    enableRightDrag={enableRightDrag}
                   >
-                    <ChartDraggable
-                      block={block}
-                      handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                      parentDivRef={draggableParentRef}
-                      enableLeftDrag={enableLeftDrag}
-                      enableRightDrag={enableRightDrag}
+                    <div
+                      className="rounded shadow-sm bg-custom-background-80 overflow-hidden flex items-center h-[34px] border border-custom-border-200 transition-all"
+                      style={{
+                        width: `${block.position?.width}px`,
+                      }}
                     >
-                      <div
-                        className="rounded shadow-sm bg-custom-background-100 overflow-hidden flex items-center h-[34px] border border-custom-border-200 transition-all"
-                        style={{
-                          width: `${block?.position?.width}px`,
-                        }}
-                      >
-                        {blockRender({
-                          ...block?.data,
-                          infoToggle: block?.infoToggle ? true : false,
-                        })}
-                      </div>
-                    </ChartDraggable>
-                  </div>
+                      {blockRender({
+                        ...block.data,
+                      })}
+                    </div>
+                  </ChartDraggable>
                 </div>
               )
           )}

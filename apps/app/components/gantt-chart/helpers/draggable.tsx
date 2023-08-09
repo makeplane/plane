@@ -1,13 +1,15 @@
 import React, { useRef } from "react";
+
 import { useChart } from "../hooks";
+// types
+import { IBlock } from "../types";
 
 type Props = {
   children: any;
-  block: any;
+  block: IBlock;
   handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right") => void;
   enableLeftDrag: boolean;
   enableRightDrag: boolean;
-  parentDivRef: React.RefObject<HTMLDivElement>;
 };
 
 export const ChartDraggable: React.FC<Props> = ({
@@ -16,8 +18,8 @@ export const ChartDraggable: React.FC<Props> = ({
   handleBlock,
   enableLeftDrag = true,
   enableRightDrag = true,
-  parentDivRef,
 }) => {
+  const parentDivRef = useRef<HTMLDivElement>(null);
   const resizableRef = useRef<HTMLDivElement>(null);
 
   const { currentViewData } = useChart();
@@ -28,13 +30,14 @@ export const ChartDraggable: React.FC<Props> = ({
     const resizableDiv = resizableRef.current;
     const parentDiv = parentDivRef.current;
 
-    if (!resizableDiv || !parentDiv) return;
+    if (!resizableDiv || !parentDiv || !block.position) return;
 
     const columnWidth = currentViewData.data.width;
 
-    const blockInitialWidth = resizableDiv.clientWidth ?? parseInt(block?.position?.width, 10);
+    const blockInitialWidth =
+      resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
 
-    let initialWidth = resizableDiv.clientWidth ?? parseInt(block?.position?.width, 10);
+    let initialWidth = resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
 
     let initialMarginLeft = block?.position?.marginLeft;
 
@@ -96,7 +99,13 @@ export const ChartDraggable: React.FC<Props> = ({
   };
 
   return (
-    <>
+    <div
+      ref={parentDivRef}
+      className="relative group inline-flex cursor-pointer items-center font-medium h-10 transition-all"
+      style={{
+        marginLeft: `${block.position?.marginLeft}px`,
+      }}
+    >
       {enableLeftDrag && (
         <div
           onMouseDown={() => handleDrag("left")}
@@ -110,6 +119,6 @@ export const ChartDraggable: React.FC<Props> = ({
           className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-6 bg-brand-backdrop rounded-md cursor-col-resize"
         />
       )}
-    </>
+    </div>
   );
 };

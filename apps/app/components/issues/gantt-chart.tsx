@@ -1,14 +1,17 @@
-// next imports
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+// services
+import issuesService from "services/issues.service";
+// hooks
+import useUser from "hooks/use-user";
+import useGanttChartIssues from "hooks/gantt-chart/issue-view";
 // components
 import { GanttChartRoot } from "components/gantt-chart";
 // ui
-import { Icon, Tooltip } from "components/ui";
-// hooks
-import useGanttChartIssues from "hooks/gantt-chart/issue-view";
-import issuesService from "services/issues.service";
-import useUser from "hooks/use-user";
+import { Tooltip } from "components/ui";
+// types
+import { IIssue } from "types";
 
 export const IssueGanttChartView = () => {
   const router = useRouter();
@@ -38,20 +41,13 @@ export const IssueGanttChartView = () => {
       <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm font-normal transition-all duration-300">
         <div
           className="flex-shrink-0 w-1 h-full"
-          style={{ backgroundColor: data?.state_detail?.color || "rgb(var(--color-primary-100))" }}
+          style={{ backgroundColor: data?.state_detail?.color }}
         />
-        <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
+        <Tooltip tooltipContent={data?.name}>
           <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-1 px-2.5 overflow-hidden w-full">
             {data?.name}
           </div>
         </Tooltip>
-        {data.infoToggle && (
-          <Tooltip tooltipContent="No due-date set, rendered according to last updated date.">
-            <div className="flex-shrink-0 mx-2 w-[18px] h-[18px] overflow-hidden flex justify-center items-center text-custom-text-200">
-              <Icon iconName="info" />
-            </div>
-          </Tooltip>
-        )}
       </a>
     </Link>
   );
@@ -71,19 +67,19 @@ export const IssueGanttChartView = () => {
       .then(() => mutateGanttIssues());
   };
 
-  const blockFormat = (blocks: any) =>
+  const blockFormat = (blocks: IIssue[]) =>
     blocks && blocks.length > 0
       ? blocks
-          .filter((b: any) => b.start_date && b.target_date)
-          .map((block: any) => {
-            const startDate = new Date(block.start_date);
-            const targetDate = new Date(block.target_date);
+          .filter((b) => b.start_date && b.target_date)
+          .map((block) => {
+            const startDate = new Date(block.start_date ?? "");
+            const targetDate = new Date(block.target_date ?? "");
 
             return {
+              data: block,
+              sort_order: block.sort_order,
               start_date: new Date(startDate),
               target_date: new Date(targetDate),
-              infoToggle: true,
-              data: block,
             };
           })
       : [];
@@ -94,7 +90,7 @@ export const IssueGanttChartView = () => {
         border={false}
         title="Issues"
         loaderTitle="Issues"
-        blocks={ganttIssues ? blockFormat(ganttIssues) : null}
+        blocks={ganttIssues ? blockFormat(ganttIssues as IIssue[]) : null}
         blockUpdateHandler={handleUpdateDates}
         sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
         blockRender={(data: any) => <GanttBlockView data={data} />}
