@@ -63,11 +63,13 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
             }}
           />
         ) : (
-          <ProfileEmptyState
-            title="No Data yet"
-            description="Create issues to view the them by priority in the graph for better analysis."
-            image={priorityGraph}
-          />
+          <div className="p-7">
+            <ProfileEmptyState
+              title="No Data yet"
+              description="Create issues to view the them by priority in the graph for better analysis."
+              image={priorityGraph}
+            />
+          </div>
         )}
       </div>
     ) : (
