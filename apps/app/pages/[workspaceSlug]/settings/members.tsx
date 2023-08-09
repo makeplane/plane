@@ -214,8 +214,10 @@ const MembersSettings: NextPage = () => {
                               className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                               alt={member.display_name || member.email}
                             />
+                          ) : member.display_name || member.email ? (
+                            (member.display_name || member.email)?.charAt(0)
                           ) : (
-                            (member.display_name || member.email).charAt(0)
+                            "?"
                           )}
                         </div>
                         <div>
