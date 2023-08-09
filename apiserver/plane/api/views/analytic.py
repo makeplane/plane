@@ -79,12 +79,12 @@ class AnalyticsEndpoint(BaseAPIView):
                 )
 
             assignee_details = {}
-            if x_axis in ["assignees__email"] or segment in ["assignees__email"]:
+            if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
                 assignee_details = (
                     Issue.issue_objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
                     .order_by("assignees__id")
                     .distinct("assignees__id")
-                    .values("assignees__avatar", "assignees__email", "assignees__first_name", "assignees__last_name")
+                    .values("assignees__avatar", "assignees__display_name", "assignees__first_name", "assignees__last_name", "assignees__id")
                 )
 
 
@@ -243,21 +243,21 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             )
             most_issue_created_user = (
                 queryset.exclude(created_by=None)
-                .values("created_by__first_name", "created_by__last_name", "created_by__avatar", "created_by__email")
+                .values("created_by__first_name", "created_by__last_name", "created_by__avatar", "created_by__display_name")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             most_issue_closed_user = (
                 queryset.filter(completed_at__isnull=False, assignees__isnull=False)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__email")
+                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__display_name")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             pending_issue_user = (
                 queryset.filter(completed_at__isnull=True)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__email")
+                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__display_name")
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )

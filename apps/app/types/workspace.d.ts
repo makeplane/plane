@@ -2,7 +2,7 @@ import type {
   IIssueFilterOptions,
   IProjectMember,
   IUser,
-  IUserLite,
+  IUserMemberLite,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueViewOptions,
@@ -49,6 +49,7 @@ export interface IWorkspaceBulkInviteFormData {
 
 export type Properties = {
   assignee: boolean;
+  start_date: boolean;
   due_date: boolean;
   labels: boolean;
   key: boolean;
@@ -73,9 +74,8 @@ export interface IWorkspaceViewProps {
 
 export interface IWorkspaceMember {
   readonly id: string;
-  user: IUserLite;
   workspace: IWorkspace;
-  member: IUserLite;
+  member: IUserMemberLite;
   role: 5 | 10 | 15 | 20;
   company_role: string | null;
   view_props: IWorkspaceViewProps;

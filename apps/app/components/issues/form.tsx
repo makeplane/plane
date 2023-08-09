@@ -75,6 +75,7 @@ const defaultValues: Partial<IIssue> = {
   assignees_list: [],
   labels: [],
   labels_list: [],
+  start_date: null,
   target_date: null,
 };
 
@@ -96,6 +97,7 @@ export interface IssueFormProps {
     | "priority"
     | "assignee"
     | "label"
+    | "startDate"
     | "dueDate"
     | "estimate"
     | "parent"
@@ -238,6 +240,15 @@ export const IssueForm: FC<IssueFormProps> = ({
       project: projectId,
     });
   }, [getValues, projectId, reset]);
+
+  const startDate = watch("start_date");
+  const targetDate = watch("target_date");
+
+  const minDate = startDate ? new Date(startDate) : null;
+  minDate?.setDate(minDate.getDate());
+
+  const maxDate = targetDate ? new Date(targetDate) : null;
+  maxDate?.setDate(maxDate.getDate());
 
   return (
     <>
@@ -447,13 +458,34 @@ export const IssueForm: FC<IssueFormProps> = ({
                     )}
                   />
                 )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
+                  <div>
+                    <Controller
+                      control={control}
+                      name="start_date"
+                      render={({ field: { value, onChange } }) => (
+                        <IssueDateSelect
+                          label="Start date"
+                          maxDate={maxDate ?? undefined}
+                          onChange={onChange}
+                          value={value}
+                        />
+                      )}
+                    />
+                  </div>
+                )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div>
                     <Controller
                       control={control}
                       name="target_date"
                       render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect value={value} onChange={onChange} />
+                        <IssueDateSelect
+                          label="Due date"
+                          minDate={minDate ?? undefined}
+                          onChange={onChange}
+                          value={value}
+                        />
                       )}
                     />
                   </div>

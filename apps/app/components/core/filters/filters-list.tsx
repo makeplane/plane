@@ -157,10 +157,10 @@ export const FiltersList: React.FC<Props> = ({
                         return (
                           <div
                             key={memberId}
-                            className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1 capitalize"
+                            className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1"
                           >
                             <Avatar user={member} />
-                            <span>{member?.first_name}</span>
+                            <span>{member?.display_name}</span>
                             <span
                               className="cursor-pointer"
                               onClick={() =>
@@ -184,7 +184,7 @@ export const FiltersList: React.FC<Props> = ({
                             className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1 capitalize"
                           >
                             <Avatar user={member} />
-                            <span>{member?.first_name}</span>
+                            <span>{member?.display_name}</span>
                             <span
                               className="cursor-pointer"
                               onClick={() =>

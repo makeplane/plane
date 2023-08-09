@@ -81,10 +81,7 @@ export const BoardHeader: React.FC<Props> = ({
         break;
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        title =
-          member?.first_name && member.first_name !== ""
-            ? `${member.first_name} ${member.last_name}`
-            : member?.email ?? "";
+        title = member?.display_name ?? "";
         break;
     }
 
@@ -149,7 +146,9 @@ export const BoardHeader: React.FC<Props> = ({
         >
           <span className="flex items-center">{getGroupIcon()}</span>
           <h2
-            className="text-lg font-semibold capitalize truncate"
+            className={`text-lg font-semibold truncate ${
+              selectedGroup === "created_by" ? "" : "capitalize"
+            }`}
             style={{
               writingMode: isCollapsed ? "horizontal-tb" : "vertical-rl",
             }}

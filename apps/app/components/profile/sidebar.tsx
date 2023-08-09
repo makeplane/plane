@@ -86,29 +86,29 @@ export const ProfileSidebar = () => {
                 userProjectsData.user_data.cover_image ??
                 "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
               }
-              alt={userProjectsData.user_data.first_name}
+              alt={userProjectsData.user_data.display_name}
               className="h-32 w-full object-cover"
             />
             <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded">
               {userProjectsData.user_data.avatar && userProjectsData.user_data.avatar !== "" ? (
                 <img
                   src={userProjectsData.user_data.avatar}
-                  alt={userProjectsData.user_data.first_name}
+                  alt={userProjectsData.user_data.display_name}
                   className="rounded"
                 />
               ) : (
                 <div className="bg-custom-background-90 flex justify-center items-center w-[52px] h-[52px] rounded text-custom-text-100">
-                  {userProjectsData.user_data.first_name[0]}
+                  {userProjectsData.user_data.display_name?.[0]}
                 </div>
               )}
             </div>
           </div>
           <div className="px-5">
             <div className="mt-[38px]">
-              <h4 className="text-lg font-semibold">
-                {userProjectsData.user_data.first_name} {userProjectsData.user_data.last_name}
-              </h4>
-              <h6 className="text-custom-text-200 text-sm">{userProjectsData.user_data.email}</h6>
+              <h4 className="text-lg font-semibold">{userProjectsData.user_data.display_name}</h4>
+              <h6 className="text-custom-text-200 text-sm">
+                {userProjectsData.user_data.display_name}
+              </h6>
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (

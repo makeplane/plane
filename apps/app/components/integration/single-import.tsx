@@ -42,12 +42,7 @@ export const SingleImport: React.FC<Props> = ({ service, refreshing, handleDelet
       </h4>
       <div className="mt-2 flex items-center gap-2 text-xs text-custom-text-200">
         <span>{renderShortDateWithYearFormat(service.created_at)}</span>|
-        <span>
-          Imported by{" "}
-          {service.initiated_by_detail.first_name && service.initiated_by_detail.first_name !== ""
-            ? service.initiated_by_detail.first_name + " " + service.initiated_by_detail.last_name
-            : service.initiated_by_detail.email}
-        </span>
+        <span>Imported by {service.initiated_by_detail.display_name}</span>
       </div>
     </div>
     <CustomMenu ellipsis>

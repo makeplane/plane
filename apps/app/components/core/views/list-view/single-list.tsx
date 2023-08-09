@@ -96,10 +96,7 @@ export const SingleList: React.FC<Props> = ({
         break;
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        title =
-          member?.first_name && member.first_name !== ""
-            ? `${member.first_name} ${member.last_name}`
-            : member?.email ?? "";
+        title = member?.display_name ?? "";
         break;
     }
 
@@ -163,7 +160,11 @@ export const SingleList: React.FC<Props> = ({
                   <div className="flex items-center">{getGroupIcon()}</div>
                 )}
                 {selectedGroup !== null ? (
-                  <h2 className="text-sm font-semibold capitalize leading-6 text-custom-text-100">
+                  <h2
+                    className={`text-sm font-semibold leading-6 text-custom-text-100 ${
+                      selectedGroup === "created_by" ? "" : "capitalize"
+                    }`}
+                  >
                     {getGroupTitle()}
                   </h2>
                 ) : (
