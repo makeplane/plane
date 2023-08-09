@@ -14,6 +14,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { lowlight } from 'lowlight/lib/core'
 import SlashCommand from "../slash-command";
 import { InputRule } from "@tiptap/core";
+import { Node as ProseMirrorNode } from '@tiptap/pm/model';
 
 import ts from 'highlight.js/lib/languages/typescript'
 
@@ -80,8 +81,8 @@ export const TiptapExtensions = [
             const { tr } = state;
             const start = range.from;
             const end = range.to;
-
-            tr.insert(start - 1, this.type.create(attributes)).delete(
+            const node = this.type.create(attributes) as unknown as ProseMirrorNode;
+            tr.insert(start - 1, node).delete(
               tr.mapping.map(start),
               tr.mapping.map(end),
             );
