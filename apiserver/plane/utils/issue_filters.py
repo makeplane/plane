@@ -303,8 +303,6 @@ def filter_start_target_date_issues(params, filter, method):
 def issue_filters(query_params, method):
     filter = dict()
 
-    print(query_params)
-
     ISSUE_FILTER = {
         "state": filter_state,
         "state_group": filter_state_group,
