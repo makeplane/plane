@@ -14,6 +14,14 @@ type Props = {
 export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => {
   let tooltipValue: string | number = "";
 
+  const renderAssigneeName = (assigneeId: string): string => {
+    const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
+
+    if (!assignee) return "No assignee";
+
+    return assignee.assignees__display_name || "No assignee";
+  };
+
   if (params.segment) {
     if (DATE_KEYS.includes(params.segment)) tooltipValue = renderMonthAndYear(datum.id);
     else tooltipValue = datum.id;
@@ -41,7 +49,10 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
             : ""
         }`}
       >
-        {tooltipValue}:
+        {params.segment === "assignees__id"
+          ? renderAssigneeName(tooltipValue.toString())
+          : tooltipValue}
+        :
       </span>
       <span>{datum.value}</span>
     </div>
