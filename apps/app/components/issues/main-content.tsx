@@ -129,30 +129,30 @@ export const IssueMainContent: React.FC<Props> = ({
           isAllowed={memberRole.isMember || memberRole.isOwner || !uneditable}
         />
 
-        {/*   <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} /> */}
-        {/**/}
-        {/*   <div className="mt-2 space-y-2"> */}
-        {/*     <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} /> */}
-        {/*   </div> */}
-        {/* </div> */}
-        {/* <div className="flex flex-col gap-3 py-3"> */}
-        {/*   <h3 className="text-lg">Attachments</h3> */}
-        {/*   <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"> */}
-        {/*     <IssueAttachmentUpload disabled={uneditable} /> */}
-        {/*     <IssueAttachments /> */}
-        {/*   </div> */}
-        {/* </div> */}
-        {/* <div className="space-y-5 pt-3"> */}
-        {/*   <h3 className="text-lg text-custom-text-100">Comments/Activity</h3> */}
-        {/*   <IssueActivitySection */}
-        {/*     issueId={(archivedIssueId as string) ?? (issueId as string)} */}
-        {/*     user={user} */}
-        {/*   /> */}
-        {/*   <AddComment */}
-        {/*     issueId={(archivedIssueId as string) ?? (issueId as string)} */}
-        {/*     user={user} */}
-        {/*     disabled={uneditable} */}
-        {/*   /> */}
+        <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />
+
+        <div className="mt-2 space-y-2">
+          <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} />
+        </div>
+      </div>
+      <div className="flex flex-col gap-3 py-3">
+        <h3 className="text-lg">Attachments</h3>
+        <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          <IssueAttachmentUpload disabled={uneditable} />
+          <IssueAttachments />
+        </div>
+      </div>
+      <div className="space-y-5 pt-3">
+        <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
+        <IssueActivitySection
+          issueId={(archivedIssueId as string) ?? (issueId as string)}
+          user={user}
+        />
+        <AddComment
+          issueId={(archivedIssueId as string) ?? (issueId as string)}
+          user={user}
+          disabled={uneditable}
+        />
       </div>
     </>
   );

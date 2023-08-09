@@ -15,6 +15,7 @@ import { CommentReaction } from "components/issues";
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
 // const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 //
@@ -26,7 +27,14 @@ import type { IIssueComment } from "types";
 // >((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
 //
 // WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
-//
+
+const TiptapEditor = React.forwardRef<
+  ITiptapRichTextEditor,
+  ITiptapRichTextEditor
+>((props, ref) => <Tiptap {...props} forwardedRef={ref} />);
+
+TiptapEditor.displayName = "TiptapEditor";
+
 type Props = {
   comment: IIssueComment;
   onSubmit: (comment: IIssueComment) => void;
@@ -45,6 +53,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
     formState: { isSubmitting },
     handleSubmit,
     setFocus,
+    watch,
     setValue,
   } = useForm<IIssueComment>({
     defaultValues: comment,
@@ -55,9 +64,10 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
     setIsEditing(false);
 
     onSubmit(formData);
+    console.log("watching", formData.comment_html)
 
-    editorRef.current?.setEditorValue(formData.comment_json);
-    showEditorRef.current?.setEditorValue(formData.comment_json);
+    editorRef.current?.setEditorValue(formData.comment_html);
+    showEditorRef.current?.setEditorValue(formData.comment_html);
   };
 
   useEffect(() => {
@@ -105,14 +115,24 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
             onSubmit={handleSubmit(onEnter)}
           >
-            <WrappedRemirrorRichTextEditor
-              value={comment.comment_html}
-              onBlur={(jsonValue, htmlValue) => {
-                setValue("comment_json", jsonValue);
-                setValue("comment_html", htmlValue);
-              }}
-              placeholder="Enter Your comment..."
+            {/* <WrappedRemirrorRichTextEditor */}
+            {/*   value={comment.comment_html} */}
+            {/*   onBlur={(jsonValue, htmlValue) => { */}
+            {/*     setValue("comment_json", jsonValue); */}
+            {/*     setValue("comment_html", htmlValue); */}
+            {/*   }} */}
+            {/*   placeholder="Enter Your comment..." */}
+            {/*   ref={editorRef} */}
+            {/* /> */}
+            <TiptapEditor
               ref={editorRef}
+              value={watch("comment_html")}
+              debouncedUpdatesEnabled={false}
+              customClassName="min-h-[50px] p-3"
+              onChange={(comment_json: Object, comment_html: string) => {
+                setValue("comment_json", comment_json);
+                setValue("comment_html", comment_html);
+              }}
             />
             <div className="flex gap-1 self-end">
               <button
@@ -132,6 +152,12 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
+            <TiptapEditor
+              ref={showEditorRef}
+              value={comment.comment_html}
+              editable={false}
+              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+            />
             {/* <WrappedRemirrorRichTextEditor */}
             {/*   value={comment.comment_html} */}
             {/*   editable={false} */}
@@ -139,7 +165,6 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             {/*   customClassName="text-xs border border-custom-border-200 bg-custom-background-100" */}
             {/*   ref={showEditorRef} */}
             {/* /> */}
-
             <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>
         </div>

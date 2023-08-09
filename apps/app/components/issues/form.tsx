@@ -372,6 +372,7 @@ export const IssueForm: FC<IssueFormProps> = ({
 
                       return (
                         <Tiptap
+                          debouncedUpdatesEnabled={false}
                           value={
                             !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                               ? watch("description_html")
