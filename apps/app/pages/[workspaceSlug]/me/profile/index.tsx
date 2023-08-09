@@ -69,6 +69,7 @@ const Profile: NextPage = () => {
       last_name: formData.last_name,
       avatar: formData.avatar,
       role: formData.role,
+      display_name: formData.display_name,
     };
 
     await userService
@@ -224,6 +225,36 @@ const Profile: NextPage = () => {
                   id="last_name"
                   placeholder="Enter your last name"
                   autoComplete="off"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-custom-text-100">Display Name</h4>
+                <p className="text-sm text-custom-text-200">
+                  The email address that you are using.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <Input
+                  id="display_name"
+                  name="display_name"
+                  autoComplete="off"
+                  register={register}
+                  error={errors.display_name}
+                  className="w-full"
+                  placeholder="Enter your display name"
+                  validations={{
+                    required: "Display name is required.",
+                    minLength: {
+                      value: 3,
+                      message: "Display name must be at least 3 characters long.",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Display name should not exceed 20 characters",
+                    },
+                  }}
                 />
               </div>
             </div>
