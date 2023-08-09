@@ -35,8 +35,8 @@ import {
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
-// rich-text-editor
 import Tiptap from "components/tiptap";
+// rich-text-editor
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -360,6 +360,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                               ? watch("description_html")
                               : value
                           }
+                          customClassName="min-h-[150px]"
                           onChange={(description: Object, description_html: string) => {
                             onChange(description_html);
                             setValue("description", description);
