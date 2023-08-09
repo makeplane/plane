@@ -1,4 +1,4 @@
-import { useEffect, useState, forwardRef, useRef } from "react";
+import React, { useEffect, useState, forwardRef, useRef } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -15,6 +15,7 @@ import useUserAuth from "hooks/use-user-auth";
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 
 import { IIssue, IPageBlock } from "types";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -43,6 +44,14 @@ type FormData = {
 // );
 //
 // WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+
+const TiptapEditor = React.forwardRef<
+  ITiptapRichTextEditor,
+  ITiptapRichTextEditor
+>((props, ref) => <Tiptap {...props} forwardedRef={ref} />);
+
+TiptapEditor.displayName = "TiptapEditor";
+
 
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
@@ -146,33 +155,48 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
-        isOpen ? "block" : "hidden"
-      }`}
+      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${isOpen ? "block" : "hidden"
+        }`}
     >
-      {/* {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && ( */}
-      {/*   <div className="remirror-section text-sm"> */}
-      {/*     Content: */}
-      {/*     <WrappedRemirrorRichTextEditor */}
-      {/*       value={htmlContent ?? <p>{content}</p>} */}
-      {/*       customClassName="-m-3" */}
-      {/*       noBorder */}
-      {/*       borderOnFocus={false} */}
-      {/*       editable={false} */}
-      {/*       ref={editorRef} */}
-      {/*     /> */}
-      {/*   </div> */}
-      {/* )} */}
+      {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
+        <div className="remirror-section text-sm">
+          Content:
+          <TiptapEditor
+            value={htmlContent ?? `<p>${content}</p>`}
+            customClassName="-m-3"
+            noBorder
+            borderOnFocus={false}
+            editable={false}
+            ref={editorRef}
+          />
+          {/* <WrappedRemirrorRichTextEditor */}
+          {/*   value={htmlContent ?? <p>{content}</p>} */}
+          {/*   customClassName="-m-3" */}
+          {/*   noBorder */}
+          {/*   borderOnFocus={false} */}
+          {/*   editable={false} */}
+          {/*   ref={editorRef} */}
+          {/* /> */}
+        </div>
+      )}
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <RemirrorRichTextEditor
+          <Tiptap
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder
             borderOnFocus={false}
             editable={false}
           />
+
+          {/* <RemirrorRichTextEditor */}
+          {/*   value={`<p>${response}</p>`} */}
+          {/*   customClassName="-mx-3 -my-3" */}
+          {/*   noBorder */}
+          {/*   borderOnFocus={false} */}
+          {/*   editable={false} */}
+          {/* /> */}
         </div>
       )}
       {invalidResponse && (
@@ -185,11 +209,10 @@ export const GptAssistantModal: React.FC<Props> = ({
         type="text"
         name="task"
         register={register}
-        placeholder={`${
-          content && content !== ""
-            ? "Tell AI what action to perform on this content..."
-            : "Ask AI anything..."
-        }`}
+        placeholder={`${content && content !== ""
+          ? "Tell AI what action to perform on this content..."
+          : "Ask AI anything..."
+          }`}
         autoComplete="off"
       />
       <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
@@ -225,8 +248,8 @@ export const GptAssistantModal: React.FC<Props> = ({
             {isSubmitting
               ? "Generating response..."
               : response === ""
-              ? "Generate response"
-              : "Generate again"}
+                ? "Generate response"
+                : "Generate again"}
           </PrimaryButton>
         </div>
       </div>
