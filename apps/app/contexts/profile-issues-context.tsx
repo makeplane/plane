@@ -84,6 +84,7 @@ export const initialState: StateType = {
     labels: true,
     link: true,
     priority: true,
+    start_date: true,
     state: true,
     sub_issue_count: true,
     updated_on: true,
