@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// component
+import { Icon } from "components/ui";
 // services
 import workspaceService from "services/workspace.service";
 // icons
@@ -105,7 +107,8 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           {users.length > length ? (
             <div className="-ml-3.5 relative h-6 w-6 rounded">
               <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
-                +{users.length - length}
+                <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
+                {users.length - length}
               </div>
             </div>
           ) : null}
@@ -121,8 +124,9 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           {showLength ? (
             userIds.length > length ? (
               <div className="-ml-3.5 relative h-6 w-6 rounded">
-                <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
-                  +{userIds.length - length}
+                <div className="flex items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
+                  <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
+                  {userIds.length - length}
                 </div>
               </div>
             ) : null
