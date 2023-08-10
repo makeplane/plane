@@ -98,5 +98,10 @@
   },
   "resolutions": {
     "prosemirror-model": "1.9.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "prosemirror-model": "1.9.1"
+    }
   }
 }
