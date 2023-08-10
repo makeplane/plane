@@ -58,6 +58,13 @@
     "next-pwa": "^5.6.0",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
+    "prosemirror-commands": "^1.5.2",
+    "prosemirror-keymap": "^1.2.2",
+    "prosemirror-model": "^1.19.3",
+    "prosemirror-schema-list": "^1.3.0",
+    "prosemirror-state": "^1.4.3",
+    "prosemirror-transform": "^1.7.4",
+    "prosemirror-view": "^1.31.7",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-color": "^2.19.3",
@@ -97,11 +104,6 @@
     "typescript": "4.7.4"
   },
   "resolutions": {
-    "prosemirror-model": "1.9.1"
-  },
-  "pnpm": {
-    "overrides": {
-      "prosemirror-model": "1.9.1"
-    }
+    "prosemirror-model": "1.18.1"
   }
 }
