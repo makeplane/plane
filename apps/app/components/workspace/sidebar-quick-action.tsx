@@ -10,8 +10,8 @@ export const WorkspaceSidebarQuickAction = () => {
 
   return (
     <div
-      className={`flex items-center justify-between gap-2 w-full cursor-pointer px-4 mt-4 ${
-        store?.theme?.sidebarCollapsed ? "flex-col" : ""
+      className={`flex items-center justify-between w-full cursor-pointer px-4 mt-4 ${
+        store?.theme?.sidebarCollapsed ? "flex-col gap-1" : "gap-2"
       }`}
     >
       <button
