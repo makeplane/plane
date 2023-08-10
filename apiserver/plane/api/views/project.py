@@ -109,6 +109,12 @@ class ProjectViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                member_role=ProjectMember.objects.filter(
+                    project_id=OuterRef("pk"),
+                    member_id=self.request.user.id,
+                ).values("role")
+            )
             .distinct()
         )
 
