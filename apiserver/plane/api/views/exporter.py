@@ -24,21 +24,18 @@ class ExportIssuesEndpoint(BaseAPIView):
             provider = request.data.get("provider", False)
             multiple = request.data.get("multiple", False)
             project_ids = request.data.get("project", [])
-            all_project_ids = []
 
             workspace = Workspace.objects.get(slug=slug)
             if provider in ["csv", "xlsx", "json"]:
                 if not project_ids:
-                    all_project_ids = (
-                        Project.objects.filter(workspace__slug=slug)
-                        .prefetch_related("workspace")
-                        .values_list("id", flat=True)
-                    )
-                    project_ids = list(all_project_ids)
+                    project_ids = Project.objects.filter(
+                        workspace__slug=slug
+                    ).values_list("id", flat=True)
                     project_ids = [str(project_id) for project_id in project_ids]
                 exporter = ExporterHistory.objects.create(
                     workspace=workspace,
                     project=project_ids,
+                    initiated_by=request.user,
                     provider=provider,
                 )
                 token_id = exporter.token
