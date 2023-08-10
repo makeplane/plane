@@ -112,150 +112,129 @@ def upload_to_s3(zip_file, workspace_id, token_id):
     else:
         exporter_instance.status = "failed"
 
-    exporter_instance.save(update_fields=["status","url"])
+    exporter_instance.save(update_fields=["status", "url"])
+
 
 def generate_table_row(issue):
-    (
-        project_identifier,
-        sequence_id,
-        name,
-        description,
-        priority,
-        state_name,
-        project_name,
-        created_at,
-        updated_at,
-        completed_at,
-        archived_at,
-        cycle_name,
-        cycle_start_date,
-        cycle_end_date,
-        module_name,
-        module_start_date,
-        module_target_date,
-        created_by_first_name,
-        created_by_last_name,
-        assignees_first_names,
-        assignees_last_names,
-        labels_names,
-    ) = issue
 
-    created_by_fullname = (
-        f"{created_by_first_name} {created_by_last_name}"
-        if created_by_first_name and created_by_last_name
-        else ""
-    )
+    print(issue)
 
     assignees_names = ""
-    if assignees_first_names and assignees_last_names:
-        assignees_names = ", ".join(
-            [
-                f"{assignees_first_name} {assignees_last_name}"
-                for assignees_first_name, assignees_last_name in zip(
-                    assignees_first_names, assignees_last_names
-                )
-            ]
-        )
+    # if assignees_first_names and assignees_last_names:
+    #     assignees_names = ", ".join(
+    #         [
+    #             f"{assignees_first_name} {assignees_last_name}"
+    #             for assignees_first_name, assignees_last_name in zip(
+    #                 assignees_first_names, assignees_last_names
+    #             )
+    #         ]
+    #     )
 
-    labels_names = ", ".join(labels_names) if labels_names else ""
+    # labels_names = ", ".join(labels_names) if labels_names else ""
     return [
-        f"{project_identifier}-{sequence_id}",
-        project_name,
-        name,
-        description,
-        state_name,
-        priority,
-        created_by_fullname,
-        assignees_names,
-        labels_names,
-        cycle_name,
-        cycle_start_date,
-        cycle_end_date,
-        module_name,
-        module_start_date,
-        module_target_date,
-        created_at,
-        updated_at,
-        completed_at,
-        archived_at,
+        f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
+        issue["project__name"],
+        issue["name"],
+        issue["description_stripped"],
+        issue["state__name"],
+        issue["priority"],
+        issue["created_by__first_name"],
+        # issue["created_by__last_name"],
+        issue["assignees__first_name"],
+        #   + issue["assignees__last_name"],
+        issue["labels__name"],
+        issue["issue_cycle__cycle__name"],
+        issue["issue_cycle__cycle__start_date"],
+        issue["issue_cycle__cycle__end_date"],
+        issue["issue_module__module__name"],
+        issue["issue_module__module__start_date"],
+        issue["issue_module__module__target_date"],
+        issue["created_at"],
+        issue["updated_at"],
+        issue["completed_at"],
+        issue["archived_at"],
     ]
 
 
 def generate_json_row(issue):
-    (
-        project_identifier,
-        sequence_id,
-        name,
-        description,
-        priority,
-        state_name,
-        project_name,
-        created_at,
-        updated_at,
-        completed_at,
-        archived_at,
-        cycle_name,
-        cycle_start_date,
-        cycle_end_date,
-        module_name,
-        module_start_date,
-        module_target_date,
-        created_by_first_name,
-        created_by_last_name,
-        assignees_first_names,
-        assignees_last_names,
-        labels_names,
-    ) = issue
+    # (
+    #     project_identifier,
+    #     sequence_id,
+    #     name,
+    #     description,
+    #     priority,
+    #     state_name,
+    #     project_name,
+    #     created_at,
+    #     updated_at,
+    #     completed_at,
+    #     archived_at,
+    #     cycle_name,
+    #     cycle_start_date,
+    #     cycle_end_date,
+    #     module_name,
+    #     module_start_date,
+    #     module_target_date,
+    #     created_by_first_name,
+    #     created_by_last_name,
+    #     assignees_first_names,
+    #     assignees_last_names,
+    #     labels_names,
+    # ) = issue
 
-    created_by_fullname = (
-        f"{created_by_first_name} {created_by_last_name}"
-        if created_by_first_name and created_by_last_name
-        else ""
-    )
+    # created_by_fullname = (
+    #     f"{created_by_first_name} {created_by_last_name}"
+    #     if created_by_first_name and created_by_last_name
+    #     else ""
+    # )
 
-    assignees_names = ""
-    if assignees_first_names and assignees_last_names:
-        assignees_names = ", ".join(
-            [
-                f"{assignees_first_name} {assignees_last_name}"
-                for assignees_first_name, assignees_last_name in zip(
-                    assignees_first_names, assignees_last_names
-                )
-            ]
-        )
+    # assignees_names = ""
+    # if assignees_first_names and assignees_last_names:
+    #     assignees_names = ", ".join(
+    #         [
+    #             f"{assignees_first_name} {assignees_last_name}"
+    #             for assignees_first_name, assignees_last_name in zip(
+    #                 assignees_first_names, assignees_last_names
+    #             )
+    #         ]
+    #     )
 
-    labels_names = ", ".join(labels_names) if labels_names else ""
+    # labels_names = ", ".join(labels_names) if labels_names else ""
     return {
-        "ID": f"{project_identifier}-{sequence_id}",
-        "Project": project_name,
-        "Name": name,
-        "Description": description,
-        "State": state_name,
-        "Priority": priority,
-        "Created By": created_by_fullname,
-        "Assignee": assignees_names,
-        "Labels": labels_names,
-        "Cycle Name": cycle_name,
-        "Cycle Start Date": cycle_start_date,
-        "Cycle End Date": cycle_end_date,
-        "Module Name": module_name,
-        "Module Start Date": module_start_date,
-        "Module Target Date": module_target_date,
-        "Created At": created_at,
-        "Updated At": updated_at,
-        "Completed At": completed_at,
-        "Archived At": archived_at,
+        "ID": f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
+        "Project": issue["project__name"],
+        "Name": issue["name"],
+        "Description": issue["description"],
+        "State": issue["state__name"],
+        "Priority": issue["priority"],
+        "Created By": issue["created_by__first_name"],
+        "Assignee": issue["assignees__first_name"],
+        "Labels": issue["labels__name"],
+        "Cycle Name": issue["issue_cycle__cycle__name"],
+        "Cycle Start Date": issue["issue_cycle__cycle__start_date"],
+        "Cycle End Date": issue["issue_cycle__cycle__end_date"],
+        "Module Name": issue["issue_module__module__name"],
+        "Module Start Date": issue["issue_module__module__start_date"],
+        "Module Target Date": issue["issue_module__module__target_date"],
+        "Created At": issue["created_at"],
+        "Updated At": issue["updated_at"],
+        "Completed At": issue["completed_at"],
+        "Archived At": issue["archived_at"],
     }
 
 
 def generate_csv(header, project_id, issues, files):
-    rows = [header]
+    """
+    Generate CSV export for all the passed issues.
+    """
+    rows = [
+        header,
+    ]
     for issue in issues:
         row = generate_table_row(issue)
         rows.append(row)
-    project_name = Project.objects.get(id=project_id).name
     csv_file = create_csv_file(rows)
-    files.append((f"{project_name}.csv", csv_file))
+    files.append((f"{project_id}.csv", csv_file))
 
 
 def generate_json(header, project_id, issues, files):
@@ -280,7 +259,7 @@ def generate_xlsx(header, project_id, issues, files):
 
 @shared_task
 def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
-    try:
+    # try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
         exporter_instance.save(update_fields=["status"])
@@ -291,14 +270,16 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
             .prefetch_related(
                 "assignees", "labels", "issue_cycle__cycle", "issue_module__module"
             )
-            .values_list(
+            .values(
+                "id",
                 "project__identifier",
+                "project__name",
+                "project__id",
                 "sequence_id",
                 "name",
                 "description_stripped",
                 "priority",
                 "state__name",
-                "project__name",
                 "created_at",
                 "updated_at",
                 "completed_at",
@@ -315,7 +296,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
                 "assignees__last_name",
                 "labels__name",
             )
-        )
+        ).order_by("project__identifier").distinct()
         # CSV header
         header = [
             "ID",
@@ -371,14 +352,14 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
         zip_buffer = create_zip_file(files)
         upload_to_s3(zip_buffer, workspace_id, token_id)
 
-    except Exception as e:
-        exporter_instance = ExporterHistory.objects.get(token=token_id)
-        exporter_instance.status = "failed"
-        exporter_instance.reason = str(e)
-        exporter_instance.save(update_fields=["status","reason"])
+    # except Exception as e:
+    #     exporter_instance = ExporterHistory.objects.get(token=token_id)
+    #     exporter_instance.status = "failed"
+    #     exporter_instance.reason = str(e)
+    #     exporter_instance.save(update_fields=["status", "reason"])
 
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
-        return
+    #     # Print logs if in DEBUG mode
+    #     if settings.DEBUG:
+    #         print(e)
+    #     capture_exception(e)
+    #     return

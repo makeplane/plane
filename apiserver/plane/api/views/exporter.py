@@ -21,31 +21,32 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     def post(self, request, slug):
         try:
+            # Get the workspace
+            workspace = Workspace.objects.get(slug=slug)
+            
             provider = request.data.get("provider", False)
             multiple = request.data.get("multiple", False)
             project_ids = request.data.get("project", [])
-
-            workspace = Workspace.objects.get(slug=slug)
+            
             if provider in ["csv", "xlsx", "json"]:
                 if not project_ids:
                     project_ids = Project.objects.filter(
                         workspace__slug=slug
                     ).values_list("id", flat=True)
                     project_ids = [str(project_id) for project_id in project_ids]
-                    
+
                 exporter = ExporterHistory.objects.create(
                     workspace=workspace,
                     project=project_ids,
                     initiated_by=request.user,
                     provider=provider,
                 )
-                token_id = exporter.token
 
                 issue_export_task.delay(
-                    provider=provider,
+                    provider=exporter.provider,
                     workspace_id=workspace.id,
                     project_ids=project_ids,
-                    token_id=token_id,
+                    token_id=exporter.token,
                     multiple=multiple,
                 )
                 return Response(
@@ -59,13 +60,15 @@ class ExportIssuesEndpoint(BaseAPIView):
                     {"error": f"Provider '{provider}' not found."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        except Exception as e:
-            capture_exception(e)
+        except Workspace.DoesNotExist:
             return Response(
-                {
-                    "error": "Something went wrong please try again later",
-                    "message": str(e),
-                },
+                {"error": "Workspace does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
