@@ -1,11 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // hooks
-import useTheme from "hooks/use-theme";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // components
@@ -47,7 +44,6 @@ export const CommandPalette: React.FC = () => {
   const { user } = useUser();
 
   const { setToastAlert } = useToast();
-  const { toggleCollapsed } = useTheme();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -86,8 +82,7 @@ export const CommandPalette: React.FC = () => {
       if (
         !(e.target instanceof HTMLTextAreaElement) &&
         !(e.target instanceof HTMLInputElement) &&
-        // !(e.target as Element).classList?.contains("remirror-editor") &&
-        (e.target === document || (e.target instanceof Element && !e.target.closest(".tiptap-editor-container")))
+        !(e.target as Element).classList?.contains("tiptap-editor-container")
       ) {
         if ((ctrlKey || metaKey) && keyPressed === "k") {
           e.preventDefault();
@@ -97,8 +92,9 @@ export const CommandPalette: React.FC = () => {
           copyIssueUrlToClipboard();
         } else if (keyPressed === "b") {
           e.preventDefault();
-          toggleCollapsed();
+          store.theme.setSidebarCollapsed();
         } else if (keyPressed === "backspace") {
+          console.log("KEYDOWN")
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);
         }
@@ -120,7 +116,7 @@ export const CommandPalette: React.FC = () => {
         }
       }
     },
-    [copyIssueUrlToClipboard, toggleCollapsed]
+    [copyIssueUrlToClipboard]
   );
 
   useEffect(() => {
