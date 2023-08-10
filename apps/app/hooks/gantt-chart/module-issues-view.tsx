@@ -2,6 +2,8 @@ import useSWR from "swr";
 
 // services
 import modulesService from "services/modules.service";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // fetch-keys
 import { MODULE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
@@ -10,8 +12,12 @@ const useGanttChartModuleIssues = (
   projectId: string | undefined,
   moduleId: string | undefined
 ) => {
-  // fetch only the issues with a start date and a target date
-  const params = {
+  const { orderBy, filters, showSubIssues } = useIssuesView();
+
+  const params: any = {
+    order_by: orderBy,
+    type: filters?.type ? filters?.type : undefined,
+    sub_issue: showSubIssues,
     start_target_date: true,
   };
 

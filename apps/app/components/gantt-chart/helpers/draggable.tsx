@@ -56,12 +56,14 @@ export const ChartDraggable: React.FC<Props> = ({
       const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
       const appSidebar = document.querySelector("#app-sidebar") as HTMLElement;
 
+      // scroll to left if reached the left end while dragging
       if (posFromLeft - appSidebar.clientWidth <= 70) {
         delWidth = dragDirection === "left" ? -5 : 5;
 
         scrollContainer.scrollBy(-1 * Math.abs(delWidth), 0);
       } else delWidth = dragDirection === "left" ? -1 * e.movementX : e.movementX;
 
+      // scroll to right if reached the right end while dragging
       if (posFromRight <= 70) {
         delWidth = dragDirection === "left" ? -5 : 5;
 
@@ -70,12 +72,14 @@ export const ChartDraggable: React.FC<Props> = ({
 
       const newWidth = Math.round((initialWidth + delWidth) / columnWidth) * columnWidth;
 
+      // block needs to be at least 1 column wide
       if (newWidth < columnWidth) return;
 
       resizableDiv.style.width = `${newWidth}px`;
       if (block.position) block.position.width = newWidth;
       initialWidth += delWidth;
 
+      // update the margin left of the block if dragging from the left end
       if (dragDirection === "left") {
         const newMarginLeft =
           Math.round((initialMarginLeft + delWidth) / columnWidth) * columnWidth;

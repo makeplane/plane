@@ -41,6 +41,7 @@ type ChartViewRootProps = {
   blockRender: FC<any>;
   enableLeftDrag: boolean;
   enableRightDrag: boolean;
+  enableReorder: boolean;
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = ({
@@ -53,6 +54,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blockRender,
   enableLeftDrag,
   enableRightDrag,
+  enableReorder,
 }) => {
   const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
@@ -327,6 +329,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               blockUpdateHandler={blockUpdateHandler}
               enableLeftDrag={enableLeftDrag}
               enableRightDrag={enableRightDrag}
+              enableReorder={enableReorder}
             />
           )}
 

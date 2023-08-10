@@ -2,14 +2,19 @@ import useSWR from "swr";
 
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // fetch-keys
 import { PROJECT_ISSUES_LIST_WITH_PARAMS } from "constants/fetch-keys";
 
 const useGanttChartIssues = (workspaceSlug: string | undefined, projectId: string | undefined) => {
-  // fetch only the issues with a start date and a target date
-  const params = {
+  const { orderBy, filters, showSubIssues } = useIssuesView();
+
+  const params: any = {
+    order_by: orderBy,
+    type: filters?.type ? filters?.type : undefined,
+    sub_issue: showSubIssues,
     start_target_date: true,
-    order_by: "sort_order",
   };
 
   // all issues under the workspace and project

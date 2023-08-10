@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 
 // hooks
+import useIssuesView from "hooks/use-issues-view";
 import useUser from "hooks/use-user";
 import useGanttChartCycleIssues from "hooks/gantt-chart/cycle-issues-view";
 import { updateGanttIssue } from "components/gantt-chart/hooks/block-update";
@@ -16,6 +17,8 @@ import { IIssue } from "types";
 export const CycleIssuesGanttChartView = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
+
+  const { orderBy } = useIssuesView();
 
   const { user } = useUser();
 
@@ -47,6 +50,7 @@ export const CycleIssuesGanttChartView = () => {
         }
         sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
         blockRender={(data: any) => <IssueGanttBlock issue={data as IIssue} />}
+        enableReorder={orderBy === "sort_order"}
       />
     </div>
   );

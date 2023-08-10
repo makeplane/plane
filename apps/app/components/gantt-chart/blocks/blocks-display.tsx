@@ -24,6 +24,7 @@ export const GanttChartBlocks: FC<{
   ) => void;
   enableLeftDrag: boolean;
   enableRightDrag: boolean;
+  enableReorder: boolean;
 }> = ({
   itemsContainerWidth,
   blocks,
@@ -32,6 +33,7 @@ export const GanttChartBlocks: FC<{
   blockUpdateHandler,
   enableLeftDrag,
   enableRightDrag,
+  enableReorder,
 }) => {
   const handleChartBlockPosition = (
     block: IGanttBlock,
@@ -92,7 +94,7 @@ export const GanttChartBlocks: FC<{
 
   return (
     <div
-      className="relative z-[5] mt-[58px] h-full divide-x divide-gray-300 overflow-hidden overflow-y-auto"
+      className="relative z-[5] mt-[72px] h-full divide-x divide-gray-300 overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
     >
       <DragDropContext onDragEnd={handleOrderChange}>
@@ -103,49 +105,52 @@ export const GanttChartBlocks: FC<{
               ref={droppableProvided.innerRef}
               {...droppableProvided.droppableProps}
             >
-              {blocks &&
-                blocks.length > 0 &&
-                blocks.map(
-                  (block, index: number) =>
-                    block.start_date &&
-                    block.target_date && (
-                      <Draggable
-                        key={`block-${index}`}
-                        draggableId={`block-${index}`}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <div
-                            className={
-                              droppableSnapshot.isDraggingOver ? "bg-custom-border-100/20" : ""
-                            }
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                          >
-                            <ChartDraggable
-                              block={block}
-                              handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                              enableLeftDrag={enableLeftDrag}
-                              enableRightDrag={enableRightDrag}
-                              provided={provided}
+              <>
+                {blocks &&
+                  blocks.length > 0 &&
+                  blocks.map(
+                    (block, index: number) =>
+                      block.start_date &&
+                      block.target_date && (
+                        <Draggable
+                          key={`block-${index}`}
+                          draggableId={`block-${index}`}
+                          index={index}
+                          isDragDisabled={!enableReorder}
+                        >
+                          {(provided) => (
+                            <div
+                              className={
+                                droppableSnapshot.isDraggingOver ? "bg-custom-border-100/20" : ""
+                              }
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
                             >
-                              <div
-                                className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-9 flex items-center transition-all"
-                                style={{
-                                  width: `${block.position?.width}px`,
-                                }}
+                              <ChartDraggable
+                                block={block}
+                                handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                                enableLeftDrag={enableLeftDrag}
+                                enableRightDrag={enableRightDrag}
+                                provided={provided}
                               >
-                                {blockRender({
-                                  ...block.data,
-                                })}
-                              </div>
-                            </ChartDraggable>
-                          </div>
-                        )}
-                      </Draggable>
-                    )
-                )}
-              {droppableProvided.placeholder}
+                                <div
+                                  className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-9 flex items-center transition-all"
+                                  style={{
+                                    width: `${block.position?.width}px`,
+                                  }}
+                                >
+                                  {blockRender({
+                                    ...block.data,
+                                  })}
+                                </div>
+                              </ChartDraggable>
+                            </div>
+                          )}
+                        </Draggable>
+                      )
+                  )}
+                {droppableProvided.placeholder}
+              </>
             </div>
           )}
         </StrictModeDroppable>
