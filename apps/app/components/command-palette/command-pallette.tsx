@@ -78,38 +78,39 @@ export const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      const singleShortcutKeys = ["p", "v", "d", "h", "q", "m"];
-      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
-      if (!key) return;
-      const keyPressed = key.toLowerCase();
+      // if on input, textarea or editor, don't do anything
       if (
-        !(e.target instanceof HTMLTextAreaElement) &&
-        !(e.target instanceof HTMLInputElement) &&
-        !(e.target as Element).classList?.contains("remirror-editor")
-      ) {
-        if ((ctrlKey || metaKey) && keyPressed === "k") {
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLInputElement ||
+        (e.target as Element).classList?.contains("remirror-editor")
+      )
+        return;
+
+      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
+
+      if (!key) return;
+
+      const keyPressed = key.toLowerCase();
+
+      const cmdClicked = ctrlKey || metaKey;
+
+      if (cmdClicked) {
+        if (keyPressed === "k") {
           e.preventDefault();
           setIsPaletteOpen(true);
-        } else if ((ctrlKey || metaKey) && keyPressed === "c") {
-          if (altKey) {
-            e.preventDefault();
-            copyIssueUrlToClipboard();
-          }
-        } else if (keyPressed === "c") {
+        } else if (keyPressed === "c" && altKey) {
           e.preventDefault();
-          setIsIssueModalOpen(true);
-        } else if ((ctrlKey || metaKey) && keyPressed === "b") {
+          copyIssueUrlToClipboard();
+        } else if (keyPressed === "b") {
           e.preventDefault();
-          // toggleCollapsed();
-          store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed);
-        } else if (key === "Delete") {
+          toggleCollapsed();
+        } else if (keyPressed === "backspace") {
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);
-        } else if (
-          singleShortcutKeys.includes(keyPressed) &&
-          (ctrlKey || metaKey || altKey || shiftKey)
-        ) {
-          e.preventDefault();
+        }
+      } else {
+        if (keyPressed === "c") {
+          setIsIssueModalOpen(true);
         } else if (keyPressed === "p") {
           setIsProjectModalOpen(true);
         } else if (keyPressed === "v") {
@@ -125,7 +126,7 @@ export const CommandPalette: React.FC = () => {
         }
       }
     },
-    [copyIssueUrlToClipboard]
+    [copyIssueUrlToClipboard, toggleCollapsed]
   );
 
   useEffect(() => {
