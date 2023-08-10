@@ -95,5 +95,8 @@
     "tailwindcss": "^3.1.6",
     "tsconfig": "*",
     "typescript": "4.7.4"
+  },
+  "resolutions": {
+    "prosemirror-model": "1.9.1"
   }
 }
