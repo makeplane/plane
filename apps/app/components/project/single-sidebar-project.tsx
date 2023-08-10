@@ -12,7 +12,7 @@ import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, Tooltip } from "components/ui";
+import { CustomMenu, Icon, Tooltip } from "components/ui";
 // icons
 import { EllipsisVerticalIcon, LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
@@ -258,6 +258,14 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     </div>
                   </CustomMenu.MenuItem>
                 )}
+                <CustomMenu.MenuItem
+                  onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}
+                >
+                  <div className="flex items-center justify-start gap-2">
+                    <Icon iconName="settings" className="!text-base !leading-4" />
+                    <span>Settings</span>
+                  </div>
+                </CustomMenu.MenuItem>
               </CustomMenu>
             )}
           </div>
