@@ -14,7 +14,7 @@ FROM node:18-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_API_BASE_URL=https://plane-production-fdc2.up.railway.app
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
