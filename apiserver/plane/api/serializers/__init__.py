@@ -82,3 +82,5 @@ from .inbox import InboxSerializer, InboxIssueSerializer, IssueStateInboxSeriali
 from .analytic import AnalyticViewSerializer
 
 from .notification import NotificationSerializer
+
+from .exporter import ExporterHistorySerializer
