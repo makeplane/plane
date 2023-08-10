@@ -1,9 +1,14 @@
 import { useEffect } from "react";
+// next themes
+import { useTheme } from "next-themes";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// theme helpers
+import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 
 const MobxStoreInit = () => {
   const store: any = useMobxStore();
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     // sidebar collapsed toggle
@@ -21,11 +26,25 @@ const MobxStoreInit = () => {
       );
 
     // theme
-    if (localStorage && localStorage.getItem("theme") && store.theme.theme === null)
-      store.theme.setTheme(
-        localStorage.getItem("theme") ? localStorage.getItem("theme") : "system"
-      );
-  }, [store?.theme]);
+    if (store.theme.theme === null && store?.user?.currentUserSettings) {
+      let currentTheme = localStorage.getItem("theme");
+      currentTheme = currentTheme ? currentTheme : "system";
+
+      // validating the theme and applying for initial state
+      if (currentTheme) {
+        setTheme(currentTheme);
+        store.theme.setTheme({ theme: { theme: currentTheme } });
+      }
+    }
+  }, [store?.theme, store?.user, setTheme]);
+
+  useEffect(() => {
+    // current user
+    if (store?.user?.currentUser === null) store.user.setCurrentUser();
+
+    // current user settings
+    if (store?.user?.currentUserSettings === null) store.user.setCurrentUserSettings();
+  }, [store?.user]);
 
   return <></>;
 };
