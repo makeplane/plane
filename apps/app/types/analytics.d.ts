@@ -4,6 +4,7 @@ export interface IAnalyticsResponse {
   extras: {
     colors: IAnalyticsExtra[];
     assignee_details: {
+      assignees__id: string | null;
       assignees__display_name: string | null;
       assignees__avatar: string | null;
       assignees__first_name: string;
