@@ -2,18 +2,13 @@ import { KeyedMutator } from "swr";
 
 // services
 import issuesService from "services/issues.service";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
+import { IBlockUpdateData } from "../types";
 
 export const updateGanttIssue = (
   issue: IIssue,
-  payload: {
-    sort_order?: number;
-    start_date?: string;
-    target_date?: string;
-  },
+  payload: IBlockUpdateData,
   mutate: KeyedMutator<any>,
   user: ICurrentUserResponse | undefined,
   workspaceSlug: string | undefined
@@ -28,10 +23,21 @@ export const updateGanttIssue = (
       ...(p.id === issue.id ? payload : {}),
     }));
 
-    return payload.sort_order ? orderArrayBy(newList, "sort_order") : newList;
+    if (payload.sort_order) {
+      const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
+      removedElement.sort_order = payload.sort_order.newSortOrder;
+      newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
+    }
+
+    return newList;
   }, false);
 
+  const newPayload: any = { ...payload };
+
+  if (newPayload.sort_order && payload.sort_order)
+    newPayload.sort_order = payload.sort_order.newSortOrder;
+
   issuesService
-    .patchIssue(workspaceSlug, issue.project, issue.id, payload, user)
+    .patchIssue(workspaceSlug, issue.project, issue.id, newPayload, user)
     .finally(() => mutate());
 };

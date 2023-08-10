@@ -7,21 +7,14 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { ChartDraggable } from "../helpers/draggable";
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
-import { IGanttBlock } from "../types";
+import { IBlockUpdateData, IGanttBlock } from "../types";
 
 export const GanttChartBlocks: FC<{
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
   sidebarBlockRender: FC;
   blockRender: FC;
-  blockUpdateHandler: (
-    block: any,
-    payload: {
-      sort_order?: number;
-      start_date?: string;
-      target_date?: string;
-    }
-  ) => void;
+  blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableLeftDrag: boolean;
   enableRightDrag: boolean;
   enableReorder: boolean;
@@ -66,11 +59,18 @@ export const GanttChartBlocks: FC<{
   const handleOrderChange = (result: DropResult) => {
     if (!blocks) return;
 
-    const { source, destination } = result;
+    const { source, destination, draggableId } = result;
 
     if (!destination) return;
 
-    if (source.index === destination.index) return;
+    if (source.index === destination.index && document) {
+      // const draggedBlock = document.querySelector(`#${draggableId}`) as HTMLElement;
+      // const blockStyles = window.getComputedStyle(draggedBlock);
+
+      // console.log(blockStyles.marginLeft);
+
+      return;
+    }
 
     let updatedSortOrder = blocks[source.index].sort_order;
 
@@ -87,14 +87,21 @@ export const GanttChartBlocks: FC<{
       updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
     }
 
-    blockUpdateHandler(blocks[source.index].data, {
-      sort_order: updatedSortOrder,
+    const removedElement = blocks.splice(source.index, 1)[0];
+    blocks.splice(destination.index, 0, removedElement);
+
+    blockUpdateHandler(removedElement.data, {
+      sort_order: {
+        destinationIndex: destination.index,
+        newSortOrder: updatedSortOrder,
+        sourceIndex: source.index,
+      },
     });
   };
 
   return (
     <div
-      className="relative z-[5] mt-[72px] h-full divide-x divide-gray-300 overflow-hidden overflow-y-auto"
+      className="relative z-[5] mt-[72px] h-full overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
     >
       <DragDropContext onDragEnd={handleOrderChange}>
@@ -113,15 +120,15 @@ export const GanttChartBlocks: FC<{
                       block.start_date &&
                       block.target_date && (
                         <Draggable
-                          key={`block-${index}`}
-                          draggableId={`block-${index}`}
+                          key={`block-${block.id}`}
+                          draggableId={`block-${block.id}`}
                           index={index}
                           isDragDisabled={!enableReorder}
                         >
                           {(provided) => (
                             <div
                               className={
-                                droppableSnapshot.isDraggingOver ? "bg-custom-border-100/20" : ""
+                                droppableSnapshot.isDraggingOver ? "bg-custom-border-100/10" : ""
                               }
                               ref={provided.innerRef}
                               {...provided.draggableProps}

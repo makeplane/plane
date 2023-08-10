@@ -9,9 +9,7 @@ import modulesService from "services/modules.service";
 // hooks
 import useUser from "hooks/use-user";
 // components
-import { GanttChartRoot, ModuleGanttBlock } from "components/gantt-chart";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
+import { GanttChartRoot, IBlockUpdateData, ModuleGanttBlock } from "components/gantt-chart";
 // types
 import { IModule } from "types";
 // constants
@@ -41,10 +39,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
     </div>
   );
 
-  const handleModuleUpdate = (
-    module: IModule,
-    payload: { sort_order?: number; start_date?: string; target_date?: string }
-  ) => {
+  const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
 
     mutateModules((prevData) => {
@@ -52,14 +47,30 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
 
       const newList = prevData.map((p) => ({
         ...p,
-        ...(p.id === module.id ? payload : {}),
+        ...(p.id === module.id
+          ? {
+              start_date: payload.start_date ? payload.start_date : p.start_date,
+              target_date: payload.target_date ? payload.target_date : p.target_date,
+              sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
+            }
+          : {}),
       }));
 
-      return payload.sort_order ? orderArrayBy(newList, "sort_order") : newList;
+      if (payload.sort_order) {
+        const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
+        newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
+      }
+
+      return newList;
     }, false);
 
+    const newPayload: any = { ...payload };
+
+    if (newPayload.sort_order && payload.sort_order)
+      newPayload.sort_order = payload.sort_order.newSortOrder;
+
     modulesService
-      .patchModule(workspaceSlug.toString(), module.project, module.id, payload, user)
+      .patchModule(workspaceSlug.toString(), module.project, module.id, newPayload, user)
       .finally(() => mutateModules());
   };
 
@@ -69,6 +80,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
           .filter((b) => b.start_date && b.target_date)
           .map((block) => ({
             data: block,
+            id: block.id,
             sort_order: block.sort_order,
             start_date: new Date(block.start_date ?? ""),
             target_date: new Date(block.target_date ?? ""),

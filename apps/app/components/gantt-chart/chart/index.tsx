@@ -25,7 +25,7 @@ import {
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
-import { ChartDataType, IGanttBlock } from "../types";
+import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
 // data
 import { currentViewDataWithView } from "../data";
 // context
@@ -36,7 +36,7 @@ type ChartViewRootProps = {
   title: null | string;
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
-  blockUpdateHandler: (block: any, payload: { start_date?: string; target_date?: string }) => void;
+  blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
   enableLeftDrag: boolean;
@@ -243,7 +243,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       </div> */}
 
       {/* chart header */}
-      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
+      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap p-2">
         {/* <div
           className="transition-all border border-custom-border-200 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
           onClick={() => setBlocksSidebarView(() => !blocksSidebarView)}
@@ -302,8 +302,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         </div>
 
         <div
-          className="transition-all border border-custom-border-200 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
-          onClick={() => setFullScreenMode(() => !fullScreenMode)}
+          className="transition-all border border-custom-border-200 p-1 flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
+          onClick={() => setFullScreenMode((prevData) => !prevData)}
         >
           {fullScreenMode ? (
             <ArrowsPointingInIcon className="h-4 w-4" />

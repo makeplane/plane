@@ -9,9 +9,7 @@ import cyclesService from "services/cycles.service";
 // hooks
 import useUser from "hooks/use-user";
 // components
-import { CycleGanttBlock, GanttChartRoot } from "components/gantt-chart";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
+import { CycleGanttBlock, GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
 // types
 import { ICycle } from "types";
 
@@ -37,10 +35,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
     </div>
   );
 
-  const handleCycleUpdate = (
-    cycle: ICycle,
-    payload: { sort_order?: number; start_date?: string; target_date?: string }
-  ) => {
+  const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
 
     mutateCycles((prevData) => {
@@ -48,14 +43,30 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
 
       const newList = prevData.map((p) => ({
         ...p,
-        ...(p.id === cycle.id ? payload : {}),
+        ...(p.id === cycle.id
+          ? {
+              start_date: payload.start_date ? payload.start_date : p.start_date,
+              target_date: payload.target_date ? payload.target_date : p.end_date,
+              sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
+            }
+          : {}),
       }));
 
-      return payload.sort_order ? orderArrayBy(newList, "sort_order") : newList;
+      if (payload.sort_order) {
+        const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
+        newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
+      }
+
+      return newList;
     }, false);
 
+    const newPayload: any = { ...payload };
+
+    if (newPayload.sort_order && payload.sort_order)
+      newPayload.sort_order = payload.sort_order.newSortOrder;
+
     cyclesService
-      .patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, payload, user)
+      .patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload, user)
       .finally(() => mutateCycles());
   };
 
@@ -65,6 +76,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
           .filter((b) => b.start_date && b.end_date)
           .map((block) => ({
             data: block,
+            id: block.id,
             sort_order: block.sort_order,
             start_date: new Date(block.start_date ?? ""),
             target_date: new Date(block.end_date ?? ""),

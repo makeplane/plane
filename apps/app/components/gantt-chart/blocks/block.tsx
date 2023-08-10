@@ -49,10 +49,7 @@ export const CycleGanttBlock = ({ cycle }: { cycle: ICycle }) => {
   return (
     <Link href={`/${workspaceSlug}/projects/${cycle.project}/cycles/${cycle.id}`}>
       <a className="relative flex items-center w-full h-full shadow-sm transition-all duration-300">
-        <div
-          className="flex-shrink-0 w-1 h-full"
-          style={{ backgroundColor: "rgb(var(--color-primary-100))" }}
-        />
+        <div className="flex-shrink-0 w-0.5 h-full bg-custom-primary-100" />
         <Tooltip tooltipContent={cycle.name}>
           <div className="text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
             {cycle.name}
@@ -71,7 +68,7 @@ export const ModuleGanttBlock = ({ module }: { module: IModule }) => {
     <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
       <a className="relative flex items-center w-full h-full shadow-sm transition-all duration-300">
         <div
-          className="flex-shrink-0 w-1 h-full"
+          className="flex-shrink-0 w-0.5 h-full"
           style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color }}
         />
         <Tooltip tooltipContent={module.name}>

@@ -7,6 +7,7 @@ export type allViewsType = {
 
 export interface IGanttBlock {
   data: any;
+  id: string;
   position?: {
     marginLeft: number;
     width: number;
@@ -14,6 +15,16 @@ export interface IGanttBlock {
   sort_order: number;
   start_date: Date;
   target_date: Date;
+}
+
+export interface IBlockUpdateData {
+  sort_order?: {
+    destinationIndex: number;
+    newSortOrder: number;
+    sourceIndex: number;
+  };
+  start_date?: string;
+  target_date?: string;
 }
 
 export interface ChartContextData {

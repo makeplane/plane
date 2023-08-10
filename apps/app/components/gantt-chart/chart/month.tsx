@@ -1,6 +1,8 @@
 import { FC } from "react";
-// context
+
+// hooks
 import { useChart } from "../hooks";
+// types
 import { IMonthBlock } from "../views";
 
 export const MonthChartView: FC<any> = () => {
@@ -10,7 +12,7 @@ export const MonthChartView: FC<any> = () => {
 
   return (
     <>
-      <div className="absolute flex h-full flex-grow divide-x divide-custom-border-200">
+      <div className="absolute flex h-full flex-grow divide-x divide-custom-border-100/50">
         {monthBlocks &&
           monthBlocks.length > 0 &&
           monthBlocks.map((block, _idxRoot) => (
@@ -21,7 +23,7 @@ export const MonthChartView: FC<any> = () => {
                 </div>
               </div>
 
-              <div className="flex h-full w-full divide-x divide-custom-border-200">
+              <div className="flex h-full w-full divide-x divide-custom-border-100/50">
                 {block?.children &&
                   block?.children.length > 0 &&
                   block?.children.map((monthDay, _idx) => (
@@ -47,7 +49,7 @@ export const MonthChartView: FC<any> = () => {
                         }`}
                       >
                         {monthDay?.today && (
-                          <div className="absolute top-0 bottom-0 border border-red-500"> </div>
+                          <div className="absolute top-0 bottom-0 w-[1px] bg-red-500" />
                         )}
                       </div>
                     </div>
