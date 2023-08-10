@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-
-// next-themes
-import { useTheme } from "next-themes";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -14,37 +11,47 @@ import { Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { ICustomTheme } from "types";
+// mobx react lite
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// next themes
+import { useTheme } from "next-themes";
 
-const ProfilePreferences = () => {
-  const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
-  const [preLoadedData, setPreLoadedData] = useState<ICustomTheme | null>(null);
-
-  const { theme } = useTheme();
-
+const ProfilePreferences = observer(() => {
   const { user: myProfile } = useUserAuth();
 
+  const store: any = useMobxStore();
+  const { theme } = useTheme();
+
+  console.log("store", store?.theme?.theme);
+  console.log("theme", theme);
+
+  const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
+
+  const [preLoadedData, setPreLoadedData] = useState<ICustomTheme | null>(null);
+
   useEffect(() => {
-    if (theme === "custom") {
-      if (myProfile?.theme.palette)
+    if (store?.user && store?.theme?.theme === "custom") {
+      const currentTheme = store?.user?.currentUserSettings?.theme;
+      if (currentTheme.palette)
         setPreLoadedData({
-          background: myProfile.theme.background !== "" ? myProfile.theme.background : "#0d101b",
-          text: myProfile.theme.text !== "" ? myProfile.theme.text : "#c5c5c5",
-          primary: myProfile.theme.primary !== "" ? myProfile.theme.primary : "#3f76ff",
+          background: currentTheme.background !== "" ? currentTheme.background : "#0d101b",
+          text: currentTheme.text !== "" ? currentTheme.text : "#c5c5c5",
+          primary: currentTheme.primary !== "" ? currentTheme.primary : "#3f76ff",
           sidebarBackground:
-            myProfile.theme.sidebarBackground !== ""
-              ? myProfile.theme.sidebarBackground
-              : "#0d101b",
-          sidebarText: myProfile.theme.sidebarText !== "" ? myProfile.theme.sidebarText : "#c5c5c5",
+            currentTheme.sidebarBackground !== "" ? currentTheme.sidebarBackground : "#0d101b",
+          sidebarText: currentTheme.sidebarText !== "" ? currentTheme.sidebarText : "#c5c5c5",
           darkPalette: false,
           palette:
-            myProfile.theme.palette !== ",,,,"
-              ? myProfile.theme.palette
+            currentTheme.palette !== ",,,,"
+              ? currentTheme.palette
               : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
           theme: "custom",
         });
-      if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
+      setCustomThemeSelectorOptions((prevData) => true);
     }
-  }, [myProfile, theme, customThemeSelectorOptions]);
+  }, [store, store?.theme?.theme]);
 
   return (
     <WorkspaceAuthorizationLayout
@@ -91,6 +98,6 @@ const ProfilePreferences = () => {
       )}
     </WorkspaceAuthorizationLayout>
   );
-};
+});
 
 export default ProfilePreferences;
