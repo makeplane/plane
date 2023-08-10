@@ -90,6 +90,8 @@ export const SingleSidebarProject: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
+  const isAdmin = project.member_role === 20;
+
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
@@ -216,7 +218,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
                 ellipsis
               >
-                {!shortContextMenu && (
+                {!shortContextMenu && isAdmin && (
                   <CustomMenu.MenuItem onClick={handleDeleteProject}>
                     <span className="flex items-center justify-start gap-2 ">
                       <TrashIcon className="h-4 w-4" />
