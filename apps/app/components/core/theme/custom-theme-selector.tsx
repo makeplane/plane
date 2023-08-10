@@ -4,17 +4,13 @@ import { useTheme } from "next-themes";
 
 import { useForm } from "react-hook-form";
 
-// hooks
-import useUser from "hooks/use-user";
 // ui
 import { PrimaryButton } from "components/ui";
 import { ColorPickerInput } from "components/core";
-// services
-import userService from "services/user.service";
-// helper
-import { applyTheme } from "helpers/theme.helper";
 // types
 import { ICustomTheme } from "types";
+// mobx react lite
+import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -33,11 +29,11 @@ const defaultValues: ICustomTheme = {
   theme: "custom",
 };
 
-export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
+export const CustomThemeSelector: React.FC<Props> = observer(({ preLoadedData }) => {
   const store: any = useMobxStore();
+  const { setTheme } = useTheme();
 
   const [darkPalette, setDarkPalette] = useState(false);
-
   const {
     register,
     formState: { errors, isSubmitting },
@@ -48,11 +44,14 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
   } = useForm<ICustomTheme>({
     defaultValues,
   });
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...preLoadedData,
+    });
+  }, [preLoadedData, reset]);
 
-  const { setTheme } = useTheme();
-  const { mutateUser } = useUser();
-
-  const handleFormSubmit = async (formData: ICustomTheme) => {
+  const handleUpdateTheme = async (formData: any) => {
     const payload: ICustomTheme = {
       background: formData.background,
       text: formData.text,
@@ -64,27 +63,13 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
       theme: "custom",
     };
 
-    store.user
+    setTheme("custom");
+
+    return store.user
       .updateCurrentUserSettings({ theme: payload })
-      .then((response: any) => {
-        setTheme("custom");
-        applyTheme(payload.palette, darkPalette);
-      })
-      .catch((error: any) => {
-        console.log("error", error);
-      });
+      .then((response: any) => response)
+      .catch((error: any) => error);
   };
-
-  const handleUpdateTheme = async (formData: any) => {
-    await handleFormSubmit({ ...formData, darkPalette });
-  };
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...preLoadedData,
-    });
-  }, [preLoadedData, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>
@@ -164,4 +149,4 @@ export const CustomThemeSelector: React.FC<Props> = ({ preLoadedData }) => {
       </div>
     </form>
   );
-};
+});
