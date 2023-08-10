@@ -205,9 +205,6 @@ const Profile: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold text-custom-text-100">Full Name</h4>
-                <p className="text-sm text-custom-text-200">
-                  This name will be reflected on all the projects you are working on.
-                </p>
               </div>
               <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
                 <Input
@@ -232,7 +229,8 @@ const Profile: NextPage = () => {
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold text-custom-text-100">Display Name</h4>
                 <p className="text-sm text-custom-text-200">
-                  The email address that you are using.
+                  This could be your first name, or a nickname — however you{"'"}d like people to
+                  refer to you in Plane.
                 </p>
               </div>
               <div className="col-span-12 sm:col-span-6">
@@ -246,13 +244,19 @@ const Profile: NextPage = () => {
                   placeholder="Enter your display name"
                   validations={{
                     required: "Display name is required.",
-                    minLength: {
-                      value: 3,
-                      message: "Display name must be at least 3 characters long.",
-                    },
-                    maxLength: {
-                      value: 20,
-                      message: "Display name should not exceed 20 characters",
+                    validate: (value) => {
+                      if (value.trim().length < 1) return "Display name can't be empty.";
+
+                      if (value.split("  ").length > 1)
+                        return "Display name can't have two consecutive spaces.";
+
+                      if (value.replace(/\s/g, "").length < 1)
+                        return "Display name must be at least 1 characters long.";
+
+                      if (value.replace(/\s/g, "").length > 20)
+                        return "Display name must be less than 20 characters long.";
+
+                      return true;
                     },
                   }}
                 />
