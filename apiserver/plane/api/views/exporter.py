@@ -32,6 +32,7 @@ class ExportIssuesEndpoint(BaseAPIView):
                         workspace__slug=slug
                     ).values_list("id", flat=True)
                     project_ids = [str(project_id) for project_id in project_ids]
+                    
                 exporter = ExporterHistory.objects.create(
                     workspace=workspace,
                     project=project_ids,

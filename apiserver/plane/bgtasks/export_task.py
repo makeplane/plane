@@ -346,7 +346,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
         }
 
         files = []
-        if multiple == "True":
+        if multiple:
             for project_id in project_ids:
                 issues = issues.filter(project__id=project_id)
                 exporter = EXPORTER_MAPPER.get(provider)
