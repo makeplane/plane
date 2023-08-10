@@ -45,7 +45,7 @@ const defaultValues = {
 const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-  console.log(workspaceSlug, "workspaceSlug")
+  // console.log(workspaceSlug, "workspaceSlug")
 
   const { user } = useUserAuth();
 

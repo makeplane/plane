@@ -55,7 +55,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
-      console.log("formdata", formData)
+      // console.log("formdata", formData)
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
       await handleFormSubmit({
@@ -99,8 +99,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         {characterLimit && (
           <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
             <span
-              className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
-                }`}
+              className={`${
+                watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
+              }`}
             >
               {watch("name").length}
             </span>
@@ -119,7 +120,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             return (
               <Tiptap
                 value={
-                  !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                  !value ||
+                  value === "" ||
+                  (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("description_html")
                     : value
                 }
