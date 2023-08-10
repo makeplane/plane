@@ -155,13 +155,14 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
   const updatingCurrentLeftScrollPosition = (width: number) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-    scrollContainer.scrollLeft = width + scrollContainer.scrollLeft;
-    setItemsContainerWidth(width + scrollContainer.scrollLeft);
+    scrollContainer.scrollLeft = width + scrollContainer?.scrollLeft;
+    setItemsContainerWidth(width + scrollContainer?.scrollLeft);
   };
 
   const handleScrollToCurrentSelectedDate = (currentState: ChartDataType, date: Date) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-    const clientVisibleWidth: number = scrollContainer.clientWidth;
+
+    const clientVisibleWidth: number = scrollContainer?.clientWidth;
     let scrollWidth: number = 0;
     let daysDifference: number = 0;
 
@@ -190,9 +191,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const onScroll = () => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
 
-    const scrollWidth: number = scrollContainer.scrollWidth;
-    const clientVisibleWidth: number = scrollContainer.clientWidth;
-    const currentScrollPosition: number = scrollContainer.scrollLeft;
+    const scrollWidth: number = scrollContainer?.scrollWidth;
+    const clientVisibleWidth: number = scrollContainer?.clientWidth;
+    const currentScrollPosition: number = scrollContainer?.scrollLeft;
 
     const approxRangeLeft: number =
       scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
@@ -208,6 +209,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
 
     scrollContainer.addEventListener("scroll", onScroll);
+
     return () => {
       scrollContainer.removeEventListener("scroll", onScroll);
     };
