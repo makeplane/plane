@@ -53,7 +53,7 @@ export const CommandPalette: React.FC = () => {
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
-          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+        issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -78,24 +78,18 @@ export const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
+      if (!key) return;
+      const keyPressed = key.toLowerCase();
+      const cmdClicked = ctrlKey || metaKey;
       // if on input, textarea or editor, don't do anything
       if (
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLInputElement ||
-        (e.target as Element).classList?.contains("remirror-editor")
-      )
-        return;
-
-      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
-
-      if (!key) return;
-
-      const keyPressed = key.toLowerCase();
-
-      const cmdClicked = ctrlKey || metaKey;
-
-      if (cmdClicked) {
-        if (keyPressed === "k") {
+        !(e.target instanceof HTMLTextAreaElement) &&
+        !(e.target instanceof HTMLInputElement) &&
+        // !(e.target as Element).classList?.contains("remirror-editor") &&
+        (e.target === document || (e.target instanceof Element && !e.target.closest(".tiptap-editor-container")))
+      ) {
+        if ((ctrlKey || metaKey) && keyPressed === "k") {
           e.preventDefault();
           setIsPaletteOpen(true);
         } else if (keyPressed === "c" && altKey) {
