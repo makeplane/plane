@@ -164,6 +164,15 @@ export interface IIssueLabels {
   parent: string | null;
 }
 
+export interface LabelForm {
+  name: string;
+  description: string;
+  color: string;
+  project: string;
+  workspace: string;
+  parent: string | null;
+}
+
 export interface IIssueActivity {
   actor: string;
   actor_detail: IUserLite;
