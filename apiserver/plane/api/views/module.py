@@ -53,6 +53,8 @@ class ModuleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        order_by = self.request.GET.get("order_by", "sort_order")
+
         subquery = ModuleFavorite.objects.filter(
             user=self.request.user,
             module_id=OuterRef("pk"),
@@ -106,7 +108,7 @@ class ModuleViewSet(BaseViewSet):
                     filter=Q(issue_module__issue__state__group="backlog"),
                 )
             )
-            .order_by("-is_favorite", "name")
+            .order_by(order_by, "name")
         )
 
     def perform_destroy(self, instance):

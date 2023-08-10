@@ -165,6 +165,9 @@ class CycleViewSet(BaseViewSet):
         try:
             queryset = self.get_queryset()
             cycle_view = request.GET.get("cycle_view", "all")
+            order_by = request.GET.get("order_by", "sort_order")
+
+            queryset = queryset.order_by(order_by)
 
             # All Cycles
             if cycle_view == "all":
