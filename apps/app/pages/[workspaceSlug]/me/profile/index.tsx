@@ -69,6 +69,7 @@ const Profile: NextPage = () => {
       last_name: formData.last_name,
       avatar: formData.avatar,
       role: formData.role,
+      display_name: formData.display_name,
     };
 
     await userService
@@ -176,7 +177,7 @@ const Profile: NextPage = () => {
                           src={watch("avatar")}
                           className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
                           onClick={() => setIsImageUploadModalOpen(true)}
-                          alt={myProfile.first_name}
+                          alt={myProfile.display_name}
                         />
                       </div>
                     )}
@@ -204,9 +205,6 @@ const Profile: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold text-custom-text-100">Full Name</h4>
-                <p className="text-sm text-custom-text-200">
-                  This name will be reflected on all the projects you are working on.
-                </p>
               </div>
               <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
                 <Input
@@ -224,6 +222,43 @@ const Profile: NextPage = () => {
                   id="last_name"
                   placeholder="Enter your last name"
                   autoComplete="off"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-custom-text-100">Display Name</h4>
+                <p className="text-sm text-custom-text-200">
+                  This could be your first name, or a nickname — however you{"'"}d like people to
+                  refer to you in Plane.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <Input
+                  id="display_name"
+                  name="display_name"
+                  autoComplete="off"
+                  register={register}
+                  error={errors.display_name}
+                  className="w-full"
+                  placeholder="Enter your display name"
+                  validations={{
+                    required: "Display name is required.",
+                    validate: (value) => {
+                      if (value.trim().length < 1) return "Display name can't be empty.";
+
+                      if (value.split("  ").length > 1)
+                        return "Display name can't have two consecutive spaces.";
+
+                      if (value.replace(/\s/g, "").length < 1)
+                        return "Display name must be at least 1 characters long.";
+
+                      if (value.replace(/\s/g, "").length > 20)
+                        return "Display name must be less than 20 characters long.";
+
+                      return true;
+                    },
+                  }}
                 />
               </div>
             </div>

@@ -42,7 +42,11 @@ from plane.api.serializers import (
     ProjectDeployBoardSerializer,
 )
 
-from plane.api.permissions import ProjectBasePermission, ProjectMemberPermission
+from plane.api.permissions import (
+    ProjectBasePermission,
+    ProjectEntityPermission,
+    ProjectMemberPermission,
+)
 
 from plane.db.models import (
     Project,
@@ -483,7 +487,7 @@ class ProjectMemberViewSet(BaseViewSet):
     ]
 
     search_fields = [
-        "member__email",
+        "member__display_name",
         "member__first_name",
     ]
 
@@ -1059,7 +1063,26 @@ class ProjectDeployBoardViewSet(BaseViewSet):
             project_deploy_board.save()
 
             serializer = ProjectDeployBoardSerializer(project_deploy_board)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
+
+class ProjectMemberEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id):
+        try:
+            project_members = ProjectMember.objects.filter(
+                project_id=project_id, workspace__slug=slug
+            ).select_related("project", "member")
+            serializer = ProjectMemberSerializer(project_members, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)

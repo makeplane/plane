@@ -1,3 +1,6 @@
+# Third party imports
+from rest_framework import serializers
+
 # Module import
 from .base import BaseSerializer
 from plane.db.models import User
@@ -37,11 +40,50 @@ class UserLiteSerializer(BaseSerializer):
             "id",
             "first_name",
             "last_name",
-            "email",
             "avatar",
             "is_bot",
+            "display_name",
         ]
         read_only_fields = [
             "id",
             "is_bot",
         ]
+
+
+class UserAdminLiteSerializer(BaseSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "avatar",
+            "is_bot",
+            "display_name",
+            "email",
+        ]
+        read_only_fields = [
+            "id",
+            "is_bot",
+        ]
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    model = User
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    model = User
+
+    """
+    Serializer for password change endpoint.
+    """
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)

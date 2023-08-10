@@ -428,6 +428,40 @@ const activityDetails: {
     ),
     icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
   },
+  start_date: {
+    message: (activity, showIssue) => {
+      if (!activity.new_value)
+        return (
+          <>
+            removed the start date
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
+          </>
+        );
+      else
+        return (
+          <>
+            set the start date to{" "}
+            <span className="font-medium text-custom-text-100">
+              {renderShortDateWithYearFormat(activity.new_value)}
+            </span>
+            {showIssue && (
+              <>
+                {" "}
+                for <IssueLink activity={activity} />
+              </>
+            )}
+            .
+          </>
+        );
+    },
+    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
+  },
   state: {
     message: (activity, showIssue) => (
       <>

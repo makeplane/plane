@@ -24,6 +24,7 @@ import {
   ViewEstimateSelect,
   ViewIssueLabel,
   ViewPrioritySelect,
+  ViewStartDateSelect,
   ViewStateSelect,
 } from "components/issues";
 // ui
@@ -320,6 +321,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 isNotAllowed={isNotAllowed}
                 user={user}
                 selfPositioned
+              />
+            )}
+            {properties.start_date && issue.start_date && (
+              <ViewStartDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                user={user}
+                isNotAllowed={isNotAllowed}
               />
             )}
             {properties.due_date && issue.target_date && (

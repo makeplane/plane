@@ -22,15 +22,12 @@ type Props = {
 };
 
 export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, params, yAxisKey }) => {
-  const renderAssigneeName = (email: string): string => {
-    const assignee = analytics.extras.assignee_details.find((a) => a.assignees__email === email);
+  const renderAssigneeName = (assigneeId: string): string => {
+    const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
 
     if (!assignee) return "No assignee";
 
-    if (assignee.assignees__first_name !== "")
-      return assignee.assignees__first_name + " " + assignee.assignees__last_name;
-
-    return email;
+    return assignee.assignees__display_name || "No assignee";
   };
 
   return (
@@ -65,10 +62,10 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                             }}
                           />
                         )}
-                        {DATE_KEYS.includes(params.segment ?? "")
-                          ? renderMonthAndYear(key)
-                          : params.segment === "assignees__email"
+                        {params.segment === "assignees__id"
                           ? renderAssigneeName(key)
+                          : DATE_KEYS.includes(params.segment ?? "")
+                          ? renderMonthAndYear(key)
                           : key}
                       </div>
                     </th>
@@ -108,7 +105,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                         }}
                       />
                     )}
-                    {params.x_axis === "assignees__email"
+                    {params.x_axis === "assignees__id"
                       ? renderAssigneeName(`${item.name}`)
                       : addSpaceIfCamelCase(`${item.name}`)}
                   </td>

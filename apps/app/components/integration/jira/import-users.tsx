@@ -3,11 +3,17 @@ import { FC } from "react";
 // next
 import { useRouter } from "next/router";
 
+// swr
+import useSWR from "swr";
+
 // react-hook-form
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 
-// hooks
-import useWorkspaceMembers from "hooks/use-workspace-members";
+// fetch keys
+import { WORKSPACE_MEMBERS_WITH_EMAIL } from "constants/fetch-keys";
+
+// services
+import workspaceService from "services/workspace.service";
 
 // components
 import { ToggleSwitch, Input, CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
@@ -30,22 +36,20 @@ export const JiraImportUsers: FC = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
+  const { data: members } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug?.toString() ?? "") : null,
+    workspaceSlug
+      ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug?.toString() ?? "")
+      : null
+  );
 
   const options = members?.map((member) => ({
     value: member.member.email,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    query: member.member.display_name ?? "",
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name + " (" + member.member.email + ")"
-          : member.member.email}
+        {member.member.display_name}
       </div>
     ),
   }));

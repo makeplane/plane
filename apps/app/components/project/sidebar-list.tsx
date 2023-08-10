@@ -26,8 +26,12 @@ import { orderArrayBy } from "helpers/array.helper";
 import { IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const ProjectSidebarList: FC = () => {
+  const store: any = useMobxStore();
+
   const [deleteProjectModal, setDeleteProjectModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
 
@@ -139,7 +143,7 @@ export const ProjectSidebarList: FC = () => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!sidebarCollapse && (
+                        {!store?.theme?.sidebarCollapsed && (
                           <Disclosure.Button
                             as="button"
                             type="button"
@@ -165,7 +169,7 @@ export const ProjectSidebarList: FC = () => {
                                   <SingleSidebarProject
                                     key={project.id}
                                     project={project}
-                                    sidebarCollapse={sidebarCollapse}
+                                    sidebarCollapse={store?.theme?.sidebarCollapsed}
                                     provided={provided}
                                     snapshot={snapshot}
                                     handleDeleteProject={() => handleDeleteProject(project)}
@@ -194,7 +198,7 @@ export const ProjectSidebarList: FC = () => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!sidebarCollapse && (
+                        {!store?.theme?.sidebarCollapsed && (
                           <Disclosure.Button
                             as="button"
                             type="button"
@@ -215,7 +219,7 @@ export const ProjectSidebarList: FC = () => {
                                   <SingleSidebarProject
                                     key={project.id}
                                     project={project}
-                                    sidebarCollapse={sidebarCollapse}
+                                    sidebarCollapse={store?.theme?.sidebarCollapsed}
                                     provided={provided}
                                     snapshot={snapshot}
                                     handleDeleteProject={() => handleDeleteProject(project)}
@@ -243,7 +247,7 @@ export const ProjectSidebarList: FC = () => {
           >
             {({ open }) => (
               <>
-                {!sidebarCollapse && (
+                {!store?.theme?.sidebarCollapsed && (
                   <Disclosure.Button
                     as="button"
                     type="button"
@@ -261,7 +265,7 @@ export const ProjectSidebarList: FC = () => {
                     <SingleSidebarProject
                       key={project.id}
                       project={project}
-                      sidebarCollapse={sidebarCollapse}
+                      sidebarCollapse={store?.theme?.sidebarCollapsed}
                       handleDeleteProject={() => handleDeleteProject(project)}
                       handleCopyText={() => handleCopyText(project.id)}
                       shortContextMenu
@@ -284,7 +288,7 @@ export const ProjectSidebarList: FC = () => {
             }}
           >
             <PlusIcon className="h-5 w-5" />
-            {!sidebarCollapse && "Add Project"}
+            {!store?.theme?.sidebarCollapsed && "Add Project"}
           </button>
         )}
       </div>

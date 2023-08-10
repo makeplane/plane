@@ -41,8 +41,8 @@ const SingleInvitation: React.FC<Props> = ({
         <p className="text-sm text-custom-text-200">
           Invited by{" "}
           {invitation.created_by_detail
-            ? invitation.created_by_detail.first_name
-            : invitation.workspace.owner.first_name}
+            ? invitation.created_by_detail.display_name
+            : invitation.workspace.owner.display_name}
         </p>
       </div>
       <div className="flex-shrink-0 self-center">

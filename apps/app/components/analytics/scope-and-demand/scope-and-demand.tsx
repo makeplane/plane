@@ -56,9 +56,9 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
               <AnalyticsLeaderboard
                 users={defaultAnalytics.most_issue_created_user?.map((user) => ({
                   avatar: user?.created_by__avatar,
-                  email: user?.created_by__email,
                   firstName: user?.created_by__first_name,
                   lastName: user?.created_by__last_name,
+                  display_name: user?.created_by__display_name,
                   count: user?.count,
                 }))}
                 title="Most issues created"
@@ -66,9 +66,9 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
               <AnalyticsLeaderboard
                 users={defaultAnalytics.most_issue_closed_user?.map((user) => ({
                   avatar: user?.assignees__avatar,
-                  email: user?.assignees__email,
                   firstName: user?.assignees__first_name,
                   lastName: user?.assignees__last_name,
+                  display_name: user?.assignees__display_name,
                   count: user?.count,
                 }))}
                 title="Most issues closed"

@@ -32,6 +32,7 @@ from plane.api.views import (
     InviteWorkspaceEndpoint,
     JoinWorkspaceEndpoint,
     WorkSpaceMemberViewSet,
+    WorkspaceMembersEndpoint,
     WorkspaceInvitationsViewset,
     UserWorkspaceInvitationsEndpoint,
     WorkspaceMemberUserEndpoint,
@@ -59,6 +60,7 @@ from plane.api.views import (
     ProjectViewSet,
     InviteProjectEndpoint,
     ProjectMemberViewSet,
+    ProjectMemberEndpoint,
     ProjectMemberInvitationsViewset,
     ProjectMemberUserEndpoint,
     AddMemberToProjectEndpoint,
@@ -87,6 +89,7 @@ from plane.api.views import (
     IssueCommentPublicViewSet,
     IssueReactionViewSet,
     CommentReactionViewSet,
+    ExportIssuesEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -345,6 +348,11 @@ urlpatterns = [
         name="workspace",
     ),
     path(
+        "workspaces/<str:slug>/workspace-members/",
+        WorkspaceMembersEndpoint.as_view(),
+        name="workspace-members",
+    ),
+    path(
         "workspaces/<str:slug>/teams/",
         TeamMemberViewSet.as_view(
             {
@@ -475,6 +483,11 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/",
+        ProjectMemberEndpoint.as_view(),
         name="project",
     ),
     path(
@@ -817,6 +830,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
         IssueAttachmentEndpoint.as_view(),
         name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/export-issues/",
+        ExportIssuesEndpoint.as_view(),
+        name="export-issues",
     ),
     ## End Issues
     ## Issue Activity

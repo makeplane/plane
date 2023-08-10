@@ -47,7 +47,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         <img
           src={user.avatar}
           className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
-          alt={user.first_name}
+          alt={user.display_name}
         />
       </div>
     ) : (
@@ -59,9 +59,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           fontSize: fontSize,
         }}
       >
-        {user?.first_name && user.first_name !== ""
-          ? user.first_name.charAt(0)
-          : user?.email?.charAt(0)}
+        {user?.display_name?.charAt(0)}
       </div>
     )}
   </div>

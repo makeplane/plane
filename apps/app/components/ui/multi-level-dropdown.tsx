@@ -66,7 +66,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             >
               <Menu.Items
                 static
-                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none"
+                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-custom-background-90 border border-custom-border-300 text-xs shadow-lg focus:outline-none"
               >
                 {options.map((option) => (
                   <div className="relative p-1" key={option.id}>
@@ -107,7 +107,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     </Menu.Item>
                     {option.hasChildren && option.id === openChildFor && (
                       <div
-                        className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 shadow-lg focus:outline-none ${
+                        className={`absolute top-0 min-w-36 whitespace-nowrap origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 border border-custom-border-300 shadow-lg focus:outline-none ${
                           direction === "left"
                             ? "right-full -translate-x-1"
                             : "left-full translate-x-1"
@@ -125,27 +125,33 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                       >
                         {option.children ? (
                           <div className="space-y-1 p-1">
-                            {option.children.map((child) => {
-                              if (child.element) return child.element;
-                              else
-                                return (
-                                  <button
-                                    key={child.id}
-                                    type="button"
-                                    onClick={() => onSelect(child.value)}
-                                    className={`${
-                                      child.selected ? "bg-custom-background-80" : ""
-                                    } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
-                                  >
-                                    {child.label}{" "}
-                                    <CheckIcon
-                                      className={`h-3.5 w-3.5 opacity-0 ${
-                                        child.selected ? "opacity-100" : ""
-                                      }`}
-                                    />
-                                  </button>
-                                );
-                            })}
+                            {option.children.length === 0 ? (
+                              <p className="text-custom-text-200 text-center px-1 py-1.5">
+                                No {option.label} found
+                              </p> //if no children found, show this message.
+                            ) : (
+                              option.children.map((child) => {
+                                if (child.element) return child.element;
+                                else
+                                  return (
+                                    <button
+                                      key={child.id}
+                                      type="button"
+                                      onClick={() => onSelect(child.value)}
+                                      className={`${
+                                        child.selected ? "bg-custom-background-80" : ""
+                                      } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
+                                    >
+                                      {child.label}{" "}
+                                      <CheckIcon
+                                        className={`h-3.5 w-3.5 opacity-0 ${
+                                          child.selected ? "opacity-100" : ""
+                                        }`}
+                                      />
+                                    </button>
+                                  );
+                              })
+                            )}
                           </div>
                         ) : (
                           <Loader className="p-1 space-y-2">
