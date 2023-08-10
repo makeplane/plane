@@ -104,7 +104,7 @@ export const CommandPalette: React.FC = () => {
         } else if (keyPressed === "b") {
           e.preventDefault();
           toggleCollapsed();
-        } else if (keyPressed === "backspace") {
+        } else if (keyPressed === "backspace" || keyPressed === "delete") {
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);
         }
