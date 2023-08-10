@@ -41,7 +41,7 @@ export interface IProject {
   identifier: string;
   is_favorite: boolean;
   is_member: boolean;
-  member_role: 5 | 10 | 15 | 20;
+  member_role: 5 | 10 | 15 | 20 | null;
   issue_views_view: boolean;
   module_view: boolean;
   name: string;
