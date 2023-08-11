@@ -40,6 +40,8 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
                 ? "bg-yellow-500/20 text-yellow-500"
                 : service.status === "failed"
                 ? "bg-red-500/20 text-red-500"
+                : service.status === "expired"
+                ? "bg-orange-500/20 text-orange-500"
                 : ""
             }`}
           >
