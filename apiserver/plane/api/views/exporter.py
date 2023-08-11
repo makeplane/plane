@@ -76,7 +76,7 @@ class ExportIssuesEndpoint(BaseAPIView):
         try:
             exporter_history = ExporterHistory.objects.filter(
                 workspace__slug=slug
-            ).select_related("workspace").select_related("initiated_by")
+            ).select_related("workspace","initiated_by")
 
             if request.GET.get("per_page", False) and request.GET.get("cursor", False):
                 return self.paginate(

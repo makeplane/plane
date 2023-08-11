@@ -19,7 +19,7 @@ from plane.db.models import ExporterHistory
 def delete_old_s3_link():
     # Get a list of keys and IDs to process
     expired_exporter_history = ExporterHistory.objects.filter(
-        ~Q(status="expired") & Q(created_at__lte=timezone.now() - timedelta(days=8))
+        Q(url__isnull=False) & Q(created_at__lte=timezone.now() - timedelta(days=8))
     ).values_list("key", "id")
 
     s3 = boto3.client(
@@ -35,5 +35,4 @@ def delete_old_s3_link():
         if file_name:
             s3.delete_object(Bucket=settings.AWS_S3_BUCKET_NAME, Key=file_name)
 
-        # Update ExporterHistory status to "expired"
-        ExporterHistory.objects.filter(id=exporter_id).update(status="expired")
+        ExporterHistory.objects.filter(id=exporter_id).update(url=None)
