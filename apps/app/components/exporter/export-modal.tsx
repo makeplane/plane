@@ -64,6 +64,7 @@ export const Exporter: React.FC<Props> = ({
         .then(() => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/export`);
+          setExportLoading(false);
           setToastAlert({
             type: "success",
             title: "Export Successful",
@@ -78,13 +79,14 @@ export const Exporter: React.FC<Props> = ({
             } from the previous export.`,
           });
         })
-        .catch(() =>
+        .catch(() => {
+          setExportLoading(false);
           setToastAlert({
             type: "error",
             title: "Error!",
             message: "Export was unsuccessful. Please try again.",
-          })
-        );
+          });
+        });
     }
   };
 
