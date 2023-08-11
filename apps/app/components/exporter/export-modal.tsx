@@ -121,7 +121,7 @@ export const Exporter: React.FC<Props> = ({
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">
-                        Export Issues{" "}
+                        Export to{" "}
                         {provider === "csv"
                           ? "CSV"
                           : provider === "xlsx"
