@@ -59,7 +59,7 @@ export const ChartDraggable: React.FC<Props> = ({
 
       // manually scroll to left if reached the left end while dragging
       if (posFromLeft - appSidebar.clientWidth <= 70) {
-        if (e.movementX >= 0) return;
+        if (e.movementX > 0) return;
 
         delWidth = dragDirection === "left" ? -5 : 5;
 
@@ -68,7 +68,7 @@ export const ChartDraggable: React.FC<Props> = ({
 
       // manually scroll to right if reached the right end while dragging
       if (posFromRight <= 70) {
-        if (e.movementX <= 0) return;
+        if (e.movementX < 0) return;
 
         delWidth = dragDirection === "left" ? -5 : 5;
 
