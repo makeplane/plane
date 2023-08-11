@@ -51,11 +51,8 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
 
   const handleClose = () => {
     setIsDeleteLoading(false);
-    const timer = setTimeout(() => {
-      setConfirmWorkspaceName("");
-      setConfirmDeleteMyWorkspace(false);
-      clearTimeout(timer);
-    }, 350);
+    setConfirmWorkspaceName("");
+    setConfirmDeleteMyWorkspace(false);
     onClose();
   };
 
