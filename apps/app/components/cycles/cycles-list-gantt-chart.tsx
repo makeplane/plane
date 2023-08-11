@@ -1,21 +1,28 @@
 import { FC } from "react";
-// next imports
-import Link from "next/link";
+
 import { useRouter } from "next/router";
+
+import { KeyedMutator } from "swr";
+
+// services
+import cyclesService from "services/cycles.service";
+// hooks
+import useUser from "hooks/use-user";
 // components
-import { GanttChartRoot } from "components/gantt-chart";
-// ui
-import { Tooltip } from "components/ui";
+import { CycleGanttBlock, GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
 // types
 import { ICycle } from "types";
 
 type Props = {
   cycles: ICycle[];
+  mutateCycles: KeyedMutator<ICycle[]>;
 };
 
-export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
+export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
+
+  const { user } = useUser();
 
   // rendering issues on gantt sidebar
   const GanttSidebarBlockView = ({ data }: any) => (
@@ -28,53 +35,65 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles }) => {
     </div>
   );
 
-  // rendering issues on gantt card
-  const GanttBlockView = ({ data }: { data: ICycle }) => (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${data?.id}`}>
-      <a className="relative flex items-center w-full h-full overflow-hidden shadow-sm">
-        <div
-          className="flex-shrink-0 w-[4px] h-full"
-          style={{ backgroundColor: "rgb(var(--color-primary-100))" }}
-        />
-        <Tooltip tooltipContent={data?.name} className={`z-[999999]`}>
-          <div className="text-custom-text-100 text-[15px] whitespace-nowrap py-[4px] px-2.5 overflow-hidden w-full">
-            {data?.name}
-          </div>
-        </Tooltip>
-      </a>
-    </Link>
-  );
+  const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
+    if (!workspaceSlug || !user) return;
 
-  // handle gantt issue start date and target date
-  const handleUpdateDates = async (data: any) => {
-    const payload = {
-      id: data?.id,
-      start_date: data?.start_date,
-      target_date: data?.target_date,
-    };
+    mutateCycles((prevData) => {
+      if (!prevData) return prevData;
+
+      const newList = prevData.map((p) => ({
+        ...p,
+        ...(p.id === cycle.id
+          ? {
+              start_date: payload.start_date ? payload.start_date : p.start_date,
+              target_date: payload.target_date ? payload.target_date : p.end_date,
+              sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
+            }
+          : {}),
+      }));
+
+      if (payload.sort_order) {
+        const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
+        newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
+      }
+
+      return newList;
+    }, false);
+
+    const newPayload: any = { ...payload };
+
+    if (newPayload.sort_order && payload.sort_order)
+      newPayload.sort_order = payload.sort_order.newSortOrder;
+
+    cyclesService
+      .patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload, user)
+      .finally(() => mutateCycles());
   };
 
-  const blockFormat = (blocks: any) =>
+  const blockFormat = (blocks: ICycle[]) =>
     blocks && blocks.length > 0
-      ? blocks.map((_block: any) => {
-          if (_block?.start_date && _block.target_date) console.log("_block", _block);
-          return {
-            start_date: new Date(_block.created_at),
-            target_date: new Date(_block.updated_at),
-            data: _block,
-          };
-        })
+      ? blocks
+          .filter((b) => b.start_date && b.end_date)
+          .map((block) => ({
+            data: block,
+            id: block.id,
+            sort_order: block.sort_order,
+            start_date: new Date(block.start_date ?? ""),
+            target_date: new Date(block.end_date ?? ""),
+          }))
       : [];
 
   return (
     <div className="w-full h-full overflow-y-auto">
       <GanttChartRoot
-        title={"Cycles"}
+        title="Cycles"
         loaderTitle="Cycles"
         blocks={cycles ? blockFormat(cycles) : null}
-        blockUpdateHandler={handleUpdateDates}
+        blockUpdateHandler={(block, payload) => handleCycleUpdate(block, payload)}
         sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
-        blockRender={(data: any) => <GanttBlockView data={data} />}
+        blockRender={(data: any) => <CycleGanttBlock cycle={data as ICycle} />}
+        enableLeftDrag={false}
+        enableRightDrag={false}
       />
     </div>
   );

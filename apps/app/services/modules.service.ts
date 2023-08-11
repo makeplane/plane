@@ -75,7 +75,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: any,
+    data: Partial<IModule>,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
@@ -127,7 +127,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    queries?: Partial<IIssueViewOptions>
+    queries?: any
   ): Promise<
     | IIssue[]
     | {

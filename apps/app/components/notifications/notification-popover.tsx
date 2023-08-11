@@ -84,7 +84,7 @@ export const NotificationPopover = () => {
                 disabled={!store?.theme?.sidebarCollapsed}
               >
                 <Popover.Button
-                  className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
+                  className={`relative group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
@@ -93,9 +93,13 @@ export const NotificationPopover = () => {
                   <NotificationsOutlined fontSize="small" />
                   {store?.theme?.sidebarCollapsed ? null : <span>Notifications</span>}
                   {totalNotificationCount && totalNotificationCount > 0 ? (
-                    <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
-                      {getNumberCount(totalNotificationCount)}
-                    </span>
+                    store?.theme?.sidebarCollapsed ? (
+                      <span className="absolute right-3.5 top-2 h-2 w-2 bg-custom-primary-300 rounded-full" />
+                    ) : (
+                      <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
+                        {getNumberCount(totalNotificationCount)}
+                      </span>
+                    )
                   ) : null}
                 </Popover.Button>
               </Tooltip>
@@ -108,7 +112,7 @@ export const NotificationPopover = () => {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 top-0 md:w-[36rem] w-[20rem] h-[50vh] border border-custom-border-300 shadow-lg rounded-xl">
+                <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 -top-44 md:w-[36rem] w-[20rem] h-[75vh] border border-custom-border-300 shadow-lg rounded-xl">
                   <NotificationHeader
                     notificationCount={notificationCount}
                     notificationMutate={notificationMutate}

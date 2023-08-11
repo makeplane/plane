@@ -29,6 +29,7 @@ export interface ICycle {
   owned_by: IUser;
   project: string;
   project_detail: IProjectLite;
+  sort_order: number;
   start_date: string | null;
   started_issues: number;
   total_issues: number;
