@@ -5,7 +5,21 @@ from datetime import datetime
 # Django imports
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Q, Exists, OuterRef, Func, F, Min, Subquery
+from django.db.models import (
+    Q,
+    Exists,
+    OuterRef,
+    Func,
+    F,
+    Max,
+    CharField,
+    Func,
+    Subquery,
+    Prefetch,
+    When,
+    Case,
+    Value,
+)
 from django.core.validators import validate_email
 from django.conf import settings
 
@@ -13,6 +27,7 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
+from rest_framework.permissions import AllowAny
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -23,10 +38,16 @@ from plane.api.serializers import (
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
     ProjectFavoriteSerializer,
+    IssueLiteSerializer,
+    ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
 )
 
-from plane.api.permissions import ProjectBasePermission, ProjectEntityPermission
+from plane.api.permissions import (
+    ProjectBasePermission,
+    ProjectEntityPermission,
+    ProjectMemberPermission,
+)
 
 from plane.db.models import (
     Project,
@@ -49,9 +70,17 @@ from plane.db.models import (
     IssueAssignee,
     ModuleMember,
     Inbox,
+    ProjectDeployBoard,
+    Issue,
+    IssueReaction,
+    IssueLink,
+    IssueAttachment,
+    Label,
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
+from plane.utils.grouper import group_results
+from plane.utils.issue_filters import issue_filters
 
 
 class ProjectViewSet(BaseViewSet):
@@ -993,6 +1022,63 @@ class ProjectFavoritesViewSet(BaseViewSet):
             )
 
 
+class ProjectDeployBoardViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectMemberPermission,
+    ]
+    serializer_class = ProjectDeployBoardSerializer
+    model = ProjectDeployBoard
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
+            )
+            .select_related("project")
+        )
+
+    def create(self, request, slug, project_id):
+        try:
+            comments = request.data.get("comments", False)
+            reactions = request.data.get("reactions", False)
+            inbox = request.data.get("inbox", None)
+            votes = request.data.get("votes", False)
+            views = request.data.get(
+                "views",
+                {
+                    "list": True,
+                    "kanban": True,
+                    "calendar": True,
+                    "gantt": True,
+                    "spreadsheet": True,
+                },
+            )
+
+            project_deploy_board, _ = ProjectDeployBoard.objects.get_or_create(
+                anchor=f"{slug}/{project_id}",
+                project_id=project_id,
+            )
+            project_deploy_board.comments = comments
+            project_deploy_board.reactions = reactions
+            project_deploy_board.inbox = inbox
+            project_deploy_board.votes = votes
+            project_deploy_board.views = views
+
+            project_deploy_board.save()
+
+            serializer = ProjectDeployBoardSerializer(project_deploy_board)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
 class ProjectMemberEndpoint(BaseAPIView):
     permission_classes = [
         ProjectEntityPermission,
@@ -1005,6 +1091,179 @@ class ProjectMemberEndpoint(BaseAPIView):
             ).select_related("project", "member")
             serializer = ProjectMemberSerializer(project_members, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request, slug, project_id):
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
+            serializer = ProjectDeployBoardSerializer(project_deploy_board)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ProjectDeployBoard.DoesNotExist:
+            return Response(
+                {"error": "Project Deploy Board does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ProjectDeployBoardIssuesPublicEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request, slug, project_id):
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
+
+            filters = issue_filters(request.query_params, "GET")
+
+            # Custom ordering for priority and state
+            priority_order = ["urgent", "high", "medium", "low", None]
+            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+            order_by_param = request.GET.get("order_by", "-created_at")
+
+            issue_queryset = (
+                Issue.issue_objects.annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .filter(project_id=project_id)
+                .filter(workspace__slug=slug)
+                .select_related("project", "workspace", "state", "parent")
+                .prefetch_related("assignees", "labels")
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related("actor"),
+                    )
+                )
+                .filter(**filters)
+                .annotate(cycle_id=F("issue_cycle__cycle_id"))
+                .annotate(module_id=F("issue_module__module_id"))
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+            )
+
+            # Priority Ordering
+            if order_by_param == "priority" or order_by_param == "-priority":
+                priority_order = (
+                    priority_order
+                    if order_by_param == "priority"
+                    else priority_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    priority_order=Case(
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
+                        output_field=CharField(),
+                    )
+                ).order_by("priority_order")
+
+            # State Ordering
+            elif order_by_param in [
+                "state__name",
+                "state__group",
+                "-state__name",
+                "-state__group",
+            ]:
+                state_order = (
+                    state_order
+                    if order_by_param in ["state__name", "state__group"]
+                    else state_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    state_order=Case(
+                        *[
+                            When(state__group=state_group, then=Value(i))
+                            for i, state_group in enumerate(state_order)
+                        ],
+                        default=Value(len(state_order)),
+                        output_field=CharField(),
+                    )
+                ).order_by("state_order")
+            # assignee and label ordering
+            elif order_by_param in [
+                "labels__name",
+                "-labels__name",
+                "assignees__first_name",
+                "-assignees__first_name",
+            ]:
+                issue_queryset = issue_queryset.annotate(
+                    max_values=Max(
+                        order_by_param[1::]
+                        if order_by_param.startswith("-")
+                        else order_by_param
+                    )
+                ).order_by(
+                    "-max_values" if order_by_param.startswith("-") else "max_values"
+                )
+            else:
+                issue_queryset = issue_queryset.order_by(order_by_param)
+
+            issues = IssueLiteSerializer(issue_queryset, many=True).data
+
+            states = State.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values("name", "group", "color", "id")
+
+            labels = Label.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            ).values("id", "name", "color", "parent")
+
+            ## Grouping the results
+            group_by = request.GET.get("group_by", False)
+            if group_by:
+                issues = group_results(issues, group_by)
+
+            return Response(
+                {
+                    "issues": issues,
+                    "states": states,
+                    "labels": labels,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except ProjectDeployBoard.DoesNotExist:
+            return Response(
+                {"error": "Board does not exists"}, status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

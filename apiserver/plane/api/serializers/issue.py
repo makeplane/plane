@@ -31,6 +31,7 @@ from plane.db.models import (
     IssueAttachment,
     IssueReaction,
     CommentReaction,
+    IssueVote,
 )
 
 
@@ -554,6 +555,14 @@ class CommentReactionSerializer(BaseSerializer):
 
 
 
+class IssueVoteSerializer(BaseSerializer):
+
+    class Meta:
+        model = IssueVote
+        fields = ["issue", "vote", "workspace_id", "project_id", "actor"]
+        read_only_fields = fields
+
+
 class IssueCommentSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
@@ -573,6 +582,7 @@ class IssueCommentSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "access",
         ]
 
 
