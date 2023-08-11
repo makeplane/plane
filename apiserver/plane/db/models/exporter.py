@@ -34,6 +34,7 @@ class ExporterHistory(BaseModel):
             ("processing", "Processing"),
             ("completed", "Completed"),
             ("failed", "Failed"),
+            ("expired", "Expired"),
         ),
         default="queued",
     )

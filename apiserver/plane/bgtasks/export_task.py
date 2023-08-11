@@ -4,10 +4,11 @@ import io
 import json
 import boto3
 import zipfile
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 # Django imports
 from django.conf import settings
+from django.utils import timezone
 
 # Third party imports
 from celery import shared_task
@@ -19,11 +20,6 @@ from openpyxl.utils.datetime import to_excel
 
 # Module imports
 from plane.db.models import Issue, ExporterHistory, Project
-
-
-# def format_datetime(dt):
-#     if isinstance(dt, (datetime, datetime.date)):
-#         return dt.strftime("%Y-%m-%d %H:%M:%S") if isinstance(dt, datetime) else dt.strftime("%Y-%m-%d")
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -290,7 +286,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
                     "labels__name",
                 )
             )
-            .order_by("project__identifier")
+            .order_by("project__identifier","sequence_id")
             .distinct()
         )
         # CSV header

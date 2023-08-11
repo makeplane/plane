@@ -66,7 +66,7 @@ class ExportIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -74,16 +74,16 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
-            history = ExporterHistory.objects.filter(
+            exporter_history = ExporterHistory.objects.filter(
                 workspace__slug=slug
-            ).select_related("workspace")
+            ).select_related("workspace").select_related("initiated_by")
 
             if request.GET.get("per_page", False) and request.GET.get("cursor", False):
                 return self.paginate(
                     request=request,
-                    queryset=history,
-                    on_results=lambda history: ExporterHistorySerializer(
-                        history, many=True
+                    queryset=exporter_history,
+                    on_results=lambda exporter_history: ExporterHistorySerializer(
+                        exporter_history, many=True
                     ).data,
                 )
             else:
