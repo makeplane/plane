@@ -5,8 +5,8 @@ import type { Props } from "../types";
 import { issueGroupColors } from "constants/data";
 
 export const UnstartedStateIcon: React.FC<Props> = ({
-  width = "16",
-  height = "16",
+  width = "14",
+  height = "14",
   className,
   color = issueGroupColors["unstarted"],
 }) => (

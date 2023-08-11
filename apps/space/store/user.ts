@@ -2,10 +2,11 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // service
 import UserService from "services/user.service";
+// types
+import { IUserStore } from "./types";
 
-class UserStore {
+class UserStore implements IUserStore {
   currentUser: any | null = null;
-  currentUserSettings: any | null = null;
   // root store
   rootStore;
   // service
@@ -15,13 +16,11 @@ class UserStore {
     makeObservable(this, {
       // observable
       currentUser: observable,
-      currentUserSettings: observable,
       // actions
       // computed
     });
     this.rootStore = _rootStore;
     this.userService = new UserService();
-    this.initialLoad();
   }
 
   getUserAsync = async () => {
@@ -39,27 +38,6 @@ class UserStore {
       });
     }
   };
-
-  getUserSettingsAsync = async () => {
-    try {
-      const response = this.userService.currentUser();
-      if (response) {
-        runInAction(() => {
-          this.currentUserSettings = response;
-        });
-      }
-    } catch (error) {
-      console.error("error", error);
-      runInAction(() => {
-        // render error actions
-      });
-    }
-  };
-
-  setCurrentUserSettings = async () => {};
-
-  // init load
-  initialLoad() {}
 }
 
 export default UserStore;

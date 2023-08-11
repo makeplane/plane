@@ -3,14 +3,14 @@ import axios from "axios";
 // js cookie
 import Cookies from "js-cookie";
 
-const baseToken: string | null = "secret_token";
+const base_url: string | null = "https://boarding.plane.so";
 
 abstract class APIService {
   protected baseURL: string;
   protected headers: any = {};
 
-  constructor(baseURL: string | null = null) {
-    this.baseURL = baseURL != null ? baseURL : "http://localhost:8000";
+  constructor(baseURL: string) {
+    this.baseURL = base_url ? base_url : baseURL;
   }
 
   setRefreshToken(token: string) {
@@ -39,7 +39,7 @@ abstract class APIService {
 
   getHeaders() {
     return {
-      Authorization: `Bearer ${baseToken != null ? baseToken : this.getAccessToken()}`,
+      Authorization: `Bearer ${this.getAccessToken()}`,
     };
   }
 

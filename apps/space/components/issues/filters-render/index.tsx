@@ -11,16 +11,16 @@ import IssuePriorityFilter from "./priority";
 import IssueDateFilter from "./date";
 
 const IssueFilter = observer(() => {
-  const store = useMobxStore();
+  const store: any = useMobxStore();
 
   const clearAllFilters = () => {};
 
   return (
-    <div className="container mx-auto px-5 flex justify-start items-center flex-wrap gap-2 text-sm">
+    <div className="container mx-auto px-5 md:px-0 flex justify-start items-center flex-wrap gap-2 text-sm">
       {/* state */}
-      <IssueStateFilter />
+      {store?.issue?.states && <IssueStateFilter />}
       {/* labels */}
-      <IssueLabelFilter />
+      {store?.issue?.labels && <IssueLabelFilter />}
       {/* priority */}
       <IssuePriorityFilter />
       {/* due date */}

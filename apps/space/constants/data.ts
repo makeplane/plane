@@ -1,5 +1,13 @@
 // interfaces
-import { TIssueRenderViews, TIssueGroupKey, TIssuePriorityFilters, TIssueGroup } from "interfaces/issues";
+import {
+  IIssueBoardViews,
+  // priority
+  TIssuePriorityKey,
+  // state groups
+  TIssueGroupKey,
+  IIssuePriorityFilters,
+  IIssueGroup,
+} from "store/types/issue";
 // icons
 import {
   BacklogStateIcon,
@@ -10,7 +18,7 @@ import {
 } from "components/icons";
 
 // all issue views
-export const issueViews: TIssueRenderViews[] = [
+export const issueViews: IIssueBoardViews[] = [
   {
     key: "list",
     title: "List View",
@@ -18,67 +26,76 @@ export const issueViews: TIssueRenderViews[] = [
     className: "",
   },
   {
-    key: "board",
+    key: "kanban",
     title: "Board View",
     icon: "grid_view",
     className: "",
   },
-  {
-    key: "calendar",
-    title: "Calendar View",
-    icon: "calendar_month",
-    className: "",
-  },
-  {
-    key: "spreadsheet",
-    title: "Spreadsheet View",
-    icon: "table_chart",
-    className: "",
-  },
-  {
-    key: "gantt",
-    title: "Gantt Chart View",
-    icon: "waterfall_chart",
-    className: "rotate-90",
-  },
+  // {
+  //   key: "calendar",
+  //   title: "Calendar View",
+  //   icon: "calendar_month",
+  //   className: "",
+  // },
+  // {
+  //   key: "spreadsheet",
+  //   title: "Spreadsheet View",
+  //   icon: "table_chart",
+  //   className: "",
+  // },
+  // {
+  //   key: "gantt",
+  //   title: "Gantt Chart View",
+  //   icon: "waterfall_chart",
+  //   className: "rotate-90",
+  // },
 ];
 
 // issue priority filters
-export const issuePriorityFilters: TIssuePriorityFilters[] = [
+export const issuePriorityFilters: IIssuePriorityFilters[] = [
   {
     key: "urgent",
     title: "Urgent",
-    color: "bg-red-500/20 text-red-500",
+    className: "border border-red-500/50 bg-red-500/20 text-red-500",
     icon: "error",
   },
   {
     key: "high",
     title: "High",
-    color: "bg-red-500/20 text-red-500",
+    className: "border border-orange-500/50 bg-orange-500/20 text-orange-500",
     icon: "signal_cellular_alt",
   },
   {
     key: "medium",
     title: "Medium",
-    color: "bg-red-500/20 text-red-500",
+    className: "border border-yellow-500/50 bg-yellow-500/20 text-yellow-500",
     icon: "signal_cellular_alt_2_bar",
   },
   {
     key: "low",
     title: "Low",
-    color: "bg-red-500/20 text-red-500",
+    className: "border border-green-500/50 bg-green-500/20 text-green-500",
     icon: "signal_cellular_alt_1_bar",
   },
   {
     key: "none",
     title: "None",
-    color: "bg-red-500/20 text-red-500",
+    className: "border border-gray-500/50 bg-gray-500/20 text-gray-500",
     icon: "block",
   },
 ];
 
-// issue group filters
+export const issuePriorityFilter = (priorityKey: TIssuePriorityKey): IIssuePriorityFilters | null => {
+  const currentIssuePriority: IIssuePriorityFilters | undefined | null =
+    issuePriorityFilters && issuePriorityFilters.length > 0
+      ? issuePriorityFilters.find((_priority) => _priority.key === priorityKey)
+      : null;
 
+  if (currentIssuePriority === undefined || currentIssuePriority === null) return null;
+  return { ...currentIssuePriority };
+};
+
+// issue group filters
 export const issueGroupColors: {
   [key: string]: string;
 } = {
@@ -89,7 +106,7 @@ export const issueGroupColors: {
   cancelled: "#dc2626",
 };
 
-export const issueGroups: TIssueGroup[] = [
+export const issueGroups: IIssueGroup[] = [
   {
     key: "backlog",
     title: "Backlog",
@@ -100,8 +117,8 @@ export const issueGroups: TIssueGroup[] = [
   {
     key: "unstarted",
     title: "Unstarted",
-    color: issueGroupColors["unstarted"],
-    className: `border-[${issueGroupColors["unstarted"]}]/50 text-[${issueGroupColors["unstarted"]}] bg-[${issueGroupColors["unstarted"]}]/10`,
+    color: "#3f76ff",
+    className: `border-[#3f76ff]/50 text-[#3f76ff] bg-[#3f76ff]/10`,
     icon: UnstartedStateIcon,
   },
   {
@@ -127,8 +144,8 @@ export const issueGroups: TIssueGroup[] = [
   },
 ];
 
-export const issueGroupFilter = (issueKey: TIssueGroupKey): TIssueGroup | null => {
-  const currentIssueStateGroup: TIssueGroup | undefined | null =
+export const issueGroupFilter = (issueKey: TIssueGroupKey): IIssueGroup | null => {
+  const currentIssueStateGroup: IIssueGroup | undefined | null =
     issueGroups && issueGroups.length > 0 ? issueGroups.find((group) => group.key === issueKey) : null;
 
   if (currentIssueStateGroup === undefined || currentIssueStateGroup === null) return null;
