@@ -12,7 +12,7 @@ import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, Tooltip } from "components/ui";
+import { CustomMenu, Icon, Tooltip } from "components/ui";
 // icons
 import { EllipsisVerticalIcon, LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
@@ -90,6 +90,8 @@ export const SingleSidebarProject: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
+  const isAdmin = project.member_role === 20;
+
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
@@ -152,7 +154,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
               >
                 <button
                   type="button"
-                  className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 ${
+                  className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 text-custom-sidebar-text-400 ${
                     sidebarCollapse ? "" : "group-hover:!flex"
                   } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
                   {...provided?.dragHandleProps}
@@ -204,15 +206,19 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     fontSize="small"
                     className={`flex-shrink-0 ${
                       open ? "rotate-180" : ""
-                    } !hidden group-hover:!block text-custom-sidebar-text-200 duration-300`}
+                    } !hidden group-hover:!block text-custom-sidebar-text-400 duration-300`}
                   />
                 )}
               </Disclosure.Button>
             </Tooltip>
 
             {!sidebarCollapse && (
-              <CustomMenu className="hidden group-hover:block flex-shrink-0" ellipsis>
-                {!shortContextMenu && (
+              <CustomMenu
+                className="hidden group-hover:block flex-shrink-0"
+                buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
+                ellipsis
+              >
+                {!shortContextMenu && isAdmin && (
                   <CustomMenu.MenuItem onClick={handleDeleteProject}>
                     <span className="flex items-center justify-start gap-2 ">
                       <TrashIcon className="h-4 w-4" />
@@ -231,7 +237,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 {project.is_favorite && (
                   <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                     <span className="flex items-center justify-start gap-2">
-                      <StarIcon className="h-4 w-4" />
+                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                       <span>Remove from favorites</span>
                     </span>
                   </CustomMenu.MenuItem>
@@ -254,6 +260,14 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     </div>
                   </CustomMenu.MenuItem>
                 )}
+                <CustomMenu.MenuItem
+                  onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}
+                >
+                  <div className="flex items-center justify-start gap-2">
+                    <Icon iconName="settings" className="!text-base !leading-4" />
+                    <span>Settings</span>
+                  </div>
+                </CustomMenu.MenuItem>
               </CustomMenu>
             )}
           </div>
