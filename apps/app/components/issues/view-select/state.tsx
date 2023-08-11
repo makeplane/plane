@@ -131,7 +131,7 @@ export const ViewStateSelect: React.FC<Props> = ({
       disabled={isNotAllowed}
       onOpen={() => setFetchStates(true)}
       noChevron
-      selfPositioned
+      selfPositioned={selfPositioned}
     />
   );
 };
