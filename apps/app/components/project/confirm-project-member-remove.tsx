@@ -67,13 +67,13 @@ const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, ha
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Remove {data?.email}?
+                        Remove {data?.display_name}?
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to remove member-{" "}
-                          <span className="font-bold">{data?.email}</span>? They will no longer have
-                          access to this project. This action cannot be undone.
+                          <span className="font-bold">{data?.display_name}</span>? They will no
+                          longer have access to this project. This action cannot be undone.
                         </p>
                       </div>
                     </div>

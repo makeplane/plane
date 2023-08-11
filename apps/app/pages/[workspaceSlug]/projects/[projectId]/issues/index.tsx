@@ -63,7 +63,7 @@ const ProjectIssues: NextPage = () => {
             <IssuesFilterView />
             <SecondaryButton
               onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 rounded-md font-normal text-custom-sidebar-text-200 border-custom-sidebar-border-200 hover:text-custom-text-100 hover:bg-custom-sidebar-background-90"
+              className="!py-1.5 rounded-md font-normal text-custom-sidebar-text-200 border-custom-border-200 hover:text-custom-text-100 hover:bg-custom-sidebar-background-90"
               outline
             >
               Analytics
@@ -72,7 +72,7 @@ const ProjectIssues: NextPage = () => {
               <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxList?.[0]?.id}`}>
                 <a>
                   <SecondaryButton
-                    className="relative !py-1.5 rounded-md font-normal text-custom-sidebar-text-200 border-custom-sidebar-border-200 hover:text-custom-text-100 hover:bg-custom-sidebar-background-90"
+                    className="relative !py-1.5 rounded-md font-normal text-custom-sidebar-text-200 border-custom-border-200 hover:text-custom-text-100 hover:bg-custom-sidebar-background-90"
                     outline
                   >
                     <span>Inbox</span>
@@ -97,6 +97,7 @@ const ProjectIssues: NextPage = () => {
             </PrimaryButton>
           </div>
         }
+        bg="secondary"
       >
         <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
         <div className="h-full w-full flex flex-col">

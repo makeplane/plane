@@ -1,5 +1,5 @@
 // types
-import { ChartDataType } from "../types";
+import { ChartDataType, IGanttBlock } from "../types";
 // data
 import { weeks, months } from "../data";
 // helpers
@@ -19,7 +19,35 @@ type GetAllDaysInMonthInMonthViewType = {
   active: boolean;
   today: boolean;
 };
-const getAllDaysInMonthInMonthView = (month: number, year: number) => {
+
+interface IMonthChild {
+  active: boolean;
+  date: Date;
+  day: number;
+  dayData: {
+    key: number;
+    shortTitle: string;
+    title: string;
+  };
+  title: string;
+  today: boolean;
+  weekNumber: number;
+}
+
+export interface IMonthBlock {
+  children: IMonthChild[];
+  month: number;
+  monthData: {
+    key: number;
+    shortTitle: string;
+    title: string;
+  };
+  title: string;
+  year: number;
+}
+[];
+
+const getAllDaysInMonthInMonthView = (month: number, year: number): IMonthChild[] => {
   const day: GetAllDaysInMonthInMonthViewType[] = [];
   const numberOfDaysInMonth = getNumberOfDaysInMonth(month, year);
   const currentDate = new Date();
@@ -45,7 +73,7 @@ const getAllDaysInMonthInMonthView = (month: number, year: number) => {
   return day;
 };
 
-const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number) => {
+const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number): IMonthBlock => {
   const currentMonth: number = month;
   const currentYear: number = year;
 
@@ -162,7 +190,11 @@ export const getNumberOfDaysBetweenTwoDatesInMonth = (startDate: Date, endDate: 
   return daysDifference;
 };
 
-export const getMonthChartItemPositionWidthInMonth = (chartData: ChartDataType, itemData: any) => {
+// calc item scroll position and width
+export const getMonthChartItemPositionWidthInMonth = (
+  chartData: ChartDataType,
+  itemData: IGanttBlock
+) => {
   let scrollPosition: number = 0;
   let scrollWidth: number = 0;
 

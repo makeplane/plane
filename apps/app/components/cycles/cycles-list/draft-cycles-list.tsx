@@ -17,7 +17,7 @@ export const DraftCyclesList: React.FC<Props> = ({ viewType }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: draftCyclesList } = useSWR(
+  const { data: draftCyclesList, mutate } = useSWR(
     workspaceSlug && projectId ? DRAFT_CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () =>
@@ -25,5 +25,5 @@ export const DraftCyclesList: React.FC<Props> = ({ viewType }) => {
       : null
   );
 
-  return <CyclesView cycles={draftCyclesList} viewType={viewType} />;
+  return <CyclesView cycles={draftCyclesList} mutateCycles={mutate} viewType={viewType} />;
 };

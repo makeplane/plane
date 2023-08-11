@@ -127,9 +127,7 @@ export const SelectFilters: React.FC<Props> = ({
               label: (
                 <div className="flex items-center gap-2">
                   <Avatar user={member.member} />
-                  {member.member.first_name && member.member.first_name !== ""
-                    ? member.member.first_name
-                    : member.member.email}
+                  {member.member.display_name}
                 </div>
               ),
               value: {
@@ -149,9 +147,7 @@ export const SelectFilters: React.FC<Props> = ({
               label: (
                 <div className="flex items-center gap-2">
                   <Avatar user={member.member} />
-                  {member.member.first_name && member.member.first_name !== ""
-                    ? member.member.first_name
-                    : member.member.email}
+                  {member.member.display_name}
                 </div>
               ),
               value: {

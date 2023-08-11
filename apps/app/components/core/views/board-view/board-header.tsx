@@ -10,7 +10,7 @@ import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
 // component
-import { Avatar } from "components/ui";
+import { Avatar, Icon } from "components/ui";
 // icons
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { getPriorityIcon, getStateGroupIcon } from "components/icons";
@@ -81,10 +81,7 @@ export const BoardHeader: React.FC<Props> = ({
         break;
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        title =
-          member?.first_name && member.first_name !== ""
-            ? `${member.first_name} ${member.last_name}`
-            : member?.email ?? "";
+        title = member?.display_name ?? "";
         break;
     }
 
@@ -143,24 +140,22 @@ export const BoardHeader: React.FC<Props> = ({
     >
       <div className={`flex items-center ${isCollapsed ? "gap-1" : "flex-col gap-2"}`}>
         <div
-          className={`flex cursor-pointer items-center gap-x-3 max-w-[316px] ${
+          className={`flex cursor-pointer items-center gap-x-2 max-w-[316px] ${
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
           }`}
         >
           <span className="flex items-center">{getGroupIcon()}</span>
           <h2
-            className="text-lg font-semibold capitalize truncate"
+            className={`text-lg font-semibold truncate ${
+              selectedGroup === "created_by" ? "" : "capitalize"
+            }`}
             style={{
               writingMode: isCollapsed ? "horizontal-tb" : "vertical-rl",
             }}
           >
             {getGroupTitle()}
           </h2>
-          <span
-            className={`${
-              isCollapsed ? "ml-0.5" : ""
-            } min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs`}
-          >
+          <span className={`${isCollapsed ? "ml-0.5" : ""} py-1 text-center text-sm`}>
             {groupedIssues?.[groupTitle].length ?? 0}
           </span>
         </div>
@@ -175,9 +170,12 @@ export const BoardHeader: React.FC<Props> = ({
           }}
         >
           {isCollapsed ? (
-            <ArrowsPointingInIcon className="h-4 w-4" />
+            <Icon
+              iconName="close_fullscreen"
+              className="text-base font-medium text-custom-text-900"
+            />
           ) : (
-            <ArrowsPointingOutIcon className="h-4 w-4" />
+            <Icon iconName="open_in_full" className="text-base font-medium text-custom-text-900" />
           )}
         </button>
         {!disableUserActions && selectedGroup !== "created_by" && (

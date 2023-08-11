@@ -73,7 +73,7 @@ const ProfileActivity = () => {
                             activityItem.actor_detail.avatar !== "" ? (
                             <img
                               src={activityItem.actor_detail.avatar}
-                              alt={activityItem.actor_detail.first_name}
+                              alt={activityItem.actor_detail.display_name}
                               height={30}
                               width={30}
                               className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
@@ -82,7 +82,7 @@ const ProfileActivity = () => {
                             <div
                               className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}
                             >
-                              {activityItem.actor_detail.first_name.charAt(0)}
+                              {activityItem.actor_detail.display_name?.charAt(0)}
                             </div>
                           )}
 
@@ -96,10 +96,9 @@ const ProfileActivity = () => {
                         <div className="min-w-0 flex-1">
                           <div>
                             <div className="text-xs">
-                              {activityItem.actor_detail.first_name}
                               {activityItem.actor_detail.is_bot
-                                ? "Bot"
-                                : " " + activityItem.actor_detail.last_name}
+                                ? activityItem.actor_detail.first_name + " Bot"
+                                : activityItem.actor_detail.display_name}
                             </div>
                             <p className="mt-0.5 text-xs text-custom-text-200">
                               Commented {timeAgo(activityItem.created_at)}
@@ -176,7 +175,7 @@ const ProfileActivity = () => {
                                       activityItem.actor_detail.avatar !== "" ? (
                                       <img
                                         src={activityItem.actor_detail.avatar}
-                                        alt={activityItem.actor_detail.first_name}
+                                        alt={activityItem.actor_detail.display_name}
                                         height={24}
                                         width={24}
                                         className="rounded-full"
@@ -185,7 +184,7 @@ const ProfileActivity = () => {
                                       <div
                                         className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white`}
                                       >
-                                        {activityItem.actor_detail.first_name.charAt(0)}
+                                        {activityItem.actor_detail.display_name?.charAt(0)}
                                       </div>
                                     )}
                                   </div>
@@ -206,8 +205,7 @@ const ProfileActivity = () => {
                                     href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}
                                   >
                                     <a className="text-gray font-medium">
-                                      {activityItem.actor_detail.first_name}{" "}
-                                      {activityItem.actor_detail.last_name}
+                                      {activityItem.actor_detail.display_name}
                                     </a>
                                   </Link>
                                 )}{" "}
