@@ -48,12 +48,12 @@ class IssueStore implements IIssueStore {
   }
 
   // computed
-  getCountOfIssuesByState(state: string) {
-    return this.issues?.filter((issue) => issue.state == state).length || 0;
+  getCountOfIssuesByState(state_id: string): number {
+    return this.issues?.filter((issue) => issue.state == state_id).length || 0;
   }
 
-  getFilteredIssuesByState(state: string) {
-    return this.issues?.filter((issue) => issue.state == state) || [];
+  getFilteredIssuesByState(state_id: string): IIssue[] | [] {
+    return this.issues?.filter((issue) => issue.state == state_id) || [];
   }
 
   // action

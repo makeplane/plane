@@ -6,18 +6,21 @@ import { useRouter, useParams } from "next/navigation";
 import { observer } from "mobx-react-lite";
 // constants
 import { issueViews } from "constants/data";
+// interfaces
+import { TIssueBoardKeys } from "store/types";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const NavbarIssueBoardView = observer(() => {
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   const router = useRouter();
   const routerParams = useParams();
 
   const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
 
-  const handleCurrentBoardView = (boardView: string) => {
+  const handleCurrentBoardView = (boardView: TIssueBoardKeys) => {
     store?.issue?.setCurrentIssueBoardView(boardView);
     router.replace(`/${workspace_slug}/${project_slug}?board=${boardView}`);
   };

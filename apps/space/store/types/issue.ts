@@ -64,8 +64,8 @@ export interface IIssueStore {
   userSelectedStates: string[];
   userSelectedLabels: string[];
 
-  getCountOfIssuesByState: (state: TIssueBoardKeys) => number;
-  getFilteredIssuesByState: (state: TIssueBoardKeys) => IIssue[];
+  getCountOfIssuesByState: (state: string) => number;
+  getFilteredIssuesByState: (state: string) => IIssue[];
 
   setCurrentIssueBoardView: (view: TIssueBoardKeys) => void;
   getIssuesAsync: (workspace_slug: string, project_slug: string) => Promise<void>;

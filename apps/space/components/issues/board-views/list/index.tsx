@@ -5,13 +5,14 @@ import { observer } from "mobx-react-lite";
 // components
 import { IssueListHeader } from "components/issues/board-views/list/header";
 import { IssueListBlock } from "components/issues/board-views/list/block";
-// mobx hook
-import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
 import { IIssueState, IIssue } from "store/types/issue";
+// mobx hook
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const IssueListView = observer(() => {
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   return (
     <>

@@ -4,9 +4,10 @@
 import { observer } from "mobx-react-lite";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const NavbarTheme = observer(() => {
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   const handleTheme = () => {
     store?.theme?.setTheme(store?.theme?.theme === "light" ? "dark" : "light");

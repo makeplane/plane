@@ -48,7 +48,7 @@ const WorkspaceProjectPage = observer(() => {
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {store?.issue?.loader ? (
+      {store?.issue?.loader && !store.issue.issues ? (
         <div className="text-sm text-center py-10 text-gray-500">Loading...</div>
       ) : (
         <>
@@ -59,13 +59,13 @@ const WorkspaceProjectPage = observer(() => {
               <>
                 {store?.issue?.currentIssueBoardView === "list" && (
                   <div className="relative w-full h-full overflow-y-auto">
-                    <div className="container mx-auto px-5 md:px-0 py-3">
+                    <div className="container mx-auto px-5 py-3">
                       <IssueListView />
                     </div>
                   </div>
                 )}
                 {store?.issue?.currentIssueBoardView === "kanban" && (
-                  <div className="relative w-full h-full container mx-auto px-5 md:px-0">
+                  <div className="relative w-full h-full mx-auto px-5">
                     <IssueKanbanView />
                   </div>
                 )}

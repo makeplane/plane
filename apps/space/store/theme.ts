@@ -20,10 +20,10 @@ class ThemeStore implements IThemeStore {
     this.rootStore = _rootStore;
   }
 
-  setTheme = async (_theme: "light" | "dark") => {
+  setTheme = async (_theme: "light" | "dark" | string) => {
     try {
       localStorage.setItem("app_theme", _theme);
-      this.theme = _theme;
+      this.theme = _theme === "light" ? "light" : "dark";
     } catch (error) {
       console.error("setting user theme error", error);
     }

@@ -5,13 +5,14 @@ import { observer } from "mobx-react-lite";
 // components
 import { IssueListHeader } from "components/issues/board-views/kanban/header";
 import { IssueListBlock } from "components/issues/board-views/kanban/block";
-// mobx hook
-import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
 import { IIssueState, IIssue } from "store/types/issue";
+// mobx hook
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const IssueKanbanView = observer(() => {
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-x-auto flex gap-3">

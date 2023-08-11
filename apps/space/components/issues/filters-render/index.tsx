@@ -2,21 +2,22 @@
 
 // mobx react lite
 import { observer } from "mobx-react-lite";
-// mobx hook
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import IssueStateFilter from "./state";
 import IssueLabelFilter from "./label";
 import IssuePriorityFilter from "./priority";
 import IssueDateFilter from "./date";
+// mobx hook
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const IssueFilter = observer(() => {
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   const clearAllFilters = () => {};
 
   return (
-    <div className="container mx-auto px-5 md:px-0 flex justify-start items-center flex-wrap gap-2 text-sm">
+    <div className="container mx-auto px-5 flex justify-start items-center flex-wrap gap-2 text-sm">
       {/* state */}
       {store?.issue?.states && <IssueStateFilter />}
       {/* labels */}
