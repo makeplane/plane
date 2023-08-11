@@ -1,4 +1,4 @@
-import React, { useState, FC } from "react";
+import React, { useState, FC, useRef, useEffect } from "react";
 
 import { useRouter } from "next/router";
 import { mutate } from "swr";
@@ -36,6 +36,10 @@ export const ProjectSidebarList: FC = () => {
   const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
 
   // router
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -126,6 +130,27 @@ export const ProjectSidebarList: FC = () => {
       });
   };
 
+  const handleScroll = () => {
+    if (containerRef.current) {
+      const scrollTop = containerRef.current.scrollTop;
+      setIsScrolled(scrollTop > 0);
+    }
+  };
+
+  useEffect(() => {
+    const currentContainerRef = containerRef.current;
+
+    if (currentContainerRef) {
+      currentContainerRef.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (currentContainerRef) {
+        currentContainerRef.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
   return (
     <>
       <DeleteProjectModal
@@ -134,7 +159,12 @@ export const ProjectSidebarList: FC = () => {
         data={projectToDelete}
         user={user}
       />
-      <div className="h-full overflow-y-auto px-4 space-y-3 pt-3 border-t border-custom-sidebar-border-300">
+      <div
+        ref={containerRef}
+        className={`h-full overflow-y-auto px-4 space-y-3 pt-3 ${
+          isScrolled ? "border-t border-custom-sidebar-border-300" : ""
+        }`}
+      >
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
             {(provided) => (
