@@ -187,7 +187,7 @@ class ProjectViewSet(BaseViewSet):
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
 
-                if serializer.data["project_lead"] is not None:
+                if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(request.user.id):
                     ProjectMember.objects.create(
                         project_id=serializer.data["id"],
                         member_id=serializer.data["project_lead"],
