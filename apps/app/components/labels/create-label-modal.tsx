@@ -20,6 +20,7 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import type { ICurrentUserResponse, IIssueLabels, IState } from "types";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 
 // types
 type Props = {
@@ -52,9 +53,14 @@ export const CreateLabelModal: React.FC<Props> = ({
     watch,
     control,
     reset,
+    setValue,
   } = useForm<IIssueLabels>({
     defaultValues,
   });
+
+  useEffect(() => {
+    if (isOpen) setValue("color", getRandomLabelColor());
+  }, [setValue, isOpen]);
 
   const onClose = () => {
     handleClose();
@@ -156,6 +162,7 @@ export const CreateLabelModal: React.FC<Props> = ({
                                   render={({ field: { value, onChange } }) => (
                                     <TwitterPicker
                                       color={value}
+                                      colors={LABEL_COLOR_OPTIONS}
                                       onChange={(value) => {
                                         onChange(value.hex);
                                         close();
