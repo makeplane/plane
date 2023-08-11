@@ -44,6 +44,14 @@ export const SPREADSHEET_COLUMN = [
     descendingOrder: "-labels__name",
   },
   {
+    propertyName: "start_date",
+    colName: "Start Date",
+    colSize: "128px",
+    icon: CalendarDaysIcon,
+    ascendingOrder: "-start_date",
+    descendingOrder: "start_date",
+  },
+  {
     propertyName: "due_date",
     colName: "Due Date",
     colSize: "128px",
