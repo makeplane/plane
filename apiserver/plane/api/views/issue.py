@@ -758,18 +758,16 @@ class SubIssuesEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                State.objects.filter(~Q(name="Triage"), workspace__slug=slug)
-                .annotate(
-                    state_count=Count(
-                        "state_issue",
-                        filter=Q(state_issue__parent_id=issue_id),
-                    )
+                State.objects.filter(
+                    workspace__slug=slug, state_issue__parent_id=issue_id
                 )
-                .order_by("group")
-                .values("group", "state_count")
+                .annotate(state_group=F("group"))
+                .values("state_group")
+                .annotate(state_count=Count("state_group"))
+                .order_by("state_group")
             )
 
-            result = {item["group"]: item["state_count"] for item in state_distribution}
+            result = {item["state_group"]: item["state_count"] for item in state_distribution}
 
             serializer = IssueLiteSerializer(
                 sub_issues,
