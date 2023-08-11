@@ -20,6 +20,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.issue_automation_task.archive_and_close_old_issues",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-every-day-to-delete_exporter_history": {
+        "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
+        "schedule": crontab(hour=0, minute=0),
+    },
 }
 
 # Load task modules from all registered Django app configs.
