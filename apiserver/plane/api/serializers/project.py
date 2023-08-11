@@ -94,6 +94,7 @@ class ProjectDetailSerializer(BaseSerializer):
     total_modules = serializers.IntegerField(read_only=True)
     is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
+    member_role = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Project
