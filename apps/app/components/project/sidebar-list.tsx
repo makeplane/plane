@@ -103,9 +103,7 @@ export const ProjectSidebarList: FC = () => {
           ? (projectsList[destination.index + 1].sort_order as number)
           : (projectsList[destination.index - 1].sort_order as number);
 
-      updatedSortOrder = Math.round(
-        (destinationSortingOrder + relativeDestinationSortingOrder) / 2
-      );
+      updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
     }
 
     mutate<IProject[]>(

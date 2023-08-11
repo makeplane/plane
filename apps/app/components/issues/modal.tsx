@@ -248,7 +248,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             await addIssueToModule(res.id, payload.module);
 
           if (issueView === "calendar") mutate(calendarFetchKey);
-          if (issueView === "gantt_chart") mutate(ganttFetchKey);
+          if (issueView === "gantt_chart")
+            mutate(ganttFetchKey, {
+              start_target_date: true,
+              order_by: "sort_order",
+            });
           if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
           if (groupedIssues) mutateMyIssues();
 

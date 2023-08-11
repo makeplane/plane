@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { mutate } from "swr";
+import { KeyedMutator, mutate } from "swr";
 
 // services
 import cyclesService from "services/cycles.service";
@@ -35,10 +35,11 @@ import {
 
 type Props = {
   cycles: ICycle[] | undefined;
+  mutateCycles: KeyedMutator<ICycle[]>;
   viewType: string | null;
 };
 
-export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
+export const CyclesView: React.FC<Props> = ({ cycles, mutateCycles, viewType }) => {
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
   const [selectedCycleToUpdate, setSelectedCycleToUpdate] = useState<ICycle | null>(null);
 
@@ -202,7 +203,7 @@ export const CyclesView: React.FC<Props> = ({ cycles, viewType }) => {
               ))}
             </div>
           ) : (
-            <CyclesListGanttChartView cycles={cycles ?? []} />
+            <CyclesListGanttChartView cycles={cycles ?? []} mutateCycles={mutateCycles} />
           )
         ) : (
           <div className="h-full grid place-items-center text-center">

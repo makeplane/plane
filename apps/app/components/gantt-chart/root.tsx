@@ -3,15 +3,20 @@ import { FC } from "react";
 import { ChartViewRoot } from "./chart";
 // context
 import { ChartContextProvider } from "./contexts";
+// types
+import { IBlockUpdateData, IGanttBlock } from "./types";
 
 type GanttChartRootProps = {
   border?: boolean;
   title: null | string;
   loaderTitle: string;
-  blocks: any;
-  blockUpdateHandler: (data: any) => void;
+  blocks: IGanttBlock[] | null;
+  blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
+  enableLeftDrag?: boolean;
+  enableRightDrag?: boolean;
+  enableReorder?: boolean;
 };
 
 export const GanttChartRoot: FC<GanttChartRootProps> = ({
@@ -22,6 +27,9 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
   blockUpdateHandler,
   sidebarBlockRender,
   blockRender,
+  enableLeftDrag = true,
+  enableRightDrag = true,
+  enableReorder = true,
 }) => (
   <ChartContextProvider>
     <ChartViewRoot
@@ -32,6 +40,9 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
       blockUpdateHandler={blockUpdateHandler}
       sidebarBlockRender={sidebarBlockRender}
       blockRender={blockRender}
+      enableLeftDrag={enableLeftDrag}
+      enableRightDrag={enableRightDrag}
+      enableReorder={enableReorder}
     />
   </ChartContextProvider>
 );
