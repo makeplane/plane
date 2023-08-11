@@ -129,7 +129,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
                 debouncedUpdatesEnabled={true}
                 setIsSubmitting={setIsSubmitting}
                 customClassName="min-h-[150px]"
-                editorContentCustomClassNames="pt-9"
+                editorContentCustomClassNames="pb-9"
                 onChange={(description: Object, description_html: string) => {
                   setIsSubmitting(true);
                   onChange(description_html);
@@ -140,7 +140,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             );
           }}
         />
-        <div className="absolute right-5 top-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center">
+        <div className="absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center">
           {isSubmitting ? "Saving..." : "Saved"}
         </div>
       </div>
