@@ -10,8 +10,9 @@ import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
-import useProjectDetails from "hooks/use-project-details";
 import useUser from "hooks/use-user";
+import useProjectMembers from "hooks/use-project-members";
+import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -48,6 +49,11 @@ const MembersSettings: NextPage = () => {
 
   const { user } = useUser();
   const { projectDetails } = useProjectDetails();
+  const { isOwner } = useProjectMembers(
+    workspaceSlug?.toString(),
+    projectId?.toString(),
+    Boolean(workspaceSlug && projectId)
+  );
 
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
@@ -80,6 +86,7 @@ const MembersSettings: NextPage = () => {
       avatar: item.member?.avatar,
       first_name: item.member?.first_name,
       last_name: item.member?.last_name,
+      email: item.member?.email,
       display_name: item.member?.display_name,
       role: item.role,
       status: true,
@@ -91,6 +98,7 @@ const MembersSettings: NextPage = () => {
       avatar: item.avatar ?? "",
       first_name: item.first_name ?? item.email,
       last_name: item.last_name ?? "",
+      email: item.email,
       display_name: item.email,
       role: item.role,
       status: item.accepted,
@@ -193,21 +201,30 @@ const MembersSettings: NextPage = () => {
                               alt={member.display_name}
                               className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                             />
+                          ) : member.display_name || member.email ? (
+                            (member.display_name || member.email)?.charAt(0)
                           ) : (
-                            member.display_name.charAt(0)
+                            "?"
                           )}
                         </div>
                         <div>
                           {member.member ? (
                             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-                              <a className="text-sm">{member.display_name}</a>
+                              <a className="text-sm">
+                                <span>
+                                  {member.first_name} {member.last_name}
+                                </span>
+                                <span className="text-custom-text-300 text-sm ml-2">
+                                  ({member.display_name})
+                                </span>
+                              </a>
                             </Link>
                           ) : (
-                            <h4 className="text-sm">{member.display_name}</h4>
+                            <h4 className="text-sm">{member.display_name || member.email}</h4>
                           )}
-                          <p className="mt-0.5 text-xs text-custom-text-200">
-                            {member.display_name}
-                          </p>
+                          {isOwner && (
+                            <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs">

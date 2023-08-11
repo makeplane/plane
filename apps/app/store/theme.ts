@@ -38,21 +38,24 @@ class ThemeStore {
     }
   }
 
-  setTheme = async (_theme: ICurrentUserSettings) => {
+  setTheme = async (_theme: { theme: ICurrentUserSettings }) => {
     try {
-      localStorage.setItem("theme", _theme.theme.toString());
-      this.theme = _theme.theme.toString();
+      const currentTheme: string = _theme.theme.theme.toString();
 
-      if (this.theme === "custom") {
-        let themeSettings = this.rootStore.user.currentUserSettings || null;
-        if (themeSettings && themeSettings.theme.palette) {
-          applyTheme(
-            themeSettings.theme.palette !== ",,,,"
-              ? themeSettings.theme.palette
-              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
-            themeSettings.theme.darkPalette
-          );
-        }
+      // updating the local storage theme value
+      localStorage.setItem("theme", currentTheme);
+      // updating the mobx theme value
+      this.theme = currentTheme;
+
+      // applying the theme to platform if the selected theme is custom
+      if (currentTheme === "custom") {
+        const themeSettings = this.rootStore.user.currentUserSettings || null;
+        applyTheme(
+          themeSettings?.theme?.palette !== ",,,,"
+            ? themeSettings?.theme?.palette
+            : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+          themeSettings?.theme?.darkPalette
+        );
       } else unsetCustomCssVariables();
     } catch (error) {
       console.error("setting user theme error", error);
