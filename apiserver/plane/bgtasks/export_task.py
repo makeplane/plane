@@ -109,6 +109,7 @@ def upload_to_s3(zip_file, workspace_id, token_id):
     if presigned_url:
         exporter_instance.url = presigned_url
         exporter_instance.status = "completed"
+        exporter_instance.key = file_name
     else:
         exporter_instance.status = "failed"
 
@@ -116,21 +117,6 @@ def upload_to_s3(zip_file, workspace_id, token_id):
 
 
 def generate_table_row(issue):
-
-    print(issue)
-
-    assignees_names = ""
-    # if assignees_first_names and assignees_last_names:
-    #     assignees_names = ", ".join(
-    #         [
-    #             f"{assignees_first_name} {assignees_last_name}"
-    #             for assignees_first_name, assignees_last_name in zip(
-    #                 assignees_first_names, assignees_last_names
-    #             )
-    #         ]
-    #     )
-
-    # labels_names = ", ".join(labels_names) if labels_names else ""
     return [
         f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
         issue["project__name"],
@@ -138,10 +124,12 @@ def generate_table_row(issue):
         issue["description_stripped"],
         issue["state__name"],
         issue["priority"],
-        issue["created_by__first_name"],
-        # issue["created_by__last_name"],
-        issue["assignees__first_name"],
-        #   + issue["assignees__last_name"],
+        f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
+        if issue["created_by__first_name"] and issue["created_by__last_name"]
+        else "",
+        f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
+        if issue["assignees__first_name"] and issue["assignees__last_name"]
+        else "",
         issue["labels__name"],
         issue["issue_cycle__cycle__name"],
         issue["issue_cycle__cycle__start_date"],
@@ -157,58 +145,19 @@ def generate_table_row(issue):
 
 
 def generate_json_row(issue):
-    # (
-    #     project_identifier,
-    #     sequence_id,
-    #     name,
-    #     description,
-    #     priority,
-    #     state_name,
-    #     project_name,
-    #     created_at,
-    #     updated_at,
-    #     completed_at,
-    #     archived_at,
-    #     cycle_name,
-    #     cycle_start_date,
-    #     cycle_end_date,
-    #     module_name,
-    #     module_start_date,
-    #     module_target_date,
-    #     created_by_first_name,
-    #     created_by_last_name,
-    #     assignees_first_names,
-    #     assignees_last_names,
-    #     labels_names,
-    # ) = issue
-
-    # created_by_fullname = (
-    #     f"{created_by_first_name} {created_by_last_name}"
-    #     if created_by_first_name and created_by_last_name
-    #     else ""
-    # )
-
-    # assignees_names = ""
-    # if assignees_first_names and assignees_last_names:
-    #     assignees_names = ", ".join(
-    #         [
-    #             f"{assignees_first_name} {assignees_last_name}"
-    #             for assignees_first_name, assignees_last_name in zip(
-    #                 assignees_first_names, assignees_last_names
-    #             )
-    #         ]
-    #     )
-
-    # labels_names = ", ".join(labels_names) if labels_names else ""
     return {
         "ID": f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
         "Project": issue["project__name"],
         "Name": issue["name"],
-        "Description": issue["description"],
+        "Description": issue["description_stripped"],
         "State": issue["state__name"],
         "Priority": issue["priority"],
-        "Created By": issue["created_by__first_name"],
-        "Assignee": issue["assignees__first_name"],
+        "Created By": f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
+        if issue["created_by__first_name"] and issue["created_by__last_name"]
+        else "",
+        "Assignee": f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
+        if issue["assignees__first_name"] and issue["assignees__last_name"]
+        else "",
         "Labels": issue["labels__name"],
         "Cycle Name": issue["issue_cycle__cycle__name"],
         "Cycle Start Date": issue["issue_cycle__cycle__start_date"],
@@ -223,6 +172,49 @@ def generate_json_row(issue):
     }
 
 
+def update_json_row(rows, row):
+    matched_index = next(
+        (
+            index
+            for index, existing_row in enumerate(rows)
+            if existing_row["ID"] == row["ID"]
+        ),
+        None,
+    )
+
+    if matched_index is not None:
+        existing_assignees, existing_labels = (
+            rows[matched_index]["Assignee"],
+            rows[matched_index]["Labels"],
+        )
+        assignee, label = row["Assignee"], row["Labels"]
+
+        if assignee not in existing_assignees:
+            rows[matched_index]["Assignee"] += f", {assignee}"
+        if label not in existing_labels:
+            rows[matched_index]["Labels"] += f", {label}"
+    else:
+        rows.append(row)
+
+
+def update_table_row(rows, row):
+    matched_index = next(
+        (index for index, existing_row in enumerate(rows) if existing_row[0] == row[0]),
+        None,
+    )
+
+    if matched_index is not None:
+        existing_assignees, existing_labels = rows[matched_index][7:9]
+        assignee, label = row[7:9]
+
+        if assignee not in existing_assignees:
+            rows[matched_index][7] += f", {assignee}"
+        if label not in existing_labels:
+            rows[matched_index][8] += f", {label}"
+    else:
+        rows.append(row)
+
+
 def generate_csv(header, project_id, issues, files):
     """
     Generate CSV export for all the passed issues.
@@ -232,7 +224,7 @@ def generate_csv(header, project_id, issues, files):
     ]
     for issue in issues:
         row = generate_table_row(issue)
-        rows.append(row)
+        update_table_row(rows, row)
     csv_file = create_csv_file(rows)
     files.append((f"{project_id}.csv", csv_file))
 
@@ -241,62 +233,66 @@ def generate_json(header, project_id, issues, files):
     rows = []
     for issue in issues:
         row = generate_json_row(issue)
-        rows.append(row)
-    project_name = Project.objects.get(id=project_id).name
+        update_json_row(rows, row)
     json_file = create_json_file(rows)
-    files.append((f"{project_name}.json", json_file))
+    files.append((f"{project_id}.json", json_file))
 
 
 def generate_xlsx(header, project_id, issues, files):
     rows = [header]
     for issue in issues:
         row = generate_table_row(issue)
-        rows.append(row)
-    project_name = Project.objects.get(id=project_id).name
+        update_table_row(rows, row)
     xlsx_file = create_xlsx_file(rows)
-    files.append((f"{project_name}.xlsx", xlsx_file))
+    files.append((f"{project_id}.xlsx", xlsx_file))
 
 
 @shared_task
 def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
-    # try:
+    try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
         exporter_instance.save(update_fields=["status"])
 
-        issues = (
-            Issue.objects.filter(workspace__id=workspace_id, project_id__in=project_ids)
-            .select_related("project", "workspace", "state", "parent", "created_by")
-            .prefetch_related(
-                "assignees", "labels", "issue_cycle__cycle", "issue_module__module"
+        workspace_issues = (
+            (
+                Issue.objects.filter(
+                    workspace__id=workspace_id, project_id__in=project_ids
+                )
+                .select_related("project", "workspace", "state", "parent", "created_by")
+                .prefetch_related(
+                    "assignees", "labels", "issue_cycle__cycle", "issue_module__module"
+                )
+                .values(
+                    "id",
+                    "project__identifier",
+                    "project__name",
+                    "project__id",
+                    "sequence_id",
+                    "name",
+                    "description_stripped",
+                    "priority",
+                    "state__name",
+                    "created_at",
+                    "updated_at",
+                    "completed_at",
+                    "archived_at",
+                    "issue_cycle__cycle__name",
+                    "issue_cycle__cycle__start_date",
+                    "issue_cycle__cycle__end_date",
+                    "issue_module__module__name",
+                    "issue_module__module__start_date",
+                    "issue_module__module__target_date",
+                    "created_by__first_name",
+                    "created_by__last_name",
+                    "assignees__first_name",
+                    "assignees__last_name",
+                    "labels__name",
+                )
             )
-            .values(
-                "id",
-                "project__identifier",
-                "project__name",
-                "project__id",
-                "sequence_id",
-                "name",
-                "description_stripped",
-                "priority",
-                "state__name",
-                "created_at",
-                "updated_at",
-                "completed_at",
-                "archived_at",
-                "issue_cycle__cycle__name",
-                "issue_cycle__cycle__start_date",
-                "issue_cycle__cycle__end_date",
-                "issue_module__module__name",
-                "issue_module__module__start_date",
-                "issue_module__module__target_date",
-                "created_by__first_name",
-                "created_by__last_name",
-                "assignees__first_name",
-                "assignees__last_name",
-                "labels__name",
-            )
-        ).order_by("project__identifier").distinct()
+            .order_by("project__identifier")
+            .distinct()
+        )
         # CSV header
         header = [
             "ID",
@@ -329,7 +325,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
         files = []
         if multiple:
             for project_id in project_ids:
-                issues = issues.filter(project__id=project_id)
+                issues = workspace_issues.filter(project__id=project_id)
                 exporter = EXPORTER_MAPPER.get(provider)
                 if exporter is not None:
                     exporter(
@@ -344,22 +340,22 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
             if exporter is not None:
                 exporter(
                     header,
-                    project_ids[0],
-                    issues,
+                    workspace_id,
+                    workspace_issues,
                     files,
                 )
 
         zip_buffer = create_zip_file(files)
         upload_to_s3(zip_buffer, workspace_id, token_id)
 
-    # except Exception as e:
-    #     exporter_instance = ExporterHistory.objects.get(token=token_id)
-    #     exporter_instance.status = "failed"
-    #     exporter_instance.reason = str(e)
-    #     exporter_instance.save(update_fields=["status", "reason"])
+    except Exception as e:
+        exporter_instance = ExporterHistory.objects.get(token=token_id)
+        exporter_instance.status = "failed"
+        exporter_instance.reason = str(e)
+        exporter_instance.save(update_fields=["status", "reason"])
 
-    #     # Print logs if in DEBUG mode
-    #     if settings.DEBUG:
-    #         print(e)
-    #     capture_exception(e)
-    #     return
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
+        capture_exception(e)
+        return
