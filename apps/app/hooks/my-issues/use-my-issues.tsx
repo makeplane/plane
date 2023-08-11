@@ -52,8 +52,23 @@ const useMyIssues = (workspaceSlug: string | undefined) => {
         allIssues: myIssues,
       };
 
+    if (groupBy === "state_detail.group") {
+      return myIssues
+        ? Object.assign(
+            {
+              backlog: [],
+              unstarted: [],
+              started: [],
+              completed: [],
+              cancelled: [],
+            },
+            myIssues
+          )
+        : undefined;
+    }
+
     return myIssues;
-  }, [myIssues]);
+  }, [groupBy, myIssues]);
 
   const isEmpty =
     Object.values(groupedIssues ?? {}).every((group) => group.length === 0) ||

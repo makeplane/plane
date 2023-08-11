@@ -40,6 +40,7 @@ from plane.api.serializers import (
     ProjectFavoriteSerializer,
     IssueLiteSerializer,
     ProjectDeployBoardSerializer,
+    ProjectMemberAdminSerializer,
 )
 
 from plane.api.permissions import (
@@ -138,6 +139,12 @@ class ProjectViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                member_role=ProjectMember.objects.filter(
+                    project_id=OuterRef("pk"),
+                    member_id=self.request.user.id,
+                ).values("role")
+            )
             .distinct()
         )
 
@@ -209,7 +216,7 @@ class ProjectViewSet(BaseViewSet):
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
 
-                if serializer.data["project_lead"] is not None:
+                if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(request.user.id):
                     ProjectMember.objects.create(
                         project_id=serializer.data["id"],
                         member_id=serializer.data["project_lead"],
@@ -480,7 +487,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
 
 
 class ProjectMemberViewSet(BaseViewSet):
-    serializer_class = ProjectMemberSerializer
+    serializer_class = ProjectMemberAdminSerializer
     model = ProjectMember
     permission_classes = [
         ProjectBasePermission,

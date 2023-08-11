@@ -108,11 +108,7 @@ class Issue(ProjectBaseModel):
                         ~models.Q(name="Triage"), project=self.project
                     ).first()
                     self.state = random_state
-                    if random_state.group == "started":
-                        self.start_date = timezone.now().date()
                 else:
-                    if default_state.group == "started":
-                        self.start_date = timezone.now().date()
                     self.state = default_state
             except ImportError:
                 pass
@@ -127,8 +123,6 @@ class Issue(ProjectBaseModel):
                     PageBlock.objects.filter(issue_id=self.id).filter().update(
                         completed_at=timezone.now()
                     )
-                elif self.state.group == "started":
-                    self.start_date = timezone.now().date()
                 else:
                     PageBlock.objects.filter(issue_id=self.id).filter().update(
                         completed_at=None
@@ -153,9 +147,6 @@ class Issue(ProjectBaseModel):
             if largest_sort_order is not None:
                 self.sort_order = largest_sort_order + 10000
 
-            # If adding it to started state
-            if self.state.group == "started":
-                self.start_date = timezone.now().date()
         # Strip the html tags using html parser
         self.description_stripped = (
             None

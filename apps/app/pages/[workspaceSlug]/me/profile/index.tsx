@@ -12,7 +12,7 @@ import useToast from "hooks/use-toast";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import SettingsNavbar from "layouts/settings-navbar";
 // components
-import { ImageUploadModal } from "components/core";
+import { ImagePickerPopover, ImageUploadModal } from "components/core";
 // ui
 import { CustomSelect, DangerButton, Input, SecondaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -26,6 +26,7 @@ import { USER_ROLES } from "constants/workspace";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
+  cover_image: "",
   first_name: "",
   last_name: "",
   email: "",
@@ -68,6 +69,7 @@ const Profile: NextPage = () => {
       first_name: formData.first_name,
       last_name: formData.last_name,
       avatar: formData.avatar,
+      cover_image: formData.cover_image,
       role: formData.role,
       display_name: formData.display_name,
     };
@@ -198,6 +200,40 @@ const Profile: NextPage = () => {
                         {isRemoving ? "Removing..." : "Remove"}
                       </DangerButton>
                     )}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Cover Photo</h4>
+                <p className="text-sm text-custom-text-200">
+                  Select your cover photo from the given library.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <div className="h-32 w-full rounded border border-custom-border-200 p-1">
+                  <div className="relative h-full w-full rounded">
+                    <img
+                      src={
+                        watch("cover_image") ??
+                        "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
+                      }
+                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
+                      alt={myProfile?.name ?? "Cover image"}
+                    />
+                    <div className="absolute bottom-0 flex w-full justify-end">
+                      <ImagePickerPopover
+                        label={"Change cover"}
+                        onChange={(imageUrl) => {
+                          setValue("cover_image", imageUrl);
+                        }}
+                        value={
+                          watch("cover_image") ??
+                          "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

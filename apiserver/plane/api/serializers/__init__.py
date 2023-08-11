@@ -19,6 +19,7 @@ from .project import (
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
     ProjectDeployBoardSerializer,
+    ProjectMemberAdminSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import IssueViewSerializer, IssueViewFavoriteSerializer

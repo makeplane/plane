@@ -19,6 +19,7 @@ from plane.db.models import (
     IssueView,
     Issue,
     IssueViewFavorite,
+    IssueReaction,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -77,6 +78,12 @@ class ViewIssuesEndpoint(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related("actor"),
+                    )
+                )
             )
 
             serializer = IssueLiteSerializer(issues, many=True)

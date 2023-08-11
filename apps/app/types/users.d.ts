@@ -11,6 +11,7 @@ import {
 
 export interface IUser {
   avatar: string;
+  cover_image: string | null;
   created_at: readonly Date;
   created_location: readonly string;
   date_joined: readonly Date;

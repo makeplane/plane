@@ -165,6 +165,9 @@ class CycleViewSet(BaseViewSet):
         try:
             queryset = self.get_queryset()
             cycle_view = request.GET.get("cycle_view", "all")
+            order_by = request.GET.get("order_by", "sort_order")
+
+            queryset = queryset.order_by(order_by)
 
             # All Cycles
             if cycle_view == "all":
@@ -370,7 +373,8 @@ class CycleViewSet(BaseViewSet):
                 .annotate(last_name=F("assignees__last_name"))
                 .annotate(assignee_id=F("assignees__id"))
                 .annotate(avatar=F("assignees__avatar"))
-                .values("first_name", "last_name", "assignee_id", "avatar")
+                .annotate(display_name=F("assignees__display_name"))
+                .values("first_name", "last_name", "assignee_id", "avatar", "display_name")
                 .annotate(total_issues=Count("assignee_id"))
                 .annotate(
                     completed_issues=Count(

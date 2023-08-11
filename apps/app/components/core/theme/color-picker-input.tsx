@@ -21,13 +21,21 @@ import { ICustomTheme } from "types";
 
 type Props = {
   name: keyof ICustomTheme;
+  position?: "left" | "right";
   watch: UseFormWatch<any>;
   setValue: UseFormSetValue<any>;
   error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
   register: UseFormRegister<any>;
 };
 
-export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error, register }) => {
+export const ColorPickerInput: React.FC<Props> = ({
+  name,
+  position = "left",
+  watch,
+  setValue,
+  error,
+  register,
+}) => {
   const handleColorChange = (newColor: ColorResult) => {
     const { hex } = newColor;
     setValue(name, hex);
@@ -104,7 +112,11 @@ export const ColorPickerInput: React.FC<Props> = ({ name, watch, setValue, error
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute bottom-8 right-0 z-20 mt-1 max-w-xs px-2 sm:px-0">
+                <Popover.Panel
+                  className={`absolute bottom-8 z-20 mt-1 max-w-xs px-2 sm:px-0 ${
+                    position === "right" ? "left-0" : "right-0"
+                  }`}
+                >
                   <SketchPicker color={watch(name)} onChange={handleColorChange} />
                 </Popover.Panel>
               </Transition>
