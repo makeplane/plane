@@ -16,6 +16,14 @@ type Props = {
 export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
   const provider = service.provider;
   const [isLoading, setIsLoading] = React.useState(false);
+
+  const checkExpiry = (inputDateString: string) => {
+    const currentDate = new Date();
+    const expiryDate = new Date(inputDateString);
+    expiryDate.setDate(expiryDate.getDate() + 7);
+    return expiryDate > currentDate;
+  };
+
   return (
     <div className="flex items-center justify-between gap-2 py-3">
       <div>
@@ -53,14 +61,20 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
           <span>Exported by {service?.initiated_by_detail?.display_name}</span>
         </div>
       </div>
-      {service.status == "completed" && (
-        <div>
-          <Link href={service?.url}>
-            <PrimaryButton className="w-full text-center">
-              {isLoading ? "Downloading..." : "Download"}
-            </PrimaryButton>
-          </Link>
-        </div>
+      {checkExpiry(service.created_at) ? (
+        <>
+          {service.status == "completed" && (
+            <div>
+              <Link href={service?.url}>
+                <PrimaryButton className="w-full text-center">
+                  {isLoading ? "Downloading..." : "Download"}
+                </PrimaryButton>
+              </Link>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="text-xs text-red-500">Expired</div>
       )}
     </div>
   );

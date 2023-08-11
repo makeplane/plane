@@ -41,7 +41,7 @@ const IntegrationGuide = () => {
   );
 
   const handleCsvClose = () => {
-    router.replace(`/plane/settings/export`);
+    router.replace(`/plane/settings/exports`);
   };
 
   return (

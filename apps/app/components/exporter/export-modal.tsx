@@ -63,7 +63,7 @@ export const Exporter: React.FC<Props> = ({
       await CSVIntegrationService.exportCSVService(workspaceSlug as string, payload, user)
         .then(() => {
           mutateServices();
-          router.push(`/${workspaceSlug}/settings/export`);
+          router.push(`/${workspaceSlug}/settings/exports`);
           setExportLoading(false);
           setToastAlert({
             type: "success",

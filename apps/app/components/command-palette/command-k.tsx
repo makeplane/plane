@@ -731,7 +731,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </div>
                       </Command.Item>
                       <Command.Item
-                        onSelect={() => redirect(`/${workspaceSlug}/settings/import`)}
+                        onSelect={() => redirect(`/${workspaceSlug}/settings/imports`)}
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
@@ -740,7 +740,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </div>
                       </Command.Item>
                       <Command.Item
-                        onSelect={() => redirect(`/${workspaceSlug}/settings/export`)}
+                        onSelect={() => redirect(`/${workspaceSlug}/settings/exports`)}
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">

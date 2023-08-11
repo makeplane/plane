@@ -31,11 +31,11 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
     },
     {
       label: "Imports",
-      href: `/${workspaceSlug}/settings/import`,
+      href: `/${workspaceSlug}/settings/imports`,
     },
     {
       label: "Exports",
-      href: `/${workspaceSlug}/settings/export`,
+      href: `/${workspaceSlug}/settings/exports`,
     },
   ];
 
