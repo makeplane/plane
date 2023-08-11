@@ -8,7 +8,7 @@ import useSWR from "swr";
 import projectService from "services/project.service";
 import trackEventServices from "services/track-event.service";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect, Tooltip } from "components/ui";
+import { AssigneesList, Avatar, CustomSearchSelect, Icon, Tooltip } from "components/ui";
 // icons
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 // types
@@ -73,11 +73,11 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       >
         {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
           <div className="-my-0.5 flex items-center justify-center gap-2">
-            <AssigneesList userIds={issue.assignees} length={5} showLength={true} />
+            <AssigneesList userIds={issue.assignees} length={3} showLength={true} />
           </div>
         ) : (
-          <div className="flex items-center justify-center gap-2">
-            <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
+          <div className="flex items-center justify-center gap-2 px-1.5 py-1 rounded shadow-sm border border-custom-border-300">
+            <Icon iconName="person" className="text-sm !leading-4" />
           </div>
         )}
       </div>
@@ -87,6 +87,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
   return (
     <CustomSearchSelect
       value={issue.assignees}
+      buttonClassName="!p-0"
       onChange={(data: any) => {
         const newData = issue.assignees ?? [];
 

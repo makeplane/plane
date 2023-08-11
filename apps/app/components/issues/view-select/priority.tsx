@@ -67,14 +67,8 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             noBorder
               ? ""
               : issue.priority === "urgent"
-              ? "border-red-500/20 bg-red-500/20"
-              : issue.priority === "high"
-              ? "border-orange-500/20 bg-orange-500/20"
-              : issue.priority === "medium"
-              ? "border-yellow-500/20 bg-yellow-500/20"
-              : issue.priority === "low"
-              ? "border-green-500/20 bg-green-500/20"
-              : "border-custom-border-200 bg-custom-background-80"
+              ? "border-red-500/20 bg-red-500"
+              : "border-custom-border-300 bg-custom-background-100"
           } items-center`}
         >
           <Tooltip
@@ -87,7 +81,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
                 issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
                 `text-sm ${
                   issue.priority === "urgent"
-                    ? "text-red-500"
+                    ? "text-white"
                     : issue.priority === "high"
                     ? "text-orange-500"
                     : issue.priority === "medium"
