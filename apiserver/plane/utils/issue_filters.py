@@ -292,9 +292,16 @@ def filter_subscribed_issues(params, filter, method):
     return filter
 
 
+def filter_start_target_date_issues(params, filter, method):
+    start_target_date = params.get("start_target_date", "false")
+    if start_target_date == "true":
+        filter["target_date__isnull"] = False
+        filter["start_date__isnull"] = False
+    return filter
+
+
 def issue_filters(query_params, method):
     filter = dict()
-    print(query_params)
 
     ISSUE_FILTER = {
         "state": filter_state,
@@ -318,6 +325,7 @@ def issue_filters(query_params, method):
         "inbox_status": filter_inbox_status,
         "sub_issue": filter_sub_issue_toggle,
         "subscriber":  filter_subscribed_issues,
+        "start_target_date": filter_start_target_date_issues,
     }
 
     for key, value in ISSUE_FILTER.items():

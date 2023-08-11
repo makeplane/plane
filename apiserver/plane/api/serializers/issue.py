@@ -111,6 +111,11 @@ class IssueCreateSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def validate(self, data):
+        if data.get("start_date", None) is not None and data.get("target_date", None) is not None and data.get("start_date", None) > data.get("target_date", None):
+            raise serializers.ValidationError("Start date cannot exceed target date")
+        return data
+
     def create(self, validated_data):
         blockers = validated_data.pop("blockers_list", None)
         assignees = validated_data.pop("assignees_list", None)

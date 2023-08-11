@@ -169,7 +169,6 @@ class IssueViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         try:
             filters = issue_filters(request.query_params, "GET")
-            print(filters)
 
             # Custom ordering for priority and state
             priority_order = ["urgent", "high", "medium", "low", None]
