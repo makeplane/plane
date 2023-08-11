@@ -18,6 +18,7 @@ from .project import (
     ProjectFavoriteSerializer,
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
+    ProjectMemberAdminSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import IssueViewSerializer, IssueViewFavoriteSerializer
