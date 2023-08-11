@@ -133,6 +133,11 @@ const LabelsSettings: NextPage = () => {
                   setLabelForm={setLabelForm}
                   isUpdating={isUpdating}
                   labelToUpdate={labelToUpdate}
+                  onClose={() => {
+                    setLabelForm(false);
+                    setIsUpdating(false);
+                    setLabelToUpdate(null);
+                  }}
                   ref={scrollToRef}
                 />
               )}
