@@ -60,8 +60,10 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   lastName: user?.created_by__last_name,
                   display_name: user?.created_by__display_name,
                   count: user?.count,
+                  id: user?.created_by__id,
                 }))}
                 title="Most issues created"
+                workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <AnalyticsLeaderboard
                 users={defaultAnalytics.most_issue_closed_user?.map((user) => ({
@@ -70,8 +72,10 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   lastName: user?.assignees__last_name,
                   display_name: user?.assignees__display_name,
                   count: user?.count,
+                  id: user?.assignees__id,
                 }))}
                 title="Most issues closed"
+                workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <div className={fullScreen ? "md:col-span-2" : ""}>
                 <AnalyticsYearWiseIssues defaultAnalytics={defaultAnalytics} />
