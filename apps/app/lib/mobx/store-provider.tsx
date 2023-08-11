@@ -4,7 +4,7 @@ import { RootStore } from "store/root";
 
 let rootStore: any = null;
 
-export const MobxStoreContext = createContext(null);
+export const MobxStoreContext = createContext<RootStore>({} as RootStore);
 
 const initializeStore = () => {
   const _rootStore = rootStore ?? new RootStore();

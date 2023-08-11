@@ -4,8 +4,13 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// mobx
+import { useObserver } from "mobx-react-lite";
+
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+// store
+import labelStore from "store/labels";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // react-color
@@ -58,20 +63,17 @@ export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpd
     defaultValues,
   });
 
-  const handleLabelCreate: SubmitHandler<IIssueLabels> = async (formData) => {
-    if (!workspaceSlug || !projectId || isSubmitting) return;
+  const { createLabel } = useObserver(() => ({
+    createLabel: labelStore.createLabel,
+  }));
 
-    await issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
-      .then((res) => {
-        mutate<IIssueLabels[]>(
-          PROJECT_ISSUE_LABELS(projectId as string),
-          (prevData) => [res, ...(prevData ?? [])],
-          false
-        );
-        reset(defaultValues);
-        setLabelForm(false);
-      });
+  const handleLabelCreate: SubmitHandler<IIssueLabels> = async (formData) => {
+    if (!workspaceSlug || !projectId || isSubmitting || !user) return;
+
+    await createLabel(workspaceSlug.toString(), projectId.toString(), formData, user).then(() => {
+      reset(defaultValues);
+      setLabelForm(false);
+    });
   };
 
   const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {

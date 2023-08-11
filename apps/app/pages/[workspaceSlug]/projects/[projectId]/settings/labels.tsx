@@ -1,14 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// mobx
+import { observer } from "mobx-react-lite";
+
 // hooks
 import useUserAuth from "hooks/use-user-auth";
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import projectService from "services/project.service";
-import issuesService from "services/issues.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -31,7 +34,7 @@ import emptyLabel from "public/empty-state/label.svg";
 import { IIssueLabels } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
@@ -57,17 +60,13 @@ const LabelsSettings: NextPage = () => {
 
   const scrollToRef = useRef<HTMLDivElement>(null);
 
+  const { labelStore } = useMobxStore();
+  const { isLabelsLoading: isLoading, labels } = labelStore;
+
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: issueLabels } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -86,6 +85,11 @@ const LabelsSettings: NextPage = () => {
     setIsUpdating(true);
     setLabelToUpdate(label);
   };
+
+  useEffect(() => {
+    if (workspaceSlug && projectId)
+      labelStore.loadLabels(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, labelStore]);
 
   return (
     <>
@@ -137,10 +141,10 @@ const LabelsSettings: NextPage = () => {
                 />
               )}
               <>
-                {issueLabels ? (
-                  issueLabels.length > 0 ? (
-                    issueLabels.map((label) => {
-                      const children = issueLabels?.filter((l) => l.parent === label.id);
+                {!isLoading ? (
+                  labels.length > 0 ? (
+                    labels.map((label) => {
+                      const children = labels?.filter((l) => l.parent === label.id);
 
                       if (children && children.length === 0) {
                         if (!label.parent)
@@ -148,7 +152,17 @@ const LabelsSettings: NextPage = () => {
                             <SingleLabel
                               key={label.id}
                               label={label}
-                              addLabelToGroup={() => addLabelToGroup(label)}
+                              addLabelToGroup={() => {
+                                addLabelToGroup(label);
+                                // if (!workspaceSlug || !projectId || !user) return;
+                                // labelStore.updateLabel(
+                                //   workspaceSlug.toString(),
+                                //   projectId.toString(),
+                                //   label.id,
+                                //   { parent: label.id },
+                                //   user
+                                // );
+                              }}
                               editLabel={(label) => {
                                 editLabel(label);
                                 scrollToRef.current?.scrollIntoView({
@@ -205,4 +219,4 @@ const LabelsSettings: NextPage = () => {
   );
 };
 
-export default LabelsSettings;
+export default observer(LabelsSettings);

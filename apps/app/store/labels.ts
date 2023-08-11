@@ -1,5 +1,5 @@
 // mobx
-import { action, observable, runInAction, makeObservable } from "mobx";
+import { action, observable, runInAction, makeAutoObservable } from "mobx";
 
 // services
 import issueService from "services/issues.service";
@@ -9,12 +9,14 @@ import type { IIssueLabels, LabelForm, ICurrentUserResponse } from "types";
 
 class LabelStore {
   labels: IIssueLabels[] = [];
+  isLabelsLoading: boolean = false;
   rootStore: any | null = null;
 
   constructor(_rootStore: any | null = null) {
-    makeObservable(this, {
+    makeAutoObservable(this, {
       labels: observable.ref,
       loadLabels: action,
+      isLabelsLoading: observable,
       createLabel: action,
       updateLabel: action,
       deleteLabel: action,
@@ -24,6 +26,7 @@ class LabelStore {
   }
 
   loadLabels = async (workspaceSlug: string, projectId: string) => {
+    this.isLabelsLoading = true;
     try {
       const labelsResponse: IIssueLabels[] = await issueService.getIssueLabels(
         workspaceSlug,
@@ -31,8 +34,10 @@ class LabelStore {
       );
       runInAction(() => {
         this.labels = labelsResponse;
+        this.isLabelsLoading = false;
       });
     } catch (error) {
+      this.isLabelsLoading = false;
       console.error("Fetching labels error", error);
     }
   };
@@ -62,7 +67,7 @@ class LabelStore {
     workspaceSlug: string,
     projectId: string,
     labelId: string,
-    labelForm: LabelForm,
+    labelForm: Partial<LabelForm>,
     user: ICurrentUserResponse
   ) => {
     try {

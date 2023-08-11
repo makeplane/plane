@@ -10,11 +10,11 @@ enableStaticRendering(typeof window === "undefined");
 export class RootStore {
   user;
   theme;
-  labels;
+  labelStore: LabelStore;
 
   constructor() {
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
-    this.labels = new LabelStore(this);
+    this.labelStore = new LabelStore(this);
   }
 }
