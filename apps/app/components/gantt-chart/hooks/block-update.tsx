@@ -37,7 +37,5 @@ export const updateGanttIssue = (
   if (newPayload.sort_order && payload.sort_order)
     newPayload.sort_order = payload.sort_order.newSortOrder;
 
-  issuesService
-    .patchIssue(workspaceSlug, issue.project, issue.id, newPayload, user)
-    .finally(() => mutate());
+  issuesService.patchIssue(workspaceSlug, issue.project, issue.id, newPayload, user);
 };
