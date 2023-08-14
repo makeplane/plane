@@ -100,7 +100,7 @@ const IntegrationGuide = () => {
                     </div>
                     <div className="flex-shrink-0">
                       <Link
-                        href={`/${workspaceSlug}/settings/import?provider=${service.provider}`}
+                        href={`/${workspaceSlug}/settings/imports?provider=${service.provider}`}
                       >
                         <a>
                           <PrimaryButton>
