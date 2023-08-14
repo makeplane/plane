@@ -98,6 +98,8 @@ type ImporterEventType =
   | "JIRA_IMPORTER_CREATE"
   | "JIRA_IMPORTER_DELETE";
 
+type ExporterEventType = "CSV_EXPORTER_CREATE";
+
 type AnalyticsEventType =
   | "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
   | "WORKSPACE_CUSTOM_ANALYTICS"
@@ -771,6 +773,27 @@ class TrackEventServices extends APIService {
       data: {
         eventName,
         extra: payload,
+        user: user,
+      },
+    });
+  }
+
+  // track exporter function\
+  async trackExporterEvent(
+    data: any,
+    eventName: ExporterEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    const payload = { ...data };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...payload,
+        },
         user: user,
       },
     });

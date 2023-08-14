@@ -69,9 +69,13 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
     if (newPayload.sort_order && payload.sort_order)
       newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    modulesService
-      .patchModule(workspaceSlug.toString(), module.project, module.id, newPayload, user)
-      .finally(() => mutateModules());
+    modulesService.patchModule(
+      workspaceSlug.toString(),
+      module.project,
+      module.id,
+      newPayload,
+      user
+    );
   };
 
   const blockFormat = (blocks: IModule[]) =>
