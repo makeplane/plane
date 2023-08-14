@@ -28,13 +28,13 @@ export const ChangeInterfaceTheme: React.FC<Props> = ({ setIsPaletteOpen }) => {
 
     setTheme(newTheme);
 
-    mutateUser((prevData) => {
+    mutateUser((prevData: any) => {
       if (!prevData) return prevData;
 
       return {
         ...prevData,
         theme: {
-          ...prevData.theme,
+          ...prevData?.theme,
           theme: newTheme,
         },
       };
