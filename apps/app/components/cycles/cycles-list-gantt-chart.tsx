@@ -65,9 +65,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
     if (newPayload.sort_order && payload.sort_order)
       newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    cyclesService
-      .patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload, user)
-      .finally(() => mutateCycles());
+    cyclesService.patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload, user);
   };
 
   const blockFormat = (blocks: ICycle[]) =>
