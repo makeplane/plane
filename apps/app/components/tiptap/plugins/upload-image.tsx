@@ -22,7 +22,10 @@ const UploadImagesPlugin = () =>
           const placeholder = document.createElement("div");
           placeholder.setAttribute("class", "img-placeholder");
           const image = document.createElement("img");
-          image.setAttribute("class", "opacity-10 rounded-lg border border-custom-border-300");
+          image.setAttribute(
+            "class",
+            "opacity-10 rounded-lg border border-custom-border-300",
+          );
           image.src = src;
           placeholder.appendChild(image);
           const deco = Decoration.widget(pos + 1, placeholder, {

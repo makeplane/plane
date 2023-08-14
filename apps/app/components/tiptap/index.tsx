@@ -115,10 +115,10 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     }, 500);
   }, 1000);
 
-  const editorClassNames = `mt-2 p-3 relative focus:outline-none rounded-md focus:border-custom-border-200 
-      ${noBorder ? "" : "border border-custom-border-200"} ${
-    borderOnFocus ? "focus:border border-custom-border-200" : "focus:border-0"
-  } ${customClassName}`;
+  const editorClassNames = `relative w-full max-w-screen-lg sm:rounded-lg sm:border sm:shadow-lg mt-2 p-3 relative focus:outline-none rounded-md
+      ${noBorder ? '' : 'border border-custom-border-200'
+    } ${borderOnFocus ? 'focus:border border-custom-border-300' : 'focus:border-0'
+    } ${customClassName}`;
 
   if (!editor) return null;
   editorRef.current = editor;
@@ -128,7 +128,7 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
       onClick={() => {
         editor?.chain().focus().run();
       }}
-      className={`tiptap-editor-container cursor-text relative ${editorClassNames}`}
+      className={`tiptap-editor-container ${editorClassNames}`}
     >
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className={`${editorContentCustomClassNames}`}>

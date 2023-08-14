@@ -14,7 +14,6 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { lowlight } from "lowlight/lib/core";
 import SlashCommand from "../slash-command";
 import { InputRule } from "@tiptap/core";
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 
 import ts from "highlight.js/lib/languages/typescript";
 
@@ -54,7 +53,8 @@ export const TiptapExtensions = [
     },
     code: {
       HTMLAttributes: {
-        class: "rounded-md bg-custom-bg-1000 px-1 py-1 font-mono font-medium text-custom-text-200",
+        class:
+          "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
         spellcheck: "false",
       },
     },
@@ -95,7 +95,7 @@ export const TiptapExtensions = [
   TiptapLink.configure({
     HTMLAttributes: {
       class:
-        "text-custom-text-200 underline underline-offset-[3px] hover:text-custom-text-100 transition-colors cursor-pointer",
+        "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
   CustomImage.configure({

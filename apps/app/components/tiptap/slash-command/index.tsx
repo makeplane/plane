@@ -17,6 +17,7 @@ import {
   ImageIcon,
 } from "lucide-react";
 import { startImageUpload } from "../plugins/upload-image";
+import { cn } from "../utils";
 
 interface CommandItemProps {
   title: string;
@@ -197,8 +198,6 @@ export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
 const CommandList = ({
   items,
   command,
-  editor,
-  range,
 }: {
   items: CommandItemProps[];
   command: any;
@@ -261,19 +260,17 @@ const CommandList = ({
     <div
       id="slash-command"
       ref={commandListContainer}
-      className="z-20 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
+      className="z-50 fixed h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
     >
       {items.map((item: CommandItemProps, index: number) => (
         <button
-          className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-custom-primary-100/5 ${
-            index === selectedIndex ? "bg-custom-primary-100/5" : ""
-          }`}
+          className={cn(`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`, { "bg-custom-primary-100/5  text-custom-text-100": index === selectedIndex })}
           key={index}
           onClick={() => selectItem(index)}
         >
           <div>
             <p className="font-medium">{item.title}</p>
-            <p className="text-xs text-custom-text-200">{item.description}</p>
+            <p className="text-xs text-custom-text-300">{item.description}</p>
           </div>
         </button>
       ))}
