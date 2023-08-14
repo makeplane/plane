@@ -237,6 +237,10 @@ export const JIRA_IMPORTER_DETAIL = (workspaceSlug: string, params: IJiraMetadat
 export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
   `IMPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}`;
 
+//export
+export const EXPORT_SERVICES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
+  `EXPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
+
 // github-importer
 export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) =>
   `GITHUB_REPO_INFO_${workspaceSlug.toString().toUpperCase()}_${repoName.toUpperCase()}`;

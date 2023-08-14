@@ -8,7 +8,7 @@ import workspaceService from "services/workspace.service";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { SettingsHeader } from "components/workspace";
 // components
-import IntegrationGuide from "components/integration/guide";
+import ExportGuide from "components/exporter/guide";
 import { IntegrationAndImportExportBanner } from "components/ui";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -37,14 +37,14 @@ const ImportExport: NextPage = () => {
             link={`/${workspaceSlug}`}
             linkTruncate
           />
-          <BreadcrumbItem title="Import/ Export Settings" unshrinkTitle />
+          <BreadcrumbItem title="Export Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >
       <div className="p-8 space-y-4">
         <SettingsHeader />
-        <IntegrationAndImportExportBanner bannerName="Import/ Export" />
-        <IntegrationGuide />
+        <IntegrationAndImportExportBanner bannerName="Export" />
+        <ExportGuide />
       </div>
     </WorkspaceAuthorizationLayout>
   );

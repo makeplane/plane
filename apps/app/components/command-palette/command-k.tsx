@@ -739,12 +739,21 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </div>
                       </Command.Item>
                       <Command.Item
-                        onSelect={() => redirect(`/${workspaceSlug}/settings/import-export`)}
+                        onSelect={() => redirect(`/${workspaceSlug}/settings/imports`)}
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
                           <SettingIcon className="h-4 w-4 text-custom-text-200" />
-                          Import/Export
+                          Import
+                        </div>
+                      </Command.Item>
+                      <Command.Item
+                        onSelect={() => redirect(`/${workspaceSlug}/settings/exports`)}
+                        className="focus:outline-none"
+                      >
+                        <div className="flex items-center gap-2 text-custom-text-200">
+                          <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                          Export
                         </div>
                       </Command.Item>
                     </>
