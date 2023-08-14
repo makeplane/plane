@@ -175,6 +175,11 @@ from plane.api.views import (
     InboxIssuePublicViewSet,
     IssueVotePublicViewSet,
     ## End Public Boards
+    # Issue Properties
+    IssuePropertyViewSet,
+    IssuePropertyValueViewSet,
+    IssuePropertyAttributeViewSet,
+    ## End Issue Properties
 )
 
 
@@ -1616,5 +1621,15 @@ urlpatterns = [
     ),
     ## End Public Boards
     # Issue Property
+    path(
+        "workspaces/<str:slug>/issue-properties/",
+        IssuePropertyViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="issue-properties",
+    ),
     ## End Issue Property
 ]

@@ -25,7 +25,7 @@ class IssueProperty(BaseModel):
     required = models.BooleanField(default=False)
     sort_order = models.FloatField(default=65535)
     parent = models.ForeignKey(
-        "db.IssueAttribute", on_delete=models.CASCADE, related_name="parent_property"
+        "db.IssueProperty", on_delete=models.CASCADE, related_name="parent_property"
     )
     default = models.CharField(max_length=800, blank=True, null=True)
     is_shared = models.BooleanField(default=False)

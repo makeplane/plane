@@ -7,7 +7,6 @@ class IssuePropertySerializer(BaseSerializer):
         model = IssueProperty
         fields = "__all__"
         read_only_fields = [
-            "project",
             "workspace",
         ]
 
