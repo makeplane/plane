@@ -40,7 +40,7 @@ from .issue import (
     IssueCreateSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
-    IssuePropertySerializer,
+    IssueDisplayPropertySerializer,
     BlockerIssueSerializer,
     BlockedIssueSerializer,
     IssueAssigneeSerializer,

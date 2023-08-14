@@ -68,7 +68,7 @@ from .issue import (
     WorkSpaceIssuesEndpoint,
     IssueActivityEndpoint,
     IssueCommentViewSet,
-    IssuePropertyViewSet,
+    IssueDisplayPropertyViewSet,
     LabelViewSet,
     BulkDeleteIssuesEndpoint,
     UserWorkSpaceIssues,

@@ -327,7 +327,7 @@ class IssueComment(ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueProperty(ProjectBaseModel):
+class IssueDisplayProperty(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -336,9 +336,9 @@ class IssueProperty(ProjectBaseModel):
     properties = models.JSONField(default=dict)
 
     class Meta:
-        verbose_name = "Issue Property"
-        verbose_name_plural = "Issue Properties"
-        db_table = "issue_properties"
+        verbose_name = "Issue Display Property"
+        verbose_name_plural = "Issue Display Properties"
+        db_table = "issue_display_properties"
         ordering = ("-created_at",)
         unique_together = ["user", "project"]
 

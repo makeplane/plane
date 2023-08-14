@@ -36,7 +36,7 @@ from plane.api.serializers import (
     IssueCreateSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
-    IssuePropertySerializer,
+    IssueDisplayPropertySerializer,
     LabelSerializer,
     IssueSerializer,
     LabelSerializer,
@@ -62,7 +62,7 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    IssueProperty,
+    IssueDisplayProperty,
     Label,
     IssueLink,
     IssueAttachment,
@@ -592,9 +592,9 @@ class IssueCommentViewSet(BaseViewSet):
         )
 
 
-class IssuePropertyViewSet(BaseViewSet):
-    serializer_class = IssuePropertySerializer
-    model = IssueProperty
+class IssueDisplayPropertyViewSet(BaseViewSet):
+    serializer_class = IssueDisplayPropertySerializer
+    model = IssueDisplayProperty
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -620,7 +620,7 @@ class IssuePropertyViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
-        serializer = IssuePropertySerializer(queryset, many=True)
+        serializer = IssueDisplayPropertySerializer(queryset, many=True)
         return Response(
             serializer.data[0] if len(serializer.data) > 0 else [],
             status=status.HTTP_200_OK,
@@ -628,7 +628,7 @@ class IssuePropertyViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id):
         try:
-            issue_property, created = IssueProperty.objects.get_or_create(
+            issue_property, created = IssueDisplayProperty.objects.get_or_create(
                 user=request.user,
                 project_id=project_id,
             )
@@ -637,12 +637,12 @@ class IssuePropertyViewSet(BaseViewSet):
                 issue_property.properties = request.data.get("properties", {})
                 issue_property.save()
 
-                serializer = IssuePropertySerializer(issue_property)
+                serializer = IssueDisplayPropertySerializer(issue_property)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             issue_property.properties = request.data.get("properties", {})
             issue_property.save()
-            serializer = IssuePropertySerializer(issue_property)
+            serializer = IssueDisplayPropertySerializer(issue_property)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except Exception as e:

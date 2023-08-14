@@ -78,7 +78,7 @@ from plane.api.views import (
     BulkDeleteIssuesEndpoint,
     BulkImportIssuesEndpoint,
     ProjectUserViewsEndpoint,
-    IssuePropertyViewSet,
+    IssueDisplayPropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
     IssueLinkViewSet,
@@ -941,7 +941,7 @@ urlpatterns = [
     ## IssueProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",
-        IssuePropertyViewSet.as_view(
+        IssueDisplayPropertyViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -951,7 +951,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/<uuid:pk>/",
-        IssuePropertyViewSet.as_view(
+        IssueDisplayPropertyViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",

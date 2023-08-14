@@ -24,7 +24,7 @@ from .project import (
 from .issue import (
     Issue,
     IssueActivity,
-    IssueProperty,
+    IssueDisplayProperty,
     IssueComment,
     IssueBlocker,
     IssueLabel,
@@ -78,4 +78,4 @@ from .notification import Notification
 
 from .exporter import ExporterHistory
 
-from .custom_attribute import CustomProperty, CustomPropertyAttribute, CustomPropertyValue
+from .issue_property import IssueProperty, IssuePropertyAttribute, Issue
