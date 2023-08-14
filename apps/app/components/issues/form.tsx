@@ -136,8 +136,6 @@ export const IssueForm: FC<IssueFormProps> = ({
     reValidateMode: "onChange",
   });
 
-  console.log("values", getValues());
-
   const issueName = watch("name");
 
   const handleCreateUpdateIssue = async (formData: Partial<IIssue>) => {
@@ -164,7 +162,6 @@ export const IssueForm: FC<IssueFormProps> = ({
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    console.log(response)
     setValue("description", {});
     setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
     editorRef.current?.setEditorValue(`${watch("description_html")}`);

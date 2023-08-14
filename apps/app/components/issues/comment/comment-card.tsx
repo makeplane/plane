@@ -50,7 +50,6 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
     setIsEditing(false);
 
     onSubmit(formData);
-    console.log("watching", formData.comment_html);
 
     editorRef.current?.setEditorValue(formData.comment_html);
     showEditorRef.current?.setEditorValue(formData.comment_html);

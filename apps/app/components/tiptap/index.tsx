@@ -17,7 +17,7 @@ export interface ITiptapRichTextEditor {
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
-  setIsSubmitting?: (isSubmitting: boolean) => void;
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   editable?: boolean;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
@@ -44,7 +44,7 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     content: value,
     onUpdate: async ({ editor }) => {
       // for instant feedback loop
-      setIsSubmitting?.(true);
+      setIsSubmitting?.("submitting");
       checkForNodeDeletions(editor);
       if (debouncedUpdatesEnabled) {
         debouncedUpdates({ onChange, editor });
@@ -58,7 +58,6 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
 
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: () => {
-      console.log("clearContent");
       console.log(editorRef);
       editorRef.current?.commands.clearContent();
     },

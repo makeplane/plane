@@ -83,7 +83,6 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
   };
 
   const src = await UploadImageHandler(file);
-  console.log(src, "src");
   const { schema } = view.state;
   pos = findPlaceholder(view.state, id);
 
