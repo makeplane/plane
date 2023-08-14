@@ -11,18 +11,18 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Highlight from "@tiptap/extension-highlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { lowlight } from 'lowlight/lib/core'
+import { lowlight } from "lowlight/lib/core";
 import SlashCommand from "../slash-command";
 import { InputRule } from "@tiptap/core";
-import { Node as ProseMirrorNode } from '@tiptap/pm/model';
+import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 
-import ts from 'highlight.js/lib/languages/typescript'
+import ts from "highlight.js/lib/languages/typescript";
 
-import 'highlight.js/styles/github-dark.css';
+import "highlight.js/styles/github-dark.css";
 import UploadImagesPlugin from "../plugins/upload-image";
 import UniqueID from "@tiptap-pro/extension-unique-id";
 
-lowlight.registerLanguage('ts', ts)
+lowlight.registerLanguage("ts", ts);
 
 const CustomImage = TiptapImage.extend({
   addProseMirrorPlugins() {
@@ -49,13 +49,12 @@ export const TiptapExtensions = [
     },
     blockquote: {
       HTMLAttributes: {
-        class: "border-l-4 border-stone-700",
+        class: "border-l-4 border-custom-border-300",
       },
     },
     code: {
       HTMLAttributes: {
-        class:
-          "rounded-md bg-custom-bg-1000 px-1 py-1 font-mono font-medium text-stone-900",
+        class: "rounded-md bg-custom-bg-1000 px-1 py-1 font-mono font-medium text-custom-text-200",
         spellcheck: "false",
       },
     },
@@ -84,25 +83,25 @@ export const TiptapExtensions = [
             const end = range.to;
             // @ts-ignore
             tr.replaceWith(start - 1, end, this.type.create(attributes));
-          }
+          },
         }),
       ];
     },
   }).configure({
     HTMLAttributes: {
-      class: "mb-6 border-t border-custom-border-400",
+      class: "mb-6 border-t border-custom-border-300",
     },
   }),
   TiptapLink.configure({
     HTMLAttributes: {
       class:
-        "text-stone-400 underline underline-offset-[3px] hover:text-stone-600 transition-colors cursor-pointer",
+        "text-custom-text-200 underline underline-offset-[3px] hover:text-custom-text-100 transition-colors cursor-pointer",
     },
   }),
   CustomImage.configure({
     allowBase64: true,
     HTMLAttributes: {
-      class: "rounded-lg border border-stone-200",
+      class: "rounded-lg border border-custom-border-300",
     },
   }),
   Placeholder.configure({
@@ -116,7 +115,7 @@ export const TiptapExtensions = [
     includeChildren: true,
   }),
   UniqueID.configure({
-    types: ['image'],
+    types: ["image"],
   }),
   SlashCommand,
   TiptapUnderline,

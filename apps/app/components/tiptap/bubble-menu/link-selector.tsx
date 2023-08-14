@@ -1,7 +1,7 @@
 import { Editor } from "@tiptap/core";
 import { Check, Trash } from "lucide-react";
 import { Dispatch, FC, SetStateAction, useEffect, useRef } from "react";
-import { cn } from '../utils';
+import { cn } from "../utils";
 
 interface LinkSelectorProps {
   editor: Editor;
@@ -9,11 +9,7 @@ interface LinkSelectorProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const LinkSelector: FC<LinkSelectorProps> = ({
-  editor,
-  isOpen,
-  setIsOpen,
-}) => {
+export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -46,13 +42,13 @@ export const LinkSelector: FC<LinkSelectorProps> = ({
             editor.chain().focus().setLink({ href: input.value }).run();
             setIsOpen(false);
           }}
-          className="fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-100 bg-custom-background-100 dow-xl animate-in fade-in slide-in-from-top-1"
+          className="fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 dow-xl animate-in fade-in slide-in-from-top-1"
         >
           <input
             ref={inputRef}
             type="url"
             placeholder="Paste a link"
-            className="flex-1 bg-custom-background-100 border border-blue-900 p-1 text-sm outline-none"
+            className="flex-1 bg-custom-background-100 border border-custom-border-300 p-1 text-sm outline-none placeholder:text-custom-text-400"
             defaultValue={editor.getAttributes("link").href || ""}
           />
           {editor.getAttributes("link").href ? (
@@ -66,7 +62,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({
               <Trash className="h-4 w-4" />
             </button>
           ) : (
-            <button className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-stone-100">
+            <button className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90">
               <Check className="h-4 w-4" />
             </button>
           )}
@@ -75,4 +71,3 @@ export const LinkSelector: FC<LinkSelectorProps> = ({
     </div>
   );
 };
-

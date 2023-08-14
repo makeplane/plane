@@ -22,10 +22,7 @@ const UploadImagesPlugin = () =>
           const placeholder = document.createElement("div");
           placeholder.setAttribute("class", "img-placeholder");
           const image = document.createElement("img");
-          image.setAttribute(
-            "class",
-            "opacity-10 rounded-lg border border-stone-200",
-          );
+          image.setAttribute("class", "opacity-10 rounded-lg border border-custom-border-300");
           image.src = src;
           placeholder.appendChild(image);
           const deco = Decoration.widget(pos + 1, placeholder, {
@@ -33,9 +30,7 @@ const UploadImagesPlugin = () =>
           });
           set = set.add(tr.doc, [deco]);
         } else if (action && action.remove) {
-          set = set.remove(
-            set.find(undefined, undefined, (spec) => spec.id == action.remove.id),
-          );
+          set = set.remove(set.find(undefined, undefined, (spec) => spec.id == action.remove.id));
         }
         return set;
       },
@@ -43,7 +38,7 @@ const UploadImagesPlugin = () =>
     props: {
       decorations(state) {
         return this.getState(state);
-      }
+      },
     },
   });
 
@@ -51,7 +46,11 @@ export default UploadImagesPlugin;
 
 function findPlaceholder(state: EditorState, id: {}) {
   const decos = uploadKey.getState(state);
-  const found = decos.find(undefined, undefined, (spec: { id: number | undefined }) => spec.id == id);
+  const found = decos.find(
+    undefined,
+    undefined,
+    (spec: { id: number | undefined }) => spec.id == id
+  );
   return found.length ? found[0].from : null;
 }
 
@@ -81,7 +80,7 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
   };
 
   const src = await UploadImageHandler(file);
-  console.log(src, "src")
+  console.log(src, "src");
   const { schema } = view.state;
   pos = findPlaceholder(view.state, id);
 
@@ -111,10 +110,9 @@ const UploadImageHandler = (file: File): Promise<string> => {
       image.onload = () => {
         resolve(imageUrl);
       };
-    })
-  }
-  catch (error) {
-    console.log(error)
+    });
+  } catch (error) {
+    console.log(error);
     return Promise.reject(error);
   }
 };

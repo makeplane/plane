@@ -261,19 +261,19 @@ const CommandList = ({
     <div
       id="slash-command"
       ref={commandListContainer}
-      className="z-20 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
+      className="z-20 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
     >
       {items.map((item: CommandItemProps, index: number) => (
         <button
-          className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-90 hover:text-custom-text-100 ${
-            index === selectedIndex ? "bg-gray-800 text-custom-text-90" : ""
+          className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-custom-primary-100/5 ${
+            index === selectedIndex ? "bg-custom-primary-100/5" : ""
           }`}
           key={index}
           onClick={() => selectItem(index)}
         >
           <div>
             <p className="font-medium">{item.title}</p>
-            <p className="text-xs text-stone-500">{item.description}</p>
+            <p className="text-xs text-custom-text-200">{item.description}</p>
           </div>
         </button>
       ))}
