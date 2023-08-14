@@ -53,7 +53,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       onClick={() => {
         markNotificationReadStatus(notification.id);
         router.push(
-          `/${workspaceSlug}/projects/${notification.project}/issues/${notification.data.issue.id}`
+          `/${workspaceSlug}/projects/${notification.project}/${
+            notification.data.issue_activity.field === "archived_at" ? "archived-issues" : "issues"
+          }/${notification.data.issue.id}`
         );
       }}
       className={`group w-full flex items-center gap-4 p-3 pl-6 relative cursor-pointer ${
