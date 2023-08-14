@@ -31,6 +31,35 @@ export const ChartDraggable: React.FC<Props> = ({
 
   const { currentViewData } = useChart();
 
+  const checkScrollEnd = (e: MouseEvent): number => {
+    let delWidth = 0;
+
+    const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
+    const appSidebar = document.querySelector("#app-sidebar") as HTMLElement;
+
+    const posFromLeft = e.clientX;
+    // manually scroll to left if reached the left end while dragging
+    if (posFromLeft - appSidebar.clientWidth <= 70) {
+      if (e.movementX > 0) return 0;
+
+      delWidth = -5;
+
+      scrollContainer.scrollBy(delWidth, 0);
+    } else delWidth = e.movementX;
+
+    // manually scroll to right if reached the right end while dragging
+    const posFromRight = window.innerWidth - e.clientX;
+    if (posFromRight <= 70) {
+      if (e.movementX < 0) return 0;
+
+      delWidth = 5;
+
+      scrollContainer.scrollBy(delWidth, 0);
+    } else delWidth = e.movementX;
+
+    return delWidth;
+  };
+
   const handleLeftDrag = () => {
     if (!currentViewData || !resizableRef.current || !parentDivRef.current || !block.position)
       return;
@@ -51,19 +80,8 @@ export const ChartDraggable: React.FC<Props> = ({
 
       let delWidth = 0;
 
-      const posFromLeft = e.clientX;
+      delWidth = checkScrollEnd(e);
 
-      const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
-      const appSidebar = document.querySelector("#app-sidebar") as HTMLElement;
-
-      // manually scroll to left if reached the left end while dragging
-      if (posFromLeft - appSidebar.clientWidth <= 70) {
-        if (e.movementX > 0) return;
-
-        delWidth = -5;
-
-        scrollContainer.scrollBy(delWidth, 0);
-      } else delWidth = e.movementX;
       // calculate new width and update the initialMarginLeft using -=
       const newWidth = Math.round((initialWidth -= delWidth) / columnWidth) * columnWidth;
       // calculate new marginLeft and update the initial marginLeft to the newly calculated one
@@ -115,18 +133,7 @@ export const ChartDraggable: React.FC<Props> = ({
 
       let delWidth = 0;
 
-      const posFromRight = window.innerWidth - e.clientX;
-
-      const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
-
-      // manually scroll to right if reached the right end while dragging
-      if (posFromRight <= 70) {
-        if (e.movementX < 0) return;
-
-        delWidth = 5;
-
-        scrollContainer.scrollBy(delWidth, 0);
-      } else delWidth = e.movementX;
+      delWidth = checkScrollEnd(e);
 
       // calculate new width and update the initialMarginLeft using +=
       const newWidth = Math.round((initialWidth += delWidth) / columnWidth) * columnWidth;
