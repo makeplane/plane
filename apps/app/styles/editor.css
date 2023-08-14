@@ -115,3 +115,14 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
 }
+
+.fadeIn {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
+}
+
+.fadeOut {
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+

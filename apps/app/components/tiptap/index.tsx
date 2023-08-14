@@ -58,11 +58,9 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
 
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: () => {
-      console.log(editorRef);
       editorRef.current?.commands.clearContent();
     },
     setEditorValue: (content: string) => {
-      console.log(editorRef, forwardedRef, content);
       editorRef.current?.commands.setContent(content);
     },
   }));

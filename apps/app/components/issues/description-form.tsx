@@ -71,7 +71,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
     if (isSubmitting === "submitted") {
       setTimeout(async () => {
         setIsSubmitting("saved");
-      }, 1000);
+      }, 2000);
     }
   }, [isSubmitting]);
 
@@ -154,9 +154,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             );
           }}
         />
-        {isSubmitting !== "saved" && (<div className="absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center">
-          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-        </div>)}
+        <div className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === 'saved' ? 'fadeOut' : 'fadeIn'}`}>
+          {isSubmitting === 'submitting' ? 'Saving...' : 'Saved'}
+        </div>
       </div>
     </div>
   );
