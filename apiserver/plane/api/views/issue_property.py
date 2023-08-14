@@ -5,17 +5,17 @@ from rest_framework import status
 # Module imports
 from .base import BaseViewSet
 from plane.api.serializers import (
-    CustomPropertySerializer,
-    CustomPropertyAttributeSerializer,
-    CustomPropertyValueSerializer,
+    IssuePropertySerializer,
+    IssuePropertyAttributeSerializer,
+    IssuePropertyValueSerializer,
 )
-from plane.db.models import CustomProperty, CustomPropertyAttribute, CustomPropertyValue
+from plane.db.models import IssueProperty, IssuePropertyAttribute, IssuePropertyValue
 from plane.api.permissions import ProjectEntityPermission
 
 
-class CustomPropertyViewSet(BaseViewSet):
-    serializer_class = CustomPropertySerializer
-    model = CustomProperty
+class IssuePropertyViewSet(BaseViewSet):
+    serializer_class = IssuePropertySerializer
+    model = IssueProperty
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -26,9 +26,9 @@ class CustomPropertyViewSet(BaseViewSet):
         )
 
 
-class CustomPropertyAttributeViewSet(BaseViewSet):
-    serializer_class = CustomPropertyAttributeSerializer
-    model = CustomPropertyAttribute
+class IssuePropertyAttributeViewSet(BaseViewSet):
+    serializer_class = IssuePropertyAttributeSerializer
+    model = IssuePropertyAttribute
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -39,9 +39,9 @@ class CustomPropertyAttributeViewSet(BaseViewSet):
         )
 
 
-class CustomPropertyValueViewSet(BaseViewSet):
-    serializer_class = CustomPropertyValueSerializer
-    model = CustomPropertyValue
+class IssuePropertyValueViewSet(BaseViewSet):
+    serializer_class = IssuePropertyValueSerializer
+    model = IssuePropertyValue
 
     def perform_create(self, serializer):
         serializer.save(

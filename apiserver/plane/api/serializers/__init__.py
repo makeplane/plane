@@ -95,8 +95,8 @@ from .notification import NotificationSerializer
 
 from .exporter import ExporterHistorySerializer
 
-from .custom_attribute import (
-    CustomPropertySerializer,
-    CustomPropertyAttributeSerializer,
-    CustomPropertyValueSerializer,
+from .issue_property import (
+    IssuePropertySerializer,
+    IssuePropertyAttributeSerializer,
+    IssuePropertyValueSerializer,
 )

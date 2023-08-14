@@ -166,3 +166,9 @@ from .notification import NotificationViewSet, UnreadNotificationEndpoint
 from .exporter import (
     ExportIssuesEndpoint,
 )
+
+from .issue_property import (
+    IssuePropertyViewSet,
+    IssuePropertyAttributeViewSet,
+    IssuePropertyValueViewSet,
+)

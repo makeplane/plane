@@ -1,10 +1,10 @@
 from .base import BaseSerializer
-from plane.db.models import CustomProperty, CustomPropertyAttribute, CustomPropertyValue
+from plane.db.models import IssueProperty, IssuePropertyAttribute, IssuePropertyValue
 
 
-class CustomPropertySerializer(BaseSerializer):
+class IssuePropertySerializer(BaseSerializer):
     class Meta:
-        model = CustomProperty
+        model = IssueProperty
         fields = "__all__"
         read_only_fields = [
             "project",
@@ -12,9 +12,9 @@ class CustomPropertySerializer(BaseSerializer):
         ]
 
 
-class CustomPropertyAttributeSerializer(BaseSerializer):
+class IssuePropertyAttributeSerializer(BaseSerializer):
     class Meta:
-        model = CustomPropertyAttribute
+        model = IssuePropertyAttribute
         fields = "__all__"
         read_only_fields = [
             "project",
@@ -22,9 +22,9 @@ class CustomPropertyAttributeSerializer(BaseSerializer):
         ]
 
 
-class CustomPropertyValueSerializer(BaseSerializer):
+class IssuePropertyValueSerializer(BaseSerializer):
     class Meta:
-        model = CustomPropertyValue
+        model = IssuePropertyValue
         fields = "__all__"
         read_only_fields = [
             "project",

@@ -1615,4 +1615,6 @@ urlpatterns = [
         name="issue-vote-project-board",
     ),
     ## End Public Boards
+    # Issue Property
+    ## End Issue Property
 ]

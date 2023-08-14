@@ -78,4 +78,4 @@ from .notification import Notification
 
 from .exporter import ExporterHistory
 
-from .issue_property import IssueProperty, IssuePropertyAttribute, Issue
+from .issue_property import IssueProperty, IssuePropertyAttribute, IssuePropertyValue
