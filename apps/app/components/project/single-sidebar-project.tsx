@@ -257,25 +257,21 @@ export const SingleSidebarProject: React.FC<Props> = observer(
                       <span>Copy project link</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-4 w-4" />
-                      <span>Copy project link</span>
-                    </span>
-                  </CustomMenu.MenuItem>
 
                   {/* publish project settings */}
-                  <CustomMenu.MenuItem
-                    onClick={() => projectPublish.handleProjectModal(project?.id)}
-                  >
-                    <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
-                      <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
-                        <span className="material-symbols-rounded text-[16px]">ios_share</span>
+                  {isAdmin && (
+                    <CustomMenu.MenuItem
+                      onClick={() => projectPublish.handleProjectModal(project?.id)}
+                    >
+                      <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
+                        <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
+                          <span className="material-symbols-rounded text-[16px]">ios_share</span>
+                        </div>
+                        <div>Publish</div>
                       </div>
-                      <div>Publish</div>
-                    </div>
-                    {/* <PublishProjectModal /> */}
-                  </CustomMenu.MenuItem>
+                      {/* <PublishProjectModal /> */}
+                    </CustomMenu.MenuItem>
+                  )}
 
                   {project.archive_in > 0 && (
                     <CustomMenu.MenuItem
