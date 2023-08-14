@@ -18,10 +18,9 @@ import type { ICurrentUserResponse, IIssueComment } from "types";
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
-const TiptapEditor = React.forwardRef<
-  ITiptapRichTextEditor,
-  ITiptapRichTextEditor
->((props, ref) => <Tiptap {...props} forwardedRef={ref} />);
+const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
+  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
+);
 
 TiptapEditor.displayName = "TiptapEditor";
 
@@ -88,15 +87,17 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="issue-comments-section">
+        <div id="tiptap-container" className="issue-comments-section">
           <Controller
             name="comment_html"
             control={control}
-            render={({ field: { value, onChange } }) =>
+            render={({ field: { value, onChange } }) => (
               <TiptapEditor
                 ref={editorRef}
                 value={
-                  !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                  !value ||
+                  value === "" ||
+                  (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("comment_html")
                     : value
                 }
@@ -107,7 +108,7 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
                   setValue("comment_json", comment_json);
                 }}
               />
-            }
+            )}
           />
 
           <SecondaryButton type="submit" disabled={isSubmitting || disabled} className="mt-2">

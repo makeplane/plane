@@ -32,18 +32,18 @@
 
 /* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
 
-ul[data-type="taskList"] li>label {
+ul[data-type="taskList"] li > label {
   margin-right: 0.2rem;
   user-select: none;
 }
 
 @media screen and (max-width: 768px) {
-  ul[data-type="taskList"] li>label {
+  ul[data-type="taskList"] li > label {
     margin-right: 0.5rem;
   }
 }
 
-ul[data-type="taskList"] li>label input[type="checkbox"] {
+ul[data-type="taskList"] li > label input[type="checkbox"] {
   -webkit-appearance: none;
   appearance: none;
   background-color: rgb(var(--color-background-100));
@@ -81,7 +81,7 @@ ul[data-type="taskList"] li>label input[type="checkbox"] {
   }
 }
 
-ul[data-type="taskList"] li[data-checked="true"]>div>p {
+ul[data-type="taskList"] li[data-checked="true"] > div > p {
   color: rgb(var(--color-text-200));
   text-decoration: line-through;
   text-decoration-thickness: 2px;

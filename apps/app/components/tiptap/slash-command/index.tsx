@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  ReactNode,
-  useRef,
-  useLayoutEffect,
-} from "react";
+import React, { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } from "react";
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
@@ -42,15 +35,7 @@ const Command = Extension.create({
     return {
       suggestion: {
         char: "/",
-        command: ({
-          editor,
-          range,
-          props,
-        }: {
-          editor: Editor;
-          range: Range;
-          props: any;
-        }) => {
+        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
           props.command({ editor, range });
         },
       },
@@ -74,12 +59,7 @@ const getSuggestionItems = ({ query }: { query: string }) =>
       searchTerms: ["p", "paragraph"],
       icon: <Text size={18} />,
       command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .toggleNode("paragraph", "paragraph")
-          .run();
+        editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
       },
     },
     {
@@ -88,12 +68,7 @@ const getSuggestionItems = ({ query }: { query: string }) =>
       searchTerms: ["title", "big", "large"],
       icon: <Heading1 size={18} />,
       command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setNode("heading", { level: 1 })
-          .run();
+        editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
       },
     },
     {
@@ -102,12 +77,7 @@ const getSuggestionItems = ({ query }: { query: string }) =>
       searchTerms: ["subtitle", "medium"],
       icon: <Heading2 size={18} />,
       command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setNode("heading", { level: 2 })
-          .run();
+        editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
       },
     },
     {
@@ -116,12 +86,7 @@ const getSuggestionItems = ({ query }: { query: string }) =>
       searchTerms: ["subtitle", "small"],
       icon: <Heading3 size={18} />,
       command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setNode("heading", { level: 3 })
-          .run();
+        editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
       },
     },
     {
@@ -148,7 +113,7 @@ const getSuggestionItems = ({ query }: { query: string }) =>
       searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
       icon: <MinusSquare size={18} />,
       command: ({ editor, range }: CommandProps) => {
-        editor.chain().focus().deleteRange(range).setHorizontalRule().run()
+        editor.chain().focus().deleteRange(range).setHorizontalRule().run();
       },
     },
     {
@@ -209,12 +174,11 @@ const getSuggestionItems = ({ query }: { query: string }) =>
       return (
         item.title.toLowerCase().includes(search) ||
         item.description.toLowerCase().includes(search) ||
-        (item.searchTerms &&
-          item.searchTerms.some((term: string) => term.includes(search)))
+        (item.searchTerms && item.searchTerms.some((term: string) => term.includes(search)))
       );
     }
     return true;
-  });;
+  });
 
 export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   const containerHeight = container.offsetHeight;
@@ -250,7 +214,7 @@ const CommandList = ({
         command(item);
       }
     },
-    [command, items],
+    [command, items]
   );
 
   useEffect(() => {
@@ -297,12 +261,13 @@ const CommandList = ({
     <div
       id="slash-command"
       ref={commandListContainer}
-      className="z-50 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
+      className="z-20 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
     >
-      {items.map((item: CommandItemProps, index: number) =>
+      {items.map((item: CommandItemProps, index: number) => (
         <button
-          className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-90 hover:text-custom-text-100 ${index === selectedIndex ? "bg-gray-800 text-custom-text-90" : ""
-            }`}
+          className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-90 hover:text-custom-text-100 ${
+            index === selectedIndex ? "bg-gray-800 text-custom-text-90" : ""
+          }`}
           key={index}
           onClick={() => selectItem(index)}
         >
@@ -311,7 +276,7 @@ const CommandList = ({
             <p className="text-xs text-stone-500">{item.description}</p>
           </div>
         </button>
-      )}
+      ))}
     </div>
   ) : null;
 };
@@ -319,6 +284,8 @@ const CommandList = ({
 const renderItems = () => {
   let component: ReactRenderer | null = null;
   let popup: any | null = null;
+
+  const container = document.querySelector("#tiptap-container") as HTMLElement;
 
   return {
     onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
@@ -330,7 +297,7 @@ const renderItems = () => {
       // @ts-ignore
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => document.body,
+        appendTo: () => container,
         content: component.element,
         showOnCreate: true,
         interactive: true,

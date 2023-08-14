@@ -15,10 +15,9 @@ import { timeAgo } from "helpers/date-time.helper";
 import type { IIssueComment } from "types";
 import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
-const TiptapEditor = React.forwardRef<
-  ITiptapRichTextEditor,
-  ITiptapRichTextEditor
->((props, ref) => <Tiptap {...props} forwardedRef={ref} />);
+const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
+  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
+);
 
 TiptapEditor.displayName = "TiptapEditor";
 
@@ -51,7 +50,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
     setIsEditing(false);
 
     onSubmit(formData);
-    console.log("watching", formData.comment_html)
+    console.log("watching", formData.comment_html);
 
     editorRef.current?.setEditorValue(formData.comment_html);
     showEditorRef.current?.setEditorValue(formData.comment_html);
@@ -103,16 +102,18 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
             onSubmit={handleSubmit(onEnter)}
           >
-            <TiptapEditor
-              ref={editorRef}
-              value={watch("comment_html")}
-              debouncedUpdatesEnabled={false}
-              customClassName="min-h-[50px] p-3"
-              onChange={(comment_json: Object, comment_html: string) => {
-                setValue("comment_json", comment_json);
-                setValue("comment_html", comment_html);
-              }}
-            />
+            <div id="tiptap-container">
+              <TiptapEditor
+                ref={editorRef}
+                value={watch("comment_html")}
+                debouncedUpdatesEnabled={false}
+                customClassName="min-h-[50px] p-3"
+                onChange={(comment_json: Object, comment_html: string) => {
+                  setValue("comment_json", comment_json);
+                  setValue("comment_html", comment_html);
+                }}
+              />
+            </div>
             <div className="flex gap-1 self-end">
               <button
                 type="submit"

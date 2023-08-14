@@ -32,10 +32,9 @@ type FormData = {
   task: string;
 };
 
-const TiptapEditor = React.forwardRef<
-  ITiptapRichTextEditor,
-  ITiptapRichTextEditor
->((props, ref) => <Tiptap {...props} forwardedRef={ref} />);
+const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
+  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
+);
 
 TiptapEditor.displayName = "TiptapEditor";
 
@@ -141,11 +140,12 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${isOpen ? "block" : "hidden"
-        }`}
+      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
+        isOpen ? "block" : "hidden"
+      }`}
     >
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
-        <div className="remirror-section text-sm">
+        <div id="tiptap-container" className="remirror-section text-sm">
           Content:
           <TiptapEditor
             value={htmlContent ?? `<p>${content}</p>`}
@@ -179,10 +179,11 @@ export const GptAssistantModal: React.FC<Props> = ({
         type="text"
         name="task"
         register={register}
-        placeholder={`${content && content !== ""
-          ? "Tell AI what action to perform on this content..."
-          : "Ask AI anything..."
-          }`}
+        placeholder={`${
+          content && content !== ""
+            ? "Tell AI what action to perform on this content..."
+            : "Ask AI anything..."
+        }`}
         autoComplete="off"
       />
       <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
@@ -218,8 +219,8 @@ export const GptAssistantModal: React.FC<Props> = ({
             {isSubmitting
               ? "Generating response..."
               : response === ""
-                ? "Generate response"
-                : "Generate again"}
+              ? "Generate response"
+              : "Generate again"}
           </PrimaryButton>
         </div>
       </div>

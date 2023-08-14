@@ -110,7 +110,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         )}
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
-      <div className="relative">
+      <div id="tiptap-container" className="relative">
         <Controller
           name="description_html"
           control={control}
