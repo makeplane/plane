@@ -4,30 +4,28 @@ import io
 import json
 import boto3
 import zipfile
-from datetime import datetime, date, timedelta
+from datetime import datetime
 
 # Django imports
 from django.conf import settings
-from django.utils import timezone
 
 # Third party imports
 from celery import shared_task
 from sentry_sdk import capture_exception
 from botocore.client import Config
 from openpyxl import Workbook
-from openpyxl.styles import NamedStyle
-from openpyxl.utils.datetime import to_excel
 
 # Module imports
-from plane.db.models import Issue, ExporterHistory, Project
+from plane.db.models import Issue, ExporterHistory
 
 
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, (datetime, date)):
-            return obj.isoformat()
-        return super().default(obj)
+def dateTimeConverter(time):
+    if time:
+        return time.strftime("%a, %d %b %Y %I:%M:%S %Z%z")
 
+def dateConverter(time):
+    if time:
+        return time.strftime("%a, %d %b %Y")    
 
 def create_csv_file(data):
     csv_buffer = io.StringIO()
@@ -41,24 +39,17 @@ def create_csv_file(data):
 
 
 def create_json_file(data):
-    return json.dumps(data, cls=DateTimeEncoder)
+    return json.dumps(data)
 
 
 def create_xlsx_file(data):
     workbook = Workbook()
     sheet = workbook.active
 
-    no_timezone_style = NamedStyle(name="no_timezone_style")
-    no_timezone_style.number_format = "yyyy-mm-dd hh:mm:ss"
 
     for row in data:
         sheet.append(row)
 
-    for column_cells in sheet.columns:
-        for cell in column_cells:
-            if isinstance(cell.value, datetime):
-                cell.style = no_timezone_style
-                cell.value = to_excel(cell.value.replace(tzinfo=None))
 
     xlsx_buffer = io.BytesIO()
     workbook.save(xlsx_buffer)
@@ -128,15 +119,15 @@ def generate_table_row(issue):
         else "",
         issue["labels__name"],
         issue["issue_cycle__cycle__name"],
-        issue["issue_cycle__cycle__start_date"],
-        issue["issue_cycle__cycle__end_date"],
+        dateConverter(issue["issue_cycle__cycle__start_date"]),
+        dateConverter(issue["issue_cycle__cycle__end_date"]),
         issue["issue_module__module__name"],
-        issue["issue_module__module__start_date"],
-        issue["issue_module__module__target_date"],
-        issue["created_at"],
-        issue["updated_at"],
-        issue["completed_at"],
-        issue["archived_at"],
+        dateConverter(issue["issue_module__module__start_date"]),
+        dateConverter(issue["issue_module__module__target_date"]),
+        dateTimeConverter(issue["created_at"]),
+        dateTimeConverter(issue["updated_at"]),
+        dateTimeConverter(issue["completed_at"]),
+        dateTimeConverter(issue["archived_at"]),
     ]
 
 
@@ -156,15 +147,15 @@ def generate_json_row(issue):
         else "",
         "Labels": issue["labels__name"],
         "Cycle Name": issue["issue_cycle__cycle__name"],
-        "Cycle Start Date": issue["issue_cycle__cycle__start_date"],
-        "Cycle End Date": issue["issue_cycle__cycle__end_date"],
+        "Cycle Start Date":  dateConverter(issue["issue_cycle__cycle__start_date"]),
+        "Cycle End Date": dateConverter(issue["issue_cycle__cycle__end_date"]),
         "Module Name": issue["issue_module__module__name"],
-        "Module Start Date": issue["issue_module__module__start_date"],
-        "Module Target Date": issue["issue_module__module__target_date"],
-        "Created At": issue["created_at"],
-        "Updated At": issue["updated_at"],
-        "Completed At": issue["completed_at"],
-        "Archived At": issue["archived_at"],
+        "Module Start Date": dateConverter(issue["issue_module__module__start_date"]),
+        "Module Target Date": dateConverter(issue["issue_module__module__target_date"]),
+        "Created At": dateTimeConverter(issue["created_at"]),
+        "Updated At": dateTimeConverter(issue["updated_at"]),
+        "Completed At": dateTimeConverter(issue["completed_at"]),
+        "Archived At": dateTimeConverter(issue["archived_at"]),
     }
 
 
