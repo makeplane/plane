@@ -145,7 +145,7 @@ export const GptAssistantModal: React.FC<Props> = ({
       }`}
     >
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
-        <div id="tiptap-container" className="remirror-section text-sm">
+        <div id="tiptap-container" className="text-sm">
           Content:
           <TiptapEditor
             value={htmlContent ?? `<p>${content}</p>`}

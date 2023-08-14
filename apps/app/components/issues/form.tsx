@@ -35,8 +35,14 @@ import {
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
-import Tiptap from "components/tiptap";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 // rich-text-editor
+
+const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
+  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
+);
+
+TiptapEditor.displayName = "TiptapEditor";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -158,6 +164,7 @@ export const IssueForm: FC<IssueFormProps> = ({
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
+    console.log(response)
     setValue("description", {});
     setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
     editorRef.current?.setEditorValue(`${watch("description_html")}`);
@@ -365,7 +372,8 @@ export const IssueForm: FC<IssueFormProps> = ({
                       if (!value && !watch("description_html")) return <></>;
 
                       return (
-                        <Tiptap
+                        <TiptapEditor
+                          ref={editorRef}
                           debouncedUpdatesEnabled={false}
                           value={
                             !value ||
