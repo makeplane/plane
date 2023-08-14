@@ -1,5 +1,11 @@
 from .base import BaseSerializer
-from .user import UserSerializer, UserLiteSerializer, ChangePasswordSerializer, ResetPasswordSerializer, UserAdminLiteSerializer
+from .user import (
+    UserSerializer,
+    UserLiteSerializer,
+    ChangePasswordSerializer,
+    ResetPasswordSerializer,
+    UserAdminLiteSerializer,
+)
 from .workspace import (
     WorkSpaceSerializer,
     WorkSpaceMemberSerializer,
@@ -23,7 +29,12 @@ from .project import (
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import IssueViewSerializer, IssueViewFavoriteSerializer
-from .cycle import CycleSerializer, CycleIssueSerializer, CycleFavoriteSerializer, CycleWriteSerializer
+from .cycle import (
+    CycleSerializer,
+    CycleIssueSerializer,
+    CycleFavoriteSerializer,
+    CycleWriteSerializer,
+)
 from .asset import FileAssetSerializer
 from .issue import (
     IssueCreateSerializer,
@@ -83,3 +94,9 @@ from .analytic import AnalyticViewSerializer
 from .notification import NotificationSerializer
 
 from .exporter import ExporterHistorySerializer
+
+from .custom_attribute import (
+    CustomPropertySerializer,
+    CustomPropertyAttributeSerializer,
+    CustomPropertyValueSerializer,
+)

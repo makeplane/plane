@@ -77,3 +77,5 @@ from .analytic import AnalyticView
 from .notification import Notification
 
 from .exporter import ExporterHistory
+
+from .custom_attribute import CustomProperty, CustomPropertyAttribute, CustomPropertyValue
