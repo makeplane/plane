@@ -83,6 +83,7 @@ export const CustomThemeSelector: React.FC<Props> = observer(({ preLoadedData })
               </h3>
               <ColorPickerInput
                 name="background"
+                position="right"
                 error={errors.background}
                 watch={watch}
                 setValue={setValue}
@@ -120,6 +121,7 @@ export const CustomThemeSelector: React.FC<Props> = observer(({ preLoadedData })
               </h3>
               <ColorPickerInput
                 name="sidebarBackground"
+                position="right"
                 error={errors.sidebarBackground}
                 watch={watch}
                 setValue={setValue}

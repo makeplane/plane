@@ -69,6 +69,7 @@ export interface IDefaultAnalyticsUser {
   assignees__first_name: string;
   assignees__last_name: string;
   assignees__display_name: string;
+  assignees__id: string;
   count: number;
 }
 
@@ -80,6 +81,7 @@ export interface IDefaultAnalyticsResponse {
     created_by__first_name: string;
     created_by__last_name: string;
     created_by__display_name: string;
+    created_by__id: string;
     count: number;
   }[];
   open_estimate_sum: number;

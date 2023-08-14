@@ -210,7 +210,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   {project.is_favorite ? (
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <StarIcon className="h-4 w-4" />
+                        <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>

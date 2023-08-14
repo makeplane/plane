@@ -17,12 +17,24 @@ class Cycle(ProjectBaseModel):
         related_name="owned_by_cycle",
     )
     view_props = models.JSONField(default=dict)
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         verbose_name = "Cycle"
         verbose_name_plural = "Cycles"
         db_table = "cycles"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            smallest_sort_order = Cycle.objects.filter(
+                project=self.project
+            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+
+            if smallest_sort_order is not None:
+                self.sort_order = smallest_sort_order - 10000
+
+        super(Cycle, self).save(*args, **kwargs)
 
     def __str__(self):
         """Return name of the cycle"""

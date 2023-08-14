@@ -33,6 +33,7 @@ def get_default_props():
             "estimate": True,
             "created_on": True,
             "updated_on": True,
+            "start_date": True,
         },
         "showEmptyGroups": True,
     }

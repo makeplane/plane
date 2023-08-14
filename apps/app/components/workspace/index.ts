@@ -9,3 +9,4 @@ export * from "./issues-stats";
 export * from "./settings-header";
 export * from "./sidebar-dropdown";
 export * from "./sidebar-menu";
+export * from "./sidebar-quick-action";
