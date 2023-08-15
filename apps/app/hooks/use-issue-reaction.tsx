@@ -56,7 +56,7 @@ const useIssueReaction = (
       user.user
     );
 
-    mutateReaction((prev) => [...(prev || []), data]);
+    mutateReaction((prev: any) => [...(prev || []), data]);
   };
 
   /**
@@ -69,8 +69,8 @@ const useIssueReaction = (
     if (!workspaceSlug || !projectId || !issueId) return;
 
     mutateReaction(
-      (prevData) =>
-        prevData?.filter((r) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
+      (prevData: any) =>
+        prevData?.filter((r: any) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
       false
     );
 

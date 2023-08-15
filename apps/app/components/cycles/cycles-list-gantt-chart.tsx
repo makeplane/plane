@@ -38,10 +38,10 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
   const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
 
-    mutateCycles((prevData) => {
+    mutateCycles((prevData: any) => {
       if (!prevData) return prevData;
 
-      const newList = prevData.map((p) => ({
+      const newList = prevData.map((p: any) => ({
         ...p,
         ...(p.id === cycle.id
           ? {

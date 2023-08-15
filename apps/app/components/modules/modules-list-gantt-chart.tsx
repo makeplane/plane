@@ -42,10 +42,10 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
 
-    mutateModules((prevData) => {
+    mutateModules((prevData: any) => {
       if (!prevData) return prevData;
 
-      const newList = prevData.map((p) => ({
+      const newList = prevData.map((p: any) => ({
         ...p,
         ...(p.id === module.id
           ? {

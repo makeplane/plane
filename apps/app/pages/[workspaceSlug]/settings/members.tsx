@@ -139,14 +139,15 @@ const MembersSettings: NextPage = () => {
                 });
               })
               .finally(() => {
-                mutateMembers((prevData) =>
-                  prevData?.filter((item) => item.id !== selectedRemoveMember)
+                mutateMembers((prevData: any) =>
+                  prevData?.filter((item: any) => item.id !== selectedRemoveMember)
                 );
               });
           }
           if (selectedInviteRemoveMember) {
             mutateInvitations(
-              (prevData) => prevData?.filter((item) => item.id !== selectedInviteRemoveMember),
+              (prevData: any) =>
+                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
             workspaceService
@@ -262,8 +263,8 @@ const MembersSettings: NextPage = () => {
                             if (!workspaceSlug) return;
 
                             mutateMembers(
-                              (prevData) =>
-                                prevData?.map((m) =>
+                              (prevData: any) =>
+                                prevData?.map((m: any) =>
                                   m.id === member.id ? { ...m, role: value } : m
                                 ),
                               false
