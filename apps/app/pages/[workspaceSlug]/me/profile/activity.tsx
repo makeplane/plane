@@ -104,16 +104,6 @@ const ProfileActivity = () => {
                             </p>
                           </div>
                           <div className="issue-comments-section p-0">
-                            {/* <RemirrorRichTextEditor
-                              value={
-                                activityItem.new_value && activityItem.new_value !== ""
-                                  ? activityItem.new_value
-                                  : activityItem.old_value
-                              }
-                              editable={false}
-                              noBorder
-                              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-                            /> */}
                             {/* // TODO: Check these styles */}
                             <div
                               dangerouslySetInnerHTML={{
