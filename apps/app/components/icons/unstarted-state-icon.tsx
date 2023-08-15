@@ -6,7 +6,7 @@ export const UnstartedStateIcon: React.FC<Props> = ({
   width = "20",
   height = "20",
   className,
-  color = "#858e96",
+  color = "rgb(var(--color-text-200))",
 }) => (
   <svg
     width={width}

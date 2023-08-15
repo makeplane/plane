@@ -17,30 +17,30 @@ export const JiraConfirmImport: React.FC = () => {
         </div>
 
         <div className="col-span-1">
-          <p className="text-sm text-brand-secondary">Migrating</p>
+          <p className="text-sm text-custom-text-200">Migrating</p>
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.total_issues")}</h4>
-            <p className="text-sm text-brand-secondary">Issues</p>
+            <p className="text-sm text-custom-text-200">Issues</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.total_states")}</h4>
-            <p className="text-sm text-brand-secondary">States</p>
+            <p className="text-sm text-custom-text-200">States</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.total_modules")}</h4>
-            <p className="text-sm text-brand-secondary">Modules</p>
+            <p className="text-sm text-custom-text-200">Modules</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.total_labels")}</h4>
-            <p className="text-sm text-brand-secondary">Labels</p>
+            <p className="text-sm text-custom-text-200">Labels</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">
               {watch("data.users").filter((user) => user.import).length}
             </h4>
-            <p className="text-sm text-brand-secondary">User</p>
+            <p className="text-sm text-custom-text-200">User</p>
           </div>
         </div>
       </div>

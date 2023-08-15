@@ -5,14 +5,13 @@ import { LineGraph } from "components/ui";
 // helpers
 import { getDatesInRange, renderShortNumericDateFormat } from "helpers/date-time.helper";
 //types
-import { IIssue } from "types";
+import { TCompletionChartDistribution } from "types";
 
 type Props = {
-  issues: IIssue[];
-  start: string;
-  end: string;
-  width?: number;
-  height?: number;
+  distribution: TCompletionChartDistribution;
+  startDate: string | Date;
+  endDate: string | Date;
+  totalIssues: number;
 };
 
 const styleById = {
@@ -41,32 +40,32 @@ const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
     />
   ));
 
-const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
+const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, totalIssues }) => {
+  const chartData = Object.keys(distribution).map((key) => ({
+    currentDate: renderShortNumericDateFormat(key),
+    pending: distribution[key],
+  }));
 
-  const getChartData = () => {
-    const dateRangeArray = getDatesInRange(startDate, endDate);
-    let count = 0;
+  const generateXAxisTickValues = () => {
+    const dates = getDatesInRange(startDate, endDate);
 
-    const dateWiseData = dateRangeArray.map((d) => {
-      const current = d.toISOString().split("T")[0];
-      const total = issues.length;
-      const currentData = issues.filter(
-        (i) => i.completed_at && i.completed_at.toString().split("T")[0] === current
-      );
-      count = currentData ? currentData.length + count : count;
+    const maxDates = 4;
+    const totalDates = dates.length;
 
-      return {
-        currentDate: renderShortNumericDateFormat(current),
-        currentDateData: currentData,
-        pending: new Date(current) < new Date() ? total - count : null,
-      };
-    });
-    return dateWiseData;
+    if (totalDates <= maxDates) return dates.map((d) => renderShortNumericDateFormat(d));
+    else {
+      const interval = Math.ceil(totalDates / maxDates);
+      const limitedDates = [];
+
+      for (let i = 0; i < totalDates; i += interval)
+        limitedDates.push(renderShortNumericDateFormat(dates[i]));
+
+      if (!limitedDates.includes(renderShortNumericDateFormat(dates[totalDates - 1])))
+        limitedDates.push(renderShortNumericDateFormat(dates[totalDates - 1]));
+
+      return limitedDates;
+    }
   };
-
-  const chartData = getChartData();
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -74,7 +73,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
         animate
         curve="monotoneX"
         height="160px"
-        width="360px"
+        width="100%"
         enableGridY={false}
         lineWidth={1}
         margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
@@ -94,29 +93,40 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
             id: "ideal",
             color: "#a9bbd0",
             fill: "transparent",
-            data: [
-              {
-                x: chartData[0].currentDate,
-                y: issues.length,
-              },
-              {
-                x: chartData[chartData.length - 1].currentDate,
-                y: 0,
-              },
-            ],
+            data:
+              chartData.length > 0
+                ? [
+                    {
+                      x: chartData[0].currentDate,
+                      y: totalIssues,
+                    },
+                    {
+                      x: chartData[chartData.length - 1].currentDate,
+                      y: 0,
+                    },
+                  ]
+                : [],
           },
         ]}
         layers={["grid", "markers", "areas", DashedLine, "slices", "points", "axes", "legends"]}
         axisBottom={{
-          tickValues: chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : "")),
+          tickValues: generateXAxisTickValues(),
         }}
         enablePoints={false}
         enableArea
         colors={(datum) => datum.color ?? "#3F76FF"}
-        customYAxisTickValues={[0, issues.length]}
+        customYAxisTickValues={[0, totalIssues]}
         gridXValues={chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : ""))}
+        enableSlices="x"
+        sliceTooltip={(datum) => (
+          <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
+            {datum.slice.points[0].data.yFormatted}
+            <span className="text-custom-text-200"> issues pending on </span>
+            {datum.slice.points[0].data.xFormatted}
+          </div>
+        )}
         theme={{
-          background: "rgb(var(--color-bg-sidebar))",
+          background: "transparent",
           axis: {
             domain: {
               line: {

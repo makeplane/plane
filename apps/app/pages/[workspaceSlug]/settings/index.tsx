@@ -14,7 +14,6 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal, SettingsHeader } from "components/workspace";
@@ -24,19 +23,19 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import type { IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
+import { WORKSPACE_DETAILS, USER_WORKSPACES, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // constants
-import { COMPANY_SIZE } from "constants/workspace";
+import { ORGANIZATION_SIZE } from "constants/workspace";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
   url: "",
-  company_size: null,
+  organization_size: "2-10",
   logo: null,
 };
 
@@ -50,6 +49,11 @@ const WorkspaceSettings: NextPage = () => {
   const { workspaceSlug } = router.query;
 
   const { user } = useUserAuth();
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => workspaceService.workspaceMemberMe(workspaceSlug.toString()) : null
+  );
 
   const { setToastAlert } = useToast();
 
@@ -80,7 +84,7 @@ const WorkspaceSettings: NextPage = () => {
     const payload: Partial<IWorkspace> = {
       logo: formData.logo,
       name: formData.name,
-      company_size: formData.company_size,
+      organization_size: formData.organization_size,
     };
 
     await workspaceService
@@ -143,11 +147,15 @@ const WorkspaceSettings: NextPage = () => {
     });
   };
 
+  const isAdmin = memberDetails?.role === 20;
+
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
+          <BreadcrumbItem
+            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`}
+          />
         </Breadcrumbs>
       }
     >
@@ -177,7 +185,7 @@ const WorkspaceSettings: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">Logo</h4>
-                <p className="text-sm text-brand-secondary">
+                <p className="text-sm text-custom-text-200">
                   Max file size is 5MB. Supported file types are .jpg and .png.
                 </p>
               </div>
@@ -207,7 +215,10 @@ const WorkspaceSettings: NextPage = () => {
                       {isImageUploading ? "Uploading..." : "Upload"}
                     </SecondaryButton>
                     {activeWorkspace.logo && activeWorkspace.logo !== "" && (
-                      <DangerButton onClick={() => handleDelete(activeWorkspace.logo)}>
+                      <DangerButton
+                        onClick={() => handleDelete(activeWorkspace.logo)}
+                        loading={isImageRemoving}
+                      >
                         {isImageRemoving ? "Removing..." : "Remove"}
                       </DangerButton>
                     )}
@@ -218,22 +229,24 @@ const WorkspaceSettings: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">URL</h4>
-                <p className="text-sm text-brand-secondary">Your workspace URL.</p>
+                <p className="text-sm text-custom-text-200">Your workspace URL.</p>
               </div>
               <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
-                <Input
-                  id="url"
-                  name="url"
-                  autoComplete="off"
-                  register={register}
-                  error={errors.name}
-                  className="w-full"
-                  value={`${
-                    typeof window !== "undefined" &&
-                    window.location.origin.replace("http://", "").replace("https://", "")
-                  }/${activeWorkspace.slug}`}
-                  disabled
-                />
+                <div className="flex flex-col gap-1">
+                  <Input
+                    id="url"
+                    name="url"
+                    autoComplete="off"
+                    register={register}
+                    error={errors.url}
+                    className="w-full"
+                    value={`${
+                      typeof window !== "undefined" &&
+                      window.location.origin.replace("http://", "").replace("https://", "")
+                    }/${activeWorkspace.slug}`}
+                    disabled
+                  />
+                </div>
                 <SecondaryButton
                   className="h-min"
                   onClick={() =>
@@ -258,7 +271,7 @@ const WorkspaceSettings: NextPage = () => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">Name</h4>
-                <p className="text-sm text-brand-secondary">Give a name to your workspace.</p>
+                <p className="text-sm text-custom-text-200">Give a name to your workspace.</p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <Input
@@ -270,29 +283,36 @@ const WorkspaceSettings: NextPage = () => {
                   error={errors.name}
                   validations={{
                     required: "Name is required",
+                    maxLength: {
+                      value: 80,
+                      message: "Workspace name should not exceed 80 characters",
+                    },
                   }}
                 />
               </div>
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold">Company Size</h4>
-                <p className="text-sm text-brand-secondary">How big is your company?</p>
+                <h4 className="text-lg font-semibold">Organization Size</h4>
+                <p className="text-sm text-custom-text-200">What size is your organization?</p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <Controller
-                  name="company_size"
+                  name="organization_size"
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <CustomSelect
                       value={value}
                       onChange={onChange}
-                      label={value ? value.toString() : "Select company size"}
+                      label={
+                        ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"
+                      }
+                      width="w-full"
                       input
                     >
-                      {COMPANY_SIZE?.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
-                          {item.label}
+                      {ORGANIZATION_SIZE?.map((item) => (
+                        <CustomSelect.Option key={item} value={item}>
+                          {item}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
@@ -301,26 +321,32 @@ const WorkspaceSettings: NextPage = () => {
               </div>
             </div>
             <div className="sm:text-right">
-              <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+              <SecondaryButton
+                onClick={handleSubmit(onSubmit)}
+                loading={isSubmitting}
+                disabled={!isAdmin}
+              >
                 {isSubmitting ? "Updating..." : "Update Workspace"}
               </SecondaryButton>
             </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold">Danger Zone</h4>
-                <p className="text-sm text-brand-secondary">
-                  The danger zone of the workspace delete page is a critical area that requires
-                  careful consideration and attention. When deleting a workspace, all of the data
-                  and resources within that workspace will be permanently removed and cannot be
-                  recovered.
-                </p>
+            {memberDetails?.role === 20 && (
+              <div className="grid grid-cols-12 gap-4 sm:gap-16">
+                <div className="col-span-12 sm:col-span-6">
+                  <h4 className="text-lg font-semibold">Danger Zone</h4>
+                  <p className="text-sm text-custom-text-200">
+                    The danger zone of the workspace delete page is a critical area that requires
+                    careful consideration and attention. When deleting a workspace, all of the data
+                    and resources within that workspace will be permanently removed and cannot be
+                    recovered.
+                  </p>
+                </div>
+                <div className="col-span-12 sm:col-span-6">
+                  <DangerButton onClick={() => setIsOpen(true)} outline>
+                    Delete the workspace
+                  </DangerButton>
+                </div>
               </div>
-              <div className="col-span-12 sm:col-span-6">
-                <DangerButton onClick={() => setIsOpen(true)} outline>
-                  Delete the workspace
-                </DangerButton>
-              </div>
-            </div>
+            )}
           </div>
         ) : (
           <div className="grid h-full w-full place-items-center px-4 sm:px-0">

@@ -12,20 +12,19 @@ import projectService from "services/project.service";
 // components
 import { SettingsHeader, SingleIntegration } from "components/project";
 // ui
-import {
-  EmptySpace,
-  EmptySpaceItem,
-  IntegrationAndImportExportBanner,
-  Loader,
-} from "components/ui";
+import { EmptyState, IntegrationAndImportExportBanner, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
+// images
+import emptyIntegration from "public/empty-state/integration.svg";
 // types
 import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const ProjectIntegrations: NextPage = () => {
   const router = useRouter();
@@ -51,18 +50,19 @@ const ProjectIntegrations: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectId}/issues`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Integrations" />
+          <BreadcrumbItem title="Integrations" unshrinkTitle />
         </Breadcrumbs>
       }
     >
-      <div className="p-8">
+      <div className="h-full flex flex-col p-8 overflow-hidden">
         <SettingsHeader />
         {workspaceIntegrations ? (
           workspaceIntegrations.length > 0 ? (
-            <section className="space-y-8">
+            <section className="space-y-8 overflow-y-auto">
               <IntegrationAndImportExportBanner bannerName="Integrations" />
               <div className="space-y-5">
                 {workspaceIntegrations.map((integration) => (
@@ -74,21 +74,15 @@ const ProjectIntegrations: NextPage = () => {
               </div>
             </section>
           ) : (
-            <div className="grid h-full w-full place-items-center">
-              <EmptySpace
-                title="You haven't added any integration yet."
-                description="Add GitHub and other integrations to sync your project issues."
-                Icon={PuzzlePieceIcon}
-              >
-                <EmptySpaceItem
-                  title="Add new integration"
-                  Icon={PlusIcon}
-                  action={() => {
-                    router.push(`/${workspaceSlug}/settings/integrations`);
-                  }}
-                />
-              </EmptySpace>
-            </div>
+            <EmptyState
+              title="You haven't configured integrations"
+              description="Configure GitHub and other integrations to sync your project issues."
+              image={emptyIntegration}
+              primaryButton={{
+                text: "Configure now",
+                onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
+              }}
+            />
           )
         ) : (
           <Loader className="space-y-5">

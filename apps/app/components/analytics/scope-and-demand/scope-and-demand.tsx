@@ -56,22 +56,26 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
               <AnalyticsLeaderboard
                 users={defaultAnalytics.most_issue_created_user?.map((user) => ({
                   avatar: user?.created_by__avatar,
-                  email: user?.created_by__email,
                   firstName: user?.created_by__first_name,
                   lastName: user?.created_by__last_name,
+                  display_name: user?.created_by__display_name,
                   count: user?.count,
+                  id: user?.created_by__id,
                 }))}
                 title="Most issues created"
+                workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <AnalyticsLeaderboard
                 users={defaultAnalytics.most_issue_closed_user?.map((user) => ({
                   avatar: user?.assignees__avatar,
-                  email: user?.assignees__email,
                   firstName: user?.assignees__first_name,
                   lastName: user?.assignees__last_name,
+                  display_name: user?.assignees__display_name,
                   count: user?.count,
+                  id: user?.assignees__id,
                 }))}
                 title="Most issues closed"
+                workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <div className={fullScreen ? "md:col-span-2" : ""}>
                 <AnalyticsYearWiseIssues defaultAnalytics={defaultAnalytics} />
@@ -88,7 +92,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
         )
       ) : (
         <div className="grid h-full place-items-center p-5">
-          <div className="space-y-4 text-brand-secondary">
+          <div className="space-y-4 text-custom-text-200">
             <p className="text-sm">There was some error in fetching the data.</p>
             <div className="flex items-center justify-center gap-2">
               <PrimaryButton onClick={() => mutateDefaultAnalytics()}>Refresh</PrimaryButton>

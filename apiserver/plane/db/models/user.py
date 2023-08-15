@@ -1,6 +1,7 @@
 # Python imports
-from enum import unique
 import uuid
+import string
+import random
 
 # Django imports
 from django.db import models
@@ -19,6 +20,15 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 
+def get_default_onboarding():
+    return {
+        "profile_complete": False,
+        "workspace_create": False,
+        "workspace_invite": False,
+        "workspace_join": False,
+    }
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
@@ -31,6 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
     avatar = models.CharField(max_length=255, blank=True)
+    cover_image = models.URLField(blank=True, null=True, max_length=800)
 
     # tracking metrics
     date_joined = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
@@ -73,6 +84,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=300, null=True, blank=True)
     is_bot = models.BooleanField(default=False)
     theme = models.JSONField(default=dict)
+    display_name = models.CharField(max_length=255, default="")
+    is_tour_completed = models.BooleanField(default=False)
+    onboarding_step = models.JSONField(default=get_default_onboarding)
 
     USERNAME_FIELD = "email"
 
@@ -96,6 +110,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.token_updated_at is not None:
             self.token = uuid.uuid4().hex + uuid.uuid4().hex
             self.token_updated_at = timezone.now()
+
+        if not self.display_name:
+            self.display_name = (
+                self.email.split("@")[0]
+                if len(self.email.split("@"))
+                else "".join(random.choice(string.ascii_letters) for _ in range(6))
+            )
 
         if self.is_superuser:
             self.is_staff = True

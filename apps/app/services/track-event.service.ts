@@ -19,6 +19,8 @@ import type {
   IState,
   IView,
   IWorkspace,
+  IssueCommentReaction,
+  IssueReaction,
 } from "types";
 
 type WorkspaceEventType =
@@ -96,6 +98,8 @@ type ImporterEventType =
   | "JIRA_IMPORTER_CREATE"
   | "JIRA_IMPORTER_DELETE";
 
+type ExporterEventType = "CSV_EXPORTER_CREATE";
+
 type AnalyticsEventType =
   | "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
   | "WORKSPACE_CUSTOM_ANALYTICS"
@@ -109,6 +113,12 @@ type AnalyticsEventType =
   | "MODULE_SCOPE_AND_DEMAND_ANALYTICS"
   | "MODULE_CUSTOM_ANALYTICS"
   | "MODULE_ANALYTICS_EXPORT";
+
+type ReactionEventType =
+  | "ISSUE_REACTION_CREATE"
+  | "ISSUE_COMMENT_REACTION_CREATE"
+  | "ISSUE_REACTION_DELETE"
+  | "ISSUE_COMMENT_REACTION_DELETE";
 
 class TrackEventServices extends APIService {
   constructor() {
@@ -185,6 +195,23 @@ class TrackEventServices extends APIService {
       method: "POST",
       data: {
         eventName: "USER_ONBOARDING_COMPLETE",
+        extra: {
+          ...data,
+        },
+        user: user,
+      },
+    });
+  }
+
+  async trackUserTourCompleteEvent(
+    data: any,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "USER_TOUR_COMPLETE",
         extra: {
           ...data,
         },
@@ -751,6 +778,27 @@ class TrackEventServices extends APIService {
     });
   }
 
+  // track exporter function\
+  async trackExporterEvent(
+    data: any,
+    eventName: ExporterEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    const payload = { ...data };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...payload,
+        },
+        user: user,
+      },
+    });
+  }
+
   // TODO: add types to the data
   async trackInboxEvent(
     data: any,
@@ -782,6 +830,53 @@ class TrackEventServices extends APIService {
       },
     });
   }
+
+  async trackReactionEvent(
+    data: IssueReaction | IssueCommentReaction,
+    eventName: ReactionEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    let payload: any;
+    if (eventName === "ISSUE_REACTION_DELETE" || eventName === "ISSUE_COMMENT_REACTION_DELETE")
+      payload = data;
+    else
+      payload = {
+        workspaceId: data?.workspace,
+        projectId: data?.project,
+        reaction: data?.reaction,
+      };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: payload,
+        user: user,
+      },
+    });
+  }
+
+  // project publish settings track events starts
+  async trackProjectPublishSettingsEvent(
+    data: any,
+    eventName: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    const payload: any = data;
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: payload,
+        user: user,
+      },
+    });
+  }
+
+  // project publish settings track events ends
 }
 
 const trackEventServices = new TrackEventServices();

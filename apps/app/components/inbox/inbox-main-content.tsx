@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
@@ -19,6 +19,7 @@ import {
   IssueActivitySection,
   IssueDescriptionForm,
   IssueDetailsSidebar,
+  IssueReaction,
 } from "components/issues";
 // ui
 import { Loader } from "components/ui";
@@ -29,14 +30,15 @@ import {
   ClockIcon,
   DocumentDuplicateIcon,
   ExclamationTriangleIcon,
+  InboxIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
-import { INBOX_ISSUES, INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
+import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const defaultValues = {
   name: "",
@@ -55,7 +57,7 @@ export const InboxMainContent: React.FC = () => {
 
   const { user } = useUserAuth();
   const { memberRole } = useProjectMyMembership();
-  const { params } = useInboxView();
+  const { params, issues: inboxIssues } = useInboxView();
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
@@ -75,17 +77,6 @@ export const InboxMainContent: React.FC = () => {
           )
       : null
   );
-
-  useEffect(() => {
-    if (!issueDetails || !inboxIssueId) return;
-
-    reset({
-      ...issueDetails,
-      assignees_list:
-        issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
-    });
-  }, [issueDetails, reset, inboxIssueId]);
 
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
@@ -129,6 +120,7 @@ export const InboxMainContent: React.FC = () => {
         .then(() => {
           mutateIssueDetails();
           mutate(INBOX_ISSUES(inboxId.toString(), params));
+          mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
         });
     },
     [
@@ -143,7 +135,85 @@ export const InboxMainContent: React.FC = () => {
     ]
   );
 
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (!inboxIssues || !inboxIssueId) return;
+
+      const currentIssueIndex = inboxIssues.findIndex((issue) => issue.bridge_id === inboxIssueId);
+
+      switch (e.key) {
+        case "ArrowUp":
+          Router.push({
+            pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+            query: {
+              inboxIssueId:
+                currentIssueIndex === 0
+                  ? inboxIssues[inboxIssues.length - 1].bridge_id
+                  : inboxIssues[currentIssueIndex - 1].bridge_id,
+            },
+          });
+          break;
+        case "ArrowDown":
+          Router.push({
+            pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
+            query: {
+              inboxIssueId:
+                currentIssueIndex === inboxIssues.length - 1
+                  ? inboxIssues[0].bridge_id
+                  : inboxIssues[currentIssueIndex + 1].bridge_id,
+            },
+          });
+          break;
+        default:
+          break;
+      }
+    },
+    [workspaceSlug, projectId, inboxIssueId, inboxId, inboxIssues]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown]);
+
+  useEffect(() => {
+    if (!issueDetails || !inboxIssueId) return;
+
+    reset({
+      ...issueDetails,
+      assignees_list:
+        issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
+      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+    });
+  }, [issueDetails, reset, inboxIssueId]);
+
   const issueStatus = issueDetails?.issue_inbox[0].status;
+
+  if (!inboxIssueId)
+    return (
+      <div className="h-full p-4 grid place-items-center text-custom-text-200">
+        <div className="grid h-full place-items-center">
+          <div className="my-5 flex flex-col items-center gap-4">
+            <InboxIcon height={60} width={60} />
+            {inboxIssues && inboxIssues.length > 0 ? (
+              <span className="text-custom-text-200">
+                {inboxIssues?.length} issues found. Select an issue from the sidebar to view its
+                details.
+              </span>
+            ) : (
+              <span className="text-custom-text-200">
+                No issues found. Use{" "}
+                <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre> shortcut
+                to create a new issue
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>
@@ -153,15 +223,17 @@ export const InboxMainContent: React.FC = () => {
             <div
               className={`flex items-center gap-2 p-3 text-sm border rounded-md ${
                 issueStatus === -2
-                  ? "text-orange-500 border-orange-500 bg-orange-500/10"
+                  ? "text-yellow-500 border-yellow-500 bg-yellow-500/10"
                   : issueStatus === -1
                   ? "text-red-500 border-red-500 bg-red-500/10"
                   : issueStatus === 0
-                  ? "text-blue-500 border-blue-500 bg-blue-500/10"
+                  ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
+                    ? "text-red-500 border-red-500 bg-red-500/10"
+                    : "text-custom-text-200 border-gray-500 bg-gray-500/10"
                   : issueStatus === 1
                   ? "text-green-500 border-green-500 bg-green-500/10"
                   : issueStatus === 2
-                  ? "text-yellow-500 border-yellow-500 bg-yellow-500/10"
+                  ? "text-custom-text-200 border-gray-500 bg-gray-500/10"
                   : ""
               }`}
             >
@@ -178,10 +250,23 @@ export const InboxMainContent: React.FC = () => {
               ) : issueStatus === 0 ? (
                 <>
                   <ClockIcon className="h-5 w-5" />
-                  <p>
-                    This issue has been snoozed till{" "}
-                    {renderShortNumericDateFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
-                  </p>
+                  {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
+                    <p>
+                      This issue was snoozed till{" "}
+                      {renderShortDateWithYearFormat(
+                        issueDetails.issue_inbox[0].snoozed_till ?? ""
+                      )}
+                      .
+                    </p>
+                  ) : (
+                    <p>
+                      This issue has been snoozed till{" "}
+                      {renderShortDateWithYearFormat(
+                        issueDetails.issue_inbox[0].snoozed_till ?? ""
+                      )}
+                      .
+                    </p>
+                  )}
                 </>
               ) : issueStatus === 1 ? (
                 <>
@@ -219,14 +304,21 @@ export const InboxMainContent: React.FC = () => {
                 }
               />
             </div>
+
+            <IssueReaction
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              issueId={issueDetails.id}
+            />
+
             <div className="space-y-5">
-              <h3 className="text-lg text-brand-base">Comments/Activity</h3>
+              <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
               <IssueActivitySection issueId={issueDetails.id} user={user} />
               <AddComment issueId={issueDetails.id} user={user} />
             </div>
           </div>
 
-          <div className="basis-1/3 space-y-5 border-brand-base p-5">
+          <div className="basis-1/3 space-y-5 border-custom-border-200 p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}
@@ -254,6 +346,4 @@ export const InboxMainContent: React.FC = () => {
       )}
     </>
   );
-
-  return null;
 };

@@ -39,11 +39,11 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
               />
             ) : (
               <Squares2X2Icon
-                className={`h-3 w-3 ${error ? "text-red-500" : "text-brand-secondary"}`}
+                className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`}
               />
             )}
             {MODULE_STATUS.find((s) => s.value === value)?.label ?? (
-              <span className={`${error ? "text-red-500" : "text-brand-secondary"}`}>Status</span>
+              <span className={`${error ? "text-red-500" : "text-custom-text-200"}`}>Status</span>
             )}
           </div>
         }

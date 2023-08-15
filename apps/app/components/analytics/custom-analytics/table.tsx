@@ -22,24 +22,21 @@ type Props = {
 };
 
 export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, params, yAxisKey }) => {
-  const renderAssigneeName = (email: string): string => {
-    const assignee = analytics.extras.assignee_details.find((a) => a.assignees__email === email);
+  const renderAssigneeName = (assigneeId: string): string => {
+    const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
 
     if (!assignee) return "No assignee";
 
-    if (assignee.assignees__first_name !== "")
-      return assignee.assignees__first_name + " " + assignee.assignees__last_name;
-
-    return email;
+    return assignee.assignees__display_name || "No assignee";
   };
 
   return (
     <div className="flow-root">
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
-          <table className="min-w-full divide-y divide-brand-base whitespace-nowrap border-y border-brand-base">
-            <thead className="bg-brand-surface-2">
-              <tr className="divide-x divide-brand-base text-sm text-brand-base">
+          <table className="min-w-full divide-y divide-custom-border-200 whitespace-nowrap border-y border-custom-border-200">
+            <thead className="bg-custom-background-80">
+              <tr className="divide-x divide-custom-border-200 text-sm text-custom-text-100">
                 <th scope="col" className="py-3 px-2.5 text-left font-medium">
                   {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === params.x_axis)?.label}
                 </th>
@@ -65,10 +62,10 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                             }}
                           />
                         )}
-                        {DATE_KEYS.includes(params.segment ?? "")
-                          ? renderMonthAndYear(key)
-                          : params.segment === "assignees__email"
+                        {params.segment === "assignees__id"
                           ? renderAssigneeName(key)
+                          : DATE_KEYS.includes(params.segment ?? "")
+                          ? renderMonthAndYear(key)
                           : key}
                       </div>
                     </th>
@@ -80,11 +77,11 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-brand-base">
+            <tbody className="divide-y divide-custom-border-200">
               {barGraphData.data.map((item, index) => (
                 <tr
                   key={`table-row-${index}`}
-                  className="divide-x divide-brand-base text-xs text-brand-secondary"
+                  className="divide-x divide-custom-border-200 text-xs text-custom-text-200"
                 >
                   <td
                     className={`flex items-center gap-2 whitespace-nowrap py-2 px-2.5 font-medium ${
@@ -108,7 +105,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                         }}
                       />
                     )}
-                    {params.x_axis === "assignees__email"
+                    {params.x_axis === "assignees__id"
                       ? renderAssigneeName(`${item.name}`)
                       : addSpaceIfCamelCase(`${item.name}`)}
                   </td>

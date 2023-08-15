@@ -18,6 +18,11 @@ export interface IModule {
   description: string;
   description_text: any;
   description_html: any;
+  distribution: {
+    assignees: TAssigneesDistribution[];
+    completion_chart: TCompletionChartDistribution;
+    labels: TLabelsDistribution[];
+  };
   id: string;
   lead: string | null;
   lead_detail: IUserLite | null;
@@ -38,6 +43,7 @@ export interface IModule {
   name: string;
   project: string;
   project_detail: IProjectLite;
+  sort_order: number;
   start_date: string | null;
   started_issues: number;
   status: "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled" | null;

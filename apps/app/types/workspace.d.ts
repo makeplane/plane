@@ -1,4 +1,12 @@
-import type { IProjectMember, IUser, IUserLite } from "types";
+import type {
+  IIssueFilterOptions,
+  IProjectMember,
+  IUser,
+  IUserMemberLite,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+  TIssueViewOptions,
+} from "types";
 
 export interface IWorkspace {
   readonly id: string;
@@ -13,7 +21,8 @@ export interface IWorkspace {
   readonly slug: string;
   readonly created_by: string;
   readonly updated_by: string;
-  company_size: number | null;
+  organization_size: string;
+  total_issues: number;
 }
 
 export interface IWorkspaceLite {
@@ -34,8 +43,13 @@ export interface IWorkspaceMemberInvitation {
   workspace: IWorkspace;
 }
 
+export interface IWorkspaceBulkInviteFormData {
+  emails: { email: string; role: 5 | 10 | 15 | 20 }[];
+}
+
 export type Properties = {
   assignee: boolean;
+  start_date: boolean;
   due_date: boolean;
   labels: boolean;
   key: boolean;
@@ -45,16 +59,26 @@ export type Properties = {
   link: boolean;
   attachment_count: boolean;
   estimate: boolean;
+  created_on: boolean;
+  updated_on: boolean;
 };
+
+export interface IWorkspaceViewProps {
+  properties: Properties;
+  issueView: TIssueViewOptions;
+  groupByProperty: TIssueGroupByOptions;
+  orderBy: TIssueOrderByOptions;
+  filters: Partial<IIssueFilterOptions>;
+  showEmptyGroups: boolean;
+}
 
 export interface IWorkspaceMember {
   readonly id: string;
-  user: IUserLite;
   workspace: IWorkspace;
-  member: IUserLite;
+  member: IUserMemberLite;
   role: 5 | 10 | 15 | 20;
   company_role: string | null;
-  view_props: Properties;
+  view_props: IWorkspaceViewProps;
   created_at: Date;
   updated_at: Date;
   created_by: string;
@@ -67,29 +91,38 @@ export interface ILastActiveWorkspaceDetails {
 }
 
 export interface IWorkspaceDefaultSearchResult {
-  name: string;
   id: string;
+  name: string;
   project_id: string;
+  project__identifier: string;
   workspace__slug: string;
 }
 export interface IWorkspaceSearchResult {
-  name: string;
   id: string;
+  name: string;
   slug: string;
 }
 
 export interface IWorkspaceIssueSearchResult {
-  name: string;
   id: string;
-  sequence_id: number;
+  name: string;
   project__identifier: string;
   project_id: string;
+  sequence_id: number;
   workspace__slug: string;
 }
+
+export interface IWorkspaceProjectSearchResult {
+  id: string;
+  identifier: string;
+  name: string;
+  workspace__slug: string;
+}
+
 export interface IWorkspaceSearchResults {
   results: {
     workspace: IWorkspaceSearchResult[];
-    project: IWorkspaceDefaultSearchResult[];
+    project: IWorkspaceProjectSearchResult[];
     issue: IWorkspaceIssueSearchResult[];
     cycle: IWorkspaceDefaultSearchResult[];
     module: IWorkspaceDefaultSearchResult[];

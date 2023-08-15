@@ -31,37 +31,30 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
 
   const options = members?.map((member) => ({
     value: member.member.id,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name
-          : member.member.email}
+        {member.member.display_name}
       </div>
     ),
   }));
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2 text-brand-secondary">
+      <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
         <UserGroupIcon className="h-5 w-5" />
         <span>Members</span>
       </div>
       <div className="sm:basis-1/2">
         <CustomSearchSelect
-          value={value}
+          value={value ?? []}
           label={
-            <div className="flex items-center gap-2 text-brand-secondary">
+            <div className="flex items-center gap-2 text-custom-text-200">
               {value && value.length > 0 && Array.isArray(value) ? (
                 <div className="flex items-center justify-center gap-2">
                   <AssigneesList userIds={value} length={3} showLength={false} />
-                  <span className="text-brand-secondary">{value.length} Assignees</span>
+                  <span className="text-custom-text-200">{value.length} Assignees</span>
                 </div>
               ) : (
                 "No members"
@@ -70,7 +63,7 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
           }
           options={options}
           onChange={onChange}
-          height="md"
+          maxHeight="md"
           position="right"
           multiple
         />

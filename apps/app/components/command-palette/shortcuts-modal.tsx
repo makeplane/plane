@@ -85,29 +85,29 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-brand-surface-2 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-brand-surface-2 p-5">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-custom-background-80 p-5">
                   <div className="sm:flex sm:items-start">
                     <div className="flex w-full flex-col gap-y-4 text-center sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="flex justify-between text-lg font-medium leading-6 text-brand-base"
+                        className="flex justify-between text-lg font-medium leading-6 text-custom-text-100"
                       >
                         <span>Keyboard Shortcuts</span>
                         <span>
                           <button type="button" onClick={() => setIsOpen(false)}>
                             <XMarkIcon
-                              className="h-6 w-6 text-gray-400 hover:text-brand-secondary"
+                              className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100"
                               aria-hidden="true"
                             />
                           </button>
                         </span>
                       </Dialog.Title>
                       <div>
-                        <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-brand-base bg-brand-surface-1 px-3 py-2">
-                          <MagnifyingGlassIcon className="h-3.5 w-3.5 text-brand-secondary" />
+                        <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-custom-border-200 bg-custom-background-90 px-3 py-2">
+                          <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-200" />
                           <Input
-                            className="w-full  border-none bg-transparent py-1 px-2 text-xs text-brand-secondary focus:outline-none"
+                            className="w-full  border-none bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
                             id="search"
                             name="search"
                             type="text"
@@ -123,22 +123,22 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div key={shortcut.keys} className="flex w-full flex-col">
                                 <div className="flex flex-col gap-y-3">
                                   <div className="flex items-center justify-between">
-                                    <p className="text-sm text-brand-secondary">
+                                    <p className="text-sm text-custom-text-200">
                                       {shortcut.description}
                                     </p>
                                     <div className="flex items-center gap-x-2.5">
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-brand-base bg-brand-surface-1 p-1.5">
-                                              <CommandIcon className="h-4 w-4 fill-current text-brand-secondary" />
+                                            <span className="flex h-full items-center rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5">
+                                              <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
                                             </span>
                                           ) : key === "Ctrl" ? (
-                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 p-1.5 text-sm font-medium text-brand-secondary">
-                                              <CommandIcon className="h-4 w-4 fill-current text-brand-secondary" />
+                                            <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
+                                              <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
                                             </kbd>
                                           ) : (
-                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-brand-secondary">
+                                            <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
                                               {key}
                                             </kbd>
                                           )}
@@ -151,7 +151,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                             ))
                           ) : (
                             <div className="flex flex-col gap-y-3">
-                              <p className="text-sm text-brand-secondary">
+                              <p className="text-sm text-custom-text-200">
                                 No shortcuts found for{" "}
                                 <span className="font-semibold italic">
                                   {`"`}
@@ -168,20 +168,20 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div className="flex flex-col gap-y-3">
                                 {shortcuts.map(({ keys, description }, index) => (
                                   <div key={index} className="flex items-center justify-between">
-                                    <p className="text-sm text-brand-secondary">{description}</p>
+                                    <p className="text-sm text-custom-text-200">{description}</p>
                                     <div className="flex items-center gap-x-2.5">
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-brand-base bg-brand-surface-1 p-1.5 text-brand-secondary">
-                                              <CommandIcon className="h-4 w-4 fill-current text-brand-secondary" />
+                                            <span className="flex h-full items-center rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-custom-text-200">
+                                              <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
                                             </span>
                                           ) : key === "Ctrl" ? (
-                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 p-1.5 text-sm font-medium text-brand-secondary">
-                                              <CommandIcon className="h-4 w-4 fill-current text-brand-secondary" />
+                                            <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
+                                              <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
                                             </kbd>
                                           ) : (
-                                            <kbd className="rounded-sm border border-brand-base bg-brand-surface-1 px-2 py-1 text-sm font-medium text-brand-secondary">
+                                            <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
                                               {key}
                                             </kbd>
                                           )}

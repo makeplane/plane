@@ -1,6 +1,5 @@
 # Python imports
 import json
-from datetime import datetime, timedelta
 
 # Django imports
 from django.db import IntegrityError
@@ -15,7 +14,6 @@ from django.db.models import (
     Prefetch,
     Sum,
 )
-from django.db.models.functions import TruncDate
 from django.core import serializers
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -33,6 +31,7 @@ from plane.api.serializers import (
     CycleIssueSerializer,
     CycleFavoriteSerializer,
     IssueStateSerializer,
+    CycleWriteSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import (
@@ -163,14 +162,12 @@ class CycleViewSet(BaseViewSet):
         )
 
     def list(self, request, slug, project_id):
-        # try:
+        try:
             queryset = self.get_queryset()
-            cycle_view = request.GET.get("cycle_view", False)
-            if not cycle_view:
-                return Response(
-                    {"error": "Cycle View parameter is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            cycle_view = request.GET.get("cycle_view", "all")
+            order_by = request.GET.get("order_by", "sort_order")
+
+            queryset = queryset.order_by(order_by)
 
             # All Cycles
             if cycle_view == "all":
@@ -197,7 +194,8 @@ class CycleViewSet(BaseViewSet):
                         .annotate(first_name=F("assignees__first_name"))
                         .annotate(last_name=F("assignees__last_name"))
                         .annotate(assignee_id=F("assignees__id"))
-                        .values("first_name", "last_name", "assignee_id")
+                        .annotate(avatar=F("assignees__avatar"))
+                        .values("first_name", "last_name", "assignee_id", "avatar")
                         .annotate(total_issues=Count("assignee_id"))
                         .annotate(
                             completed_issues=Count(
@@ -252,9 +250,7 @@ class CycleViewSet(BaseViewSet):
                             cycle_id=data[0]["id"],
                         )
 
-                return Response(
-                    data, status=status.HTTP_200_OK
-                )
+                return Response(data, status=status.HTTP_200_OK)
 
             # Upcoming Cycles
             if cycle_view == "upcoming":
@@ -293,12 +289,13 @@ class CycleViewSet(BaseViewSet):
             return Response(
                 {"error": "No matching view found"}, status=status.HTTP_400_BAD_REQUEST
             )
-        # except Exception as e:
-        #     print(e)
-        #     return Response(
-        #         {"error": "Something went wrong please try again later"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def create(self, request, slug, project_id):
         try:
@@ -345,7 +342,7 @@ class CycleViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = CycleSerializer(cycle, data=request.data, partial=True)
+            serializer = CycleWriteSerializer(cycle, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -365,6 +362,7 @@ class CycleViewSet(BaseViewSet):
         try:
             queryset = self.get_queryset().get(pk=pk)
 
+            # Assignee Distribution
             assignee_distribution = (
                 Issue.objects.filter(
                     issue_cycle__cycle_id=pk,
@@ -374,7 +372,9 @@ class CycleViewSet(BaseViewSet):
                 .annotate(first_name=F("assignees__first_name"))
                 .annotate(last_name=F("assignees__last_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .values("first_name", "last_name", "assignee_id")
+                .annotate(avatar=F("assignees__avatar"))
+                .annotate(display_name=F("assignees__display_name"))
+                .values("first_name", "last_name", "assignee_id", "avatar", "display_name")
                 .annotate(total_issues=Count("assignee_id"))
                 .annotate(
                     completed_issues=Count(
@@ -391,6 +391,7 @@ class CycleViewSet(BaseViewSet):
                 .order_by("first_name", "last_name")
             )
 
+            # Label Distribution
             label_distribution = (
                 Issue.objects.filter(
                     issue_cycle__cycle_id=pk,
@@ -433,7 +434,10 @@ class CycleViewSet(BaseViewSet):
                 data,
                 status=status.HTTP_200_OK,
             )
-
+        except Cycle.DoesNotExist:
+            return Response(
+                {"error": "Cycle Does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -692,7 +696,6 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 return Response(
                     {
                         "error": "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
-                        "cycles": CycleSerializer(cycles, many=True).data,
                         "status": False,
                     }
                 )
@@ -707,9 +710,6 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
 
 class CycleFavoriteViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     serializer_class = CycleFavoriteSerializer
     model = CycleFavorite

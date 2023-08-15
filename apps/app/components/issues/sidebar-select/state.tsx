@@ -23,11 +23,17 @@ type Props = {
   value: string;
   onChange: (val: string) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
+export const SidebarStateSelect: React.FC<Props> = ({
+  value,
+  onChange,
+  userAuth,
+  disabled = false,
+}) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
@@ -35,30 +41,39 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const states = getStatesList(stateGroups ?? {});
+  const states = getStatesList(stateGroups);
 
   const selectedState = states?.find((s) => s.id === value);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
         <p>State</p>
       </div>
       <div className="sm:basis-1/2">
         <CustomSelect
           label={
-            <div className="flex items-center gap-2 text-left text-brand-base">
-              {getStateGroupIcon(
-                selectedState?.group ?? "backlog",
-                "16",
-                "16",
-                selectedState?.color ?? ""
-              )}
-              {addSpaceIfCamelCase(selectedState?.name ?? "")}
-            </div>
+            selectedState ? (
+              <div className="flex items-center gap-2 text-left text-custom-text-100">
+                {getStateGroupIcon(
+                  selectedState?.group ?? "backlog",
+                  "16",
+                  "16",
+                  selectedState?.color ?? ""
+                )}
+                {addSpaceIfCamelCase(selectedState?.name ?? "")}
+              </div>
+            ) : inboxIssueId ? (
+              <div className="flex items-center gap-2 text-left text-custom-text-100">
+                {getStateGroupIcon("backlog", "16", "16", "#ff7700")}
+                Triage
+              </div>
+            ) : (
+              "None"
+            )
           }
           value={value}
           onChange={onChange}

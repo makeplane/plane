@@ -33,7 +33,7 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
             label={
               <span
                 className={`flex items-center gap-2 text-left capitalize ${
-                  value ? "" : "text-brand-base"
+                  value ? "" : "text-custom-text-100"
                 }`}
               >
                 <span

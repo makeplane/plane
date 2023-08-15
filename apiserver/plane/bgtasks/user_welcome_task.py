@@ -29,5 +29,8 @@ def send_welcome_slack(user_id, created, message):
                     print(f"Got an error: {e.response['error']}")
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

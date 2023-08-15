@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -28,7 +28,16 @@ import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { CustomSearchSelect, Loader, PrimaryButton, TextArea, Tooltip } from "components/ui";
+import {
+  CustomSearchSelect,
+  EmptyState,
+  Loader,
+  TextArea,
+  ToggleSwitch,
+  Tooltip,
+} from "components/ui";
+// images
+import emptyPage from "public/empty-state/page.svg";
 // icons
 import {
   ArrowLeftIcon,
@@ -38,26 +47,29 @@ import {
   StarIcon,
   LinkIcon,
   XMarkIcon,
+  ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
+import { ColorPalletteIcon } from "components/icons";
 // helpers
-import { renderShortTime, renderShortDate } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage } from "next";
-import { IIssueLabels, IPage, IPageBlock } from "types";
+import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
   PAGE_DETAILS,
   PROJECT_DETAILS,
   PROJECT_ISSUE_LABELS,
+  USER_PROJECT_VIEW,
 } from "constants/fetch-keys";
 
 const SinglePage: NextPage = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
+  const [showBlock, setShowBlock] = useState(false);
 
   const scrollToRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +91,7 @@ const SinglePage: NextPage = () => {
       : null
   );
 
-  const { data: pageDetails } = useSWR(
+  const { data: pageDetails, error } = useSWR(
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
@@ -107,6 +119,13 @@ const SinglePage: NextPage = () => {
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -257,29 +276,58 @@ const SinglePage: NextPage = () => {
     );
   };
 
-  const handleNewBlock = useCallback(() => {
-    setCreateBlockForm(true);
-    scrollToRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [setCreateBlockForm, scrollToRef]);
+  const handleShowBlockToggle = async () => {
+    if (!workspaceSlug || !projectId) return;
 
-  const options =
-    labels?.map((label) => ({
-      value: label.id,
-      query: label.name,
-      content: (
-        <div className="flex items-center gap-2">
-          <span
-            className="h-2 w-2 flex-shrink-0 rounded-full"
-            style={{
-              backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
-            }}
-          />
-          {label.name}
-        </div>
-      ),
-    })) ?? [];
+    const payload: Partial<IProjectMember> = {
+      preferences: {
+        pages: {
+          block_display: !showBlock,
+        },
+      },
+    };
+
+    mutate<IProjectMember>(
+      (workspaceSlug as string) && (projectId as string)
+        ? USER_PROJECT_VIEW(projectId as string)
+        : null,
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          ...payload,
+        };
+      },
+      false
+    );
+
+    await projectService
+      .setProjectView(workspaceSlug as string, projectId as string, payload)
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
+      });
+  };
+
+  const options = labels?.map((label) => ({
+    value: label.id,
+    query: label.name,
+    content: (
+      <div className="flex items-center gap-2">
+        <span
+          className="h-2 w-2 flex-shrink-0 rounded-full"
+          style={{
+            backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
+          }}
+        />
+        {label.name}
+      </div>
+    ),
+  }));
 
   useEffect(() => {
     if (!pageDetails) return;
@@ -289,16 +337,31 @@ const SinglePage: NextPage = () => {
     });
   }, [reset, pageDetails]);
 
+  useEffect(() => {
+    if (!memberDetails) return;
+    setShowBlock(memberDetails.preferences.pages.block_display);
+  }, [memberDetails]);
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Pages`} />
+          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
         </Breadcrumbs>
       }
     >
-      {pageDetails ? (
+      {error ? (
+        <EmptyState
+          image={emptyPage}
+          title="Page does not exist"
+          description="The page you are looking for does not exist or has been deleted."
+          primaryButton={{
+            text: "View other pages",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/pages`),
+          }}
+        />
+      ) : pageDetails ? (
         <div className="flex h-full flex-col justify-between space-y-4 overflow-hidden p-4">
           <div className="h-full w-full overflow-y-auto">
             <div className="flex items-start justify-between gap-2">
@@ -306,7 +369,7 @@ const SinglePage: NextPage = () => {
                 <div className="flex w-full items-center gap-2">
                   <button
                     type="button"
-                    className="flex items-center gap-2 text-sm text-brand-secondary"
+                    className="flex items-center gap-2 text-sm text-custom-text-200"
                     onClick={() => router.back()}
                   >
                     <ArrowLeftIcon className="h-4 w-4" />
@@ -320,7 +383,7 @@ const SinglePage: NextPage = () => {
                     onBlur={handleSubmit(updatePage)}
                     onChange={(e) => setValue("name", e.target.value)}
                     required={true}
-                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0 placeholder:text-[#858E96]"
+                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0"
                     role="textbox"
                     noPadding
                   />
@@ -337,7 +400,7 @@ const SinglePage: NextPage = () => {
                         return (
                           <div
                             key={label.id}
-                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                             onClick={() => {
                               const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
                               partialUpdatePage({ labels_list: updatedLabels });
@@ -366,7 +429,7 @@ const SinglePage: NextPage = () => {
                     customButton={
                       <button
                         type="button"
-                        className="flex items-center gap-1 rounded-sm bg-brand-surface-2 p-1.5 text-xs"
+                        className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs"
                       >
                         <PlusIcon className="h-3.5 w-3.5" />
                         {pageDetails.labels.length <= 0 && <span>Add Label</span>}
@@ -376,12 +439,12 @@ const SinglePage: NextPage = () => {
                     footerOption={
                       <button
                         type="button"
-                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-brand-surface-2"
+                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
                         onClick={() => {
                           setLabelModal(true);
                         }}
                       >
-                        <span className="flex items-center justify-start gap-1 text-brand-secondary">
+                        <span className="flex items-center justify-start gap-1 text-custom-text-200">
                           <PlusIcon className="h-4 w-4" aria-hidden="true" />
                           <span>Create New Label</span>
                         </span>
@@ -395,14 +458,57 @@ const SinglePage: NextPage = () => {
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="flex items-center gap-6 text-brand-secondary">
+                <div className="flex items-center gap-6 text-custom-text-200">
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderShortTime(
+                    tooltipContent={`Last updated at ${render24HourFormatTime(
                       pageDetails.updated_at
                     )} on ${renderShortDate(pageDetails.updated_at)}`}
                   >
-                    <p className="text-sm">{renderShortTime(pageDetails.updated_at)}</p>
+                    <p className="text-sm">{render24HourFormatTime(pageDetails.updated_at)}</p>
                   </Tooltip>
+                  <Popover className="relative">
+                    {({ open }) => (
+                      <>
+                        <Popover.Button
+                          className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-200 bg-transparent px-2 py-1 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
+                            open
+                              ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
+                              : "text-custom-sidebar-text-200"
+                          }`}
+                        >
+                          View
+                          <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                        </Popover.Button>
+
+                        <Transition
+                          as={React.Fragment}
+                          enter="transition ease-out duration-200"
+                          enterFrom="opacity-0 translate-y-1"
+                          enterTo="opacity-100 translate-y-0"
+                          leave="transition ease-in duration-150"
+                          leaveFrom="opacity-100 translate-y-0"
+                          leaveTo="opacity-0 translate-y-1"
+                        >
+                          <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
+                            <div className="relative divide-y-2 divide-custom-border-200">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-custom-text-200">
+                                  Show full block content
+                                </span>
+                                <ToggleSwitch
+                                  value={showBlock}
+                                  onChange={(value) => {
+                                    setShowBlock(value);
+                                    handleShowBlockToggle();
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </Popover.Panel>
+                        </Transition>
+                      </>
+                    )}
+                  </Popover>
                   <button className="flex items-center gap-2" onClick={handleCopyText}>
                     <LinkIcon className="h-4 w-4" />
                   </button>
@@ -413,7 +519,7 @@ const SinglePage: NextPage = () => {
                           <Popover.Button
                             type="button"
                             className={`group inline-flex items-center outline-none ${
-                              open ? "text-brand-base" : "text-brand-secondary"
+                              open ? "text-custom-text-100" : "text-custom-text-200"
                             }`}
                           >
                             {watch("color") && watch("color") !== "" ? (
@@ -443,27 +549,27 @@ const SinglePage: NextPage = () => {
                                 styles={{
                                   default: {
                                     card: {
-                                      backgroundColor: `rgba(var(--color-bg-surface-2))`,
+                                      backgroundColor: `rgba(var(--color-background-80))`,
                                     },
                                     triangle: {
                                       position: "absolute",
                                       borderColor:
-                                        "transparent transparent rgba(var(--color-bg-surface-2)) transparent",
+                                        "transparent transparent rgba(var(--color-background-80)) transparent",
                                     },
                                     input: {
                                       border: "none",
                                       height: "1.85rem",
                                       fontSize: "0.875rem",
                                       paddingLeft: "0.25rem",
-                                      color: `rgba(var(--color-text-secondary))`,
+                                      color: `rgba(var(--color-text-200))`,
                                       boxShadow: "none",
-                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
-                                      borderLeft: `1px solid rgba(var(--color-bg-surface-2))`,
+                                      backgroundColor: `rgba(var(--color-background-90))`,
+                                      borderLeft: `1px solid rgba(var(--color-background-80))`,
                                     },
                                     hash: {
-                                      color: `rgba(var(--color-text-secondary))`,
+                                      color: `rgba(var(--color-text-200))`,
                                       boxShadow: "none",
-                                      backgroundColor: `rgba(var(--color-bg-surface-1))`,
+                                      backgroundColor: `rgba(var(--color-background-90))`,
                                     },
                                   },
                                 }}
@@ -482,7 +588,6 @@ const SinglePage: NextPage = () => {
                           ? "This page is only visible to you."
                           : "This page can be viewed by anyone in the project."
                       }`}
-                      theme="dark"
                     >
                       {pageDetails.access ? (
                         <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
@@ -529,6 +634,7 @@ const SinglePage: NextPage = () => {
                                 key={block.id}
                                 block={block}
                                 projectDetails={projectDetails}
+                                showBlockDetails={showBlock}
                                 index={index}
                                 user={user}
                               />
@@ -554,6 +660,11 @@ const SinglePage: NextPage = () => {
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
                       user={user}
+                      onSuccess={(response) => {
+                        partialUpdatePage({
+                          labels_list: [...(pageDetails.labels ?? []), response.id],
+                        });
+                      }}
                     />
                   )}
                 </>

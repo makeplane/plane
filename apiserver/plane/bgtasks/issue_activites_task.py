@@ -5,6 +5,7 @@ import requests
 # Django imports
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 
 # Third Party imports
 from celery import shared_task
@@ -20,6 +21,9 @@ from plane.db.models import (
     State,
     Cycle,
     Module,
+    IssueSubscriber,
+    Notification,
+    IssueAssignee,
 )
 from plane.api.serializers import IssueActivitySerializer
 
@@ -44,7 +48,7 @@ def track_name(
                 field="name",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated the name to {requested_data.get('name')}",
+                comment=f"updated the name to {requested_data.get('name')}",
             )
         )
 
@@ -66,12 +70,12 @@ def track_parent(
                     issue_id=issue_id,
                     actor=actor,
                     verb="updated",
-                    old_value=f"{project.identifier}-{old_parent.sequence_id}",
+                    old_value=f"{old_parent.project.identifier}-{old_parent.sequence_id}",
                     new_value=None,
                     field="parent",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the parent issue to None",
+                    comment=f"updated the parent issue to None",
                     old_identifier=old_parent.id,
                     new_identifier=None,
                 )
@@ -84,14 +88,14 @@ def track_parent(
                     issue_id=issue_id,
                     actor=actor,
                     verb="updated",
-                    old_value=f"{project.identifier}-{old_parent.sequence_id}"
+                    old_value=f"{old_parent.project.identifier}-{old_parent.sequence_id}"
                     if old_parent is not None
                     else None,
-                    new_value=f"{project.identifier}-{new_parent.sequence_id}",
+                    new_value=f"{new_parent.project.identifier}-{new_parent.sequence_id}",
                     field="parent",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the parent issue to {new_parent.name}",
+                    comment=f"updated the parent issue to {new_parent.name}",
                     old_identifier=old_parent.id if old_parent is not None else None,
                     new_identifier=new_parent.id,
                 )
@@ -119,7 +123,7 @@ def track_priority(
                     field="priority",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the priority to None",
+                    comment=f"updated the priority to None",
                 )
             )
         else:
@@ -133,7 +137,7 @@ def track_priority(
                     field="priority",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the priority to {requested_data.get('priority')}",
+                    comment=f"updated the priority to {requested_data.get('priority')}",
                 )
             )
 
@@ -161,7 +165,7 @@ def track_state(
                 field="state",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated the state to {new_state.name}",
+                comment=f"updated the state to {new_state.name}",
                 old_identifier=old_state.id,
                 new_identifier=new_state.id,
             )
@@ -190,7 +194,7 @@ def track_description(
                 field="description",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated the description to {requested_data.get('description_html')}",
+                comment=f"updated the description to {requested_data.get('description_html')}",
             )
         )
 
@@ -216,7 +220,7 @@ def track_target_date(
                     field="target_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the target date to None",
+                    comment=f"updated the target date to None",
                 )
             )
         else:
@@ -230,7 +234,7 @@ def track_target_date(
                     field="target_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the target date to {requested_data.get('target_date')}",
+                    comment=f"updated the target date to {requested_data.get('target_date')}",
                 )
             )
 
@@ -256,7 +260,7 @@ def track_start_date(
                     field="start_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the start date to None",
+                    comment=f"updated the start date to None",
                 )
             )
         else:
@@ -270,7 +274,7 @@ def track_start_date(
                     field="start_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the start date to {requested_data.get('start_date')}",
+                    comment=f"updated the start date to {requested_data.get('start_date')}",
                 )
             )
 
@@ -299,7 +303,7 @@ def track_labels(
                         field="labels",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added label {label.name}",
+                        comment=f"added label {label.name}",
                         new_identifier=label.id,
                         old_identifier=None,
                     )
@@ -320,7 +324,7 @@ def track_labels(
                         field="labels",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed label {label.name}",
+                        comment=f"removed label {label.name}",
                         old_identifier=label.id,
                         new_identifier=None,
                     )
@@ -349,12 +353,12 @@ def track_assignees(
                         actor=actor,
                         verb="updated",
                         old_value="",
-                        new_value=assignee.email,
+                        new_value=assignee.display_name,
                         field="assignees",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added assignee {assignee.email}",
-                        new_identifier=actor.id,
+                        comment=f"added assignee {assignee.display_name}",
+                        new_identifier=assignee.id,
                     )
                 )
 
@@ -370,13 +374,13 @@ def track_assignees(
                         issue_id=issue_id,
                         actor=actor,
                         verb="updated",
-                        old_value=assignee.email,
+                        old_value=assignee.display_name,
                         new_value="",
-                        field="assignee",
+                        field="assignees",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed assignee {assignee.email}",
-                        old_identifier=actor.id,
+                        comment=f"removed assignee {assignee.display_name}",
+                        old_identifier=assignee.id,
                     )
                 )
 
@@ -411,11 +415,11 @@ def track_blocks(
                         actor=actor,
                         verb="updated",
                         old_value="",
-                        new_value=f"{project.identifier}-{issue.sequence_id}",
+                        new_value=f"{issue.project.identifier}-{issue.sequence_id}",
                         field="blocks",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added blocking issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"added blocking issue {project.identifier}-{issue.sequence_id}",
                         new_identifier=issue.id,
                     )
                 )
@@ -432,12 +436,12 @@ def track_blocks(
                         issue_id=issue_id,
                         actor=actor,
                         verb="updated",
-                        old_value=f"{project.identifier}-{issue.sequence_id}",
+                        old_value=f"{issue.project.identifier}-{issue.sequence_id}",
                         new_value="",
                         field="blocks",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed blocking issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"removed blocking issue {project.identifier}-{issue.sequence_id}",
                         old_identifier=issue.id,
                     )
                 )
@@ -473,11 +477,11 @@ def track_blockings(
                         actor=actor,
                         verb="updated",
                         old_value="",
-                        new_value=f"{project.identifier}-{issue.sequence_id}",
+                        new_value=f"{issue.project.identifier}-{issue.sequence_id}",
                         field="blocking",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} added blocked by issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"added blocked by issue {project.identifier}-{issue.sequence_id}",
                         new_identifier=issue.id,
                     )
                 )
@@ -494,12 +498,12 @@ def track_blockings(
                         issue_id=issue_id,
                         actor=actor,
                         verb="updated",
-                        old_value=f"{project.identifier}-{issue.sequence_id}",
+                        old_value=f"{issue.project.identifier}-{issue.sequence_id}",
                         new_value="",
                         field="blocking",
                         project=project,
                         workspace=project.workspace,
-                        comment=f"{actor.email} removed blocked by issue {project.identifier}-{issue.sequence_id}",
+                        comment=f"removed blocked by issue {project.identifier}-{issue.sequence_id}",
                         old_identifier=issue.id,
                     )
                 )
@@ -513,7 +517,7 @@ def create_issue_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created the issue",
+            comment=f"created the issue",
             verb="created",
             actor=actor,
         )
@@ -535,7 +539,7 @@ def track_estimate_points(
                     field="estimate_point",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the estimate point to None",
+                    comment=f"updated the estimate point to None",
                 )
             )
         else:
@@ -549,9 +553,67 @@ def track_estimate_points(
                     field="estimate_point",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the estimate point to {requested_data.get('estimate_point')}",
+                    comment=f"updated the estimate point to {requested_data.get('estimate_point')}",
                 )
             )
+
+
+def track_archive_at(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    if requested_data.get("archived_at") is None:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"has restored the issue",
+                verb="updated",
+                actor=actor,
+                field="archived_at",
+                old_value="archive",
+                new_value="restore",
+            )
+        )
+    else:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"Plane has archived the issue",
+                verb="updated",
+                actor=actor,
+                field="archived_at",
+                old_value=None,
+                new_value="archive",
+            )
+        )
+
+
+def track_closed_to(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    if requested_data.get("closed_to") is not None:
+        updated_state = State.objects.get(
+            pk=requested_data.get("closed_to"), project=project
+        )
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor=actor,
+                verb="updated",
+                old_value=None,
+                new_value=updated_state.name,
+                field="state",
+                project=project,
+                workspace=project.workspace,
+                comment=f"Plane updated the state to {updated_state.name}",
+                old_identifier=None,
+                new_identifier=updated_state.id,
+            )
+        )
 
 
 def update_issue_activity(
@@ -570,6 +632,8 @@ def update_issue_activity(
         "blocks_list": track_blocks,
         "blockers_list": track_blockings,
         "estimate_point": track_estimate_points,
+        "archived_at": track_archive_at,
+        "closed_to": track_closed_to,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
@@ -597,7 +661,7 @@ def delete_issue_activity(
         IssueActivity(
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} deleted the issue",
+            comment=f"deleted the issue",
             verb="deleted",
             actor=actor,
             field="issue",
@@ -618,7 +682,7 @@ def create_comment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created a comment",
+            comment=f"created a comment",
             verb="created",
             actor=actor,
             field="comment",
@@ -643,7 +707,7 @@ def update_comment_activity(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated a comment",
+                comment=f"updated a comment",
                 verb="updated",
                 actor=actor,
                 field="comment",
@@ -664,7 +728,7 @@ def delete_comment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} deleted the comment",
+            comment=f"deleted the comment",
             verb="deleted",
             actor=actor,
             field="comment",
@@ -702,7 +766,7 @@ def create_cycle_issue_activity(
                 field="cycles",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated cycle from {old_cycle.name} to {new_cycle.name}",
+                comment=f"updated cycle from {old_cycle.name} to {new_cycle.name}",
                 old_identifier=old_cycle.id,
                 new_identifier=new_cycle.id,
             )
@@ -723,7 +787,7 @@ def create_cycle_issue_activity(
                 field="cycles",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} added cycle {cycle.name}",
+                comment=f"added cycle {cycle.name}",
                 new_identifier=cycle.id,
             )
         )
@@ -752,7 +816,7 @@ def delete_cycle_issue_activity(
                 field="cycles",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} removed this issue from {cycle.name if cycle is not None else None}",
+                comment=f"removed this issue from {cycle.name if cycle is not None else None}",
                 old_identifier=cycle.id if cycle is not None else None,
             )
         )
@@ -788,7 +852,7 @@ def create_module_issue_activity(
                 field="modules",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated module from {old_module.name} to {new_module.name}",
+                comment=f"updated module from {old_module.name} to {new_module.name}",
                 old_identifier=old_module.id,
                 new_identifier=new_module.id,
             )
@@ -808,7 +872,7 @@ def create_module_issue_activity(
                 field="modules",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} added module {module.name}",
+                comment=f"added module {module.name}",
                 new_identifier=module.id,
             )
         )
@@ -837,7 +901,7 @@ def delete_module_issue_activity(
                 field="modules",
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} removed this issue from {module.name if module is not None else None}",
+                comment=f"removed this issue from {module.name if module is not None else None}",
                 old_identifier=module.id if module is not None else None,
             )
         )
@@ -856,7 +920,7 @@ def create_link_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created a link",
+            comment=f"created a link",
             verb="created",
             actor=actor,
             field="link",
@@ -880,7 +944,7 @@ def update_link_activity(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"{actor.email} updated a link",
+                comment=f"updated a link",
                 verb="updated",
                 actor=actor,
                 field="link",
@@ -895,15 +959,22 @@ def update_link_activity(
 def delete_link_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
+
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} deleted the link",
+            comment=f"deleted the link",
             verb="deleted",
             actor=actor,
             field="link",
+            old_value=current_instance.get("url", ""),
+            new_value=""
         )
     )
 
@@ -921,11 +992,11 @@ def create_attachment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created an attachment",
+            comment=f"created an attachment",
             verb="created",
             actor=actor,
             field="attachment",
-            new_value=current_instance.get("access", ""),
+            new_value=current_instance.get("asset", ""),
             new_identifier=current_instance.get("id", None),
         )
     )
@@ -939,7 +1010,7 @@ def delete_attachment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} deleted the attachment",
+            comment=f"deleted the attachment",
             verb="deleted",
             actor=actor,
             field="attachment",
@@ -950,13 +1021,43 @@ def delete_attachment_activity(
 # Receive message from room group
 @shared_task
 def issue_activity(
-    type, requested_data, current_instance, issue_id, actor_id, project_id
+    type,
+    requested_data,
+    current_instance,
+    issue_id,
+    actor_id,
+    project_id,
+    subscriber=True,
 ):
     try:
         issue_activities = []
 
         actor = User.objects.get(pk=actor_id)
         project = Project.objects.get(pk=project_id)
+
+        if type not in [
+            "cycle.activity.created",
+            "cycle.activity.deleted",
+            "module.activity.created",
+            "module.activity.deleted",
+        ]:
+            issue = Issue.objects.filter(pk=issue_id).first()
+
+            if issue is not None:
+                try:
+                    issue.updated_at = timezone.now()
+                    issue.save(update_fields=["updated_at"])
+                except Exception as e:
+                    pass
+
+            if subscriber:
+                # add the user to issue subscriber
+                try:
+                    _ = IssueSubscriber.objects.get_or_create(
+                        issue_id=issue_id, subscriber=actor
+                    )
+                except Exception as e:
+                    pass
 
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
@@ -992,19 +1093,101 @@ def issue_activity(
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
             # Don't send activities if the actor is a bot
-            if settings.PROXY_BASE_URL:
+            try:
+                if settings.PROXY_BASE_URL:
+                    for issue_activity in issue_activities_created:
+                        headers = {"Content-Type": "application/json"}
+                        issue_activity_json = json.dumps(
+                            IssueActivitySerializer(issue_activity).data,
+                            cls=DjangoJSONEncoder,
+                        )
+                        _ = requests.post(
+                            f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
+                            json=issue_activity_json,
+                            headers=headers,
+                        )
+            except Exception as e:
+                capture_exception(e)
+
+        if type not in [
+            "cycle.activity.created",
+            "cycle.activity.deleted",
+            "module.activity.created",
+            "module.activity.deleted",
+        ]:
+            # Create Notifications
+            bulk_notifications = []
+
+            issue_subscribers = list(
+                IssueSubscriber.objects.filter(project=project, issue_id=issue_id)
+                .exclude(subscriber_id=actor_id)
+                .values_list("subscriber", flat=True)
+            )
+
+            issue_assignees = list(
+                IssueAssignee.objects.filter(project=project, issue_id=issue_id)
+                .exclude(assignee_id=actor_id)
+                .values_list("assignee", flat=True)
+            )
+
+            issue_subscribers = issue_subscribers + issue_assignees
+
+            issue = Issue.objects.filter(pk=issue_id).first()
+
+            # Add bot filtering
+            if (
+                issue is not None
+                and issue.created_by_id is not None
+                and not issue.created_by.is_bot
+                and str(issue.created_by_id) != str(actor_id)
+            ):
+                issue_subscribers = issue_subscribers + [issue.created_by_id]
+
+            for subscriber in issue_subscribers:
                 for issue_activity in issue_activities_created:
-                    headers = {"Content-Type": "application/json"}
-                    issue_activity_json = json.dumps(
-                        IssueActivitySerializer(issue_activity).data,
-                        cls=DjangoJSONEncoder,
+                    bulk_notifications.append(
+                        Notification(
+                            workspace=project.workspace,
+                            sender="in_app:issue_activities",
+                            triggered_by_id=actor_id,
+                            receiver_id=subscriber,
+                            entity_identifier=issue_id,
+                            entity_name="issue",
+                            project=project,
+                            title=issue_activity.comment,
+                            data={
+                                "issue": {
+                                    "id": str(issue_id),
+                                    "name": str(issue.name),
+                                    "identifier": str(issue.project.identifier),
+                                    "sequence_id": issue.sequence_id,
+                                    "state_name": issue.state.name,
+                                    "state_group": issue.state.group,
+                                },
+                                "issue_activity": {
+                                    "id": str(issue_activity.id),
+                                    "verb": str(issue_activity.verb),
+                                    "field": str(issue_activity.field),
+                                    "actor": str(issue_activity.actor_id),
+                                    "new_value": str(issue_activity.new_value),
+                                    "old_value": str(issue_activity.old_value),
+                                    "issue_comment": str(
+                                        issue_activity.issue_comment.comment_stripped
+                                        if issue_activity.issue_comment is not None
+                                        else ""
+                                    ),
+                                },
+                            },
+                        )
                     )
-                    _ = requests.post(
-                        f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
-                        json=issue_activity_json,
-                        headers=headers,
-                    )
+
+            # Bulk create notifications
+            Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+
         return
     except Exception as e:
+        # Print logs if in DEBUG mode
+        if settings.DEBUG:
+            print(e)
         capture_exception(e)
         return

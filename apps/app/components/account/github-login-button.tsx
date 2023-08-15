@@ -1,9 +1,14 @@
 import { useEffect, useState, FC } from "react";
+
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+
+// next-themes
+import { useTheme } from "next-themes";
 // images
-import githubImage from "/public/logos/github-black.png";
+import githubBlackImage from "/public/logos/github-black.png";
+import githubWhiteImage from "/public/logos/github-white.png";
 
 const { NEXT_PUBLIC_GITHUB_ID } = process.env;
 
@@ -11,15 +16,15 @@ export interface GithubLoginButtonProps {
   handleSignIn: React.Dispatch<string>;
 }
 
-export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
-  const { handleSignIn } = props;
-  // router
+export const GithubLoginButton: FC<GithubLoginButtonProps> = ({ handleSignIn }) => {
+  const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
+  const [gitCode, setGitCode] = useState<null | string>(null);
+
   const {
     query: { code },
   } = useRouter();
-  // states
-  const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
-  const [gitCode, setGitCode] = useState<null | string>(null);
+
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (code && !gitCode) {
@@ -35,13 +40,18 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
   }, []);
 
   return (
-    <div className="w-full flex justify-center items-center px-[3px]">
+    <div className="w-full flex justify-center items-center">
       <Link
         href={`https://github.com/login/oauth/authorize?client_id=${NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
       >
-        <button className="flex w-full items-center justify-center gap-3 rounded border border-brand-base p-2 text-sm font-medium text-brand-secondary duration-300 hover:bg-brand-surface-2">
-          <Image src={githubImage} height={20} width={20} color="#000" alt="GitHub Logo" />
-          <span>Sign In with Github</span>
+        <button className="flex w-full items-center justify-center gap-2 rounded border border-custom-border-300 p-2 text-sm font-medium text-custom-text-100 duration-300 hover:bg-custom-background-80 h-[46px]">
+          <Image
+            src={theme === "dark" ? githubWhiteImage : githubBlackImage}
+            height={20}
+            width={20}
+            alt="GitHub Logo"
+          />
+          <span>Sign in with GitHub</span>
         </button>
       </Link>
     </div>

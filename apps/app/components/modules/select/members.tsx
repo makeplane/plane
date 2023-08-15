@@ -30,18 +30,11 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
   );
   const options = members?.map((member) => ({
     value: member.member.id,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name
-          : member.member.email}
+        {member.member.display_name}
       </div>
     ),
   }));
@@ -50,23 +43,23 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
     <CustomSearchSelect
       value={value}
       label={
-        <div className="flex items-center gap-2 text-brand-secondary">
+        <div className="flex items-center gap-2 text-custom-text-200">
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="flex items-center justify-center gap-2">
               <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className="text-brand-secondary">{value.length} Assignees</span>
+              <span className="text-custom-text-200">{value.length} Assignees</span>
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
-              <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
-              <span className="text-brand-secondary">Assignee</span>
+              <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
+              <span className="text-custom-text-200">Assignee</span>
             </div>
           )}
         </div>
       }
       options={options}
       onChange={onChange}
-      height="md"
+      maxHeight="md"
       multiple
       noChevron
     />

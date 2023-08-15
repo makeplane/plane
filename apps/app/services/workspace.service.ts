@@ -13,6 +13,8 @@ import {
   IWorkspaceSearchResults,
   IProductUpdateResponse,
   ICurrentUserResponse,
+  IWorkspaceBulkInviteFormData,
+  IWorkspaceViewProps,
 } from "types";
 
 const trackEvent =
@@ -87,7 +89,7 @@ class WorkspaceService extends APIService {
 
   async inviteWorkspace(
     workspaceSlug: string,
-    data: any,
+    data: IWorkspaceBulkInviteFormData,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
@@ -153,6 +155,14 @@ class WorkspaceService extends APIService {
   }
 
   async workspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/workspace-members/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async workspaceMembersWithEmail(workspaceSlug: string): Promise<IWorkspaceMember[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -168,7 +178,10 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async updateWorkspaceView(workspaceSlug: string, data: any): Promise<any> {
+  async updateWorkspaceView(
+    workspaceSlug: string,
+    data: { view_props: IWorkspaceViewProps }
+  ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/workspace-views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -204,6 +217,16 @@ class WorkspaceService extends APIService {
       });
   }
 
+  async workspaceInvitationsWithEmail(
+    workspaceSlug: string
+  ): Promise<IWorkspaceMemberInvitation[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/invitations/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getWorkspaceInvitation(invitationId: string): Promise<IWorkspaceMemberInvitation> {
     return this.get(`/api/users/me/invitations/${invitationId}/`, { headers: {} })
       .then((response) => response?.data)
@@ -230,12 +253,15 @@ class WorkspaceService extends APIService {
 
   async searchWorkspace(
     workspaceSlug: string,
-    projectId: string,
-    query: string
+    params: {
+      project_id?: string;
+      search: string;
+      workspace_search: boolean;
+    }
   ): Promise<IWorkspaceSearchResults> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/search/?search=${query}`
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/search/`, {
+      params,
+    })
       .then((res) => res?.data)
       .catch((error) => {
         throw error?.response?.data;

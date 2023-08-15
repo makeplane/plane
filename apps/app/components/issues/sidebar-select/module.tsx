@@ -21,12 +21,14 @@ type Props = {
   issueDetail: IIssue | undefined;
   handleModuleChange: (module: IModule) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
 export const SidebarModuleSelect: React.FC<Props> = ({
   issueDetail,
   handleModuleChange,
   userAuth,
+  disabled = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -55,11 +57,11 @@ export const SidebarModuleSelect: React.FC<Props> = ({
 
   const issueModule = issueDetail?.issue_module;
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <RectangleGroupIcon className="h-4 w-4 flex-shrink-0" />
         <p>Module</p>
       </div>
@@ -73,7 +75,9 @@ export const SidebarModuleSelect: React.FC<Props> = ({
               }`}
             >
               <span className="w-full max-w-[125px] truncate text-left sm:block">
-                <span className={`${issueModule ? "text-brand-base" : "text-brand-secondary"}`}>
+                <span
+                  className={`${issueModule ? "text-custom-text-100" : "text-custom-text-200"}`}
+                >
                   {truncateText(
                     `${modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}`,
                     15
@@ -88,7 +92,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
               ? removeIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
               : handleModuleChange(modules?.find((m) => m.id === value) as IModule);
           }}
-          width="auto"
+          width="w-full"
           position="right"
           maxHeight="rg"
           disabled={isNotAllowed}

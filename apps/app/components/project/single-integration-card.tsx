@@ -93,7 +93,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 rounded-[10px] border border-brand-base bg-brand-base p-5">
+        <div className="flex items-center justify-between gap-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 flex-shrink-0">
               <Image
@@ -105,7 +105,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
               <h3 className="flex items-center gap-4 text-xl font-semibold">
                 {integration.integration_detail.title}
               </h3>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 {integrationDetails[integration.integration_detail.provider].description}
               </p>
             </div>

@@ -3,6 +3,7 @@ import jwt
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from uuid import uuid4
+
 # Django imports
 from django.db import IntegrityError
 from django.db.models import Prefetch
@@ -12,15 +13,22 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import (
-    CharField,
-    Count,
+    Prefetch,
     OuterRef,
     Func,
     F,
     Q,
+    Count,
+    Case,
+    Value,
+    CharField,
+    When,
+    Max,
+    IntegerField,
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
+from django.contrib.auth.hashers import make_password
 
 # Third party modules
 from rest_framework import status
@@ -37,6 +45,9 @@ from plane.api.serializers import (
     UserLiteSerializer,
     ProjectMemberSerializer,
     WorkspaceThemeSerializer,
+    IssueActivitySerializer,
+    IssueLiteSerializer,
+    WorkspaceMemberAdminSerializer
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -58,9 +69,24 @@ from plane.db.models import (
     PageFavorite,
     Page,
     IssueViewFavorite,
+    IssueLink,
+    IssueAttachment,
+    IssueSubscriber,
+    Project,
+    Label,
+    WorkspaceMember,
+    CycleIssue,
+    IssueReaction,
 )
-from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
+from plane.api.permissions import (
+    WorkSpaceBasePermission,
+    WorkSpaceAdminPermission,
+    WorkspaceEntityPermission,
+    WorkspaceViewerPermission,
+)
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
+from plane.utils.issue_filters import issue_filters
+from plane.utils.grouper import group_results
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -93,13 +119,33 @@ class WorkSpaceViewSet(BaseViewSet):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
-        return self.filter_queryset(
-            super().get_queryset().select_related("owner")
-        ).order_by("name").filter(workspace_member__member=self.request.user).annotate(total_members=member_count).annotate(total_issues=issue_count)
+        return (
+            self.filter_queryset(super().get_queryset().select_related("owner"))
+            .order_by("name")
+            .filter(workspace_member__member=self.request.user)
+            .annotate(total_members=member_count)
+            .annotate(total_issues=issue_count)
+            .select_related("owner")
+        )
 
     def create(self, request):
         try:
             serializer = WorkSpaceSerializer(data=request.data)
+
+            slug = request.data.get("slug", False)
+            name = request.data.get("name", False)
+
+            if not name or not slug:
+                return Response(
+                    {"error": "Both name and slug are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if len(name) > 80 or len(slug) > 48:
+                return Response(
+                    {"error": "The maximum length for name is 80 and for slug is 48"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             if serializer.is_valid():
                 serializer.save(owner=request.user)
@@ -160,14 +206,20 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             )
 
             workspace = (
-                Workspace.objects.prefetch_related(
-                    Prefetch("workspace_member", queryset=WorkspaceMember.objects.all())
+                (
+                    Workspace.objects.prefetch_related(
+                        Prefetch(
+                            "workspace_member", queryset=WorkspaceMember.objects.all()
+                        )
+                    )
+                    .filter(
+                        workspace_member__member=request.user,
+                    )
+                    .select_related("owner")
                 )
-                .filter(
-                    workspace_member__member=request.user,
-                )
-                .select_related("owner")
-            ).annotate(total_members=member_count).annotate(total_issues=issue_count)
+                .annotate(total_members=member_count)
+                .annotate(total_issues=issue_count)
+            )
 
             serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -216,9 +268,20 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 )
 
             # check for role level
-            requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
-            if len([email for email in emails if int(email.get("role", 10)) > requesting_user.role]):
-                return Response({"error": "You cannot invite a user with higher role"}, status=status.HTTP_400_BAD_REQUEST)
+            requesting_user = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+            if len(
+                [
+                    email
+                    for email in emails
+                    if int(email.get("role", 10)) > requesting_user.role
+                ]
+            ):
+                return Response(
+                    {"error": "You cannot invite a user with higher role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             workspace = Workspace.objects.get(slug=slug)
 
@@ -276,14 +339,18 @@ class InviteWorkspaceEndpoint(BaseAPIView):
 
             # create the user if signup is disabled
             if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
-                _ = User.objects.bulk_create([
-                    User(
-                        email=email.get("email"),
-                        password=str(uuid4().hex),
-                        is_password_autoset=True
-                    )
-                     for email in emails
-                ], batch_size=100)
+                _ = User.objects.bulk_create(
+                    [
+                        User(
+                            username=str(uuid4().hex),
+                            email=invitation.email,
+                            password=make_password(uuid4().hex),
+                            is_password_autoset=True,
+                        )
+                        for invitation in workspace_invitations
+                    ],
+                    batch_size=100,
+                )
 
             for invitation in workspace_invitations:
                 workspace_invitation.delay(
@@ -400,6 +467,30 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             .select_related("workspace", "workspace__owner", "created_by")
         )
 
+    def destroy(self, request, slug, pk):
+        try:
+            workspace_member_invite = WorkspaceMemberInvite.objects.get(
+                pk=pk, workspace__slug=slug
+            )
+            # delete the user if signup is disabled
+            if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
+                user = User.objects.filter(email=workspace_member_invite.email).first()
+                if user is not None:
+                    user.delete()
+            workspace_member_invite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except WorkspaceMemberInvite.DoesNotExist:
+            return Response(
+                {"error": "Workspace member invite does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class UserWorkspaceInvitationsEndpoint(BaseViewSet):
     serializer_class = WorkSpaceMemberInviteSerializer
@@ -447,7 +538,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
-    serializer_class = WorkSpaceMemberSerializer
+    serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
 
     permission_classes = [
@@ -455,7 +546,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     ]
 
     search_fields = [
-        "member__email",
+        "member__display_name",
         "member__first_name",
     ]
 
@@ -530,6 +621,19 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Check for the only member in the workspace
+            if (
+                workspace_member.role == 20
+                and WorkspaceMember.objects.filter(
+                    workspace__slug=slug, role=20
+                ).count()
+                == 1
+            ):
+                return Response(
+                    {"error": "Cannot delete the only Admin for the workspace"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Delete the user also from all the projects
             ProjectMember.objects.filter(
                 workspace__slug=slug, member=workspace_member.member
@@ -587,7 +691,7 @@ class TeamMemberViewSet(BaseViewSet):
     ]
 
     search_fields = [
-        "member__email",
+        "member__display_name",
         "member__first_name",
     ]
 
@@ -865,7 +969,9 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             )
 
             state_distribution = (
-                Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
+                Issue.issue_objects.filter(
+                    workspace__slug=slug, assignees__in=[request.user]
+                )
                 .annotate(state_group=F("state__group"))
                 .values("state_group")
                 .annotate(state_count=Count("state_group"))
@@ -934,6 +1040,425 @@ class WorkspaceThemeViewSet(BaseViewSet):
                 {"error": "Workspace does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
+    def get(self, request, slug, user_id):
+        try:
+            filters = issue_filters(request.query_params, "GET")
+
+            state_distribution = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .annotate(state_group=F("state__group"))
+                .values("state_group")
+                .annotate(state_count=Count("state_group"))
+                .order_by("state_group")
+            )
+
+            priority_order = ["urgent", "high", "medium", "low", None]
+
+            priority_distribution = (
+                Issue.objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .values("priority")
+                .annotate(priority_count=Count("priority"))
+                .annotate(
+                    priority_order=Case(
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
+                        default=Value(len(priority_order)),
+                        output_field=IntegerField(),
+                    )
+                )
+                .order_by("priority_order")
+            )
+
+            created_issues = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                    created_by_id=user_id,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            assigned_issues_count = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            pending_issues_count = (
+                Issue.issue_objects.filter(
+                    ~Q(state__group__in=["completed", "cancelled"]),
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            completed_issues_count = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[user_id],
+                    state__group="completed",
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            subscribed_issues_count = (
+                IssueSubscriber.objects.filter(
+                    workspace__slug=slug,
+                    subscriber_id=user_id,
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .count()
+            )
+
+            upcoming_cycles = CycleIssue.objects.filter(
+                workspace__slug=slug,
+                cycle__start_date__gt=timezone.now().date(),
+                issue__assignees__in=[
+                    user_id,
+                ],
+            ).values("cycle__name", "cycle__id", "cycle__project_id")
+
+            present_cycle = CycleIssue.objects.filter(
+                workspace__slug=slug,
+                cycle__start_date__lt=timezone.now().date(),
+                cycle__end_date__gt=timezone.now().date(),
+                issue__assignees__in=[
+                    user_id,
+                ],
+            ).values("cycle__name", "cycle__id", "cycle__project_id")
+
+            return Response(
+                {
+                    "state_distribution": state_distribution,
+                    "priority_distribution": priority_distribution,
+                    "created_issues": created_issues,
+                    "assigned_issues": assigned_issues_count,
+                    "completed_issues": completed_issues_count,
+                    "pending_issues": pending_issues_count,
+                    "subscribed_issues": subscribed_issues_count,
+                    "present_cycles": present_cycle,
+                    "upcoming_cycles": upcoming_cycles,
+                }
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceUserActivityEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug, user_id):
+        try:
+            projects = request.query_params.getlist("project", [])
+
+            queryset = IssueActivity.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+                actor=user_id,
+            ).select_related("actor", "workspace", "issue", "project")
+
+            if projects:
+                queryset = queryset.filter(project__in=projects)
+
+            return self.paginate(
+                request=request,
+                queryset=queryset,
+                on_results=lambda issue_activities: IssueActivitySerializer(
+                    issue_activities, many=True
+                ).data,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceUserProfileEndpoint(BaseAPIView):
+    def get(self, request, slug, user_id):
+        try:
+            user_data = User.objects.get(pk=user_id)
+
+            requesting_workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+            projects = []
+            if requesting_workspace_member.role >= 10:
+                projects = (
+                    Project.objects.filter(
+                        workspace__slug=slug,
+                        project_projectmember__member=request.user,
+                    )
+                    .annotate(
+                        created_issues=Count(
+                            "project_issue",
+                            filter=Q(project_issue__created_by_id=user_id),
+                        )
+                    )
+                    .annotate(
+                        assigned_issues=Count(
+                            "project_issue",
+                            filter=Q(project_issue__assignees__in=[user_id]),
+                        )
+                    )
+                    .annotate(
+                        completed_issues=Count(
+                            "project_issue",
+                            filter=Q(
+                                project_issue__completed_at__isnull=False,
+                                project_issue__assignees__in=[user_id],
+                            ),
+                        )
+                    )
+                    .annotate(
+                        pending_issues=Count(
+                            "project_issue",
+                            filter=Q(
+                                project_issue__state__group__in=[
+                                    "backlog",
+                                    "unstarted",
+                                    "started",
+                                ],
+                                project_issue__assignees__in=[user_id],
+                            ),
+                        )
+                    )
+                    .values(
+                        "id",
+                        "name",
+                        "identifier",
+                        "emoji",
+                        "icon_prop",
+                        "created_issues",
+                        "assigned_issues",
+                        "completed_issues",
+                        "pending_issues",
+                    )
+                )
+
+            return Response(
+                {
+                    "project_data": projects,
+                    "user_data": {
+                        "email": user_data.email,
+                        "first_name": user_data.first_name,
+                        "last_name": user_data.last_name,
+                        "avatar": user_data.avatar,
+                        "cover_image": user_data.cover_image,
+                        "date_joined": user_data.date_joined,
+                        "user_timezone": user_data.user_timezone,
+                        "display_name": user_data.display_name,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+        except WorkspaceMember.DoesNotExist:
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def get(self, request, slug, user_id):
+        try:
+            filters = issue_filters(request.query_params, "GET")
+            order_by_param = request.GET.get("order_by", "-created_at")
+            issue_queryset = (
+                Issue.issue_objects.filter(
+                    Q(assignees__in=[user_id])
+                    | Q(created_by_id=user_id)
+                    | Q(issue_subscribers__subscriber_id=user_id),
+                    workspace__slug=slug,
+                    project__project_projectmember__member=request.user,
+                )
+                .filter(**filters)
+                .annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .select_related("project", "workspace", "state", "parent")
+                .prefetch_related("assignees", "labels")
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related("actor"),
+                    )
+                )
+                .order_by("-created_at")
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+            ).distinct()
+
+            # Priority Ordering
+            if order_by_param == "priority" or order_by_param == "-priority":
+                priority_order = (
+                    priority_order
+                    if order_by_param == "priority"
+                    else priority_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    priority_order=Case(
+                        *[
+                            When(priority=p, then=Value(i))
+                            for i, p in enumerate(priority_order)
+                        ],
+                        output_field=CharField(),
+                    )
+                ).order_by("priority_order")
+
+            # State Ordering
+            elif order_by_param in [
+                "state__name",
+                "state__group",
+                "-state__name",
+                "-state__group",
+            ]:
+                state_order = (
+                    state_order
+                    if order_by_param in ["state__name", "state__group"]
+                    else state_order[::-1]
+                )
+                issue_queryset = issue_queryset.annotate(
+                    state_order=Case(
+                        *[
+                            When(state__group=state_group, then=Value(i))
+                            for i, state_group in enumerate(state_order)
+                        ],
+                        default=Value(len(state_order)),
+                        output_field=CharField(),
+                    )
+                ).order_by("state_order")
+            # assignee and label ordering
+            elif order_by_param in [
+                "labels__name",
+                "-labels__name",
+                "assignees__first_name",
+                "-assignees__first_name",
+            ]:
+                issue_queryset = issue_queryset.annotate(
+                    max_values=Max(
+                        order_by_param[1::]
+                        if order_by_param.startswith("-")
+                        else order_by_param
+                    )
+                ).order_by(
+                    "-max_values" if order_by_param.startswith("-") else "max_values"
+                )
+            else:
+                issue_queryset = issue_queryset.order_by(order_by_param)
+
+            issues = IssueLiteSerializer(issue_queryset, many=True).data
+
+            ## Grouping the results
+            group_by = request.GET.get("group_by", False)
+            if group_by:
+                return Response(
+                    group_results(issues, group_by), status=status.HTTP_200_OK
+                )
+
+            return Response(issues, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceLabelsEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceViewerPermission,
+    ]
+
+    def get(self, request, slug):
+        try:
+            labels = Label.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=request.user,
+            ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
+            return Response(labels, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceMembersEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        try:
+            workspace_members = WorkspaceMember.objects.filter(
+                workspace__slug=slug
+            ).select_related("workspace", "member")
+            serialzier = WorkSpaceMemberSerializer(workspace_members, many=True)
+            return Response(serialzier.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

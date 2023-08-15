@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
-
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -13,19 +11,47 @@ import { Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { ICustomTheme } from "types";
+// mobx react lite
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// next themes
+import { useTheme } from "next-themes";
 
-const ProfilePreferences = () => {
+const ProfilePreferences = observer(() => {
   const { user: myProfile } = useUserAuth();
+
+  const store: any = useMobxStore();
   const { theme } = useTheme();
+
+  console.log("store", store?.theme?.theme);
+  console.log("theme", theme);
+
   const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
+
   const [preLoadedData, setPreLoadedData] = useState<ICustomTheme | null>(null);
 
   useEffect(() => {
-    if (theme === "custom") {
-      if (myProfile?.theme.palette) setPreLoadedData(myProfile.theme);
-      if (!customThemeSelectorOptions) setCustomThemeSelectorOptions(true);
+    if (store?.user && store?.theme?.theme === "custom") {
+      const currentTheme = store?.user?.currentUserSettings?.theme;
+      if (currentTheme.palette)
+        setPreLoadedData({
+          background: currentTheme.background !== "" ? currentTheme.background : "#0d101b",
+          text: currentTheme.text !== "" ? currentTheme.text : "#c5c5c5",
+          primary: currentTheme.primary !== "" ? currentTheme.primary : "#3f76ff",
+          sidebarBackground:
+            currentTheme.sidebarBackground !== "" ? currentTheme.sidebarBackground : "#0d101b",
+          sidebarText: currentTheme.sidebarText !== "" ? currentTheme.sidebarText : "#c5c5c5",
+          darkPalette: false,
+          palette:
+            currentTheme.palette !== ",,,,"
+              ? currentTheme.palette
+              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+          theme: "custom",
+        });
+      setCustomThemeSelectorOptions((prevData) => true);
     }
-  }, [myProfile, theme]);
+  }, [store, store?.theme?.theme]);
 
   return (
     <WorkspaceAuthorizationLayout
@@ -36,11 +62,11 @@ const ProfilePreferences = () => {
       }
     >
       {myProfile ? (
-        <div className="px-24 py-8">
-          <div className="mb-12 space-y-6">
+        <div className="p-8">
+          <div className="mb-8 space-y-6">
             <div>
               <h3 className="text-3xl font-semibold">Profile Settings</h3>
-              <p className="mt-1 text-brand-secondary">
+              <p className="mt-1 text-custom-text-200">
                 This information will be visible to only you.
               </p>
             </div>
@@ -49,14 +75,13 @@ const ProfilePreferences = () => {
           <div className="space-y-8 sm:space-y-12">
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-brand-base">Theme</h4>
-                <p className="text-sm text-brand-secondary">
+                <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
+                <p className="text-sm text-custom-text-200">
                   Select or customize your interface color scheme.
                 </p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <ThemeSwitch
-                  user={myProfile}
                   setPreLoadedData={setPreLoadedData}
                   customThemeSelectorOptions={customThemeSelectorOptions}
                   setCustomThemeSelectorOptions={setCustomThemeSelectorOptions}
@@ -73,6 +98,6 @@ const ProfilePreferences = () => {
       )}
     </WorkspaceAuthorizationLayout>
   );
-};
+});
 
 export default ProfilePreferences;

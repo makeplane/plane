@@ -9,6 +9,7 @@ import type {
   IIssueComment,
   IIssueLabels,
   IIssueViewOptions,
+  ISubIssueResponse,
 } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
@@ -59,7 +60,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<IIssue> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -247,6 +248,14 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
+  async getWorkspaceLabels(workspaceSlug: string): Promise<IIssueLabels[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/labels/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabels[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`)
       .then((response) => response?.data)
@@ -345,26 +354,6 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async updateIssue(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
-    return this.put(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
-      data
-    )
-      .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async patchIssue(
     workspaceSlug: string,
     projectId: string,
@@ -420,7 +409,11 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async subIssues(workspaceSlug: string, projectId: string, issueId: string) {
+  async subIssues(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<ISubIssueResponse> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`
     )
@@ -519,6 +512,52 @@ class ProjectIssuesServices extends APIService {
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/${assetId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getArchivedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/`, {
+      params: queries,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async unarchiveIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/unarchive/${issueId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async retrieveArchivedIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issueId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteArchivedIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issuesId: string
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issuesId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

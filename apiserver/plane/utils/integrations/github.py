@@ -113,7 +113,7 @@ def get_github_repo_details(access_tokens_url, owner, repo):
         last_url = labels_response.links.get("last").get("url")
         parsed_url = urlparse(last_url)
         last_page_value = parse_qs(parsed_url.query)["page"][0]
-        total_labels = total_labels + 100 * (last_page_value - 1)
+        total_labels = total_labels + 100 * (int(last_page_value) - 1)
 
         # Get labels in last page
         last_page_labels = requests.get(last_url, headers=headers).json()

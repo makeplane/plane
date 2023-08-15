@@ -16,6 +16,11 @@ export interface ICycle {
   created_at: Date;
   created_by: string;
   description: string;
+  distribution: {
+    assignees: TAssigneesDistribution[];
+    completion_chart: TCompletionChartDistribution;
+    labels: TLabelsDistribution[];
+  };
   end_date: string | null;
   id: string;
   is_favorite: boolean;
@@ -24,6 +29,7 @@ export interface ICycle {
   owned_by: IUser;
   project: string;
   project_detail: IProjectLite;
+  sort_order: number;
   start_date: string | null;
   started_issues: number;
   total_issues: number;
@@ -37,6 +43,30 @@ export interface ICycle {
   workspace: string;
   workspace_detail: IWorkspaceLite;
 }
+
+export type TAssigneesDistribution = {
+  assignee_id: string | null;
+  avatar: string | null;
+  completed_issues: number;
+  first_name: string | null;
+  last_name: string | null;
+  display_name: string | null;
+  pending_issues: number;
+  total_issues: number;
+};
+
+export type TCompletionChartDistribution = {
+  [key: string]: number;
+};
+
+export type TLabelsDistribution = {
+  color: string | null;
+  completed_issues: number;
+  label_id: string | null;
+  label_name: string | null;
+  pending_issues: number;
+  total_issues: number;
+};
 
 export interface CycleIssueResponse {
   id: string;
@@ -57,3 +87,9 @@ export type SelectCycleType =
   | undefined;
 
 export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | null;
+
+export type CycleDateCheckData = {
+  start_date: string;
+  end_date: string;
+  cycle_id?: string;
+};

@@ -13,10 +13,11 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from .common import *  # noqa
 
 # Database
-DEBUG = False
+DEBUG = int(os.environ.get("DEBUG", 0)) == 1
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "plane",
         "USER": os.environ.get("PGUSER", ""),
         "PASSWORD": os.environ.get("PGPASSWORD", ""),
@@ -69,8 +70,14 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-# Simplified static file serving.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+INSTALLED_APPS += ("scout_apm.django",)
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 if bool(os.environ.get("SENTRY_DSN", False)):
     sentry_sdk.init(
@@ -81,11 +88,12 @@ if bool(os.environ.get("SENTRY_DSN", False)):
         traces_sample_rate=1,
         send_default_pii=True,
         environment="production",
+        profiles_sample_rate=1.0,
     )
 
 if DOCKERIZED and USE_MINIO:
     INSTALLED_APPS += ("storages",)
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
     # The AWS access key to use.
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
     # The AWS secret access key to use.
@@ -93,7 +101,9 @@ if DOCKERIZED and USE_MINIO:
     # The name of the bucket to store files in.
     AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
     # The full URL to the S3 endpoint. Leave blank to use the default region URL.
-    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL",  "http://plane-minio:9000")
+    AWS_S3_ENDPOINT_URL = os.environ.get(
+        "AWS_S3_ENDPOINT_URL", "http://plane-minio:9000"
+    )
     # Default permissions
     AWS_DEFAULT_ACL = "public-read"
     AWS_QUERYSTRING_AUTH = False
@@ -184,7 +194,10 @@ else:
     # extra characters appended.
     AWS_S3_FILE_OVERWRITE = False
 
-    DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"
+    STORAGES["default"] = {
+        "BACKEND": "django_s3_storage.storage.S3Storage",
+    }
+
 # AWS Settings End
 
 # Enable Connection Pooling (if desired)
@@ -198,9 +211,6 @@ ALLOWED_HOSTS = [
     "*",
 ]
 
-
-# Simplified static file serving.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -238,8 +248,9 @@ PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
+OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
-GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
+GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 
@@ -261,3 +272,8 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 
 
 ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
+
+# Scout Settings
+SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
+SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
+SCOUT_NAME = "Plane"

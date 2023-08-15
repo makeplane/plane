@@ -14,14 +14,20 @@ type Props = {
   value: string | null;
   onChange: (val: string) => void;
   userAuth: UserAuth;
+  disabled?: boolean;
 };
 
-export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+export const SidebarPrioritySelect: React.FC<Props> = ({
+  value,
+  onChange,
+  userAuth,
+  disabled = false,
+}) => {
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-brand-secondary sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
         <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
         <p>Priority</p>
       </div>
@@ -29,10 +35,10 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, userAu
         <CustomSelect
           label={
             <div className="flex items-center gap-2 text-left capitalize">
-              <span className={`${value ? "text-brand-base" : "text-brand-secondary"}`}>
+              <span className={`${value ? "text-custom-text-100" : "text-custom-text-200"}`}>
                 {getPriorityIcon(value ?? "None", "text-sm")}
               </span>
-              <span className={`${value ? "text-brand-base" : "text-brand-secondary"}`}>
+              <span className={`${value ? "text-custom-text-100" : "text-custom-text-200"}`}>
                 {value ?? "None"}
               </span>
             </div>

@@ -14,24 +14,24 @@ type Props = {
 export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => {
   let tooltipValue: string | number = "";
 
+  const renderAssigneeName = (assigneeId: string): string => {
+    const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
+
+    if (!assignee) return "No assignee";
+
+    return assignee.assignees__display_name || "No assignee";
+  };
+
   if (params.segment) {
     if (DATE_KEYS.includes(params.segment)) tooltipValue = renderMonthAndYear(datum.id);
-    else if (params.segment === "assignees__email") {
-      const assignee = analytics.extras.assignee_details.find(
-        (a) => a.assignees__email === datum.id
-      );
-
-      if (assignee)
-        tooltipValue = assignee.assignees__first_name + " " + assignee.assignees__last_name;
-      else tooltipValue = "No assignees";
-    } else tooltipValue = datum.id;
+    else tooltipValue = datum.id;
   } else {
     if (DATE_KEYS.includes(params.x_axis)) tooltipValue = datum.indexValue;
     else tooltipValue = datum.id === "count" ? "Issue count" : "Estimate";
   }
 
   return (
-    <div className="flex items-center gap-2 rounded-md border border-brand-base bg-brand-surface-2 p-2 text-xs">
+    <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
       <span
         className="h-3 w-3 rounded"
         style={{
@@ -39,7 +39,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
         }}
       />
       <span
-        className={`font-medium text-brand-secondary ${
+        className={`font-medium text-custom-text-200 ${
           params.segment
             ? params.segment === "priority" || params.segment === "state__group"
               ? "capitalize"
@@ -49,7 +49,10 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
             : ""
         }`}
       >
-        {tooltipValue}:
+        {params.segment === "assignees__id"
+          ? renderAssigneeName(tooltipValue.toString())
+          : tooltipValue}
+        :
       </span>
       <span>{datum.value}</span>
     </div>

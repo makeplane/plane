@@ -27,11 +27,14 @@ import {
   DangerButton,
 } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// helpers
+import { renderEmoji } from "helpers/emoji.helper";
+import { truncateText } from "helpers/string.helper";
 // types
 import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 
@@ -56,6 +59,13 @@ const GeneralSettings: NextPage = () => {
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: memberDetails, error } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -92,7 +102,13 @@ const GeneralSettings: NextPage = () => {
           (prevData) => ({ ...prevData, ...res }),
           false
         );
-        mutate(PROJECTS_LIST(workspaceSlug as string));
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
+
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -137,15 +153,29 @@ const GeneralSettings: NextPage = () => {
     else await updateProject(payload);
   };
 
+  const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+
+    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    const formattedValue = alphanumericValue.toUpperCase();
+
+    setValue("identifier", formattedValue);
+  };
+
+  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
+
+  const isAdmin = memberDetails?.role === 20;
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
+            linkTruncate
           />
-          <BreadcrumbItem title="General Settings" />
+          <BreadcrumbItem title="General Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -164,7 +194,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Icon & Name</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Select an icon and a name for your project.
               </p>
             </div>
@@ -176,22 +206,7 @@ const GeneralSettings: NextPage = () => {
                     name="emoji_and_icon"
                     render={({ field: { value, onChange } }) => (
                       <EmojiIconPicker
-                        label={
-                          value ? (
-                            typeof value === "object" ? (
-                              <span
-                                style={{ color: value.color }}
-                                className="material-symbols-rounded text-lg"
-                              >
-                                {value.name}
-                              </span>
-                            ) : (
-                              String.fromCodePoint(parseInt(value))
-                            )
-                          ) : (
-                            "Icon"
-                          )
-                        }
+                        label={value ? renderEmoji(value) : "Icon"}
                         value={value}
                         onChange={onChange}
                       />
@@ -224,7 +239,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Description</h4>
-              <p className="text-sm text-brand-secondary">Give a description to your project.</p>
+              <p className="text-sm text-custom-text-200">Give a description to your project.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -247,13 +262,13 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Cover Photo</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Select your cover photo from the given library.
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border border-brand-base p-1">
+                <div className="h-32 w-full rounded border border-custom-border-200 p-1">
                   <div className="relative h-full w-full rounded">
                     <img
                       src={watch("cover_image")!}
@@ -281,7 +296,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Identifier</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Create a 1-6 characters{"'"} identifier for the project.
               </p>
             </div>
@@ -293,10 +308,11 @@ const GeneralSettings: NextPage = () => {
                   error={errors.identifier}
                   register={register}
                   placeholder="Enter identifier"
+                  onChange={handleIdentifierChange}
                   validations={{
                     required: "Identifier is required",
                     validate: (value) =>
-                      /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
+                      /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
                     minLength: {
                       value: 1,
                       message: "Identifier must at least be of 1 character",
@@ -317,7 +333,7 @@ const GeneralSettings: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Network</h4>
-              <p className="text-sm text-brand-secondary">Select privacy type for the project.</p>
+              <p className="text-sm text-custom-text-200">Select privacy type for the project.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -328,16 +344,12 @@ const GeneralSettings: NextPage = () => {
                     <CustomSelect
                       value={value}
                       onChange={onChange}
-                      label={
-                        Object.keys(NETWORK_CHOICES).find((k) => k === value.toString())
-                          ? NETWORK_CHOICES[value.toString() as keyof typeof NETWORK_CHOICES]
-                          : "Select network"
-                      }
+                      label={currentNetwork?.label ?? "Select network"}
                       input
                     >
-                      {Object.keys(NETWORK_CHOICES).map((key) => (
-                        <CustomSelect.Option key={key} value={parseInt(key)}>
-                          {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
+                      {NETWORK_CHOICES.map((network) => (
+                        <CustomSelect.Option key={network.key} value={network.key}>
+                          {network.label}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
@@ -352,7 +364,7 @@ const GeneralSettings: NextPage = () => {
           </div>
           <div className="sm:text-right">
             {projectDetails ? (
-              <SecondaryButton type="submit" loading={isSubmitting}>
+              <SecondaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
                 {isSubmitting ? "Updating Project..." : "Update Project"}
               </SecondaryButton>
             ) : (
@@ -361,32 +373,34 @@ const GeneralSettings: NextPage = () => {
               </Loader>
             )}
           </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Danger Zone</h4>
-              <p className="text-sm text-brand-secondary">
-                The danger zone of the project delete page is a critical area that requires careful
-                consideration and attention. When deleting a project, all of the data and resources
-                within that project will be permanently removed and cannot be recovered.
-              </p>
+          {memberDetails?.role === 20 && (
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Danger Zone</h4>
+                <p className="text-sm text-custom-text-200">
+                  The danger zone of the project delete page is a critical area that requires
+                  careful consideration and attention. When deleting a project, all of the data and
+                  resources within that project will be permanently removed and cannot be recovered.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                {projectDetails ? (
+                  <div>
+                    <DangerButton
+                      onClick={() => setSelectedProject(projectDetails.id ?? null)}
+                      outline
+                    >
+                      Delete Project
+                    </DangerButton>
+                  </div>
+                ) : (
+                  <Loader className="mt-2 w-full">
+                    <Loader.Item height="46px" width="100px" />
+                  </Loader>
+                )}
+              </div>
             </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <div>
-                  <DangerButton
-                    onClick={() => setSelectedProject(projectDetails.id ?? null)}
-                    outline
-                  >
-                    Delete Project
-                  </DangerButton>
-                </div>
-              ) : (
-                <Loader className="mt-2 w-full">
-                  <Loader.Item height="46px" width="100px" />
-                </Loader>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </form>
     </ProjectAuthorizationWrapper>

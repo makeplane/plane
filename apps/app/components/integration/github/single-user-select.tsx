@@ -44,25 +44,18 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
   );
 
   const options = members?.map((member) => ({
-    value: member.member.email,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    value: member.member.display_name,
+    query: member.member.display_name ?? "",
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name + "(" + member.member.email + ")"
-          : member.member.email}
+        {member.member.display_name}
       </div>
     ),
   }));
 
   return (
-    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-brand-surface-2 px-2 py-3">
+    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-custom-background-80 px-2 py-3">
       <div className="flex items-center gap-2">
         <div className="relative h-8 w-8 flex-shrink-0 rounded">
           <img

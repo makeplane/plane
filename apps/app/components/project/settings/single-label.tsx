@@ -40,7 +40,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
   return (
     <>
       {children && children.length === 0 ? (
-        <div className="gap-2 space-y-3 divide-y rounded-md border  border-brand-base p-3 md:w-2/3">
+        <div className="gap-2 space-y-3 divide-y rounded-md border  border-custom-border-200 p-3 md:w-2/3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span
@@ -61,12 +61,12 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
           </div>
           <div className={`flex items-center gap-2 ${newLabelForm ? "" : "hidden"}`}>
             <div className="h-8 w-8 flex-shrink-0">
-              <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-brand-surface-2">
+              <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-custom-background-80">
                 {({ open }) => (
                   <>
                     <Popover.Button
                       className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                        open ? "text-brand-base" : "text-brand-secondary"
+                        open ? "text-custom-text-100" : "text-custom-text-200"
                       }`}
                     >
                       {watch("color") && watch("color") !== "" && (
@@ -123,13 +123,13 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
           </div>
         </div>
       ) : (
-        <div className="rounded-md bg-brand-surface-2 p-4 text-brand-base">
+        <div className="rounded-md bg-custom-background-80 p-4 text-custom-text-100">
           <h3 className="flex items-center gap-2 font-medium leading-5">
             <RectangleGroupIcon className="h-5 w-5" />
             This is the label group title
           </h3>
           <div className="mt-4 pl-5">
-            <div className="group flex items-center justify-between rounded p-2 text-sm hover:bg-brand-surface-1">
+            <div className="group flex items-center justify-between rounded p-2 text-sm hover:bg-custom-background-90">
               <h5 className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-red-600" />
                 This is the label title

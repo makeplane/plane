@@ -3,7 +3,7 @@ import type { Props } from "./types";
 export const AlarmClockIcon: React.FC<Props> = ({
   width = "24",
   height = "24",
-  color = "#858E96",
+  color = "rgb(var(--color-text-200))",
   className,
 }) => (
   <svg

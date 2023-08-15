@@ -59,32 +59,36 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
   };
 
   return (
-    <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(forgotPassword)}>
-      <div>
+    <form
+      className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto"
+      onSubmit={handleSubmit(forgotPassword)}
+    >
+      <div className="space-y-1">
         <Input
           id="email"
           type="email"
           name="email"
           register={register}
           validations={{
-            required: "Email ID is required",
+            required: "Email address is required",
             validate: (value) =>
               /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                 value
-              ) || "Email ID is not valid",
+              ) || "Email address is not valid",
           }}
           error={errors.email}
-          placeholder="Enter registered Email ID"
+          placeholder="Enter registered email address.."
+          className="border-custom-border-300 h-[46px]"
         />
       </div>
-      <div className="mt-5 flex items-center gap-2">
+      <div className="mt-5 flex flex-col-reverse sm:flex-row items-center gap-2">
         <SecondaryButton
-          className="w-full text-center"
+          className="w-full text-center h-[46px]"
           onClick={() => setIsResettingPassword(false)}
         >
           Go Back
         </SecondaryButton>
-        <PrimaryButton type="submit" className="w-full text-center" loading={isSubmitting}>
+        <PrimaryButton type="submit" className="w-full text-center h-[46px]" loading={isSubmitting}>
           {isSubmitting ? "Sending link..." : "Send reset link"}
         </PrimaryButton>
       </div>

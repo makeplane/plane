@@ -3,12 +3,16 @@ import type {
   IUserLite,
   IWorkspace,
   IWorkspaceLite,
+  IUserMemberLite,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueViewOptions,
+  TStateGroups,
 } from "./";
 
 export interface IProject {
+  archive_in: number;
+  close_in: number;
   created_at: Date;
   created_by: string;
   cover_image: string | null;
@@ -18,6 +22,7 @@ export interface IProject {
   page_view: boolean;
   inbox_view: boolean;
   default_assignee: IUser | string | null;
+  default_state: string | null;
   description: string;
   emoji: string | null;
   emoji_and_icon:
@@ -35,12 +40,15 @@ export interface IProject {
   id: string;
   identifier: string;
   is_favorite: boolean;
+  is_member: boolean;
+  member_role: 5 | 10 | 15 | 20 | null;
   issue_views_view: boolean;
   module_view: boolean;
   name: string;
   network: number;
   page_view: boolean;
-  project_lead: IUser | string | null;
+  project_lead: IUserLite | string | null;
+  sort_order: number | null;
   slug: string;
   total_cycles: number;
   total_members: number;
@@ -57,18 +65,6 @@ export interface IProjectLite {
   identifier: string;
 }
 
-export interface IFavoriteProject {
-  created_at: Date;
-  created_by: string;
-  id: string;
-  project: string;
-  project_detail: IProject;
-  updated_at: Date;
-  updated_by: string;
-  user: string;
-  workspace: string;
-}
-
 type ProjectViewTheme = {
   issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
@@ -77,13 +73,21 @@ type ProjectViewTheme = {
   filters: IIssueFilterOptions;
 };
 
+type ProjectPreferences = {
+  pages: {
+    block_display: boolean;
+  };
+};
+
 export interface IProjectMember {
   id: string;
-  member: IUserLite;
-  project: IProject;
-  workspace: IWorkspace;
+  member: IUserMemberLite;
+  project: IProjectLite;
+  workspace: IWorkspaceLite;
   comment: string;
   role: 5 | 10 | 15 | 20;
+
+  preferences: ProjectPreferences;
 
   view_props: ProjectViewTheme;
   default_props: ProjectViewTheme;
@@ -113,6 +117,10 @@ export interface IProjectMemberInvitation {
   updated_by: string;
 }
 
+export interface IProjectBulkInviteFormData {
+  members: { role: 5 | 10 | 15 | 20; member_id: string }[];
+}
+
 export interface IGithubRepository {
   id: string;
   full_name: string;
@@ -123,4 +131,28 @@ export interface IGithubRepository {
 export interface GithubRepositoriesResponse {
   repositories: IGithubRepository[];
   total_count: number;
+}
+
+export type TProjectIssuesSearchParams = {
+  search: string;
+  parent?: boolean;
+  blocker_blocked_by?: boolean;
+  cycle?: boolean;
+  module?: boolean;
+  sub_issue?: boolean;
+  issue_id?: string;
+  workspace_search: boolean;
+};
+
+export interface ISearchIssueResponse {
+  id: string;
+  name: string;
+  project_id: string;
+  project__identifier: string;
+  project__name: string;
+  sequence_id: number;
+  state__color: string;
+  state__group: TStateGroups;
+  state__name: string;
+  workspace__slug: string;
 }

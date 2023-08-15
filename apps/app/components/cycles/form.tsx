@@ -29,16 +29,13 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
     handleSubmit,
     control,
     reset,
+    watch,
   } = useForm<ICycle>({
     defaultValues,
   });
 
   const handleCreateUpdateCycle = async (formData: Partial<ICycle>) => {
     await handleFormSubmit(formData);
-
-    reset({
-      ...defaultValues,
-    });
   };
 
   useEffect(() => {
@@ -48,10 +45,19 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
     });
   }, [data, reset]);
 
+  const startDate = watch("start_date");
+  const endDate = watch("end_date");
+
+  const minDate = startDate ? new Date(startDate) : new Date();
+  minDate.setDate(minDate.getDate() + 1);
+
+  const maxDate = endDate ? new Date(endDate) : null;
+  maxDate?.setDate(maxDate.getDate() - 1);
+
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateCycle)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-brand-base">
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
           {status ? "Update" : "Create"} Cycle
         </h3>
         <div className="space-y-3">
@@ -91,7 +97,13 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 control={control}
                 name="start_date"
                 render={({ field: { value, onChange } }) => (
-                  <DateSelect label="Start date" value={value} onChange={(val) => onChange(val)} />
+                  <DateSelect
+                    label="Start date"
+                    value={value}
+                    onChange={(val) => onChange(val)}
+                    minDate={new Date()}
+                    maxDate={maxDate ?? undefined}
+                  />
                 )}
               />
             </div>
@@ -100,14 +112,19 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 control={control}
                 name="end_date"
                 render={({ field: { value, onChange } }) => (
-                  <DateSelect label="End date" value={value} onChange={(val) => onChange(val)} />
+                  <DateSelect
+                    label="End date"
+                    value={value}
+                    onChange={(val) => onChange(val)}
+                    minDate={minDate}
+                  />
                 )}
               />
             </div>
           </div>
         </div>
       </div>
-      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-brand-base px-5 pt-5">
+      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-200 px-5 pt-5">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting}>
           {status

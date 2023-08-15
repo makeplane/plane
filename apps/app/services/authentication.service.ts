@@ -1,5 +1,6 @@
 // services
 import APIService from "services/api.service";
+import { ICurrentUserResponse } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -28,11 +29,15 @@ class AuthService extends APIService {
         return response?.data;
       })
       .catch((error) => {
-        throw error?.response;
+        throw error?.response?.data;
       });
   }
 
-  async socialAuth(data: any) {
+  async socialAuth(data: any): Promise<{
+    access_token: string;
+    refresh_toke: string;
+    user: ICurrentUserResponse;
+  }> {
     return this.post("/api/social-auth/", data, { headers: {} })
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
@@ -63,6 +68,7 @@ class AuthService extends APIService {
         throw error?.response?.data;
       });
   }
+
   async magicSignIn(data: any) {
     const response = await this.post("/api/magic-sign-in/", data, { headers: {} });
     if (response?.status === 200) {

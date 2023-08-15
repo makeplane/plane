@@ -209,8 +209,8 @@ export const CustomFloatingToolbar: React.FC<Props> = ({
   }, [clickEdit]);
 
   return (
-    <div className="z-[99999] flex flex-col items-center gap-y-2 divide-x divide-y divide-brand-base rounded border border-brand-base bg-brand-surface-2 p-1 px-0.5 shadow-md">
-      <div className="flex items-center gap-y-2 divide-x divide-brand-base">
+    <div className="z-[99999] flex flex-col items-center gap-y-2 divide-x divide-y divide-custom-border-200 rounded border border-custom-border-200 bg-custom-background-80 p-1 px-0.5 shadow-md">
+      <div className="flex items-center gap-y-2 divide-x divide-custom-border-200">
         <div className="flex items-center gap-x-1 px-2">
           <ToggleHeadingButton
             attrs={{
@@ -242,7 +242,7 @@ export const CustomFloatingToolbar: React.FC<Props> = ({
           <div className="flex items-center gap-x-1 px-2">
             <button
               type="button"
-              className="rounded py-1 px-1.5 text-xs hover:bg-brand-surface-1"
+              className="rounded py-1 px-1.5 text-xs hover:bg-custom-background-90"
               onClick={() => console.log(editorState.selection.$anchor.nodeBefore)}
             >
               AI

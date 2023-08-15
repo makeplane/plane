@@ -1,16 +1,17 @@
-import React from "react";
-// next imports
+import React, { useEffect } from "react";
+
 import Image from "next/image";
-// next types
+
 import type { NextPage } from "next";
+
 // layouts
 import DefaultLayout from "layouts/default-layout";
+// services
+import authenticationService from "services/authentication.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
-// services
-import authenticationService from "services/authentication.service";
-// social auth buttons
+// components
 import {
   GoogleLoginButton,
   GithubLoginButton,
@@ -20,8 +21,16 @@ import {
 } from "components/account";
 // ui
 import { Spinner } from "components/ui";
-// icons
-import Logo from "public/logo.png";
+// images
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+// mobx react lite
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// next themes
+import { useTheme } from "next-themes";
+import { IUser } from "types";
+
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -29,10 +38,19 @@ type EmailPasswordFormValues = {
   medium?: string;
 };
 
-const HomePage: NextPage = () => {
-  const { user, isLoading, mutateUser } = useUserAuth("sign-in");
+const HomePage: NextPage = observer(() => {
+  const store: any = useMobxStore();
+  const { setTheme } = useTheme();
+
+  const { isLoading, mutateUser } = useUserAuth("sign-in");
 
   const { setToastAlert } = useToast();
+
+  const handleTheme = (user: IUser) => {
+    const currentTheme = user.theme.theme ?? "system";
+    setTheme(currentTheme);
+    store?.user?.setCurrentUserSettings();
+  };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -43,23 +61,24 @@ const HomePage: NextPage = () => {
           clientId,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
-        if (response && response?.user) mutateUser();
+        if (response && response?.user) {
+          mutateUser();
+          handleTheme(response?.user);
+        }
       } else {
         throw Error("Cant find credentials");
       }
-    } catch (error: any) {
-      console.log(error);
+    } catch (err: any) {
       setToastAlert({
         title: "Error signing in!",
         type: "error",
         message:
-          error?.error ||
-          "Something went wrong. Please try again later or contact the support team.",
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
 
-  const handleGithubSignIn = async (credential: string) => {
+  const handleGitHubSignIn = async (credential: string) => {
     try {
       if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
         const socialAuthPayload = {
@@ -68,17 +87,19 @@ const HomePage: NextPage = () => {
           clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
-        if (response && response?.user) mutateUser();
+        if (response && response?.user) {
+          mutateUser();
+          handleTheme(response?.user);
+        }
       } else {
         throw Error("Cant find credentials");
       }
-    } catch (error: any) {
+    } catch (err: any) {
       setToastAlert({
         title: "Error signing in!",
         type: "error",
         message:
-          error?.error ||
-          "Something went wrong. Please try again later or contact the support team.",
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
@@ -112,38 +133,43 @@ const HomePage: NextPage = () => {
       .emailLogin(formData)
       .then((response) => {
         try {
-          if (response) mutateUser();
-        } catch (error: any) {
-          console.log(error);
+          if (response) {
+            mutateUser();
+            handleTheme(response?.user);
+          }
+        } catch (err: any) {
           setToastAlert({
-            title: "Error signing in!",
             type: "error",
+            title: "Error!",
             message:
-              error?.error ||
+              err?.error ||
               "Something went wrong. Please try again later or contact the support team.",
           });
         }
       })
-      .catch(() =>
+      .catch((err) =>
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: "Enter the correct email address and password to sign in",
+          title: "Error!",
+          message:
+            err?.error ||
+            "Something went wrong. Please try again later or contact the support team.",
         })
       );
   };
 
   const handleEmailCodeSignIn = async (response: any) => {
     try {
-      if (response) mutateUser();
-    } catch (error: any) {
-      console.log(error);
+      if (response) {
+        mutateUser();
+        handleTheme(response?.user);
+      }
+    } catch (err: any) {
       setToastAlert({
-        title: "Error signing in!",
         type: "error",
+        title: "Error!",
         message:
-          error?.error ||
-          "Something went wrong. Please try again later or contact the support team.",
+          err?.error || "Something went wrong. Please try again later or contact the support team.",
       });
     }
   };
@@ -151,26 +177,29 @@ const HomePage: NextPage = () => {
   return (
     <DefaultLayout>
       {isLoading ? (
-        <div className="flex flex-col gap-3 w-full h-screen justify-center items-center">
-          <div>
-            <Spinner />
-          </div>
+        <div className="grid place-items-center h-screen">
+          <Spinner />
         </div>
       ) : (
-        <div className="flex h-screen w-full items-center justify-center overflow-auto">
-          <div className="flex min-h-full w-full flex-col justify-center py-12 px-6 lg:px-8">
-            <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
-              <div className="flex flex-col items-center justify-center gap-10">
-                <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
-                <div className="text-center text-xl font-medium text-brand-base">
-                  Sign In to your Plane Account
+        <>
+          <>
+            <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
+            <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
+              <div className="grid place-items-center bg-custom-background-100">
+                <div className="h-[30px] w-[30px]">
+                  <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
                 </div>
               </div>
-
-              <div className="flex flex-col rounded-[10px] bg-brand-base shadow-md">
+            </div>
+          </>
+          <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
+            <div>
                 {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ||
                 parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
                   <>
+                    <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+                      Sign in to Plane
+                    </h1>
                     {parseInt(process.env.NEXT_PUBLIC_AUTO_OIDC || "0") ? (
                       <></>
                     ) : (
@@ -187,17 +216,31 @@ const HomePage: NextPage = () => {
                         <OidcLoginButton handleSignIn={handleOidcSignIn} />
                       ) : null}
                     </div>
-                  </>
-                ) : (
-                  <EmailPasswordForm onSubmit={handlePasswordSignIn} />
-                )}
-              </div>
+                  </div>
+                </>
+              ) : (
+                <EmailPasswordForm onSubmit={handlePasswordSignIn} />
+              )}
+
+              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                <p className="pt-16 text-custom-text-200 text-sm text-center">
+                  By signing up, you agree to the{" "}
+                  <a
+                    href="https://plane.so/terms-and-conditions"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium underline"
+                  >
+                    Terms & Conditions
+                  </a>
+                </p>
+              ) : null}
             </div>
           </div>
-        </div>
+        </>
       )}
     </DefaultLayout>
   );
-};
+});
 
 export default HomePage;

@@ -1,24 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { useRouter } from "next/router";
 
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// icons
-import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-// ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
-// types
-import { IIssue } from "types";
+// services
+import projectService from "services/project.service";
+// hooks
+import useDebounce from "hooks/use-debounce";
+// components
 import { LayerDiagonalIcon } from "components/icons";
+// ui
+import { Loader, ToggleSwitch, Tooltip } from "components/ui";
+// icons
+import { LaunchOutlined } from "@mui/icons-material";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+// types
+import { ISearchIssueResponse } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   value?: any;
-  onChange: (...event: any[]) => void;
-  issues: IIssue[];
-  title?: string;
-  multiple?: boolean;
-  customDisplay?: JSX.Element;
+  onChange: (issue: ISearchIssueResponse) => void;
+  projectId: string;
+  issueId?: string;
 };
 
 export const ParentIssuesListModal: React.FC<Props> = ({
@@ -26,28 +32,49 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   handleClose: onClose,
   value,
   onChange,
-  issues,
-  title = "Issues",
-  multiple = false,
-  customDisplay,
+  projectId,
+  issueId,
 }) => {
-  const [query, setQuery] = useState("");
-  const [values, setValues] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
+
+  const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const handleClose = () => {
     onClose();
-    setQuery("");
-    setValues([]);
+    setSearchTerm("");
+    setIsWorkspaceLevel(false);
   };
 
-  const filteredIssues: IIssue[] =
-    query === ""
-      ? issues ?? []
-      : issues?.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ?? [];
+  useEffect(() => {
+    if (!isOpen || !workspaceSlug || !projectId) return;
+
+    setIsSearching(true);
+
+    projectService
+      .projectIssuesSearch(workspaceSlug as string, projectId as string, {
+        search: debouncedSearchTerm,
+        parent: true,
+        issue_id: issueId,
+        workspace_search: isWorkspaceLevel,
+      })
+      .then((res) => setIssues(res))
+      .finally(() => setIsSearching(false));
+  }, [debouncedSearchTerm, isOpen, issueId, isWorkspaceLevel, projectId, workspaceSlug]);
 
   return (
     <>
-      <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
+      <Transition.Root
+        show={isOpen}
+        as={React.Fragment}
+        afterLeave={() => setSearchTerm("")}
+        appear
+      >
         <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
@@ -58,7 +85,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -71,146 +98,128 @@ export const ParentIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-brand-base bg-brand-base shadow-2xl transition-all">
-                {multiple ? (
-                  <>
-                    <Combobox value={value} onChange={() => ({})} multiple>
-                      <div className="relative m-1">
-                        <MagnifyingGlassIcon
-                          className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
-                          aria-hidden="true"
-                        />
-                        <Combobox.Input
-                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
-                          placeholder="Search..."
-                          onChange={(e) => setQuery(e.target.value)}
-                          displayValue={() => ""}
-                        />
-                      </div>
-                      {customDisplay && <div className="p-3">{customDisplay}</div>}
-                      <Combobox.Options
-                        static
-                        className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+                <Combobox
+                  value={value}
+                  onChange={(val) => {
+                    onChange(val);
+                    handleClose();
+                  }}
+                >
+                  <div className="relative m-1">
+                    <MagnifyingGlassIcon
+                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                      aria-hidden="true"
+                    />
+                    <Combobox.Input
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm placeholder:text-custom-text-400"
+                      placeholder="Type to search..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      displayValue={() => ""}
+                    />
+                  </div>
+                  <div className="flex sm:justify-end p-2">
+                    <Tooltip tooltipContent="Toggle workspace level search">
+                      <div
+                        className={`flex-shrink-0 flex items-center gap-1 text-xs cursor-pointer ${
+                          isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
+                        }`}
                       >
-                        {filteredIssues.length > 0 && (
-                          <li className="p-2">
-                            {query === "" && (
-                              <h2 className="mt-4 mb-2 px-3 text-xs font-medium">{title}</h2>
-                            )}
-                            <ul className="text-sm">
-                              {filteredIssues.map((issue) => (
-                                <Combobox.Option
-                                  key={issue.id}
-                                  value={issue.id}
-                                  className={({ active, selected }) =>
-                                    `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
-                                      active ? "bg-brand-surface-2 text-brand-base" : ""
-                                    } ${selected ? "text-brand-base" : ""}`
-                                  }
-                                >
-                                  {({ selected }) => (
-                                    <>
-                                      <input type="checkbox" checked={selected} readOnly />
-                                      <span
-                                        className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                        style={{
-                                          backgroundColor: issue.state_detail.color,
-                                        }}
-                                      />
-                                      <span className="flex-shrink-0 text-xs">
-                                        {issue.project_detail?.identifier}-{issue.sequence_id}
-                                      </span>{" "}
-                                      {issue.id}
-                                    </>
-                                  )}
-                                </Combobox.Option>
-                              ))}
-                            </ul>
-                          </li>
-                        )}
-                      </Combobox.Options>
+                        <ToggleSwitch
+                          value={isWorkspaceLevel}
+                          onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                          label="Workspace level"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                          className="flex-shrink-0"
+                        >
+                          workspace level
+                        </button>
+                      </div>
+                    </Tooltip>
+                  </div>
+                  <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
+                    {searchTerm !== "" && (
+                      <h5 className="text-[0.825rem] text-custom-text-200 mx-2">
+                        Search results for{" "}
+                        <span className="text-custom-text-100">
+                          {'"'}
+                          {searchTerm}
+                          {'"'}
+                        </span>{" "}
+                        in project:
+                      </h5>
+                    )}
 
-                      {query !== "" && filteredIssues.length === 0 && (
-                        <div className="py-14 px-6 text-center sm:px-14">
-                          <RectangleStackIcon
-                            className="mx-auto h-6 w-6 text-brand-base text-opacity-40"
-                            aria-hidden="true"
-                          />
-                          <p className="mt-4 text-sm text-brand-base">
-                            We couldn{"'"}t find any issue with that term. Please try again.
-                          </p>
-                        </div>
-                      )}
-                    </Combobox>
-                    <div className="flex items-center justify-end gap-2 p-3">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton onClick={() => onChange(values)}>Add issues</PrimaryButton>
-                    </div>
-                  </>
-                ) : (
-                  <Combobox value={value} onChange={onChange}>
-                    <div className="relative m-1">
-                      <MagnifyingGlassIcon
-                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-brand-base text-opacity-40"
-                        aria-hidden="true"
-                      />
-                      <Combobox.Input
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-brand-base placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
-                        placeholder="Search..."
-                        onChange={(e) => setQuery(e.target.value)}
-                        displayValue={() => ""}
-                      />
-                    </div>
-                    {customDisplay && <div className="p-3">{customDisplay}</div>}
-                    <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
-                      {filteredIssues.length > 0 ? (
-                        <li className="p-2">
-                          {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-medium">{title}</h2>
-                          )}
-                          <ul className="text-sm">
-                            {filteredIssues.map((issue) => (
-                              <Combobox.Option
-                                key={issue.id}
-                                value={issue.id}
-                                className={({ active, selected }) =>
-                                  `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-brand-secondary ${
-                                    active ? "bg-brand-surface-2 text-brand-base" : ""
-                                  } ${selected ? "text-brand-base" : ""}`
-                                }
-                                onClick={handleClose}
-                              >
-                                <>
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: issue.state_detail.color,
-                                    }}
-                                  />
-                                  <span className="flex-shrink-0 text-xs">
-                                    {issue.project_detail?.identifier}-{issue.sequence_id}
-                                  </span>{" "}
-                                  {issue.name}
-                                </>
-                              </Combobox.Option>
-                            ))}
-                          </ul>
-                        </li>
-                      ) : (
+                    {!isSearching &&
+                      issues.length === 0 &&
+                      searchTerm !== "" &&
+                      debouncedSearchTerm !== "" && (
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                           <LayerDiagonalIcon height="52" width="52" />
-                          <h3 className="text-brand-secondary">
+                          <h3 className="text-custom-text-200">
                             No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-brand-surface-2 px-2 py-1 text-sm">
+                            <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">
                               C
                             </pre>
                             .
                           </h3>
                         </div>
                       )}
-                    </Combobox.Options>
-                  </Combobox>
-                )}
+
+                    {isSearching ? (
+                      <Loader className="space-y-3 p-3">
+                        <Loader.Item height="40px" />
+                        <Loader.Item height="40px" />
+                        <Loader.Item height="40px" />
+                        <Loader.Item height="40px" />
+                      </Loader>
+                    ) : (
+                      <ul className={`text-sm ${issues.length > 0 ? "p-2" : ""}`}>
+                        {issues.map((issue) => (
+                          <Combobox.Option
+                            key={issue.id}
+                            value={issue}
+                            className={({ active, selected }) =>
+                              `group flex items-center justify-between gap-2 cursor-pointer select-none rounded-md px-3 py-2 text-custom-text-200 ${
+                                active ? "bg-custom-background-80 text-custom-text-100" : ""
+                              } ${selected ? "text-custom-text-100" : ""}`
+                            }
+                          >
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                style={{
+                                  backgroundColor: issue.state__color,
+                                }}
+                              />
+                              <span className="flex-shrink-0 text-xs">
+                                {issue.project__identifier}-{issue.sequence_id}
+                              </span>{" "}
+                              {issue.name}
+                            </div>
+                            <a
+                              href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+                              target="_blank"
+                              className="group-hover:block hidden relative z-1 text-custom-text-200 hover:text-custom-text-100"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <LaunchOutlined
+                                sx={{
+                                  fontSize: 16,
+                                }}
+                              />
+                            </a>
+                          </Combobox.Option>
+                        ))}
+                      </ul>
+                    )}
+                  </Combobox.Options>
+                </Combobox>
               </Dialog.Panel>
             </Transition.Child>
           </div>

@@ -1,6 +1,5 @@
-import React, { ChangeEvent, FC, useState, useEffect, useRef } from "react";
+import React, { FC, useState, useEffect, useRef } from "react";
 
-import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
@@ -12,18 +11,17 @@ import aiService from "services/ai.service";
 import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
+import { ParentIssuesListModal } from "components/issues";
 import {
   IssueAssigneeSelect,
   IssueDateSelect,
   IssueEstimateSelect,
   IssueLabelSelect,
-  IssueParentSelect,
   IssuePrioritySelect,
   IssueProjectSelect,
   IssueStateSelect,
 } from "components/issues/select";
 import { CreateStateModal } from "components/states";
-import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
 // ui
 import {
@@ -36,10 +34,8 @@ import {
 } from "components/ui";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
-// helpers
-import { cosineSimilarity } from "helpers/string.helper";
 // types
-import type { ICurrentUserResponse, IIssue } from "types";
+import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
 // rich-text-editor
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
@@ -73,18 +69,19 @@ const defaultValues: Partial<IIssue> = {
   description_html: "<p></p>",
   estimate_point: null,
   state: "",
-  cycle: null,
+  parent: null,
   priority: null,
   assignees: [],
   assignees_list: [],
   labels: [],
   labels_list: [],
+  start_date: null,
+  target_date: null,
 };
 
 export interface IssueFormProps {
   handleFormSubmit: (values: Partial<IIssue>) => Promise<void>;
   initialData?: Partial<IIssue>;
-  issues: IIssue[];
   projectId: string;
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   createMore: boolean;
@@ -100,6 +97,7 @@ export interface IssueFormProps {
     | "priority"
     | "assignee"
     | "label"
+    | "startDate"
     | "dueDate"
     | "estimate"
     | "parent"
@@ -110,7 +108,6 @@ export interface IssueFormProps {
 export const IssueForm: FC<IssueFormProps> = ({
   handleFormSubmit,
   initialData,
-  issues = [],
   projectId,
   setActiveProject,
   createMore,
@@ -120,12 +117,10 @@ export const IssueForm: FC<IssueFormProps> = ({
   user,
   fieldsToShow,
 }) => {
-  // states
-  const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
-  const [cycleModal, setCycleModal] = useState(false);
   const [stateModal, setStateModal] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
 
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -148,20 +143,16 @@ export const IssueForm: FC<IssueFormProps> = ({
     setValue,
     setFocus,
   } = useForm<IIssue>({
-    defaultValues,
+    defaultValues: initialData ?? defaultValues,
     reValidateMode: "onChange",
   });
 
   const issueName = watch("name");
 
-  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const similarIssue = issues?.find((i: IIssue) => cosineSimilarity(i.name, value) > 0.7);
-    setMostSimilarIssue(similarIssue);
-  };
-
   const handleCreateUpdateIssue = async (formData: Partial<IIssue>) => {
     await handleFormSubmit(formData);
+
+    setGptAssistantModal(false);
 
     reset({
       ...defaultValues,
@@ -198,7 +189,7 @@ export const IssueForm: FC<IssueFormProps> = ({
         projectId as string,
         {
           prompt: issueName,
-          task: "Generate a proper description for this issue in context of a project management software.",
+          task: "Generate a proper description for this issue.",
         },
         user
       )
@@ -213,18 +204,21 @@ export const IssueForm: FC<IssueFormProps> = ({
         else handleAiAssistance(res.response_html);
       })
       .catch((err) => {
+        const error = err?.data?.error;
+
         if (err.status === 429)
           setToastAlert({
             type: "error",
             title: "Error!",
             message:
+              error ||
               "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
             type: "error",
             title: "Error!",
-            message: "Some error occurred. Please try again.",
+            message: error || "Some error occurred. Please try again.",
           });
       })
       .finally(() => setIAmFeelingLucky(false));
@@ -236,9 +230,25 @@ export const IssueForm: FC<IssueFormProps> = ({
     reset({
       ...defaultValues,
       ...initialData,
+    });
+  }, [setFocus, initialData, reset]);
+
+  // update projectId in form when projectId changes
+  useEffect(() => {
+    reset({
+      ...getValues(),
       project: projectId,
     });
-  }, [setFocus, initialData, reset, projectId]);
+  }, [getValues, projectId, reset]);
+
+  const startDate = watch("start_date");
+  const targetDate = watch("target_date");
+
+  const minDate = startDate ? new Date(startDate) : null;
+  minDate?.setDate(minDate.getDate());
+
+  const maxDate = targetDate ? new Date(targetDate) : null;
+  maxDate?.setDate(maxDate.getDate());
 
   return (
     <>
@@ -250,16 +260,15 @@ export const IssueForm: FC<IssueFormProps> = ({
             projectId={projectId}
             user={user}
           />
-          <CreateUpdateCycleModal
-            isOpen={cycleModal}
-            handleClose={() => setCycleModal(false)}
-            user={user}
-          />
           <CreateLabelModal
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
             user={user}
+            onSuccess={(response) => {
+              setValue("labels", [...watch("labels"), response.id]);
+              setValue("labels_list", [...watch("labels_list"), response.id]);
+            }}
           />
         </>
       )}
@@ -273,38 +282,41 @@ export const IssueForm: FC<IssueFormProps> = ({
                 render={({ field: { value, onChange } }) => (
                   <IssueProjectSelect
                     value={value}
-                    onChange={onChange}
-                    setActiveProject={setActiveProject}
+                    onChange={(val: string) => {
+                      onChange(val);
+                      setActiveProject(val);
+                    }}
                   />
                 )}
               />
             )}
-            <h3 className="text-xl font-semibold leading-6 text-brand-base">
+            <h3 className="text-xl font-semibold leading-6 text-custom-text-100">
               {status ? "Update" : "Create"} Issue
             </h3>
           </div>
           {watch("parent") &&
-            watch("parent") !== "" &&
-            (fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-              <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs">
+            (fieldsToShow.includes("all") || fieldsToShow.includes("parent")) &&
+            selectedParentIssue && (
+              <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-custom-background-80 p-2 text-xs">
                 <div className="flex items-center gap-2">
                   <span
                     className="block h-1.5 w-1.5 rounded-full"
                     style={{
-                      backgroundColor: issues.find((i) => i.id === watch("parent"))?.state_detail
-                        .color,
+                      backgroundColor: selectedParentIssue.state__color,
                     }}
                   />
-                  <span className="flex-shrink-0 text-brand-secondary">
-                    {/* {projects?.find((p) => p.id === projectId)?.identifier}- */}
-                    {issues.find((i) => i.id === watch("parent"))?.sequence_id}
+                  <span className="flex-shrink-0 text-custom-text-200">
+                    {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                   </span>
                   <span className="truncate font-medium">
-                    {issues.find((i) => i.id === watch("parent"))?.name.substring(0, 50)}
+                    {selectedParentIssue.name.substring(0, 50)}
                   </span>
                   <XMarkIcon
                     className="h-3 w-3 cursor-pointer"
-                    onClick={() => setValue("parent", null)}
+                    onClick={() => {
+                      setValue("parent", null);
+                      setSelectedParentIssue(null);
+                    }}
                   />
                 </div>
               </div>
@@ -316,7 +328,6 @@ export const IssueForm: FC<IssueFormProps> = ({
                   <Input
                     id="name"
                     name="name"
-                    onChange={handleTitleChange}
                     className="resize-none text-xl"
                     placeholder="Title"
                     autoComplete="off"
@@ -330,42 +341,15 @@ export const IssueForm: FC<IssueFormProps> = ({
                       },
                     }}
                   />
-                  {mostSimilarIssue && (
-                    <div className="flex items-center gap-x-2">
-                      <p className="text-sm text-brand-secondary">
-                        <Link
-                          href={`/${workspaceSlug}/projects/${projectId}/issues/${mostSimilarIssue.id}`}
-                        >
-                          <a target="_blank" type="button" className="inline text-left">
-                            <span>Did you mean </span>
-                            <span className="italic">
-                              {mostSimilarIssue.project_detail.identifier}-
-                              {mostSimilarIssue.sequence_id}: {mostSimilarIssue.name}{" "}
-                            </span>
-                            ?
-                          </a>
-                        </Link>
-                      </p>
-                      <button
-                        type="button"
-                        className="text-sm text-brand-accent"
-                        onClick={() => {
-                          setMostSimilarIssue(undefined);
-                        }}
-                      >
-                        No
-                      </button>
-                    </div>
-                  )}
                 </div>
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("description")) && (
                 <div className="relative">
-                  <div className="-mb-2 flex justify-end">
+                  <div className="flex justify-end">
                     {issueName && issueName !== "" && (
                       <button
                         type="button"
-                        className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-1 ${
+                        className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 ${
                           iAmFeelingLucky ? "cursor-wait" : ""
                         }`}
                         onClick={handleAutoGenerateDescription}
@@ -382,7 +366,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                     )}
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-brand-surface-1"
+                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                       onClick={() => setGptAssistantModal((prevData) => !prevData)}
                     >
                       <SparklesIcon className="h-4 w-4" />
@@ -474,13 +458,34 @@ export const IssueForm: FC<IssueFormProps> = ({
                     )}
                   />
                 )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
+                  <div>
+                    <Controller
+                      control={control}
+                      name="start_date"
+                      render={({ field: { value, onChange } }) => (
+                        <IssueDateSelect
+                          label="Start date"
+                          maxDate={maxDate ?? undefined}
+                          onChange={onChange}
+                          value={value}
+                        />
+                      )}
+                    />
+                  </div>
+                )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div>
                     <Controller
                       control={control}
                       name="target_date"
                       render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect value={value} onChange={onChange} />
+                        <IssueDateSelect
+                          label="Due date"
+                          minDate={minDate ?? undefined}
+                          onChange={onChange}
+                          value={value}
+                        />
                       )}
                     />
                   </div>
@@ -497,16 +502,25 @@ export const IssueForm: FC<IssueFormProps> = ({
                   </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-                  <IssueParentSelect
+                  <Controller
                     control={control}
-                    isOpen={parentIssueListModalOpen}
-                    setIsOpen={setParentIssueListModalOpen}
-                    issues={issues ?? []}
+                    name="parent"
+                    render={({ field: { onChange } }) => (
+                      <ParentIssuesListModal
+                        isOpen={parentIssueListModalOpen}
+                        handleClose={() => setParentIssueListModalOpen(false)}
+                        onChange={(issue) => {
+                          onChange(issue.id);
+                          setSelectedParentIssue(issue);
+                        }}
+                        projectId={projectId}
+                      />
+                    )}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <CustomMenu ellipsis>
-                    {watch("parent") && watch("parent") !== "" ? (
+                    {watch("parent") ? (
                       <>
                         <CustomMenu.MenuItem
                           renderAs="button"
@@ -535,7 +549,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             </div>
           </div>
         </div>
-        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-brand-base px-5 pt-5">
+        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-200 px-5 pt-5">
           <div
             className="flex cursor-pointer items-center gap-1"
             onClick={() => setCreateMore((prevData) => !prevData)}

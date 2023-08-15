@@ -19,10 +19,12 @@ import { SettingsHeader } from "components/project";
 import { CustomSelect, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import { IProject, IWorkspace } from "types";
+import { IProject, IUserLite, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, PROJECT_MEMBERS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -59,7 +61,7 @@ const ControlSettings: NextPage = () => {
   } = useForm<IProject>({ defaultValues });
 
   const onSubmit = async (formData: IProject) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !projectDetails) return;
 
     const payload: Partial<IProject> = {
       default_assignee: formData.default_assignee,
@@ -70,7 +72,12 @@ const ControlSettings: NextPage = () => {
       .updateProject(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(PROJECT_DETAILS(projectId as string));
-        mutate(PROJECTS_LIST(workspaceSlug as string));
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
 
         setToastAlert({
           title: "Success",
@@ -88,7 +95,7 @@ const ControlSettings: NextPage = () => {
       reset({
         ...projectDetails,
         default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
-        project_lead: projectDetails.project_lead?.id ?? projectDetails.project_lead,
+        project_lead: (projectDetails.project_lead as IUserLite)?.id ?? projectDetails.project_lead,
         workspace: (projectDetails.workspace as IWorkspace).id,
       });
   }, [projectDetails, reset]);
@@ -98,10 +105,11 @@ const ControlSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${projectDetails?.name ?? "Project"}`}
+            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
             link={`/${workspaceSlug}/projects/${projectId}/issues`}
+            linkTruncate
           />
-          <BreadcrumbItem title="Control Settings" />
+          <BreadcrumbItem title="Control Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -111,7 +119,7 @@ const ControlSettings: NextPage = () => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Project Lead</h4>
-              <p className="text-sm text-brand-secondary">Select the project leader.</p>
+              <p className="text-sm text-custom-text-200">Select the project leader.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -123,7 +131,7 @@ const ControlSettings: NextPage = () => {
                       {...field}
                       label={
                         people?.find((person) => person.member.id === field.value)?.member
-                          .first_name ?? <span className="text-brand-secondary">Select lead</span>
+                          .display_name ?? <span className="text-custom-text-200">Select lead</span>
                       }
                       width="w-full"
                       input
@@ -145,14 +153,10 @@ const ControlSettings: NextPage = () => {
                               </div>
                             ) : (
                               <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                {person.member.first_name && person.member.first_name !== ""
-                                  ? person.member.first_name.charAt(0)
-                                  : person.member.email.charAt(0)}
+                                {person.member.display_name?.charAt(0)}
                               </div>
                             )}
-                            {person.member.first_name !== ""
-                              ? person.member.first_name
-                              : person.member.email}
+                            {person.member.display_name}
                           </div>
                         </CustomSelect.Option>
                       ))}
@@ -169,7 +173,7 @@ const ControlSettings: NextPage = () => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Default Assignee</h4>
-              <p className="text-sm text-brand-secondary">
+              <p className="text-sm text-custom-text-200">
                 Select the default assignee for the project.
               </p>
             </div>
@@ -182,8 +186,8 @@ const ControlSettings: NextPage = () => {
                     <CustomSelect
                       {...field}
                       label={
-                        people?.find((p) => p.member.id === field.value)?.member.first_name ?? (
-                          <span className="text-brand-secondary">Select default assignee</span>
+                        people?.find((p) => p.member.id === field.value)?.member.display_name ?? (
+                          <span className="text-custom-text-200">Select default assignee</span>
                         )
                       }
                       width="w-full"
@@ -206,14 +210,10 @@ const ControlSettings: NextPage = () => {
                               </div>
                             ) : (
                               <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                {person.member.first_name && person.member.first_name !== ""
-                                  ? person.member.first_name.charAt(0)
-                                  : person.member.email.charAt(0)}
+                                {person.member.display_name?.charAt(0)}
                               </div>
                             )}
-                            {person.member.first_name !== ""
-                              ? person.member.first_name
-                              : person.member.email}
+                            {person.member.display_name}
                           </div>
                         </CustomSelect.Option>
                       ))}

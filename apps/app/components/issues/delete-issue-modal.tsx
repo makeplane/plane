@@ -12,17 +12,20 @@ import issueServices from "services/issues.service";
 import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
+import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { IIssue, ICurrentUserResponse } from "types";
+import type { IIssue, ICurrentUserResponse, ISubIssueResponse } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
@@ -37,10 +40,12 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, issueId } = router.query;
+  const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const { issueView, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
+  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { setToastAlert } = useToast();
 
@@ -54,11 +59,12 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
   };
 
   const handleDeletion = async () => {
+    if (!workspaceSlug || !data) return;
+
     setIsDeleteLoading(true);
-    if (!workspaceSlug || !projectId || !data) return;
 
     await issueServices
-      .deleteIssue(workspaceSlug as string, projectId as string, data.id, user)
+      .deleteIssue(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         if (issueView === "calendar") {
           const calendarFetchKey = cycleId
@@ -67,17 +73,47 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
             ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
             : viewId
             ? VIEW_ISSUES(viewId.toString(), calendarParams)
-            : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), calendarParams);
+            : PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, calendarParams);
 
           mutate<IIssue[]>(
             calendarFetchKey,
             (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
             false
           );
+        } else if (issueView === "spreadsheet") {
+          const spreadsheetFetchKey = cycleId
+            ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
+            : moduleId
+            ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
+            : viewId
+            ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
+            : PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, spreadsheetParams);
+          if (data.parent) {
+            mutate<ISubIssueResponse>(
+              SUB_ISSUES(data.parent.toString()),
+              (prevData) => {
+                if (!prevData) return prevData;
+                const updatedArray = (prevData.sub_issues ?? []).filter((i) => i.id !== data.id);
+
+                return {
+                  ...prevData,
+                  sub_issues: updatedArray,
+                };
+              },
+              false
+            );
+            mutate<IIssue[]>(spreadsheetFetchKey);
+          } else {
+            mutate<IIssue[]>(
+              spreadsheetFetchKey,
+              (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
+              false
+            );
+          }
         } else {
           if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, params));
         }
 
         handleClose();
@@ -86,12 +122,39 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
           type: "success",
           message: "Issue deleted successfully",
         });
+
+        if (issueId) router.back();
       })
       .catch((error) => {
         console.log(error);
         setIsDeleteLoading(false);
       });
   };
+
+  const handleArchivedIssueDeletion = async () => {
+    setIsDeleteLoading(true);
+    if (!workspaceSlug || !projectId || !data) return;
+
+    await issueServices
+      .deleteArchivedIssue(workspaceSlug as string, projectId as string, data.id)
+      .then(() => {
+        mutate(PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+        handleClose();
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Issue deleted successfully",
+        });
+        router.back();
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsDeleteLoading(false);
+      });
+  };
+
+  const handleIssueDelete = () =>
+    isArchivedIssues ? handleArchivedIssueDeletion() : handleDeletion();
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -105,7 +168,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -119,7 +182,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-brand-base bg-brand-base text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -133,9 +196,9 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm text-brand-secondary">
+                    <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
-                      <span className="break-all font-medium text-brand-base">
+                      <span className="break-words font-medium text-custom-text-100">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This
@@ -144,7 +207,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
                   </span>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                    <DangerButton onClick={handleIssueDelete} loading={isDeleteLoading}>
                       {isDeleteLoading ? "Deleting..." : "Delete Issue"}
                     </DangerButton>
                   </div>

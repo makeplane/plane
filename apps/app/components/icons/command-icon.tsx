@@ -5,7 +5,7 @@ import type { Props } from "./types";
 export const CommandIcon: React.FC<Props> = ({
   width = "81",
   height = "80",
-  color = "#858E96",
+  color = "rgb(var(--color-text-200))",
   className,
 }) => (
   <svg

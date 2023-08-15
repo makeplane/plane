@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
 import inboxServices from "services/inbox.service";
@@ -17,6 +16,9 @@ import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 import useInboxView from "hooks/use-inbox-view";
+import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
+import useProjects from "hooks/use-projects";
+import useMyIssues from "hooks/my-issues/use-my-issues";
 // components
 import { IssueForm } from "components/issues";
 // types
@@ -24,9 +26,7 @@ import type { IIssue } from "types";
 // fetch-keys
 import {
   PROJECT_ISSUES_DETAILS,
-  PROJECT_ISSUES_LIST,
   USER_ISSUE,
-  PROJECTS_LIST,
   SUB_ISSUES,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   CYCLE_ISSUES_WITH_PARAMS,
@@ -40,11 +40,11 @@ import {
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
 export interface IssuesModalProps {
-  isOpen: boolean;
-  handleClose: () => void;
   data?: IIssue | null;
-  prePopulateData?: Partial<IIssue>;
+  handleClose: () => void;
+  isOpen: boolean;
   isUpdatingSingleIssue?: boolean;
+  prePopulateData?: Partial<IIssue>;
   fieldsToShow?: (
     | "project"
     | "name"
@@ -53,20 +53,23 @@ export interface IssuesModalProps {
     | "priority"
     | "assignee"
     | "label"
+    | "startDate"
     | "dueDate"
     | "estimate"
     | "parent"
     | "all"
   )[];
+  onSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
-  isOpen,
-  handleClose,
   data,
-  prePopulateData,
+  handleClose,
+  isOpen,
   isUpdatingSingleIssue = false,
+  prePopulateData,
   fieldsToShow = ["all"],
+  onSubmit,
 }) => {
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -79,47 +82,51 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const { params: calendarParams } = useCalendarIssuesView();
   const { order_by, group_by, ...viewGanttParams } = params;
   const { params: inboxParams } = useInboxView();
+  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
+
+  const { user } = useUser();
+  const { projects } = useProjects();
+
+  const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
+
+  const { setToastAlert } = useToast();
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
-
-  const { user } = useUser();
-  const { setToastAlert } = useToast();
-
-  const { data: issues } = useSWR(
-    workspaceSlug && activeProject
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? "")
-      : null,
-    workspaceSlug && activeProject
-      ? () => issuesService.getIssues(workspaceSlug as string, activeProject ?? "")
-      : null
-  );
-
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
-  );
-
-  useEffect(() => {
-    if (projects && projects.length > 0)
-      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [projectId, projects]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        handleClose();
-      }
+  if (router.asPath.includes("my-issues"))
+    prePopulateData = {
+      ...prePopulateData,
+      assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+  const onClose = useCallback(() => {
+    handleClose();
+    setActiveProject(null);
   }, [handleClose]);
 
+  useEffect(() => {
+    // if modal is closed, reset active project to null
+    // and return to avoid activeProject being set to some other project
+    if (!isOpen) {
+      setActiveProject(null);
+      return;
+    }
+
+    // if data is present, set active project to the project of the
+    // issue. This has more priority than the project in the url.
+    if (data && data.project) {
+      setActiveProject(data.project);
+      return;
+    }
+
+    // if data is not present, set active project to the project
+    // in the url. This has the least priority.
+    if (projects && projects.length > 0 && !activeProject)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [activeProject, data, projectId, projects, isOpen]);
+
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !activeProject) return;
 
     await issuesService
       .addIssueToCycle(
@@ -140,7 +147,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !activeProject) return;
 
     await modulesService
       .addIssuesToModule(
@@ -161,7 +168,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const addIssueToInbox = async (formData: Partial<IIssue>) => {
-    if (!workspaceSlug || !projectId || !inboxId) return;
+    if (!workspaceSlug || !activeProject || !inboxId) return;
 
     const payload = {
       issue: {
@@ -176,7 +183,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     await inboxServices
       .createInboxIssue(
         workspaceSlug.toString(),
-        projectId.toString(),
+        activeProject.toString(),
         inboxId.toString(),
         payload,
         user
@@ -187,6 +194,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           title: "Success!",
           message: "Issue created successfully.",
         });
+
+        router.push(
+          `/${workspaceSlug}/projects/${activeProject}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`
+        );
 
         mutate(INBOX_ISSUES(inboxId.toString(), inboxParams));
       })
@@ -205,7 +216,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
     : viewId
     ? VIEW_ISSUES(viewId.toString(), calendarParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", calendarParams);
+
+  const spreadsheetFetchKey = cycleId
+    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
+    : moduleId
+    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
+    : viewId
+    ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", spreadsheetParams);
 
   const ganttFetchKey = cycleId
     ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
@@ -213,10 +232,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
     : viewId
     ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
+    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "");
 
   const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !activeProject) return;
 
     if (inboxId) await addIssueToInbox(payload);
     else
@@ -229,7 +248,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             await addIssueToModule(res.id, payload.module);
 
           if (issueView === "calendar") mutate(calendarFetchKey);
-          if (issueView === "gantt_chart") mutate(ganttFetchKey);
+          if (issueView === "gantt_chart")
+            mutate(ganttFetchKey, {
+              start_target_date: true,
+              order_by: "sort_order",
+            });
+          if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
+          if (groupedIssues) mutateMyIssues();
 
           setToastAlert({
             type: "success",
@@ -237,7 +262,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             message: "Issue created successfully.",
           });
 
-          if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
+          if (payload.assignees_list?.some((assignee) => assignee === user?.id))
+            mutate(USER_ISSUE(workspaceSlug as string));
 
           if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
         })
@@ -249,24 +275,26 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           });
         });
 
-    if (!createMore) handleClose();
+    if (!createMore) onClose();
   };
 
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
-      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
+      .patchIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
           if (issueView === "calendar") mutate(calendarFetchKey);
+          if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
+          if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
-        if (!createMore) handleClose();
+        if (!createMore) onClose();
 
         setToastAlert({
           type: "success",
@@ -296,11 +324,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     if (!data) await createIssue(payload);
     else await updateIssue(payload);
+
+    if (onSubmit) await onSubmit(payload);
   };
+
+  if (!projects || projects.length === 0) return null;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => {}}>
+      <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -310,7 +342,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-brand-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -324,14 +356,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-brand-base bg-brand-base p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <IssueForm
-                  issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
-                  initialData={prePopulateData}
+                  initialData={data ?? prePopulateData}
                   createMore={createMore}
                   setCreateMore={setCreateMore}
-                  handleClose={handleClose}
+                  handleClose={onClose}
                   projectId={activeProject ?? ""}
                   setActiveProject={setActiveProject}
                   status={data ? true : false}

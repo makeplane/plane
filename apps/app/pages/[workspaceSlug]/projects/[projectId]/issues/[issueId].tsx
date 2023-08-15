@@ -1,14 +1,11 @@
 import React, { useCallback, useEffect } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // services
 import issuesService from "services/issues.service";
 // hooks
@@ -16,38 +13,33 @@ import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
-import {
-  IssueDescriptionForm,
-  SubIssuesList,
-  IssueDetailsSidebar,
-  IssueActivitySection,
-  AddComment,
-  IssueAttachmentUpload,
-  IssueAttachments,
-} from "components/issues";
+import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { Loader, CustomMenu } from "components/ui";
+import { EmptyState, Loader } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
+// images
+import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { IIssue } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
+import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 const defaultValues = {
-  name: "",
+  assignees_list: [],
   description: "",
   description_html: "",
   estimate_point: null,
-  state: "",
-  assignees_list: [],
-  priority: "low",
-  blockers_list: [],
-  blocked_list: [],
-  target_date: new Date().toString(),
   issue_cycle: null,
   issue_module: null,
   labels_list: [],
+  name: "",
+  priority: "low",
+  start_date: null,
+  state: "",
+  target_date: null,
 };
 
 const IssueDetailsPage: NextPage = () => {
@@ -55,25 +47,16 @@ const IssueDetailsPage: NextPage = () => {
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { user } = useUserAuth();
-  const { memberRole } = useProjectMyMembership();
 
-  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
+  const {
+    data: issueDetails,
+    mutate: mutateIssueDetails,
+    error,
+  } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
           issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
-      : null
-  );
-
-  const { data: siblingIssues } = useSWR(
-    workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
-    workspaceSlug && projectId && issueDetails?.parent
-      ? () =>
-          issuesService.subIssues(
-            workspaceSlug as string,
-            projectId as string,
-            issueDetails.parent ?? ""
-          )
       : null
   );
 
@@ -89,6 +72,7 @@ const IssueDetailsPage: NextPage = () => {
         ISSUE_DETAILS(issueId as string),
         (prevData) => {
           if (!prevData) return prevData;
+
           return {
             ...prevData,
             ...formData,
@@ -97,10 +81,16 @@ const IssueDetailsPage: NextPage = () => {
         false
       );
 
-      const payload = { ...formData };
+      const payload: Partial<IIssue> = {
+        ...formData,
+      };
+
+      delete payload.blocker_issues;
+      delete payload.blocked_issues;
+
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
-        .then((res) => {
+        .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
@@ -117,12 +107,6 @@ const IssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
-      blockers_list:
-        issueDetails.blockers_list ??
-        issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
-      blocked_list:
-        issueDetails.blocks_list ??
-        issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
       assignees_list:
         issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,
@@ -135,91 +119,35 @@ const IssueDetailsPage: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
-            title={`${issueDetails?.project_detail.name ?? "Project"} Issues`}
+            title={`${truncateText(issueDetails?.project_detail.name ?? "Project", 32)} Issues`}
             link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
+            linkTruncate
           />
           <Breadcrumbs.BreadcrumbItem
             title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
               issueDetails?.sequence_id ?? "..."
             } Details`}
+            unshrinkTitle
           />
         </Breadcrumbs>
       }
     >
-      {issueDetails && projectId ? (
-        <div className="flex h-full">
-          <div className="basis-2/3 space-y-5 divide-y-2 divide-brand-base p-5">
-            <div className="rounded-lg">
-              {issueDetails?.parent && issueDetails.parent !== "" ? (
-                <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-brand-surface-2 p-2 text-xs">
-                  <Link
-                    href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
-                      issueDetails.parent
-                    }`}
-                  >
-                    <a className="flex items-center gap-2 text-brand-secondary">
-                      <span
-                        className="block h-1.5 w-1.5 rounded-full"
-                        style={{
-                          backgroundColor: issueDetails?.state_detail?.color,
-                        }}
-                      />
-                      <span className="flex-shrink-0">
-                        {issueDetails.project_detail.identifier}-
-                        {issueDetails.parent_detail?.sequence_id}
-                      </span>
-                      <span className="truncate">
-                        {issueDetails.parent_detail?.name.substring(0, 50)}
-                      </span>
-                    </a>
-                  </Link>
-
-                  <CustomMenu ellipsis position="left">
-                    {siblingIssues && siblingIssues.length > 0 ? (
-                      siblingIssues.map((issue: IIssue) => (
-                        <CustomMenu.MenuItem key={issue.id}>
-                          <Link
-                            href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
-                              issue.id
-                            }`}
-                          >
-                            <a>
-                              {issueDetails.project_detail.identifier}-{issue.sequence_id}
-                            </a>
-                          </Link>
-                        </CustomMenu.MenuItem>
-                      ))
-                    ) : (
-                      <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-brand-secondary">
-                        No other sibling issues
-                      </CustomMenu.MenuItem>
-                    )}
-                  </CustomMenu>
-                </div>
-              ) : null}
-              <IssueDescriptionForm
-                issue={issueDetails}
-                handleFormSubmit={submitChanges}
-                isAllowed={memberRole.isMember || memberRole.isOwner}
-              />
-              <div className="mt-2 space-y-2">
-                <SubIssuesList parentIssue={issueDetails} user={user} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-3 py-3">
-              <h3 className="text-lg">Attachments</h3>
-              <div className="grid  grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                <IssueAttachmentUpload />
-                <IssueAttachments />
-              </div>
-            </div>
-            <div className="space-y-5 pt-3">
-              <h3 className="text-lg text-brand-base">Comments/Activity</h3>
-              <IssueActivitySection issueId={issueId as string} user={user} />
-              <AddComment issueId={issueId as string} user={user} />
-            </div>
+      {error ? (
+        <EmptyState
+          image={emptyIssue}
+          title="Issue does not exist"
+          description="The issue you are looking for does not exist, has been archived, or has been deleted."
+          primaryButton={{
+            text: "View other issues",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/issues`),
+          }}
+        />
+      ) : issueDetails && projectId ? (
+        <div className="flex h-full overflow-hidden">
+          <div className="w-2/3 h-full overflow-y-auto space-y-5 divide-y-2 divide-custom-border-300 p-5">
+            <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
           </div>
-          <div className="basis-1/3 space-y-5 border-l border-brand-base p-5">
+          <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 p-5 overflow-hidden">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

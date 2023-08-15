@@ -23,7 +23,7 @@ export const SelectSegment: React.FC<Props> = ({ value, onChange, params }) => {
       label={
         <span>
           {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label ?? (
-            <span className="text-brand-secondary">No value</span>
+            <span className="text-custom-text-200">No value</span>
           )}
         </span>
       }

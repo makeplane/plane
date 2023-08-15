@@ -5,22 +5,25 @@ import { CalendarDaysIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // react-datepicker
 import DatePicker from "react-datepicker";
 // import "react-datepicker/dist/react-datepicker.css";
-import { renderDateFormat } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
 type Props = {
-  value: string | null;
+  label: string;
+  maxDate?: Date;
+  minDate?: Date;
   onChange: (val: string | null) => void;
+  value: string | null;
 };
 
-export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
+export const IssueDateSelect: React.FC<Props> = ({ label, maxDate, minDate, onChange, value }) => (
   <Popover className="relative flex items-center justify-center  rounded-lg">
     {({ open }) => (
       <>
-        <Popover.Button className="flex cursor-pointer items-center rounded-md border border-brand-base text-xs shadow-sm duration-200">
-          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-brand-secondary">
+        <Popover.Button className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200">
+          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200">
             {value ? (
               <>
-                <span className="text-brand-base">{value}</span>
+                <span className="text-custom-text-100">{renderShortDateWithYearFormat(value)}</span>
                 <button onClick={() => onChange(null)}>
                   <XMarkIcon className="h-3 w-3" />
                 </button>
@@ -28,7 +31,7 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
             ) : (
               <>
                 <CalendarDaysIcon className="h-3.5 w-3.5 flex-shrink-0" />
-                <span>Due Date</span>
+                <span>{label}</span>
               </>
             )}
           </span>
@@ -51,6 +54,8 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
                 else onChange(renderDateFormat(val));
               }}
               dateFormat="dd-MM-yyyy"
+              minDate={minDate}
+              maxDate={maxDate}
               inline
             />
           </Popover.Panel>

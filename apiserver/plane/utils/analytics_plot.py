@@ -81,30 +81,55 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     return sorted_data
 
 
-def burndown_plot(queryset, slug, project_id, cycle_id):
-    # Get all dates between the two dates
-    date_range = [
-        queryset.start_date + timedelta(days=x)
-        for x in range((queryset.end_date - queryset.start_date).days + 1)
-    ]
-
-    chart_data = {str(date): 0 for date in date_range}
-
-    # Total Issues in Cycle
+def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
+    # Total Issues in Cycle or Module
     total_issues = queryset.total_issues
 
-    completed_issues_distribution = (
-        Issue.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_cycle__cycle_id=cycle_id,
+
+    if cycle_id:
+        # Get all dates between the two dates
+        date_range = [
+            queryset.start_date + timedelta(days=x)
+            for x in range((queryset.end_date - queryset.start_date).days + 1)
+        ]
+
+        chart_data = {str(date): 0 for date in date_range}
+
+        completed_issues_distribution = (
+            Issue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_cycle__cycle_id=cycle_id,
+            )
+            .annotate(date=TruncDate("completed_at"))
+            .values("date")
+            .annotate(total_completed=Count("id"))
+            .values("date", "total_completed")
+            .order_by("date")
         )
-        .annotate(date=TruncDate("completed_at"))
-        .values("date")
-        .annotate(total_completed=Count("id"))
-        .values("date", "total_completed")
-        .order_by("date")
-    )
+    
+    if module_id:
+        # Get all dates between the two dates
+        date_range = [
+            queryset.start_date + timedelta(days=x)
+            for x in range((queryset.target_date - queryset.start_date).days + 1)
+        ]
+
+        chart_data = {str(date): 0 for date in date_range}
+
+        completed_issues_distribution = (
+            Issue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_module__module_id=module_id,
+            )
+            .annotate(date=TruncDate("completed_at"))
+            .values("date")
+            .annotate(total_completed=Count("id"))
+            .values("date", "total_completed")
+            .order_by("date")
+        )
+
 
     for date in date_range:
         cumulative_pending_issues = total_issues

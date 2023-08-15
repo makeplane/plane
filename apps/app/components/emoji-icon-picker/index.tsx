@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 // headless ui
 import { Tab, Transition, Popover } from "@headlessui/react";
 // react colors
@@ -10,9 +10,7 @@ import emojis from "./emojis.json";
 import icons from "./icons.json";
 // helpers
 import { getRecentEmojis, saveRecentEmoji } from "./helpers";
-import { getRandomEmoji } from "helpers/common.helper";
-// hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 
 const tabOptions = [
   {
@@ -26,11 +24,9 @@ const tabOptions = [
 ];
 
 const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorChange }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
   const [isOpen, setIsOpen] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
-  const [activeColor, setActiveColor] = useState<string>("#858e96");
+  const [activeColor, setActiveColor] = useState<string>("rgb(var(--color-text-200))");
 
   const [recentEmojis, setRecentEmojis] = useState<string[]>([]);
 
@@ -38,20 +34,13 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
     setRecentEmojis(getRecentEmojis());
   }, []);
 
-  useOutsideClickDetector(ref, () => {
-    setIsOpen(false);
-  });
-
   useEffect(() => {
     if (!value || value?.length === 0) onChange(getRandomEmoji());
   }, [value, onChange]);
 
   return (
-    <Popover className="relative z-[1]" ref={ref}>
-      <Popover.Button
-        className="rounded-full bg-brand-surface-1 p-2 outline-none sm:text-sm"
-        onClick={() => setIsOpen((prev) => !prev)}
-      >
+    <Popover className="relative z-[1]">
+      <Popover.Button onClick={() => setIsOpen((prev) => !prev)} className="outline-none">
         {label}
       </Popover.Button>
       <Transition
@@ -63,8 +52,8 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] border border-brand-base bg-brand-surface-2 shadow-lg">
-          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-brand-base bg-brand-surface-2 p-2 shadow-xl">
+        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] border border-custom-border-200 bg-custom-background-80 shadow-lg">
+          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-custom-border-200 bg-custom-background-80 p-2 shadow-xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 p-1">
                 {tabOptions.map((tab) => (
@@ -76,7 +65,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                           setOpenColorPicker(false);
                         }}
                         className={`-my-1 w-1/2 border-b pb-2 text-center text-sm font-medium outline-none transition-colors ${
-                          selected ? "" : "border-transparent text-brand-secondary"
+                          selected ? "" : "border-transparent text-custom-text-200"
                         }`}
                       >
                         {tab.title}
@@ -89,7 +78,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                 <Tab.Panel>
                   {recentEmojis.length > 0 && (
                     <div className="py-2">
-                      <h3 className="mb-2 text-xs text-brand-secondary">Recent</h3>
+                      <h3 className="mb-2 text-xs text-custom-text-200">Recent</h3>
                       <div className="grid grid-cols-8 gap-2">
                         {recentEmojis.map((emoji) => (
                           <button
@@ -101,13 +90,13 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                               setIsOpen(false);
                             }}
                           >
-                            {String.fromCodePoint(parseInt(emoji))}
+                            {renderEmoji(emoji)}
                           </button>
                         ))}
                       </div>
                     </div>
                   )}
-                  <hr className="mb-2 h-[1px] w-full border-brand-base" />
+                  <hr className="mb-2 h-[1px] w-full border-custom-border-200" />
                   <div>
                     <div className="grid grid-cols-8 gap-x-2 gap-y-3">
                       {emojis.map((emoji) => (
@@ -121,7 +110,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                             setIsOpen(false);
                           }}
                         >
-                          {String.fromCodePoint(parseInt(emoji))}
+                          {renderEmoji(emoji)}
                         </button>
                       ))}
                     </div>
@@ -173,7 +162,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
                         />
                       </div>
                     </div>
-                    <hr className="mb-1 h-[1px] w-full border-brand-base" />
+                    <hr className="mb-1 h-[1px] w-full border-custom-border-200" />
                     <div className="mt-1 ml-1 grid grid-cols-8 gap-x-2 gap-y-3">
                       {icons.material_rounded.map((icon, index) => (
                         <button

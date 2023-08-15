@@ -2,8 +2,10 @@ export const GROUP_BY_OPTIONS: Array<{
   name: string;
   key: TIssueGroupByOptions;
 }> = [
-  { name: "State", key: "state" },
+  { name: "States", key: "state" },
+  { name: "State Groups", key: "state_detail.group" },
   { name: "Priority", key: "priority" },
+  { name: "Project", key: "project" },
   { name: "Labels", key: "labels" },
   { name: "Created by", key: "created_by" },
   { name: "None", key: null },
@@ -73,6 +75,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
       ...prevData[issueIndex],
       ...formData,
       assignees: formData?.assignees_list ?? prevData[issueIndex]?.assignees,
+      labels: formData?.labels_list ?? prevData[issueIndex]?.labels,
     };
 
     prevData.splice(issueIndex, 1, updatedIssue);
@@ -90,6 +93,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
       ...oldGroup[issueIndex],
       ...formData,
       assignees: formData?.assignees_list ?? oldGroup[issueIndex]?.assignees,
+      labels: formData?.labels_list ?? oldGroup[issueIndex]?.labels,
     };
 
     if (selectedGroupBy !== Object.keys(formData)[0])

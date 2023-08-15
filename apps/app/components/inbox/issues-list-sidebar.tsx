@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // hooks
 import useInboxView from "hooks/use-inbox-view";
 // components
-import { InboxIssueCard } from "components/inbox";
+import { InboxIssueCard, InboxFiltersList } from "components/inbox";
 // ui
 import { Loader } from "components/ui";
 
@@ -11,13 +11,14 @@ export const IssuesListSidebar = () => {
   const router = useRouter();
   const { inboxIssueId } = router.query;
 
-  const { issues: inboxIssues } = useInboxView();
+  const { issues: inboxIssues, filtersLength } = useInboxView();
 
   return (
-    <>
+    <div className="h-full flex flex-col overflow-hidden">
+      <InboxFiltersList />
       {inboxIssues ? (
         inboxIssues.length > 0 ? (
-          <div className="divide-y divide-brand-base overflow-auto h-full pb-10">
+          <div className="divide-y divide-custom-border-200 overflow-auto h-full">
             {inboxIssues.map((issue) => (
               <InboxIssueCard
                 key={issue.id}
@@ -27,8 +28,9 @@ export const IssuesListSidebar = () => {
             ))}
           </div>
         ) : (
-          <div className="h-full p-4 grid place-items-center text-center text-sm text-brand-secondary">
-            No issues found for the selected filters. Try changing the filters.
+          <div className="h-full p-4 grid place-items-center text-center text-sm text-custom-text-200">
+            {filtersLength > 0 &&
+              "No issues found for the selected filters. Try changing the filters."}
           </div>
         )
       ) : (
@@ -39,6 +41,6 @@ export const IssuesListSidebar = () => {
           <Loader.Item height="50px" />
         </Loader>
       )}
-    </>
+    </div>
   );
 };

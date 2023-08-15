@@ -7,13 +7,14 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from plane.api.serializers.workspace import WorkSpaceSerializer, WorkspaceLiteSerializer
-from plane.api.serializers.user import UserLiteSerializer
+from plane.api.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
 from plane.db.models import (
     Project,
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
     ProjectFavorite,
+    ProjectDeployBoard,
 )
 
 
@@ -77,6 +78,20 @@ class ProjectSerializer(BaseSerializer):
         raise serializers.ValidationError(detail="Project Identifier is already taken")
 
 
+class ProjectLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Project
+        fields = [
+            "id",
+            "identifier",
+            "name",
+            "cover_image",
+            "icon_prop",
+            "emoji",
+        ]
+        read_only_fields = fields
+
+
 class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
@@ -86,6 +101,8 @@ class ProjectDetailSerializer(BaseSerializer):
     total_cycles = serializers.IntegerField(read_only=True)
     total_modules = serializers.IntegerField(read_only=True)
     is_member = serializers.BooleanField(read_only=True)
+    sort_order = serializers.FloatField(read_only=True)
+    member_role = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Project
@@ -94,7 +111,7 @@ class ProjectDetailSerializer(BaseSerializer):
 
 class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
-    project = ProjectSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
     member = UserLiteSerializer(read_only=True)
 
     class Meta:
@@ -102,9 +119,19 @@ class ProjectMemberSerializer(BaseSerializer):
         fields = "__all__"
 
 
+class ProjectMemberAdminSerializer(BaseSerializer):
+    workspace = WorkspaceLiteSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
+    member = UserAdminLiteSerializer(read_only=True)
+
+    class Meta:
+        model = ProjectMember
+        fields = "__all__"
+
+
 class ProjectMemberInviteSerializer(BaseSerializer):
-    project = ProjectSerializer(read_only=True)
-    workspace = WorkSpaceSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
 
     class Meta:
         model = ProjectMemberInvite
@@ -118,7 +145,7 @@ class ProjectIdentifierSerializer(BaseSerializer):
 
 
 class ProjectFavoriteSerializer(BaseSerializer):
-    project_detail = ProjectSerializer(source="project", read_only=True)
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
 
     class Meta:
         model = ProjectFavorite
@@ -129,8 +156,24 @@ class ProjectFavoriteSerializer(BaseSerializer):
         ]
 
 
-class ProjectLiteSerializer(BaseSerializer):
+class ProjectMemberLiteSerializer(BaseSerializer):
+    member = UserLiteSerializer(read_only=True)
+    is_subscribed = serializers.BooleanField(read_only=True)
+
     class Meta:
-        model = Project
-        fields = ["id", "identifier", "name"]
+        model = ProjectMember
+        fields = ["member", "id", "is_subscribed"]
         read_only_fields = fields
+
+
+class ProjectDeployBoardSerializer(BaseSerializer):
+    project_details = ProjectLiteSerializer(read_only=True, source="project")
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+
+    class Meta:
+        model = ProjectDeployBoard
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project" "anchor",
+        ]

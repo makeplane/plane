@@ -6,4 +6,4 @@ python manage.py migrate
 # Create a Default User
 python bin/user_script.py
 
-exec gunicorn -w 8 -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:8000 --config gunicorn.config.py --max-requests 1200 --max-requests-jitter 1000 --access-logfile -
+exec gunicorn -w 8 -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:8000 --max-requests 1200 --max-requests-jitter 1000 --access-logfile -

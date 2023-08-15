@@ -15,7 +15,7 @@ import stateService from "services/state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { CustomSelect, Input, PrimaryButton, SecondaryButton, Tooltip } from "components/ui";
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys
@@ -28,13 +28,14 @@ type Props = {
   onClose: () => void;
   selectedGroup: StateGroup | null;
   user: ICurrentUserResponse | undefined;
+  groupLength: number;
 };
 
 export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled" | null;
 
 const defaultValues: Partial<IState> = {
   name: "",
-  color: "#858e96",
+  color: "rgb(var(--color-text-200))",
   group: "backlog",
 };
 
@@ -43,6 +44,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   onClose,
   selectedGroup,
   user,
+  groupLength,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -167,7 +169,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex items-center gap-x-2 rounded-[10px] bg-brand-base p-5"
+      className="flex items-center gap-x-2 rounded-[10px] bg-custom-background-100 p-5"
     >
       <div className="flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center">
@@ -175,7 +177,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
             <>
               <Popover.Button
                 className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-brand-base" : "text-brand-secondary"
+                  open ? "text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
                 {watch("color") && watch("color") !== "" && (
@@ -228,22 +230,29 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           name="group"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <CustomSelect
-              value={value}
-              onChange={onChange}
-              label={
-                Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
-                  ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
-                  : "Select group"
-              }
-              input
+            <Tooltip
+              tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}
             >
-              {Object.keys(GROUP_CHOICES).map((key) => (
-                <CustomSelect.Option key={key} value={key}>
-                  {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+              <div>
+                <CustomSelect
+                  disabled={groupLength === 1}
+                  value={value}
+                  onChange={onChange}
+                  label={
+                    Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
+                      ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
+                      : "Select group"
+                  }
+                  input
+                >
+                  {Object.keys(GROUP_CHOICES).map((key) => (
+                    <CustomSelect.Option key={key} value={key}>
+                      {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
+                    </CustomSelect.Option>
+                  ))}
+                </CustomSelect>
+              </div>
+            </Tooltip>
           )}
         />
       )}

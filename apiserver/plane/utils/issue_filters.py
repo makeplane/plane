@@ -1,7 +1,6 @@
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 
-
 def filter_state(params, filter, method):
     if method == "GET":
         states = params.get("state").split(",")
@@ -11,6 +10,18 @@ def filter_state(params, filter, method):
         if params.get("state", None) and len(params.get("state")):
             filter["state__in"] = params.get("state")
     return filter
+
+
+def filter_state_group(params, filter, method):
+    if method == "GET":
+        state_group = params.get("state_group").split(",")
+        if len(state_group) and "" not in state_group:
+            filter["state__group__in"] = state_group
+    else:
+        if params.get("state_group", None) and len(params.get("state_group")):
+            filter["state__group__in"] = params.get("state_group")
+    return filter
+
 
 
 def filter_estimate_point(params, filter, method):
@@ -26,12 +37,27 @@ def filter_estimate_point(params, filter, method):
 
 def filter_priority(params, filter, method):
     if method == "GET":
-        priorties = params.get("priority").split(",")
-        if len(priorties) and "" not in priorties:
-            filter["priority__in"] = priorties
+        priorities = params.get("priority").split(",")
+        if len(priorities) and "" not in priorities:
+            if len(priorities) == 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+            elif len(priorities) > 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+            else:
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+
     else:
         if params.get("priority", None) and len(params.get("priority")):
-            filter["priority__in"] = params.get("priority")
+            priorities = params.get("priority")
+            if len(priorities) == 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+            elif len(priorities) > 1 and "null" in priorities:
+                filter["priority__isnull"] = True
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+            else:
+                filter["priority__in"] = [p for p in priorities if p != "null"]
+
     return filter
 
 
@@ -98,10 +124,11 @@ def filter_created_at(params, filter, method):
     else:
         if params.get("created_at", None) and len(params.get("created_at")):
             for query in params.get("created_at"):
-                if query.get("timeline", "after") == "after":
-                    filter["created_at__date__gte"] = query.get("datetime")
+                created_at_query = query.split(";")
+                if len(created_at_query) == 2 and "after" in created_at_query:
+                    filter["created_at__date__gte"] = created_at_query[0]
                 else:
-                    filter["created_at__date__lte"] = query.get("datetime")
+                    filter["created_at__date__lte"] = created_at_query[0]
     return filter
 
 
@@ -118,10 +145,11 @@ def filter_updated_at(params, filter, method):
     else:
         if params.get("updated_at", None) and len(params.get("updated_at")):
             for query in params.get("updated_at"):
-                if query.get("timeline", "after") == "after":
-                    filter["updated_at__date__gte"] = query.get("datetime")
+                updated_at_query = query.split(";")
+                if len(updated_at_query) == 2 and "after" in updated_at_query:
+                    filter["updated_at__date__gte"] = updated_at_query[0]
                 else:
-                    filter["updated_at__date__lte"] = query.get("datetime")
+                    filter["updated_at__date__lte"] = updated_at_query[0]
     return filter
 
 
@@ -138,10 +166,11 @@ def filter_start_date(params, filter, method):
     else:
         if params.get("start_date", None) and len(params.get("start_date")):
             for query in params.get("start_date"):
-                if query.get("timeline", "after") == "after":
-                    filter["start_date__gte"] = query.get("datetime")
+                start_date_query = query.split(";")
+                if len(start_date_query) == 2 and "after" in start_date_query:
+                    filter["start_date__gte"] = start_date_query[0]
                 else:
-                    filter["start_date__lte"] = query.get("datetime")
+                    filter["start_date__lte"] = start_date_query[0]
     return filter
 
 
@@ -152,16 +181,17 @@ def filter_target_date(params, filter, method):
             for query in target_dates:
                 target_date_query = query.split(";")
                 if len(target_date_query) == 2 and "after" in target_date_query:
-                    filter["target_date__gte"] = target_date_query[0]
+                    filter["target_date__gt"] = target_date_query[0]
                 else:
-                    filter["target_date__lte"] = target_date_query[0]
+                    filter["target_date__lt"] = target_date_query[0]
     else:
         if params.get("target_date", None) and len(params.get("target_date")):
             for query in params.get("target_date"):
-                if query.get("timeline", "after") == "after":
-                    filter["target_date__gte"] = query.get("datetime")
+                target_date_query = query.split(";")
+                if len(target_date_query) == 2 and "after" in target_date_query:
+                    filter["target_date__gt"] = target_date_query[0]
                 else:
-                    filter["target_date__lte"] = query.get("datetime")
+                    filter["target_date__lt"] = target_date_query[0]
 
     return filter
 
@@ -179,10 +209,11 @@ def filter_completed_at(params, filter, method):
     else:
         if params.get("completed_at", None) and len(params.get("completed_at")):
             for query in params.get("completed_at"):
-                if query.get("timeline", "after") == "after":
-                    filter["completed_at__date__gte"] = query.get("datetime")
+                completed_at_query = query.split(";")
+                if len(completed_at_query) == 2 and "after" in completed_at_query:
+                    filter["completed_at__date__gte"] = completed_at_query[0]
                 else:
-                    filter["completed_at__lte"] = query.get("datetime")
+                    filter["completed_at__lte"] = completed_at_query[0]
     return filter
 
 
@@ -196,6 +227,7 @@ def filter_issue_state_type(params, filter, method):
 
     filter["state__group__in"] = group
     return filter
+
 
 
 def filter_project(params, filter, method):
@@ -242,11 +274,43 @@ def filter_inbox_status(params, filter, method):
     return filter
 
 
+def filter_sub_issue_toggle(params, filter, method):
+    if method == "GET":
+        sub_issue = params.get("sub_issue", "false")
+        if sub_issue == "false":
+            filter["parent__isnull"] = True
+    else:
+        sub_issue = params.get("sub_issue", "false")
+        if sub_issue == "false":
+            filter["parent__isnull"] = True
+    return filter
+
+
+def filter_subscribed_issues(params, filter, method):
+    if method == "GET":
+        subscribers = params.get("subscriber").split(",")
+        if len(subscribers) and "" not in subscribers:
+            filter["issue_subscribers__subscriber_id__in"] = subscribers
+    else:
+        if params.get("subscriber", None) and len(params.get("subscriber")):
+            filter["issue_subscribers__subscriber_id__in"] = params.get("subscriber")
+    return filter
+
+
+def filter_start_target_date_issues(params, filter, method):
+    start_target_date = params.get("start_target_date", "false")
+    if start_target_date == "true":
+        filter["target_date__isnull"] = False
+        filter["start_date__isnull"] = False
+    return filter
+
+
 def issue_filters(query_params, method):
     filter = dict()
 
     ISSUE_FILTER = {
         "state": filter_state,
+        "state_group": filter_state_group,
         "estimate_point": filter_estimate_point,
         "priority": filter_priority,
         "parent": filter_parent,
@@ -263,7 +327,10 @@ def issue_filters(query_params, method):
         "project": filter_project,
         "cycle": filter_cycle,
         "module": filter_module,
-        "inbox_status": filter_inbox_status
+        "inbox_status": filter_inbox_status,
+        "sub_issue": filter_sub_issue_toggle,
+        "subscriber":  filter_subscribed_issues,
+        "start_target_date": filter_start_target_date_issues,
     }
 
     for key, value in ISSUE_FILTER.items():

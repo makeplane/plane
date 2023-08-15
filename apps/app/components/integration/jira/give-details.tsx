@@ -31,10 +31,10 @@ export const JiraGetImportDetail: React.FC = () => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Personal Access Token</h3>
-          <p className="text-sm text-brand-secondary">
+          <p className="text-sm text-custom-text-200">
             Get to know your access token by navigating to{" "}
             <Link href="https://id.atlassian.com/manage-profile/security/api-tokens">
-              <a className="text-brand-accent underline" target="_blank" rel="noreferrer">
+              <a className="text-custom-primary underline" target="_blank" rel="noreferrer">
                 Atlassian Settings
               </a>
             </Link>
@@ -58,7 +58,7 @@ export const JiraGetImportDetail: React.FC = () => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Project Key</h3>
-          <p className="text-sm text-brand-secondary">If XXX-123 is your issue, then enter XXX</p>
+          <p className="text-sm text-custom-text-200">If XXX-123 is your issue, then enter XXX</p>
         </div>
         <div className="col-span-1">
           <Input
@@ -77,7 +77,7 @@ export const JiraGetImportDetail: React.FC = () => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Email Address</h3>
-          <p className="text-sm text-brand-secondary">
+          <p className="text-sm text-custom-text-200">
             Enter the Gmail account that you use in Jira account
           </p>
         </div>
@@ -99,7 +99,7 @@ export const JiraGetImportDetail: React.FC = () => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Installation or Cloud Host Name</h3>
-          <p className="text-sm text-brand-secondary">Enter your companies cloud host name</p>
+          <p className="text-sm text-custom-text-200">Enter your companies cloud host name</p>
         </div>
         <div className="col-span-1">
           <Input
@@ -119,7 +119,7 @@ export const JiraGetImportDetail: React.FC = () => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import to project</h3>
-          <p className="text-sm text-brand-secondary">
+          <p className="text-sm text-custom-text-200">
             Select which project you want to import to.
           </p>
         </div>
@@ -137,22 +137,22 @@ export const JiraGetImportDetail: React.FC = () => {
                 label={
                   <span>
                     {value && value !== "" ? (
-                      projects.find((p) => p.id === value)?.name
+                      projects?.find((p) => p.id === value)?.name
                     ) : (
-                      <span className="text-brand-secondary">Select a project</span>
+                      <span className="text-custom-text-200">Select a project</span>
                     )}
                   </span>
                 }
                 verticalPosition="top"
               >
-                {projects.length > 0 ? (
+                {projects && projects.length > 0 ? (
                   projects.map((project) => (
                     <CustomSelect.Option key={project.id} value={project.id}>
                       {project.name}
                     </CustomSelect.Option>
                   ))
                 ) : (
-                  <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-brand-secondary">
+                  <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200">
                     <p>You don{"'"}t have any project. Please create a project first.</p>
                   </div>
                 )}
@@ -163,9 +163,9 @@ export const JiraGetImportDetail: React.FC = () => {
                       const event = new KeyboardEvent("keydown", { key: "p" });
                       document.dispatchEvent(event);
                     }}
-                    className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-brand-secondary"
+                    className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
-                    <PlusIcon className="h-4 w-4 text-gray-500" />
+                    <PlusIcon className="h-4 w-4 text-custom-text-200" />
                     <span>Create new project</span>
                   </button>
                 </div>

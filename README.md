@@ -2,7 +2,7 @@
 
 <p align="center">
 <a href="https://plane.so">
-  <img src="https://res.cloudinary.com/toolspacedev/image/upload/v1680596414/Plane/Plane_Icon_Blue_on_White_150x150_muysa3.jpg" alt="Plane Logo" width="70">
+  <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_logo_.webp" alt="Plane Logo" width="70">
 </a>
 </p>
 
@@ -11,22 +11,22 @@
 
 <p align="center">
 <a href="https://discord.com/invite/A92xrEGCge">
-<img alt="Discord" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
+<img alt="Discord online members" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
 </a>
-<img alt="Discord" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
+<img alt="Commit activity per month" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
 </p>
 
 <p>
     <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Screen.png?updatedAt=1684942001069"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_screen.webp"
         alt="Plane Screens"
         width="100%"
       />
     </a>
     <a href="https://app.plane.so/#gh-dark-mode-only" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Screens_Dark_Mode.png?updatedAt=1684942388044"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_screens_dark_mode.webp"
         alt="Plane Screens"
         width="100%"
       />
@@ -61,14 +61,6 @@ chmod +x setup.sh
 
 > If running in a cloud env replace localhost with public facing IP address of the VM
 
-- Export Environment Variables
-
-```bash
-set -a
-source .env
-set +a
-```
-
 - Run Docker compose up
 
 ```bash
@@ -94,7 +86,7 @@ docker compose up -d
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Views_Dark_Mode.png?updatedAt=1684943050275"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_views_dark_mode.webp"
         alt="Plane Views"
         width="100%"
       />
@@ -103,7 +95,7 @@ docker compose up -d
 <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Issue_Detail_Dark_Mode.png?updatedAt=1684943050202"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_issue_detail_dark_mode.webp"
         alt="Plane Issue Details"
         width="100%"
       />
@@ -112,7 +104,7 @@ docker compose up -d
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Cycles___Modules_Dark_Mode.png?updatedAt=1684943050281"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_cycles_modules_dark_mode.webp"
         alt="Plane Cycles and Modules"
         width="100%"
       />
@@ -121,7 +113,7 @@ docker compose up -d
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Analytics_Dark_Mode.png?updatedAt=1684944596824"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_analytics_dark_mode.webp"
         alt="Plane Analytics"
         width="100%"
       />
@@ -130,7 +122,7 @@ docker compose up -d
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Pages_Dark_Mode.png?updatedAt=1684943050202"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_pages_dark_mode.webp"
         alt="Plane Pages"
         width="100%"
       />
@@ -140,7 +132,7 @@ docker compose up -d
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/killbluedog/Plane_Commad_K_Dark_Mode.png?updatedAt=1684943050312"
+        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_commad_k_dark_mode.webp"
         alt="Plane Command Menu"
         width="100%"
       />
@@ -165,4 +157,4 @@ Our [Code of Conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CON
 
 ## ⛓️ Security
 
-If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email security@plane.so to disclose any security vulnerabilities.
+If you believe you have found a security vulnerability in Plane, we encourage you to responsibly disclose this and not open a public issue. We will investigate all legitimate reports. Email engineering@plane.so to disclose any security vulnerabilities.

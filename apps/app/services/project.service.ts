@@ -6,11 +6,14 @@ import trackEventServices from "services/track-event.service";
 import type {
   GithubRepositoriesResponse,
   ICurrentUserResponse,
-  IFavoriteProject,
   IProject,
+  IProjectBulkInviteFormData,
   IProjectMember,
   IProjectMemberInvitation,
+  ISearchIssueResponse,
+  ProjectPreferences,
   ProjectViewTheme,
+  TProjectIssuesSearchParams,
 } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
@@ -50,8 +53,15 @@ class ProjectServices extends APIService {
       });
   }
 
-  async getProjects(workspaceSlug: string): Promise<IProject[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/`)
+  async getProjects(
+    workspaceSlug: string,
+    params: {
+      is_favorite: "all" | boolean;
+    }
+  ): Promise<IProject[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -100,7 +110,7 @@ class ProjectServices extends APIService {
   async inviteProject(
     workspaceSlug: string,
     projectId: string,
-    data: any,
+    data: IProjectBulkInviteFormData,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
@@ -141,6 +151,17 @@ class ProjectServices extends APIService {
   }
 
   async projectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async projectMembersWithEmail(
+    workspaceSlug: string,
+    projectId: string
+  ): Promise<IProjectMember[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -209,6 +230,17 @@ class ProjectServices extends APIService {
       });
   }
 
+  async projectInvitationsWithEmail(
+    workspaceSlug: string,
+    projectId: string
+  ): Promise<IProjectMemberInvitation[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async updateProjectInvitation(
     workspaceSlug: string,
     projectId: string,
@@ -243,6 +275,8 @@ class ProjectServices extends APIService {
     data: {
       view_props?: ProjectViewTheme;
       default_props?: ProjectViewTheme;
+      preferences?: ProjectPreferences;
+      sort_order?: number;
     }
   ): Promise<any> {
     await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-views/`, data)
@@ -295,14 +329,6 @@ class ProjectServices extends APIService {
       });
   }
 
-  async getFavoriteProjects(workspaceSlug: string): Promise<IFavoriteProject[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async addProjectToFavorites(
     workspaceSlug: string,
     data: {
@@ -318,6 +344,20 @@ class ProjectServices extends APIService {
 
   async removeProjectFromFavorites(workspaceSlug: string, projectId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/user-favorite-projects/${projectId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async projectIssuesSearch(
+    workspaceSlug: string,
+    projectId: string,
+    params: TProjectIssuesSearchParams
+  ): Promise<ISearchIssueResponse[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search-issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

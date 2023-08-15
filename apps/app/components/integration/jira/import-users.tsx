@@ -3,11 +3,17 @@ import { FC } from "react";
 // next
 import { useRouter } from "next/router";
 
+// swr
+import useSWR from "swr";
+
 // react-hook-form
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 
-// hooks
-import useWorkspaceMembers from "hooks/use-workspace-members";
+// fetch keys
+import { WORKSPACE_MEMBERS_WITH_EMAIL } from "constants/fetch-keys";
+
+// services
+import workspaceService from "services/workspace.service";
 
 // components
 import { ToggleSwitch, Input, CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
@@ -30,32 +36,30 @@ export const JiraImportUsers: FC = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { workspaceMembers: members } = useWorkspaceMembers(workspaceSlug?.toString());
+  const { data: members } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug?.toString() ?? "") : null,
+    workspaceSlug
+      ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug?.toString() ?? "")
+      : null
+  );
 
   const options = members?.map((member) => ({
     value: member.member.email,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    query: member.member.display_name ?? "",
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {member.member.first_name && member.member.first_name !== ""
-          ? member.member.first_name + " (" + member.member.email + ")"
-          : member.member.email}
+        {member.member.display_name}
       </div>
     ),
   }));
 
   return (
-    <div className="h-full w-full space-y-10 divide-y-2 divide-brand-base overflow-y-auto">
+    <div className="h-full w-full space-y-10 divide-y-2 divide-custom-border-200 overflow-y-auto">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Users</h3>
-          <p className="text-sm text-brand-secondary">
+          <p className="text-sm text-custom-text-200">
             Update, invite or choose not to invite assignee
           </p>
         </div>
@@ -73,8 +77,8 @@ export const JiraImportUsers: FC = () => {
       {watch("data.invite_users") && (
         <div className="pt-6">
           <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-1 text-sm text-brand-secondary">Name</div>
-            <div className="col-span-1 text-sm text-brand-secondary">Import as</div>
+            <div className="col-span-1 text-sm text-custom-text-200">Name</div>
+            <div className="col-span-1 text-sm text-custom-text-200">Import as</div>
           </div>
 
           <div className="mt-5 space-y-3">

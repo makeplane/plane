@@ -17,16 +17,16 @@ export const CalendarGraph: React.FC<TGraph & Omit<CalendarSvgProps, "height" | 
       margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
       colors={
         rest.colors ?? [
-          "rgba(var(--color-accent), 0.2)",
-          "rgba(var(--color-accent), 0.4)",
-          "rgba(var(--color-accent), 0.8)",
-          "rgba(var(--color-accent), 1)",
+          "rgba(var(--color-primary-100), 0.2)",
+          "rgba(var(--color-primary-100), 0.4)",
+          "rgba(var(--color-primary-100), 0.8)",
+          "rgba(var(--color-primary-100), 1)",
         ]
       }
-      emptyColor={rest.emptyColor ?? "rgb(var(--color-bg-surface-2))"}
+      emptyColor={rest.emptyColor ?? "rgb(var(--color-background-80))"}
       dayBorderColor={rest.dayBorderColor ?? "transparent"}
       daySpacing={rest.daySpacing ?? 5}
-      monthBorderColor={rest.monthBorderColor ?? "rgb(var(--color-bg-base))"}
+      monthBorderColor={rest.monthBorderColor ?? "rgb(var(--color-background-100))"}
       theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
       {...rest}
     />

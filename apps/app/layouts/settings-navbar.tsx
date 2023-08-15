@@ -30,8 +30,12 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
-      label: "Import/Export",
-      href: `/${workspaceSlug}/settings/import-export`,
+      label: "Imports",
+      href: `/${workspaceSlug}/settings/imports`,
+    },
+    {
+      label: "Exports",
+      href: `/${workspaceSlug}/settings/exports`,
     },
   ];
 
@@ -71,6 +75,10 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
       label: "Estimates",
       href: `/${workspaceSlug}/projects/${projectId}/settings/estimates`,
     },
+    {
+      label: "Automations",
+      href: `/${workspaceSlug}/projects/${projectId}/settings/automations`,
+    },
   ];
 
   const profileLinks: Array<{
@@ -99,12 +107,12 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
             <div
               className={`rounded-full border px-5 py-1.5 text-sm outline-none ${
                 (
-                  link.label === "Import/Export"
+                  link.label === "Import"
                     ? router.asPath.includes(link.href)
                     : router.asPath === link.href
                 )
-                  ? "border-brand-accent bg-brand-accent text-white"
-                  : "border-brand-base bg-brand-base hover:bg-brand-surface-1"
+                  ? "border-custom-primary bg-custom-primary text-white"
+                  : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
               }`}
             >
               {link.label}

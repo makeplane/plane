@@ -66,7 +66,7 @@ const WorkspaceInvitation: NextPage = () => {
         {invitationDetail ? (
           <>
             {error ? (
-              <div className="flex w-full flex-col space-y-4 rounded border border-brand-base bg-brand-base px-4 py-8 text-center shadow-2xl md:w-1/3">
+              <div className="flex w-full flex-col space-y-4 rounded border border-custom-border-200 bg-custom-background-100 px-4 py-8 text-center shadow-2xl md:w-1/3">
                 <h2 className="text-xl uppercase">INVITATION NOT FOUND</h2>
               </div>
             ) : (

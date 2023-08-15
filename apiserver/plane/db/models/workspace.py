@@ -14,16 +14,41 @@ ROLE_CHOICES = (
 )
 
 
+def get_default_props():
+    return {
+        "filters": {"type": None},
+        "groupByProperty": None,
+        "issueView": "list",
+        "orderBy": "-created_at",
+        "properties": {
+            "assignee": True,
+            "due_date": True,
+            "key": True,
+            "labels": True,
+            "priority": True,
+            "state": True,
+            "sub_issue_count": True,
+            "attachment_count": True,
+            "link": True,
+            "estimate": True,
+            "created_on": True,
+            "updated_on": True,
+            "start_date": True,
+        },
+        "showEmptyGroups": True,
+    }
+
+
 class Workspace(BaseModel):
-    name = models.CharField(max_length=255, verbose_name="Workspace Name")
+    name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.URLField(verbose_name="Logo", blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="owner_workspace",
     )
-    slug = models.SlugField(max_length=100, db_index=True, unique=True)
-    company_size = models.PositiveIntegerField(default=10)
+    slug = models.SlugField(max_length=48, db_index=True, unique=True)
+    organization_size = models.CharField(max_length=20)
 
     def __str__(self):
         """Return name of the Workspace"""
@@ -47,7 +72,8 @@ class WorkspaceMember(BaseModel):
     )
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
     company_role = models.TextField(null=True, blank=True)
-    view_props = models.JSONField(null=True, blank=True)
+    view_props = models.JSONField(default=get_default_props)
+    default_props = models.JSONField(default=get_default_props)
 
     class Meta:
         unique_together = ["workspace", "member"]

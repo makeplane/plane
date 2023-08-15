@@ -26,6 +26,7 @@ type ReducerActionType = {
 
 type ContextType = InboxViewProps & {
   setFilters: (filters: Partial<IInboxFilterOptions>) => void;
+  clearAllFilters: () => void;
 };
 
 type StateType = {
@@ -53,7 +54,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         filters: {
           ...state.filters,
-          ...payload,
+          ...payload?.filters,
         },
       };
 
@@ -140,6 +141,38 @@ export const InboxViewContextProvider: React.FC<{ children: React.ReactNode }> =
     [workspaceSlug, projectId, inboxId, mutateInboxDetails, state]
   );
 
+  const clearAllFilters = useCallback(() => {
+    dispatch({
+      type: "SET_FILTERS",
+      payload: {
+        filters: { ...initialState.filters },
+      },
+    });
+
+    if (!workspaceSlug || !projectId || !inboxId) return;
+
+    const newViewProps = {
+      ...state,
+      filters: { ...initialState.filters },
+    };
+
+    mutateInboxDetails((prevData) => {
+      if (!prevData) return prevData;
+
+      return {
+        ...prevData,
+        view_props: newViewProps,
+      };
+    }, false);
+
+    saveDataToServer(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      inboxId.toString(),
+      newViewProps
+    );
+  }, [inboxId, mutateInboxDetails, projectId, state, workspaceSlug]);
+
   useEffect(() => {
     dispatch({
       type: "REHYDRATE_THEME",
@@ -154,6 +187,7 @@ export const InboxViewContextProvider: React.FC<{ children: React.ReactNode }> =
       value={{
         filters: state.filters,
         setFilters,
+        clearAllFilters,
       }}
     >
       <ToastAlert />
