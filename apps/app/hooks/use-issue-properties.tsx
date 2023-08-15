@@ -64,7 +64,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
 
       if (issueProperties && projectId) {
         mutateIssueProperties(
-          (prev) =>
+          (prev: any) =>
             ({
               ...prev,
               properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },

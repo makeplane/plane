@@ -120,7 +120,7 @@ const UserNotificationContextProvider: React.FC<{
   const handleReadMutation = (action: "read" | "unread") => {
     const notificationCountNumber = action === "read" ? -1 : 1;
 
-    mutateNotificationCount((prev) => {
+    mutateNotificationCount((prev: any) => {
       if (!prev) return prev;
 
       const notificationType: keyof NotificationCount =
@@ -143,8 +143,8 @@ const UserNotificationContextProvider: React.FC<{
       notifications?.find((notification) => notification.id === notificationId)?.read_at !== null;
 
     notificationsMutate(
-      (previousNotifications) =>
-        previousNotifications?.map((notification) =>
+      (previousNotifications: any) =>
+        previousNotifications?.map((notification: any) =>
           notification.id === notificationId
             ? { ...notification, read_at: isRead ? null : new Date() }
             : notification
@@ -199,7 +199,8 @@ const UserNotificationContextProvider: React.FC<{
         });
     } else {
       notificationsMutate(
-        (prev) => prev?.filter((prevNotification) => prevNotification.id !== notificationId),
+        (prev: any) =>
+          prev?.filter((prevNotification: any) => prevNotification.id !== notificationId),
         false
       );
       await userNotificationServices
@@ -222,8 +223,8 @@ const UserNotificationContextProvider: React.FC<{
       null;
 
     notificationsMutate(
-      (previousNotifications) =>
-        previousNotifications?.map((notification) =>
+      (previousNotifications: any) =>
+        previousNotifications?.map((notification: any) =>
           notification.id === notificationId
             ? { ...notification, snoozed_till: isSnoozed ? null : new Date(dateTime!) }
             : notification
