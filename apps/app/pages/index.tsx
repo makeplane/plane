@@ -194,28 +194,27 @@ const HomePage: NextPage = observer(() => {
           </>
           <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
             <div>
-                {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ||
-                parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
-                  <>
-                    <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-                      Sign in to Plane
-                    </h1>
-                    {parseInt(process.env.NEXT_PUBLIC_AUTO_OIDC || "0") ? (
-                      <></>
-                    ) : (
-                      <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
-                    )}
-                    <div className="flex flex-col items-center justify-center gap-3 border-t border-brand-base py-5 px-5">
-                      {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
-                        <>
-                          <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                          <GithubLoginButton handleSignIn={handleGithubSignIn} />
-                        </>
-                      ) : null}
-                      {parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
-                        <OidcLoginButton handleSignIn={handleOidcSignIn} />
-                      ) : null}
-                    </div>
+              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ||
+              parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
+                <>
+                  <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+                    Sign in to Plane
+                  </h1>
+                  {parseInt(process.env.NEXT_PUBLIC_AUTO_OIDC || "0") ? (
+                    <></>
+                  ) : (
+                    <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                  )}
+                  <div className="flex flex-col items-center justify-center gap-3 border-t border-brand-base py-5 px-5">
+                    {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                      <>
+                        <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
+                        <GithubLoginButton handleSignIn={handleGitHubSignIn} />
+                      </>
+                    ) : null}
+                    {parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
+                      <OidcLoginButton handleSignIn={handleOidcSignIn} />
+                    ) : null}
                   </div>
                 </>
               ) : (
