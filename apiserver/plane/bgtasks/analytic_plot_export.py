@@ -101,11 +101,11 @@ def analytic_export_task(email, data, slug):
 
             # If segment is ["assignees__display_name"] then replace segment_zero rows with first and last names
             if segmented in ["assignees__id"]:
-                for index, segm in enumerate(row_zero[2:]):
+                for index, segm in enumerate(row_zero[1:]):
                     # find the name of the user
                     assignee = [user for user in assignee_details if str(user.get("assignees__id")) == str(segm)]
                     if len(assignee):
-                        row_zero[index] = str(assignee[0].get("assignees__first_name")) + " " + str(assignee[0].get("assignees__last_name"))
+                        row_zero[index + 1] = str(assignee[0].get("assignees__first_name")) + " " + str(assignee[0].get("assignees__last_name"))
 
             rows = [tuple(row_zero)] + rows
             csv_buffer = io.StringIO()
