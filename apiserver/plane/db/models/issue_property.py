@@ -45,11 +45,12 @@ class IssueProperty(BaseModel):
         ordering = ("sort_order",)
 
     def save(self, *args, **kwargs):
-        smallest_order = IssueProperty.objects.filter(
-            project=self.project, state=self.state
-        ).aggregate(smallest=models.Min("sort_order"))["smallest"]
-        if smallest_order is not None:
-            self.sort_order = smallest_order - 10000
+        if self._state.adding:
+            smallest_order = IssueProperty.objects.filter(
+                workspace=self.workspace
+            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+            if smallest_order is not None:
+                self.sort_order = smallest_order - 10000
 
         if self.project is not None and self.workspace is not None:
             self.is_shared = False

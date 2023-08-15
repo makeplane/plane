@@ -945,7 +945,7 @@ urlpatterns = [
     ## End Comment Reactions
     ## IssueProperty
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-display-properties/",
         IssueDisplayPropertyViewSet.as_view(
             {
                 "get": "list",
@@ -955,7 +955,7 @@ urlpatterns = [
         name="project-issue-roadmap",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-display-properties/<uuid:pk>/",
         IssueDisplayPropertyViewSet.as_view(
             {
                 "get": "retrieve",
@@ -1664,7 +1664,7 @@ urlpatterns = [
         name="issue-property-attributes",
     ),
     path(
-        "workspaces/<str:slug>/issues/<uuid:issue_id>/issue-properties/<issue_property_id:uuid>/issue-property-values/",
+        "workspaces/<str:slug>/issues/<uuid:issue_id>/issue-properties/<uuid:issue_property_id>/issue-property-values/",
         IssuePropertyAttributeViewSet.as_view(
             {
                 "get": "list",
@@ -1674,7 +1674,7 @@ urlpatterns = [
         name="issue-property-attributes",
     ),
     path(
-        "workspaces/<str:slug>/issues/<uuid:issue_id>/issue-attributes/<issue-attribute_id:uuid>/issue-property-values/<uuid:pk>/",
+        "workspaces/<str:slug>/issues/<uuid:issue_id>/issue-properties/<uuid:issue_property_id>/issue-property-values/<uuid:pk>/",
         IssuePropertyAttributeViewSet.as_view(
             {
                 "get": "retrieve",
