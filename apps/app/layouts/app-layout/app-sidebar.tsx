@@ -8,6 +8,7 @@ import {
   WorkspaceSidebarQuickAction,
 } from "components/workspace";
 import { ProjectSidebarList } from "components/project";
+import { PublishProjectModal } from "components/project/publish-project/modal";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -37,6 +38,7 @@ const Sidebar: React.FC<SidebarProps> = observer(({ toggleSidebar, setToggleSide
         <ProjectSidebarList />
         <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />
       </div>
+      <PublishProjectModal />
     </div>
   );
 });

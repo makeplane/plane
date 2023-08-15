@@ -856,6 +856,27 @@ class TrackEventServices extends APIService {
       },
     });
   }
+
+  // project publish settings track events starts
+  async trackProjectPublishSettingsEvent(
+    data: any,
+    eventName: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    const payload: any = data;
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: payload,
+        user: user,
+      },
+    });
+  }
+
+  // project publish settings track events ends
 }
 
 const trackEventServices = new TrackEventServices();

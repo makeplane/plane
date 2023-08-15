@@ -396,7 +396,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 start_date: val,
                               })
                             }
-                            className="bg-custom-background-90"
+                            className="bg-custom-background-90 w-full"
                             maxDate={maxDate ?? undefined}
                             disabled={isNotAllowed || uneditable}
                           />
@@ -424,7 +424,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 target_date: val,
                               })
                             }
-                            className="bg-custom-background-90"
+                            className="bg-custom-background-90 w-full"
                             minDate={minDate ?? undefined}
                             disabled={isNotAllowed || uneditable}
                           />
