@@ -1631,5 +1631,58 @@ urlpatterns = [
         ),
         name="issue-properties",
     ),
+    path(
+        "workspaces/<str:slug>/issue-properties/<uuid:pk>/",
+        IssuePropertyViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="issue-properties",
+    ),
+    path(
+        "workspaces/<str:slug>/issue-properties/<uuid:issue_property_id>/issue-property-attributes/",
+        IssuePropertyAttributeViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="issue-property-attributes",
+    ),
+    path(
+        "workspaces/<str:slug>/issue-properties/<uuid:issue_property_id>/issue-property-attributes/<uuid:pk>/",
+        IssuePropertyAttributeViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="issue-property-attributes",
+    ),
+    path(
+        "workspaces/<str:slug>/issues/<uuid:issue_id>/issue-properties/<issue_property_id:uuid>/issue-property-values/",
+        IssuePropertyAttributeViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="issue-property-attributes",
+    ),
+    path(
+        "workspaces/<str:slug>/issues/<uuid:issue_id>/issue-attributes/<issue-attribute_id:uuid>/issue-property-values/<uuid:pk>/",
+        IssuePropertyAttributeViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="issue-property-attributes",
+    ),
     ## End Issue Property
 ]

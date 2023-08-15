@@ -6,8 +6,15 @@ from plane.db.models import ProjectBaseModel, BaseModel
 
 
 class IssueProperty(BaseModel):
-    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="issue_properties")
-    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="issue_properties", null=True)
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="issue_properties"
+    )
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="issue_properties",
+        null=True,
+    )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     type = models.CharField(
@@ -51,7 +58,11 @@ class IssueProperty(BaseModel):
 
 
 class IssuePropertyAttribute(BaseModel):
-    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="issue_property_attributes")
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="issue_property_attributes",
+    )
     issue_property = models.ForeignKey(
         IssueProperty, on_delete=models.CASCADE, related_name="attributes"
     )
@@ -67,6 +78,9 @@ class IssuePropertyAttribute(BaseModel):
 class IssuePropertyValue(ProjectBaseModel):
     attribute = models.ForeignKey(
         IssuePropertyAttribute, on_delete=models.CASCADE, related_name="values"
+    )
+    issue_property = models.ForeignKey(
+        IssueProperty, on_delete=models.CASCADE, related_name="values"
     )
     description = models.TextField(blank=True, null=True)
     value = models.CharField(max_length=800)
