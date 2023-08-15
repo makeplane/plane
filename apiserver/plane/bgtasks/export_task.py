@@ -4,7 +4,6 @@ import io
 import json
 import boto3
 import zipfile
-from datetime import datetime
 
 # Django imports
 from django.conf import settings
@@ -46,10 +45,8 @@ def create_xlsx_file(data):
     workbook = Workbook()
     sheet = workbook.active
 
-
     for row in data:
         sheet.append(row)
-
 
     xlsx_buffer = io.BytesIO()
     workbook.save(xlsx_buffer)
@@ -75,7 +72,7 @@ def upload_to_s3(zip_file, workspace_id, token_id):
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         config=Config(signature_version="s3v4"),
     )
-    file_name = f"{workspace_id}/issues-{datetime.now().date()}.zip"
+    file_name = f"{workspace_id}/issues-{token_id}.zip"
 
     s3.upload_fileobj(
         zip_file,
