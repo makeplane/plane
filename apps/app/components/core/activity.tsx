@@ -53,7 +53,11 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 
 const activityDetails: {
   [key: string]: {
-    message: (activity: IIssueActivity, showIssue: boolean) => React.ReactNode;
+    message: (
+      activity: IIssueActivity,
+      showIssue: boolean,
+      backgroundColor?: string
+    ) => React.ReactNode;
     icon: React.ReactNode;
   };
 } = {
@@ -253,7 +257,7 @@ const activityDetails: {
     icon: <Icon iconName="stack" className="!text-sm" aria-hidden="true" />,
   },
   labels: {
-    message: (activity, showIssue) => {
+    message: (activity, showIssue, backgroundColor = "#000000") => {
       if (activity.old_value === "")
         return (
           <>
@@ -262,7 +266,7 @@ const activityDetails: {
               <span
                 className="h-1.5 w-1.5 rounded-full"
                 style={{
-                  backgroundColor: "#000000",
+                  backgroundColor,
                 }}
                 aria-hidden="true"
               />
@@ -532,14 +536,26 @@ export const ActivityIcon = ({ activity }: { activity: IIssueActivity }) => (
   <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>
 );
 
-export const ActivityMessage = ({
-  activity,
-  showIssue = false,
-}: {
+type ActivityMessageProps = {
   activity: IIssueActivity;
   showIssue?: boolean;
-}) => (
-  <>
-    {activityDetails[activity.field as keyof typeof activityDetails]?.message(activity, showIssue)}
-  </>
-);
+};
+
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
+export const ActivityMessage = observer(({ activity, showIssue = false }: ActivityMessageProps) => {
+  const {
+    label: { getLabelById },
+  } = useMobxStore();
+
+  return (
+    <>
+      {activityDetails[activity.field as keyof typeof activityDetails]?.message(
+        activity,
+        showIssue,
+        activity.field === "labels" ? getLabelById(activity?.new_identifier!)?.color : undefined
+      )}
+    </>
+  );
+});
