@@ -178,7 +178,6 @@ from plane.api.views import (
     # Issue Properties
     IssuePropertyViewSet,
     IssuePropertyValueViewSet,
-    IssuePropertyAttributeViewSet,
     ## End Issue Properties
 )
 
@@ -1643,29 +1642,8 @@ urlpatterns = [
         name="issue-properties",
     ),
     path(
-        "workspaces/<str:slug>/issue-properties/<uuid:issue_property_id>/issue-property-attributes/",
-        IssuePropertyAttributeViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="issue-property-attributes",
-    ),
-    path(
-        "workspaces/<str:slug>/issue-properties/<uuid:issue_property_id>/issue-property-attributes/<uuid:pk>/",
-        IssuePropertyAttributeViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="issue-property-attributes",
-    ),
-    path(
         "workspaces/<str:slug>/issues/<uuid:issue_id>/issue-properties/<uuid:issue_property_id>/issue-property-values/",
-        IssuePropertyAttributeViewSet.as_view(
+        IssuePropertyValueViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -1675,7 +1653,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/issues/<uuid:issue_id>/issue-properties/<uuid:issue_property_id>/issue-property-values/<uuid:pk>/",
-        IssuePropertyAttributeViewSet.as_view(
+        IssuePropertyValueViewSet.as_view(
             {
                 "get": "retrieve",
                 "patch": "partial_update",

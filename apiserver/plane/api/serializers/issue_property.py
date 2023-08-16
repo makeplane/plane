@@ -1,5 +1,5 @@
 from .base import BaseSerializer
-from plane.db.models import IssueProperty, IssuePropertyAttribute, IssuePropertyValue
+from plane.db.models import IssueProperty, IssuePropertyValue
 
 
 class IssuePropertySerializer(BaseSerializer):
@@ -8,16 +8,6 @@ class IssuePropertySerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-        ]
-
-
-class IssuePropertyAttributeSerializer(BaseSerializer):
-    class Meta:
-        model = IssuePropertyAttribute
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "issue_property"
         ]
 
 

@@ -97,6 +97,5 @@ from .exporter import ExporterHistorySerializer
 
 from .issue_property import (
     IssuePropertySerializer,
-    IssuePropertyAttributeSerializer,
     IssuePropertyValueSerializer,
 )

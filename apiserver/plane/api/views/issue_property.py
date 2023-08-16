@@ -7,13 +7,11 @@ from sentry_sdk import capture_exception
 from .base import BaseViewSet
 from plane.api.serializers import (
     IssuePropertySerializer,
-    IssuePropertyAttributeSerializer,
     IssuePropertyValueSerializer,
 )
 from plane.db.models import (
     Workspace,
     IssueProperty,
-    IssuePropertyAttribute,
     IssuePropertyValue,
 )
 from plane.api.permissions import WorkSpaceAdminPermission
@@ -37,36 +35,6 @@ class IssuePropertyViewSet(BaseViewSet):
         except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class IssuePropertyAttributeViewSet(BaseViewSet):
-    serializer_class = IssuePropertyAttributeSerializer
-    model = IssuePropertyAttribute
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
-
-    def create(self, request, slug, issue_property_id):
-        try:
-            workspace = Workspace.objects.get(slug=slug)
-            serializer = IssuePropertyAttributeSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(
-                    workspace_id=workspace.id, issue_property_id=issue_property_id
-                )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:

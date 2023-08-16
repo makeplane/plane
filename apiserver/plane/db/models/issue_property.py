@@ -58,28 +58,7 @@ class IssueProperty(BaseModel):
         super(IssueProperty, self).save(*args, **kwargs)
 
 
-class IssuePropertyAttribute(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="issue_property_attributes",
-    )
-    issue_property = models.ForeignKey(
-        IssueProperty, on_delete=models.CASCADE, related_name="attributes"
-    )
-    value = models.CharField(max_length=800)
-    description = models.TextField(blank=True, null=True)
-
-    class Meta:
-        verbose_name = "IssuePropertyAttribute"
-        verbose_name_plural = "IssuePropertyAttributes"
-        db_table = "issue_property_attributes"
-
-
 class IssuePropertyValue(ProjectBaseModel):
-    attribute = models.ForeignKey(
-        IssuePropertyAttribute, on_delete=models.CASCADE, related_name="values"
-    )
     issue_property = models.ForeignKey(
         IssueProperty, on_delete=models.CASCADE, related_name="values"
     )
