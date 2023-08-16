@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
 
   return {
     title: `${project?.project_details?.name} | ${workspace_slug}`,
-    description: `${project?.project_details?.description || project?.project_details?.name}`,
+    description: `${project?.project_details?.description || `${project?.project_details?.name} | ${workspace_slug}`}`,
     icons: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${
       typeof project?.project_details?.emoji != "object"
         ? String.fromCodePoint(parseInt(project?.project_details?.emoji))
