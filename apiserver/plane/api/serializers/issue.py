@@ -6,11 +6,10 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .user import UserLiteSerializer
+from .user import UserSerializer
 from .state import StateSerializer, StateLiteSerializer
-from .user import UserLiteSerializer
 from .project import ProjectSerializer, ProjectLiteSerializer
-from .workspace import WorkspaceLiteSerializer
+from .workspace import WorkSpaceSerializer
 from plane.db.models import (
     User,
     Issue,
@@ -71,9 +70,17 @@ class IssueProjectLiteSerializer(BaseSerializer):
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
     state_detail = StateSerializer(read_only=True, source="state")
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    created_by_detail = UserSerializer(
+        source="created_by",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    )
 
     assignees_list = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
@@ -113,7 +120,11 @@ class IssueCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
-        if data.get("start_date", None) is not None and data.get("target_date", None) is not None and data.get("start_date", None) > data.get("target_date", None):
+        if (
+            data.get("start_date", None) is not None
+            and data.get("target_date", None) is not None
+            and data.get("start_date", None) > data.get("target_date", None)
+        ):
             raise serializers.ValidationError("Start date cannot exceed target date")
         return data
 
@@ -296,7 +307,11 @@ class IssueCreateSerializer(BaseSerializer):
 
 
 class IssueActivitySerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    actor_detail = UserSerializer(
+        source="actor",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
@@ -306,10 +321,18 @@ class IssueActivitySerializer(BaseSerializer):
 
 
 class IssueCommentSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    actor_detail = UserSerializer(
+        source="actor",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    )
 
     class Meta:
         model = IssueComment
@@ -337,7 +360,9 @@ class IssuePropertySerializer(BaseSerializer):
 
 
 class LabelSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace", fields=("id", "name", "slug"), read_only=True
+    )
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
 
     class Meta:
@@ -400,7 +425,11 @@ class BlockerIssueSerializer(BaseSerializer):
 
 
 class IssueAssigneeSerializer(BaseSerializer):
-    assignee_details = UserLiteSerializer(read_only=True, source="assignee")
+    assignee_details = UserSerializer(
+        source="assignee",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
 
     class Meta:
         model = IssueAssignee
@@ -468,7 +497,11 @@ class IssueModuleDetailSerializer(BaseSerializer):
 
 
 class IssueLinkSerializer(BaseSerializer):
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    created_by_detail = UserSerializer(
+        source="created_by",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
 
     class Meta:
         model = IssueLink
@@ -522,7 +555,11 @@ class IssueReactionSerializer(BaseSerializer):
 
 
 class IssueReactionLiteSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    actor_detail = UserSerializer(
+        source="actor",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
 
     class Meta:
         model = IssueReaction
@@ -535,7 +572,11 @@ class IssueReactionLiteSerializer(BaseSerializer):
 
 
 class CommentReactionLiteSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    actor_detail = UserSerializer(
+        source="actor",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
 
     class Meta:
         model = CommentReaction
@@ -554,9 +595,7 @@ class CommentReactionSerializer(BaseSerializer):
         read_only_fields = ["workspace", "project", "comment", "actor"]
 
 
-
 class IssueVoteSerializer(BaseSerializer):
-
     class Meta:
         model = IssueVote
         fields = ["issue", "vote", "workspace_id", "project_id", "actor"]
@@ -564,12 +603,20 @@ class IssueVoteSerializer(BaseSerializer):
 
 
 class IssueCommentSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    actor_detail = UserSerializer(
+        source="actor",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-    comment_reactions = CommentReactionLiteSerializer(read_only=True, many=True)
 
+    workspace_details = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
+    comment_reactions = CommentReactionLiteSerializer(read_only=True, many=True)
 
     class Meta:
         model = IssueComment
@@ -606,7 +653,12 @@ class IssueStateSerializer(BaseSerializer):
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
     state_detail = StateLiteSerializer(read_only=True, source="state")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    assignee_details = UserSerializer(
+        source="assignees",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+        many=True,
+    )
     sub_issues_count = serializers.IntegerField(read_only=True)
     bridge_id = serializers.UUIDField(read_only=True)
     attachment_count = serializers.IntegerField(read_only=True)
@@ -622,7 +674,12 @@ class IssueSerializer(BaseSerializer):
     state_detail = StateSerializer(read_only=True, source="state")
     parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    assignee_details = UserSerializer(
+        source="assignees",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+        many=True,
+    )
     # List of issues blocked by this issue
     blocked_issues = BlockedIssueSerializer(read_only=True, many=True)
     # List of issues that block this issue
@@ -648,11 +705,20 @@ class IssueSerializer(BaseSerializer):
 
 
 class IssueLiteSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    assignee_details = UserSerializer(
+        source="assignees",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+        many=True,
+    )
     sub_issues_count = serializers.IntegerField(read_only=True)
     cycle_id = serializers.UUIDField(read_only=True)
     module_id = serializers.UUIDField(read_only=True)

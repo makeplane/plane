@@ -1,13 +1,17 @@
 # Module imports
 from .base import BaseSerializer
-from .workspace import WorkspaceLiteSerializer
+from .workspace import WorkSpaceSerializer
 from .project import ProjectLiteSerializer
 
 from plane.db.models import State
 
 
 class StateSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
     class Meta:

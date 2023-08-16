@@ -7,7 +7,7 @@ from .issue import IssueFlatSerializer, LabelLiteSerializer
 from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
 from .project import ProjectLiteSerializer
-from .user import UserLiteSerializer
+from .user import UserSerializer
 from plane.db.models import Inbox, InboxIssue, Issue
 
 
@@ -48,7 +48,12 @@ class IssueStateInboxSerializer(BaseSerializer):
     state_detail = StateLiteSerializer(read_only=True, source="state")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    assignee_details = UserSerializer(
+        source="assignees",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+        many=True,
+    )
     sub_issues_count = serializers.IntegerField(read_only=True)
     bridge_id = serializers.UUIDField(read_only=True)
     issue_inbox = InboxIssueLiteSerializer(read_only=True, many=True)

@@ -2,11 +2,15 @@
 from .base import BaseSerializer
 
 from plane.db.models import Estimate, EstimatePoint
-from plane.api.serializers import WorkspaceLiteSerializer, ProjectLiteSerializer
+from plane.api.serializers import WorkSpaceSerializer, ProjectLiteSerializer
 
 
 class EstimateSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
     class Meta:
@@ -31,7 +35,11 @@ class EstimatePointSerializer(BaseSerializer):
 
 class EstimateReadSerializer(BaseSerializer):
     points = EstimatePointSerializer(read_only=True, many=True)
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
     class Meta:

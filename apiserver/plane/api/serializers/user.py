@@ -33,42 +33,6 @@ class UserSerializer(BaseSerializer):
             return bool(obj.first_name) or bool(obj.last_name)
 
 
-class UserLiteSerializer(BaseSerializer):
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "first_name",
-            "last_name",
-            "avatar",
-            "is_bot",
-            "display_name",
-        ]
-        read_only_fields = [
-            "id",
-            "is_bot",
-        ]
-
-
-class UserAdminLiteSerializer(BaseSerializer):
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "first_name",
-            "last_name",
-            "avatar",
-            "is_bot",
-            "display_name",
-            "email",
-        ]
-        read_only_fields = [
-            "id",
-            "is_bot",
-        ]
-
-
 class ChangePasswordSerializer(serializers.Serializer):
     model = User
 

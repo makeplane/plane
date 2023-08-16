@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .user import UserLiteSerializer, UserAdminLiteSerializer
+from .user import UserSerializer
 
 from plane.db.models import (
     User,
@@ -17,7 +17,10 @@ from plane.db.models import (
 
 
 class WorkSpaceSerializer(BaseSerializer):
-    owner = UserLiteSerializer(read_only=True)
+    owner = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
     total_members = serializers.IntegerField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
 
@@ -33,40 +36,55 @@ class WorkSpaceSerializer(BaseSerializer):
             "owner",
         ]
 
-class WorkspaceLiteSerializer(BaseSerializer):
-    class Meta:
-        model = Workspace
-        fields = [
-            "name",
-            "slug",
-            "id",
-        ]
-        read_only_fields = fields
-
 
 
 class WorkSpaceMemberSerializer(BaseSerializer):
-    member = UserLiteSerializer(read_only=True)
-    workspace = WorkspaceLiteSerializer(read_only=True)
+    member = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name" ,"email"),
+        read_only=True,
+    )
+    workspace = WorkSpaceSerializer(
+        fields=("id", "name", "slug"),
+        read_only=True,
+    )
 
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
 
 
-class WorkspaceMemberAdminSerializer(BaseSerializer):
-    member = UserAdminLiteSerializer(read_only=True)
-    workspace = WorkspaceLiteSerializer(read_only=True)
+# class WorkspaceMemberAdminSerializer(BaseSerializer):
+#     member = UserSerializer(
+#         fields=(
+#             "id",
+#             "first_name",
+#             "last_name",
+#             "avatar",
+#             "is_bot",
+#             "display_name",
+#             "email",
+#         ),
+#         read_only=True,
+#     )
 
-    class Meta:
-        model = WorkspaceMember
-        fields = "__all__"
+#     workspace = WorkSpaceSerializer(
+#         fields=("id", "name", "slug"),
+#         read_only=True,
+#     )
+
+#     class Meta:
+#         model = WorkspaceMember
+#         fields = "__all__"
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    created_by_detail = UserSerializer(
+        source="created_by",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
 
     class Meta:
         model = WorkspaceMemberInvite
@@ -74,7 +92,12 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
 
 
 class TeamSerializer(BaseSerializer):
-    members_detail = UserLiteSerializer(read_only=True, source="members", many=True)
+    members_detail = UserSerializer(
+        source="members",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+        many=True,
+    )
     members = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,

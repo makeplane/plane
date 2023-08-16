@@ -42,12 +42,11 @@ from plane.api.serializers import (
     WorkSpaceMemberSerializer,
     TeamSerializer,
     WorkSpaceMemberInviteSerializer,
-    UserLiteSerializer,
+    UserSerializer,
     ProjectMemberSerializer,
     WorkspaceThemeSerializer,
     IssueActivitySerializer,
     IssueLiteSerializer,
-    WorkspaceMemberAdminSerializer
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -538,7 +537,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
-    serializer_class = WorkspaceMemberAdminSerializer
+    # serializer_class = WorkSpaceMemberSerializer
     model = WorkspaceMember
 
     permission_classes = [
@@ -719,7 +718,7 @@ class TeamMemberViewSet(BaseViewSet):
                 users = list(set(request.data.get("members", [])).difference(members))
                 users = User.objects.filter(pk__in=users)
 
-                serializer = UserLiteSerializer(users, many=True)
+                serializer = UserSerializer(users, fields=('id', 'first_name',"last_name","avatar","is_bot","display_name"),many=True)
                 return Response(
                     {
                         "error": f"{len(users)} of the member(s) are not a part of the workspace",
@@ -786,6 +785,7 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
 
             workspace = Workspace.objects.get(pk=last_workspace_id)
             workspace_serializer = WorkSpaceSerializer(workspace)
+            # workspace_serializer = WorkSpaceSerializer(workspace, fields=("member": (fields: "displayname")))
 
             project_member = ProjectMember.objects.filter(
                 workspace_id=last_workspace_id, member=request.user
@@ -819,7 +819,7 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             workspace_member = WorkspaceMember.objects.get(
                 member=request.user, workspace__slug=slug
             )
-            serializer = WorkSpaceMemberSerializer(workspace_member)
+            serializer = WorkSpaceMemberSerializer(workspace_member, fields=("member","workspace"), remove_nested_fields={"member": ("email",)})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except (Workspace.DoesNotExist, WorkspaceMember.DoesNotExist):
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)

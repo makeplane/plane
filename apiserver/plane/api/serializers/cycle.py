@@ -6,9 +6,9 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .user import UserLiteSerializer
+from .user import UserSerializer
 from .issue import IssueStateSerializer
-from .workspace import WorkspaceLiteSerializer
+from .workspace import WorkSpaceSerializer
 from .project import ProjectLiteSerializer
 from plane.db.models import Cycle, CycleIssue, CycleFavorite
 
@@ -20,7 +20,10 @@ class CycleWriteSerializer(BaseSerializer):
 
 
 class CycleSerializer(BaseSerializer):
-    owned_by = UserLiteSerializer(read_only=True)
+    owned_by = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
@@ -33,9 +36,13 @@ class CycleSerializer(BaseSerializer):
     total_estimates = serializers.IntegerField(read_only=True)
     completed_estimates = serializers.IntegerField(read_only=True)
     started_estimates = serializers.IntegerField(read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail =  WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    
+
     def get_assignees(self, obj):
         members = [
             {
@@ -54,7 +61,7 @@ class CycleSerializer(BaseSerializer):
         unique_list = [dict(item) for item in unique_objects]
 
         return unique_list
-    
+
     def get_labels(self, obj):
         labels = [
             {

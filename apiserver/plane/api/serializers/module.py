@@ -3,9 +3,9 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .user import UserLiteSerializer
+from .user import UserSerializer
 from .project import ProjectSerializer, ProjectLiteSerializer
-from .workspace import WorkspaceLiteSerializer
+from .workspace import WorkSpaceSerializer
 from .issue import IssueStateSerializer
 
 from plane.db.models import (
@@ -26,7 +26,11 @@ class ModuleWriteSerializer(BaseSerializer):
     )
 
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
 
     class Meta:
         model = Module
@@ -124,7 +128,11 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class ModuleLinkSerializer(BaseSerializer):
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    created_by_detail = UserSerializer(
+        source="created_by",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
 
     class Meta:
         model = ModuleLink
@@ -152,8 +160,17 @@ class ModuleLinkSerializer(BaseSerializer):
 
 class ModuleSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    lead_detail = UserLiteSerializer(read_only=True, source="lead")
-    members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
+    lead_detail = UserSerializer(
+        source="lead",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
+    members_detail = UserSerializer(
+        source="members",
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+        many=True,
+    )
     link_module = ModuleLinkSerializer(read_only=True, many=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)

@@ -6,8 +6,8 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.api.serializers.workspace import WorkSpaceSerializer, WorkspaceLiteSerializer
-from plane.api.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
+from plane.api.serializers.workspace import WorkSpaceSerializer
+from plane.api.serializers.user import UserSerializer
 from plane.db.models import (
     Project,
     ProjectMember,
@@ -19,7 +19,11 @@ from plane.db.models import (
 
 
 class ProjectSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
 
     class Meta:
         model = Project
@@ -94,8 +98,14 @@ class ProjectLiteSerializer(BaseSerializer):
 
 class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
-    default_assignee = UserLiteSerializer(read_only=True)
-    project_lead = UserLiteSerializer(read_only=True)
+    default_assignee = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
+    project_lead = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
@@ -112,7 +122,10 @@ class ProjectDetailSerializer(BaseSerializer):
 class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     project = ProjectLiteSerializer(read_only=True)
-    member = UserLiteSerializer(read_only=True)
+    member = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
 
     class Meta:
         model = ProjectMember
@@ -120,9 +133,24 @@ class ProjectMemberSerializer(BaseSerializer):
 
 
 class ProjectMemberAdminSerializer(BaseSerializer):
-    workspace = WorkspaceLiteSerializer(read_only=True)
+    workspace = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
     project = ProjectLiteSerializer(read_only=True)
-    member = UserAdminLiteSerializer(read_only=True)
+    member = UserSerializer(
+        fields=(
+            "id",
+            "first_name",
+            "last_name",
+            "avatar",
+            "is_bot",
+            "display_name",
+            "email",
+        ),
+        read_only=True,
+    )
 
     class Meta:
         model = ProjectMember
@@ -131,7 +159,10 @@ class ProjectMemberAdminSerializer(BaseSerializer):
 
 class ProjectMemberInviteSerializer(BaseSerializer):
     project = ProjectLiteSerializer(read_only=True)
-    workspace = WorkspaceLiteSerializer(read_only=True)
+    workspace = WorkSpaceSerializer(
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
 
     class Meta:
         model = ProjectMemberInvite
@@ -157,7 +188,10 @@ class ProjectFavoriteSerializer(BaseSerializer):
 
 
 class ProjectMemberLiteSerializer(BaseSerializer):
-    member = UserLiteSerializer(read_only=True)
+    member = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
     is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -168,7 +202,11 @@ class ProjectMemberLiteSerializer(BaseSerializer):
 
 class ProjectDeployBoardSerializer(BaseSerializer):
     project_details = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    workspace_detail = WorkSpaceSerializer(
+        source="workspace",
+        fields=("id", "name", "slug"),
+        read_only=True,
+    ) 
 
     class Meta:
         model = ProjectDeployBoard
