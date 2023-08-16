@@ -28,22 +28,24 @@ import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 import { truncateText } from "helpers/string.helper";
 
 const defaultValues = {
-  name: "",
+  assignees_list: [],
   description: "",
   description_html: "",
   estimate_point: null,
-  state: "",
-  assignees_list: [],
-  priority: "low",
-  target_date: new Date().toString(),
   issue_cycle: null,
   issue_module: null,
   labels_list: [],
+  name: "",
+  priority: "low",
+  start_date: null,
+  state: "",
+  target_date: null,
 };
 
 const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+  // console.log(workspaceSlug, "workspaceSlug")
 
   const { user } = useUserAuth();
 

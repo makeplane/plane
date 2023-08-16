@@ -25,7 +25,7 @@ export const WeekChartView: FC<any> = () => {
                     <div
                       key={`sub-title-${_idxRoot}-${_idx}`}
                       className="relative flex h-full flex-col overflow-hidden whitespace-nowrap"
-                      style={{ width: `${currentViewData.data.width}px` }}
+                      style={{ width: `${currentViewData?.data.width}px` }}
                     >
                       <div
                         className={`flex-shrink-0 border-b py-1 text-center text-sm capitalize font-medium ${

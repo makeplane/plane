@@ -18,7 +18,7 @@ export const ViewIssueLabel: React.FC<Props> = ({ issue, maxRender = 1 }) => (
           {issue.label_details.map((label, index) => (
             <div
               key={label.id}
-              className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm"
+              className="flex cursor-default items-center flex-shrink-0 rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm"
             >
               <Tooltip position="top" tooltipHeading="Label" tooltipContent={label.name}>
                 <div className="flex items-center gap-1.5 text-custom-text-200">
@@ -35,7 +35,7 @@ export const ViewIssueLabel: React.FC<Props> = ({ issue, maxRender = 1 }) => (
           ))}
         </>
       ) : (
-        <div className="flex cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
+        <div className="flex cursor-default items-center flex-shrink-0 rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
           <Tooltip
             position="top"
             tooltipHeading="Labels"

@@ -629,17 +629,19 @@ const SinglePage: NextPage = () => {
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                           >
-                            {pageBlocks.map((block, index) => (
-                              <SinglePageBlock
-                                key={block.id}
-                                block={block}
-                                projectDetails={projectDetails}
-                                showBlockDetails={showBlock}
-                                index={index}
-                                user={user}
-                              />
-                            ))}
-                            {provided.placeholder}
+                            <>
+                              {pageBlocks.map((block, index) => (
+                                <SinglePageBlock
+                                  key={block.id}
+                                  block={block}
+                                  projectDetails={projectDetails}
+                                  showBlockDetails={showBlock}
+                                  index={index}
+                                  user={user}
+                                />
+                              ))}
+                              {provided.placeholder}
+                            </>
                           </div>
                         )}
                       </StrictModeDroppable>

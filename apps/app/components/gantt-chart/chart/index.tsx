@@ -1,13 +1,8 @@
 import { FC, useEffect, useState } from "react";
 // icons
-import {
-  Bars4Icon,
-  XMarkIcon,
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-} from "@heroicons/react/20/solid";
+import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
-import { GanttChartBlocks } from "../blocks";
+import { GanttChartBlocks } from "components/gantt-chart";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
 // import { WeekChartView } from "./week";
@@ -30,9 +25,9 @@ import {
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
-import { ChartDataType } from "../types";
+import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
 // data
-import { datePreview, currentViewDataWithView } from "../data";
+import { currentViewDataWithView } from "../data";
 // context
 import { useChart } from "../hooks";
 
@@ -40,10 +35,13 @@ type ChartViewRootProps = {
   border: boolean;
   title: null | string;
   loaderTitle: string;
-  blocks: any;
-  blockUpdateHandler: (data: any) => void;
+  blocks: IGanttBlock[] | null;
+  blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
+  enableLeftDrag: boolean;
+  enableRightDrag: boolean;
+  enableReorder: boolean;
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = ({
@@ -54,6 +52,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blockUpdateHandler,
   sidebarBlockRender,
   blockRender,
+  enableLeftDrag,
+  enableRightDrag,
+  enableReorder,
 }) => {
   const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
@@ -62,13 +63,13 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const [blocksSidebarView, setBlocksSidebarView] = useState<boolean>(false);
 
   // blocks state management starts
-  const [chartBlocks, setChartBlocks] = useState<any[] | null>(null);
+  const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
 
-  const renderBlockStructure = (view: any, blocks: any) =>
+  const renderBlockStructure = (view: any, blocks: IGanttBlock[]) =>
     blocks && blocks.length > 0
-      ? blocks.map((_block: any) => ({
-          ..._block,
-          position: getMonthChartItemPositionWidthInMonth(view, _block),
+      ? blocks.map((block: any) => ({
+          ...block,
+          position: getMonthChartItemPositionWidthInMonth(view, block),
         }))
       : [];
 
@@ -154,13 +155,14 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
   const updatingCurrentLeftScrollPosition = (width: number) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-    scrollContainer.scrollLeft = width + scrollContainer.scrollLeft;
-    setItemsContainerWidth(width + scrollContainer.scrollLeft);
+    scrollContainer.scrollLeft = width + scrollContainer?.scrollLeft;
+    setItemsContainerWidth(width + scrollContainer?.scrollLeft);
   };
 
   const handleScrollToCurrentSelectedDate = (currentState: ChartDataType, date: Date) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-    const clientVisibleWidth: number = scrollContainer.clientWidth;
+
+    const clientVisibleWidth: number = scrollContainer?.clientWidth;
     let scrollWidth: number = 0;
     let daysDifference: number = 0;
 
@@ -189,9 +191,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const onScroll = () => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
 
-    const scrollWidth: number = scrollContainer.scrollWidth;
-    const clientVisibleWidth: number = scrollContainer.clientWidth;
-    const currentScrollPosition: number = scrollContainer.scrollLeft;
+    const scrollWidth: number = scrollContainer?.scrollWidth;
+    const clientVisibleWidth: number = scrollContainer?.clientWidth;
+    const currentScrollPosition: number = scrollContainer?.scrollLeft;
 
     const approxRangeLeft: number =
       scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
@@ -207,6 +209,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
 
     scrollContainer.addEventListener("scroll", onScroll);
+
     return () => {
       scrollContainer.removeEventListener("scroll", onScroll);
     };
@@ -242,7 +245,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       </div> */}
 
       {/* chart header */}
-      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2">
+      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap p-2">
         {/* <div
           className="transition-all border border-custom-border-200 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
           onClick={() => setBlocksSidebarView(() => !blocksSidebarView)}
@@ -301,8 +304,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         </div>
 
         <div
-          className="transition-all border border-custom-border-200 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
-          onClick={() => setFullScreenMode(() => !fullScreenMode)}
+          className="transition-all border border-custom-border-200 p-1 flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
+          onClick={() => setFullScreenMode((prevData) => !prevData)}
         >
           {fullScreenMode ? (
             <ArrowsPointingInIcon className="h-4 w-4" />
@@ -325,6 +328,10 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               blocks={chartBlocks}
               sidebarBlockRender={sidebarBlockRender}
               blockRender={blockRender}
+              blockUpdateHandler={blockUpdateHandler}
+              enableLeftDrag={enableLeftDrag}
+              enableRightDrag={enableRightDrag}
+              enableReorder={enableReorder}
             />
           )}
 

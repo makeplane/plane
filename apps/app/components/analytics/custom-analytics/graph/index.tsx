@@ -29,6 +29,14 @@ export const AnalyticsGraph: React.FC<Props> = ({
   yAxisKey,
   fullScreen,
 }) => {
+  const renderAssigneeName = (assigneeId: string): string => {
+    const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
+
+    if (!assignee) return "?";
+
+    return assignee.assignees__display_name || "?";
+  };
+
   const generateYAxisTickValues = () => {
     if (!analytics) return [];
 
@@ -70,17 +78,17 @@ export const AnalyticsGraph: React.FC<Props> = ({
       height={fullScreen ? "400px" : "300px"}
       margin={{
         right: 20,
-        bottom: params.x_axis === "assignees__email" ? 50 : longestXAxisLabel.length * 5 + 20,
+        bottom: params.x_axis === "assignees__id" ? 50 : longestXAxisLabel.length * 5 + 20,
       }}
       axisBottom={{
         tickSize: 0,
         tickPadding: 10,
         tickRotation: barGraphData.data.length > 7 ? -45 : 0,
         renderTick:
-          params.x_axis === "assignees__email"
+          params.x_axis === "assignees__id"
             ? (datum) => {
                 const avatar = analytics.extras.assignee_details?.find(
-                  (a) => a?.assignees__email === datum?.value
+                  (a) => a?.assignees__display_name === datum?.value
                 )?.assignees__avatar;
 
                 if (avatar && avatar !== "")
@@ -101,7 +109,11 @@ export const AnalyticsGraph: React.FC<Props> = ({
                     <g transform={`translate(${datum.x},${datum.y})`}>
                       <circle cy={18} r={8} fill="#374151" />
                       <text x={0} y={21} textAnchor="middle" fontSize={9} fill="#ffffff">
-                        {datum.value && datum.value !== "None"
+                        {params.x_axis === "assignees__id"
+                          ? datum.value && datum.value !== "None"
+                            ? renderAssigneeName(datum.value)[0].toUpperCase()
+                            : "?"
+                          : datum.value && datum.value !== "None"
                           ? `${datum.value}`.toUpperCase()[0]
                           : "?"}
                       </text>

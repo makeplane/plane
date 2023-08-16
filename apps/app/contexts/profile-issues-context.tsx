@@ -19,7 +19,7 @@ type IssueViewProps = {
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
   showSubIssues: boolean;
-  filters: IIssueFilterOptions & { subscriber: string | null };
+  filters: IIssueFilterOptions;
   properties: Properties;
 };
 
@@ -41,7 +41,7 @@ type ContextType = IssueViewProps & {
   setOrderBy: (property: TIssueOrderByOptions) => void;
   setShowEmptyGroups: (property: boolean) => void;
   setShowSubIssues: (value: boolean) => void;
-  setFilters: (filters: Partial<IIssueFilterOptions & { subscriber: string | null }>) => void;
+  setFilters: (filters: Partial<IIssueFilterOptions>) => void;
   setProperties: (key: keyof Properties) => void;
   setIssueView: (property: TIssueViewOptions) => void;
 };
@@ -52,7 +52,7 @@ type StateType = {
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
   showSubIssues: boolean;
-  filters: IIssueFilterOptions & { subscriber: string | null };
+  filters: IIssueFilterOptions;
   properties: Properties;
 };
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
@@ -76,16 +76,17 @@ export const initialState: StateType = {
   },
   properties: {
     assignee: true,
-    attachment_count: true,
-    created_on: true,
+    start_date: true,
     due_date: true,
-    estimate: true,
     key: true,
     labels: true,
-    link: true,
     priority: true,
     state: true,
     sub_issue_count: true,
+    attachment_count: true,
+    link: true,
+    estimate: true,
+    created_on: true,
     updated_on: true,
   },
 };

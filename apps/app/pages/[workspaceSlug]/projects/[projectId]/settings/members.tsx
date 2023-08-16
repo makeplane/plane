@@ -10,8 +10,9 @@ import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
-import useProjectDetails from "hooks/use-project-details";
 import useUser from "hooks/use-user";
+import useProjectMembers from "hooks/use-project-members";
+import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -26,7 +27,11 @@ import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_INVITATIONS, PROJECT_MEMBERS, WORKSPACE_DETAILS } from "constants/fetch-keys";
+import {
+  PROJECT_INVITATIONS_WITH_EMAIL,
+  PROJECT_MEMBERS_WITH_EMAIL,
+  WORKSPACE_DETAILS,
+} from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 // helper
@@ -44,6 +49,11 @@ const MembersSettings: NextPage = () => {
 
   const { user } = useUser();
   const { projectDetails } = useProjectDetails();
+  const { isOwner } = useProjectMembers(
+    workspaceSlug?.toString(),
+    projectId?.toString(),
+    Boolean(workspaceSlug && projectId)
+  );
 
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
@@ -51,16 +61,21 @@ const MembersSettings: NextPage = () => {
   );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? PROJECT_MEMBERS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString())
+      : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembersWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
-    workspaceSlug && projectId ? PROJECT_INVITATIONS : null,
     workspaceSlug && projectId
-      ? () => projectService.projectInvitations(workspaceSlug as string, projectId as string)
+      ? PROJECT_INVITATIONS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString())
+      : null,
+    workspaceSlug && projectId
+      ? () =>
+          projectService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -72,6 +87,7 @@ const MembersSettings: NextPage = () => {
       first_name: item.member?.first_name,
       last_name: item.member?.last_name,
       email: item.member?.email,
+      display_name: item.member?.display_name,
       role: item.role,
       status: true,
       member: true,
@@ -83,6 +99,7 @@ const MembersSettings: NextPage = () => {
       first_name: item.first_name ?? item.email,
       last_name: item.last_name ?? "",
       email: item.email,
+      display_name: item.email,
       role: item.role,
       status: item.accepted,
       member: false,
@@ -122,7 +139,7 @@ const MembersSettings: NextPage = () => {
               selectedRemoveMember
             );
             mutateMembers(
-              (prevData) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
+              (prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
               false
             );
           }
@@ -133,7 +150,8 @@ const MembersSettings: NextPage = () => {
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData: any) =>
+                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }
@@ -177,32 +195,41 @@ const MembersSettings: NextPage = () => {
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">
                       <div className="flex items-center gap-x-6 gap-y-2">
-                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-                          {member.avatar && member.avatar !== "" ? (
+                        {member.avatar && member.avatar !== "" ? (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
                             <img
                               src={member.avatar}
-                              alt={member.first_name}
+                              alt={member.display_name}
                               className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                             />
-                          ) : member.first_name !== "" ? (
-                            member.first_name.charAt(0)
-                          ) : (
-                            member.email.charAt(0)
-                          )}
-                        </div>
+                          </div>
+                        ) : member.display_name || member.email ? (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                            {(member.display_name || member.email)?.charAt(0)}
+                          </div>
+                        ) : (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                            ?
+                          </div>
+                        )}
                         <div>
                           {member.member ? (
                             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
                               <a className="text-sm">
-                                {member.first_name} {member.last_name}
+                                <span>
+                                  {member.first_name} {member.last_name}
+                                </span>
+                                <span className="text-custom-text-300 text-sm ml-2">
+                                  ({member.display_name})
+                                </span>
                               </a>
                             </Link>
                           ) : (
-                            <h4 className="text-sm">
-                              {member.first_name} {member.last_name}
-                            </h4>
+                            <h4 className="text-sm">{member.display_name || member.email}</h4>
                           )}
-                          <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
+                          {isOwner && (
+                            <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs">

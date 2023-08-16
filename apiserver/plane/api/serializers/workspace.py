@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .user import UserLiteSerializer
+from .user import UserLiteSerializer, UserAdminLiteSerializer
 
 from plane.db.models import (
     User,
@@ -33,10 +33,30 @@ class WorkSpaceSerializer(BaseSerializer):
             "owner",
         ]
 
+class WorkspaceLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Workspace
+        fields = [
+            "name",
+            "slug",
+            "id",
+        ]
+        read_only_fields = fields
+
+
 
 class WorkSpaceMemberSerializer(BaseSerializer):
     member = UserLiteSerializer(read_only=True)
-    workspace = WorkSpaceSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
+
+    class Meta:
+        model = WorkspaceMember
+        fields = "__all__"
+
+
+class WorkspaceMemberAdminSerializer(BaseSerializer):
+    member = UserAdminLiteSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
 
     class Meta:
         model = WorkspaceMember
@@ -99,17 +119,6 @@ class TeamSerializer(BaseSerializer):
             return super().update(instance, validated_data)
         else:
             return super().update(instance, validated_data)
-
-
-class WorkspaceLiteSerializer(BaseSerializer):
-    class Meta:
-        model = Workspace
-        fields = [
-            "name",
-            "slug",
-            "id",
-        ]
-        read_only_fields = fields
 
 
 class WorkspaceThemeSerializer(BaseSerializer):

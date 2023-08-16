@@ -1,6 +1,9 @@
 // services images
 import GithubLogo from "public/services/github.png";
 import JiraLogo from "public/services/jira.png";
+import CSVLogo from "public/services/csv.png";
+import ExcelLogo from "public/services/excel.png";
+import JSONLogo from "public/services/json.png";
 
 export const ROLE = {
   5: "Guest",
@@ -38,5 +41,29 @@ export const IMPORTERS_EXPORTERS_LIST = [
     title: "Jira",
     description: "Import issues and epics from Jira projects and epics.",
     logo: JiraLogo,
+  },
+];
+
+export const EXPORTERS_LIST = [
+  {
+    provider: "csv",
+    type: "export",
+    title: "CSV",
+    description: "Export issues to a CSV file.",
+    logo: CSVLogo,
+  },
+  {
+    provider: "xlsx",
+    type: "export",
+    title: "Excel",
+    description: "Export issues to a Excel file.",
+    logo: ExcelLogo,
+  },
+  {
+    provider: "json",
+    type: "export",
+    title: "JSON",
+    description: "Export issues to a JSON file.",
+    logo: JSONLogo,
   },
 ];

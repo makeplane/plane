@@ -200,7 +200,7 @@ export const MyIssuesView: React.FC<Props> = ({
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
 
-  const filtersToDisplay = { ...filters, assignees: null, created_by: null };
+  const filtersToDisplay = { ...filters, assignees: null, created_by: null, subscriber: null };
 
   const nullFilters = Object.keys(filtersToDisplay).filter(
     (key) => filtersToDisplay[key as keyof IIssueFilterOptions] === null
@@ -264,7 +264,11 @@ export const MyIssuesView: React.FC<Props> = ({
         disableUserActions={disableUserActions}
         dragDisabled={groupBy !== "priority"}
         emptyState={{
-          title: "You don't have any issue assigned to you yet",
+          title: filters.assignees
+            ? "You don't have any issue assigned to you yet"
+            : filters.created_by
+            ? "You have not created any issue yet."
+            : "You have not subscribed to any issue yet.",
           description: "Keep track of your work in a single place.",
           primaryButton: {
             icon: <PlusIcon className="h-4 w-4" />,

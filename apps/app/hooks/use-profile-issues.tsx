@@ -46,7 +46,7 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
     state_group: filters?.state_group ? filters?.state_group.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
     type: filters?.type ? filters?.type : undefined,
-    subscriber: filters?.subscriber ? filters?.subscriber : undefined,
+    subscriber: filters?.subscriber ? filters?.subscriber.join(",") : undefined,
   };
 
   const { data: userProfileIssues, mutate: mutateProfileIssues } = useSWR(
@@ -93,7 +93,7 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
     }
 
     if (router.pathname.includes("subscribed") && filters.subscriber === null) {
-      setFilters({ subscriber: userId });
+      setFilters({ subscriber: [userId] });
       return;
     }
   }, [filters, router, setFilters, userId]);

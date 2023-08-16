@@ -7,13 +7,14 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from plane.api.serializers.workspace import WorkSpaceSerializer, WorkspaceLiteSerializer
-from plane.api.serializers.user import UserLiteSerializer
+from plane.api.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
 from plane.db.models import (
     Project,
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
     ProjectFavorite,
+    ProjectDeployBoard,
 )
 
 
@@ -80,7 +81,15 @@ class ProjectSerializer(BaseSerializer):
 class ProjectLiteSerializer(BaseSerializer):
     class Meta:
         model = Project
-        fields = ["id", "identifier", "name"]
+        fields = [
+            "id",
+            "identifier",
+            "name",
+            "cover_image",
+            "icon_prop",
+            "emoji",
+            "description",
+        ]
         read_only_fields = fields
 
 
@@ -94,6 +103,8 @@ class ProjectDetailSerializer(BaseSerializer):
     total_modules = serializers.IntegerField(read_only=True)
     is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
+    member_role = serializers.IntegerField(read_only=True)
+    is_deployed = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Project
@@ -104,6 +115,16 @@ class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     project = ProjectLiteSerializer(read_only=True)
     member = UserLiteSerializer(read_only=True)
+
+    class Meta:
+        model = ProjectMember
+        fields = "__all__"
+
+
+class ProjectMemberAdminSerializer(BaseSerializer):
+    workspace = WorkspaceLiteSerializer(read_only=True)
+    project = ProjectLiteSerializer(read_only=True)
+    member = UserAdminLiteSerializer(read_only=True)
 
     class Meta:
         model = ProjectMember
@@ -137,8 +158,6 @@ class ProjectFavoriteSerializer(BaseSerializer):
         ]
 
 
-
-
 class ProjectMemberLiteSerializer(BaseSerializer):
     member = UserLiteSerializer(read_only=True)
     is_subscribed = serializers.BooleanField(read_only=True)
@@ -147,3 +166,16 @@ class ProjectMemberLiteSerializer(BaseSerializer):
         model = ProjectMember
         fields = ["member", "id", "is_subscribed"]
         read_only_fields = fields
+
+
+class ProjectDeployBoardSerializer(BaseSerializer):
+    project_details = ProjectLiteSerializer(read_only=True, source="project")
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+
+    class Meta:
+        model = ProjectDeployBoard
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project" "anchor",
+        ]

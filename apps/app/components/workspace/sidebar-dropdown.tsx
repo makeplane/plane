@@ -23,6 +23,8 @@ import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { truncateText } from "helpers/string.helper";
 // types
 import { IWorkspace } from "types";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
@@ -54,6 +56,8 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
 ];
 
 export const WorkspaceSidebarDropdown = () => {
+  const store: any = useMobxStore();
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -108,7 +112,7 @@ export const WorkspaceSidebarDropdown = () => {
         <Menu.Button className="text-custom-sidebar-text-200 flex w-full items-center rounded-sm text-sm font-medium focus:outline-none">
           <div
             className={`flex w-full items-center gap-x-2 rounded-sm bg-custom-sidebar-background-80 p-1 ${
-              sidebarCollapse ? "justify-center" : ""
+              store?.theme?.sidebarCollapsed ? "justify-center" : ""
             }`}
           >
             <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white">
@@ -123,7 +127,7 @@ export const WorkspaceSidebarDropdown = () => {
               )}
             </div>
 
-            {!sidebarCollapse && (
+            {!store?.theme?.sidebarCollapsed && (
               <h4 className="text-custom-text-100">
                 {activeWorkspace?.name ? truncateText(activeWorkspace.name, 14) : "Loading..."}
               </h4>
@@ -142,13 +146,12 @@ export const WorkspaceSidebarDropdown = () => {
         >
           <Menu.Items
             className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 shadow-lg outline-none"
+          border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
-              <div className="text-sm text-custom-sidebar-text-200">{user?.email}</div>
-              <span className="text-sm font-semibold text-custom-sidebar-text-200">Workspace</span>
+              <span className="text-sm font-medium text-custom-sidebar-text-200">Workspace</span>
               {workspaces ? (
-                <div className="flex h-full w-full flex-col items-start justify-start gap-3.5">
+                <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
                   {workspaces.length > 0 ? (
                     workspaces.map((workspace) => (
                       <Menu.Item key={workspace.id}>
@@ -156,7 +159,7 @@ export const WorkspaceSidebarDropdown = () => {
                           <button
                             type="button"
                             onClick={() => handleWorkspaceNavigation(workspace)}
-                            className="flex w-full items-center justify-between gap-1 rounded-md text-sm text-custom-sidebar-text-100"
+                            className="flex w-full items-center justify-between gap-1 p-1 rounded-md text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
                           >
                             <div className="flex items-center justify-start gap-2.5">
                               <span className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 text-xs uppercase text-white">
@@ -182,9 +185,7 @@ export const WorkspaceSidebarDropdown = () => {
                             <span className="p-1">
                               <CheckIcon
                                 className={`h-3 w-3.5 text-custom-sidebar-text-100 ${
-                                  active || workspace.id === activeWorkspace?.id
-                                    ? "opacity-100"
-                                    : "opacity-0"
+                                  workspace.id === activeWorkspace?.id ? "opacity-100" : "opacity-0"
                                 }`}
                               />
                             </span>
@@ -201,9 +202,9 @@ export const WorkspaceSidebarDropdown = () => {
                     onClick={() => {
                       router.push("/create-workspace");
                     }}
-                    className="flex w-full items-center gap-1 text-sm text-custom-sidebar-text-200"
+                    className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                   >
-                    <PlusIcon className="h-3 w-3" />
+                    <PlusIcon className="h-4 w-4" />
                     Create Workspace
                   </Menu.Item>
                 </div>
@@ -243,7 +244,7 @@ export const WorkspaceSidebarDropdown = () => {
         </Transition>
       </Menu>
 
-      {!sidebarCollapse && (
+      {!store?.theme?.sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
             <Avatar user={user} height="28px" width="28px" fontSize="14px" />
@@ -259,16 +260,17 @@ export const WorkspaceSidebarDropdown = () => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className="absolute left-0 z-20 mt-1.5 flex flex-col w-52 origin-top-left rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-90 p-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-xs outline-none"
+              className="absolute left-0 z-20 mt-1.5 flex flex-col w-52  origin-top-left rounded-md
+          border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-xs outline-none"
             >
-              <div className="flex flex-col space-y-2 pb-2">
+              <div className="flex flex-col gap-2.5 pb-2">
+                <span className="px-2 text-custom-sidebar-text-200">{user?.email}</span>
                 {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map(
                   (link, index) => (
                     <Menu.Item key={index} as="button" type="button">
                       <Link href={link.link}>
                         <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                          <Icon iconName={link.icon} className="!text-base" />
+                          <Icon iconName={link.icon} className="!text-lg !leading-5" />
                           {link.name}
                         </a>
                       </Link>
@@ -283,7 +285,7 @@ export const WorkspaceSidebarDropdown = () => {
                   className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
                   onClick={handleSignOut}
                 >
-                  <Icon iconName="logout" className="!text-base" />
+                  <Icon iconName="logout" className="!text-lg !leading-5" />
                   Sign out
                 </Menu.Item>
               </div>
