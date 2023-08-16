@@ -16,6 +16,7 @@ import {
   ViewEstimateSelect,
   ViewIssueLabel,
   ViewPrioritySelect,
+  ViewStartDateSelect,
   ViewStateSelect,
 } from "components/issues";
 // ui
@@ -107,7 +108,7 @@ export const SingleListIssue: React.FC<Props> = ({
         );
       } else {
         mutateIssues(
-          (prevData) =>
+          (prevData: any) =>
             handleIssuesMutation(
               formData,
               groupTitle ?? "",
@@ -240,6 +241,14 @@ export const SingleListIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               position="right"
+              user={user}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.start_date && issue.start_date && (
+            <ViewStartDateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
               user={user}
               isNotAllowed={isNotAllowed}
             />

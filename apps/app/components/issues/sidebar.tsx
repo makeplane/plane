@@ -54,6 +54,7 @@ type Props = {
     | "parent"
     | "blocker"
     | "blocked"
+    | "startDate"
     | "dueDate"
     | "cycle"
     | "module"
@@ -209,6 +210,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     fieldsToShow.includes("all") ||
     fieldsToShow.includes("cycle") ||
     fieldsToShow.includes("module");
+
+  const startDate = watchIssue("start_date");
+  const targetDate = watchIssue("target_date");
+
+  const minDate = startDate ? new Date(startDate) : null;
+  minDate?.setDate(minDate.getDate());
+
+  const maxDate = targetDate ? new Date(targetDate) : null;
+  maxDate?.setDate(maxDate.getDate());
 
   const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
 
@@ -367,6 +377,34 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     disabled={uneditable}
                   />
                 )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <p>Start date</p>
+                    </div>
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="start_date"
+                        render={({ field: { value } }) => (
+                          <CustomDatePicker
+                            placeholder="Start date"
+                            value={value}
+                            onChange={(val) =>
+                              submitChanges({
+                                start_date: val,
+                              })
+                            }
+                            className="bg-custom-background-90 w-full"
+                            maxDate={maxDate ?? undefined}
+                            disabled={isNotAllowed || uneditable}
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
@@ -386,7 +424,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 target_date: val,
                               })
                             }
-                            className="bg-custom-background-90"
+                            className="bg-custom-background-90 w-full"
+                            minDate={minDate ?? undefined}
                             disabled={isNotAllowed || uneditable}
                           />
                         )}

@@ -41,6 +41,7 @@ class CycleSerializer(BaseSerializer):
             {
                 "avatar": assignee.avatar,
                 "first_name": assignee.first_name,
+                "display_name": assignee.display_name,
                 "id": assignee.id,
             }
             for issue_cycle in obj.issue_cycle.all()

@@ -11,10 +11,12 @@ import {
 
 export interface IUser {
   avatar: string;
+  cover_image: string | null;
   created_at: readonly Date;
   created_location: readonly string;
   date_joined: readonly Date;
   email: string;
+  display_name: string;
   first_name: string;
   id: readonly string;
   is_email_verified: boolean;
@@ -64,11 +66,15 @@ export interface ICurrentUserResponse extends IUser {
 export interface IUserLite {
   avatar: string;
   created_at: Date;
-  email: string;
+  display_name: string;
   first_name: string;
   readonly id: string;
   is_bot: boolean;
   last_name: string;
+}
+
+export interface IUserMemberLite extends IUserLite {
+  email: string;
 }
 
 export interface IUserActivity {
@@ -152,9 +158,39 @@ export interface IUserProfileProjectSegregation {
     avatar: string;
     cover_image: string | null;
     date_joined: Date;
-    email: string;
+    display_name: string;
     first_name: string;
     last_name: string;
     user_timezone: string;
   };
+}
+
+export interface ICurrentUser {
+  id: readonly string;
+  avatar: string;
+  first_name: string;
+  last_name: string;
+  username: string;
+  email: string;
+  mobile_number: string;
+  is_email_verified: boolean;
+  is_tour_completed: boolean;
+  onboarding_step: TOnboardingSteps;
+  is_onboarded: boolean;
+  role: string;
+}
+
+export interface ICustomTheme {
+  background: string;
+  text: string;
+  primary: string;
+  sidebarBackground: string;
+  sidebarText: string;
+  darkPalette: boolean;
+  palette: string;
+  theme: string;
+}
+
+export interface ICurrentUserSettings {
+  theme: ICustomTheme;
 }

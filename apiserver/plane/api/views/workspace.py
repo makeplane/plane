@@ -47,6 +47,7 @@ from plane.api.serializers import (
     WorkspaceThemeSerializer,
     IssueActivitySerializer,
     IssueLiteSerializer,
+    WorkspaceMemberAdminSerializer,
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -106,7 +107,9 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def get_queryset(self):
         member_count = (
-            WorkspaceMember.objects.filter(workspace=OuterRef("id"))
+            WorkspaceMember.objects.filter(
+                workspace=OuterRef("id"), member__is_bot=False
+            )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -191,7 +194,9 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     def get(self, request):
         try:
             member_count = (
-                WorkspaceMember.objects.filter(workspace=OuterRef("id"))
+                WorkspaceMember.objects.filter(
+                    workspace=OuterRef("id"), member__is_bot=False
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -537,7 +542,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
-    serializer_class = WorkSpaceMemberSerializer
+    serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
 
     permission_classes = [
@@ -545,7 +550,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     ]
 
     search_fields = [
-        "member__email",
+        "member__display_name",
         "member__first_name",
     ]
 
@@ -624,7 +629,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             if (
                 workspace_member.role == 20
                 and WorkspaceMember.objects.filter(
-                    workspace__slug=slug, role=20
+                    workspace__slug=slug,
+                    role=20,
+                    member__is_bot=False,
                 ).count()
                 == 1
             ):
@@ -690,7 +697,7 @@ class TeamMemberViewSet(BaseViewSet):
     ]
 
     search_fields = [
-        "member__email",
+        "member__display_name",
         "member__first_name",
     ]
 
@@ -1048,7 +1055,6 @@ class WorkspaceThemeViewSet(BaseViewSet):
 
 
 class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
-
     def get(self, request, slug, user_id):
         try:
             filters = issue_filters(request.query_params, "GET")
@@ -1146,14 +1152,18 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             upcoming_cycles = CycleIssue.objects.filter(
                 workspace__slug=slug,
                 cycle__start_date__gt=timezone.now().date(),
-                issue__assignees__in=[user_id,]
+                issue__assignees__in=[
+                    user_id,
+                ],
             ).values("cycle__name", "cycle__id", "cycle__project_id")
 
             present_cycle = CycleIssue.objects.filter(
                 workspace__slug=slug,
                 cycle__start_date__lt=timezone.now().date(),
                 cycle__end_date__gt=timezone.now().date(),
-                issue__assignees__in=[user_id,]
+                issue__assignees__in=[
+                    user_id,
+                ],
             ).values("cycle__name", "cycle__id", "cycle__project_id")
 
             return Response(
@@ -1166,7 +1176,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                     "pending_issues": pending_issues_count,
                     "subscribed_issues": subscribed_issues_count,
                     "present_cycles": present_cycle,
-                    "upcoming_cycles": upcoming_cycles, 
+                    "upcoming_cycles": upcoming_cycles,
                 }
             )
         except Exception as e:
@@ -1184,7 +1194,6 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
 
     def get(self, request, slug, user_id):
         try:
-
             projects = request.query_params.getlist("project", [])
 
             queryset = IssueActivity.objects.filter(
@@ -1212,12 +1221,13 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
 
 
 class WorkspaceUserProfileEndpoint(BaseAPIView):
-
     def get(self, request, slug, user_id):
         try:
             user_data = User.objects.get(pk=user_id)
 
-            requesting_workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user)
+            requesting_workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
             projects = []
             if requesting_workspace_member.role >= 10:
                 projects = (
@@ -1227,7 +1237,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     )
                     .annotate(
                         created_issues=Count(
-                            "project_issue", filter=Q(project_issue__created_by_id=user_id)
+                            "project_issue",
+                            filter=Q(project_issue__created_by_id=user_id),
                         )
                     )
                     .annotate(
@@ -1282,6 +1293,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                         "cover_image": user_data.cover_image,
                         "date_joined": user_data.date_joined,
                         "user_timezone": user_data.user_timezone,
+                        "display_name": user_data.display_name,
                     },
                 },
                 status=status.HTTP_200_OK,
@@ -1433,6 +1445,27 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
                 project__project_projectmember__member=request.user,
             ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
             return Response(labels, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceMembersEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        try:
+            workspace_members = WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                member__is_bot=False,
+            ).select_related("workspace", "member")
+            serialzier = WorkSpaceMemberSerializer(workspace_members, many=True)
+            return Response(serialzier.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

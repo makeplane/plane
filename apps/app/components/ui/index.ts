@@ -23,3 +23,4 @@ export * from "./product-updates-modal";
 export * from "./integration-and-import-export-banner";
 export * from "./range-datepicker";
 export * from "./circular-progress";
+export * from "./profile-empty-state";

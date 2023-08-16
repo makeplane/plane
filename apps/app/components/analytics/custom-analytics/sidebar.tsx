@@ -277,9 +277,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Lead</h6>
-                      <span>
-                        {cycleDetails.owned_by?.first_name} {cycleDetails.owned_by?.last_name}
-                      </span>
+                      <span>{cycleDetails.owned_by?.display_name}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Start Date</h6>
@@ -305,10 +303,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Lead</h6>
-                      <span>
-                        {moduleDetails.lead_detail?.first_name}{" "}
-                        {moduleDetails.lead_detail?.last_name}
-                      </span>
+                      <span>{moduleDetails.lead_detail?.display_name}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Start Date</h6>

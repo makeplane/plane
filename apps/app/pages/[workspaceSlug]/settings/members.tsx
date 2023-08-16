@@ -10,6 +10,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
+import useWorkspaceMembers from "hooks/use-workspace-members";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { SettingsHeader } from "components/workspace";
@@ -24,7 +25,11 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import {
+  WORKSPACE_DETAILS,
+  WORKSPACE_INVITATION_WITH_EMAIL,
+  WORKSPACE_MEMBERS_WITH_EMAIL,
+} from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 // helper
@@ -42,19 +47,25 @@ const MembersSettings: NextPage = () => {
 
   const { user } = useUser();
 
+  const { isOwner } = useWorkspaceMembers(workspaceSlug?.toString(), Boolean(workspaceSlug));
+
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug.toString()) : null,
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug.toString()) : null)
   );
 
   const { data: workspaceMembers, mutate: mutateMembers } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug.toString()) : null,
+    workspaceSlug
+      ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug.toString())
+      : null
   );
 
   const { data: workspaceInvitations, mutate: mutateInvitations } = useSWR(
-    workspaceSlug ? WORKSPACE_INVITATIONS : null,
-    workspaceSlug ? () => workspaceService.workspaceInvitations(workspaceSlug.toString()) : null
+    workspaceSlug ? WORKSPACE_INVITATION_WITH_EMAIL(workspaceSlug.toString()) : null,
+    workspaceSlug
+      ? () => workspaceService.workspaceInvitationsWithEmail(workspaceSlug.toString())
+      : null
   );
 
   const members = [
@@ -65,6 +76,7 @@ const MembersSettings: NextPage = () => {
       first_name: item.member?.first_name,
       last_name: item.member?.last_name,
       email: item.member?.email,
+      display_name: item.member?.display_name,
       role: item.role,
       status: true,
       member: true,
@@ -77,6 +89,7 @@ const MembersSettings: NextPage = () => {
       first_name: item.email,
       last_name: "",
       email: item.email,
+      display_name: item.email,
       role: item.role,
       status: item.accepted,
       member: false,
@@ -126,14 +139,15 @@ const MembersSettings: NextPage = () => {
                 });
               })
               .finally(() => {
-                mutateMembers((prevData) =>
-                  prevData?.filter((item) => item.id !== selectedRemoveMember)
+                mutateMembers((prevData: any) =>
+                  prevData?.filter((item: any) => item.id !== selectedRemoveMember)
                 );
               });
           }
           if (selectedInviteRemoveMember) {
             mutateInvitations(
-              (prevData) => prevData?.filter((item) => item.id !== selectedInviteRemoveMember),
+              (prevData: any) =>
+                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
             workspaceService
@@ -194,32 +208,41 @@ const MembersSettings: NextPage = () => {
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">
                       <div className="flex items-center gap-x-8 gap-y-2">
-                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-                          {member.avatar && member.avatar !== "" ? (
+                        {member.avatar && member.avatar !== "" ? (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
                             <img
                               src={member.avatar}
                               className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
-                              alt={member.first_name}
+                              alt={member.display_name || member.email}
                             />
-                          ) : member.first_name !== "" ? (
-                            member.first_name.charAt(0)
-                          ) : (
-                            member.email.charAt(0)
-                          )}
-                        </div>
+                          </div>
+                        ) : member.display_name || member.email ? (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize bg-gray-700 text-white">
+                            {(member.display_name || member.email)?.charAt(0)}
+                          </div>
+                        ) : (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize bg-gray-700 text-white">
+                            ?
+                          </div>
+                        )}
                         <div>
                           {member.member ? (
                             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
                               <a className="text-sm">
-                                {member.first_name} {member.last_name}
+                                <span>
+                                  {member.first_name} {member.last_name}
+                                </span>
+                                <span className="text-custom-text-300 text-sm ml-2">
+                                  ({member.display_name})
+                                </span>
                               </a>
                             </Link>
                           ) : (
-                            <h4 className="text-sm">
-                              {member.first_name} {member.last_name}
-                            </h4>
+                            <h4 className="text-sm">{member.display_name || member.email}</h4>
                           )}
-                          <p className="text-xs text-custom-text-200">{member.email}</p>
+                          {isOwner && (
+                            <p className="text-xs text-custom-text-200">{member.email}</p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
@@ -240,8 +263,8 @@ const MembersSettings: NextPage = () => {
                             if (!workspaceSlug) return;
 
                             mutateMembers(
-                              (prevData) =>
-                                prevData?.map((m) =>
+                              (prevData: any) =>
+                                prevData?.map((m: any) =>
                                   m.id === member.id ? { ...m, role: value } : m
                                 ),
                               false

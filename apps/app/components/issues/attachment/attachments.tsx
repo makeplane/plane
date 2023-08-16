@@ -77,7 +77,7 @@ export const IssueAttachments = () => {
                       <Tooltip
                         tooltipContent={`${
                           people?.find((person) => person.member.id === file.updated_by)?.member
-                            .first_name ?? ""
+                            .display_name ?? ""
                         } uploaded on ${renderLongDateFormat(file.updated_at)}`}
                       >
                         <span>

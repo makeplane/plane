@@ -12,11 +12,11 @@ import { PrimaryButton, SecondaryButton } from "components/ui";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // images
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
-import IssuesTour from "public/onboarding/issues.svg";
-import CyclesTour from "public/onboarding/cycles.svg";
-import ModulesTour from "public/onboarding/modules.svg";
-import ViewsTour from "public/onboarding/views.svg";
-import PagesTour from "public/onboarding/pages.svg";
+import IssuesTour from "public/onboarding/issues.webp";
+import CyclesTour from "public/onboarding/cycles.webp";
+import ModulesTour from "public/onboarding/modules.webp";
+import ViewsTour from "public/onboarding/views.webp";
+import PagesTour from "public/onboarding/pages.webp";
 
 type Props = {
   onComplete: () => void;

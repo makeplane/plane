@@ -163,7 +163,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
 
     await GithubIntegrationService.createGithubServiceImport(workspaceSlug as string, payload, user)
       .then(() => {
-        router.push(`/${workspaceSlug}/settings/import-export`);
+        router.push(`/${workspaceSlug}/settings/imports`);
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
       })
       .catch(() =>
@@ -178,7 +178,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
   return (
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="space-y-2">
-        <Link href={`/${workspaceSlug}/settings/import-export`}>
+        <Link href={`/${workspaceSlug}/settings/imports`}>
           <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
             <ArrowLeftIcon className="h-3 w-3" />
             <div>Cancel import & go back</div>

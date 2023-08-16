@@ -92,6 +92,7 @@ export const initialState: StateType = {
     labels: null,
     state: null,
     state_group: null,
+    subscriber: null,
     created_by: null,
     target_date: null,
   },
@@ -400,7 +401,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -431,7 +432,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -462,7 +463,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -493,7 +494,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -524,7 +525,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -646,7 +647,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
             user
           );
       } else {
-        mutateMyViewProps((prevData) => {
+        mutateMyViewProps((prevData: any) => {
           if (!prevData) return prevData;
 
           return {

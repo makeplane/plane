@@ -182,5 +182,8 @@ module.exports = {
       custom: ["Inter", "sans-serif"],
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography")
+  ],
 };

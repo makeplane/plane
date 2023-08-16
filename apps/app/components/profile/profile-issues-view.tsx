@@ -110,7 +110,7 @@ export const ProfileIssuesView = () => {
 
         draggedItem[groupByProperty] = destinationGroup;
 
-        mutateProfileIssues((prevData) => {
+        mutateProfileIssues((prevData: any) => {
           if (!prevData) return prevData;
 
           const sourceGroupArray = [...groupedIssues[sourceGroup]];
@@ -279,10 +279,10 @@ export const ProfileIssuesView = () => {
         dragDisabled={groupByProperty !== "priority"}
         emptyState={{
           title: router.pathname.includes("assigned")
-            ? `Issues assigned to ${profileData?.user_data.first_name} ${profileData?.user_data.last_name} will appear here`
+            ? `Issues assigned to ${profileData?.user_data.display_name} will appear here`
             : router.pathname.includes("created")
-            ? `Issues created by ${profileData?.user_data.first_name} ${profileData?.user_data.last_name} will appear here`
-            : `Issues subscribed by ${profileData?.user_data.first_name} ${profileData?.user_data.last_name} will appear here`,
+            ? `Issues created by ${profileData?.user_data.display_name} will appear here`
+            : `Issues subscribed by ${profileData?.user_data.display_name} will appear here`,
         }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}

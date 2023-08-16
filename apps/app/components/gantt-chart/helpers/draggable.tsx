@@ -1,138 +1,205 @@
-import { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 
-export const ChartDraggable = ({ children, block, handleBlock, className }: any) => {
-  const [dragging, setDragging] = useState(false);
+// react-beautiful-dnd
+import { DraggableProvided } from "react-beautiful-dnd";
+import { useChart } from "../hooks";
+// types
+import { IGanttBlock } from "../types";
 
-  const [chartBlockPositionLeft, setChartBlockPositionLeft] = useState(0);
-  const [blockPositionLeft, setBlockPositionLeft] = useState(0);
-  const [dragBlockOffsetX, setDragBlockOffsetX] = useState(0);
+type Props = {
+  children: any;
+  block: IGanttBlock;
+  handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right") => void;
+  enableLeftDrag: boolean;
+  enableRightDrag: boolean;
+  provided: DraggableProvided;
+};
 
-  const handleMouseDown = (event: any) => {
-    const chartBlockPositionLeft: number = block.position.marginLeft;
-    const blockPositionLeft: number = event.target.getBoundingClientRect().left;
-    const dragBlockOffsetX: number = event.clientX - event.target.getBoundingClientRect().left;
+export const ChartDraggable: React.FC<Props> = ({
+  children,
+  block,
+  handleBlock,
+  enableLeftDrag = true,
+  enableRightDrag = true,
+  provided,
+}) => {
+  const [isLeftResizing, setIsLeftResizing] = useState(false);
+  const [isRightResizing, setIsRightResizing] = useState(false);
 
-    console.log("--------------------");
-    console.log("chartBlockPositionLeft", chartBlockPositionLeft);
-    console.log("blockPositionLeft", blockPositionLeft);
-    console.log("dragBlockOffsetX", dragBlockOffsetX);
-    console.log("-->");
+  const parentDivRef = useRef<HTMLDivElement>(null);
+  const resizableRef = useRef<HTMLDivElement>(null);
 
-    setDragging(true);
-    setChartBlockPositionLeft(chartBlockPositionLeft);
-    setBlockPositionLeft(blockPositionLeft);
-    setDragBlockOffsetX(dragBlockOffsetX);
+  const { currentViewData } = useChart();
+
+  const checkScrollEnd = (e: MouseEvent): number => {
+    let delWidth = 0;
+
+    const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
+    const appSidebar = document.querySelector("#app-sidebar") as HTMLElement;
+
+    const posFromLeft = e.clientX;
+    // manually scroll to left if reached the left end while dragging
+    if (posFromLeft - appSidebar.clientWidth <= 70) {
+      if (e.movementX > 0) return 0;
+
+      delWidth = -5;
+
+      scrollContainer.scrollBy(delWidth, 0);
+    } else delWidth = e.movementX;
+
+    // manually scroll to right if reached the right end while dragging
+    const posFromRight = window.innerWidth - e.clientX;
+    if (posFromRight <= 70) {
+      if (e.movementX < 0) return 0;
+
+      delWidth = 5;
+
+      scrollContainer.scrollBy(delWidth, 0);
+    } else delWidth = e.movementX;
+
+    return delWidth;
   };
 
-  const handleMouseMove = (event: any) => {
-    if (!dragging) return;
+  const handleLeftDrag = () => {
+    if (!currentViewData || !resizableRef.current || !parentDivRef.current || !block.position)
+      return;
 
-    const currentBlockPosition = event.clientX - dragBlockOffsetX;
-    console.log("currentBlockPosition", currentBlockPosition);
-    if (currentBlockPosition <= blockPositionLeft) {
-      const updatedPosition = chartBlockPositionLeft - (blockPositionLeft - currentBlockPosition);
-      console.log("updatedPosition", updatedPosition);
-      handleBlock({ ...block, position: { ...block.position, marginLeft: updatedPosition } });
-    } else {
-      const updatedPosition = chartBlockPositionLeft + (blockPositionLeft - currentBlockPosition);
-      console.log("updatedPosition", updatedPosition);
-      handleBlock({ ...block, position: { ...block.position, marginLeft: updatedPosition } });
-    }
-    console.log("--------------------");
+    const resizableDiv = resizableRef.current;
+    const parentDiv = parentDivRef.current;
+
+    const columnWidth = currentViewData.data.width;
+
+    const blockInitialWidth =
+      resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
+
+    let initialWidth = resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
+    let initialMarginLeft = parseInt(parentDiv.style.marginLeft);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!window) return;
+
+      let delWidth = 0;
+
+      delWidth = checkScrollEnd(e);
+
+      // calculate new width and update the initialMarginLeft using -=
+      const newWidth = Math.round((initialWidth -= delWidth) / columnWidth) * columnWidth;
+      // calculate new marginLeft and update the initial marginLeft to the newly calculated one
+      const newMarginLeft = initialMarginLeft - (newWidth - (block.position?.width ?? 0));
+      initialMarginLeft = newMarginLeft;
+
+      // block needs to be at least 1 column wide
+      if (newWidth < columnWidth) return;
+
+      resizableDiv.style.width = `${newWidth}px`;
+      parentDiv.style.marginLeft = `${newMarginLeft}px`;
+
+      if (block.position) {
+        block.position.width = newWidth;
+        block.position.marginLeft = newMarginLeft;
+      }
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+
+      const totalBlockShifts = Math.ceil(
+        (resizableDiv.clientWidth - blockInitialWidth) / columnWidth
+      );
+
+      handleBlock(totalBlockShifts, "left");
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
-  const handleMouseUp = () => {
-    setDragging(false);
-    setChartBlockPositionLeft(0);
-    setBlockPositionLeft(0);
-    setDragBlockOffsetX(0);
+  const handleRightDrag = () => {
+    if (!currentViewData || !resizableRef.current || !parentDivRef.current || !block.position)
+      return;
+
+    const resizableDiv = resizableRef.current;
+
+    const columnWidth = currentViewData.data.width;
+
+    const blockInitialWidth =
+      resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
+
+    let initialWidth = resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!window) return;
+
+      let delWidth = 0;
+
+      delWidth = checkScrollEnd(e);
+
+      // calculate new width and update the initialMarginLeft using +=
+      const newWidth = Math.round((initialWidth += delWidth) / columnWidth) * columnWidth;
+
+      // block needs to be at least 1 column wide
+      if (newWidth < columnWidth) return;
+
+      resizableDiv.style.width = `${Math.max(newWidth, 80)}px`;
+      if (block.position) block.position.width = Math.max(newWidth, 80);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+
+      const totalBlockShifts = Math.ceil(
+        (resizableDiv.clientWidth - blockInitialWidth) / columnWidth
+      );
+
+      handleBlock(totalBlockShifts, "right");
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   return (
     <div
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      className={`${className ? className : ``}`}
+      id={`block-${block.id}`}
+      ref={parentDivRef}
+      className="relative group inline-flex cursor-pointer items-center font-medium transition-all"
+      style={{
+        marginLeft: `${block.position?.marginLeft}px`,
+      }}
     >
-      {children}
+      {enableLeftDrag && (
+        <>
+          <div
+            onMouseDown={handleLeftDrag}
+            onMouseEnter={() => setIsLeftResizing(true)}
+            onMouseLeave={() => setIsLeftResizing(false)}
+            className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[1] w-6 h-10 bg-brand-backdrop rounded-md cursor-col-resize"
+          />
+          <div
+            className={`absolute top-1/2 -translate-y-1/2 w-1 h-4/5 rounded-sm bg-custom-background-80 transition-all duration-300 ${
+              isLeftResizing ? "-left-2.5" : "left-1"
+            }`}
+          />
+        </>
+      )}
+      {React.cloneElement(children, { ref: resizableRef, ...provided.dragHandleProps })}
+      {enableRightDrag && (
+        <>
+          <div
+            onMouseDown={handleRightDrag}
+            onMouseEnter={() => setIsRightResizing(true)}
+            onMouseLeave={() => setIsRightResizing(false)}
+            className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-6 bg-brand-backdrop rounded-md cursor-col-resize"
+          />
+          <div
+            className={`absolute top-1/2 -translate-y-1/2 w-1 h-4/5 rounded-sm bg-custom-background-80 transition-all duration-300 ${
+              isRightResizing ? "-right-2.5" : "right-1"
+            }`}
+          />
+        </>
+      )}
     </div>
   );
 };
-
-// import { useState } from "react";
-
-// export const ChartDraggable = ({ children, id, className = "", style }: any) => {
-//   const [dragging, setDragging] = useState(false);
-
-//   const [chartBlockPositionLeft, setChartBlockPositionLeft] = useState(0);
-//   const [blockPositionLeft, setBlockPositionLeft] = useState(0);
-//   const [dragBlockOffsetX, setDragBlockOffsetX] = useState(0);
-
-//   const handleDragStart = (event: any) => {
-//     // event.dataTransfer.setData("text/plain", event.target.id);
-
-//     const chartBlockPositionLeft: number = parseInt(event.target.style.left.slice(0, -2));
-//     const blockPositionLeft: number = event.target.getBoundingClientRect().left;
-//     const dragBlockOffsetX: number = event.clientX - event.target.getBoundingClientRect().left;
-
-//     console.log("chartBlockPositionLeft", chartBlockPositionLeft);
-//     console.log("blockPositionLeft", blockPositionLeft);
-//     console.log("dragBlockOffsetX", dragBlockOffsetX);
-//     console.log("--------------------");
-
-//     setDragging(true);
-//     setChartBlockPositionLeft(chartBlockPositionLeft);
-//     setBlockPositionLeft(blockPositionLeft);
-//     setDragBlockOffsetX(dragBlockOffsetX);
-//   };
-
-//   const handleDragEnd = () => {
-//     setDragging(false);
-//     setChartBlockPositionLeft(0);
-//     setBlockPositionLeft(0);
-//     setDragBlockOffsetX(0);
-//   };
-
-//   const handleDragOver = (event: any) => {
-//     event.preventDefault();
-//     if (dragging) {
-//       const scrollContainer = document.getElementById(`block-parent-${id}`) as HTMLElement;
-//       const currentBlockPosition = event.clientX - dragBlockOffsetX;
-//       console.log('currentBlockPosition')
-//       if (currentBlockPosition <= blockPositionLeft) {
-//         const updatedPosition = chartBlockPositionLeft - (blockPositionLeft - currentBlockPosition);
-//         console.log("updatedPosition", updatedPosition);
-//         if (scrollContainer) scrollContainer.style.left = `${updatedPosition}px`;
-//       } else {
-//         const updatedPosition = chartBlockPositionLeft + (blockPositionLeft - currentBlockPosition);
-//         console.log("updatedPosition", updatedPosition);
-//         if (scrollContainer) scrollContainer.style.left = `${updatedPosition}px`;
-//       }
-//       console.log("--------------------");
-//     }
-//   };
-
-//   const handleDrop = (event: any) => {
-//     event.preventDefault();
-//     setDragging(false);
-//     setChartBlockPositionLeft(0);
-//     setBlockPositionLeft(0);
-//     setDragBlockOffsetX(0);
-//   };
-
-//   return (
-//     <div
-//       id={id}
-//       draggable
-//       onDragStart={handleDragStart}
-//       onDragEnd={handleDragEnd}
-//       onDragOver={handleDragOver}
-//       onDrop={handleDrop}
-//       className={`${className} ${dragging ? "dragging" : ""}`}
-//       style={style}
-//     >
-//       {children}
-//     </div>
-//   );
-// };

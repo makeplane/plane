@@ -25,6 +25,7 @@ const initialValues: IWorkspaceViewProps = {
     labels: null,
     priority: null,
     state_group: null,
+    subscriber: null,
     target_date: null,
     type: null,
   },
@@ -32,6 +33,7 @@ const initialValues: IWorkspaceViewProps = {
   orderBy: "-created_at",
   properties: {
     assignee: true,
+    start_date: true,
     due_date: true,
     key: true,
     labels: true,
@@ -172,6 +174,7 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
 
   const newProperties: Properties = {
     assignee: myWorkspace?.view_props.properties.assignee ?? true,
+    start_date: myWorkspace?.view_props.properties.start_date ?? true,
     due_date: myWorkspace?.view_props.properties.due_date ?? true,
     key: myWorkspace?.view_props.properties.key ?? true,
     labels: myWorkspace?.view_props.properties.labels ?? true,

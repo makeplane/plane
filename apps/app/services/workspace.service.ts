@@ -155,6 +155,14 @@ class WorkspaceService extends APIService {
   }
 
   async workspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/workspace-members/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async workspaceMembersWithEmail(workspaceSlug: string): Promise<IWorkspaceMember[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -202,6 +210,16 @@ class WorkspaceService extends APIService {
   }
 
   async workspaceInvitations(workspaceSlug: string): Promise<IWorkspaceMemberInvitation[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/invitations/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async workspaceInvitationsWithEmail(
+    workspaceSlug: string
+  ): Promise<IWorkspaceMemberInvitation[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/invitations/`)
       .then((response) => response?.data)
       .catch((error) => {

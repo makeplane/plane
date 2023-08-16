@@ -58,7 +58,7 @@ const IntegrationGuide = () => {
         user={user}
       />
       <div className="h-full space-y-2">
-        {!provider && (
+        {(!provider || provider === "csv") && (
           <>
             <div className="mb-5 flex items-center gap-2">
               <div className="h-full w-full space-y-1">
@@ -100,7 +100,7 @@ const IntegrationGuide = () => {
                     </div>
                     <div className="flex-shrink-0">
                       <Link
-                        href={`/${workspaceSlug}/settings/import-export?provider=${service.provider}`}
+                        href={`/${workspaceSlug}/settings/imports?provider=${service.provider}`}
                       >
                         <a>
                           <PrimaryButton>
