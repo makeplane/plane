@@ -88,6 +88,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const [isDropdownActive, setIsDropdownActive] = useState(false);
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -304,7 +305,11 @@ export const SingleBoardIssue: React.FC<Props> = ({
               <h5 className="text-sm break-words line-clamp-2">{issue.name}</h5>
             </a>
           </Link>
-          <div className="mt-2.5 flex overflow-x-scroll items-center gap-2 text-xs">
+          <div
+            className={`mt-2.5 flex items-center gap-2 text-xs ${
+              isDropdownActive ? "" : "overflow-x-scroll"
+            }`}
+          >
             {properties.priority && (
               <ViewPrioritySelect
                 issue={issue}
@@ -327,6 +332,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
               <ViewStartDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
+                handleOnOpen={() => setIsDropdownActive(true)}
+                handleOnClose={() => setIsDropdownActive(false)}
                 user={user}
                 isNotAllowed={isNotAllowed}
               />
@@ -335,6 +342,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
+                handleOnOpen={() => setIsDropdownActive(true)}
+                handleOnClose={() => setIsDropdownActive(false)}
                 user={user}
                 isNotAllowed={isNotAllowed}
               />
