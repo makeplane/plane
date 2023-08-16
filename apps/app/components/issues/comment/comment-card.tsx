@@ -101,7 +101,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
             onSubmit={handleSubmit(onEnter)}
           >
-            <div id="tiptap-container">
+            <div>
               <TiptapEditor
                 ref={editorRef}
                 value={watch("comment_html")}

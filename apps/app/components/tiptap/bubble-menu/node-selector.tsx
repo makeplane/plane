@@ -91,8 +91,9 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
   return (
     <div className="relative h-full">
       <button
-        className="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5"
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
+        className="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5"
       >
         <span>{activeItem?.name}</span>
         <ChevronDown className="h-4 w-4" />
@@ -103,11 +104,15 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
           {items.map((item, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => {
                 item.command();
                 setIsOpen(false);
               }}
-              className={cn("flex items-center justify-between rounded-sm px-2 py-1 text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100", { "bg-custom-primary-100/5 text-custom-text-100": activeItem.name === item.name })}
+              className={cn(
+                "flex items-center justify-between rounded-sm px-2 py-1 text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100",
+                { "bg-custom-primary-100/5 text-custom-text-100": activeItem.name === item.name }
+              )}
             >
               <div className="flex items-center space-x-2">
                 <div className="rounded-sm border border-custom-border-300 p-1">
