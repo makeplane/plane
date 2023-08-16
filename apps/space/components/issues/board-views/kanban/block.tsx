@@ -27,7 +27,7 @@ export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
       <div className="font-medium text-gray-800 h-full line-clamp-2">{issue.name}</div>
 
       {/* priority */}
-      <div className="relative flex items-center gap-3 w-full">
+      <div className="relative flex flex-wrap items-center gap-2 w-full">
         {issue?.priority && (
           <div className="flex-shrink-0">
             <IssueBlockPriority priority={issue?.priority} />

@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from "react";
 
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 // react-hook-form
@@ -36,24 +35,14 @@ import {
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 // rich-text-editor
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="mt-4">
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
 
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
+  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
+);
 
-const WrappedRemirrorRichTextEditor = React.forwardRef<
-  IRemirrorRichTextEditor,
-  IRemirrorRichTextEditor
->((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+TiptapEditor.displayName = "TiptapEditor";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -344,7 +333,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 </div>
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("description")) && (
-                <div className="relative">
+                <div id="tiptap-container" className="relative">
                   <div className="flex justify-end">
                     {issueName && issueName !== "" && (
                       <button
@@ -374,21 +363,30 @@ export const IssueForm: FC<IssueFormProps> = ({
                     </button>
                   </div>
                   <Controller
-                    name="description"
+                    name="description_html"
                     control={control}
-                    render={({ field: { value } }) => (
-                      <WrappedRemirrorRichTextEditor
-                        value={
-                          !value || (typeof value === "object" && Object.keys(value).length === 0)
-                            ? watch("description_html")
-                            : value
-                        }
-                        onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                        onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                        placeholder="Description"
-                        ref={editorRef}
-                      />
-                    )}
+                    render={({ field: { value, onChange } }) => {
+                      if (!value && !watch("description_html")) return <></>;
+
+                      return (
+                        <TiptapEditor
+                          ref={editorRef}
+                          debouncedUpdatesEnabled={false}
+                          value={
+                            !value ||
+                            value === "" ||
+                            (typeof value === "object" && Object.keys(value).length === 0)
+                              ? watch("description_html")
+                              : value
+                          }
+                          customClassName="min-h-[150px]"
+                          onChange={(description: Object, description_html: string) => {
+                            onChange(description_html);
+                            setValue("description", description);
+                          }}
+                        />
+                      );
+                    }}
                   />
                   <GptAssistantModal
                     isOpen={gptAssistantModal}

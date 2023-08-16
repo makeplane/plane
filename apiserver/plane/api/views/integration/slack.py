@@ -20,6 +20,17 @@ class SlackProjectSyncViewSet(BaseViewSet):
     serializer_class = SlackProjectSyncSerializer
     model = SlackProjectSync
 
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
+            )
+            .filter(project__project_projectmember__member=self.request.user)
+        )
+
     def create(self, request, slug, project_id, workspace_integration_id):
         try:
             serializer = SlackProjectSyncSerializer(data=request.data)
@@ -45,7 +56,10 @@ class SlackProjectSyncViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
-            return Response({"error": "Slack is already enabled for the project"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Slack is already enabled for the project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except WorkspaceIntegration.DoesNotExist:
             return Response(
                 {"error": "Workspace Integration does not exist"},

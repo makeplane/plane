@@ -56,7 +56,7 @@ const useCommentReaction = (
       user.user
     );
 
-    mutateCommentReactions((prev) => [...(prev || []), data]);
+    mutateCommentReactions((prev: any) => [...(prev || []), data]);
   };
 
   /**
@@ -69,8 +69,8 @@ const useCommentReaction = (
     if (!workspaceSlug || !projectId || !commendId) return;
 
     mutateCommentReactions(
-      (prevData) =>
-        prevData?.filter((r) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
+      (prevData: any) =>
+        prevData?.filter((r: any) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
       false
     );
 

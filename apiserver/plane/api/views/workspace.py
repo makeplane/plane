@@ -106,7 +106,9 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def get_queryset(self):
         member_count = (
-            WorkspaceMember.objects.filter(workspace=OuterRef("id"))
+            WorkspaceMember.objects.filter(
+                workspace=OuterRef("id"), member__is_bot=False
+            )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -191,7 +193,9 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     def get(self, request):
         try:
             member_count = (
-                WorkspaceMember.objects.filter(workspace=OuterRef("id"))
+                WorkspaceMember.objects.filter(
+                    workspace=OuterRef("id"), member__is_bot=False
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -624,7 +628,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             if (
                 workspace_member.role == 20
                 and WorkspaceMember.objects.filter(
-                    workspace__slug=slug, role=20
+                    workspace__slug=slug,
+                    role=20,
+                    member__is_bot=False,
                 ).count()
                 == 1
             ):
@@ -1455,7 +1461,8 @@ class WorkspaceMembersEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             workspace_members = WorkspaceMember.objects.filter(
-                workspace__slug=slug
+                workspace__slug=slug,
+                member__is_bot=False,
             ).select_related("workspace", "member")
             serialzier = WorkSpaceMemberSerializer(workspace_members, many=True)
             return Response(serialzier.data, status=status.HTTP_200_OK)

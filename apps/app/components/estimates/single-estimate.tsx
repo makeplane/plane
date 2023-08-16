@@ -47,7 +47,7 @@ export const SingleEstimate: React.FC<Props> = ({
       estimate: estimate.id,
     };
 
-    mutateProjectDetails((prevData) => {
+    mutateProjectDetails((prevData: any) => {
       if (!prevData) return prevData;
 
       return { ...prevData, estimate: estimate.id };

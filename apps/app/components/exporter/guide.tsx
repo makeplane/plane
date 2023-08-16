@@ -68,7 +68,7 @@ const IntegrationGuide = () => {
                     <p className="text-sm text-custom-text-200">{service.description}</p>
                   </div>
                   <div className="flex-shrink-0">
-                    <Link href={`/${workspaceSlug}/settings/export?provider=${service.provider}`}>
+                    <Link href={`/${workspaceSlug}/settings/exports?provider=${service.provider}`}>
                       <a>
                         <PrimaryButton>
                           <span className="capitalize">{service.type}</span> now

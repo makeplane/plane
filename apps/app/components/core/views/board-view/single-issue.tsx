@@ -125,7 +125,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         );
       } else {
         mutateIssues(
-          (prevData) =>
+          (prevData: any) =>
             handleIssuesMutation(
               formData,
               groupTitle ?? "",

@@ -49,8 +49,8 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
     if (!workspaceSlug || !projectId) return;
 
     mutate(
-      (prevData) =>
-        prevData?.map((l) => {
+      (prevData: any) =>
+        prevData?.map((l: any) => {
           if (l.id === label.id) return { ...l, parent: parent?.id ?? "" };
 
           return l;
