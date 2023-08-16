@@ -20,6 +20,7 @@ import ts from "highlight.js/lib/languages/typescript";
 import "highlight.js/styles/github-dark.css";
 import UploadImagesPlugin from "../plugins/upload-image";
 import UniqueID from "@tiptap-pro/extension-unique-id";
+import UpdatedImage from "./updated-image";
 
 lowlight.registerLanguage("ts", ts);
 
@@ -100,6 +101,11 @@ export const TiptapExtensions = [
   }),
   CustomImage.configure({
     allowBase64: true,
+    HTMLAttributes: {
+      class: "rounded-lg border border-custom-border-300",
+    },
+  }),
+  UpdatedImage.configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
     },
