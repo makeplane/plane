@@ -3,14 +3,14 @@ import React from "react";
 // ui
 import { CustomMenu } from "components/ui";
 // types
-import { IIssueLabels } from "types";
+import { LabelLite } from "types";
 //icons
 import { RectangleGroupIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 type Props = {
-  label: IIssueLabels;
-  addLabelToGroup: (parentLabel: IIssueLabels) => void;
-  editLabel: (label: IIssueLabels) => void;
+  label: LabelLite;
+  addLabelToGroup: (parentLabel: LabelLite) => void;
+  editLabel: (label: LabelLite) => void;
   handleLabelDelete: () => void;
 };
 

@@ -1,14 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
-import issuesService from "services/issues.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -28,10 +31,10 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // images
 import emptyLabel from "public/empty-state/label.svg";
 // types
-import { IIssueLabels } from "types";
+import { LabelLite } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
@@ -41,17 +44,20 @@ const LabelsSettings: NextPage = () => {
 
   // edit label
   const [isUpdating, setIsUpdating] = useState(false);
-  const [labelToUpdate, setLabelToUpdate] = useState<IIssueLabels | null>(null);
+  const [labelToUpdate, setLabelToUpdate] = useState<LabelLite | null>(null);
 
   // labels list modal
   const [labelsListModal, setLabelsListModal] = useState(false);
-  const [parentLabel, setParentLabel] = useState<IIssueLabels | undefined>(undefined);
+  const [parentLabel, setParentLabel] = useState<LabelLite | undefined>(undefined);
 
   // delete label
-  const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabels | null>(null);
+  const [selectDeleteLabel, setSelectDeleteLabel] = useState<LabelLite | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { label } = useMobxStore();
+  const { labels, isLabelsLoading: isLoading, getLabelChildren, loadLabels } = label;
 
   const { user } = useUserAuth();
 
@@ -64,24 +70,21 @@ const LabelsSettings: NextPage = () => {
       : null
   );
 
-  const { data: issueLabels } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
+  useEffect(() => {
+    if (workspaceSlug && projectId) loadLabels(workspaceSlug.toString(), projectId.toString());
+  }, [loadLabels, projectId, workspaceSlug]);
 
   const newLabel = () => {
     setIsUpdating(false);
     setLabelForm(true);
   };
 
-  const addLabelToGroup = (parentLabel: IIssueLabels) => {
+  const addLabelToGroup = (parentLabel: LabelLite) => {
     setLabelsListModal(true);
     setParentLabel(parentLabel);
   };
 
-  const editLabel = (label: IIssueLabels) => {
+  const editLabel = (label: LabelLite) => {
     setLabelForm(true);
     setIsUpdating(true);
     setLabelToUpdate(label);
@@ -142,10 +145,10 @@ const LabelsSettings: NextPage = () => {
                 />
               )}
               <>
-                {issueLabels ? (
-                  issueLabels.length > 0 ? (
-                    issueLabels.map((label) => {
-                      const children = issueLabels?.filter((l) => l.parent === label.id);
+                {!isLoading ? (
+                  labels.length > 0 ? (
+                    labels.map((label) => {
+                      const children = getLabelChildren(label.id);
 
                       if (children && children.length === 0) {
                         if (!label.parent)
@@ -176,7 +179,7 @@ const LabelsSettings: NextPage = () => {
                                 behavior: "smooth",
                               });
                             }}
-                            handleLabelDelete={() => setSelectDeleteLabel(label)}
+                            handleLabelDelete={setSelectDeleteLabel}
                             user={user}
                           />
                         );
@@ -210,4 +213,4 @@ const LabelsSettings: NextPage = () => {
   );
 };
 
-export default LabelsSettings;
+export default observer(LabelsSettings);

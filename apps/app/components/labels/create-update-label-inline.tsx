@@ -2,7 +2,9 @@ import React, { forwardRef, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
-import { mutate } from "swr";
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -12,23 +14,20 @@ import useUserAuth from "hooks/use-user-auth";
 import { TwitterPicker } from "react-color";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
-// services
-import issuesService from "services/issues.service";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabels, LabelLite } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
 
 type Props = {
   labelForm: boolean;
   setLabelForm: React.Dispatch<React.SetStateAction<boolean>>;
   isUpdating: boolean;
-  labelToUpdate: IIssueLabels | null;
+  labelToUpdate: LabelLite | null;
   onClose?: () => void;
 };
 
@@ -37,12 +36,15 @@ const defaultValues: Partial<IIssueLabels> = {
   color: "rgb(var(--color-text-200))",
 };
 
-export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
-  function CreateUpdateLabelInline(props, ref) {
+export const CreateUpdateLabelInline = observer(
+  forwardRef<HTMLDivElement, Props>(function CreateUpdateLabelInline(props, ref) {
     const { labelForm, setLabelForm, isUpdating, labelToUpdate, onClose } = props;
 
     const router = useRouter();
     const { workspaceSlug, projectId } = router.query;
+
+    const { label: labelStore } = useMobxStore();
+    const { createLabel, updateLabel } = labelStore;
 
     const { user } = useUserAuth();
 
@@ -65,41 +67,27 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
     };
 
     const handleLabelCreate: SubmitHandler<IIssueLabels> = async (formData) => {
-      if (!workspaceSlug || !projectId || isSubmitting) return;
+      if (!workspaceSlug || !projectId || isSubmitting || !user) return;
 
-      await issuesService
-        .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
-        .then((res) => {
-          mutate<IIssueLabels[]>(
-            PROJECT_ISSUE_LABELS(projectId as string),
-            (prevData) => [res, ...(prevData ?? [])],
-            false
-          );
+      await createLabel(workspaceSlug.toString(), projectId.toString(), formData, user).finally(
+        () => {
           handleClose();
-        });
+        }
+      );
     };
 
     const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
-      if (!workspaceSlug || !projectId || isSubmitting) return;
+      if (!workspaceSlug || !projectId || isSubmitting || !user) return;
 
-      await issuesService
-        .patchIssueLabel(
-          workspaceSlug as string,
-          projectId as string,
-          labelToUpdate?.id ?? "",
-          formData,
-          user
-        )
-        .then(() => {
-          reset(defaultValues);
-          mutate<IIssueLabels[]>(
-            PROJECT_ISSUE_LABELS(projectId as string),
-            (prevData) =>
-              prevData?.map((p) => (p.id === labelToUpdate?.id ? { ...p, ...formData } : p)),
-            false
-          );
-          handleClose();
-        });
+      await updateLabel(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        labelToUpdate?.id ?? "",
+        formData,
+        user
+      ).finally(() => {
+        handleClose();
+      });
     };
 
     useEffect(() => {
@@ -212,5 +200,5 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
         )}
       </div>
     );
-  }
+  })
 );
