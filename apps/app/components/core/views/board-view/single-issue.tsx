@@ -246,7 +246,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           setContextMenuPosition({ x: e.pageX, y: e.pageY });
         }}
       >
-        <div className="group/card relative select-none p-3.5">
+        <div className="flex flex-col justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px]">
           {!isNotAllowed && (
             <div
               ref={actionSectionRef}
@@ -296,9 +296,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </div>
           )}
           <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-            <a>
+            <a className="flex flex-col gap-1.5">
               {properties.key && (
-                <div className="mb-2.5 text-xs font-medium text-custom-text-200">
+                <div className="text-xs font-medium text-custom-text-200">
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
@@ -306,7 +306,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </a>
           </Link>
           <div
-            className={`mt-2.5 flex items-center gap-2 text-xs ${
+            className={`flex items-center gap-2 text-xs ${
               isDropdownActive ? "" : "overflow-x-scroll"
             }`}
           >
