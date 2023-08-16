@@ -10,6 +10,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
@@ -104,14 +105,16 @@ const ProfileActivity = () => {
                             </p>
                           </div>
                           <div className="issue-comments-section p-0">
-                            {/* // TODO: Check these styles */}
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html:
-                                  activityItem?.new_value !== ""
-                                    ? activityItem.new_value
-                                    : activityItem.old_value,
-                              }}
+                            <Tiptap
+                              value={
+                                activityItem?.new_value !== ""
+                                  ? activityItem.new_value
+                                  : activityItem.old_value
+                              }
+                              customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+                              noBorder
+                              borderOnFocus={false}
+                              editable={false}
                             />
                           </div>
                         </div>
