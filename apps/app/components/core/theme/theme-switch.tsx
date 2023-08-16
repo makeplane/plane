@@ -45,26 +45,18 @@ export const ThemeSwitch: React.FC<Props> = observer(
           currentThemeObj ? (
             <div className="flex items-center gap-2">
               <div
-                className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
+                className="h-full w-1/2 rounded-l-full"
                 style={{
-                  borderColor: currentThemeObj.icon.border,
+                  background: currentThemeObj.icon.color1,
                 }}
-              >
-                <div
-                  className="h-full w-1/2 rounded-l-full"
-                  style={{
-                    background: currentThemeObj.icon.color1,
-                  }}
-                />
-                <div
-                  className="h-full w-1/2 rounded-r-full border-l"
-                  style={{
-                    borderLeftColor: currentThemeObj.icon.border,
-                    background: currentThemeObj.icon.color2,
-                  }}
-                />
-              </div>
-              {currentThemeObj.label}
+              />
+              <div
+                className="h-full w-1/2 rounded-r-full border-l"
+                style={{
+                  borderLeftColor: currentThemeObj.icon.border,
+                  background: currentThemeObj.icon.color2,
+                }}
+              />
             </div>
           ) : (
             "Select your theme"
@@ -106,26 +98,18 @@ export const ThemeSwitch: React.FC<Props> = observer(
           <CustomSelect.Option key={value} value={{ value, type }}>
             <div className="flex items-center gap-2">
               <div
-                className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
+                className="h-full w-1/2 rounded-l-full"
                 style={{
-                  borderColor: icon.border,
+                  background: icon.color1,
                 }}
-              >
-                <div
-                  className="h-full w-1/2 rounded-l-full"
-                  style={{
-                    background: icon.color1,
-                  }}
-                />
-                <div
-                  className="h-full w-1/2 rounded-r-full border-l"
-                  style={{
-                    borderLeftColor: icon.border,
-                    background: icon.color2,
-                  }}
-                />
-              </div>
-              {label}
+              />
+              <div
+                className="h-full w-1/2 rounded-r-full border-l"
+                style={{
+                  borderLeftColor: icon.border,
+                  background: icon.color2,
+                }}
+              />
             </div>
           </CustomSelect.Option>
         ))}

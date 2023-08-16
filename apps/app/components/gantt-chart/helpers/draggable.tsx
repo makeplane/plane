@@ -31,7 +31,36 @@ export const ChartDraggable: React.FC<Props> = ({
 
   const { currentViewData } = useChart();
 
-  const handleDrag = (dragDirection: "left" | "right") => {
+  const checkScrollEnd = (e: MouseEvent): number => {
+    let delWidth = 0;
+
+    const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
+    const appSidebar = document.querySelector("#app-sidebar") as HTMLElement;
+
+    const posFromLeft = e.clientX;
+    // manually scroll to left if reached the left end while dragging
+    if (posFromLeft - appSidebar.clientWidth <= 70) {
+      if (e.movementX > 0) return 0;
+
+      delWidth = -5;
+
+      scrollContainer.scrollBy(delWidth, 0);
+    } else delWidth = e.movementX;
+
+    // manually scroll to right if reached the right end while dragging
+    const posFromRight = window.innerWidth - e.clientX;
+    if (posFromRight <= 70) {
+      if (e.movementX < 0) return 0;
+
+      delWidth = 5;
+
+      scrollContainer.scrollBy(delWidth, 0);
+    } else delWidth = e.movementX;
+
+    return delWidth;
+  };
+
+  const handleLeftDrag = () => {
     if (!currentViewData || !resizableRef.current || !parentDivRef.current || !block.position)
       return;
 
@@ -44,54 +73,30 @@ export const ChartDraggable: React.FC<Props> = ({
       resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
 
     let initialWidth = resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
-    let initialMarginLeft = block?.position?.marginLeft;
+    let initialMarginLeft = parseInt(parentDiv.style.marginLeft);
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!window) return;
 
       let delWidth = 0;
 
-      const posFromLeft = e.clientX;
-      const posFromRight = window.innerWidth - e.clientX;
+      delWidth = checkScrollEnd(e);
 
-      const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
-      const appSidebar = document.querySelector("#app-sidebar") as HTMLElement;
-
-      // manually scroll to left if reached the left end while dragging
-      if (posFromLeft - appSidebar.clientWidth <= 70) {
-        if (e.movementX > 0) return;
-
-        delWidth = dragDirection === "left" ? -5 : 5;
-
-        scrollContainer.scrollBy(-1 * Math.abs(delWidth), 0);
-      } else delWidth = dragDirection === "left" ? -1 * e.movementX : e.movementX;
-
-      // manually scroll to right if reached the right end while dragging
-      if (posFromRight <= 70) {
-        if (e.movementX < 0) return;
-
-        delWidth = dragDirection === "left" ? -5 : 5;
-
-        scrollContainer.scrollBy(Math.abs(delWidth), 0);
-      } else delWidth = dragDirection === "left" ? -1 * e.movementX : e.movementX;
-
-      // calculate new width and update the initialMarginLeft using +=
-      const newWidth = Math.round((initialWidth += delWidth) / columnWidth) * columnWidth;
+      // calculate new width and update the initialMarginLeft using -=
+      const newWidth = Math.round((initialWidth -= delWidth) / columnWidth) * columnWidth;
+      // calculate new marginLeft and update the initial marginLeft to the newly calculated one
+      const newMarginLeft = initialMarginLeft - (newWidth - (block.position?.width ?? 0));
+      initialMarginLeft = newMarginLeft;
 
       // block needs to be at least 1 column wide
       if (newWidth < columnWidth) return;
 
       resizableDiv.style.width = `${newWidth}px`;
-      if (block.position) block.position.width = newWidth;
+      parentDiv.style.marginLeft = `${newMarginLeft}px`;
 
-      // update the margin left of the block if dragging from the left end
-      if (dragDirection === "left") {
-        // calculate new marginLeft and update the initial marginLeft using -=
-        const newMarginLeft =
-          Math.round((initialMarginLeft -= delWidth) / columnWidth) * columnWidth;
-
-        parentDiv.style.marginLeft = `${newMarginLeft}px`;
-        if (block.position) block.position.marginLeft = newMarginLeft;
+      if (block.position) {
+        block.position.width = newWidth;
+        block.position.marginLeft = newMarginLeft;
       }
     };
 
@@ -103,7 +108,52 @@ export const ChartDraggable: React.FC<Props> = ({
         (resizableDiv.clientWidth - blockInitialWidth) / columnWidth
       );
 
-      handleBlock(totalBlockShifts, dragDirection);
+      handleBlock(totalBlockShifts, "left");
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleRightDrag = () => {
+    if (!currentViewData || !resizableRef.current || !parentDivRef.current || !block.position)
+      return;
+
+    const resizableDiv = resizableRef.current;
+
+    const columnWidth = currentViewData.data.width;
+
+    const blockInitialWidth =
+      resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
+
+    let initialWidth = resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!window) return;
+
+      let delWidth = 0;
+
+      delWidth = checkScrollEnd(e);
+
+      // calculate new width and update the initialMarginLeft using +=
+      const newWidth = Math.round((initialWidth += delWidth) / columnWidth) * columnWidth;
+
+      // block needs to be at least 1 column wide
+      if (newWidth < columnWidth) return;
+
+      resizableDiv.style.width = `${Math.max(newWidth, 80)}px`;
+      if (block.position) block.position.width = Math.max(newWidth, 80);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+
+      const totalBlockShifts = Math.ceil(
+        (resizableDiv.clientWidth - blockInitialWidth) / columnWidth
+      );
+
+      handleBlock(totalBlockShifts, "right");
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -122,7 +172,7 @@ export const ChartDraggable: React.FC<Props> = ({
       {enableLeftDrag && (
         <>
           <div
-            onMouseDown={() => handleDrag("left")}
+            onMouseDown={handleLeftDrag}
             onMouseEnter={() => setIsLeftResizing(true)}
             onMouseLeave={() => setIsLeftResizing(false)}
             className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[1] w-6 h-10 bg-brand-backdrop rounded-md cursor-col-resize"
@@ -138,7 +188,7 @@ export const ChartDraggable: React.FC<Props> = ({
       {enableRightDrag && (
         <>
           <div
-            onMouseDown={() => handleDrag("right")}
+            onMouseDown={handleRightDrag}
             onMouseEnter={() => setIsRightResizing(true)}
             onMouseLeave={() => setIsRightResizing(false)}
             className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-6 bg-brand-backdrop rounded-md cursor-col-resize"

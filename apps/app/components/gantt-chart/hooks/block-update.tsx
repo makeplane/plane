@@ -15,10 +15,10 @@ export const updateGanttIssue = (
 ) => {
   if (!issue || !workspaceSlug || !user) return;
 
-  mutate((prevData: IIssue[]) => {
+  mutate((prevData: any) => {
     if (!prevData) return prevData;
 
-    const newList = prevData.map((p) => ({
+    const newList = prevData.map((p: any) => ({
       ...p,
       ...(p.id === issue.id ? payload : {}),
     }));
@@ -37,7 +37,5 @@ export const updateGanttIssue = (
   if (newPayload.sort_order && payload.sort_order)
     newPayload.sort_order = payload.sort_order.newSortOrder;
 
-  issuesService
-    .patchIssue(workspaceSlug, issue.project, issue.id, newPayload, user)
-    .finally(() => mutate());
+  issuesService.patchIssue(workspaceSlug, issue.project, issue.id, newPayload, user);
 };

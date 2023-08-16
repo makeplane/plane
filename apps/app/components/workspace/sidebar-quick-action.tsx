@@ -15,7 +15,7 @@ export const WorkspaceSidebarQuickAction = () => {
       }`}
     >
       <button
-        className={`flex items-center gap-2 flex-grow rounded flex-shrink-0  py-2 ${
+        className={`flex items-center gap-2 flex-grow rounded flex-shrink-0  py-1.5 ${
           store?.theme?.sidebarCollapsed
             ? "px-2 hover:bg-custom-sidebar-background-80"
             : "px-3 shadow border-[0.5px] border-custom-border-300"
@@ -25,7 +25,7 @@ export const WorkspaceSidebarQuickAction = () => {
           document.dispatchEvent(e);
         }}
       >
-        <Icon iconName="edit_square" className="!text-xl !leading-5 text-custom-sidebar-text-300" />
+        <Icon iconName="edit_square" className="!text-lg !leading-4 text-custom-sidebar-text-300" />
         {!store?.theme?.sidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
       </button>
 
@@ -40,7 +40,7 @@ export const WorkspaceSidebarQuickAction = () => {
           document.dispatchEvent(e);
         }}
       >
-        <Icon iconName="search" className="!text-xl !leading-5 text-custom-sidebar-text-300" />
+        <Icon iconName="search" className="!text-lg !leading-4 text-custom-sidebar-text-300" />
       </button>
     </div>
   );

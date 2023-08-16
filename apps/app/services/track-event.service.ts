@@ -98,6 +98,8 @@ type ImporterEventType =
   | "JIRA_IMPORTER_CREATE"
   | "JIRA_IMPORTER_DELETE";
 
+type ExporterEventType = "CSV_EXPORTER_CREATE";
+
 type AnalyticsEventType =
   | "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
   | "WORKSPACE_CUSTOM_ANALYTICS"
@@ -776,6 +778,27 @@ class TrackEventServices extends APIService {
     });
   }
 
+  // track exporter function\
+  async trackExporterEvent(
+    data: any,
+    eventName: ExporterEventType,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    const payload = { ...data };
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...payload,
+        },
+        user: user,
+      },
+    });
+  }
+
   // TODO: add types to the data
   async trackInboxEvent(
     data: any,
@@ -833,6 +856,27 @@ class TrackEventServices extends APIService {
       },
     });
   }
+
+  // project publish settings track events starts
+  async trackProjectPublishSettingsEvent(
+    data: any,
+    eventName: string,
+    user: ICurrentUserResponse | undefined
+  ): Promise<any> {
+    const payload: any = data;
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: payload,
+        user: user,
+      },
+    });
+  }
+
+  // project publish settings track events ends
 }
 
 const trackEventServices = new TrackEventServices();

@@ -42,10 +42,10 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
 
-    mutateModules((prevData) => {
+    mutateModules((prevData: any) => {
       if (!prevData) return prevData;
 
-      const newList = prevData.map((p) => ({
+      const newList = prevData.map((p: any) => ({
         ...p,
         ...(p.id === module.id
           ? {
@@ -69,9 +69,13 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
     if (newPayload.sort_order && payload.sort_order)
       newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    modulesService
-      .patchModule(workspaceSlug.toString(), module.project, module.id, newPayload, user)
-      .finally(() => mutateModules());
+    modulesService.patchModule(
+      workspaceSlug.toString(),
+      module.project,
+      module.id,
+      newPayload,
+      user
+    );
   };
 
   const blockFormat = (blocks: IModule[]) =>

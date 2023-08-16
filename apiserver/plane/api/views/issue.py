@@ -370,7 +370,7 @@ class UserWorkSpaceIssues(BaseAPIView):
                     )
                 )
                 .filter(**filters)
-            )
+            ).distinct()
 
             # Priority Ordering
             if order_by_param == "priority" or order_by_param == "-priority":

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import dynamic from "next/dynamic";
-
 // react-hook-form
 import { useForm } from "react-hook-form";
 // icons
@@ -15,17 +13,13 @@ import { CommentReaction } from "components/issues";
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
+const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
+  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
+);
 
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-
-const WrappedRemirrorRichTextEditor = React.forwardRef<
-  IRemirrorRichTextEditor,
-  IRemirrorRichTextEditor
->((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+TiptapEditor.displayName = "TiptapEditor";
 
 type Props = {
   comment: IIssueComment;
@@ -45,6 +39,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
     formState: { isSubmitting },
     handleSubmit,
     setFocus,
+    watch,
     setValue,
   } = useForm<IIssueComment>({
     defaultValues: comment,
@@ -56,8 +51,8 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
 
     onSubmit(formData);
 
-    editorRef.current?.setEditorValue(formData.comment_json);
-    showEditorRef.current?.setEditorValue(formData.comment_json);
+    editorRef.current?.setEditorValue(formData.comment_html);
+    showEditorRef.current?.setEditorValue(formData.comment_html);
   };
 
   useEffect(() => {
@@ -106,15 +101,18 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
             onSubmit={handleSubmit(onEnter)}
           >
-            <WrappedRemirrorRichTextEditor
-              value={comment.comment_html}
-              onBlur={(jsonValue, htmlValue) => {
-                setValue("comment_json", jsonValue);
-                setValue("comment_html", htmlValue);
-              }}
-              placeholder="Enter Your comment..."
-              ref={editorRef}
-            />
+            <div id="tiptap-container">
+              <TiptapEditor
+                ref={editorRef}
+                value={watch("comment_html")}
+                debouncedUpdatesEnabled={false}
+                customClassName="min-h-[50px] p-3"
+                onChange={(comment_json: Object, comment_html: string) => {
+                  setValue("comment_json", comment_json);
+                  setValue("comment_html", comment_html);
+                }}
+              />
+            </div>
             <div className="flex gap-1 self-end">
               <button
                 type="submit"
@@ -133,14 +131,12 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <WrappedRemirrorRichTextEditor
+            <TiptapEditor
+              ref={showEditorRef}
               value={comment.comment_html}
               editable={false}
-              noBorder
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              ref={showEditorRef}
             />
-
             <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>
         </div>

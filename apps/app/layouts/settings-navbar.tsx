@@ -30,8 +30,12 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
-      label: "Import/Export",
-      href: `/${workspaceSlug}/settings/import-export`,
+      label: "Imports",
+      href: `/${workspaceSlug}/settings/imports`,
+    },
+    {
+      label: "Exports",
+      href: `/${workspaceSlug}/settings/exports`,
     },
   ];
 
@@ -103,7 +107,7 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
             <div
               className={`rounded-full border px-5 py-1.5 text-sm outline-none ${
                 (
-                  link.label === "Import/Export"
+                  link.label === "Import"
                     ? router.asPath.includes(link.href)
                     : router.asPath === link.href
                 )
