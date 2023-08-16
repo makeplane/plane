@@ -96,7 +96,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           <span className="font-semibold">
             {notification.triggered_by_details.is_bot
               ? notification.triggered_by_details.first_name
-              : notification.triggered_by_details.display_name}{" "}
+              : notification.triggered_by_details.display_name}
+            {"  "}
           </span>
           {notification.data.issue_activity.field !== "comment" &&
             notification.data.issue_activity.verb}{" "}
