@@ -259,15 +259,13 @@ class ProjectPublishStore implements IProjectPublishStore {
         user
       );
 
-      if (response) {
-        runInAction(() => {
-          this.projectPublishSettings = "not-initialized";
-          this.loader = false;
-          this.error = null;
-        });
+      runInAction(() => {
+        this.projectPublishSettings = "not-initialized";
+        this.loader = false;
+        this.error = null;
+      });
 
-        return response;
-      }
+      return response;
     } catch (error) {
       this.loader = false;
       this.error = error;
