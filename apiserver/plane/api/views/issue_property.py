@@ -53,5 +53,5 @@ class IssuePropertyValueViewSet(BaseViewSet):
         serializer.save(
             project_id=self.kwargs.get("project_id"),
             issue_id=self.kwargs.get("issue_id"),
-            
+            issue_property_id=self.kwargs.get("issue_property_id"),
         )

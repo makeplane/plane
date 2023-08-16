@@ -32,7 +32,7 @@ class IssueProperty(BaseModel):
     required = models.BooleanField(default=False)
     sort_order = models.FloatField(default=65535)
     parent = models.ForeignKey(
-        "db.IssueProperty", on_delete=models.CASCADE, related_name="parent_property"
+        "db.IssueProperty", on_delete=models.CASCADE, related_name="children", null=True,
     )
     default = models.CharField(max_length=800, blank=True, null=True)
     is_shared = models.BooleanField(default=False)
@@ -46,11 +46,11 @@ class IssueProperty(BaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            smallest_order = IssueProperty.objects.filter(
+            largest_order = IssueProperty.objects.filter(
                 workspace=self.workspace
-            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
-            if smallest_order is not None:
-                self.sort_order = smallest_order - 10000
+            ).aggregate(largest=models.Min("sort_order"))["largest"]
+            if largest_order is not None:
+                self.sort_order = largest_order + 10000
 
         if self.project is not None and self.workspace is not None:
             self.is_shared = False

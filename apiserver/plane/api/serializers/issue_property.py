@@ -19,4 +19,5 @@ class IssuePropertyValueSerializer(BaseSerializer):
             "project",
             "workspace",
             "issue",
+            "issue_property",
         ]
