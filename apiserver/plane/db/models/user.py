@@ -1,6 +1,7 @@
 # Python imports
-from enum import unique
 import uuid
+import string
+import random
 
 # Django imports
 from django.db import models
@@ -18,6 +19,7 @@ from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+
 def get_default_onboarding():
     return {
         "profile_complete": False,
@@ -25,6 +27,7 @@ def get_default_onboarding():
         "workspace_invite": False,
         "workspace_join": False,
     }
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
@@ -81,6 +84,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=300, null=True, blank=True)
     is_bot = models.BooleanField(default=False)
     theme = models.JSONField(default=dict)
+    display_name = models.CharField(max_length=255, default="")
     is_tour_completed = models.BooleanField(default=False)
     onboarding_step = models.JSONField(default=get_default_onboarding)
 
@@ -106,6 +110,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.token_updated_at is not None:
             self.token = uuid.uuid4().hex + uuid.uuid4().hex
             self.token_updated_at = timezone.now()
+
+        if not self.display_name:
+            self.display_name = (
+                self.email.split("@")[0]
+                if len(self.email.split("@"))
+                else "".join(random.choice(string.ascii_letters) for _ in range(6))
+            )
 
         if self.is_superuser:
             self.is_staff = True

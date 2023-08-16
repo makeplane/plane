@@ -17,7 +17,7 @@ export const AllCyclesList: React.FC<Props> = ({ viewType }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: allCyclesList } = useSWR(
+  const { data: allCyclesList, mutate } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () =>
@@ -25,5 +25,5 @@ export const AllCyclesList: React.FC<Props> = ({ viewType }) => {
       : null
   );
 
-  return <CyclesView cycles={allCyclesList} viewType={viewType} />;
+  return <CyclesView cycles={allCyclesList} mutateCycles={mutate} viewType={viewType} />;
 };

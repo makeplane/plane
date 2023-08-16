@@ -3,6 +3,7 @@ import type {
   IUserLite,
   IWorkspace,
   IWorkspaceLite,
+  IUserMemberLite,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueViewOptions,
@@ -39,6 +40,8 @@ export interface IProject {
   id: string;
   identifier: string;
   is_favorite: boolean;
+  is_member: boolean;
+  member_role: 5 | 10 | 15 | 20 | null;
   issue_views_view: boolean;
   module_view: boolean;
   name: string;
@@ -78,7 +81,7 @@ type ProjectPreferences = {
 
 export interface IProjectMember {
   id: string;
-  member: IUserLite;
+  member: IUserMemberLite;
   project: IProjectLite;
   workspace: IWorkspaceLite;
   comment: string;

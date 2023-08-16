@@ -62,7 +62,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
                 by{" "}
                 {link.created_by_detail.is_bot
                   ? link.created_by_detail.first_name + " Bot"
-                  : link.created_by_detail.email}
+                  : link.created_by_detail.display_name}
               </p>
             </div>
           </a>

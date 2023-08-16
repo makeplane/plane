@@ -28,7 +28,7 @@ import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import type { IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
+import { WORKSPACE_DETAILS, USER_WORKSPACES, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // constants
 import { ORGANIZATION_SIZE } from "constants/workspace";
 
@@ -49,6 +49,11 @@ const WorkspaceSettings: NextPage = () => {
   const { workspaceSlug } = router.query;
 
   const { user } = useUserAuth();
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => workspaceService.workspaceMemberMe(workspaceSlug.toString()) : null
+  );
 
   const { setToastAlert } = useToast();
 
@@ -141,6 +146,8 @@ const WorkspaceSettings: NextPage = () => {
         .finally(() => setIsImageRemoving(false));
     });
   };
+
+  const isAdmin = memberDetails?.role === 20;
 
   return (
     <WorkspaceAuthorizationLayout
@@ -314,26 +321,32 @@ const WorkspaceSettings: NextPage = () => {
               </div>
             </div>
             <div className="sm:text-right">
-              <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+              <SecondaryButton
+                onClick={handleSubmit(onSubmit)}
+                loading={isSubmitting}
+                disabled={!isAdmin}
+              >
                 {isSubmitting ? "Updating..." : "Update Workspace"}
               </SecondaryButton>
             </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold">Danger Zone</h4>
-                <p className="text-sm text-custom-text-200">
-                  The danger zone of the workspace delete page is a critical area that requires
-                  careful consideration and attention. When deleting a workspace, all of the data
-                  and resources within that workspace will be permanently removed and cannot be
-                  recovered.
-                </p>
+            {memberDetails?.role === 20 && (
+              <div className="grid grid-cols-12 gap-4 sm:gap-16">
+                <div className="col-span-12 sm:col-span-6">
+                  <h4 className="text-lg font-semibold">Danger Zone</h4>
+                  <p className="text-sm text-custom-text-200">
+                    The danger zone of the workspace delete page is a critical area that requires
+                    careful consideration and attention. When deleting a workspace, all of the data
+                    and resources within that workspace will be permanently removed and cannot be
+                    recovered.
+                  </p>
+                </div>
+                <div className="col-span-12 sm:col-span-6">
+                  <DangerButton onClick={() => setIsOpen(true)} outline>
+                    Delete the workspace
+                  </DangerButton>
+                </div>
               </div>
-              <div className="col-span-12 sm:col-span-6">
-                <DangerButton onClick={() => setIsOpen(true)} outline>
-                  Delete the workspace
-                </DangerButton>
-              </div>
-            </div>
+            )}
           </div>
         ) : (
           <div className="grid h-full w-full place-items-center px-4 sm:px-0">

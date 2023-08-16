@@ -24,6 +24,7 @@ import {
   ViewEstimateSelect,
   ViewIssueLabel,
   ViewPrioritySelect,
+  ViewStartDateSelect,
   ViewStateSelect,
 } from "components/issues";
 // ui
@@ -124,7 +125,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         );
       } else {
         mutateIssues(
-          (prevData) =>
+          (prevData: any) =>
             handleIssuesMutation(
               formData,
               groupTitle ?? "",
@@ -231,7 +232,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className={`mb-3 rounded bg-custom-background-90 shadow ${
+        className={`mb-3 rounded bg-custom-background-100 shadow ${
           snapshot.isDragging ? "border-2 border-custom-primary shadow-lg" : ""
         }`}
         ref={provided.innerRef}
@@ -300,10 +301,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <h5 className="text-sm break-words line-clamp-3">{issue.name}</h5>
+              <h5 className="text-sm break-words line-clamp-2">{issue.name}</h5>
             </a>
           </Link>
-          <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
+          <div className="mt-2.5 flex overflow-x-scroll items-center gap-2 text-xs">
             {properties.priority && (
               <ViewPrioritySelect
                 issue={issue}
@@ -322,6 +323,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
+            {properties.start_date && issue.start_date && (
+              <ViewStartDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                user={user}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
             {properties.due_date && issue.target_date && (
               <ViewDueDateSelect
                 issue={issue}
@@ -338,6 +347,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                customButton
                 user={user}
                 selfPositioned
               />

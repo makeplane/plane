@@ -7,6 +7,8 @@ import { useTheme } from "next-themes";
 import { SettingIcon } from "components/icons";
 import userService from "services/user.service";
 import useUser from "hooks/use-user";
+// helper
+import { unsetCustomCssVariables } from "helpers/theme.helper";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
@@ -22,15 +24,17 @@ export const ChangeInterfaceTheme: React.FC<Props> = ({ setIsPaletteOpen }) => {
   const updateUserTheme = (newTheme: string) => {
     if (!user) return;
 
+    unsetCustomCssVariables();
+
     setTheme(newTheme);
 
-    mutateUser((prevData) => {
+    mutateUser((prevData: any) => {
       if (!prevData) return prevData;
 
       return {
         ...prevData,
         theme: {
-          ...prevData.theme,
+          ...prevData?.theme,
           theme: newTheme,
         },
       };

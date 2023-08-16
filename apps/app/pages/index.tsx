@@ -22,8 +22,14 @@ import {
 import { Spinner } from "components/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+// mobx react lite
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// next themes
 import { useTheme } from "next-themes";
-import { ICurrentUserResponse, IUser } from "types";
+import { IUser } from "types";
+
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -31,15 +37,18 @@ type EmailPasswordFormValues = {
   medium?: string;
 };
 
-const HomePage: NextPage = () => {
+const HomePage: NextPage = observer(() => {
+  const store: any = useMobxStore();
+  const { setTheme } = useTheme();
+
   const { isLoading, mutateUser } = useUserAuth("sign-in");
 
   const { setToastAlert } = useToast();
 
-  const { setTheme } = useTheme();
-
-  const changeTheme = (user: IUser) => {
-    setTheme(user.theme.theme ?? "system");
+  const handleTheme = (user: IUser) => {
+    const currentTheme = user.theme.theme ?? "system";
+    setTheme(currentTheme);
+    store?.user?.setCurrentUserSettings();
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
@@ -53,7 +62,7 @@ const HomePage: NextPage = () => {
         const response = await authenticationService.socialAuth(socialAuthPayload);
         if (response && response?.user) {
           mutateUser();
-          changeTheme(response.user);
+          handleTheme(response?.user);
         }
       } else {
         throw Error("Cant find credentials");
@@ -79,7 +88,7 @@ const HomePage: NextPage = () => {
         const response = await authenticationService.socialAuth(socialAuthPayload);
         if (response && response?.user) {
           mutateUser();
-          changeTheme(response.user);
+          handleTheme(response?.user);
         }
       } else {
         throw Error("Cant find credentials");
@@ -101,7 +110,7 @@ const HomePage: NextPage = () => {
         try {
           if (response) {
             mutateUser();
-            changeTheme(response.user);
+            handleTheme(response?.user);
           }
         } catch (err: any) {
           setToastAlert({
@@ -128,7 +137,7 @@ const HomePage: NextPage = () => {
     try {
       if (response) {
         mutateUser();
-        changeTheme(response.user);
+        handleTheme(response?.user);
       }
     } catch (err: any) {
       setToastAlert({
@@ -202,6 +211,6 @@ const HomePage: NextPage = () => {
       )}
     </DefaultLayout>
   );
-};
+});
 
 export default HomePage;

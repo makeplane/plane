@@ -75,7 +75,7 @@ const useUserNotification = () => {
   const handleReadMutation = (action: "read" | "unread") => {
     const notificationCountNumber = action === "read" ? -1 : 1;
 
-    mutateNotificationCount((prev) => {
+    mutateNotificationCount((prev: any) => {
       if (!prev) return prev;
 
       const notificationType: keyof NotificationCount =
@@ -93,18 +93,18 @@ const useUserNotification = () => {
   };
 
   const mutateNotification = (notificationId: string, value: Object) => {
-    notificationMutate((previousNotifications) => {
+    notificationMutate((previousNotifications: any) => {
       if (!previousNotifications) return previousNotifications;
 
       const notificationIndex = Math.floor(
         previousNotifications
-          .map((d) => d.results)
+          .map((d: any) => d.results)
           .flat()
-          .findIndex((notification) => notification.id === notificationId) / PER_PAGE
+          .findIndex((notification: any) => notification.id === notificationId) / PER_PAGE
       );
 
       let notificationIndexInPage = previousNotifications[notificationIndex].results.findIndex(
-        (notification) => notification.id === notificationId
+        (notification: any) => notification.id === notificationId
       );
 
       if (notificationIndexInPage === -1) return previousNotifications;
@@ -126,18 +126,18 @@ const useUserNotification = () => {
   };
 
   const removeNotification = (notificationId: string) => {
-    notificationMutate((previousNotifications) => {
+    notificationMutate((previousNotifications: any) => {
       if (!previousNotifications) return previousNotifications;
 
       const notificationIndex = Math.floor(
         previousNotifications
-          .map((d) => d.results)
+          .map((d: any) => d.results)
           .flat()
-          .findIndex((notification) => notification.id === notificationId) / PER_PAGE
+          .findIndex((notification: any) => notification.id === notificationId) / PER_PAGE
       );
 
       let notificationIndexInPage = previousNotifications[notificationIndex].results.findIndex(
-        (notification) => notification.id === notificationId
+        (notification: any) => notification.id === notificationId
       );
 
       if (notificationIndexInPage === -1) return previousNotifications;

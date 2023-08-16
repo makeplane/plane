@@ -11,6 +11,7 @@ import { IssuePriorities, Properties } from "types";
 
 const initialValues: Properties = {
   assignee: true,
+  start_date: true,
   due_date: true,
   key: true,
   labels: true,
@@ -63,7 +64,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
 
       if (issueProperties && projectId) {
         mutateIssueProperties(
-          (prev) =>
+          (prev: any) =>
             ({
               ...prev,
               properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
@@ -91,6 +92,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
 
   const newProperties: Properties = {
     assignee: properties.assignee,
+    start_date: properties.start_date,
     due_date: properties.due_date,
     key: properties.key,
     labels: properties.labels,

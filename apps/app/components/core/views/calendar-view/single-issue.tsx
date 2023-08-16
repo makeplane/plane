@@ -21,6 +21,7 @@ import {
   ViewEstimateSelect,
   ViewLabelSelect,
   ViewPrioritySelect,
+  ViewStartDateSelect,
   ViewStateSelect,
 } from "components/issues";
 // icons
@@ -230,7 +231,14 @@ export const SingleCalendarIssue: React.FC<Props> = ({
                 user={user}
               />
             )}
-
+            {properties.start_date && issue.start_date && (
+              <ViewStartDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                user={user}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
             {properties.due_date && issue.target_date && (
               <ViewDueDateSelect
                 issue={issue}

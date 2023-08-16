@@ -40,6 +40,14 @@ class FileServices extends APIService {
       });
   }
 
+  async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
+    return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
+      .then((response) => response?.status)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deleteFile(workspaceId: string, assetUrl: string): Promise<any> {
     const lastIndex = assetUrl.lastIndexOf("/");
     const assetId = assetUrl.substring(lastIndex + 1);
@@ -50,7 +58,6 @@ class FileServices extends APIService {
         throw error?.response?.data;
       });
   }
-
   async uploadUserFile(file: FormData): Promise<any> {
     return this.mediaUpload(`/api/users/file-assets/`, file)
       .then((response) => response?.data)

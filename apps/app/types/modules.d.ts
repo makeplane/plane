@@ -43,6 +43,7 @@ export interface IModule {
   name: string;
   project: string;
   project_detail: IProjectLite;
+  sort_order: number;
   start_date: string | null;
   started_issues: number;
   status: "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled" | null;

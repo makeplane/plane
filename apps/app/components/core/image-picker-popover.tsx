@@ -27,8 +27,8 @@ const unsplashEnabled =
 
 const tabOptions = [
   {
-    key: "unsplash",
-    title: "Unsplash",
+    key: "images",
+    title: "Images",
   },
   {
     key: "upload",

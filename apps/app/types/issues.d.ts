@@ -10,6 +10,7 @@ import type {
   IWorkspaceLite,
   IStateLite,
   TStateGroups,
+  Properties,
 } from "types";
 
 export interface IIssueCycle {
@@ -147,21 +148,6 @@ export type IssuePriorities = {
   user: string;
 };
 
-export type Properties = {
-  assignee: boolean;
-  due_date: boolean;
-  labels: boolean;
-  key: boolean;
-  priority: boolean;
-  state: boolean;
-  sub_issue_count: boolean;
-  link: boolean;
-  attachment_count: boolean;
-  estimate: boolean;
-  created_on: boolean;
-  updated_on: boolean;
-};
-
 export interface IIssueLabels {
   id: string;
   created_at: Date;
@@ -229,6 +215,7 @@ export interface IIssueFilterOptions {
   target_date: string[] | null;
   state: string[] | null;
   state_group: TStateGroups[] | null;
+  subscriber: string[] | null;
   labels: string[] | null;
   priority: string[] | null;
   created_by: string[] | null;
