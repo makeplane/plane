@@ -5,9 +5,7 @@ import useSWR from "swr";
 // services
 import projectServices from "services/project.service";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
-// icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -44,15 +42,15 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
       value={value}
       onChange={onChange}
       options={options}
-      label={
-        <div className="flex items-center gap-2 text-custom-text-200">
+      customButton={
+        <div className="flex items-center gap-2 cursor-pointer text-xs text-custom-text-200">
           {value && value.length > 0 && Array.isArray(value) ? (
-            <div className="flex items-center justify-center gap-2">
+            <div className="-my-0.5 flex items-center justify-center gap-2">
               <AssigneesList userIds={value} length={3} showLength={true} />
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-2">
-              <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
+            <div className="flex items-center justify-center gap-2 px-1.5 py-1 rounded shadow-sm border border-custom-border-300">
+              <Icon iconName="person" className="!text-base !leading-4" />
               <span className="text-custom-text-200">Assignee</span>
             </div>
           )}
