@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // react-hook-form
 import { Controller, UseFormWatch, useForm } from "react-hook-form";
@@ -10,8 +12,6 @@ import { Controller, UseFormWatch, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 // headless ui
 import { Listbox, Popover, Transition } from "@headlessui/react";
-// services
-import issuesService from "services/issues.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
@@ -25,9 +25,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IIssueLabels } from "types";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { IIssue, LabelForm } from "types";
 
 type Props = {
   issueDetails: IIssue | undefined;
@@ -38,19 +36,13 @@ type Props = {
   uneditable: boolean;
 };
 
-const defaultValues: Partial<IIssueLabels> = {
+const defaultValues: Partial<LabelForm> = {
   name: "",
   color: "#ff0000",
 };
 
-export const SidebarLabelSelect: React.FC<Props> = ({
-  issueDetails,
-  issueControl,
-  watchIssue,
-  submitChanges,
-  isNotAllowed,
-  uneditable,
-}) => {
+export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
+  const { issueDetails, issueControl, watchIssue, submitChanges, isNotAllowed, uneditable } = props;
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
   const router = useRouter();
@@ -64,33 +56,38 @@ export const SidebarLabelSelect: React.FC<Props> = ({
     watch,
     control: labelControl,
     setFocus,
-  } = useForm<Partial<IIssueLabels>>({
+  } = useForm<LabelForm>({
     defaultValues,
   });
 
   const { user } = useUser();
 
-  const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { label: labelStore } = useMobxStore();
+  const {
+    labels,
+    loadLabels,
+    createLabel,
+    getLabelById,
+    getLabelChildren,
+    isLabelsLoading: isLoading,
+  } = labelStore;
 
-  const handleNewLabel = async (formData: Partial<IIssueLabels>) => {
-    if (!workspaceSlug || !projectId || isSubmitting) return;
+  useEffect(() => {
+    if (workspaceSlug && projectId) loadLabels(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, loadLabels]);
 
-    await issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
-      .then((res) => {
+  const handleNewLabel = async (formData: LabelForm) => {
+    if (!workspaceSlug || !projectId || isSubmitting || !user) return;
+
+    await createLabel(workspaceSlug.toString(), projectId.toString(), formData, user).then(
+      (res: any) => {
         reset(defaultValues);
-
-        issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
 
         submitChanges({ labels_list: [...(issueDetails?.labels ?? []), res.id] });
 
         setCreateLabelForm(false);
-      });
+      }
+    );
   };
 
   useEffect(() => {
@@ -110,7 +107,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
         <div className="basis-1/2">
           <div className="flex flex-wrap gap-1">
             {watchIssue("labels_list")?.map((labelId) => {
-              const label = issueLabels?.find((l) => l.id === labelId);
+              const label = getLabelById(labelId);
 
               if (label)
                 return (
@@ -168,12 +165,10 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                       >
                         <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-custom-background-80 py-1 text-xs shadow-lg border border-custom-border-100 focus:outline-none">
                           <div className="py-1">
-                            {issueLabels ? (
-                              issueLabels.length > 0 ? (
-                                issueLabels.map((label: IIssueLabels) => {
-                                  const children = issueLabels?.filter(
-                                    (l) => l.parent === label.id
-                                  );
+                            {!isLoading ? (
+                              labels.length > 0 ? (
+                                labels.map((label) => {
+                                  const children = getLabelChildren(label.id);
 
                                   if (children.length === 0) {
                                     if (!label.parent)
@@ -346,4 +341,4 @@ export const SidebarLabelSelect: React.FC<Props> = ({
       )}
     </div>
   );
-};
+});

@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 // services
 import stateService from "services/state.service";
 import projectService from "services/project.service";
-import issuesService from "services/issues.service";
 // components
 import { DueDateFilterModal } from "components/core";
 // ui
@@ -20,7 +23,7 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { IIssueFilterOptions, IQuery } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
+import { PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
 // constants
 import { PRIORITIES } from "constants/project";
 import { DUE_DATES } from "constants/due-dates";
@@ -32,16 +35,16 @@ type Props = {
   height?: "sm" | "md" | "rg" | "lg";
 };
 
-export const SelectFilters: React.FC<Props> = ({
-  filters,
-  onSelect,
-  direction = "right",
-  height = "md",
-}) => {
+export const SelectFilters: React.FC<Props> = observer((props) => {
+  const { filters, onSelect, direction = "right", height = "md" } = props;
+
   const [isDueDateFilterModalOpen, setIsDueDateFilterModalOpen] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { label: labelStore } = useMobxStore();
+  const { labels, loadLabels } = labelStore;
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
@@ -58,12 +61,9 @@ export const SelectFilters: React.FC<Props> = ({
       : null
   );
 
-  const { data: issueLabels } = useSWR(
-    projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId.toString())
-      : null
-  );
+  useEffect(() => {
+    if (workspaceSlug && projectId) loadLabels(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, loadLabels]);
 
   return (
     <>
@@ -160,9 +160,9 @@ export const SelectFilters: React.FC<Props> = ({
           {
             id: "labels",
             label: "Labels",
-            value: issueLabels,
+            value: labels,
             hasChildren: true,
-            children: issueLabels?.map((label) => ({
+            children: labels?.map((label) => ({
               id: label.id,
               label: (
                 <div className="flex items-center gap-2">
@@ -216,4 +216,4 @@ export const SelectFilters: React.FC<Props> = ({
       />
     </>
   );
-};
+});

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
-// services
-import issuesService from "services/issues.service";
 // component
 import { CreateLabelModal } from "components/labels";
 // ui
@@ -13,9 +13,7 @@ import { CustomSearchSelect, Tooltip } from "components/ui";
 // icons
 import { PlusIcon, TagIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IIssue, IIssueLabels } from "types";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
   issue: IIssue;
@@ -28,29 +26,31 @@ type Props = {
   isNotAllowed: boolean;
 };
 
-export const ViewLabelSelect: React.FC<Props> = ({
-  issue,
-  partialUpdateIssue,
-  position = "left",
-  selfPositioned = false,
-  tooltipPosition = "top",
-  user,
-  isNotAllowed,
-  customButton = false,
-}) => {
+export const ViewLabelSelect: React.FC<Props> = observer((props) => {
+  const {
+    issue,
+    partialUpdateIssue,
+    position = "left",
+    selfPositioned = false,
+    tooltipPosition = "top",
+    user,
+    isNotAllowed,
+    customButton = false,
+  } = props;
+
   const [labelModal, setLabelModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { label: labelStore } = useMobxStore();
+  const { labels, loadLabels, getLabelById } = labelStore;
 
-  const options = issueLabels?.map((label) => ({
+  useEffect(() => {
+    if (workspaceSlug && projectId) loadLabels(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, loadLabels]);
+
+  const options = labels?.map((label) => ({
     value: label.id,
     query: label.name,
     content: (
@@ -74,7 +74,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
         issue.labels.length > 0
           ? issue.labels
               .map((labelId) => {
-                const label = issueLabels?.find((l) => l.id === labelId);
+                const label = getLabelById(labelId);
 
                 return label?.name ?? "";
               })
@@ -90,7 +90,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
         {issue.labels.length > 0 ? (
           <>
             {issue.labels.slice(0, 4).map((labelId, index) => {
-              const label = issueLabels?.find((l) => l.id === labelId);
+              const label = getLabelById(labelId);
 
               return (
                 <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
@@ -154,4 +154,4 @@ export const ViewLabelSelect: React.FC<Props> = ({
       />
     </>
   );
-};
+});

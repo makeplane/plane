@@ -1,8 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
+
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
@@ -37,7 +41,6 @@ import {
   MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
-  PROJECT_ISSUE_LABELS,
   STATES_LIST,
 } from "constants/fetch-keys";
 
@@ -46,10 +49,8 @@ type Props = {
   disableUserActions?: boolean;
 };
 
-export const IssuesView: React.FC<Props> = ({
-  openIssuesListModal,
-  disableUserActions = false,
-}) => {
+export const IssuesView: React.FC<Props> = observer((props) => {
+  const { openIssuesListModal, disableUserActions = false } = props;
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -75,6 +76,9 @@ export const IssuesView: React.FC<Props> = ({
 
   const { user } = useUserAuth();
 
+  const { label: labelStore } = useMobxStore();
+  const { labels, loadLabels } = labelStore;
+
   const { setToastAlert } = useToast();
 
   const {
@@ -99,14 +103,11 @@ export const IssuesView: React.FC<Props> = ({
   );
   const states = getStatesList(stateGroups);
 
-  const { data: labels } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
   const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
+
+  useEffect(() => {
+    if (workspaceSlug && projectId) loadLabels(workspaceSlug as string, projectId as string);
+  }, [loadLabels, projectId, workspaceSlug]);
 
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {
@@ -564,4 +565,4 @@ export const IssuesView: React.FC<Props> = ({
       />
     </>
   );
-};
+});

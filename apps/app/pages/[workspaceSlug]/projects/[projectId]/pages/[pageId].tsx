@@ -4,6 +4,10 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 // react-hook-form
 import { useForm } from "react-hook-form";
 // headless ui
@@ -16,7 +20,6 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
 import projectService from "services/project.service";
 import pagesService from "services/pages.service";
-import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -56,13 +59,12 @@ import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage } from "next";
-import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
+import { IPage, IPageBlock, IProjectMember } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
   PAGE_DETAILS,
   PROJECT_DETAILS,
-  PROJECT_ISSUE_LABELS,
   USER_PROJECT_VIEW,
 } from "constants/fetch-keys";
 
@@ -79,6 +81,9 @@ const SinglePage: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const { user } = useUser();
+
+  const { label: labelStore } = useMobxStore();
+  const { labels, loadLabels } = labelStore;
 
   const { handleSubmit, reset, watch, setValue } = useForm<IPage>({
     defaultValues: { name: "" },
@@ -115,19 +120,16 @@ const SinglePage: NextPage = () => {
       : null
   );
 
-  const { data: labels } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
+
+  useEffect(() => {
+    if (workspaceSlug && projectId) loadLabels(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, loadLabels]);
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -691,4 +693,4 @@ const SinglePage: NextPage = () => {
   );
 };
 
-export default SinglePage;
+export default observer(SinglePage);

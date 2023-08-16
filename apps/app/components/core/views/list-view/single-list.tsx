@@ -1,11 +1,16 @@
+import { useEffect } from "react";
+
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
 import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
@@ -20,16 +25,9 @@ import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import {
-  ICurrentUserResponse,
-  IIssue,
-  IIssueLabels,
-  IIssueViewProps,
-  IState,
-  UserAuth,
-} from "types";
+import { ICurrentUserResponse, IIssue, IIssueViewProps, IState, UserAuth } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   currentState?: IState | null;
@@ -44,18 +42,20 @@ type Props = {
   viewProps: IIssueViewProps;
 };
 
-export const SingleList: React.FC<Props> = ({
-  currentState,
-  groupTitle,
-  addIssueToGroup,
-  handleIssueAction,
-  openIssuesListModal,
-  removeIssue,
-  disableUserActions,
-  user,
-  userAuth,
-  viewProps,
-}) => {
+export const SingleList: React.FC<Props> = observer((props) => {
+  const {
+    currentState,
+    groupTitle,
+    addIssueToGroup,
+    handleIssueAction,
+    openIssuesListModal,
+    removeIssue,
+    disableUserActions,
+    user,
+    userAuth,
+    viewProps,
+  } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -65,12 +65,8 @@ export const SingleList: React.FC<Props> = ({
 
   const { groupByProperty: selectedGroup, groupedIssues } = viewProps;
 
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
+  const { label: labelStore } = useMobxStore();
+  const { labels, loadLabels } = labelStore;
 
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -81,6 +77,10 @@ export const SingleList: React.FC<Props> = ({
 
   const { projects } = useProjects();
 
+  useEffect(() => {
+    if (workspaceSlug && projectId) loadLabels(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, loadLabels]);
+
   const getGroupTitle = () => {
     let title = addSpaceIfCamelCase(groupTitle);
 
@@ -89,7 +89,7 @@ export const SingleList: React.FC<Props> = ({
         title = addSpaceIfCamelCase(currentState?.name ?? "");
         break;
       case "labels":
-        title = issueLabels?.find((label) => label.id === groupTitle)?.name ?? "None";
+        title = labels?.find((label) => label.id === groupTitle)?.name ?? "None";
         break;
       case "project":
         title = projects?.find((p) => p.id === groupTitle)?.name ?? "None";
@@ -128,8 +128,7 @@ export const SingleList: React.FC<Props> = ({
             : null);
         break;
       case "labels":
-        const labelColor =
-          issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
+        const labelColor = labels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
         icon = (
           <span
             className="h-3 w-3 flex-shrink-0 rounded-full"
@@ -252,4 +251,4 @@ export const SingleList: React.FC<Props> = ({
       )}
     </Disclosure>
   );
-};
+});

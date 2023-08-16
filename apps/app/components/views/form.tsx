@@ -4,6 +4,10 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
@@ -20,9 +24,8 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { getStatesList } from "helpers/state.helper";
 // types
 import { IQuery, IView } from "types";
-import issuesService from "services/issues.service";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, STATES_LIST } from "constants/fetch-keys";
+import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   handleFormSubmit: (values: IView) => Promise<void>;
@@ -37,13 +40,9 @@ const defaultValues: Partial<IView> = {
   description: "",
 };
 
-export const ViewForm: React.FC<Props> = ({
-  handleFormSubmit,
-  handleClose,
-  status,
-  data,
-  preLoadedData,
-}) => {
+export const ViewForm: React.FC<Props> = observer((props) => {
+  const { handleFormSubmit, handleClose, status, data, preLoadedData } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -69,15 +68,15 @@ export const ViewForm: React.FC<Props> = ({
   );
   const states = getStatesList(stateGroups);
 
-  const { data: labels } = useSWR(
-    workspaceSlug && projectId && (filters?.labels ?? []).length > 0
-      ? PROJECT_ISSUE_LABELS(projectId.toString())
-      : null,
-    workspaceSlug && projectId && (filters?.labels ?? []).length > 0
-      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
+  const { label: labelStore } = useMobxStore();
+  const { labels, loadLabels } = labelStore;
+
   const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
+
+  useEffect(() => {
+    if (workspaceSlug && projectId && (filters?.labels ?? []).length > 0)
+      loadLabels(workspaceSlug.toString(), projectId.toString());
+  }, [workspaceSlug, projectId, loadLabels, filters]);
 
   const handleCreateUpdateView = async (formData: IView) => {
     await handleFormSubmit(formData);
@@ -211,4 +210,4 @@ export const ViewForm: React.FC<Props> = ({
       </div>
     </form>
   );
-};
+});
