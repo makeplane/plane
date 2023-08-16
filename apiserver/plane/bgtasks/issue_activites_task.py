@@ -184,19 +184,24 @@ def track_description(
     if current_instance.get("description_html") != requested_data.get(
         "description_html"
     ):
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor=actor,
-                verb="updated",
-                old_value=current_instance.get("description_html"),
-                new_value=requested_data.get("description_html"),
-                field="description",
-                project=project,
-                workspace=project.workspace,
-                comment=f"updated the description to {requested_data.get('description_html')}",
-            )
-        )
+        last_activity = IssueActivity.objects.filter(issue_id=issue_id).order_by("-created_at").first()
+        if(last_activity is not None and last_activity.field == "description" and actor.id == last_activity.actor_id):
+            last_activity.created_at = timezone.now()
+            last_activity.save(update_fields=["created_at"])
+        else:
+                issue_activities.append(
+                    IssueActivity(
+                        issue_id=issue_id,
+                        actor=actor,
+                        verb="updated",
+                        old_value=current_instance.get("description_html"),
+                        new_value=requested_data.get("description_html"),
+                        field="description",
+                        project=project,
+                        workspace=project.workspace,
+                        comment=f"updated the description to {requested_data.get('description_html')}",
+                    )
+                )
 
 
 # Track changes in issue target date

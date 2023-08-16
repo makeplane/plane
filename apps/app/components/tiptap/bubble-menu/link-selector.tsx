@@ -19,7 +19,11 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
   return (
     <div className="relative">
       <button
-        className={cn("flex h-full items-center space-x-2 px-3 py-1.5 text-sm font-medium text-custom-text-300 hover:bg-custom-background-100 active:bg-custom-background-100", { "bg-custom-background-100": isOpen })}
+        type="button"
+        className={cn(
+          "flex h-full items-center space-x-2 px-3 py-1.5 text-sm font-medium text-custom-text-300 hover:bg-custom-background-100 active:bg-custom-background-100",
+          { "bg-custom-background-100": isOpen }
+        )}
         onClick={() => {
           setIsOpen(!isOpen);
         }}
@@ -48,7 +52,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
             ref={inputRef}
             type="url"
             placeholder="Paste a link"
-            className="flex-1 bg-custom-background-100 border border-custom-primary-300 p-1 text-sm outline-none placeholder:text-custom-text-400"
+            className="flex-1 bg-custom-background-100 border-r border-custom-border-300 p-1 text-sm outline-none placeholder:text-custom-text-400"
             defaultValue={editor.getAttributes("link").href || ""}
           />
           {editor.getAttributes("link").href ? (

@@ -284,10 +284,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
               maxLength={255}
             />
           </div>
-          <div
-            id="tiptap-container"
-            className="page-block-section relative -mt-2 text-custom-text-200"
-          >
+          <div className="page-block-section relative -mt-2 text-custom-text-200">
             <Controller
               name="description_html"
               control={control}

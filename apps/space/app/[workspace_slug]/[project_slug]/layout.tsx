@@ -7,6 +7,7 @@ import IssueNavbar from "components/issues/navbar";
 import IssueFilter from "components/issues/filters-render";
 // service
 import ProjectService from "services/project.service";
+import { redirect } from "next/navigation";
 
 type LayoutProps = {
   params: { workspace_slug: string; project_slug: string };
@@ -17,17 +18,26 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
   const { workspace_slug, project_slug } = params;
   const projectServiceInstance = new ProjectService();
 
-  const project = await projectServiceInstance?.getProjectSettingsAsync(workspace_slug, project_slug);
+  try {
+    const project = await projectServiceInstance?.getProjectSettingsAsync(workspace_slug, project_slug);
 
-  return {
-    title: `${project?.project_details?.name} | ${workspace_slug}`,
-    description: `${project?.project_details?.description || `${project?.project_details?.name} | ${workspace_slug}`}`,
-    icons: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${
-      typeof project?.project_details?.emoji != "object"
-        ? String.fromCodePoint(parseInt(project?.project_details?.emoji))
-        : "✈️"
-    }</text></svg>`,
-  };
+    return {
+      title: `${project?.project_details?.name} | ${workspace_slug}`,
+      description: `${
+        project?.project_details?.description || `${project?.project_details?.name} | ${workspace_slug}`
+      }`,
+      icons: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${
+        typeof project?.project_details?.emoji != "object"
+          ? String.fromCodePoint(parseInt(project?.project_details?.emoji))
+          : "✈️"
+      }</text></svg>`,
+    };
+  } catch (error: any) {
+    if (error?.data?.error) {
+      redirect(`/project-not-published`);
+    }
+    return {};
+  }
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (

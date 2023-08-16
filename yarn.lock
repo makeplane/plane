@@ -5963,7 +5963,7 @@ next@12.3.2:
     "@next/swc-win32-ia32-msvc" "12.3.2"
     "@next/swc-win32-x64-msvc" "12.3.2"
 
-next@^13.4.13:
+next@^13.4.16:
   version "13.4.16"
   resolved "https://registry.yarnpkg.com/next/-/next-13.4.16.tgz#327ef6885b22161ed001cd5943c20b5e409a9406"
   integrity sha512-1xaA/5DrfpPu0eV31Iro7JfPeqO8uxQWb1zYNTe+KDKdzqkAGapLcDYHMLNKXKB7lHjZ7LfKUOf9dyuzcibrhA==
