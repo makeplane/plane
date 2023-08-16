@@ -7,6 +7,7 @@ import zipfile
 
 # Django imports
 from django.conf import settings
+from django.utils import timezone
 
 # Third party imports
 from celery import shared_task
@@ -64,7 +65,7 @@ def create_zip_file(files):
     return zip_buffer
 
 
-def upload_to_s3(zip_file, workspace_id, token_id):
+def upload_to_s3(zip_file, workspace_id, token_id, slug):
     s3 = boto3.client(
         "s3",
         region_name="ap-south-1",
@@ -72,7 +73,7 @@ def upload_to_s3(zip_file, workspace_id, token_id):
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         config=Config(signature_version="s3v4"),
     )
-    file_name = f"{workspace_id}/issues-{token_id}.zip"
+    file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{timezone.now()}.zip"
 
     s3.upload_fileobj(
         zip_file,
@@ -232,7 +233,7 @@ def generate_xlsx(header, project_id, issues, files):
 
 
 @shared_task
-def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
+def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
@@ -330,7 +331,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
                 )
 
         zip_buffer = create_zip_file(files)
-        upload_to_s3(zip_buffer, workspace_id, token_id)
+        upload_to_s3(zip_buffer, workspace_id, token_id, slug)
 
     except Exception as e:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
