@@ -87,7 +87,7 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div id="tiptap-container" className="issue-comments-section">
+        <div className="issue-comments-section">
           <Controller
             name="comment_html"
             control={control}

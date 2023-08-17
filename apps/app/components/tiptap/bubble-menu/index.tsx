@@ -97,10 +97,14 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
         {items.map((item, index) => (
           <button
             key={index}
+            type="button"
             onClick={item.command}
-            className={cn("p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors", {
-              "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-            })}
+            className={cn(
+              "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
+              {
+                "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
+              }
+            )}
           >
             <item.icon
               className={cn("h-4 w-4", {
