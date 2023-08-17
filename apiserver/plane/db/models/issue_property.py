@@ -29,14 +29,15 @@ class IssueProperty(BaseModel):
             ("relation", "relation"),
         )
     )
-    required = models.BooleanField(default=False)
+    is_required = models.BooleanField(default=False)
     sort_order = models.FloatField(default=65535)
     parent = models.ForeignKey(
         "db.IssueProperty", on_delete=models.CASCADE, related_name="children", null=True,
     )
-    default = models.CharField(max_length=800, blank=True, null=True)
+    default_value = models.CharField(max_length=800, blank=True, null=True)
     is_shared = models.BooleanField(default=False)
     extra_settings = models.JSONField(default=None, null=True, blank=True)
+    unit = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "IssueProperty"

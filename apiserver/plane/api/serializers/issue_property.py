@@ -1,8 +1,22 @@
+# Third party imports
+from rest_framework import serializers
+
+# Module imports
 from .base import BaseSerializer
 from plane.db.models import IssueProperty, IssuePropertyValue
 
 
 class IssuePropertySerializer(BaseSerializer):
+
+    children = serializers.SerializerMethodField()
+
+    def get_children(self, obj):
+        children = obj.children.all().prefetch_related("children")
+        if children:
+            serializer = IssuePropertySerializer(children, many=True)
+            return serializer.data
+        return None
+
     class Meta:
         model = IssueProperty
         fields = "__all__"
