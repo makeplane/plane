@@ -21,7 +21,7 @@ echo -e "\n\e[1;38m Instructions for generating TipTap Pro Extensions Auth Token
 echo -e "\e[1;38m 1. Head over to TipTap cloud's Pro Extensions Page, https://collab.tiptap.dev/pro-extensions \e[0m"
 echo -e "\e[1;38m 2. Copy the token given to you under the first paragraph, after 'Here it is' \e[0m \n"
 
-read -p $'\e[1;32m Please Your TipTap Pro Extensions Authentication Token: \e[0m \e[1;36m' authToken
+read -p $'\e[1;32m Please Enter Your TipTap Pro Extensions Authentication Token: \e[0m \e[1;36m' authToken
 
 
 echo "@tiptap-pro:registry=https://registry.tiptap.dev/
