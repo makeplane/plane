@@ -5,10 +5,10 @@ import { action, observable, runInAction, makeAutoObservable } from "mobx";
 import issueService from "services/issues.service";
 
 // types
-import type { IIssueLabels, LabelLite, ICurrentUserResponse, LabelForm } from "types";
+import type { IIssueLabels, ICurrentUserResponse, LabelForm } from "types";
 
 class LabelStore {
-  labels: LabelLite[] = [];
+  labels: IIssueLabels[] = [];
   isLabelsLoading: boolean = false;
   rootStore: any | null = null;
 
@@ -30,24 +30,29 @@ class LabelStore {
    */
 
   loadLabels = async (workspaceSlug: string, projectId: string) => {
-    this.isLabelsLoading = true;
+    this.isLabelsLoading = this.labels.length === 0;
     try {
       const labelsResponse: IIssueLabels[] = await issueService.getIssueLabels(
         workspaceSlug,
         projectId
       );
+
+      const _labels = [...(labelsResponse || [])].map((label) => ({
+        id: label.id,
+        name: label.name,
+        description: label.description,
+        color: label.color,
+        parent: label.parent,
+      }));
+
       runInAction(() => {
-        this.labels = labelsResponse.map((label) => ({
-          id: label.id,
-          name: label.name,
-          description: label.description,
-          color: label.color,
-          parent: label.parent,
-        }));
+        this.labels = _labels;
         this.isLabelsLoading = false;
       });
     } catch (error) {
-      this.isLabelsLoading = false;
+      runInAction(() => {
+        this.isLabelsLoading = false;
+      });
       console.error("Fetching labels error", error);
     }
   };
@@ -59,11 +64,11 @@ class LabelStore {
   /**
    * For provided query, this function returns all labels that contain query in their name from the labels store.
    * @param query - query string
-   * @returns {LabelLite[]} array of labels that contain query in their name
+   * @returns {IIssueLabels[]} array of labels that contain query in their name
    * @example
    * getFilteredLabels("labe") // [{ id: "1", name: "label1", description: "", color: "", parent: null }]
    */
-  getFilteredLabels = (query: string): LabelLite[] =>
+  getFilteredLabels = (query: string): IIssueLabels[] =>
     this.labels.filter((label) => label.name.includes(query));
 
   createLabel = async (
@@ -80,18 +85,19 @@ class LabelStore {
         user
       );
 
+      const _label = [
+        ...this.labels,
+        {
+          id: labelResponse.id,
+          name: labelResponse.name,
+          description: labelResponse.description,
+          color: labelResponse.color,
+          parent: labelResponse.parent,
+        },
+      ].sort((a, b) => a.name.localeCompare(b.name));
+
       runInAction(() => {
-        this.labels = [
-          ...this.labels,
-          {
-            id: labelResponse.id,
-            name: labelResponse.name,
-            description: labelResponse.description,
-            color: labelResponse.color,
-            parent: labelResponse.parent,
-          },
-        ];
-        this.labels.sort((a, b) => a.name.localeCompare(b.name));
+        this.labels = _label;
       });
       return labelResponse;
     } catch (error) {
@@ -116,18 +122,20 @@ class LabelStore {
         user
       );
 
-      const _labels = [...this.labels].map((label) => {
-        if (label.id === labelId) {
-          return {
-            id: labelResponse.id,
-            name: labelResponse.name,
-            description: labelResponse.description,
-            color: labelResponse.color,
-            parent: labelResponse.parent,
-          };
-        }
-        return label;
-      });
+      const _labels = [...this.labels]
+        .map((label) => {
+          if (label.id === labelId) {
+            return {
+              id: labelResponse.id,
+              name: labelResponse.name,
+              description: labelResponse.description,
+              color: labelResponse.color,
+              parent: labelResponse.parent,
+            };
+          }
+          return label;
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
 
       runInAction(() => {
         this.labels = _labels;
@@ -146,8 +154,11 @@ class LabelStore {
   ) => {
     try {
       issueService.deleteIssueLabel(workspaceSlug, projectId, labelId, user);
+
+      const _labels = [...this.labels].filter((label) => label.id !== labelId);
+
       runInAction(() => {
-        this.labels = this.labels.filter((label) => label.id !== labelId);
+        this.labels = _labels;
       });
     } catch (error) {
       console.error("Deleting label error", error);

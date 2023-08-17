@@ -11,12 +11,12 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, LabelLite } from "types";
+import { ICurrentUserResponse, IIssueLabels } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  parent: LabelLite | undefined;
+  parent: IIssueLabels | undefined;
   user: ICurrentUserResponse | undefined;
 };
 
@@ -37,7 +37,7 @@ export const LabelsListModal: React.FC<Props> = observer(
       setQuery("");
     };
 
-    const addChildLabel = async (label: LabelLite) => {
+    const addChildLabel = async (label: IIssueLabels) => {
       if (!workspaceSlug || !projectId || !user) return;
 
       updateLabel(

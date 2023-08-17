@@ -18,7 +18,7 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 // types
-import type { LabelLite } from "types";
+import type { IIssueLabels } from "types";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,7 +42,7 @@ export const IssueLabelSelect: React.FC<Props> = observer(
       if (workspaceSlug && projectId) loadLabels(workspaceSlug.toString(), projectId);
     }, [workspaceSlug, projectId, loadLabels]);
 
-    const filteredOptions: LabelLite[] = labels?.filter((l) =>
+    const filteredOptions: IIssueLabels[] = labels?.filter((l) =>
       l.name.toLowerCase().includes(query.toLowerCase())
     );
 

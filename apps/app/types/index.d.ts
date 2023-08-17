@@ -18,7 +18,7 @@ export * from "./calendar";
 export * from "./notifications";
 export * from "./waitlist";
 export * from "./reaction";
-
+export * from "./labels";
 
 export type NestedKeyOf<ObjectType extends object> = {
   [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object

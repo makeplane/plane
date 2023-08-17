@@ -31,7 +31,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // images
 import emptyLabel from "public/empty-state/label.svg";
 // types
-import { LabelLite } from "types";
+import { IIssueLabels } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
@@ -44,14 +44,14 @@ const LabelsSettings: NextPage = () => {
 
   // edit label
   const [isUpdating, setIsUpdating] = useState(false);
-  const [labelToUpdate, setLabelToUpdate] = useState<LabelLite | null>(null);
+  const [labelToUpdate, setLabelToUpdate] = useState<IIssueLabels | null>(null);
 
   // labels list modal
   const [labelsListModal, setLabelsListModal] = useState(false);
-  const [parentLabel, setParentLabel] = useState<LabelLite | undefined>(undefined);
+  const [parentLabel, setParentLabel] = useState<IIssueLabels | undefined>(undefined);
 
   // delete label
-  const [selectDeleteLabel, setSelectDeleteLabel] = useState<LabelLite | null>(null);
+  const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabels | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -79,12 +79,12 @@ const LabelsSettings: NextPage = () => {
     setLabelForm(true);
   };
 
-  const addLabelToGroup = (parentLabel: LabelLite) => {
+  const addLabelToGroup = (parentLabel: IIssueLabels) => {
     setLabelsListModal(true);
     setParentLabel(parentLabel);
   };
 
-  const editLabel = (label: LabelLite) => {
+  const editLabel = (label: IIssueLabels) => {
     setLabelForm(true);
     setIsUpdating(true);
     setLabelToUpdate(label);

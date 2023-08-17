@@ -20,14 +20,14 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, LabelLite } from "types";
+import { ICurrentUserResponse, IIssueLabels } from "types";
 
 type Props = {
-  label: LabelLite;
-  labelChildren: LabelLite[];
-  addLabelToGroup: (parentLabel: LabelLite) => void;
-  editLabel: (label: LabelLite) => void;
-  handleLabelDelete: (label: LabelLite) => void;
+  label: IIssueLabels;
+  labelChildren: IIssueLabels[];
+  addLabelToGroup: (parentLabel: IIssueLabels) => void;
+  editLabel: (label: IIssueLabels) => void;
+  handleLabelDelete: (label: IIssueLabels) => void;
   user: ICurrentUserResponse | undefined;
 };
 
@@ -39,7 +39,7 @@ export const SingleLabelGroup: React.FC<Props> = observer(
     const { label: labelStore } = useMobxStore();
     const { updateLabel } = labelStore;
 
-    const removeFromGroup = (label: LabelLite) => {
+    const removeFromGroup = (label: IIssueLabels) => {
       if (!workspaceSlug || !projectId || !user) return;
 
       updateLabel(

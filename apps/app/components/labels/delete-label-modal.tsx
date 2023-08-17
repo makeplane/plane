@@ -15,12 +15,12 @@ import useToast from "hooks/use-toast";
 // ui
 import { DangerButton, SecondaryButton } from "components/ui";
 // types
-import type { ICurrentUserResponse, LabelLite } from "types";
+import type { ICurrentUserResponse, IIssueLabels } from "types";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  data: LabelLite | null;
+  data: IIssueLabels | null;
   user: ICurrentUserResponse | undefined;
 };
 

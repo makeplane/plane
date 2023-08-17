@@ -19,7 +19,7 @@ import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssueLabels, LabelLite } from "types";
+import { IIssueLabels } from "types";
 // fetch-keys
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
 
@@ -27,7 +27,7 @@ type Props = {
   labelForm: boolean;
   setLabelForm: React.Dispatch<React.SetStateAction<boolean>>;
   isUpdating: boolean;
-  labelToUpdate: LabelLite | null;
+  labelToUpdate: IIssueLabels | null;
   onClose?: () => void;
 };
 

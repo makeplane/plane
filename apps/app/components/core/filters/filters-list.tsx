@@ -10,7 +10,7 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { IIssueFilterOptions, IState, IUserLite, TStateGroups, LabelLite } from "types";
+import { IIssueFilterOptions, IState, IUserLite, TStateGroups, IIssueLabels } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
@@ -18,7 +18,7 @@ type Props = {
   filters: Partial<IIssueFilterOptions>;
   setFilters: (updatedFilter: Partial<IIssueFilterOptions>) => void;
   clearAllFilters: (...args: any) => void;
-  labels: LabelLite[] | undefined;
+  labels: IIssueLabels[] | undefined;
   members: IUserLite[] | undefined;
   states: IState[] | undefined;
 };
