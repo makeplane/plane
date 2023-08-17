@@ -459,6 +459,29 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
+  async updateIssueLink(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    linkId: string,
+    data: {
+      metadata: any;
+      title: string;
+      url: string;
+    },
+
+  ): Promise<any> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`,
+      data
+    )
+    .then((response) => response?.data)
+    .catch((error) => {
+      throw error?.response;
+    });
+  }
+
+
   async deleteIssueLink(
     workspaceSlug: string,
     projectId: string,
