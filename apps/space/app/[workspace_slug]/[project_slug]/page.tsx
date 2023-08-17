@@ -29,15 +29,29 @@ const WorkspaceProjectPage = observer(() => {
 
   // updating default board view when we are in the issues page
   useEffect(() => {
-    if (workspace_slug && project_slug) {
-      if (!board) {
-        store.issue.setCurrentIssueBoardView("list");
-        router.replace(`/${workspace_slug}/${project_slug}?board=${store?.issue?.currentIssueBoardView}`);
-      } else {
-        if (board != store?.issue?.currentIssueBoardView) store.issue.setCurrentIssueBoardView(board);
+    if (workspace_slug && project_slug && store?.project?.workspaceProjectSettings) {
+      const workspacePRojectSettingViews = store?.project?.workspaceProjectSettings?.views;
+      let initView: null | TIssueBoardKeys = null;
+
+      if (initView === null && workspacePRojectSettingViews.list === true) initView = "list";
+      else if (initView === null && workspacePRojectSettingViews.kanban === true) initView = "kanban";
+      else if (initView === null && workspacePRojectSettingViews.calendar === true) initView = "calendar";
+      else if (initView === null && workspacePRojectSettingViews.gantt === true) initView = "gantt";
+      else if (initView === null && workspacePRojectSettingViews.spreadsheet === true) initView = "spreadsheet";
+
+      if (initView != null) {
+        if (!board) {
+          store.issue.setCurrentIssueBoardView(initView);
+          router.replace(`/${workspace_slug}/${project_slug}?board=${initView}`);
+        } else {
+          if (board != store?.issue?.currentIssueBoardView) {
+            store.issue.setCurrentIssueBoardView(initView);
+            router.replace(`/${workspace_slug}/${project_slug}?board=${initView}`);
+          }
+        }
       }
     }
-  }, [workspace_slug, project_slug, board, router, store?.issue]);
+  }, [workspace_slug, project_slug, board, router, store?.issue, store?.project?.workspaceProjectSettings]);
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
