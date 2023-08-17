@@ -1,0 +1,61 @@
+FROM node:18-alpine AS base 
+
+# [Stage 1] Prune the Space Project and lockfile out the monorepo.
+FROM base AS builder
+RUN apk add --no-cache libc6-compat 
+RUN apk update 
+
+# Installing turbo, copying monorepo and executing prune
+WORKDIR /app
+RUN yarn global add turbo
+COPY . .
+
+# Space pruned as /app/out/json (deps) and /app/out/full (space)
+RUN turbo prune --scope=space --docker
+
+# [Stage 2] Install Dependencies from deps only files from /app/out/json
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
+WORKDIR /app
+
+# Copying package.json and lockfile from space and also from root, as /app/out/yarn-lock.json and /app/out/json
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/yarn-lock.json ./yarn-lock.json
+RUN yarn install 
+
+# Building the Project with standalone mode ( https://nextjs.org/docs/pages/api-reference/next-config-js/output ) 
+COPY --from=builder ./app/out/full .
+RUN yarn turbo run build --filter=space
+
+# [Stage: 3] Running the project
+FROM base AS runner
+WORKDIR /app
+
+# Creating user group for production, plane as usergroup and captain as user
+RUN addgroup --system --gid 1001 plane
+RUN adduser --system --uid 1001 captain
+USER captain
+
+# transporting package files from installer
+COPY --from=installer /app/apps/space/next.config.js .
+COPY --from=installer /app/apps/space/package.json .
+
+# transporting builds from installer 
+COPY --from=installer --chown=captain:plane /app/apps/space/.next/standalone ./
+COPY --from=installer --chown=captain:plane /app/apps/space/.next ./apps/space/.next
+
+# Start the server
+CMD node apps/space/server.js
+
+
+
+
+
+
+
+
+
+
+
+
