@@ -31,22 +31,34 @@ const WorkspaceProjectPage = observer(() => {
   useEffect(() => {
     if (workspace_slug && project_slug && store?.project?.workspaceProjectSettings) {
       const workspacePRojectSettingViews = store?.project?.workspaceProjectSettings?.views;
-      let initView: null | TIssueBoardKeys = null;
+      const userAccessViews: TIssueBoardKeys[] = [];
 
-      if (initView === null && workspacePRojectSettingViews.list === true) initView = "list";
-      else if (initView === null && workspacePRojectSettingViews.kanban === true) initView = "kanban";
-      else if (initView === null && workspacePRojectSettingViews.calendar === true) initView = "calendar";
-      else if (initView === null && workspacePRojectSettingViews.gantt === true) initView = "gantt";
-      else if (initView === null && workspacePRojectSettingViews.spreadsheet === true) initView = "spreadsheet";
+      Object.keys(workspacePRojectSettingViews).filter((_key) => {
+        if (_key === "list" && workspacePRojectSettingViews.list === true) userAccessViews.push(_key);
+        if (_key === "kanban" && workspacePRojectSettingViews.kanban === true) userAccessViews.push(_key);
+        if (_key === "calendar" && workspacePRojectSettingViews.calendar === true) userAccessViews.push(_key);
+        if (_key === "spreadsheet" && workspacePRojectSettingViews.spreadsheet === true) userAccessViews.push(_key);
+        if (_key === "gantt" && workspacePRojectSettingViews.gantt === true) userAccessViews.push(_key);
+      });
 
-      if (initView != null) {
+      if (userAccessViews && userAccessViews.length > 0) {
         if (!board) {
-          store.issue.setCurrentIssueBoardView(initView);
-          router.replace(`/${workspace_slug}/${project_slug}?board=${initView}`);
+          store.issue.setCurrentIssueBoardView(userAccessViews[0]);
+          router.replace(`/${workspace_slug}/${project_slug}?board=${userAccessViews[0]}`);
         } else {
-          if (board != store?.issue?.currentIssueBoardView) {
-            store.issue.setCurrentIssueBoardView(initView);
-            router.replace(`/${workspace_slug}/${project_slug}?board=${initView}`);
+          if (userAccessViews.includes(board)) {
+            if (store.issue.currentIssueBoardView === null) store.issue.setCurrentIssueBoardView(board);
+            else {
+              if (board === store.issue.currentIssueBoardView)
+                router.replace(`/${workspace_slug}/${project_slug}?board=${board}`);
+              else {
+                store.issue.setCurrentIssueBoardView(board);
+                router.replace(`/${workspace_slug}/${project_slug}?board=${board}`);
+              }
+            }
+          } else {
+            store.issue.setCurrentIssueBoardView(userAccessViews[0]);
+            router.replace(`/${workspace_slug}/${project_slug}?board=${userAccessViews[0]}`);
           }
         }
       }
