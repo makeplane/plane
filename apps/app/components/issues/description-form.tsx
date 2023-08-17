@@ -69,11 +69,13 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
+      setShowAlert(false);
       setTimeout(async () => {
         setIsSubmitting("saved");
       }, 2000);
     }
-  }, [isSubmitting]);
+  }, [isSubmitting, setShowAlert]);
+
 
   // reset form values
   useEffect(() => {
@@ -112,9 +114,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         {characterLimit && (
           <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
             <span
-              className={`${
-                watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
-              }`}
+              className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
+                }`}
             >
               {watch("name").length}
             </span>
@@ -134,16 +135,18 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
               <Tiptap
                 value={
                   !value ||
-                  value === "" ||
-                  (typeof value === "object" && Object.keys(value).length === 0)
+                    value === "" ||
+                    (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("description_html")
                     : value
                 }
                 debouncedUpdatesEnabled={true}
+                setShouldShowAlert={setShowAlert}
                 setIsSubmitting={setIsSubmitting}
                 customClassName="min-h-[150px]"
                 editorContentCustomClassNames="pb-9"
                 onChange={(description: Object, description_html: string) => {
+                  setShowAlert(true);
                   setIsSubmitting("submitting");
                   onChange(description_html);
                   setValue("description", description);
@@ -156,9 +159,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
           }}
         />
         <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
+          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+            }`}
         >
           {isSubmitting === "submitting" ? "Saving..." : "Saved"}
         </div>
