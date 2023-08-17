@@ -29,15 +29,41 @@ const WorkspaceProjectPage = observer(() => {
 
   // updating default board view when we are in the issues page
   useEffect(() => {
-    if (workspace_slug && project_slug) {
-      if (!board) {
-        store.issue.setCurrentIssueBoardView("list");
-        router.replace(`/${workspace_slug}/${project_slug}?board=${store?.issue?.currentIssueBoardView}`);
-      } else {
-        if (board != store?.issue?.currentIssueBoardView) store.issue.setCurrentIssueBoardView(board);
+    if (workspace_slug && project_slug && store?.project?.workspaceProjectSettings) {
+      const workspacePRojectSettingViews = store?.project?.workspaceProjectSettings?.views;
+      const userAccessViews: TIssueBoardKeys[] = [];
+
+      Object.keys(workspacePRojectSettingViews).filter((_key) => {
+        if (_key === "list" && workspacePRojectSettingViews.list === true) userAccessViews.push(_key);
+        if (_key === "kanban" && workspacePRojectSettingViews.kanban === true) userAccessViews.push(_key);
+        if (_key === "calendar" && workspacePRojectSettingViews.calendar === true) userAccessViews.push(_key);
+        if (_key === "spreadsheet" && workspacePRojectSettingViews.spreadsheet === true) userAccessViews.push(_key);
+        if (_key === "gantt" && workspacePRojectSettingViews.gantt === true) userAccessViews.push(_key);
+      });
+
+      if (userAccessViews && userAccessViews.length > 0) {
+        if (!board) {
+          store.issue.setCurrentIssueBoardView(userAccessViews[0]);
+          router.replace(`/${workspace_slug}/${project_slug}?board=${userAccessViews[0]}`);
+        } else {
+          if (userAccessViews.includes(board)) {
+            if (store.issue.currentIssueBoardView === null) store.issue.setCurrentIssueBoardView(board);
+            else {
+              if (board === store.issue.currentIssueBoardView)
+                router.replace(`/${workspace_slug}/${project_slug}?board=${board}`);
+              else {
+                store.issue.setCurrentIssueBoardView(board);
+                router.replace(`/${workspace_slug}/${project_slug}?board=${board}`);
+              }
+            }
+          } else {
+            store.issue.setCurrentIssueBoardView(userAccessViews[0]);
+            router.replace(`/${workspace_slug}/${project_slug}?board=${userAccessViews[0]}`);
+          }
+        }
       }
     }
-  }, [workspace_slug, project_slug, board, router, store?.issue]);
+  }, [workspace_slug, project_slug, board, router, store?.issue, store?.project?.workspaceProjectSettings]);
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
