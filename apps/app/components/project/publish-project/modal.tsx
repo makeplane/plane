@@ -14,6 +14,9 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 import { IProjectPublishSettingsViews } from "store/project-publish";
+// hooks
+import useToast from "hooks/use-toast";
+import useProjectDetails from "hooks/use-project-details";
 
 type Props = {
   // user: ICurrentUserResponse | undefined;
@@ -25,7 +28,7 @@ const defaultValues: Partial<any> = {
   reactions: false,
   votes: false,
   inbox: null,
-  views: [],
+  views: ["list", "kanban"],
 };
 
 const viewOptions = [
@@ -39,6 +42,17 @@ const viewOptions = [
 export const PublishProjectModal: React.FC<Props> = observer(() => {
   const store: RootStore = useMobxStore();
   const { projectPublish } = store;
+
+  const { projectDetails, mutateProjectDetails } = useProjectDetails();
+
+  const { setToastAlert } = useToast();
+  const handleToastAlert = (title: string, type: string, message: string) => {
+    setToastAlert({
+      title: title || "Title",
+      type: "error" || "warning",
+      message: message || "Message",
+    });
+  };
 
   const { NEXT_PUBLIC_DEPLOY_URL } = process.env;
   const plane_deploy_url = NEXT_PUBLIC_DEPLOY_URL
@@ -111,32 +125,41 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
   }, [workspaceSlug, projectPublish, projectPublish.projectPublishModal]);
 
   const onSettingsPublish = async (formData: any) => {
-    const payload = {
-      comments: formData.comments || false,
-      reactions: formData.reactions || false,
-      votes: formData.votes || false,
-      inbox: formData.inbox || null,
-      views: {
-        list: formData.views.includes("list") || false,
-        kanban: formData.views.includes("kanban") || false,
-        calendar: formData.views.includes("calendar") || false,
-        gantt: formData.views.includes("gantt") || false,
-        spreadsheet: formData.views.includes("spreadsheet") || false,
-      },
-    };
+    if (formData.views && formData.views.length > 0) {
+      const payload = {
+        comments: formData.comments || false,
+        reactions: formData.reactions || false,
+        votes: formData.votes || false,
+        inbox: formData.inbox || null,
+        views: {
+          list: formData.views.includes("list") || false,
+          kanban: formData.views.includes("kanban") || false,
+          calendar: formData.views.includes("calendar") || false,
+          gantt: formData.views.includes("gantt") || false,
+          spreadsheet: formData.views.includes("spreadsheet") || false,
+        },
+      };
 
-    return projectPublish
-      .createProjectSettingsAsync(
-        workspaceSlug as string,
-        projectPublish.project_id as string,
-        payload,
-        null
-      )
-      .then((response) => response)
-      .catch((error) => {
-        console.error("error", error);
-        return error;
-      });
+      const _workspaceSlug = workspaceSlug;
+      const _projectId = projectPublish.project_id;
+
+      return projectPublish
+        .createProjectSettingsAsync(_workspaceSlug as string, _projectId as string, payload, null)
+        .then((response) => {
+          mutateProjectDetails();
+          handleClose();
+          console.log("_projectId", _projectId);
+          if (_projectId)
+            window.open(`${plane_deploy_url}/${_workspaceSlug}/${_projectId}`, "_blank");
+          return response;
+        })
+        .catch((error) => {
+          console.error("error", error);
+          return error;
+        });
+    } else {
+      handleToastAlert("Missing fields", "warning", "Please select at least one view to publish");
+    }
   };
 
   const onSettingsUpdate = async (key: string, value: any) => {
@@ -171,7 +194,10 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
         payload,
         null
       )
-      .then((response) => response)
+      .then((response) => {
+        mutateProjectDetails();
+        return response;
+      })
       .catch((error) => {
         console.log("error", error);
         return error;
@@ -187,7 +213,9 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
         null
       )
       .then((response) => {
+        mutateProjectDetails();
         reset({ ...defaultValues });
+        handleClose();
         return response;
       })
       .catch((error) => {
