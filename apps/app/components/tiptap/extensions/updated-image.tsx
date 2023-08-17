@@ -1,11 +1,15 @@
 import Image from "@tiptap/extension-image";
+import UploadImagesPlugin from "../plugins/upload-image";
 
 const UpdatedImage = Image.extend({
+  addProseMirrorPlugins() {
+    return [UploadImagesPlugin()];
+  },
   addAttributes() {
     return {
       ...this.parent?.(),
       width: {
-        default: null,
+        default: '35%',
       },
       height: {
         default: null,
