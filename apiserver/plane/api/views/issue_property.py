@@ -34,11 +34,16 @@ class IssuePropertyViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            issue_properties = self.get_queryset().filter(parent__isnull=True)
+            project_id = request.GET.get("project", False)
+            issue_properties = self.get_queryset().filter(parent__isnull=True, shared=True)
+
+            if project_id:
+                issue_properties = issue_properties.filter(project_id=project_id)
+
             serializer = IssuePropertySerializer(issue_properties, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

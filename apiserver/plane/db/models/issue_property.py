@@ -35,7 +35,7 @@ class IssueProperty(BaseModel):
         "db.IssueProperty", on_delete=models.CASCADE, related_name="children", null=True,
     )
     default_value = models.CharField(max_length=800, blank=True, null=True)
-    is_shared = models.BooleanField(default=False)
+    is_shared = models.BooleanField(default=True)
     extra_settings = models.JSONField(default=None, null=True, blank=True)
     unit = models.CharField(max_length=100, blank=True, null=True)
 
@@ -64,10 +64,11 @@ class IssuePropertyValue(ProjectBaseModel):
         IssueProperty, on_delete=models.CASCADE, related_name="values"
     )
     description = models.TextField(blank=True, null=True)
-    value = models.CharField(max_length=800)
+    value = models.TextField()
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="attribute_values"
     )
+    
 
     class Meta:
         verbose_name = "IssuePropertyValue"
