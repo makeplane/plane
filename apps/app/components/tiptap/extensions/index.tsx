@@ -21,6 +21,7 @@ import "highlight.js/styles/github-dark.css";
 import UploadImagesPlugin from "../plugins/upload-image";
 import UniqueID from "@tiptap-pro/extension-unique-id";
 import UpdatedImage from "./updated-image";
+import isValidHttpUrl from "../bubble-menu/utils/link-validator";
 
 lowlight.registerLanguage("ts", ts);
 
@@ -94,6 +95,8 @@ export const TiptapExtensions = [
     },
   }),
   TiptapLink.configure({
+    protocols: ["http", "https"],
+    validate: (url) => isValidHttpUrl(url),
     HTMLAttributes: {
       class:
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
