@@ -1083,6 +1083,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 .filter(**filters)
                 .values("priority")
                 .annotate(priority_count=Count("priority"))
+                .filter(priority_count__gte=1)
                 .annotate(
                     priority_order=Case(
                         *[
