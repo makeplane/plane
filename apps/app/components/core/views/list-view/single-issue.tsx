@@ -33,7 +33,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // helpers
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 import { handleIssuesMutation } from "constants/issue";
 // types
 import { ICurrentUserResponse, IIssue, IIssueViewProps, ISubIssueResponse, UserAuth } from "types";
@@ -71,7 +71,7 @@ export const SingleListIssue: React.FC<Props> = ({
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [contextMenuPosition, setContextMenuPosition] = useState<React.MouseEvent | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -167,7 +167,7 @@ export const SingleListIssue: React.FC<Props> = ({
   return (
     <>
       <ContextMenu
-        position={contextMenuPosition}
+        clickEvent={contextMenuPosition}
         title="Quick actions"
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
@@ -199,7 +199,7 @@ export const SingleListIssue: React.FC<Props> = ({
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
-          setContextMenuPosition({ x: e.pageX, y: e.pageY });
+          setContextMenuPosition(e);
         }}
       >
         <div className="flex-grow cursor-pointer min-w-[200px] whitespace-nowrap overflow-hidden overflow-ellipsis">
