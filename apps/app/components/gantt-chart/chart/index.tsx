@@ -30,6 +30,7 @@ import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
 import { currentViewDataWithView } from "../data";
 // context
 import { useChart } from "../hooks";
+import { GanttSidebar } from "../sidebar";
 
 type ChartViewRootProps = {
   border: boolean;
@@ -37,8 +38,8 @@ type ChartViewRootProps = {
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  sidebarBlockRender: FC<any>;
-  blockRender: FC<any>;
+  sidebarBlockRender: (data: any) => React.ReactNode;
+  blockRender: (data: any) => React.ReactNode;
   enableLeftDrag: boolean;
   enableRightDrag: boolean;
   enableReorder: boolean;
@@ -318,23 +319,21 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       {/* content */}
       <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200">
         <div
+          id="gantt-sidebar"
+          className="h-full w-1/4 flex flex-col border-r border-custom-border-200 space-y-3"
+        >
+          <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0" />
+          <GanttSidebar
+            blockUpdateHandler={blockUpdateHandler}
+            blocks={chartBlocks}
+            sidebarBlockRender={sidebarBlockRender}
+            enableReorder={enableReorder}
+          />
+        </div>
+        <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
           id="scroll-container"
         >
-          {/* blocks components */}
-          {currentView && currentViewData && (
-            <GanttChartBlocks
-              itemsContainerWidth={itemsContainerWidth}
-              blocks={chartBlocks}
-              sidebarBlockRender={sidebarBlockRender}
-              blockRender={blockRender}
-              blockUpdateHandler={blockUpdateHandler}
-              enableLeftDrag={enableLeftDrag}
-              enableRightDrag={enableRightDrag}
-              enableReorder={enableReorder}
-            />
-          )}
-
           {/* chart */}
           {/* {currentView && currentView === "hours" && <HourChartView />} */}
           {/* {currentView && currentView === "day" && <DayChartView />} */}
@@ -343,6 +342,19 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           {currentView && currentView === "month" && <MonthChartView />}
           {/* {currentView && currentView === "quarter" && <QuarterChartView />} */}
           {/* {currentView && currentView === "year" && <YearChartView />} */}
+
+          {/* blocks */}
+          {currentView && currentViewData && (
+            <GanttChartBlocks
+              itemsContainerWidth={itemsContainerWidth}
+              blocks={chartBlocks}
+              blockRender={blockRender}
+              blockUpdateHandler={blockUpdateHandler}
+              enableLeftDrag={enableLeftDrag}
+              enableRightDrag={enableRightDrag}
+              enableReorder={enableReorder}
+            />
+          )}
         </div>
       </div>
     </div>

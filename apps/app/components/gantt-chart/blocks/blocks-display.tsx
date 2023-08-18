@@ -12,8 +12,7 @@ import { IBlockUpdateData, IGanttBlock } from "../types";
 export const GanttChartBlocks: FC<{
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
-  sidebarBlockRender: FC;
-  blockRender: FC;
+  blockRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableLeftDrag: boolean;
   enableRightDrag: boolean;
@@ -21,7 +20,6 @@ export const GanttChartBlocks: FC<{
 }> = ({
   itemsContainerWidth,
   blocks,
-  sidebarBlockRender,
   blockRender,
   blockUpdateHandler,
   enableLeftDrag,
@@ -146,9 +144,7 @@ export const GanttChartBlocks: FC<{
                                     width: `${block.position?.width}px`,
                                   }}
                                 >
-                                  {blockRender({
-                                    ...block.data,
-                                  })}
+                                  {blockRender(block.data)}
                                 </div>
                               </ChartDraggable>
                             </div>

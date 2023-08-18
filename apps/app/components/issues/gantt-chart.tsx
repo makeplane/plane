@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 // hooks
 import useIssuesView from "hooks/use-issues-view";
@@ -11,6 +12,8 @@ import {
   IssueGanttBlock,
   renderIssueBlocksStructure,
 } from "components/gantt-chart";
+// icons
+import { getStateGroupIcon } from "components/icons";
 // types
 import { IIssue } from "types";
 
@@ -28,14 +31,16 @@ export const IssueGanttChartView = () => {
   );
 
   // rendering issues on gantt sidebar
-  const GanttSidebarBlockView = ({ data }: any) => (
-    <div className="relative flex w-full h-full items-center p-1 overflow-hidden gap-1">
-      <div
-        className="rounded-sm flex-shrink-0 w-[10px] h-[10px] flex justify-center items-center"
-        style={{ backgroundColor: data?.state_detail?.color || "#rgb(var(--color-primary-100))" }}
-      />
-      <div className="text-custom-text-100 text-sm">{data?.name}</div>
-    </div>
+  const GanttSidebarBlockView = ({ issue }: { issue: IIssue }) => (
+    <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
+      <a className="relative w-full flex items-center gap-2 h-full px-3">
+        {getStateGroupIcon(issue?.state_detail?.group, "14", "14", issue?.state_detail?.color)}
+        <div className="text-xs text-custom-text-300 flex-shrink-0">
+          {issue?.project_detail?.identifier} {issue?.sequence_id}
+        </div>
+        <h6 className="text-sm font-medium flex-grow truncate">{issue?.name}</h6>
+      </a>
+    </Link>
   );
 
   return (
@@ -48,8 +53,8 @@ export const IssueGanttChartView = () => {
         blockUpdateHandler={(block, payload) =>
           updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())
         }
-        sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
         blockRender={(data: any) => <IssueGanttBlock issue={data as IIssue} />}
+        sidebarBlockRender={(data: any) => <GanttSidebarBlockView issue={data as IIssue} />}
         enableReorder={orderBy === "sort_order"}
       />
     </div>
