@@ -65,7 +65,11 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
         {comment.actor_detail.avatar && comment.actor_detail.avatar !== "" ? (
           <img
             src={comment.actor_detail.avatar}
-            alt={comment.actor_detail.display_name}
+            alt={
+              comment.actor_detail.is_bot
+                ? comment.actor_detail.first_name + " Bot"
+                : comment.actor_detail.display_name
+            }
             height={30}
             width={30}
             className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-200"
@@ -74,7 +78,9 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           <div
             className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}
           >
-            {comment.actor_detail.display_name.charAt(0)}
+            {comment.actor_detail.is_bot
+              ? comment.actor_detail.first_name.charAt(0)
+              : comment.actor_detail.display_name.charAt(0)}
           </div>
         )}
 
