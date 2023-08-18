@@ -24,7 +24,7 @@ const UploadImagesPlugin = () =>
           const image = document.createElement("img");
           image.setAttribute(
             "class",
-            "w-[35%] opacity-10 rounded-lg border border-custom-border-300",
+            "opacity-10 rounded-lg border border-custom-border-300",
           );
           image.src = src;
           placeholder.appendChild(image);

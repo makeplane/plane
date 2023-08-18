@@ -1,14 +1,9 @@
-// @ts-nocheck
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import { useDebouncedCallback } from "use-debounce";
 import { EditorBubbleMenu } from "./bubble-menu";
 import { TiptapExtensions } from "./extensions";
 import { TiptapEditorProps } from "./props";
-import { Node } from "@tiptap/pm/model";
-import { Editor as CoreEditor } from "@tiptap/core";
-import { useCallback, useImperativeHandle, useRef } from "react";
-import { EditorState } from "@tiptap/pm/state";
-import fileService from "services/file.service";
+import { useImperativeHandle, useRef } from "react";
 import { ImageResizer } from "./extensions/image-resize";
 
 export interface ITiptapRichTextEditor {
@@ -51,7 +46,6 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
       // for instant feedback loop
       setIsSubmitting?.("submitting");
       setShouldShowAlert?.(true);
-      checkForNodeDeletions(editor);
       if (debouncedUpdatesEnabled) {
         debouncedUpdates({ onChange, editor });
       } else {
@@ -70,45 +64,6 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
       editorRef.current?.commands.setContent(content);
     },
   }));
-
-  const previousState = useRef<EditorState>();
-
-  const onNodeDeleted = useCallback(async (node: Node) => {
-    if (node.type.name === "image") {
-      const assetUrlWithWorkspaceId = new URL(node.attrs.src).pathname.substring(1);
-      const resStatus = await fileService.deleteImage(assetUrlWithWorkspaceId);
-      if (resStatus === 204) {
-        console.log("file deleted successfully");
-      }
-    }
-  }, []);
-
-  const checkForNodeDeletions = useCallback(
-    (editor: CoreEditor) => {
-      const prevNodesById: Record<string, Node> = {};
-      previousState.current?.doc.forEach((node) => {
-        if (node.attrs.id) {
-          prevNodesById[node.attrs.id] = node;
-        }
-      });
-
-      const nodesById: Record<string, Node> = {};
-      editor.state?.doc.forEach((node) => {
-        if (node.attrs.id) {
-          nodesById[node.attrs.id] = node;
-        }
-      });
-
-      previousState.current = editor.state;
-
-      for (const [id, node] of Object.entries(prevNodesById)) {
-        if (nodesById[id] === undefined) {
-          onNodeDeleted(node);
-        }
-      }
-    },
-    [onNodeDeleted]
-  );
 
   const debouncedUpdates = useDebouncedCallback(async ({ onChange, editor }) => {
     setTimeout(async () => {
