@@ -37,7 +37,7 @@ import { LinkIcon } from "@heroicons/react/20/solid";
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, IModule, ModuleLink } from "types";
+import { ICurrentUserResponse, IIssue, linkDetails, IModule, ModuleLink } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
@@ -61,6 +61,7 @@ type Props = {
 export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIssues, user }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -112,6 +113,37 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
             title: "Error!",
             message: "Something went wrong. Please try again.",
           });
+      });
+  };
+
+  const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
+    if (!workspaceSlug || !projectId || !module) return;
+
+    const payload = { metadata: {}, ...formData };
+
+    const updatedLinks = module.link_module.map((l) =>
+      l.id === linkId
+        ? {
+            ...l,
+            title: formData.title,
+            url: formData.url,
+          }
+        : l
+    );
+
+    mutate<IModule>(
+      MODULE_DETAILS(module.id),
+      (prevData) => ({ ...(prevData as IModule), link_module: updatedLinks }),
+      false
+    );
+
+    await modulesService
+      .updateModuleLink(workspaceSlug as string, projectId as string, module.id, linkId, payload)
+      .then((res) => {
+        mutate(MODULE_DETAILS(module.id));
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -170,12 +202,23 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
     ? Math.round((module.completed_issues / module.total_issues) * 100)
     : null;
 
+  const handleEditLink = (link: linkDetails) => {
+    setSelectedLinkToUpdate(link);
+    setModuleLinkModal(true);
+  };
+
   return (
     <>
       <LinkModal
         isOpen={moduleLinkModal}
-        handleClose={() => setModuleLinkModal(false)}
-        onFormSubmit={handleCreateLink}
+        handleClose={() => {
+          setModuleLinkModal(false);
+          setSelectedLinkToUpdate(null);
+        }}
+        data={selectedLinkToUpdate}
+        status={selectedLinkToUpdate ? true : false}
+        createIssueLink={handleCreateLink}
+        updateIssueLink={handleUpdateLink}
       />
       <DeleteModuleModal
         isOpen={moduleDeleteModal}
@@ -544,7 +587,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col border-t border-custom-border-200 px-6 py-6 text-xs">
+            <div className="flex w-full flex-col border-t border-custom-border-200 px-6 pt-6 pb-10 text-xs">
               <div className="flex w-full items-center justify-between">
                 <h4 className="text-sm font-medium text-custom-text-200">Links</h4>
                 <button
@@ -558,6 +601,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                 {memberRole && module.link_module && module.link_module.length > 0 ? (
                   <LinksList
                     links={module.link_module}
+                    handleEditLink={handleEditLink}
                     handleDeleteLink={handleDeleteLink}
                     userAuth={memberRole}
                   />

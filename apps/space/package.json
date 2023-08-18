@@ -20,7 +20,7 @@
     "js-cookie": "^3.0.1",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
-    "next": "^13.4.13",
+    "next": "^13.4.16",
     "nprogress": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

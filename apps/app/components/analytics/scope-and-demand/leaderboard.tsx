@@ -1,3 +1,8 @@
+// ui
+import { ProfileEmptyState } from "components/ui";
+// image
+import emptyUsers from "public/empty-state/empty_users.svg";
+
 type Props = {
   users: {
     avatar: string | null;
@@ -8,10 +13,16 @@ type Props = {
     id: string;
   }[];
   title: string;
+  emptyStateMessage: string;
   workspaceSlug: string;
 };
 
-export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title, workspaceSlug }) => (
+export const AnalyticsLeaderboard: React.FC<Props> = ({
+  users,
+  title,
+  emptyStateMessage,
+  workspaceSlug,
+}) => (
   <div className="p-3 border border-custom-border-200 rounded-[10px]">
     <h6 className="text-base font-medium">{title}</h6>
     {users.length > 0 ? (
@@ -47,7 +58,9 @@ export const AnalyticsLeaderboard: React.FC<Props> = ({ users, title, workspaceS
         ))}
       </div>
     ) : (
-      <div className="text-custom-text-200 text-center text-sm py-8">No matching data found.</div>
+      <div className="px-7 py-4">
+        <ProfileEmptyState title="No Data yet" description={emptyStateMessage} image={emptyUsers} />
+      </div>
     )}
   </div>
 );
