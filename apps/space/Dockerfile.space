@@ -1,6 +1,6 @@
 FROM node:18-alpine AS base 
 
-# [Stage 1] Prune the Space Project and lockfile out the monorepo.
+# [Stage 1] Prune the plane-deploy Project and lockfile out the monorepo.
 FROM base AS builder
 RUN apk add --no-cache libc6-compat 
 RUN apk update 
@@ -10,23 +10,25 @@ WORKDIR /app
 RUN yarn global add turbo
 COPY . .
 
-# Space pruned as /app/out/json (deps) and /app/out/full (space)
-RUN turbo prune --scope=space --docker
+# plane-deploy pruned as /app/out/json (deps) and /app/out/full (plane-deploy)
+RUN turbo prune --scope=plane-deploy --docker
 
 # [Stage 2] Install Dependencies from deps only files from /app/out/json
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
+RUN apk add tree
 RUN apk update
 WORKDIR /app
 
-# Copying package.json and lockfile from space and also from root, as /app/out/yarn-lock.json and /app/out/json
+# Copying package.json and lockfile from plane-deploy and also from root, as /app/out/yarn-lock.json and /app/out/json
 COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/yarn-lock.json ./yarn-lock.json
+COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn install 
 
 # Building the Project with standalone mode ( https://nextjs.org/docs/pages/api-reference/next-config-js/output ) 
 COPY --from=builder ./app/out/full .
-RUN yarn turbo run build --filter=space
+RUN yarn turbo run build --filter=plane-deploy
+# CMD tree ./apps -I 'node_modules'
 
 # [Stage: 3] Running the project
 FROM base AS runner
