@@ -227,6 +227,11 @@ class Migration(migrations.Migration):
                 'unique_together': {('issue', 'actor')},
             },
         ),
+        migrations.AlterField(
+            model_name='modulelink',
+            name='title',
+            field=models.CharField(blank=True, max_length=255, null=True),
+        ),
         migrations.RunPython(generate_display_name),
         migrations.RunPython(rectify_field_issue_activity),
         migrations.RunPython(update_assignee_issue_activity),

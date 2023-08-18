@@ -59,9 +59,9 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     >
       {({ open }: any) => (
         <>
-          <Combobox.Button className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200 hover:bg-custom-background-80">
+          <Combobox.Button className="flex cursor-pointer items-center text-xs">
             {value && value.length > 0 ? (
-              <span className="flex items-center justify-center gap-2 px-3 py-1 text-xs">
+              <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs">
                 <IssueLabelsList
                   labels={value.map((v) => issueLabels?.find((l) => l.id === v)?.color) ?? []}
                   length={3}
@@ -69,7 +69,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                 />
               </span>
             ) : (
-              <span className="flex items-center justify-center gap-2 px-2.5 py-1 text-xs">
+              <span className="flex items-center justify-center gap-2 px-2.5 py-1 text-xs rounded-md border border-custom-border-200 shadow-sm duration-200 hover:bg-custom-background-80">
                 <TagIcon className="h-3.5 w-3.5 text-custom-text-200" />
                 <span className=" text-custom-text-200">Label</span>
               </span>

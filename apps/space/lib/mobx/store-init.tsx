@@ -24,11 +24,6 @@ const MobxStoreInit = () => {
     else localStorage.setItem("app_theme", _theme && _theme != "light" ? "dark" : "light");
   }, [store?.theme]);
 
-  // updating default board view when we are in the issues page
-  useEffect(() => {
-    if (board && board != store?.issue?.currentIssueBoardView) store.issue.setCurrentIssueBoardView(board);
-  }, [board, store?.issue]);
-
   return <></>;
 };
 
