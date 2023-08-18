@@ -21,18 +21,11 @@ export const GanttSidebar: React.FC<Props> = ({
   const handleOrderChange = (result: DropResult) => {
     if (!blocks) return;
 
-    const { source, destination, draggableId } = result;
+    const { source, destination } = result;
 
     if (!destination) return;
 
-    if (source.index === destination.index && document) {
-      // const draggedBlock = document.querySelector(`#${draggableId}`) as HTMLElement;
-      // const blockStyles = window.getComputedStyle(draggedBlock);
-
-      // console.log(blockStyles.marginLeft);
-
-      return;
-    }
+    if (source.index === destination.index) return;
 
     let updatedSortOrder = blocks[source.index].sort_order;
 
@@ -64,9 +57,9 @@ export const GanttSidebar: React.FC<Props> = ({
   return (
     <DragDropContext onDragEnd={handleOrderChange}>
       <StrictModeDroppable droppableId="gantt-sidebar">
-        {(droppableProvided, snapshot) => (
+        {(droppableProvided) => (
           <div
-            className="h-full overflow-y-auto space-y-3 px-2.5"
+            className="h-full overflow-y-auto space-y-2 px-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
