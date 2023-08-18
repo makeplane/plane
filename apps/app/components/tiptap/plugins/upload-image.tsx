@@ -57,7 +57,7 @@ function findPlaceholder(state: EditorState, id: {}) {
   return found.length ? found[0].from : null;
 }
 
-export async function startImageUpload(file: File, view: EditorView, pos: number) {
+export async function startImageUpload(file: File, view: EditorView, pos: number, workspaceSlug: string) {
   if (!file.type.includes("image/")) {
     return;
   } else if (file.size / 1024 / 1024 > 20) {
@@ -82,7 +82,10 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
     view.dispatch(tr);
   };
 
-  const src = await UploadImageHandler(file);
+  if (!workspaceSlug) {
+    return;
+  }
+  const src = await UploadImageHandler(file, workspaceSlug);
   const { schema } = view.state;
   pos = findPlaceholder(view.state, id);
 
@@ -96,19 +99,24 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
   view.dispatch(transaction);
 }
 
-const UploadImageHandler = (file: File): Promise<string> => {
+const UploadImageHandler = (file: File, workspaceSlug: string): Promise<string> => {
+  if (!workspaceSlug) {
+    return Promise.reject("Workspace slug is missing");
+  }
   try {
+    console.log("in here",workspaceSlug)
     const formData = new FormData();
     formData.append("asset", file);
     formData.append("attributes", JSON.stringify({}));
 
     return new Promise(async (resolve, reject) => {
       const imageUrl = await fileService
-        .uploadFile("plane", formData)
+        .uploadFile(workspaceSlug, formData)
         .then((response) => response.asset);
 
       const image = new Image();
       image.src = imageUrl;
+      console.log("image uploaded", imageUrl)
       image.onload = () => {
         resolve(imageUrl);
       };

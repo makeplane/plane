@@ -23,7 +23,7 @@ import isValidHttpUrl from "../bubble-menu/utils/link-validator";
 
 lowlight.registerLanguage("ts", ts);
 
-export const TiptapExtensions = [
+export const TiptapExtensions = (workspaceSlug: string) => [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -112,7 +112,7 @@ export const TiptapExtensions = [
   UniqueID.configure({
     types: ["image"],
   }),
-  SlashCommand,
+  SlashCommand(workspaceSlug),
   TiptapUnderline,
   TextStyle,
   Color,

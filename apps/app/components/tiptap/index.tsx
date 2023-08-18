@@ -20,6 +20,7 @@ export interface ITiptapRichTextEditor {
   onChange?: (json: any, html: string) => void;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
+  workspaceSlug: string;
   editable?: boolean;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
@@ -36,14 +37,15 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     editorContentCustomClassNames,
     value,
     noBorder,
+    workspaceSlug,
     borderOnFocus,
     customClassName,
   } = props;
 
   const editor = useEditor({
     editable: editable ?? true,
-    editorProps: TiptapEditorProps,
-    extensions: TiptapExtensions,
+    editorProps: TiptapEditorProps(workspaceSlug),
+    extensions: TiptapExtensions(workspaceSlug),
     content: value,
     onUpdate: async ({ editor }) => {
       // for instant feedback loop

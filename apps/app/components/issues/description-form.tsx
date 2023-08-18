@@ -24,6 +24,7 @@ export interface IssueDetailsProps {
     description: string;
     description_html: string;
   };
+  workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
   isAllowed: boolean;
 }
@@ -31,6 +32,7 @@ export interface IssueDetailsProps {
 export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   issue,
   handleFormSubmit,
+  workspaceSlug,
   isAllowed,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -140,6 +142,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
                     ? watch("description_html")
                     : value
                 }
+                workspaceSlug={workspaceSlug}
                 debouncedUpdatesEnabled={true}
                 setShouldShowAlert={setShowAlert}
                 setIsSubmitting={setIsSubmitting}

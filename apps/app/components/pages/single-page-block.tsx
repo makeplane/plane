@@ -456,6 +456,7 @@ export const SinglePageBlock: React.FC<Props> = ({
                   {showBlockDetails
                     ? block.description_html.length > 7 && (
                       <TiptapEditor
+                        workspaceSlug={workspaceSlug as string}
                         value={block.description_html}
                         customClassName="text-sm min-h-[150px]"
                         noBorder
