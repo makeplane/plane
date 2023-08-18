@@ -17,7 +17,7 @@ type Props = {
 
 export const IssueDateSelect: React.FC<Props> = ({ label, maxDate, minDate, onChange, value }) => (
   <Popover className="relative flex items-center justify-center  rounded-lg">
-    {({ open }) => (
+    {({ close }) => (
       <>
         <Popover.Button className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200">
           <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80">
@@ -52,6 +52,8 @@ export const IssueDateSelect: React.FC<Props> = ({ label, maxDate, minDate, onCh
               onChange={(val) => {
                 if (!val) onChange("");
                 else onChange(renderDateFormat(val));
+
+                close();
               }}
               dateFormat="dd-MM-yyyy"
               minDate={minDate}
