@@ -141,7 +141,7 @@ export const GanttChartBlocks: FC<{
                                 provided={provided}
                               >
                                 <div
-                                  className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-9 flex items-center transition-all"
+                                  className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-8 flex items-center transition-all"
                                   style={{
                                     width: `${block.position?.width}px`,
                                   }}
