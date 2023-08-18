@@ -1,6 +1,9 @@
 # Python imports
 import uuid
 
+# Django imports
+from django.core.validators import validate_email
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -111,11 +114,14 @@ class IssuePropertyValueViewSet(BaseViewSet):
             bulk_issue_props = []
             for issue_property in issue_properties:
                 # get the requested property
-
-                print(issue_property)
-                print(issue_property.id)
                 value = request_data.get(str(issue_property.id))
-                print(value)
+
+                if issue_property.type == "email":
+                    if issue_property.is_multi:
+
+                    else:
+                        
+
                 bulk_issue_props.append(
                     IssuePropertyValue(
                         values=value,
