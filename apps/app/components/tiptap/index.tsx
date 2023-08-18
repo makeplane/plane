@@ -39,8 +39,8 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
 
   const editor = useEditor({
     editable: editable ?? true,
-    editorProps: TiptapEditorProps(workspaceSlug),
-    extensions: TiptapExtensions(workspaceSlug),
+    editorProps: TiptapEditorProps(workspaceSlug, setIsSubmitting),
+    extensions: TiptapExtensions(workspaceSlug, setIsSubmitting),
     content: value,
     onUpdate: async ({ editor }) => {
       // for instant feedback loop

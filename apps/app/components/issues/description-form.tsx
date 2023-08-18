@@ -75,6 +75,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
       setTimeout(async () => {
         setIsSubmitting("saved");
       }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
     }
   }, [isSubmitting, setShowAlert]);
 

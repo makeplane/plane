@@ -57,7 +57,7 @@ function findPlaceholder(state: EditorState, id: {}) {
   return found.length ? found[0].from : null;
 }
 
-export async function startImageUpload(file: File, view: EditorView, pos: number, workspaceSlug: string) {
+export async function startImageUpload(file: File, view: EditorView, pos: number, workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void) {
   if (!file.type.includes("image/")) {
     return;
   } else if (file.size / 1024 / 1024 > 20) {
@@ -85,6 +85,7 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
   if (!workspaceSlug) {
     return;
   }
+  setIsSubmitting?.("submitting")
   const src = await UploadImageHandler(file, workspaceSlug);
   const { schema } = view.state;
   pos = findPlaceholder(view.state, id);
@@ -104,7 +105,6 @@ const UploadImageHandler = (file: File, workspaceSlug: string): Promise<string> 
     return Promise.reject("Workspace slug is missing");
   }
   try {
-    console.log("in here",workspaceSlug)
     const formData = new FormData();
     formData.append("asset", file);
     formData.append("attributes", JSON.stringify({}));
@@ -116,7 +116,6 @@ const UploadImageHandler = (file: File, workspaceSlug: string): Promise<string> 
 
       const image = new Image();
       image.src = imageUrl;
-      console.log("image uploaded", imageUrl)
       image.onload = () => {
         resolve(imageUrl);
       };

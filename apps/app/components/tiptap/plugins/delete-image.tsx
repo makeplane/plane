@@ -14,7 +14,6 @@ const TrackImageDeletionPlugin = () =>
         const removedImages: ProseMirrorNode[] = [];
 
         oldState.doc.descendants((oldNode, oldPos) => {
-          console.log(oldNode.type.name)
           if (oldNode.type.name !== 'image') return;
 
           if (!newState.doc.resolve(oldPos).parent) return;

@@ -135,7 +135,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     box-sizing: border-box;
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 45%;
     width: 20px;
     height: 20px;
     border-radius: 50%;
