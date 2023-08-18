@@ -177,7 +177,36 @@ class ImportServiceEndpoint(BaseAPIView):
                 )
 
                 service_importer.delay(service, importer.id)
-                serializer = ImporterSerializer(importer)
+                serializer = ImporterSerializer(
+                    importer,
+                    fields={
+                        "id": [],
+                        "created_by": [],
+                        "created_at": [],
+                        "updated_at": [],
+                        "updated_by": [],
+                        "workspace": [],
+                        "project": [],
+                        "initiated_by": [],
+                        "project_detail": [],
+                        "workspace_detail": [],
+                        "service": [],
+                        "status": [],
+                        "metadata": [],
+                        "config": [],
+                        "data": [],
+                        "token": [],
+                        "imported_data": [],
+                        "initiated_by_detail": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ],
+                    },
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             if service == "jira":
@@ -213,7 +242,36 @@ class ImportServiceEndpoint(BaseAPIView):
                 )
 
                 service_importer.delay(service, importer.id)
-                serializer = ImporterSerializer(importer)
+                serializer = ImporterSerializer(
+                    importer,
+                    fields={
+                        "id": [],
+                        "created_by": [],
+                        "created_at": [],
+                        "updated_at": [],
+                        "updated_by": [],
+                        "workspace": [],
+                        "project": [],
+                        "initiated_by": [],
+                        "project_detail": [],
+                        "workspace_detail": [],
+                        "service": [],
+                        "status": [],
+                        "metadata": [],
+                        "config": [],
+                        "data": [],
+                        "token": [],
+                        "imported_data": [],
+                        "initiated_by_detail": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ],
+                    },
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             return Response(
@@ -243,7 +301,39 @@ class ImportServiceEndpoint(BaseAPIView):
                 .order_by("-created_at")
                 .select_related("initiated_by", "project", "workspace")
             )
-            serializer = ImporterSerializer(imports, many=True)
+            serializer = ImporterSerializer(
+                imports,
+                fields=[
+                    "id",
+                    "created_by",
+                    "created_at",
+                    "updated_at",
+                    "updated_by",
+                    "workspace",
+                    "project",
+                    "initiated_by",
+                    "project_detail",
+                    "workspace_detail",
+                    "service",
+                    "status",
+                    "metadata",
+                    "config",
+                    "data",
+                    "token",
+                    "imported_data",
+                    {
+                        "initiated_by_detail": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ]
+                    },
+                ],
+                many=True,
+            )
             return Response(serializer.data)
         except Exception as e:
             capture_exception(e)
@@ -284,7 +374,40 @@ class ImportServiceEndpoint(BaseAPIView):
             importer = Importer.objects.get(
                 pk=pk, service=service, workspace__slug=slug
             )
-            serializer = ImporterSerializer(importer, data=request.data, partial=True)
+            serializer = ImporterSerializer(
+                importer,
+                fields=[
+                    "id",
+                    "created_by",
+                    "created_at",
+                    "updated_at",
+                    "updated_by",
+                    "workspace",
+                    "project",
+                    "initiated_by",
+                    "project_detail",
+                    "workspace_detail",
+                    "service",
+                    "status",
+                    "metadata",
+                    "config",
+                    "data",
+                    "token",
+                    "imported_data",
+                    {
+                        "initiated_by_detail": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ]
+                    },
+                ],
+                data=request.data,
+                partial=True,
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)

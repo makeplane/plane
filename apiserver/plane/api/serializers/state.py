@@ -1,7 +1,7 @@
 # Module imports
 from .base import BaseSerializer
 from .workspace import WorkSpaceSerializer
-from .project import ProjectLiteSerializer
+from .project import ProjectSerializer
 
 from plane.db.models import State
 
@@ -12,7 +12,7 @@ class StateSerializer(BaseSerializer):
         fields=("id", "name", "slug"),
         read_only=True,
     ) 
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
 
     class Meta:
         model = State

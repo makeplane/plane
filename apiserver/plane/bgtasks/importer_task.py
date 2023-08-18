@@ -161,7 +161,7 @@ def service_importer(service, importer_id):
         if settings.PROXY_BASE_URL:
             headers = {"Content-Type": "application/json"}
             import_data_json = json.dumps(
-                ImporterSerializer(importer).data,
+                ImporterSerializer(importer,fields=["id","created_by","created_at","updated_at","updated_by","workspace","project","initiated_by","project_detail","workspace_detail","service","status","metadata","config","data","token","imported_data",{"initiated_by_detail":["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}]).data,
                 cls=DjangoJSONEncoder,
             )
             res = requests.post(

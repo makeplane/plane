@@ -56,6 +56,10 @@ class CycleViewSet(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
     ]
+    # def get_serializer_class(self):
+    #     return (
+    #         CycleSerializer(nested_fields={"owned_by":("id", "first_name", "last_name", "avatar", "is_bot", "display_name")})
+    #     )
 
     def perform_create(self, serializer):
         serializer.save(
@@ -148,13 +152,15 @@ class CycleViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__assignees",
-                    queryset=User.objects.only("avatar", "first_name", "id").distinct(),
+                    queryset=User.objects.only(
+                        "avatar", "first_name", "id").distinct(),
                 )
             )
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__labels",
-                    queryset=Label.objects.only("name", "color", "id").distinct(),
+                    queryset=Label.objects.only(
+                        "name", "color", "id").distinct(),
                 )
             )
             .order_by("-is_favorite", "name")
@@ -172,7 +178,8 @@ class CycleViewSet(BaseViewSet):
             # All Cycles
             if cycle_view == "all":
                 return Response(
-                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                    CycleSerializer(queryset, fields=["id", "created_by", "created_at", "updated_at", "updated_by", "project", "workspace", "name", "description", "start_date", "end_date", "owned_by", "view_props", "sort_order", "is_favorite", "total_issues", "cancelled_issues", "completed_issues", "started_issues", "unstarted_issues"
+                    , "backlog_issues", "assignees", "labels", "total_estimates", "completed_estimates", "started_estimates",{"workspace_detail": ["id", "name","slug"]},{ "project_detail": ["id", "name", "cover_image", "icon_prop", "emoji", "description"]}, {"owned_by": ["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}], many=True).data, status=status.HTTP_200_OK
                 )
 
             # Current Cycle
@@ -182,7 +189,8 @@ class CycleViewSet(BaseViewSet):
                     end_date__gte=timezone.now(),
                 )
 
-                data = CycleSerializer(queryset, many=True).data
+                data = CycleSerializer(queryset,  fields=["id", "created_by", "created_at", "updated_at", "updated_by", "project", "workspace", "name", "description", "start_date", "end_date", "owned_by", "view_props", "sort_order", "is_favorite", "total_issues", "cancelled_issues", "completed_issues", "started_issues", "unstarted_issues"
+                    , "backlog_issues", "assignees", "labels", "total_estimates", "completed_estimates", "started_estimates",{"workspace_detail": ["id", "name","slug"]},{ "project_detail": ["id", "name", "cover_image", "icon_prop", "emoji", "description"]}, {"owned_by": ["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}], many=True).data
 
                 if len(data):
                     assignee_distribution = (
@@ -256,14 +264,16 @@ class CycleViewSet(BaseViewSet):
             if cycle_view == "upcoming":
                 queryset = queryset.filter(start_date__gt=timezone.now())
                 return Response(
-                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                    CycleSerializer(queryset, fields=["id", "created_by", "created_at", "updated_at", "updated_by", "project", "workspace", "name", "description", "start_date", "end_date", "owned_by", "view_props", "sort_order", "is_favorite", "total_issues", "cancelled_issues", "completed_issues", "started_issues", "unstarted_issues"
+                    , "backlog_issues", "assignees", "labels", "total_estimates", "completed_estimates", "started_estimates",{"workspace_detail": ["id", "name","slug"]},{ "project_detail": ["id", "name", "cover_image", "icon_prop", "emoji", "description"]}, {"owned_by": ["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}], many=True).data, status=status.HTTP_200_OK
                 )
 
             # Completed Cycles
             if cycle_view == "completed":
                 queryset = queryset.filter(end_date__lt=timezone.now())
                 return Response(
-                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                    CycleSerializer(queryset,  fields=["id", "created_by", "created_at", "updated_at", "updated_by", "project", "workspace", "name", "description", "start_date", "end_date", "owned_by", "view_props", "sort_order", "is_favorite", "total_issues", "cancelled_issues", "completed_issues", "started_issues", "unstarted_issues"
+                    , "backlog_issues", "assignees", "labels", "total_estimates", "completed_estimates", "started_estimates",{"workspace_detail": ["id", "name","slug"]},{ "project_detail": ["id", "name", "cover_image", "icon_prop", "emoji", "description"]}, {"owned_by": ["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}], many=True).data, status=status.HTTP_200_OK
                 )
 
             # Draft Cycles
@@ -274,16 +284,19 @@ class CycleViewSet(BaseViewSet):
                 )
 
                 return Response(
-                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                    CycleSerializer(queryset,  fields=["id", "created_by", "created_at", "updated_at", "updated_by", "project", "workspace", "name", "description", "start_date", "end_date", "owned_by", "view_props", "sort_order", "is_favorite", "total_issues", "cancelled_issues", "completed_issues", "started_issues", "unstarted_issues"
+                    , "backlog_issues", "assignees", "labels", "total_estimates", "completed_estimates", "started_estimates",{"workspace_detail": ["id", "name","slug"]},{ "project_detail": ["id", "name", "cover_image", "icon_prop", "emoji", "description"]}, {"owned_by": ["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}], many=True).data, status=status.HTTP_200_OK
                 )
 
             # Incomplete Cycles
             if cycle_view == "incomplete":
                 queryset = queryset.filter(
-                    Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
+                    Q(end_date__gte=timezone.now().date()) | Q(
+                        end_date__isnull=True),
                 )
                 return Response(
-                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                    CycleSerializer(queryset,  fields=["id", "created_by", "created_at", "updated_at", "updated_by", "project", "workspace", "name", "description", "start_date", "end_date", "owned_by", "view_props", "sort_order", "is_favorite", "total_issues", "cancelled_issues", "completed_issues", "started_issues", "unstarted_issues"
+                    , "backlog_issues", "assignees", "labels", "total_estimates", "completed_estimates", "started_estimates",{"workspace_detail": ["id", "name","slug"]},{ "project_detail": ["id", "name", "cover_image", "icon_prop", "emoji", "description"]}, {"owned_by": ["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}], many=True).data, status=status.HTTP_200_OK
                 )
 
             return Response(
@@ -306,7 +319,8 @@ class CycleViewSet(BaseViewSet):
                 request.data.get("start_date", None) is not None
                 and request.data.get("end_date", None) is not None
             ):
-                serializer = CycleSerializer(data=request.data)
+                serializer = CycleSerializer(data=request.data,  fields=["id", "created_by", "created_at", "updated_at", "updated_by", "project", "workspace", "name", "description", "start_date", "end_date", "owned_by", "view_props", "sort_order", "is_favorite", "total_issues", "cancelled_issues", "completed_issues", "started_issues", "unstarted_issues"
+                    , "backlog_issues", "assignees", "labels", "total_estimates", "completed_estimates", "started_estimates",{"workspace_detail": ["id", "name","slug"]},{ "project_detail": ["id", "name", "cover_image", "icon_prop", "emoji", "description"]}, {"owned_by": ["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}])
                 if serializer.is_valid():
                     serializer.save(
                         project_id=project_id,
@@ -342,7 +356,8 @@ class CycleViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = CycleWriteSerializer(cycle, data=request.data, partial=True)
+            serializer = CycleWriteSerializer(
+                cycle, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -418,7 +433,8 @@ class CycleViewSet(BaseViewSet):
                 .order_by("label_name")
             )
 
-            data = CycleSerializer(queryset).data
+            data = CycleSerializer(queryset, fields=["id", "created_by", "created_at", "updated_at", "updated_by", "project", "workspace", "name", "description", "start_date", "end_date", "owned_by", "view_props", "sort_order", "is_favorite", "total_issues", "cancelled_issues", "completed_issues", "started_issues", "unstarted_issues"
+                    , "backlog_issues", "assignees", "labels", "total_estimates", "completed_estimates", "started_estimates",{"workspace_detail": ["id", "name","slug"]},{ "project_detail": ["id", "name", "cover_image", "icon_prop", "emoji", "description"]}, {"owned_by": ["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}]).data
             data["distribution"] = {
                 "assignees": assignee_distribution,
                 "labels": label_distribution,
@@ -486,7 +502,8 @@ class CycleIssueViewSet(BaseViewSet):
             super()
             .get_queryset()
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("issue_id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -512,7 +529,8 @@ class CycleIssueViewSet(BaseViewSet):
             issues = (
                 Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
                 .annotate(
-                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    sub_issues_count=Issue.issue_objects.filter(
+                        parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")

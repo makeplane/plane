@@ -5,13 +5,13 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .issue import IssueFlatSerializer, LabelLiteSerializer
 from .workspace import WorkSpaceSerializer
-from .project import ProjectLiteSerializer
+from .project import ProjectSerializer
 from plane.db.models import Page, PageBlock, PageFavorite, PageLabel, Label
 
 
 class PageBlockSerializer(BaseSerializer):
     issue_detail = IssueFlatSerializer(source="issue", read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     workspace_detail = WorkSpaceSerializer(
         source="workspace",
         fields=("id", "name", "slug"),
@@ -43,7 +43,7 @@ class PageSerializer(BaseSerializer):
         required=False,
     )
     blocks = PageBlockLiteSerializer(read_only=True, many=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     workspace_detail = WorkSpaceSerializer(
         source="workspace",
         fields=("id", "name", "slug"),

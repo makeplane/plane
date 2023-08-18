@@ -1103,7 +1103,7 @@ def issue_activity(
                     for issue_activity in issue_activities_created:
                         headers = {"Content-Type": "application/json"}
                         issue_activity_json = json.dumps(
-                            IssueActivitySerializer(issue_activity).data,
+                            IssueActivitySerializer(issue_activity,fields=[{"actor_detail":["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}]).data,
                             cls=DjangoJSONEncoder,
                         )
                         _ = requests.post(

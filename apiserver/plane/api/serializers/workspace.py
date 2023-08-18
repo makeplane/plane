@@ -18,7 +18,7 @@ from plane.db.models import (
 
 class WorkSpaceSerializer(BaseSerializer):
     owner = UserSerializer(
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
     total_members = serializers.IntegerField(read_only=True)
@@ -37,7 +37,6 @@ class WorkSpaceSerializer(BaseSerializer):
         ]
 
 
-
 class WorkSpaceMemberSerializer(BaseSerializer):
     member = UserSerializer(
         fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name" ,"email"),
@@ -51,30 +50,6 @@ class WorkSpaceMemberSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceMember
         fields = "__all__"
-
-
-# class WorkspaceMemberAdminSerializer(BaseSerializer):
-#     member = UserSerializer(
-#         fields=(
-#             "id",
-#             "first_name",
-#             "last_name",
-#             "avatar",
-#             "is_bot",
-#             "display_name",
-#             "email",
-#         ),
-#         read_only=True,
-#     )
-
-#     workspace = WorkSpaceSerializer(
-#         fields=("id", "name", "slug"),
-#         read_only=True,
-#     )
-
-#     class Meta:
-#         model = WorkspaceMember
-#         fields = "__all__"
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):

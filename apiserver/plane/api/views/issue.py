@@ -281,6 +281,16 @@ class IssueViewSet(BaseViewSet):
 
             serializer = IssueCreateSerializer(
                 data=request.data,
+                nested_fields={
+                    "created_by_detail": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
                 context={
                     "project_id": project_id,
                     "workspace_id": project.workspace_id,
@@ -493,8 +503,34 @@ class IssueActivityEndpoint(BaseAPIView):
                 .order_by("created_at")
                 .select_related("actor", "issue", "project", "workspace")
             )
-            issue_activities = IssueActivitySerializer(issue_activities, many=True).data
-            issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+            issue_activities = IssueActivitySerializer(
+                issue_activities,
+                nested_fields={
+                    "actor_detail": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+                many=True,
+            ).data
+            issue_comments = IssueCommentSerializer(
+                issue_comments,
+                nested_fields={
+                    "actor_detail": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+                many=True,
+            ).data
 
             result_list = sorted(
                 chain(issue_activities, issue_comments),
@@ -521,6 +557,9 @@ class IssueCommentViewSet(BaseViewSet):
         "issue__id",
         "workspace__id",
     ]
+
+    # def get_serializer_class(self):
+    #     return IssueCommentSerializer(nested_fields={"actor_detail":("id", "first_name", "last_name", "avatar", "is_bot", "display_name")})
 
     def perform_create(self, serializer):
         serializer.save(
@@ -550,7 +589,19 @@ class IssueCommentViewSet(BaseViewSet):
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
                 current_instance=json.dumps(
-                    IssueCommentSerializer(current_instance).data,
+                    IssueCommentSerializer(
+                        current_instance,
+                        nested_fields={
+                            "actor_detail": (
+                                "id",
+                                "first_name",
+                                "last_name",
+                                "avatar",
+                                "is_bot",
+                                "display_name",
+                            )
+                        },
+                    ).data,
                     cls=DjangoJSONEncoder,
                 ),
             )
@@ -571,7 +622,19 @@ class IssueCommentViewSet(BaseViewSet):
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
                 current_instance=json.dumps(
-                    IssueCommentSerializer(current_instance).data,
+                    IssueCommentSerializer(
+                        current_instance,
+                        nested_fields={
+                            "actor_detail": (
+                                "id",
+                                "first_name",
+                                "last_name",
+                                "avatar",
+                                "is_bot",
+                                "display_name",
+                            )
+                        },
+                    ).data,
                     cls=DjangoJSONEncoder,
                 ),
             )
@@ -769,7 +832,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
-            result = {item["state_group"]: item["state_count"] for item in state_distribution}
+            result = {
+                item["state_group"]: item["state_count"] for item in state_distribution
+            }
 
             serializer = IssueLiteSerializer(
                 sub_issues,
@@ -1507,7 +1572,19 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 else "EXTERNAL"
             )
 
-            serializer = IssueCommentSerializer(data=request.data)
+            serializer = IssueCommentSerializer(
+                data=request.data,
+                nested_fields={
+                    "actor_detail": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+            )
             if serializer.is_valid():
                 serializer.save(
                     project_id=project_id,
@@ -1547,7 +1624,19 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 workspace__slug=slug, pk=pk, actor=request.user
             )
             serializer = IssueCommentSerializer(
-                comment, data=request.data, partial=True
+                comment,
+                data=request.data,
+                nested_fields={
+                    "actor_detail": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+                partial=True,
             )
             if serializer.is_valid():
                 serializer.save()
@@ -1558,7 +1647,19 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     issue_id=str(issue_id),
                     project_id=str(project_id),
                     current_instance=json.dumps(
-                        IssueCommentSerializer(comment).data,
+                        IssueCommentSerializer(
+                            comment,
+                            nested_fields={
+                                "actor_detail": (
+                                    "id",
+                                    "first_name",
+                                    "last_name",
+                                    "avatar",
+                                    "is_bot",
+                                    "display_name",
+                                )
+                            },
+                        ).data,
                         cls=DjangoJSONEncoder,
                     ),
                 )
@@ -1567,7 +1668,8 @@ class IssueCommentPublicViewSet(BaseViewSet):
         except (IssueComment.DoesNotExist, ProjectDeployBoard.DoesNotExist):
             return Response(
                 {"error": "IssueComent Does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,)
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, slug, project_id, issue_id, pk):
         try:
@@ -1590,7 +1692,19 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=json.dumps(
-                    IssueCommentSerializer(comment).data,
+                    IssueCommentSerializer(
+                        comment,
+                        nested_fields={
+                            "actor_detail": (
+                                "id",
+                                "first_name",
+                                "last_name",
+                                "avatar",
+                                "is_bot",
+                                "display_name",
+                            )
+                        },
+                    ).data,
                     cls=DjangoJSONEncoder,
                 ),
             )
@@ -1835,9 +1949,11 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     def post(self, request, slug):
         try:
-
             issue_export_task.delay(
-                email=request.user.email, data=request.data, slug=slug ,exporter_name=request.user.first_name
+                email=request.user.email,
+                data=request.data,
+                slug=slug,
+                exporter_name=request.user.first_name,
             )
 
             return Response(

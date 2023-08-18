@@ -152,7 +152,22 @@ class InboxIssueViewSet(BaseViewSet):
                     )
                 )
             )
-            issues_data = IssueStateInboxSerializer(issues, many=True).data
+            issues_data = IssueStateInboxSerializer(
+                issues,
+                fields=[
+                    {
+                        "assignee_details": (
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        )
+                    }
+                ],
+                many=True,
+            ).data
             return Response(
                 issues_data,
                 status=status.HTTP_200_OK,
@@ -222,7 +237,19 @@ class InboxIssueViewSet(BaseViewSet):
                 source=request.data.get("source", "in-app"),
             )
 
-            serializer = IssueStateInboxSerializer(issue)
+            serializer = IssueStateInboxSerializer(
+                issue,
+                nested_fields={
+                    "assignee_details": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -237,10 +264,17 @@ class InboxIssueViewSet(BaseViewSet):
                 pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
             )
             # Get the project member
-            project_member = ProjectMember.objects.get(workspace__slug=slug, project_id=project_id, member=request.user)
+            project_member = ProjectMember.objects.get(
+                workspace__slug=slug, project_id=project_id, member=request.user
+            )
             # Only project members admins and created_by users can access this endpoint
-            if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(request.user.id):
-                return Response({"error": "You cannot edit inbox issues"}, status=status.HTTP_400_BAD_REQUEST)
+            if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
+                request.user.id
+            ):
+                return Response(
+                    {"error": "You cannot edit inbox issues"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             # Get issue data
             issue_data = request.data.pop("issue", False)
@@ -251,15 +285,29 @@ class InboxIssueViewSet(BaseViewSet):
                 )
                 # Only allow guests and viewers to edit name and description
                 if project_member.role <= 10:
-                    # viewers and guests since only viewers and guests 
+                    # viewers and guests since only viewers and guests
                     issue_data = {
                         "name": issue_data.get("name", issue.name),
-                        "description_html": issue_data.get("description_html", issue.description_html),
-                        "description": issue_data.get("description", issue.description)
+                        "description_html": issue_data.get(
+                            "description_html", issue.description_html
+                        ),
+                        "description": issue_data.get("description", issue.description),
                     }
 
                 issue_serializer = IssueCreateSerializer(
-                    issue, data=issue_data, partial=True
+                    issue,
+                    data=issue_data,
+                    nested_fields={
+                        "created_by_detail": (
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        )
+                    },
+                    partial=True,
                 )
 
                 if issue_serializer.is_valid():
@@ -300,7 +348,9 @@ class InboxIssueViewSet(BaseViewSet):
                             project_id=project_id,
                         )
                         state = State.objects.filter(
-                            group="cancelled", workspace__slug=slug, project_id=project_id
+                            group="cancelled",
+                            workspace__slug=slug,
+                            project_id=project_id,
                         ).first()
                         if state is not None:
                             issue.state = state
@@ -318,7 +368,9 @@ class InboxIssueViewSet(BaseViewSet):
                         if issue.state.name == "Triage":
                             # Move to default state
                             state = State.objects.filter(
-                                workspace__slug=slug, project_id=project_id, default=True
+                                workspace__slug=slug,
+                                project_id=project_id,
+                                default=True,
                             ).first()
                             if state is not None:
                                 issue.state = state
@@ -327,7 +379,9 @@ class InboxIssueViewSet(BaseViewSet):
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response(InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK)
+                return Response(
+                    InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK
+                )
         except InboxIssue.DoesNotExist:
             return Response(
                 {"error": "Inbox Issue does not exist"},
@@ -348,7 +402,19 @@ class InboxIssueViewSet(BaseViewSet):
             issue = Issue.objects.get(
                 pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
             )
-            serializer = IssueStateInboxSerializer(issue)
+            serializer = IssueStateInboxSerializer(
+                issue,
+                nested_fields={
+                    "assignee_details": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -363,15 +429,25 @@ class InboxIssueViewSet(BaseViewSet):
                 pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
             )
             # Get the project member
-            project_member = ProjectMember.objects.get(workspace__slug=slug, project_id=project_id, member=request.user)
+            project_member = ProjectMember.objects.get(
+                workspace__slug=slug, project_id=project_id, member=request.user
+            )
 
-            if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(request.user.id):
-                return Response({"error": "You cannot delete inbox issue"}, status=status.HTTP_400_BAD_REQUEST)
+            if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
+                request.user.id
+            ):
+                return Response(
+                    {"error": "You cannot delete inbox issue"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             inbox_issue.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except InboxIssue.DoesNotExist:
-            return Response({"error": "Inbox Issue does not exists"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Inbox Issue does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -389,7 +465,10 @@ class InboxIssuePublicViewSet(BaseViewSet):
     ]
 
     def get_queryset(self):
-        project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=self.kwargs.get("slug"), project_id=self.kwargs.get("project_id"))
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+        )
         if project_deploy_board is not None:
             return self.filter_queryset(
                 super()
@@ -407,9 +486,14 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, inbox_id):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, project_id=project_id)
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
             if project_deploy_board.inbox is None:
-                return Response({"error": "Inbox is not enabled for this Project Board"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "Inbox is not enabled for this Project Board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             filters = issue_filters(request.query_params, "GET")
             issues = (
@@ -452,13 +536,29 @@ class InboxIssuePublicViewSet(BaseViewSet):
                     )
                 )
             )
-            issues_data = IssueStateInboxSerializer(issues, many=True).data
+            issues_data = IssueStateInboxSerializer(
+                issues,
+                nested_fields={
+                    "assignee_details": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+                many=True,
+            ).data
             return Response(
                 issues_data,
                 status=status.HTTP_200_OK,
             )
         except ProjectDeployBoard.DoesNotExist:
-            return Response({"error": "Project Deploy Board does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Project Deploy Board does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -468,9 +568,14 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id, inbox_id):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, project_id=project_id)
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
             if project_deploy_board.inbox is None:
-                return Response({"error": "Inbox is not enabled for this Project Board"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "Inbox is not enabled for this Project Board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             if not request.data.get("issue", {}).get("name", False):
                 return Response(
@@ -527,7 +632,19 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 source=request.data.get("source", "in-app"),
             )
 
-            serializer = IssueStateInboxSerializer(issue)
+            serializer = IssueStateInboxSerializer(
+                issue,
+                nested_fields={
+                    "assignee_details": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -538,33 +655,54 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, inbox_id, pk):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, project_id=project_id)
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
             if project_deploy_board.inbox is None:
-                return Response({"error": "Inbox is not enabled for this Project Board"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "Inbox is not enabled for this Project Board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             inbox_issue = InboxIssue.objects.get(
                 pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
             )
             # Get the project member
             if str(inbox_issue.created_by_id) != str(request.user.id):
-                return Response({"error": "You cannot edit inbox issues"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "You cannot edit inbox issues"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             # Get issue data
             issue_data = request.data.pop("issue", False)
 
-
             issue = Issue.objects.get(
                 pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
             )
-            # viewers and guests since only viewers and guests 
+            # viewers and guests since only viewers and guests
             issue_data = {
                 "name": issue_data.get("name", issue.name),
-                "description_html": issue_data.get("description_html", issue.description_html),
-                "description": issue_data.get("description", issue.description)
+                "description_html": issue_data.get(
+                    "description_html", issue.description_html
+                ),
+                "description": issue_data.get("description", issue.description),
             }
 
             issue_serializer = IssueCreateSerializer(
-                issue, data=issue_data, partial=True
+                issue,
+                data=issue_data,
+                nested_fields={
+                    "created_by_detail": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+                partial=True,
             )
 
             if issue_serializer.is_valid():
@@ -600,17 +738,34 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, inbox_id, pk):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, project_id=project_id)
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
             if project_deploy_board.inbox is None:
-                return Response({"error": "Inbox is not enabled for this Project Board"}, status=status.HTTP_400_BAD_REQUEST)
-        
+                return Response(
+                    {"error": "Inbox is not enabled for this Project Board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             inbox_issue = InboxIssue.objects.get(
                 pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
             )
             issue = Issue.objects.get(
                 pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
             )
-            serializer = IssueStateInboxSerializer(issue)
+            serializer = IssueStateInboxSerializer(
+                issue,
+                nested_fields={
+                    "assignee_details": (
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    )
+                },
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -621,25 +776,35 @@ class InboxIssuePublicViewSet(BaseViewSet):
 
     def destroy(self, request, slug, project_id, inbox_id, pk):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, project_id=project_id)
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=slug, project_id=project_id
+            )
             if project_deploy_board.inbox is None:
-                return Response({"error": "Inbox is not enabled for this Project Board"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "Inbox is not enabled for this Project Board"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             inbox_issue = InboxIssue.objects.get(
                 pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
             )
 
             if str(inbox_issue.created_by_id) != str(request.user.id):
-                return Response({"error": "You cannot delete inbox issue"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "You cannot delete inbox issue"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             inbox_issue.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except InboxIssue.DoesNotExist:
-            return Response({"error": "Inbox Issue does not exists"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Inbox Issue does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-

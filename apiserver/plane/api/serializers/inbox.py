@@ -4,15 +4,14 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from .issue import IssueFlatSerializer, LabelLiteSerializer
-from .project import ProjectLiteSerializer
+from .project import ProjectSerializer
 from .state import StateLiteSerializer
-from .project import ProjectLiteSerializer
 from .user import UserSerializer
 from plane.db.models import Inbox, InboxIssue, Issue
 
 
 class InboxSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    project_detail = ProjectSerializer(source="project", fields=("id","name","cover_image","icon_prop","emoji","description"), read_only=True)
     pending_issue_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -26,7 +25,7 @@ class InboxSerializer(BaseSerializer):
 
 class InboxIssueSerializer(BaseSerializer):
     issue_detail = IssueFlatSerializer(source="issue", read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    project_detail = ProjectSerializer(source="project", fields=("id","name","cover_image","icon_prop","emoji","description"), read_only=True)
 
     class Meta:
         model = InboxIssue
@@ -46,14 +45,9 @@ class InboxIssueLiteSerializer(BaseSerializer):
 
 class IssueStateInboxSerializer(BaseSerializer):
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserSerializer(
-        source="assignees",
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
-        read_only=True,
-        many=True,
-    )
+    assignee_details = UserSerializer(source="assignees", read_only=True, many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
     bridge_id = serializers.UUIDField(read_only=True)
     issue_inbox = InboxIssueLiteSerializer(read_only=True, many=True)

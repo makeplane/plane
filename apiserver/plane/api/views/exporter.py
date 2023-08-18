@@ -23,11 +23,11 @@ class ExportIssuesEndpoint(BaseAPIView):
         try:
             # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
-            
+
             provider = request.data.get("provider", False)
             multiple = request.data.get("multiple", False)
             project_ids = request.data.get("project", [])
-            
+
             if provider in ["csv", "xlsx", "json"]:
                 if not project_ids:
                     project_ids = Project.objects.filter(
@@ -77,14 +77,38 @@ class ExportIssuesEndpoint(BaseAPIView):
         try:
             exporter_history = ExporterHistory.objects.filter(
                 workspace__slug=slug
-            ).select_related("workspace","initiated_by")
+            ).select_related("workspace", "initiated_by")
 
             if request.GET.get("per_page", False) and request.GET.get("cursor", False):
                 return self.paginate(
                     request=request,
                     queryset=exporter_history,
                     on_results=lambda exporter_history: ExporterHistorySerializer(
-                        exporter_history, many=True
+                        exporter_history,
+                        fields=[
+                            "id",
+                            "created_by",
+                            "created_at",
+                            "updated_at",
+                            "updated_by",
+                            "initiated_by",
+                            "status",
+                            "url",
+                            "token",
+                            "project",
+                            "provider",
+                            {
+                                "initiated_by_detail": [
+                                    "id",
+                                    "first_name",
+                                    "last_name",
+                                    "avatar",
+                                    "is_bot",
+                                    "display_name",
+                                ]
+                            },
+                        ],
+                        many=True,
                     ).data,
                 )
             else:

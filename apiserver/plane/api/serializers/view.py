@@ -4,14 +4,14 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from .workspace import WorkSpaceSerializer
-from .project import ProjectLiteSerializer
+from .project import ProjectSerializer
 from plane.db.models import IssueView, IssueViewFavorite
 from plane.utils.issue_filters import issue_filters
 
 
 class IssueViewSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     workspace_detail = WorkSpaceSerializer(
         source="workspace",
         fields=("id", "name", "slug"),

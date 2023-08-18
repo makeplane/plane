@@ -4,7 +4,7 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from .user import UserSerializer
-from .project import ProjectSerializer, ProjectLiteSerializer
+from .project import ProjectSerializer
 from .workspace import WorkSpaceSerializer
 from .issue import IssueStateSerializer
 
@@ -25,7 +25,7 @@ class ModuleWriteSerializer(BaseSerializer):
         required=False,
     )
 
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     workspace_detail = WorkSpaceSerializer(
         source="workspace",
         fields=("id", "name", "slug"),
@@ -110,7 +110,7 @@ class ModuleFlatSerializer(BaseSerializer):
 
 class ModuleIssueSerializer(BaseSerializer):
     module_detail = ModuleFlatSerializer(read_only=True, source="module")
-    issue_detail = ProjectLiteSerializer(read_only=True, source="issue")
+    issue_detail = ProjectSerializer(source="issue", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -159,7 +159,7 @@ class ModuleLinkSerializer(BaseSerializer):
 
 
 class ModuleSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     lead_detail = UserSerializer(
         source="lead",
         fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),

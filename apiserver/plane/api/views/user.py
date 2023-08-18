@@ -147,7 +147,18 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
                 request=request,
                 queryset=queryset,
                 on_results=lambda issue_activities: IssueActivitySerializer(
-                    issue_activities, many=True
+                    issue_activities,
+                    nested_fields={
+                        "actor_detail": (
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        )
+                    },
+                    many=True,
                 ).data,
             )
         except Exception as e:

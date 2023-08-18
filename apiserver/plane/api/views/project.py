@@ -91,10 +91,10 @@ class ProjectViewSet(BaseViewSet):
         ProjectBasePermission,
     ]
 
-    def get_serializer_class(self, *args, **kwargs):
-        if self.action == "update" or self.action == "partial_update":
-            return ProjectSerializer
-        return ProjectDetailSerializer
+    # def get_serializer_class(self, *args, **kwargs):
+    #     if self.action == "update" or self.action == "partial_update":
+    #         return ProjectSerializer(fields=['id', {'workspace_detail': ["id", "name", "slug"]}, 'created_at', 'updated_at', 'name', 'description', 'description_text', 'description_html', 'network', 'identifier', 'emoji', 'icon_prop', 'module_view', 'cycle_view', 'issue_views_view', 'page_view', 'inbox_view', 'cover_image', 'archive_in', 'close_in', 'created_by', 'updated_by', 'workspace', 'default_assignee', 'project_lead', 'estimate', 'default_state', 'sort_order'],)
+    #     return ProjectDetailSerializer
 
     def get_queryset(self):
         subquery = ProjectFavorite.objects.filter(
@@ -216,7 +216,38 @@ class ProjectViewSet(BaseViewSet):
             workspace = Workspace.objects.get(slug=slug)
 
             serializer = ProjectSerializer(
-                data={**request.data}, context={"workspace_id": workspace.id}
+                data={**request.data},
+                fields=[
+                    "id",
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    "created_at",
+                    "updated_at",
+                    "name",
+                    "description",
+                    "description_text",
+                    "description_html",
+                    "network",
+                    "identifier",
+                    "emoji",
+                    "icon_prop",
+                    "module_view",
+                    "cycle_view",
+                    "issue_views_view",
+                    "page_view",
+                    "inbox_view",
+                    "cover_image",
+                    "archive_in",
+                    "close_in",
+                    "created_by",
+                    "updated_by",
+                    "workspace",
+                    "default_assignee",
+                    "project_lead",
+                    "estimate",
+                    "default_state",
+                    "sort_order",
+                ],
+                context={"workspace_id": workspace.id},
             )
             if serializer.is_valid():
                 serializer.save()
@@ -330,6 +361,36 @@ class ProjectViewSet(BaseViewSet):
             serializer = ProjectSerializer(
                 project,
                 data={**request.data},
+                fields=[
+                    "id",
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    "created_at",
+                    "updated_at",
+                    "name",
+                    "description",
+                    "description_text",
+                    "description_html",
+                    "network",
+                    "identifier",
+                    "emoji",
+                    "icon_prop",
+                    "module_view",
+                    "cycle_view",
+                    "issue_views_view",
+                    "page_view",
+                    "inbox_view",
+                    "cover_image",
+                    "archive_in",
+                    "close_in",
+                    "created_by",
+                    "updated_by",
+                    "workspace",
+                    "default_assignee",
+                    "project_lead",
+                    "estimate",
+                    "default_state",
+                    "sort_order",
+                ],
                 context={"workspace_id": workspace.id},
                 partial=True,
             )
@@ -1263,7 +1324,7 @@ class ProjectDeployBoardIssuesPublicEndpoint(BaseAPIView):
                 workspace__slug=slug, project_id=project_id
             ).values("id", "name", "color", "parent")
 
-            ## Grouping the results
+            # Grouping the results
             group_by = request.GET.get("group_by", False)
             if group_by:
                 issues = group_results(issues, group_by)

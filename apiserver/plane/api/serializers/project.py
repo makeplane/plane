@@ -19,9 +19,26 @@ from plane.db.models import (
 
 
 class ProjectSerializer(BaseSerializer):
+    # workspace = WorkSpaceSerializer(read_only=True)
+    default_assignee = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
+    project_lead = UserSerializer(
+        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        read_only=True,
+    )
+    is_favorite = serializers.BooleanField(read_only=True)
+    total_members = serializers.IntegerField(read_only=True)
+    total_cycles = serializers.IntegerField(read_only=True)
+    total_modules = serializers.IntegerField(read_only=True)
+    is_member = serializers.BooleanField(read_only=True)
+    sort_order = serializers.FloatField(read_only=True)
+    member_role = serializers.IntegerField(read_only=True)
+    is_deployed = serializers.BooleanField(read_only=True)
     workspace_detail = WorkSpaceSerializer(
         source="workspace",
-        fields=("id", "name", "slug"),
+        # fields=("id", "name", "slug"),
         read_only=True,
     ) 
 
@@ -82,21 +99,6 @@ class ProjectSerializer(BaseSerializer):
         raise serializers.ValidationError(detail="Project Identifier is already taken")
 
 
-class ProjectLiteSerializer(BaseSerializer):
-    class Meta:
-        model = Project
-        fields = [
-            "id",
-            "identifier",
-            "name",
-            "cover_image",
-            "icon_prop",
-            "emoji",
-            "description",
-        ]
-        read_only_fields = fields
-
-
 class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserSerializer(
@@ -123,7 +125,7 @@ class ProjectDetailSerializer(BaseSerializer):
 
 class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
-    project = ProjectLiteSerializer(read_only=True)
+    project = ProjectSerializer(fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     member = UserSerializer(
         fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
@@ -140,7 +142,7 @@ class ProjectMemberAdminSerializer(BaseSerializer):
         fields=("id", "name", "slug"),
         read_only=True,
     ) 
-    project = ProjectLiteSerializer(read_only=True)
+    project = ProjectSerializer(fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     member = UserSerializer(
         fields=(
             "id",
@@ -160,7 +162,7 @@ class ProjectMemberAdminSerializer(BaseSerializer):
 
 
 class ProjectMemberInviteSerializer(BaseSerializer):
-    project = ProjectLiteSerializer(read_only=True)
+    project = ProjectSerializer(fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     workspace = WorkSpaceSerializer(
         fields=("id", "name", "slug"),
         read_only=True,
@@ -178,7 +180,7 @@ class ProjectIdentifierSerializer(BaseSerializer):
 
 
 class ProjectFavoriteSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
 
     class Meta:
         model = ProjectFavorite
@@ -203,7 +205,7 @@ class ProjectMemberLiteSerializer(BaseSerializer):
 
 
 class ProjectDeployBoardSerializer(BaseSerializer):
-    project_details = ProjectLiteSerializer(read_only=True, source="project")
+    project_details = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     workspace_detail = WorkSpaceSerializer(
         source="workspace",
         fields=("id", "name", "slug"),

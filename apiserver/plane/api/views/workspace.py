@@ -163,8 +163,8 @@ class WorkSpaceViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        ## Handling unique integrity error for now
-        ## TODO: Extend this to handle other common errors which are not automatically handled by APIException
+        # Handling unique integrity error for now
+        # TODO: Extend this to handle other common errors which are not automatically handled by APIException
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -299,7 +299,31 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                     {
                         "error": "Some users are already member of workspace",
                         "workspace_users": WorkSpaceMemberSerializer(
-                            workspace_members, many=True
+                            workspace_members,
+                            fields=[
+                                "id",
+                                "created_by",
+                                "created_at",
+                                "updated_at",
+                                "updated_by",
+                                "name",
+                                "logo",
+                                "owner",
+                                "slug",
+                                "organization_size",
+                                {"workspace": ["id", "name", "slug"]},
+                                {
+                                    "member": [
+                                        "id",
+                                        "first_name",
+                                        "last_name",
+                                        "avatar",
+                                        "is_bot",
+                                        "display_name",
+                                    ]
+                                },
+                            ],
+                            many=True,
                         ).data,
                     },
                     status=status.HTTP_400_BAD_REQUEST,
@@ -541,7 +565,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
-    # serializer_class = WorkSpaceMemberSerializer
+    serializer_class = WorkSpaceMemberSerializer
     model = WorkspaceMember
 
     permission_classes = [
@@ -590,7 +614,32 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 )
 
             serializer = WorkSpaceMemberSerializer(
-                workspace_member, data=request.data, partial=True
+                workspace_member,
+                data=request.data,
+                partial=True,
+                fields=[
+                    "id",
+                    "created_by",
+                    "created_at",
+                    "updated_at",
+                    "updated_by",
+                    "name",
+                    "logo",
+                    "owner",
+                    "slug",
+                    "organization_size",
+                    {"workspace": ["id", "name", "slug"]},
+                    {
+                        "member": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ]
+                    },
+                ],
             )
 
             if serializer.is_valid():
@@ -724,7 +773,18 @@ class TeamMemberViewSet(BaseViewSet):
                 users = list(set(request.data.get("members", [])).difference(members))
                 users = User.objects.filter(pk__in=users)
 
-                serializer = UserSerializer(users, fields=('id', 'first_name',"last_name","avatar","is_bot","display_name"),many=True)
+                serializer = UserSerializer(
+                    users,
+                    fields=[
+                        "id",
+                        "first_name",
+                        "last_name",
+                        "avatar",
+                        "is_bot",
+                        "display_name",
+                    ],
+                    many=True,
+                )
                 return Response(
                     {
                         "error": f"{len(users)} of the member(s) are not a part of the workspace",
@@ -790,15 +850,95 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
                 )
 
             workspace = Workspace.objects.get(pk=last_workspace_id)
-            workspace_serializer = WorkSpaceSerializer(workspace)
-            # workspace_serializer = WorkSpaceSerializer(workspace, fields=("member": (fields: "displayname")))
+            workspace_serializer = WorkSpaceSerializer(
+                workspace,
+                fields=[
+                    "id",
+                    {
+                        "owner": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ]
+                    },
+                    "created_at",
+                    "updated_at",
+                    "name",
+                    "logo",
+                    "slug",
+                    "organization_size",
+                    "created_by",
+                    "updated_by",
+                ],
+            )
 
             project_member = ProjectMember.objects.filter(
                 workspace_id=last_workspace_id, member=request.user
             ).select_related("workspace", "project", "member", "workspace__owner")
 
             project_member_serializer = ProjectMemberSerializer(
-                project_member, many=True
+                project_member,
+                fields=[
+                    "id",
+                    {
+                        "workspace": [
+                            "id",
+                            {
+                                "owner": [
+                                    "id",
+                                    "first_name",
+                                    "last_name",
+                                    "avatar",
+                                    "is_bot",
+                                    "display_name",
+                                ]
+                            },
+                            "created_at",
+                            "updated_at",
+                            "name",
+                            "logo",
+                            "slug",
+                            "organization_size",
+                            "created_by",
+                            "updated_by",
+                        ]
+                    },
+                    {
+                        "project": [
+                            "id",
+                            "identifier",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                        ]
+                    },
+                    {
+                        "member": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ]
+                    },
+                    "created_at",
+                    "updated_at",
+                    "comment",
+                    "role",
+                    "view_props",
+                    "default_props",
+                    "preferences",
+                    "sort_order",
+                    "created_by",
+                    "updated_by",
+                ],
+                many=True,
             )
 
             return Response(
@@ -825,7 +965,32 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             workspace_member = WorkspaceMember.objects.get(
                 member=request.user, workspace__slug=slug
             )
-            serializer = WorkSpaceMemberSerializer(workspace_member, fields=("member","workspace"), remove_nested_fields={"member": ("email",)})
+            serializer = WorkSpaceMemberSerializer(
+                workspace_member,
+                fields=[
+                    "id",
+                    "created_by",
+                    "created_at",
+                    "updated_at",
+                    "updated_by",
+                    "name",
+                    "logo",
+                    "owner",
+                    "slug",
+                    "organization_size",
+                    {"workspace": ["id", "name", "slug"]},
+                    {
+                        "member": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ]
+                    },
+                ],
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except (Workspace.DoesNotExist, WorkspaceMember.DoesNotExist):
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
@@ -998,7 +1163,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 assignees__in=[request.user],
                 completed_at__isnull=True,
-            ).values("id", "name", "workspace__slug", "project_id", "target_date")
+            ).values("id", "name", "workspace__slug", "project_id", "start_date")
 
             return Response(
                 {
@@ -1209,7 +1374,18 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
                 request=request,
                 queryset=queryset,
                 on_results=lambda issue_activities: IssueActivitySerializer(
-                    issue_activities, many=True
+                    issue_activities,
+                    nested_fields={
+                        "actor_detail": (
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        )
+                    },
+                    many=True,
                 ).data,
             )
         except Exception as e:
@@ -1417,7 +1593,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
 
             issues = IssueLiteSerializer(issue_queryset, many=True).data
 
-            ## Grouping the results
+            # Grouping the results
             group_by = request.GET.get("group_by", False)
             if group_by:
                 return Response(
@@ -1464,8 +1640,34 @@ class WorkspaceMembersEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 member__is_bot=False,
             ).select_related("workspace", "member")
-            serialzier = WorkSpaceMemberSerializer(workspace_members, many=True)
-            return Response(serialzier.data, status=status.HTTP_200_OK)
+            serializer = WorkSpaceMemberSerializer(
+                workspace_members,
+                fields=[
+                    "id",
+                    "created_by",
+                    "created_at",
+                    "updated_at",
+                    "updated_by",
+                    "name",
+                    "logo",
+                    "owner",
+                    "slug",
+                    "organization_size",
+                    {"workspace": ["id", "name", "slug"]},
+                    {
+                        "member": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ]
+                    },
+                ],
+                many=True,
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

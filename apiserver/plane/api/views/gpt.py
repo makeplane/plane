@@ -14,7 +14,7 @@ from django.conf import settings
 from .base import BaseAPIView
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project
-from plane.api.serializers import ProjectLiteSerializer, WorkSpaceSerializer
+from plane.api.serializers import ProjectSerializer, WorkSpaceSerializer
 
 
 class GPTIntegrationEndpoint(BaseAPIView):
@@ -57,10 +57,25 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 {
                     "response": text,
                     "response_html": text_html,
-                    "project_detail": ProjectLiteSerializer(project).data,
+                    "project_detail": ProjectSerializer(
+                        project,
+                        fields=[
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                            "created_by",
+                            "updated_by",
+                            "created_at",
+                            "updated_at",
+                        ],
+                        read_only=True,
+                    ).data,
                     "workspace_detail": WorkSpaceSerializer(
                         workspace,
-                        fields=("id", "name", "slug"),
+                        fields=["id", "name", "slug"],
                     ).data,
                 },
                 status=status.HTTP_200_OK,
