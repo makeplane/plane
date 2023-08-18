@@ -7,16 +7,27 @@ import issueService from "services/issues.service";
 // types
 import type { IIssueLabels, ICurrentUserResponse, LabelForm } from "types";
 
+type LabelDataStore = {
+  [projectId: string]: {
+    labels: IIssueLabels[];
+    isLoading: boolean;
+    isRevalidating: boolean;
+    error?: any;
+  };
+} | null;
+
 class LabelStore {
-  labels: IIssueLabels[] = [];
-  isLabelsLoading: boolean = false;
+  data: LabelDataStore = null;
+  // labels: IIssueLabels[] = [];
+  // isLabelsLoading: boolean = false;
   rootStore: any | null = null;
 
   constructor(_rootStore: any | null = null) {
     makeAutoObservable(this, {
-      labels: observable.ref,
+      // labels: observable.ref,
+      data: observable.ref,
       loadLabels: action,
-      isLabelsLoading: observable,
+      // isLabelsLoading: observable,
       createLabel: action,
       updateLabel: action,
       deleteLabel: action,
@@ -30,36 +41,89 @@ class LabelStore {
    */
 
   loadLabels = async (workspaceSlug: string, projectId: string) => {
-    this.isLabelsLoading = this.labels.length === 0;
+    // this.isLabelsLoading = this.labels.length === 0;
+
+    this.data = this.data || {
+      [projectId]: {
+        // labels: [...this.labels],
+        labels: [...this.getLabelsByProjectId(projectId)],
+        isLoading: this.getLabelsByProjectId(projectId).length === 0,
+        isRevalidating: true,
+        error: null,
+      },
+    };
+
     try {
       const labelsResponse: IIssueLabels[] = await issueService.getIssueLabels(
         workspaceSlug,
         projectId
       );
 
-      const _labels = [...(labelsResponse || [])].map((label) => ({
-        id: label.id,
-        name: label.name,
-        description: label.description,
-        color: label.color,
-        parent: label.parent,
-      }));
+      // const _labels = [...(labelsResponse || [])].map((label) => ({
+      //   id: label.id,
+      //   name: label.name,
+      //   description: label.description,
+      //   color: label.color,
+      //   parent: label.parent,
+      // }));
+
+      const _data = this.data?.[projectId] || {
+        labels: [
+          ...labelsResponse.map((label) => ({
+            id: label.id,
+            name: label.name,
+            description: label.description,
+            color: label.color,
+            parent: label.parent,
+            project: label.project,
+          })),
+        ].sort((a, b) => a.name.localeCompare(b.name)),
+        isLoading: false,
+        isRevalidating: false,
+      };
 
       runInAction(() => {
-        this.labels = _labels;
-        this.isLabelsLoading = false;
+        this.data = {
+          ...this.data,
+          [projectId]: _data,
+        };
+        // this.labels = _labels;
+        // this.isLabelsLoading = false;
       });
     } catch (error) {
       runInAction(() => {
-        this.isLabelsLoading = false;
+        this.data = {
+          ...this.data,
+          [projectId]: {
+            labels: [...this.getLabelsByProjectId(projectId)],
+            isLoading: false,
+            isRevalidating: false,
+            error,
+          },
+        };
+        // this.isLabelsLoading = false;
       });
       console.error("Fetching labels error", error);
     }
   };
 
-  getLabelById = (labelId: string) => this.labels.find((label) => label.id === labelId);
+  // getLabelById = (labelId: string) => this.labels.find((label) => label.id === labelId);
 
-  getLabelChildren = (labelId: string) => this.labels.filter((label) => label.parent === labelId);
+  getLabelById = (projectId: string, labelId: string) =>
+    this.data?.[projectId]?.labels.find((label) => label.id === labelId) || null;
+
+  /**
+   *
+   * @param projectId
+   * @returns {IIssueLabels[]} array of labels of a project
+   */
+  getLabelsByProjectId = (projectId: string): IIssueLabels[] =>
+    this.data?.[projectId]?.labels || [];
+
+  // getLabelChildren = (labelId: string) => this.labels.filter((label) => label.parent === labelId);
+
+  getLabelChildren = (projectId: string, labelId: string) =>
+    this.data?.[projectId]?.labels.filter((label) => label.parent === labelId) || [];
 
   /**
    * For provided query, this function returns all labels that contain query in their name from the labels store.
@@ -68,8 +132,10 @@ class LabelStore {
    * @example
    * getFilteredLabels("labe") // [{ id: "1", name: "label1", description: "", color: "", parent: null }]
    */
-  getFilteredLabels = (query: string): IIssueLabels[] =>
-    this.labels.filter((label) => label.name.includes(query));
+  getFilteredLabels = (projectId: string | null, query: string): IIssueLabels[] => {
+    if (!projectId) return [];
+    return this.data?.[projectId]?.labels.filter((label) => label.name.includes(query)) || [];
+  };
 
   createLabel = async (
     workspaceSlug: string,
@@ -85,19 +151,27 @@ class LabelStore {
         user
       );
 
-      const _label = [
-        ...this.labels,
-        {
-          id: labelResponse.id,
-          name: labelResponse.name,
-          description: labelResponse.description,
-          color: labelResponse.color,
-          parent: labelResponse.parent,
-        },
-      ].sort((a, b) => a.name.localeCompare(b.name));
+      const _data = this.data?.[projectId] || {
+        labels: [
+          ...this.getLabelsByProjectId(projectId),
+          {
+            id: labelResponse.id,
+            name: labelResponse.name,
+            description: labelResponse.description,
+            color: labelResponse.color,
+            parent: labelResponse.parent,
+            project: labelResponse.project,
+          },
+        ].sort((a, b) => a.name.localeCompare(b.name)),
+        isLoading: false,
+        isRevalidating: false,
+      };
 
       runInAction(() => {
-        this.labels = _label;
+        this.data = {
+          ...this.data,
+          [projectId]: _data,
+        };
       });
       return labelResponse;
     } catch (error) {
@@ -122,23 +196,31 @@ class LabelStore {
         user
       );
 
-      const _labels = [...this.labels]
-        .map((label) => {
-          if (label.id === labelId) {
-            return {
-              id: labelResponse.id,
-              name: labelResponse.name,
-              description: labelResponse.description,
-              color: labelResponse.color,
-              parent: labelResponse.parent,
-            };
-          }
-          return label;
-        })
-        .sort((a, b) => a.name.localeCompare(b.name));
+      const _data = this.data?.[projectId] || {
+        labels: [
+          ...this.getLabelsByProjectId(projectId).map((label) => {
+            if (label.id === labelId) {
+              return {
+                id: labelResponse.id,
+                name: labelResponse.name,
+                description: labelResponse.description,
+                color: labelResponse.color,
+                parent: labelResponse.parent,
+                project: labelResponse.project,
+              };
+            }
+            return label;
+          }),
+        ],
+        isLoading: false,
+        isRevalidating: false,
+      };
 
       runInAction(() => {
-        this.labels = _labels;
+        this.data = {
+          ...this.data,
+          [projectId]: _data,
+        };
       });
     } catch (error) {
       console.error("Updating label error", error);
@@ -155,10 +237,17 @@ class LabelStore {
     try {
       issueService.deleteIssueLabel(workspaceSlug, projectId, labelId, user);
 
-      const _labels = [...this.labels].filter((label) => label.id !== labelId);
+      const _data = this.data?.[projectId] || {
+        labels: [...this.getLabelsByProjectId(projectId)].filter((label) => label.id !== labelId),
+        isLoading: false,
+        isRevalidating: false,
+      };
 
       runInAction(() => {
-        this.labels = _labels;
+        this.data = {
+          ...this.data,
+          [projectId]: _data,
+        };
       });
     } catch (error) {
       console.error("Deleting label error", error);
