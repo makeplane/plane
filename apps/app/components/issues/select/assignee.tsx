@@ -49,7 +49,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
               <AssigneesList userIds={value} length={3} showLength={true} />
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-2 px-1.5 py-1 rounded shadow-sm border border-custom-border-300">
+            <div className="flex items-center justify-center gap-2 px-1.5 py-1 rounded shadow-sm border border-custom-border-300 hover:bg-custom-background-80">
               <Icon iconName="person" className="!text-base !leading-4" />
               <span className="text-custom-text-200">Assignee</span>
             </div>
