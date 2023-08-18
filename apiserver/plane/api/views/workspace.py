@@ -1159,7 +1159,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
 
             upcoming_issues = Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
-                target_date__gte=timezone.now(),
+                start_date__gte=timezone.now(),
                 workspace__slug=slug,
                 assignees__in=[request.user],
                 completed_at__isnull=True,

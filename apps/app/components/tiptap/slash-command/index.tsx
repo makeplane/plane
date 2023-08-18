@@ -264,7 +264,10 @@ const CommandList = ({
     >
       {items.map((item: CommandItemProps, index: number) => (
         <button
-          className={cn(`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`, { "bg-custom-primary-100/5  text-custom-text-100": index === selectedIndex })}
+          className={cn(
+            `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`,
+            { "bg-custom-primary-100/5  text-custom-text-100": index === selectedIndex }
+          )}
           key={index}
           onClick={() => selectItem(index)}
         >
@@ -282,8 +285,6 @@ const renderItems = () => {
   let component: ReactRenderer | null = null;
   let popup: any | null = null;
 
-  const container = document.querySelector("#tiptap-container") as HTMLElement;
-
   return {
     onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
       component = new ReactRenderer(CommandList, {
@@ -294,7 +295,7 @@ const renderItems = () => {
       // @ts-ignore
       popup = tippy("body", {
         getReferenceClientRect: props.clientRect,
-        appendTo: () => container,
+        appendTo: () => document.querySelector("#tiptap-container"),
         content: component.element,
         showOnCreate: true,
         interactive: true,

@@ -87,7 +87,7 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div id="tiptap-container" className="issue-comments-section">
+        <div className="issue-comments-section">
           <Controller
             name="comment_html"
             control={control}
@@ -101,7 +101,7 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
                     ? watch("comment_html")
                     : value
                 }
-                customClassName="p-3 min-h-[50px]"
+                customClassName="p-3 min-h-[50px] shadow-sm"
                 debouncedUpdatesEnabled={false}
                 onChange={(comment_json: Object, comment_html: string) => {
                   onChange(comment_html);

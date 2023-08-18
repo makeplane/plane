@@ -101,12 +101,12 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
             onSubmit={handleSubmit(onEnter)}
           >
-            <div id="tiptap-container">
+            <div>
               <TiptapEditor
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
-                customClassName="min-h-[50px] p-3"
+                customClassName="min-h-[50px] p-3 shadow-sm"
                 onChange={(comment_json: Object, comment_html: string) => {
                   setValue("comment_json", comment_json);
                   setValue("comment_html", comment_html);
