@@ -1,5 +1,7 @@
 // ui
-import { LineGraph } from "components/ui";
+import { LineGraph, ProfileEmptyState } from "components/ui";
+// image
+import emptyGraph from "public/empty-state/empty_graph.svg";
 // types
 import { IDefaultAnalyticsResponse } from "types";
 // constants
@@ -48,7 +50,13 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
         enableArea
       />
     ) : (
-      <div className="text-custom-text-200 text-center text-sm py-8">No matching data found.</div>
+      <div className="px-7 py-4">
+        <ProfileEmptyState
+          title="No Data yet"
+          description="Close issues to view analysis of the same in the form of a graph."
+          image={emptyGraph}
+        />
+      </div>
     )}
   </div>
 );
