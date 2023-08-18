@@ -6,4 +6,4 @@ set -x
 /usr/local/bin/replace-env-vars.sh "$BUILT_NEXT_PUBLIC_API_BASE_URL" "$NEXT_PUBLIC_API_BASE_URL"
 
 echo "Starting Plane Frontend.."
-node apps/app/server.js
+node apps/app/server.js & node apps/space/server.js
