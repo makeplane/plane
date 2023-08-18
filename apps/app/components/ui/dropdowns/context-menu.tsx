@@ -2,6 +2,9 @@ import React, { useEffect, useRef } from "react";
 
 import Link from "next/link";
 
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
+
 type Props = {
   clickEvent: React.MouseEvent | null;
   children: React.ReactNode;
@@ -12,6 +15,11 @@ type Props = {
 
 const ContextMenu = ({ clickEvent, children, title, isOpen, setIsOpen }: Props) => {
   const contextMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close the context menu when clicked outside
+  useOutsideClickDetector(contextMenuRef, () => {
+    if (isOpen) setIsOpen(false);
+  });
 
   useEffect(() => {
     const hideContextMenu = () => {
