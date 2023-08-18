@@ -38,6 +38,8 @@ class IssueProperty(BaseModel):
     is_shared = models.BooleanField(default=True)
     extra_settings = models.JSONField(default=None, null=True, blank=True)
     unit = models.CharField(max_length=100, blank=True, null=True)
+    is_multi = models.BooleanField(default=False)
+    is_default = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "IssueProperty"
@@ -61,7 +63,7 @@ class IssueProperty(BaseModel):
 
 class IssuePropertyValue(ProjectBaseModel):
     issue_property = models.ForeignKey(
-        IssueProperty, on_delete=models.CASCADE, related_name="values"
+        IssueProperty, on_delete=models.CASCADE, related_name="property_values"
     )
     description = models.TextField(blank=True, null=True)
     value = models.TextField()

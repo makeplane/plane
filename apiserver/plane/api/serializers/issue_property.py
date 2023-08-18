@@ -26,6 +26,9 @@ class IssuePropertySerializer(BaseSerializer):
 
 
 class IssuePropertyValueSerializer(BaseSerializer):
+
+    property_values = IssuePropertySerializer(read_only=True, many=True)
+
     class Meta:
         model = IssuePropertyValue
         fields = "__all__"

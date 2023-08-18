@@ -1,6 +1,3 @@
-# Django import
-from django.db.models import Prefetch
-
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -80,3 +77,46 @@ class IssuePropertyValueViewSet(BaseViewSet):
             issue_id=self.kwargs.get("issue_id"),
             issue_property_id=self.kwargs.get("issue_property_id"),
         )
+
+
+    def create(self, request, slug, issue_id):
+        try:
+            requested_issue_properties = request.data.get("issue_properties", [])
+
+            # Get all the issue_properties
+            issue_property_ids = [issue_property.get("property_id") for issue_property in requested_issue_properties]
+            issue_properties = IssueProperty.objects.filter(pk__in=issue_property_ids)
+
+            for issue_property in issue_properties:
+                # get the requested property
+                requested_properties = [requested_issue_property for requested_issue_property in requested_issue_properties if str(requested_issue_property.get(""))]
+                # text
+
+                # number
+
+                # checkbox
+
+                # select
+
+                # Multi-Select
+
+                # Date
+
+                # timestamp
+
+                # relation
+
+                # files
+
+                # url
+
+                # email
+
+                pass
+
+            return Response(status=status.HTTP_201_CREATED)            
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
+
