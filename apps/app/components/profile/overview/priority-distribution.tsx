@@ -1,7 +1,7 @@
 // ui
 import { BarGraph, ProfileEmptyState, Loader } from "components/ui";
 // image
-import priorityGraph from "public/empty-state/priority_graph.svg";
+import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
@@ -67,7 +67,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
             <ProfileEmptyState
               title="No Data yet"
               description="Create issues to view the them by priority in the graph for better analysis."
-              image={priorityGraph}
+              image={emptyBarGraph}
             />
           </div>
         )}

@@ -112,7 +112,7 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     }, 500);
   }, 1000);
 
-  const editorClassNames = `relative w-full max-w-screen-lg sm:rounded-lg sm:shadow-lg mt-2 p-3 relative focus:outline-none rounded-md
+  const editorClassNames = `relative w-full max-w-screen-lg mt-2 p-3 relative focus:outline-none rounded-lg
       ${noBorder ? "" : "border border-custom-border-200"} ${
     borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
   } ${customClassName}`;

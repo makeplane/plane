@@ -36,15 +36,19 @@ export const IssueLabelSelect: React.FC<Props> = observer(
     const { workspaceSlug } = router.query;
 
     const { label: labelStore } = useMobxStore();
-    const { isLabelsLoading: isLoading, labels, loadLabels, getLabelChildren } = labelStore;
+    const {
+      isLabelsLoading: isLoading,
+      labels,
+      loadLabels,
+      getLabelChildren,
+      getFilteredLabels,
+    } = labelStore;
 
     useEffect(() => {
       if (workspaceSlug && projectId) loadLabels(workspaceSlug.toString(), projectId);
     }, [workspaceSlug, projectId, loadLabels]);
 
-    const filteredOptions: IIssueLabels[] = labels?.filter((l) =>
-      l.name.toLowerCase().includes(query.toLowerCase())
-    );
+    const filteredOptions = getFilteredLabels(query);
 
     return (
       <Combobox

@@ -80,7 +80,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         ) : (
           <div className="w-12 h-12 bg-custom-background-80 rounded-full flex justify-center items-center">
             <span className="text-custom-text-100 font-medium text-lg">
-              {notification.triggered_by_details.display_name?.[0] ? (
+              {notification.triggered_by_details.is_bot ? (
+                notification.triggered_by_details.first_name?.[0]?.toUpperCase()
+              ) : notification.triggered_by_details.display_name?.[0] ? (
                 notification.triggered_by_details.display_name?.[0]?.toUpperCase()
               ) : (
                 <Icon iconName="person" className="h-6 w-6" />
@@ -91,7 +93,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
       </div>
       <div className="space-y-2.5 w-full overflow-hidden">
         <div className="text-sm w-full break-words">
-          <span className="font-semibold">{notification.triggered_by_details.display_name} </span>
+          <span className="font-semibold">
+            {notification.triggered_by_details.is_bot
+              ? notification.triggered_by_details.first_name
+              : notification.triggered_by_details.display_name}{" "}
+          </span>
           {notification.data.issue_activity.field !== "comment" &&
             notification.data.issue_activity.verb}{" "}
           {notification.data.issue_activity.field === "comment"

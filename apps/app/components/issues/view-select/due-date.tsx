@@ -13,6 +13,8 @@ import useIssuesView from "hooks/use-issues-view";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  handleOnOpen?: () => void;
+  handleOnClose?: () => void;
   tooltipPosition?: "top" | "bottom";
   noBorder?: boolean;
   user: ICurrentUserResponse | undefined;
@@ -22,6 +24,8 @@ type Props = {
 export const ViewDueDateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
+  handleOnOpen,
+  handleOnClose,
   tooltipPosition = "top",
   noBorder = false,
   user,
@@ -80,6 +84,8 @@ export const ViewDueDateSelect: React.FC<Props> = ({
           }`}
           minDate={minDate ?? undefined}
           noBorder={noBorder}
+          handleOnOpen={handleOnOpen}
+          handleOnClose={handleOnClose}
           disabled={isNotAllowed}
         />
       </div>

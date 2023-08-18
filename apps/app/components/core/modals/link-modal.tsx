@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -7,12 +7,15 @@ import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
-import type { IIssueLink, ModuleLink } from "types";
+import type { IIssueLink, linkDetails, ModuleLink } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  onFormSubmit: (formData: IIssueLink | ModuleLink) => Promise<void>;
+  data?: linkDetails | null;
+  status: boolean;
+  createIssueLink: (formData: IIssueLink | ModuleLink) => Promise<void>;
+  updateIssueLink: (formData: IIssueLink | ModuleLink, linkId: string) => Promise<void>;
 };
 
 const defaultValues: IIssueLink | ModuleLink = {
@@ -20,7 +23,14 @@ const defaultValues: IIssueLink | ModuleLink = {
   url: "",
 };
 
-export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }) => {
+export const LinkModal: React.FC<Props> = ({
+  isOpen,
+  handleClose,
+  createIssueLink,
+  updateIssueLink,
+  status,
+  data,
+}) => {
   const {
     register,
     formState: { errors, isSubmitting },
@@ -30,11 +40,6 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
     defaultValues,
   });
 
-  const onSubmit = async (formData: IIssueLink | ModuleLink) => {
-    await onFormSubmit({ title: formData.title, url: formData.url });
-    onClose();
-  };
-
   const onClose = () => {
     handleClose();
     const timeout = setTimeout(() => {
@@ -42,6 +47,27 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
       clearTimeout(timeout);
     }, 500);
   };
+
+  const handleFormSubmit = async (formData: IIssueLink | ModuleLink) => {
+    if (!data) await createIssueLink({ title: formData.title, url: formData.url });
+    else await updateIssueLink({ title: formData.title, url: formData.url }, data.id);
+    onClose();
+  };
+
+  const handleCreateUpdatePage = async (formData: IIssueLink | ModuleLink) => {
+    await handleFormSubmit(formData);
+
+    reset({
+      ...defaultValues,
+    });
+  };
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...data,
+    });
+  }, [data, reset]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -70,14 +96,14 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 border border-custom-border-200 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
                   <div>
                     <div className="space-y-5">
                       <Dialog.Title
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Add Link
+                        {status ? "Update Link" : "Add Link"}
                       </Dialog.Title>
                       <div className="mt-2 space-y-3">
                         <div>
@@ -113,7 +139,13 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                   <div className="mt-5 flex justify-end gap-2">
                     <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
                     <PrimaryButton type="submit" loading={isSubmitting}>
-                      {isSubmitting ? "Adding Link..." : "Add Link"}
+                      {status
+                        ? isSubmitting
+                          ? "Updating Link..."
+                          : "Update Link"
+                        : isSubmitting
+                        ? "Adding Link..."
+                        : "Add Link"}
                     </PrimaryButton>
                   </div>
                 </form>

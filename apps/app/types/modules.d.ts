@@ -7,6 +7,7 @@ import type {
   IWorkspaceLite,
   IProjectLite,
   IIssueFilterOptions,
+  linkDetails,
 } from "types";
 
 export interface IModule {
@@ -26,15 +27,7 @@ export interface IModule {
   id: string;
   lead: string | null;
   lead_detail: IUserLite | null;
-  link_module: {
-    created_at: Date;
-    created_by: string;
-    created_by_detail: IUserLite;
-    id: string;
-    metadata: any;
-    title: string;
-    url: string;
-  }[];
+  link_module: linkDetails[];
   links_list: ModuleLink[];
   members: string[];
   members_list: string[];
