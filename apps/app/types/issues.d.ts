@@ -207,7 +207,8 @@ export interface IIssueLite {
   id: string;
   name: string;
   project_id: string;
-  target_date: string;
+  start_date?: string | null;
+  target_date?: string | null;
   workspace__slug: string;
 }
 
