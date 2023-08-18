@@ -141,7 +141,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
                 }
                 debouncedUpdatesEnabled={true}
                 setIsSubmitting={setIsSubmitting}
-                customClassName="min-h-[150px]"
+                customClassName="min-h-[150px] shadow-sm"
                 editorContentCustomClassNames="pb-9"
                 onChange={(description: Object, description_html: string) => {
                   setIsSubmitting("submitting");

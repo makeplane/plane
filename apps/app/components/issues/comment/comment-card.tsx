@@ -106,7 +106,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
-                customClassName="min-h-[50px] p-3"
+                customClassName="min-h-[50px] p-3 shadow-sm"
                 onChange={(comment_json: Object, comment_html: string) => {
                   setValue("comment_json", comment_json);
                   setValue("comment_html", comment_html);
