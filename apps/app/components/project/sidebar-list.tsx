@@ -13,7 +13,7 @@ import useTheme from "hooks/use-theme";
 import useUserAuth from "hooks/use-user-auth";
 import useProjects from "hooks/use-projects";
 // components
-import { DeleteProjectModal, SingleSidebarProject } from "components/project";
+import { CreateProjectModal, DeleteProjectModal, SingleSidebarProject } from "components/project";
 // services
 import projectService from "services/project.service";
 // icons
@@ -32,6 +32,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 export const ProjectSidebarList: FC = () => {
   const store: any = useMobxStore();
 
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [deleteProjectModal, setDeleteProjectModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
 
@@ -151,6 +152,12 @@ export const ProjectSidebarList: FC = () => {
 
   return (
     <>
+      <CreateProjectModal
+        isOpen={isProjectModalOpen}
+        setIsOpen={setIsProjectModalOpen}
+        setToFavorite
+        user={user}
+      />
       <DeleteProjectModal
         isOpen={deleteProjectModal}
         onClose={() => setDeleteProjectModal(false)}
@@ -172,17 +179,25 @@ export const ProjectSidebarList: FC = () => {
                     {({ open }) => (
                       <>
                         {!store?.theme?.sidebarCollapsed && (
-                          <Disclosure.Button
-                            as="button"
-                            type="button"
-                            className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
-                          >
-                            Favorites
-                            <Icon
-                              iconName={open ? "arrow_drop_down" : "arrow_right"}
-                              className="group-hover:opacity-100 opacity-0 !text-lg"
-                            />
-                          </Disclosure.Button>
+                          <div className="group flex justify-between items-center text-xs px-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
+                            <Disclosure.Button
+                              as="button"
+                              type="button"
+                              className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
+                            >
+                              Favorites
+                              <Icon
+                                iconName={open ? "arrow_drop_down" : "arrow_right"}
+                                className="group-hover:opacity-100 opacity-0 !text-lg"
+                              />
+                            </Disclosure.Button>
+                            <button
+                              className="group-hover:opacity-100 opacity-0"
+                              onClick={() => setIsProjectModalOpen(true)}
+                            >
+                              <Icon iconName="add" />
+                            </button>
+                          </div>
                         )}
                         <Disclosure.Panel as="div" className="space-y-2">
                           {orderedFavProjects.map((project, index) => (
@@ -241,10 +256,7 @@ export const ProjectSidebarList: FC = () => {
                             </Disclosure.Button>
                             <button
                               className="group-hover:opacity-100 opacity-0"
-                              onClick={() => {
-                                const e = new KeyboardEvent("keydown", { key: "p" });
-                                document.dispatchEvent(e);
-                              }}
+                              onClick={() => setIsProjectModalOpen(true)}
                             >
                               <Icon iconName="add" />
                             </button>
