@@ -16,9 +16,9 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
   if (!userProfile) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col space-y-2">
       <h3 className="text-lg font-medium">Issues by State</h3>
-      <div className="border border-custom-border-100 rounded p-7">
+      <div className="flex-grow border border-custom-border-100 rounded p-7">
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
             <div>
