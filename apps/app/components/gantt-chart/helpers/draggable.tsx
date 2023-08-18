@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 
-// react-beautiful-dnd
-import { DraggableProvided } from "react-beautiful-dnd";
+// hooks
 import { useChart } from "../hooks";
 // types
 import { IGanttBlock } from "../types";
@@ -12,7 +11,6 @@ type Props = {
   handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right") => void;
   enableLeftDrag: boolean;
   enableRightDrag: boolean;
-  provided: DraggableProvided;
 };
 
 export const ChartDraggable: React.FC<Props> = ({
@@ -21,7 +19,6 @@ export const ChartDraggable: React.FC<Props> = ({
   handleBlock,
   enableLeftDrag = true,
   enableRightDrag = true,
-  provided,
 }) => {
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
@@ -184,7 +181,7 @@ export const ChartDraggable: React.FC<Props> = ({
           />
         </>
       )}
-      {React.cloneElement(children, { ref: resizableRef, ...provided.dragHandleProps })}
+      {React.cloneElement(children, { ref: resizableRef })}
       {enableRightDrag && (
         <>
           <div

@@ -352,7 +352,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               blockUpdateHandler={blockUpdateHandler}
               enableLeftDrag={enableLeftDrag}
               enableRightDrag={enableRightDrag}
-              enableReorder={enableReorder}
             />
           )}
         </div>
