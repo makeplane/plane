@@ -317,9 +317,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                     value={
                       value && value !== "" && Object.keys(value).length > 0
                         ? value
-                        : watch("description_html") && watch("description_html") !== ""
-                          ? watch("description_html")
-                          : { type: "doc", content: [{ type: "paragraph" }] }
+                        : { type: "doc", content: [{ type: "paragraph" }] }
                     }
                     debouncedUpdatesEnabled={false}
                     customClassName="text-sm"
