@@ -93,11 +93,12 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
             control={control}
             render={({ field: { value, onChange } }) => (
               <TiptapEditor
+                workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={
                   !value ||
-                  value === "" ||
-                  (typeof value === "object" && Object.keys(value).length === 0)
+                    value === "" ||
+                    (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("comment_html")
                     : value
                 }

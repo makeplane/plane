@@ -106,6 +106,7 @@ const ProfileActivity = () => {
                           </div>
                           <div className="issue-comments-section p-0">
                             <Tiptap
+                              workspaceSlug={workspaceSlug as string}
                               value={
                                 activityItem?.new_value !== ""
                                   ? activityItem.new_value
