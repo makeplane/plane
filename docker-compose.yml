@@ -59,7 +59,7 @@ services:
                         - plane-api
                         - plane-worker
         public-deploy:
-                container_name: plane_public_deploy
+                container_name: planepublicdeploy
                 build:
                         context: .
                         dockerfile: ./apps/space/Dockerfile.space
