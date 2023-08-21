@@ -1,5 +1,5 @@
 #!/bin/bash
-# cp ./.env.example ./.env
+cp ./.env.example ./.env
 
 # Export for tr error in mac
 export LC_ALL=C
