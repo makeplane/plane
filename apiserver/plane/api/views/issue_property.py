@@ -2,7 +2,7 @@
 import uuid
 
 # Django imports
-from django.core.validators import validate_email
+from django.db.models import Q, F, Case, When, Value
 
 # Third party imports
 from rest_framework.response import Response
@@ -141,3 +141,18 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+    def list(self, request, slug, project_id, issue_id):
+        try:
+            issue_property_values = IssuePropertyValue.objects.filter(
+                workspace__slug=slug, project_id=project_id, issue_id=issue_id
+            ).values("description", "values")
+            return Response(issue_property_values, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+

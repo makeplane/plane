@@ -1649,7 +1649,7 @@ urlpatterns = [
                 "post": "create",
             }
         ),
-        name="issue-property-attributes",
+        name="issue-property-values",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-properties/<uuid:issue_property_id>/issue-property-values/<uuid:pk>/",
@@ -1660,7 +1660,7 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
-        name="issue-property-attributes",
+        name="issue-property-values",
     ),
     ## End Issue Property
 ]
