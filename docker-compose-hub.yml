@@ -57,9 +57,7 @@ services:
                         
         public-deploy:
                 container_name: planepublicdeploy
-                build:
-                        context: .
-                        dockerfile: ./apps/space/Dockerfile.space
+                image: makeplane/plane-space:latest
                 restart: always
                 command: node apps/space/server.js
                 env_file:
