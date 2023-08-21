@@ -3,7 +3,7 @@ import axios from "axios";
 // js cookie
 import Cookies from "js-cookie";
 
-const base_url: string | null = "https://boarding.plane.so";
+const base_url: string | null = "http://localhost:8000";
 
 abstract class APIService {
   protected baseURL: string;
