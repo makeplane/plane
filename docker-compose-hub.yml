@@ -38,11 +38,12 @@ services:
                 container_name: planefrontend
                 image: makeplane/plane-frontend:latest
                 restart: always
-                command: /usr/local/bin/start.sh
+                command: /usr/local/bin/start.sh apps/app/server.js app
                 env_file:
                         - .env
                 environment:
                         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+                        NEXT_PUBLIC_DEPLOY_URL: ${NEXT_PUBLIC_DEPLOY_URL}
                         NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
                         NEXT_PUBLIC_GITHUB_APP_NAME: "0"
                         NEXT_PUBLIC_GITHUB_ID: "0"
@@ -54,6 +55,20 @@ services:
                 depends_on:
                         - plane-api
                         - plane-worker
+                        
+        plane-deploy:
+                container_name: planedeploy
+                image: makeplane/plane-space:latest
+                restart: always
+                command: node apps/space/server.js space
+                env_file:
+                        - .env
+                environment:
+                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+                depends_on:
+                        - plane-api
+                        - plane-worker
+                        - plane-web
 
         plane-api:
                 container_name: planebackend
