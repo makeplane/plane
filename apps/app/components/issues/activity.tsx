@@ -175,6 +175,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
             return (
               <div key={activityItem.id} className="mt-4">
                 <CommentCard
+                  workspaceSlug={workspaceSlug as string}
                   comment={activityItem as IIssueComment}
                   onSubmit={handleCommentUpdate}
                   handleCommentDeletion={handleCommentDelete}

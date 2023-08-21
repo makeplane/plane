@@ -86,7 +86,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [contextMenuPosition, setContextMenuPosition] = useState<React.MouseEvent | null>(null);
+
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isDropdownActive, setIsDropdownActive] = useState(false);
 
@@ -201,7 +202,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   return (
     <>
       <ContextMenu
-        position={contextMenuPosition}
+        clickEvent={contextMenuPosition}
         title="Quick actions"
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
@@ -243,7 +244,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
-          setContextMenuPosition({ x: e.pageX, y: e.pageY });
+          setContextMenuPosition(e);
         }}
       >
         <div className="flex flex-col justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px]">

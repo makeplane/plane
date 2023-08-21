@@ -15,36 +15,36 @@ export interface BubbleMenuItem {
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
-export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
+export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   const items: BubbleMenuItem[] = [
     {
       name: "bold",
-      isActive: () => props.editor.isActive("bold"),
-      command: () => props.editor.chain().focus().toggleBold().run(),
+      isActive: () => props.editor?.isActive("bold"),
+      command: () => props.editor?.chain().focus().toggleBold().run(),
       icon: BoldIcon,
     },
     {
       name: "italic",
-      isActive: () => props.editor.isActive("italic"),
-      command: () => props.editor.chain().focus().toggleItalic().run(),
+      isActive: () => props.editor?.isActive("italic"),
+      command: () => props.editor?.chain().focus().toggleItalic().run(),
       icon: ItalicIcon,
     },
     {
       name: "underline",
-      isActive: () => props.editor.isActive("underline"),
-      command: () => props.editor.chain().focus().toggleUnderline().run(),
+      isActive: () => props.editor?.isActive("underline"),
+      command: () => props.editor?.chain().focus().toggleUnderline().run(),
       icon: UnderlineIcon,
     },
     {
       name: "strike",
-      isActive: () => props.editor.isActive("strike"),
-      command: () => props.editor.chain().focus().toggleStrike().run(),
+      isActive: () => props.editor?.isActive("strike"),
+      command: () => props.editor?.chain().focus().toggleStrike().run(),
       icon: StrikethroughIcon,
     },
     {
       name: "code",
-      isActive: () => props.editor.isActive("code"),
-      command: () => props.editor.chain().focus().toggleCode().run(),
+      isActive: () => props.editor?.isActive("code"),
+      command: () => props.editor?.chain().focus().toggleCode().run(),
       icon: CodeIcon,
     },
   ];
@@ -78,7 +78,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
       className="flex w-fit divide-x divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
     >
       <NodeSelector
-        editor={props.editor}
+        editor={props.editor!}
         isOpen={isNodeSelectorOpen}
         setIsOpen={() => {
           setIsNodeSelectorOpen(!isNodeSelectorOpen);
@@ -86,7 +86,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
         }}
       />
       <LinkSelector
-        editor={props.editor}
+        editor={props.editor!!}
         isOpen={isLinkSelectorOpen}
         setIsOpen={() => {
           setIsLinkSelectorOpen(!isLinkSelectorOpen);

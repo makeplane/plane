@@ -22,12 +22,13 @@ const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEdit
 TiptapEditor.displayName = "TiptapEditor";
 
 type Props = {
+  workspaceSlug: string;
   comment: IIssueComment;
   onSubmit: (comment: IIssueComment) => void;
   handleCommentDeletion: (comment: string) => void;
 };
 
-export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion }) => {
+export const CommentCard: React.FC<Props> = ({ comment, workspaceSlug, onSubmit, handleCommentDeletion }) => {
   const { user } = useUser();
 
   const editorRef = React.useRef<any>(null);
@@ -109,6 +110,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           >
             <div>
               <TiptapEditor
+                workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
@@ -138,6 +140,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
             <TiptapEditor
+              workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
               value={comment.comment_html}
               editable={false}

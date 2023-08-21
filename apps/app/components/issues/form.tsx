@@ -370,6 +370,7 @@ export const IssueForm: FC<IssueFormProps> = ({
 
                       return (
                         <TiptapEditor
+                          workspaceSlug={workspaceSlug as string}
                           ref={editorRef}
                           debouncedUpdatesEnabled={false}
                           value={
