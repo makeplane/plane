@@ -45,6 +45,7 @@ const restrictedUrls = [
   "profile",
   "reset-password",
   "sign-up",
+  "spaces",
   "workspace-member-invitation",
 ];
 
