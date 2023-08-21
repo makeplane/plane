@@ -8,6 +8,7 @@ export interface IProject {
   id: string;
   identifier: string;
   name: string;
+  description: string;
   icon: string;
   cover_image: string | null;
   icon_prop: string | null;

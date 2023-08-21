@@ -42,10 +42,10 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
     value: "target_date",
     label: "Due date",
   },
-  // {
-  //   value: "start_date",
-  //   label: "Start date",
-  // },
+  {
+    value: "start_date",
+    label: "Start date",
+  },
   {
     value: "created_at",
     label: "Created date",

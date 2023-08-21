@@ -85,7 +85,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
       .then((res) => {
         reset(defaultValues);
 
-        issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
+        issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
 
         submitChanges({ labels_list: [...(issueDetails?.labels ?? []), res.id] });
 

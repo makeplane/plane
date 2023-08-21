@@ -57,6 +57,7 @@ export interface IProject {
   updated_by: string;
   workspace: IWorkspace | string;
   workspace_detail: IWorkspaceLite;
+  is_deployed: boolean;
 }
 
 export interface IProjectLite {

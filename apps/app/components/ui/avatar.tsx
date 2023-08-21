@@ -106,7 +106,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           ))}
           {users.length > length ? (
             <div className="-ml-3.5 relative h-6 w-6 rounded">
-              <div className="grid place-items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
+              <div className="flex items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
                 <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
                 {users.length - length}
               </div>

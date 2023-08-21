@@ -122,7 +122,9 @@ class ProjectViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                total_members=ProjectMember.objects.filter(project_id=OuterRef("id"))
+                total_members=ProjectMember.objects.filter(
+                    project_id=OuterRef("id"), member__is_bot=False
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -144,6 +146,14 @@ class ProjectViewSet(BaseViewSet):
                     project_id=OuterRef("pk"),
                     member_id=self.request.user.id,
                 ).values("role")
+            )
+            .annotate(
+                is_deployed=Exists(
+                    ProjectDeployBoard.objects.filter(
+                        project_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
             )
             .distinct()
         )
@@ -216,7 +226,9 @@ class ProjectViewSet(BaseViewSet):
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
 
-                if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(request.user.id):
+                if serializer.data["project_lead"] is not None and str(
+                    serializer.data["project_lead"]
+                ) != str(request.user.id):
                     ProjectMember.objects.create(
                         project_id=serializer.data["id"],
                         member_id=serializer.data["project_lead"],
@@ -383,7 +395,9 @@ class InviteProjectEndpoint(BaseAPIView):
             validate_email(email)
             # Check if user is already a member of workspace
             if ProjectMember.objects.filter(
-                project_id=project_id, member__email=email
+                project_id=project_id,
+                member__email=email,
+                member__is_bot=False,
             ).exists():
                 return Response(
                     {"error": "User is already member of workspace"},
@@ -1087,7 +1101,9 @@ class ProjectMemberEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
             project_members = ProjectMember.objects.filter(
-                project_id=project_id, workspace__slug=slug
+                project_id=project_id,
+                workspace__slug=slug,
+                member__is_bot=False,
             ).select_related("project", "member")
             serializer = ProjectMemberSerializer(project_members, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

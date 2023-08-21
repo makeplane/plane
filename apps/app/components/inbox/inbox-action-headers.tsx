@@ -72,8 +72,8 @@ export const InboxActionHeader = () => {
       false
     );
     mutateInboxIssues(
-      (prevData) =>
-        (prevData ?? []).map((i) =>
+      (prevData: any) =>
+        (prevData ?? []).map((i: any) =>
           i.bridge_id === inboxIssueId
             ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] }
             : i

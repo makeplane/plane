@@ -139,7 +139,7 @@ const MembersSettings: NextPage = () => {
               selectedRemoveMember
             );
             mutateMembers(
-              (prevData) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
+              (prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
               false
             );
           }
@@ -150,7 +150,8 @@ const MembersSettings: NextPage = () => {
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData: any) =>
+                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }
@@ -194,19 +195,23 @@ const MembersSettings: NextPage = () => {
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">
                       <div className="flex items-center gap-x-6 gap-y-2">
-                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-                          {member.avatar && member.avatar !== "" ? (
+                        {member.avatar && member.avatar !== "" ? (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
                             <img
                               src={member.avatar}
                               alt={member.display_name}
                               className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                             />
-                          ) : member.display_name || member.email ? (
-                            (member.display_name || member.email)?.charAt(0)
-                          ) : (
-                            "?"
-                          )}
-                        </div>
+                          </div>
+                        ) : member.display_name || member.email ? (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                            {(member.display_name || member.email)?.charAt(0)}
+                          </div>
+                        ) : (
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                            ?
+                          </div>
+                        )}
                         <div>
                           {member.member ? (
                             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
