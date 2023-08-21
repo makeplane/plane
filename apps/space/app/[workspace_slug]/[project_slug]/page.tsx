@@ -26,7 +26,9 @@ const WorkspaceProjectPage = observer(() => {
 
   const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
   const board =
-    routerSearchparams && routerSearchparams.get("board") != null && (routerSearchparams.get("board") as TIssueBoardKeys | "");
+    routerSearchparams &&
+    routerSearchparams.get("board") != null &&
+    (routerSearchparams.get("board") as TIssueBoardKeys | "");
 
   // updating default board view when we are in the issues page
   useEffect(() => {
