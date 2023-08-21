@@ -11,15 +11,17 @@ export const GanttChartBlocks: FC<{
   blocks: IGanttBlock[] | null;
   blockRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  enableLeftDrag: boolean;
-  enableRightDrag: boolean;
+  enableBlockLeftResize: boolean;
+  enableBlockRightResize: boolean;
+  enableBlockMove: boolean;
 }> = ({
   itemsContainerWidth,
   blocks,
   blockRender,
   blockUpdateHandler,
-  enableLeftDrag,
-  enableRightDrag,
+  enableBlockLeftResize,
+  enableBlockRightResize,
+  enableBlockMove,
 }) => {
   const handleChartBlockPosition = (
     block: IGanttBlock,
@@ -63,8 +65,9 @@ export const GanttChartBlocks: FC<{
                   <ChartDraggable
                     block={block}
                     handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                    enableLeftDrag={enableLeftDrag}
-                    enableRightDrag={enableRightDrag}
+                    enableBlockLeftResize={enableBlockLeftResize}
+                    enableBlockRightResize={enableBlockRightResize}
+                    enableBlockMove={enableBlockMove}
                   >
                     <div className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-8 w-full flex items-center">
                       {blockRender(block.data)}

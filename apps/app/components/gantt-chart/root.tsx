@@ -14,8 +14,9 @@ type GanttChartRootProps = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   sidebarBlockRender: FC<any>;
   blockRender: FC<any>;
-  enableLeftDrag?: boolean;
-  enableRightDrag?: boolean;
+  enableBlockLeftResize?: boolean;
+  enableBlockRightResize?: boolean;
+  enableBlockMove?: boolean;
   enableReorder?: boolean;
 };
 
@@ -27,8 +28,9 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
   blockUpdateHandler,
   sidebarBlockRender,
   blockRender,
-  enableLeftDrag = true,
-  enableRightDrag = true,
+  enableBlockLeftResize = true,
+  enableBlockRightResize = true,
+  enableBlockMove = true,
   enableReorder = true,
 }) => (
   <ChartContextProvider>
@@ -40,8 +42,9 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
       blockUpdateHandler={blockUpdateHandler}
       sidebarBlockRender={sidebarBlockRender}
       blockRender={blockRender}
-      enableLeftDrag={enableLeftDrag}
-      enableRightDrag={enableRightDrag}
+      enableBlockLeftResize={enableBlockLeftResize}
+      enableBlockRightResize={enableBlockRightResize}
+      enableBlockMove={enableBlockMove}
       enableReorder={enableReorder}
     />
   </ChartContextProvider>

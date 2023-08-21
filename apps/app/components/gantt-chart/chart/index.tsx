@@ -40,8 +40,9 @@ type ChartViewRootProps = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   sidebarBlockRender: (data: any) => React.ReactNode;
   blockRender: (data: any) => React.ReactNode;
-  enableLeftDrag: boolean;
-  enableRightDrag: boolean;
+  enableBlockLeftResize: boolean;
+  enableBlockRightResize: boolean;
+  enableBlockMove: boolean;
   enableReorder: boolean;
 };
 
@@ -53,8 +54,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blockUpdateHandler,
   sidebarBlockRender,
   blockRender,
-  enableLeftDrag,
-  enableRightDrag,
+  enableBlockLeftResize,
+  enableBlockRightResize,
+  enableBlockMove,
   enableReorder,
 }) => {
   const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
@@ -350,8 +352,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               blocks={chartBlocks}
               blockRender={blockRender}
               blockUpdateHandler={blockUpdateHandler}
-              enableLeftDrag={enableLeftDrag}
-              enableRightDrag={enableRightDrag}
+              enableBlockLeftResize={enableBlockLeftResize}
+              enableBlockRightResize={enableBlockRightResize}
+              enableBlockMove={enableBlockMove}
             />
           )}
         </div>

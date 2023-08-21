@@ -9,16 +9,18 @@ type Props = {
   children: any;
   block: IGanttBlock;
   handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right" | "move") => void;
-  enableLeftDrag: boolean;
-  enableRightDrag: boolean;
+  enableBlockLeftResize: boolean;
+  enableBlockRightResize: boolean;
+  enableBlockMove: boolean;
 };
 
 export const ChartDraggable: React.FC<Props> = ({
   children,
   block,
   handleBlock,
-  enableLeftDrag = true,
-  enableRightDrag = true,
+  enableBlockLeftResize,
+  enableBlockRightResize,
+  enableBlockMove,
 }) => {
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
@@ -154,7 +156,7 @@ export const ChartDraggable: React.FC<Props> = ({
   };
 
   const handleBlockMove = () => {
-    if (!currentViewData || !resizableRef.current || !block.position) return;
+    if (!enableBlockMove || !currentViewData || !resizableRef.current || !block.position) return;
 
     const resizableDiv = resizableRef.current;
 
@@ -205,7 +207,7 @@ export const ChartDraggable: React.FC<Props> = ({
         width: `${block.position?.width}px`,
       }}
     >
-      {enableLeftDrag && (
+      {enableBlockLeftResize && (
         <>
           <div
             onMouseDown={handleBlockLeftResize}
@@ -221,7 +223,7 @@ export const ChartDraggable: React.FC<Props> = ({
         </>
       )}
       {React.cloneElement(children, { onMouseDown: handleBlockMove })}
-      {enableRightDrag && (
+      {enableBlockRightResize && (
         <>
           <div
             onMouseDown={handleBlockRightResize}
