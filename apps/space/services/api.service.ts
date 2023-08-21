@@ -3,14 +3,12 @@ import axios from "axios";
 // js cookie
 import Cookies from "js-cookie";
 
-const base_url: string | null = "http://localhost:8000";
-
 abstract class APIService {
   protected baseURL: string;
   protected headers: any = {};
 
-  constructor(baseURL: string) {
-    this.baseURL = base_url ? base_url : baseURL;
+  constructor(_baseURL: string) {
+    this.baseURL = _baseURL;
   }
 
   setRefreshToken(token: string) {
