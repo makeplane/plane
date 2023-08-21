@@ -22,12 +22,13 @@ const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEdit
 TiptapEditor.displayName = "TiptapEditor";
 
 type Props = {
+  workspaceSlug: string;
   comment: IIssueComment;
   onSubmit: (comment: IIssueComment) => void;
   handleCommentDeletion: (comment: string) => void;
 };
 
-export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion }) => {
+export const CommentCard: React.FC<Props> = ({ comment, workspaceSlug, onSubmit, handleCommentDeletion }) => {
   const { user } = useUser();
 
   const editorRef = React.useRef<any>(null);
@@ -65,7 +66,11 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
         {comment.actor_detail.avatar && comment.actor_detail.avatar !== "" ? (
           <img
             src={comment.actor_detail.avatar}
-            alt={comment.actor_detail.display_name}
+            alt={
+              comment.actor_detail.is_bot
+                ? comment.actor_detail.first_name + " Bot"
+                : comment.actor_detail.display_name
+            }
             height={30}
             width={30}
             className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-200"
@@ -74,7 +79,9 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           <div
             className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}
           >
-            {comment.actor_detail.display_name.charAt(0)}
+            {comment.actor_detail.is_bot
+              ? comment.actor_detail.first_name.charAt(0)
+              : comment.actor_detail.display_name.charAt(0)}
           </div>
         )}
 
@@ -103,10 +110,11 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           >
             <div>
               <TiptapEditor
+                workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
-                customClassName="min-h-[50px] p-3"
+                customClassName="min-h-[50px] p-3 shadow-sm"
                 onChange={(comment_json: Object, comment_html: string) => {
                   setValue("comment_json", comment_json);
                   setValue("comment_html", comment_html);
@@ -132,6 +140,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
             <TiptapEditor
+              workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
               value={comment.comment_html}
               editable={false}

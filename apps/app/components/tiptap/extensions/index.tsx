@@ -1,7 +1,6 @@
 import StarterKit from "@tiptap/starter-kit";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TiptapLink from "@tiptap/extension-link";
-import TiptapImage from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import TiptapUnderline from "@tiptap/extension-underline";
 import TextStyle from "@tiptap/extension-text-style";
@@ -18,18 +17,13 @@ import { InputRule } from "@tiptap/core";
 import ts from "highlight.js/lib/languages/typescript";
 
 import "highlight.js/styles/github-dark.css";
-import UploadImagesPlugin from "../plugins/upload-image";
 import UniqueID from "@tiptap-pro/extension-unique-id";
+import UpdatedImage from "./updated-image";
+import isValidHttpUrl from "../bubble-menu/utils/link-validator";
 
 lowlight.registerLanguage("ts", ts);
 
-const CustomImage = TiptapImage.extend({
-  addProseMirrorPlugins() {
-    return [UploadImagesPlugin()];
-  },
-});
-
-export const TiptapExtensions = [
+export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void) => [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -93,13 +87,14 @@ export const TiptapExtensions = [
     },
   }),
   TiptapLink.configure({
+    protocols: ["http", "https"],
+    validate: (url) => isValidHttpUrl(url),
     HTMLAttributes: {
       class:
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  CustomImage.configure({
-    allowBase64: true,
+  UpdatedImage.configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
     },
@@ -117,7 +112,7 @@ export const TiptapExtensions = [
   UniqueID.configure({
     types: ["image"],
   }),
-  SlashCommand,
+  SlashCommand(workspaceSlug, setIsSubmitting),
   TiptapUnderline,
   TextStyle,
   Color,

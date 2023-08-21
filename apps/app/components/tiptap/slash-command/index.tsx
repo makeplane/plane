@@ -52,7 +52,7 @@ const Command = Extension.create({
   },
 });
 
-const getSuggestionItems = ({ query }: { query: string }) =>
+const getSuggestionItems = (workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void) => ({ query }: { query: string }) =>
   [
     {
       title: "Text",
@@ -163,7 +163,7 @@ const getSuggestionItems = ({ query }: { query: string }) =>
           if (input.files?.length) {
             const file = input.files[0];
             const pos = editor.view.state.selection.from;
-            startImageUpload(file, editor.view, pos);
+            startImageUpload(file, editor.view, pos, workspaceSlug, setIsSubmitting);
           }
         };
         input.click();
@@ -328,11 +328,12 @@ const renderItems = () => {
   };
 };
 
-const SlashCommand = Command.configure({
-  suggestion: {
-    items: getSuggestionItems,
-    render: renderItems,
-  },
-});
+export const SlashCommand = (workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void) =>
+  Command.configure({
+    suggestion: {
+      items: getSuggestionItems(workspaceSlug, setIsSubmitting),
+      render: renderItems,
+    },
+  });
 
 export default SlashCommand;

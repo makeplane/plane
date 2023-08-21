@@ -37,7 +37,7 @@ import { LinkIcon, CalendarDaysIcon, TrashIcon, PlusIcon } from "@heroicons/reac
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLink, IModule } from "types";
+import type { ICycle, IIssue, IIssueLink, linkDetails, IModule } from "types";
 // fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -77,6 +77,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 }) => {
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [linkModal, setLinkModal] = useState(false);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -156,6 +157,43 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       });
   };
 
+  const handleUpdateLink = async (formData: IIssueLink, linkId: string) => {
+    if (!workspaceSlug || !projectId || !issueDetail) return;
+
+    const payload = { metadata: {}, ...formData };
+
+    const updatedLinks = issueDetail.issue_link.map((l) =>
+      l.id === linkId
+        ? {
+            ...l,
+            title: formData.title,
+            url: formData.url,
+          }
+        : l
+    );
+
+    mutate<IIssue>(
+      ISSUE_DETAILS(issueDetail.id),
+      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
+      false
+    );
+
+    await issuesService
+      .updateIssueLink(
+        workspaceSlug as string,
+        projectId as string,
+        issueDetail.id,
+        linkId,
+        payload
+      )
+      .then((res) => {
+        mutate(ISSUE_DETAILS(issueDetail.id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleDeleteLink = async (linkId: string) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
@@ -220,14 +258,25 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const maxDate = targetDate ? new Date(targetDate) : null;
   maxDate?.setDate(maxDate.getDate());
 
+  const handleEditLink = (link: linkDetails) => {
+    setSelectedLinkToUpdate(link);
+    setLinkModal(true);
+  };
+
   const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
 
   return (
     <>
       <LinkModal
         isOpen={linkModal}
-        handleClose={() => setLinkModal(false)}
-        onFormSubmit={handleCreateLink}
+        handleClose={() => {
+          setLinkModal(false);
+          setSelectedLinkToUpdate(null);
+        }}
+        data={selectedLinkToUpdate}
+        status={selectedLinkToUpdate ? true : false}
+        createIssueLink={handleCreateLink}
+        updateIssueLink={handleUpdateLink}
       />
       <DeleteIssueModal
         handleClose={() => setDeleteIssueModal(false)}
@@ -396,7 +445,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 start_date: val,
                               })
                             }
-                            className="bg-custom-background-90 w-full"
+                            className="bg-custom-background-100"
+                            wrapperClassName="w-full"
                             maxDate={maxDate ?? undefined}
                             disabled={isNotAllowed || uneditable}
                           />
@@ -424,7 +474,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 target_date: val,
                               })
                             }
-                            className="bg-custom-background-90 w-full"
+                            className="bg-custom-background-100"
+                            wrapperClassName="w-full"
                             minDate={minDate ?? undefined}
                             disabled={isNotAllowed || uneditable}
                           />
@@ -488,6 +539,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <LinksList
                     links={issueDetail.issue_link}
                     handleDeleteLink={handleDeleteLink}
+                    handleEditLink={handleEditLink}
                     userAuth={memberRole}
                   />
                 ) : null}

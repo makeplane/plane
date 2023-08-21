@@ -63,6 +63,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   id: user?.created_by__id,
                 }))}
                 title="Most issues created"
+                emptyStateMessage="Co-workers and the number issues created by them appears here."
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <AnalyticsLeaderboard
@@ -75,6 +76,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   id: user?.assignees__id,
                 }))}
                 title="Most issues closed"
+                emptyStateMessage="Co-workers and the number issues closed by them appears here."
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <div className={fullScreen ? "md:col-span-2" : ""}>
