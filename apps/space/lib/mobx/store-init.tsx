@@ -1,21 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-// next imports
-import { useSearchParams } from "next/navigation";
-// interface
-import { TIssueBoardKeys } from "store/types";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
 const MobxStoreInit = () => {
   const store: RootStore = useMobxStore();
-
-  // search params
-  const routerSearchparams = useSearchParams();
-
-  const board = routerSearchparams.get("board") as TIssueBoardKeys;
 
   useEffect(() => {
     // theme
