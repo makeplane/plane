@@ -56,6 +56,16 @@ export interface IIssueLink {
   url: string;
 }
 
+export interface linkDetails {
+  created_at: Date;
+  created_by: string;
+  created_by_detail: IUserLite;
+  id: string;
+  metadata: any;
+  title: string;
+  url: string;
+}
+
 export interface IIssue {
   archived_at: string;
   assignees: string[];
@@ -80,15 +90,7 @@ export interface IIssue {
   estimate_point: number | null;
   id: string;
   issue_cycle: IIssueCycle | null;
-  issue_link: {
-    created_at: Date;
-    created_by: string;
-    created_by_detail: IUserLite;
-    id: string;
-    metadata: any;
-    title: string;
-    url: string;
-  }[];
+  issue_link: linkDetails[];
   issue_module: IIssueModule | null;
   labels: string[];
   label_details: any[];
@@ -205,7 +207,8 @@ export interface IIssueLite {
   id: string;
   name: string;
   project_id: string;
-  target_date: string;
+  start_date?: string | null;
+  target_date?: string | null;
   workspace__slug: string;
 }
 

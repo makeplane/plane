@@ -126,3 +126,27 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   transition: opacity 0.2s ease-out;
 }
 
+.img-placeholder {
+  position: relative;
+  width: 35%;
+
+  &:before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid rgba(var(--color-text-200));
+    border-top-color: rgba(var(--color-text-800)); 
+    animation: spinning 0.6s linear infinite;
+  }
+}
+
+@keyframes spinning {
+  to {
+    transform: rotate(360deg);
+  }
+}

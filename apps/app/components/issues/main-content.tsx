@@ -124,6 +124,7 @@ export const IssueMainContent: React.FC<Props> = ({
           </div>
         ) : null}
         <IssueDescriptionForm
+          workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}
           isAllowed={memberRole.isMember || memberRole.isOwner || !uneditable}
