@@ -64,7 +64,7 @@ services:
                 container_name: planedeploy
                 build:
                         context: .
-                        dockerfile: ./apps/space/Dockerfile.space space
+                        dockerfile: ./apps/space/Dockerfile.space
                         args:
                                 NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
                 restart: always
