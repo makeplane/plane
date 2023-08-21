@@ -116,12 +116,6 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 # get the requested property
                 value = request_data.get(str(issue_property.id))
 
-                if issue_property.type == "email":
-                    if issue_property.is_multi:
-
-                    else:
-                        
-
                 bulk_issue_props.append(
                     IssuePropertyValue(
                         values=value,
