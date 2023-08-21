@@ -1,25 +1,24 @@
 // icons
 import { ArrowTopRightOnSquareIcon, LinkIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Icon } from "components/ui";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { IUserLite, UserAuth } from "types";
+import { linkDetails, UserAuth } from "types";
 
 type Props = {
-  links: {
-    id: string;
-    created_at: Date;
-    created_by: string;
-    created_by_detail: IUserLite;
-    metadata: any;
-    title: string;
-    url: string;
-  }[];
+  links: linkDetails[];
   handleDeleteLink: (linkId: string) => void;
+  handleEditLink: (link: linkDetails) => void;
   userAuth: UserAuth;
 };
 
-export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }) => {
+export const LinksList: React.FC<Props> = ({
+  links,
+  handleDeleteLink,
+  handleEditLink,
+  userAuth,
+}) => {
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -28,6 +27,13 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
         <div key={link.id} className="relative">
           {!isNotAllowed && (
             <div className="absolute top-1.5 right-1.5 z-[1] flex items-center gap-1">
+              <button
+                type="button"
+                className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
+                onClick={() => handleEditLink(link)}
+              >
+                <Icon iconName="edit" className="text-custom-text-200" />
+              </button>
               <a
                 href={link.url}
                 target="_blank"
@@ -62,7 +68,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
                 by{" "}
                 {link.created_by_detail.is_bot
                   ? link.created_by_detail.first_name + " Bot"
-                  : link.created_by_detail.email}
+                  : link.created_by_detail.display_name}
               </p>
             </div>
           </a>

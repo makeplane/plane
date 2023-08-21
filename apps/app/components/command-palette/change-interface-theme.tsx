@@ -7,12 +7,20 @@ import { useTheme } from "next-themes";
 import { SettingIcon } from "components/icons";
 import userService from "services/user.service";
 import useUser from "hooks/use-user";
+// helper
+import { unsetCustomCssVariables } from "helpers/theme.helper";
+// mobx react lite
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const ChangeInterfaceTheme: React.FC<Props> = ({ setIsPaletteOpen }) => {
+export const ChangeInterfaceTheme: React.FC<Props> = observer(({ setIsPaletteOpen }) => {
+  const store: any = useMobxStore();
+
   const [mounted, setMounted] = useState(false);
 
   const { setTheme } = useTheme();
@@ -21,27 +29,11 @@ export const ChangeInterfaceTheme: React.FC<Props> = ({ setIsPaletteOpen }) => {
 
   const updateUserTheme = (newTheme: string) => {
     if (!user) return;
-
     setTheme(newTheme);
-
-    mutateUser((prevData) => {
-      if (!prevData) return prevData;
-
-      return {
-        ...prevData,
-        theme: {
-          ...prevData.theme,
-          theme: newTheme,
-        },
-      };
-    }, false);
-
-    userService.updateUser({
-      theme: {
-        ...user.theme,
-        theme: newTheme,
-      },
-    });
+    return store.user
+      .updateCurrentUserSettings({ theme: { ...user.theme, theme: newTheme } })
+      .then((response: any) => response)
+      .catch((error: any) => error);
   };
 
   // useEffect only runs on the client, so now we can safely show the UI
@@ -70,4 +62,4 @@ export const ChangeInterfaceTheme: React.FC<Props> = ({ setIsPaletteOpen }) => {
       ))}
     </>
   );
-};
+});

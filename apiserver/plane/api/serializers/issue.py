@@ -31,6 +31,7 @@ from plane.db.models import (
     IssueAttachment,
     IssueReaction,
     CommentReaction,
+    IssueVote,
 )
 
 
@@ -110,6 +111,11 @@ class IssueCreateSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def validate(self, data):
+        if data.get("start_date", None) is not None and data.get("target_date", None) is not None and data.get("start_date", None) > data.get("target_date", None):
+            raise serializers.ValidationError("Start date cannot exceed target date")
+        return data
 
     def create(self, validated_data):
         blockers = validated_data.pop("blockers_list", None)
@@ -549,6 +555,14 @@ class CommentReactionSerializer(BaseSerializer):
 
 
 
+class IssueVoteSerializer(BaseSerializer):
+
+    class Meta:
+        model = IssueVote
+        fields = ["issue", "vote", "workspace_id", "project_id", "actor"]
+        read_only_fields = fields
+
+
 class IssueCommentSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
@@ -568,6 +582,7 @@ class IssueCommentSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "access",
         ]
 
 

@@ -34,7 +34,7 @@ import { truncateText } from "helpers/string.helper";
 import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 
@@ -59,6 +59,13 @@ const GeneralSettings: NextPage = () => {
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: memberDetails, error } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -156,6 +163,8 @@ const GeneralSettings: NextPage = () => {
   };
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
+
+  const isAdmin = memberDetails?.role === 20;
 
   return (
     <ProjectAuthorizationWrapper
@@ -355,7 +364,7 @@ const GeneralSettings: NextPage = () => {
           </div>
           <div className="sm:text-right">
             {projectDetails ? (
-              <SecondaryButton type="submit" loading={isSubmitting}>
+              <SecondaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
                 {isSubmitting ? "Updating Project..." : "Update Project"}
               </SecondaryButton>
             ) : (
@@ -364,32 +373,34 @@ const GeneralSettings: NextPage = () => {
               </Loader>
             )}
           </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Danger Zone</h4>
-              <p className="text-sm text-custom-text-200">
-                The danger zone of the project delete page is a critical area that requires careful
-                consideration and attention. When deleting a project, all of the data and resources
-                within that project will be permanently removed and cannot be recovered.
-              </p>
+          {memberDetails?.role === 20 && (
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Danger Zone</h4>
+                <p className="text-sm text-custom-text-200">
+                  The danger zone of the project delete page is a critical area that requires
+                  careful consideration and attention. When deleting a project, all of the data and
+                  resources within that project will be permanently removed and cannot be recovered.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                {projectDetails ? (
+                  <div>
+                    <DangerButton
+                      onClick={() => setSelectedProject(projectDetails.id ?? null)}
+                      outline
+                    >
+                      Delete Project
+                    </DangerButton>
+                  </div>
+                ) : (
+                  <Loader className="mt-2 w-full">
+                    <Loader.Item height="46px" width="100px" />
+                  </Loader>
+                )}
+              </div>
             </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <div>
-                  <DangerButton
-                    onClick={() => setSelectedProject(projectDetails.id ?? null)}
-                    outline
-                  >
-                    Delete Project
-                  </DangerButton>
-                </div>
-              ) : (
-                <Loader className="mt-2 w-full">
-                  <Loader.Item height="46px" width="100px" />
-                </Loader>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </form>
     </ProjectAuthorizationWrapper>

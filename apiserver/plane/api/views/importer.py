@@ -458,7 +458,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         actor=request.user,
                         project_id=project_id,
                         workspace_id=project.workspace_id,
-                        comment=f"{request.user.email} importer the issue from {service}",
+                        comment=f"imported the issue from {service}",
                         verb="created",
                         created_by=request.user,
                     )

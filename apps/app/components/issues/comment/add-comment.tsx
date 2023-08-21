@@ -1,7 +1,6 @@
 import React from "react";
 
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 
 import { mutate } from "swr";
 
@@ -12,28 +11,18 @@ import issuesServices from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Loader, SecondaryButton } from "components/ui";
+import { SecondaryButton } from "components/ui";
 // types
 import type { ICurrentUserResponse, IIssueComment } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="mb-5">
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
+  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
+);
 
-const WrappedRemirrorRichTextEditor = React.forwardRef<
-  IRemirrorRichTextEditor,
-  IRemirrorRichTextEditor
->((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+TiptapEditor.displayName = "TiptapEditor";
 
 const defaultValues: Partial<IIssueComment> = {
   comment_json: "",
@@ -51,6 +40,7 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { isSubmitting },
     reset,
   } = useForm<IIssueComment>({ defaultValues });
@@ -99,15 +89,25 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="issue-comments-section">
           <Controller
-            name="comment_json"
+            name="comment_html"
             control={control}
-            render={({ field: { value } }) => (
-              <WrappedRemirrorRichTextEditor
-                value={value}
-                onJSONChange={(jsonValue) => setValue("comment_json", jsonValue)}
-                onHTMLChange={(htmlValue) => setValue("comment_html", htmlValue)}
-                placeholder="Enter your comment..."
+            render={({ field: { value, onChange } }) => (
+              <TiptapEditor
+                workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
+                value={
+                  !value ||
+                    value === "" ||
+                    (typeof value === "object" && Object.keys(value).length === 0)
+                    ? watch("comment_html")
+                    : value
+                }
+                customClassName="p-3 min-h-[50px] shadow-sm"
+                debouncedUpdatesEnabled={false}
+                onChange={(comment_json: Object, comment_html: string) => {
+                  onChange(comment_html);
+                  setValue("comment_json", comment_json);
+                }}
               />
             )}
           />

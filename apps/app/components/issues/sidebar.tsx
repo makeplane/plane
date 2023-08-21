@@ -37,7 +37,7 @@ import { LinkIcon, CalendarDaysIcon, TrashIcon, PlusIcon } from "@heroicons/reac
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLink, IModule } from "types";
+import type { ICycle, IIssue, IIssueLink, linkDetails, IModule } from "types";
 // fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -54,6 +54,7 @@ type Props = {
     | "parent"
     | "blocker"
     | "blocked"
+    | "startDate"
     | "dueDate"
     | "cycle"
     | "module"
@@ -76,6 +77,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 }) => {
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [linkModal, setLinkModal] = useState(false);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -155,6 +157,43 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       });
   };
 
+  const handleUpdateLink = async (formData: IIssueLink, linkId: string) => {
+    if (!workspaceSlug || !projectId || !issueDetail) return;
+
+    const payload = { metadata: {}, ...formData };
+
+    const updatedLinks = issueDetail.issue_link.map((l) =>
+      l.id === linkId
+        ? {
+            ...l,
+            title: formData.title,
+            url: formData.url,
+          }
+        : l
+    );
+
+    mutate<IIssue>(
+      ISSUE_DETAILS(issueDetail.id),
+      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
+      false
+    );
+
+    await issuesService
+      .updateIssueLink(
+        workspaceSlug as string,
+        projectId as string,
+        issueDetail.id,
+        linkId,
+        payload
+      )
+      .then((res) => {
+        mutate(ISSUE_DETAILS(issueDetail.id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleDeleteLink = async (linkId: string) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
@@ -210,14 +249,34 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     fieldsToShow.includes("cycle") ||
     fieldsToShow.includes("module");
 
+  const startDate = watchIssue("start_date");
+  const targetDate = watchIssue("target_date");
+
+  const minDate = startDate ? new Date(startDate) : null;
+  minDate?.setDate(minDate.getDate());
+
+  const maxDate = targetDate ? new Date(targetDate) : null;
+  maxDate?.setDate(maxDate.getDate());
+
+  const handleEditLink = (link: linkDetails) => {
+    setSelectedLinkToUpdate(link);
+    setLinkModal(true);
+  };
+
   const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
 
   return (
     <>
       <LinkModal
         isOpen={linkModal}
-        handleClose={() => setLinkModal(false)}
-        onFormSubmit={handleCreateLink}
+        handleClose={() => {
+          setLinkModal(false);
+          setSelectedLinkToUpdate(null);
+        }}
+        data={selectedLinkToUpdate}
+        status={selectedLinkToUpdate ? true : false}
+        createIssueLink={handleCreateLink}
+        updateIssueLink={handleUpdateLink}
       />
       <DeleteIssueModal
         handleClose={() => setDeleteIssueModal(false)}
@@ -367,6 +426,35 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     disabled={uneditable}
                   />
                 )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <p>Start date</p>
+                    </div>
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="start_date"
+                        render={({ field: { value } }) => (
+                          <CustomDatePicker
+                            placeholder="Start date"
+                            value={value}
+                            onChange={(val) =>
+                              submitChanges({
+                                start_date: val,
+                              })
+                            }
+                            className="bg-custom-background-100"
+                            wrapperClassName="w-full"
+                            maxDate={maxDate ?? undefined}
+                            disabled={isNotAllowed || uneditable}
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
@@ -386,7 +474,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                 target_date: val,
                               })
                             }
-                            className="bg-custom-background-90"
+                            className="bg-custom-background-100"
+                            wrapperClassName="w-full"
+                            minDate={minDate ?? undefined}
                             disabled={isNotAllowed || uneditable}
                           />
                         )}
@@ -449,6 +539,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <LinksList
                     links={issueDetail.issue_link}
                     handleDeleteLink={handleDeleteLink}
+                    handleEditLink={handleEditLink}
                     userAuth={memberRole}
                   />
                 ) : null}

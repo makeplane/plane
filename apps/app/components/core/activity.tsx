@@ -35,6 +35,22 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   );
 };
 
+const UserLink = ({ activity }: { activity: IIssueActivity }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  return (
+    <a
+      href={`/${workspaceSlug}/profile/${activity.new_identifier ?? activity.old_identifier}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-medium text-custom-text-100 inline-flex items-center hover:underline"
+    >
+      {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
+    </a>
+  );
+};
+
 const activityDetails: {
   [key: string]: {
     message: (activity: IIssueActivity, showIssue: boolean) => React.ReactNode;
@@ -46,8 +62,7 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            added a new assignee{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            added a new assignee <UserLink activity={activity} />
             {showIssue && (
               <>
                 {" "}
@@ -60,8 +75,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the assignee{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            removed the assignee <UserLink activity={activity} />
             {showIssue && (
               <>
                 {" "}
@@ -427,6 +441,40 @@ const activityDetails: {
       </>
     ),
     icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
+  },
+  start_date: {
+    message: (activity, showIssue) => {
+      if (!activity.new_value)
+        return (
+          <>
+            removed the start date
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
+          </>
+        );
+      else
+        return (
+          <>
+            set the start date to{" "}
+            <span className="font-medium text-custom-text-100">
+              {renderShortDateWithYearFormat(activity.new_value)}
+            </span>
+            {showIssue && (
+              <>
+                {" "}
+                for <IssueLink activity={activity} />
+              </>
+            )}
+            .
+          </>
+        );
+    },
+    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
   },
   state: {
     message: (activity, showIssue) => (

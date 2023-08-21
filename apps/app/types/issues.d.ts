@@ -10,6 +10,7 @@ import type {
   IWorkspaceLite,
   IStateLite,
   TStateGroups,
+  Properties,
 } from "types";
 
 export interface IIssueCycle {
@@ -55,6 +56,16 @@ export interface IIssueLink {
   url: string;
 }
 
+export interface linkDetails {
+  created_at: Date;
+  created_by: string;
+  created_by_detail: IUserLite;
+  id: string;
+  metadata: any;
+  title: string;
+  url: string;
+}
+
 export interface IIssue {
   archived_at: string;
   assignees: string[];
@@ -79,15 +90,7 @@ export interface IIssue {
   estimate_point: number | null;
   id: string;
   issue_cycle: IIssueCycle | null;
-  issue_link: {
-    created_at: Date;
-    created_by: string;
-    created_by_detail: IUserLite;
-    id: string;
-    metadata: any;
-    title: string;
-    url: string;
-  }[];
+  issue_link: linkDetails[];
   issue_module: IIssueModule | null;
   labels: string[];
   label_details: any[];
@@ -147,21 +150,6 @@ export type IssuePriorities = {
   user: string;
 };
 
-export type Properties = {
-  assignee: boolean;
-  due_date: boolean;
-  labels: boolean;
-  key: boolean;
-  priority: boolean;
-  state: boolean;
-  sub_issue_count: boolean;
-  link: boolean;
-  attachment_count: boolean;
-  estimate: boolean;
-  created_on: boolean;
-  updated_on: boolean;
-};
-
 export interface IIssueLabels {
   id: string;
   created_at: Date;
@@ -219,7 +207,8 @@ export interface IIssueLite {
   id: string;
   name: string;
   project_id: string;
-  target_date: string;
+  start_date?: string | null;
+  target_date?: string | null;
   workspace__slug: string;
 }
 
@@ -229,6 +218,7 @@ export interface IIssueFilterOptions {
   target_date: string[] | null;
   state: string[] | null;
   state_group: TStateGroups[] | null;
+  subscriber: string[] | null;
   labels: string[] | null;
   priority: string[] | null;
   created_by: string[] | null;

@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -26,55 +28,63 @@ type Props = {
   user: ICurrentUserResponse | undefined;
 };
 
+const defaultValues = {
+  workspaceName: "",
+  confirmDelete: "",
+};
+
 export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, user }) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const [confirmWorkspaceName, setConfirmWorkspaceName] = useState("");
-  const [confirmDeleteMyWorkspace, setConfirmDeleteMyWorkspace] = useState(false);
-
-  const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | null>(null);
-
   const router = useRouter();
+
   const { setToastAlert } = useToast();
 
-  useEffect(() => {
-    if (data) setSelectedWorkspace(data);
-    else {
-      const timer = setTimeout(() => {
-        setSelectedWorkspace(null);
-        clearTimeout(timer);
-      }, 350);
-    }
-  }, [data]);
+  const {
+    control,
+    formState: { isSubmitting },
+    handleSubmit,
+    reset,
+    watch,
+  } = useForm({ defaultValues });
 
-  const canDelete = confirmWorkspaceName === data?.name && confirmDeleteMyWorkspace;
+  const canDelete =
+    watch("workspaceName") === data?.name && watch("confirmDelete") === "delete my workspace";
 
   const handleClose = () => {
+    const timer = setTimeout(() => {
+      reset(defaultValues);
+      clearTimeout(timer);
+    }, 350);
+
     onClose();
-    setIsDeleteLoading(false);
   };
 
-  const handleDeletion = async () => {
-    setIsDeleteLoading(true);
+  const onSubmit = async () => {
     if (!data || !canDelete) return;
+
     await workspaceService
       .deleteWorkspace(data.slug, user)
       .then(() => {
         handleClose();
+
         router.push("/");
+
         mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
           prevData?.filter((workspace) => workspace.id !== data.id)
         );
+
         setToastAlert({
           type: "success",
-          message: "Workspace deleted successfully",
-          title: "Success",
+          title: "Success!",
+          message: "Workspace deleted successfully.",
         });
       })
-      .catch((error) => {
-        console.log(error);
-        setIsDeleteLoading(false);
-      });
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again later.",
+        })
+      );
   };
 
   return (
@@ -104,7 +114,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
-                <div className="flex flex-col gap-6 p-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
                       <ExclamationTriangleIcon
@@ -129,20 +139,21 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
                       Enter the workspace name{" "}
-                      <span className="font-medium text-custom-text-100">
-                        {selectedWorkspace?.name}
-                      </span>{" "}
-                      to continue:
+                      <span className="font-medium text-custom-text-100">{data?.name}</span> to
+                      continue:
                     </p>
-                    <Input
-                      type="text"
-                      placeholder="Workspace name"
-                      className="mt-2"
-                      value={confirmWorkspaceName}
-                      onChange={(e) => {
-                        setConfirmWorkspaceName(e.target.value);
-                      }}
+                    <Controller
+                      control={control}
                       name="workspaceName"
+                      render={({ field: { onChange, value } }) => (
+                        <Input
+                          type="text"
+                          placeholder="Workspace name"
+                          className="mt-2"
+                          onChange={onChange}
+                          value={value}
+                        />
+                      )}
                     />
                   </div>
 
@@ -152,28 +163,28 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                       <span className="font-medium text-custom-text-100">delete my workspace</span>{" "}
                       below:
                     </p>
-                    <Input
-                      type="text"
-                      placeholder="Enter 'delete my workspace'"
-                      className="mt-2"
-                      onChange={(e) => {
-                        if (e.target.value === "delete my workspace") {
-                          setConfirmDeleteMyWorkspace(true);
-                        } else {
-                          setConfirmDeleteMyWorkspace(false);
-                        }
-                      }}
-                      name="typeDelete"
+                    <Controller
+                      control={control}
+                      name="confirmDelete"
+                      render={({ field: { onChange, value } }) => (
+                        <Input
+                          type="text"
+                          placeholder="Enter 'delete my workspace'"
+                          className="mt-2"
+                          onChange={onChange}
+                          value={value}
+                        />
+                      )}
                     />
                   </div>
 
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading || !canDelete}>
-                      {isDeleteLoading ? "Deleting..." : "Delete Workspace"}
+                    <DangerButton type="submit" disabled={!canDelete} loading={isSubmitting}>
+                      {isSubmitting ? "Deleting..." : "Delete Workspace"}
                     </DangerButton>
                   </div>
-                </div>
+                </form>
               </Dialog.Panel>
             </Transition.Child>
           </div>

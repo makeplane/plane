@@ -54,7 +54,10 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
   const handleCommentDelete = async (commentId: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
-    mutateIssueActivities((prevData) => prevData?.filter((p) => p.id !== commentId), false);
+    mutateIssueActivities(
+      (prevData: any) => prevData?.filter((p: any) => p.id !== commentId),
+      false
+    );
 
     await issuesService
       .deleteIssueComment(
@@ -122,7 +125,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                               activityItem.actor_detail.avatar !== "" ? (
                               <img
                                 src={activityItem.actor_detail.avatar}
-                                alt={activityItem.actor_detail.first_name}
+                                alt={activityItem.actor_detail.display_name}
                                 height={24}
                                 width={24}
                                 className="rounded-full"
@@ -131,7 +134,9 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                               <div
                                 className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white`}
                               >
-                                {activityItem.actor_detail.first_name.charAt(0)}
+                                {activityItem.actor_detail.is_bot
+                                  ? activityItem.actor_detail.first_name.charAt(0)
+                                  : activityItem.actor_detail.display_name.charAt(0)}
                               </div>
                             )}
                           </div>
@@ -150,8 +155,9 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
                         ) : (
                           <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
                             <a className="text-gray font-medium">
-                              {activityItem.actor_detail.first_name}{" "}
-                              {activityItem.actor_detail.last_name}
+                              {activityItem.actor_detail.is_bot
+                                ? activityItem.actor_detail.first_name
+                                : activityItem.actor_detail.display_name}
                             </a>
                           </Link>
                         )}{" "}
@@ -169,6 +175,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
             return (
               <div key={activityItem.id} className="mt-4">
                 <CommentCard
+                  workspaceSlug={workspaceSlug as string}
                   comment={activityItem as IIssueComment}
                   onSubmit={handleCommentUpdate}
                   handleCommentDeletion={handleCommentDelete}

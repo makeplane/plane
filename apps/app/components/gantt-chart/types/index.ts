@@ -5,10 +5,32 @@ export type allViewsType = {
   data: Object | null;
 };
 
+export interface IGanttBlock {
+  data: any;
+  id: string;
+  position?: {
+    marginLeft: number;
+    width: number;
+  };
+  sort_order: number;
+  start_date: Date;
+  target_date: Date;
+}
+
+export interface IBlockUpdateData {
+  sort_order?: {
+    destinationIndex: number;
+    newSortOrder: number;
+    sourceIndex: number;
+  };
+  start_date?: string;
+  target_date?: string;
+}
+
 export interface ChartContextData {
   allViews: allViewsType[];
   currentView: "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
-  currentViewData: any;
+  currentViewData: ChartDataType | undefined;
   renderView: any;
 }
 

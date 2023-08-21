@@ -50,7 +50,7 @@ const ProjectModules: NextPage = () => {
       : null
   );
 
-  const { data: modules } = useSWR<IModule[]>(
+  const { data: modules, mutate: mutateModules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
@@ -139,7 +139,9 @@ const ProjectModules: NextPage = () => {
                 </div>
               </div>
             )}
-            {modulesView === "gantt_chart" && <ModulesListGanttChartView modules={modules} />}
+            {modulesView === "gantt_chart" && (
+              <ModulesListGanttChartView modules={modules} mutateModules={mutateModules} />
+            )}
           </div>
         ) : (
           <EmptyState

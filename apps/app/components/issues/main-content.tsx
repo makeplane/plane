@@ -50,11 +50,11 @@ export const IssueMainContent: React.FC<Props> = ({
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
     workspaceSlug && projectId && issueDetails?.parent
       ? () =>
-          issuesService.subIssues(
-            workspaceSlug as string,
-            projectId as string,
-            issueDetails.parent ?? ""
-          )
+        issuesService.subIssues(
+          workspaceSlug as string,
+          projectId as string,
+          issueDetails.parent ?? ""
+        )
       : null
   );
   const siblingIssuesList = siblingIssues?.sub_issues.filter((i) => i.id !== issueDetails.id);
@@ -97,9 +97,8 @@ export const IssueMainContent: React.FC<Props> = ({
                       <CustomMenu.MenuItem
                         key={issue.id}
                         renderAs="a"
-                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
-                          issue.id
-                        }`}
+                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id
+                          }`}
                         className="flex items-center gap-2 py-2"
                       >
                         <LayerDiagonalIcon className="h-4 w-4" />
@@ -125,6 +124,7 @@ export const IssueMainContent: React.FC<Props> = ({
           </div>
         ) : null}
         <IssueDescriptionForm
+          workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}
           isAllowed={memberRole.isMember || memberRole.isOwner || !uneditable}

@@ -42,6 +42,7 @@ import { NETWORK_CHOICES } from "constants/project";
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setToFavorite?: boolean;
   user: ICurrentUserResponse | undefined;
 };
 
@@ -74,7 +75,12 @@ const IsGuestCondition: React.FC<{
   return null;
 };
 
-export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user }) => {
+export const CreateProjectModal: React.FC<Props> = ({
+  isOpen,
+  setIsOpen,
+  setToFavorite = false,
+  user,
+}) => {
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
 
   const { setToastAlert } = useToast();
@@ -104,6 +110,29 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
     reset(defaultValues);
   };
 
+  const handleAddToFavorites = (projectId: string) => {
+    if (!workspaceSlug) return;
+
+    mutate<IProject[]>(
+      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+      (prevData) =>
+        (prevData ?? []).map((p) => (p.id === projectId ? { ...p, is_favorite: true } : p)),
+      false
+    );
+
+    projectServices
+      .addProjectToFavorites(workspaceSlug as string, {
+        project: projectId,
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favorites. Please try again.",
+        })
+      );
+  };
+
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
 
@@ -125,6 +154,9 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
           title: "Success!",
           message: "Project created successfully.",
         });
+        if (setToFavorite) {
+          handleAddToFavorites(res.id);
+        }
         handleClose();
       })
       .catch((err) => {
@@ -163,20 +195,11 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
 
   const options = workspaceMembers?.map((member) => ({
     value: member.member.id,
-    query:
-      (member.member.first_name && member.member.first_name !== ""
-        ? member.member.first_name
-        : member.member.email) +
-        " " +
-        member.member.last_name ?? "",
+    query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={member.member} />
-        {`${
-          member.member.first_name && member.member.first_name !== ""
-            ? member.member.first_name
-            : member.member.email
-        } ${member.member.last_name ?? ""}`}
+        {member.member.display_name}
       </div>
     ),
   }));
@@ -376,10 +399,7 @@ export const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen, user })
                                     {value ? (
                                       <>
                                         <Avatar user={selectedMember?.member} />
-                                        <span>
-                                          {selectedMember?.member.first_name}{" "}
-                                          {selectedMember?.member.last_name}
-                                        </span>
+                                        <span>{selectedMember?.member.display_name} </span>
                                         <span onClick={() => onChange(null)}>
                                           <Icon
                                             iconName="close"

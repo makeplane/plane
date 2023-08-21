@@ -13,6 +13,8 @@ import useIssuesView from "hooks/use-issues-view";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  handleOnOpen?: () => void;
+  handleOnClose?: () => void;
   tooltipPosition?: "top" | "bottom";
   noBorder?: boolean;
   user: ICurrentUserResponse | undefined;
@@ -22,6 +24,8 @@ type Props = {
 export const ViewDueDateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
+  handleOnOpen,
+  handleOnClose,
   tooltipPosition = "top",
   noBorder = false,
   user,
@@ -32,9 +36,12 @@ export const ViewDueDateSelect: React.FC<Props> = ({
 
   const { issueView } = useIssuesView();
 
+  const minDate = issue.start_date ? new Date(issue.start_date) : null;
+  minDate?.setDate(minDate.getDate());
+
   return (
     <Tooltip
-      tooltipHeading="Due Date"
+      tooltipHeading="Due date"
       tooltipContent={
         issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"
       }
@@ -56,8 +63,6 @@ export const ViewDueDateSelect: React.FC<Props> = ({
             partialUpdateIssue(
               {
                 target_date: val,
-                priority: issue.priority,
-                state: issue.state,
               },
               issue
             );
@@ -77,7 +82,10 @@ export const ViewDueDateSelect: React.FC<Props> = ({
           className={`${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
             issueView === "kanban" ? "bg-custom-background-90" : "bg-custom-background-100"
           }`}
+          minDate={minDate ?? undefined}
           noBorder={noBorder}
+          handleOnOpen={handleOnOpen}
+          handleOnClose={handleOnClose}
           disabled={isNotAllowed}
         />
       </div>

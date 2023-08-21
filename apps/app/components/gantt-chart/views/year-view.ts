@@ -100,8 +100,6 @@ export const generateYearChart = (yearPayload: ChartDataType, side: null | "left
       .map((monthData: any) => monthData.children.length)
       .reduce((partialSum: number, a: number) => partialSum + a, 0) * yearPayload.data.width;
 
-  console.log("scrollWidth", scrollWidth);
-
   return { state: renderState, payload: renderPayload, scrollWidth: scrollWidth };
 };
 

@@ -92,6 +92,7 @@ export const initialState: StateType = {
     labels: null,
     state: null,
     state_group: null,
+    subscriber: null,
     created_by: null,
     target_date: null,
   },
@@ -361,7 +362,13 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         },
       });
 
-      if (property === "kanban") {
+      const additionalProperties = {
+        groupByProperty: state.groupByProperty,
+        orderBy: state.orderBy,
+      };
+
+      if (property === "kanban" && state.groupByProperty === null) {
+        additionalProperties.groupByProperty = "state";
         dispatch({
           type: "SET_GROUP_BY_PROPERTY",
           payload: {
@@ -370,10 +377,20 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         });
       }
       if (property === "calendar") {
+        additionalProperties.groupByProperty = null;
         dispatch({
           type: "SET_GROUP_BY_PROPERTY",
           payload: {
             groupByProperty: null,
+          },
+        });
+      }
+      if (property === "gantt_chart") {
+        additionalProperties.orderBy = "sort_order";
+        dispatch({
+          type: "SET_ORDER_BY_PROPERTY",
+          payload: {
+            orderBy: "sort_order",
           },
         });
       }
@@ -383,7 +400,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
         issueView: property,
-        groupByProperty: "state",
+        ...additionalProperties,
       });
     },
     [workspaceSlug, projectId, state]
@@ -400,7 +417,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -431,7 +448,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -462,7 +479,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -493,7 +510,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -524,7 +541,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       if (!workspaceSlug || !projectId) return;
 
-      mutateMyViewProps((prevData) => {
+      mutateMyViewProps((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -646,7 +663,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
             user
           );
       } else {
-        mutateMyViewProps((prevData) => {
+        mutateMyViewProps((prevData: any) => {
           if (!prevData) return prevData;
 
           return {

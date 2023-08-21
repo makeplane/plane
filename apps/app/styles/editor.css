@@ -1,11 +1,96 @@
-.empty-node::after {
+.ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
+  float: left;
   color: rgb(var(--color-text-400));
-
-  position: absolute;
   pointer-events: none;
-  top: 15px;
-  margin-left: 1px;
+  height: 0;
+}
+
+.ProseMirror .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: rgb(var(--color-text-400));
+  pointer-events: none;
+  height: 0;
+}
+
+/* Custom image styles */
+
+.ProseMirror img {
+  transition: filter 0.1s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    filter: brightness(90%);
+  }
+
+  &.ProseMirror-selectednode {
+    outline: 3px solid #5abbf7;
+    filter: brightness(90%);
+  }
+}
+
+/* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
+
+ul[data-type="taskList"] li > label {
+  margin-right: 0.2rem;
+  user-select: none;
+}
+
+@media screen and (max-width: 768px) {
+  ul[data-type="taskList"] li > label {
+    margin-right: 0.5rem;
+  }
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: rgb(var(--color-background-100));
+  margin: 0;
+  cursor: pointer;
+  width: 1.2rem;
+  height: 1.2rem;
+  position: relative;
+  border: 2px solid rgb(var(--color-text-100));
+  margin-right: 0.3rem;
+  display: grid;
+  place-content: center;
+
+  &:hover {
+    background-color: rgb(var(--color-background-80));
+  }
+
+  &:active {
+    background-color: rgb(var(--color-background-90));
+  }
+
+  &::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em;
+    transform-origin: center;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  &:checked::before {
+    transform: scale(1);
+  }
+}
+
+ul[data-type="taskList"] li[data-checked="true"] > div > p {
+  color: rgb(var(--color-text-200));
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+/* Overwrite tippy-box original max-width */
+
+.tippy-box {
+  max-width: 400px !important;
 }
 
 .ProseMirror {
@@ -31,66 +116,37 @@
   -moz-appearance: textfield;
 }
 
-.ProseMirror-icon {
-  display: inline-block;
-  line-height: 0.8;
-  vertical-align: -2px;
-  color: #666;
-  cursor: pointer;
-  margin: 0 3px;
-  padding: 3px 8px;
-  border-radius: 3px;
-  border: 1px solid transparent;
-  transition: background 50ms ease-in-out;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+.fadeIn {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
 }
 
-.ProseMirror-menu-disabled.ProseMirror-icon {
-  opacity: 0.3;
-  cursor: default;
-  pointer-events: none;
+.fadeOut {
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
 }
 
-.ProseMirror-icon svg {
-  fill: currentColor;
-  height: 1em;
+.img-placeholder {
+  position: relative;
+  width: 35%;
+
+  &:before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid rgba(var(--color-text-200));
+    border-top-color: rgba(var(--color-text-800)); 
+    animation: spinning 0.6s linear infinite;
+  }
 }
 
-.ProseMirror-icon span {
-  vertical-align: text-top;
-}
-
-.remirror-editor-wrapper .remirror-editor {
-  min-height: 150px;
-}
-
-.issue-comments-section .remirror-editor-wrapper .remirror-editor,
-.page-block-section .remirror-editor-wrapper .remirror-editor {
-  min-height: 50px;
-}
-
-.remirror-section .remirror-editor-wrapper .remirror-editor {
-  min-height: 0 !important;
-}
-
-.remirror-editor-wrapper {
-  padding-top: 8px;
-}
-
-.MuiButtonBase-root {
-  border: none !important;
-  border-radius: 0.25rem !important;
-  padding: 0.25rem !important;
-}
-
-.MuiButtonBase-root svg {
-  fill: rgb(var(--color-text-100)) !important;
-}
-
-.MuiButtonBase-root.Mui-selected,
-.MuiButtonBase-root:hover {
-  background-color: rgb(var(--color-background-100)) !important;
+@keyframes spinning {
+  to {
+    transform: rotate(360deg);
+  }
 }

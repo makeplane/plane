@@ -122,7 +122,7 @@ export const InboxViewContextProvider: React.FC<{ children: React.ReactNode }> =
         },
       };
 
-      mutateInboxDetails((prevData) => {
+      mutateInboxDetails((prevData: any) => {
         if (!prevData) return prevData;
 
         return {
@@ -156,7 +156,7 @@ export const InboxViewContextProvider: React.FC<{ children: React.ReactNode }> =
       filters: { ...initialState.filters },
     };
 
-    mutateInboxDetails((prevData) => {
+    mutateInboxDetails((prevData: any) => {
       if (!prevData) return prevData;
 
       return {

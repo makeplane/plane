@@ -293,6 +293,7 @@ export const InboxMainContent: React.FC = () => {
             </div>
             <div>
               <IssueDescriptionForm
+                workspaceSlug={workspaceSlug as string}
                 issue={{
                   name: issueDetails.name,
                   description: issueDetails.description,

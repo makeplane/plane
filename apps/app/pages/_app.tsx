@@ -33,6 +33,9 @@ import {
   SITE_KEYWORDS,
   SITE_TITLE,
 } from "constants/seo-variables";
+// mobx store provider
+import { MobxStoreProvider } from "lib/mobx/store-provider";
+import MobxStoreInit from "lib/mobx/store-init";
 
 const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
 
@@ -45,9 +48,10 @@ Router.events.on("routeChangeComplete", NProgress.done);
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     // <UserProvider>
-    <ThemeProvider themes={THEMES} defaultTheme="system">
-      <ToastContextProvider>
-        <ThemeContextProvider>
+    // mobx root provider
+    <MobxStoreProvider {...pageProps}>
+      <ThemeProvider themes={THEMES} defaultTheme="system">
+        <ToastContextProvider>
           <CrispWithNoSSR />
           <Head>
             <title>{SITE_TITLE}</title>
@@ -64,10 +68,11 @@ function MyApp({ Component, pageProps }: AppProps) {
             <link rel="manifest" href="/site.webmanifest.json" />
             <link rel="shortcut icon" href="/favicon/favicon.ico" />
           </Head>
+          <MobxStoreInit />
           <Component {...pageProps} />
-        </ThemeContextProvider>
-      </ToastContextProvider>
-    </ThemeProvider>
+        </ToastContextProvider>
+      </ThemeProvider>
+    </MobxStoreProvider>
     // </UserProvider>
   );
 }

@@ -24,6 +24,7 @@ import {
   ViewEstimateSelect,
   ViewIssueLabel,
   ViewPrioritySelect,
+  ViewStartDateSelect,
   ViewStateSelect,
 } from "components/issues";
 // ui
@@ -85,8 +86,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [contextMenuPosition, setContextMenuPosition] = useState<React.MouseEvent | null>(null);
+
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const [isDropdownActive, setIsDropdownActive] = useState(false);
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -124,7 +127,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         );
       } else {
         mutateIssues(
-          (prevData) =>
+          (prevData: any) =>
             handleIssuesMutation(
               formData,
               groupTitle ?? "",
@@ -199,7 +202,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   return (
     <>
       <ContextMenu
-        position={contextMenuPosition}
+        clickEvent={contextMenuPosition}
         title="Quick actions"
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
@@ -231,7 +234,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         </a>
       </ContextMenu>
       <div
-        className={`mb-3 rounded bg-custom-background-90 shadow ${
+        className={`mb-3 rounded bg-custom-background-100 shadow ${
           snapshot.isDragging ? "border-2 border-custom-primary shadow-lg" : ""
         }`}
         ref={provided.innerRef}
@@ -241,10 +244,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
-          setContextMenuPosition({ x: e.pageX, y: e.pageY });
+          setContextMenuPosition(e);
         }}
       >
-        <div className="group/card relative select-none p-3.5">
+        <div className="flex flex-col justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px]">
           {!isNotAllowed && (
             <div
               ref={actionSectionRef}
@@ -294,16 +297,20 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </div>
           )}
           <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-            <a>
+            <a className="flex flex-col gap-1.5">
               {properties.key && (
-                <div className="mb-2.5 text-xs font-medium text-custom-text-200">
+                <div className="text-xs font-medium text-custom-text-200">
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <h5 className="text-sm break-words line-clamp-3">{issue.name}</h5>
+              <h5 className="text-sm break-words line-clamp-2">{issue.name}</h5>
             </a>
           </Link>
-          <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
+          <div
+            className={`flex items-center gap-2 text-xs ${
+              isDropdownActive ? "" : "overflow-x-scroll"
+            }`}
+          >
             {properties.priority && (
               <ViewPrioritySelect
                 issue={issue}
@@ -322,10 +329,22 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
+            {properties.start_date && issue.start_date && (
+              <ViewStartDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                handleOnOpen={() => setIsDropdownActive(true)}
+                handleOnClose={() => setIsDropdownActive(false)}
+                user={user}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
             {properties.due_date && issue.target_date && (
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
+                handleOnOpen={() => setIsDropdownActive(true)}
+                handleOnClose={() => setIsDropdownActive(false)}
                 user={user}
                 isNotAllowed={isNotAllowed}
               />
@@ -338,6 +357,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
+                customButton
                 user={user}
                 selfPositioned
               />

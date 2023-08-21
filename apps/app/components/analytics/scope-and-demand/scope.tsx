@@ -1,5 +1,7 @@
 // ui
-import { BarGraph } from "components/ui";
+import { BarGraph, ProfileEmptyState } from "components/ui";
+// image
+import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // types
 import { IDefaultAnalyticsResponse } from "types";
 
@@ -16,23 +18,20 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
         {defaultAnalytics.pending_issue_user.length > 0 ? (
           <BarGraph
             data={defaultAnalytics.pending_issue_user}
-            indexBy="assignees__email"
+            indexBy="assignees__display_name"
             keys={["count"]}
             height="250px"
             colors={() => `#f97316`}
             customYAxisTickValues={defaultAnalytics.pending_issue_user.map((d) => d.count)}
             tooltip={(datum) => {
               const assignee = defaultAnalytics.pending_issue_user.find(
-                (a) => a.assignees__email === `${datum.indexValue}`
+                (a) => a.assignees__display_name === `${datum.indexValue}`
               );
 
               return (
                 <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
                   <span className="font-medium text-custom-text-200">
-                    {assignee
-                      ? assignee.assignees__first_name + " " + assignee.assignees__last_name
-                      : "No assignee"}
-                    :{" "}
+                    {assignee ? assignee.assignees__display_name : "No assignee"}:{" "}
                   </span>
                   {datum.value}
                 </div>
@@ -73,8 +72,12 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
             }}
           />
         ) : (
-          <div className="text-custom-text-200 text-center text-sm py-8">
-            No matching data found.
+          <div className="px-7 py-4">
+            <ProfileEmptyState
+              title="No Data yet"
+              description="Analysis of pending issues by co-workers appears here."
+              image={emptyBarGraph}
+            />
           </div>
         )}
       </div>

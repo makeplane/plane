@@ -45,7 +45,6 @@ type TSingleStatProps = {
   handleDeleteCycle: () => void;
   handleAddToFavorites: () => void;
   handleRemoveFromFavorites: () => void;
-  isCompleted?: boolean;
 };
 
 const stateGroups = [
@@ -82,7 +81,6 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   handleDeleteCycle,
   handleAddToFavorites,
   handleRemoveFromFavorites,
-  isCompleted = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -90,6 +88,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const { setToastAlert } = useToast();
 
   const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+  const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
 
@@ -250,14 +249,14 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                           height={16}
                           width={16}
                           className="rounded-full"
-                          alt={cycle.owned_by.first_name}
+                          alt={cycle.owned_by.display_name}
                         />
                       ) : (
                         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-300 capitalize text-white">
-                          {cycle.owned_by.first_name.charAt(0)}
+                          {cycle.owned_by.display_name.charAt(0)}
                         </span>
                       )}
-                      <span className="text-custom-text-200">{cycle.owned_by.first_name}</span>
+                      <span className="text-custom-text-200">{cycle.owned_by.display_name}</span>
                     </div>
                   </div>
                   <div className="flex h-5 items-center gap-2">

@@ -354,8 +354,8 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               <Command.Item
                                 key={item.id}
                                 onSelect={() => {
-                                  router.push(currentSection.path(item));
                                   setIsPaletteOpen(false);
+                                  router.push(currentSection.path(item));
                                 }}
                                 value={`${key}-${item?.name}`}
                                 className="focus:outline-none"
@@ -379,6 +379,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         <Command.Group heading="Issue actions">
                           <Command.Item
                             onSelect={() => {
+                              setIsPaletteOpen(false);
                               setPlaceholder("Change state...");
                               setSearchTerm("");
                               setPages([...pages, "change-issue-state"]);
@@ -460,6 +461,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       <Command.Group heading="Issue">
                         <Command.Item
                           onSelect={() => {
+                            setIsPaletteOpen(false);
                             const e = new KeyboardEvent("keydown", {
                               key: "c",
                             });
@@ -479,6 +481,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         <Command.Group heading="Project">
                           <Command.Item
                             onSelect={() => {
+                              setIsPaletteOpen(false);
                               const e = new KeyboardEvent("keydown", {
                                 key: "p",
                               });
@@ -500,6 +503,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Group heading="Cycle">
                             <Command.Item
                               onSelect={() => {
+                                setIsPaletteOpen(false);
                                 const e = new KeyboardEvent("keydown", {
                                   key: "q",
                                 });
@@ -517,6 +521,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Group heading="Module">
                             <Command.Item
                               onSelect={() => {
+                                setIsPaletteOpen(false);
                                 const e = new KeyboardEvent("keydown", {
                                   key: "m",
                                 });
@@ -534,6 +539,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Group heading="View">
                             <Command.Item
                               onSelect={() => {
+                                setIsPaletteOpen(false);
                                 const e = new KeyboardEvent("keydown", {
                                   key: "v",
                                 });
@@ -551,6 +557,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Group heading="Page">
                             <Command.Item
                               onSelect={() => {
+                                setIsPaletteOpen(false);
                                 const e = new KeyboardEvent("keydown", {
                                   key: "d",
                                 });
@@ -568,11 +575,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           {projectDetails && projectDetails.inbox_view && (
                             <Command.Group heading="Inbox">
                               <Command.Item
-                                onSelect={() =>
+                                onSelect={() => {
+                                  setIsPaletteOpen(false);
                                   redirect(
                                     `/${workspaceSlug}/projects/${projectId}/inbox/${inboxList?.[0]?.id}`
-                                  )
-                                }
+                                  );
+                                }}
                                 className="focus:outline-none"
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
@@ -731,12 +739,21 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </div>
                       </Command.Item>
                       <Command.Item
-                        onSelect={() => redirect(`/${workspaceSlug}/settings/import-export`)}
+                        onSelect={() => redirect(`/${workspaceSlug}/settings/imports`)}
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
                           <SettingIcon className="h-4 w-4 text-custom-text-200" />
-                          Import/Export
+                          Import
+                        </div>
+                      </Command.Item>
+                      <Command.Item
+                        onSelect={() => redirect(`/${workspaceSlug}/settings/exports`)}
+                        className="focus:outline-none"
+                      >
+                        <div className="flex items-center gap-2 text-custom-text-200">
+                          <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                          Export
                         </div>
                       </Command.Item>
                     </>

@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// component
+import { Icon } from "components/ui";
 // services
 import workspaceService from "services/workspace.service";
 // icons
@@ -23,12 +25,14 @@ type AvatarProps = {
 export const Avatar: React.FC<AvatarProps> = ({
   user,
   index,
-  height = "20px",
-  width = "20px",
+  height = "24px",
+  width = "24px",
   fontSize = "12px",
 }) => (
   <div
-    className={`relative rounded-full ${index && index !== 0 ? "-ml-3.5" : ""}`}
+    className={`relative rounded border-[0.5px] ${
+      index && index !== 0 ? "-ml-3.5 border-custom-border-200" : "border-transparent"
+    }`}
     style={{
       height: height,
       width: width,
@@ -36,8 +40,8 @@ export const Avatar: React.FC<AvatarProps> = ({
   >
     {user && user.avatar && user.avatar !== "" ? (
       <div
-        className={`rounded-full border-2 ${
-          index ? "border-custom-border-200 bg-custom-background-80" : "border-transparent"
+        className={`rounded border-[0.5px] ${
+          index ? "border-custom-border-200 bg-custom-background-100" : "border-transparent"
         }`}
         style={{
           height: height,
@@ -46,22 +50,20 @@ export const Avatar: React.FC<AvatarProps> = ({
       >
         <img
           src={user.avatar}
-          className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
-          alt={user.first_name}
+          className="absolute top-0 left-0 h-full w-full object-cover rounded"
+          alt={user.display_name}
         />
       </div>
     ) : (
       <div
-        className="grid place-items-center rounded-full border-2 border-custom-border-200 bg-gray-700 text-xs capitalize text-white"
+        className="grid place-items-center text-xs capitalize text-white rounded bg-gray-700  border-[0.5px] border-custom-border-200"
         style={{
           height: height,
           width: width,
           fontSize: fontSize,
         }}
       >
-        {user?.first_name && user.first_name !== ""
-          ? user.first_name.charAt(0)
-          : user?.email?.charAt(0)}
+        {user?.display_name?.charAt(0)}
       </div>
     )}
   </div>
@@ -77,7 +79,7 @@ type AsigneesListProps = {
 export const AssigneesList: React.FC<AsigneesListProps> = ({
   users,
   userIds,
-  length = 5,
+  length = 3,
   showLength = true,
 }) => {
   const router = useRouter();
@@ -90,7 +92,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
 
   if ((users && users.length === 0) || (userIds && userIds.length === 0))
     return (
-      <div className="h-5 w-5 rounded-full border-2 border-white bg-custom-background-80">
+      <div className="h-5 w-5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-80">
         <Image src={User} height="100%" width="100%" className="rounded-full" alt="No user" />
       </div>
     );
@@ -102,7 +104,14 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           {users.slice(0, length).map((user, index) => (
             <Avatar key={user?.id} user={user} index={index} />
           ))}
-          {users.length > length ? <span>+{users.length - length}</span> : null}
+          {users.length > length ? (
+            <div className="-ml-3.5 relative h-6 w-6 rounded">
+              <div className="flex items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
+                <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
+                {users.length - length}
+              </div>
+            </div>
+          ) : null}
         </>
       )}
       {userIds && (
@@ -114,7 +123,12 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           })}
           {showLength ? (
             userIds.length > length ? (
-              <span>+{userIds.length - length}</span>
+              <div className="-ml-3.5 relative h-6 w-6 rounded">
+                <div className="flex items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
+                  <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
+                  {userIds.length - length}
+                </div>
+              </div>
             ) : null
           ) : (
             ""

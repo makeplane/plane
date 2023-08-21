@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from "react";
 
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 // react-hook-form
@@ -36,24 +35,14 @@ import {
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 // rich-text-editor
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="mt-4">
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
 
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
+const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
+  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
+);
 
-const WrappedRemirrorRichTextEditor = React.forwardRef<
-  IRemirrorRichTextEditor,
-  IRemirrorRichTextEditor
->((props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
+TiptapEditor.displayName = "TiptapEditor";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -75,6 +64,7 @@ const defaultValues: Partial<IIssue> = {
   assignees_list: [],
   labels: [],
   labels_list: [],
+  start_date: null,
   target_date: null,
 };
 
@@ -96,6 +86,7 @@ export interface IssueFormProps {
     | "priority"
     | "assignee"
     | "label"
+    | "startDate"
     | "dueDate"
     | "estimate"
     | "parent"
@@ -239,6 +230,15 @@ export const IssueForm: FC<IssueFormProps> = ({
     });
   }, [getValues, projectId, reset]);
 
+  const startDate = watch("start_date");
+  const targetDate = watch("target_date");
+
+  const minDate = startDate ? new Date(startDate) : null;
+  minDate?.setDate(minDate.getDate());
+
+  const maxDate = targetDate ? new Date(targetDate) : null;
+  maxDate?.setDate(maxDate.getDate());
+
   return (
     <>
       {projectId && (
@@ -363,21 +363,31 @@ export const IssueForm: FC<IssueFormProps> = ({
                     </button>
                   </div>
                   <Controller
-                    name="description"
+                    name="description_html"
                     control={control}
-                    render={({ field: { value } }) => (
-                      <WrappedRemirrorRichTextEditor
-                        value={
-                          !value || (typeof value === "object" && Object.keys(value).length === 0)
-                            ? watch("description_html")
-                            : value
-                        }
-                        onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-                        onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                        placeholder="Description"
-                        ref={editorRef}
-                      />
-                    )}
+                    render={({ field: { value, onChange } }) => {
+                      if (!value && !watch("description_html")) return <></>;
+
+                      return (
+                        <TiptapEditor
+                          workspaceSlug={workspaceSlug as string}
+                          ref={editorRef}
+                          debouncedUpdatesEnabled={false}
+                          value={
+                            !value ||
+                            value === "" ||
+                            (typeof value === "object" && Object.keys(value).length === 0)
+                              ? watch("description_html")
+                              : value
+                          }
+                          customClassName="min-h-[150px]"
+                          onChange={(description: Object, description_html: string) => {
+                            onChange(description_html);
+                            setValue("description", description);
+                          }}
+                        />
+                      );
+                    }}
                   />
                   <GptAssistantModal
                     isOpen={gptAssistantModal}
@@ -447,13 +457,34 @@ export const IssueForm: FC<IssueFormProps> = ({
                     )}
                   />
                 )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
+                  <div>
+                    <Controller
+                      control={control}
+                      name="start_date"
+                      render={({ field: { value, onChange } }) => (
+                        <IssueDateSelect
+                          label="Start date"
+                          maxDate={maxDate ?? undefined}
+                          onChange={onChange}
+                          value={value}
+                        />
+                      )}
+                    />
+                  </div>
+                )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div>
                     <Controller
                       control={control}
                       name="target_date"
                       render={({ field: { value, onChange } }) => (
-                        <IssueDateSelect value={value} onChange={onChange} />
+                        <IssueDateSelect
+                          label="Due date"
+                          minDate={minDate ?? undefined}
+                          onChange={onChange}
+                          value={value}
+                        />
                       )}
                     />
                   </div>

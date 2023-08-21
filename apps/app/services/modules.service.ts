@@ -75,7 +75,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: any,
+    data: Partial<IModule>,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
@@ -127,7 +127,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    queries?: Partial<IIssueViewOptions>
+    queries?: any
   ): Promise<
     | IIssue[]
     | {
@@ -210,6 +210,28 @@ class ProjectIssuesServices extends APIService {
       .catch((error) => {
         throw error?.response;
       });
+  }
+
+  async updateModuleLink(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    linkId: string,
+    data: {
+      metadata: any;
+      title: string;
+      url: string;
+    },
+
+  ): Promise<any> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/${linkId}/`,
+      data
+    )
+    .then((response) => response?.data)
+    .catch((error) => {
+      throw error?.response;
+    });
   }
 
   async deleteModuleLink(

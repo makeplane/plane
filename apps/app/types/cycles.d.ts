@@ -29,6 +29,7 @@ export interface ICycle {
   owned_by: IUser;
   project: string;
   project_detail: IProjectLite;
+  sort_order: number;
   start_date: string | null;
   started_issues: number;
   total_issues: number;
@@ -49,6 +50,7 @@ export type TAssigneesDistribution = {
   completed_issues: number;
   first_name: string | null;
   last_name: string | null;
+  display_name: string | null;
   pending_issues: number;
   total_issues: number;
 };

@@ -93,13 +93,14 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
     });
   };
 
-  const completedSubIssues = subIssuesResponse
-    ? subIssuesResponse.state_distribution.completed +
-      subIssuesResponse.state_distribution.cancelled
-    : 0;
+  const completedSubIssue = subIssuesResponse?.state_distribution.completed ?? 0;
+  const cancelledSubIssue = subIssuesResponse?.state_distribution.cancelled ?? 0;
+
+  const totalCompletedSubIssues = completedSubIssue + cancelledSubIssue;
+
   const totalSubIssues = subIssuesResponse ? subIssuesResponse.sub_issues.length : 0;
 
-  const completionPercentage = (completedSubIssues / totalSubIssues) * 100;
+  const completionPercentage = (totalCompletedSubIssues / totalSubIssues) * 100;
 
   const isNotAllowed = memberRole.isGuest || memberRole.isViewer || disabled;
 

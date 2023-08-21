@@ -40,6 +40,7 @@ class Module(ProjectBaseModel):
         through_fields=("module", "member"),
     )
     view_props = models.JSONField(default=dict)
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         unique_together = ["name", "project"]
@@ -47,6 +48,17 @@ class Module(ProjectBaseModel):
         verbose_name_plural = "Modules"
         db_table = "modules"
         ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            smallest_sort_order = Module.objects.filter(
+                project=self.project
+            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+
+            if smallest_sort_order is not None:
+                self.sort_order = smallest_sort_order - 10000
+
+        super(Module, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} {self.start_date} {self.target_date}"
@@ -86,7 +98,7 @@ class ModuleIssue(ProjectBaseModel):
 
 
 class ModuleLink(ProjectBaseModel):
-    title = models.CharField(max_length=255, null=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
     url = models.URLField()
     module = models.ForeignKey(
         Module, on_delete=models.CASCADE, related_name="link_module"
