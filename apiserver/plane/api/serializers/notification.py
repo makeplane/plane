@@ -7,7 +7,7 @@ from plane.db.models import Notification
 class NotificationSerializer(BaseSerializer):
     triggered_by_details = UserSerializer(
         source="triggered_by",
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
 

@@ -7,12 +7,8 @@ from plane.db.models import State
 
 
 class StateSerializer(BaseSerializer):
-    workspace_detail = WorkSpaceSerializer(
-        source="workspace",
-        fields=("id", "name", "slug"),
-        read_only=True,
-    ) 
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    workspace_detail = WorkSpaceSerializer(source="workspace", read_only=True)
+    project_detail = ProjectSerializer(source="project", read_only=True)
 
     class Meta:
         model = State

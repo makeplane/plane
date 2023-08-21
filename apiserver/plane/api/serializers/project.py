@@ -21,11 +21,11 @@ from plane.db.models import (
 class ProjectSerializer(BaseSerializer):
     # workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserSerializer(
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
     project_lead = UserSerializer(
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
     is_favorite = serializers.BooleanField(read_only=True)
@@ -102,11 +102,11 @@ class ProjectSerializer(BaseSerializer):
 class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserSerializer(
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
     project_lead = UserSerializer(
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
     is_favorite = serializers.BooleanField(read_only=True)
@@ -127,7 +127,7 @@ class ProjectMemberSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     project = ProjectSerializer(fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     member = UserSerializer(
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
 
@@ -144,15 +144,15 @@ class ProjectMemberAdminSerializer(BaseSerializer):
     ) 
     project = ProjectSerializer(fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
     member = UserSerializer(
-        fields=(
-            "id",
-            "first_name",
-            "last_name",
-            "avatar",
-            "is_bot",
-            "display_name",
-            "email",
-        ),
+        # fields=(
+        #     "id",
+        #     "first_name",
+        #     "last_name",
+        #     "avatar",
+        #     "is_bot",
+        #     "display_name",
+        #     "email",
+        # ),
         read_only=True,
     )
 
@@ -193,7 +193,7 @@ class ProjectFavoriteSerializer(BaseSerializer):
 
 class ProjectMemberLiteSerializer(BaseSerializer):
     member = UserSerializer(
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
     is_subscribed = serializers.BooleanField(read_only=True)

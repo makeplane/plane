@@ -281,16 +281,86 @@ class IssueViewSet(BaseViewSet):
 
             serializer = IssueCreateSerializer(
                 data=request.data,
-                nested_fields={
-                    "created_by_detail": (
-                        "id",
-                        "first_name",
-                        "last_name",
-                        "avatar",
-                        "is_bot",
-                        "display_name",
-                    )
-                },
+                fields=[
+                    {
+                        "created_by_detail": [
+                            "id",
+                            "first_name",
+                            "last_name",
+                            "avatar",
+                            "is_bot",
+                            "display_name",
+                        ]
+                    },
+                    {
+                        "state_detail": [
+                            "id",
+                            "created_by",
+                            "created_at",
+                            "updated_at",
+                            "updated_by",
+                            "name",
+                            "description",
+                            "color",
+                            "slug",
+                            "sequence",
+                            "group",
+                            "default",
+                            "project",
+                            "workspace",
+                            {"workspace_detail": ["id", "name", "slug"]},
+                            {
+                                "project_detail": [
+                                    "id",
+                                    "name",
+                                    "cover_image",
+                                    "icon_prop",
+                                    "emoji",
+                                    "description",
+                                ]
+                            },
+                        ],
+                    },
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                        ]
+                    },
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    "id",
+                    "created_at",
+                    "created_by",
+                    "updated_at",
+                    "updated_by",
+                    "workspace",
+                    "project",
+                    "assignees_list",
+                    "blockers_list",
+                    "labels_list",
+                    "blocks_list",
+                    "PRIORITY_CHOICES",
+                    "parent",
+                    "state",
+                    "estimate_point",
+                    "name",
+                    "description",
+                    "description_html",
+                    "description_stripped",
+                    "priority",
+                    "start_date",
+                    "target_date",
+                    "assignees",
+                    "sequence_id",
+                    "labels",
+                    "sort_order",
+                    "completed_at",
+                    "archived_at",
+                ],
                 context={
                     "project_id": project_id,
                     "workspace_id": project.workspace_id,

@@ -13,7 +13,6 @@ from plane.db.models import Project, Estimate, EstimatePoint
 from plane.api.serializers import (
     EstimateSerializer,
     EstimatePointSerializer,
-    EstimateReadSerializer,
 )
 
 
@@ -51,10 +50,38 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
     def list(self, request, slug, project_id):
         try:
-            estimates = Estimate.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).prefetch_related("points").select_related("workspace", "project")
-            serializer = EstimateReadSerializer(estimates, many=True)
+            estimates = (
+                Estimate.objects.filter(workspace__slug=slug, project_id=project_id)
+                .prefetch_related("points")
+                .select_related("workspace", "project")
+            )
+            serializer = EstimateSerializer(
+                estimates,
+                fields=[
+                    "id",
+                    "created_at",
+                    "created_by",
+                    "updated_at",
+                    "updated_by",
+                    "workspace",
+                    "project",
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                        ]
+                    },
+                    "name",
+                    "points",
+                    "description",
+                ],
+                many=True,
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -79,7 +106,31 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            estimate_serializer = EstimateSerializer(data=request.data.get("estimate"))
+            estimate_serializer = EstimateSerializer(
+                data=request.data.get("estimate"),
+                fields=[
+                    "id",
+                    "created_at",
+                    "created_by",
+                    "updated_at",
+                    "updated_by",
+                    "workspace",
+                    "project",
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                        ]
+                    },
+                    "name",
+                    "description",
+                ],
+            )
             if not estimate_serializer.is_valid():
                 return Response(
                     estimate_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -137,7 +188,32 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             estimate = Estimate.objects.get(
                 pk=estimate_id, workspace__slug=slug, project_id=project_id
             )
-            serializer = EstimateReadSerializer(estimate)
+            serializer = EstimateSerializer(
+                estimate,
+                fields=[
+                    "id",
+                    "created_at",
+                    "created_by",
+                    "updated_at",
+                    "updated_by",
+                    "workspace",
+                    "project",
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                        ]
+                    },
+                    "name",
+                    "points",
+                    "description",
+                ],
+            )
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK,
@@ -170,7 +246,31 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             estimate = Estimate.objects.get(pk=estimate_id)
 
             estimate_serializer = EstimateSerializer(
-                estimate, data=request.data.get("estimate"), partial=True
+                estimate,
+                data=request.data.get("estimate"),
+                fields=[
+                    "id",
+                    "created_at",
+                    "created_by",
+                    "updated_at",
+                    "updated_by",
+                    "workspace",
+                    "project",
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                        ]
+                    },
+                    "name",
+                    "description",
+                ],
+                partial=True,
             )
             if not estimate_serializer.is_valid():
                 return Response(
@@ -211,7 +311,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
             try:
                 EstimatePoint.objects.bulk_update(
-                    updated_estimate_points, ["value"], batch_size=10,
+                    updated_estimate_points,
+                    ["value"],
+                    batch_size=10,
                 )
             except IntegrityError as e:
                 return Response(
@@ -219,7 +321,9 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            estimate_point_serializer = EstimatePointSerializer(estimate_points, many=True)
+            estimate_point_serializer = EstimatePointSerializer(
+                estimate_points, many=True
+            )
             return Response(
                 {
                     "estimate": estimate_serializer.data,

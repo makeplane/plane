@@ -42,7 +42,36 @@ class StateViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id):
         try:
-            serializer = StateSerializer(data=request.data)
+            serializer = StateSerializer(
+                data=request.data,
+                fields=[
+                    "id",
+                    "created_by",
+                    "created_at",
+                    "updated_at",
+                    "updated_by",
+                    "name",
+                    "description",
+                    "color",
+                    "slug",
+                    "sequence",
+                    "group",
+                    "default",
+                    "project",
+                    "workspace",
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                        ]
+                    },
+                ],
+            )
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -62,7 +91,37 @@ class StateViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         try:
             state_dict = dict()
-            states = StateSerializer(self.get_queryset(), many=True).data
+            states = StateSerializer(
+                self.get_queryset(),
+                fields=[
+                    "id",
+                    "created_by",
+                    "created_at",
+                    "updated_at",
+                    "updated_by",
+                    "name",
+                    "description",
+                    "color",
+                    "slug",
+                    "sequence",
+                    "group",
+                    "default",
+                    "project",
+                    "workspace",
+                    {"workspace_detail": ["id", "name", "slug"]},
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
+                        ]
+                    },
+                ],
+                many=True,
+            ).data
 
             for key, value in groupby(
                 sorted(states, key=lambda state: state["group"]),
@@ -82,7 +141,9 @@ class StateViewSet(BaseViewSet):
         try:
             state = State.objects.get(
                 ~Q(name="Triage"),
-                pk=pk, project_id=project_id, workspace__slug=slug,
+                pk=pk,
+                project_id=project_id,
+                workspace__slug=slug,
             )
 
             if state.default:

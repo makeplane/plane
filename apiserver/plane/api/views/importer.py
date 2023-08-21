@@ -42,7 +42,6 @@ from plane.utils.html_processor import strip_tags
 
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
-
     def get(self, request, slug, service):
         try:
             if service == "github":
@@ -179,33 +178,44 @@ class ImportServiceEndpoint(BaseAPIView):
                 service_importer.delay(service, importer.id)
                 serializer = ImporterSerializer(
                     importer,
-                    fields={
-                        "id": [],
-                        "created_by": [],
-                        "created_at": [],
-                        "updated_at": [],
-                        "updated_by": [],
-                        "workspace": [],
-                        "project": [],
-                        "initiated_by": [],
-                        "project_detail": [],
-                        "workspace_detail": [],
-                        "service": [],
-                        "status": [],
-                        "metadata": [],
-                        "config": [],
-                        "data": [],
-                        "token": [],
-                        "imported_data": [],
-                        "initiated_by_detail": [
-                            "id",
-                            "first_name",
-                            "last_name",
-                            "avatar",
-                            "is_bot",
-                            "display_name",
-                        ],
-                    },
+                    fields=[
+                        "id",
+                        "created_by",
+                        "created_at",
+                        "updated_at",
+                        "updated_by",
+                        "workspace",
+                        "project",
+                        "service",
+                        "status",
+                        "initiated_by",
+                        "metadata",
+                        "config",
+                        "data",
+                        "token",
+                        "imported_data",
+                        {
+                            "initiated_by_detail": [
+                                "id",
+                                "first_name",
+                                "last_name",
+                                "avatar",
+                                "is_bot",
+                                "display_name",
+                            ],
+                        },
+                        {
+                            "project_detail": [
+                                "id",
+                                "name",
+                                "cover_image",
+                                "icon_prop",
+                                "emoji",
+                                "description",
+                            ]
+                        },
+                        {"workspace_detail": ["id", "name", "slug"]},
+                    ],
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -244,33 +254,44 @@ class ImportServiceEndpoint(BaseAPIView):
                 service_importer.delay(service, importer.id)
                 serializer = ImporterSerializer(
                     importer,
-                    fields={
-                        "id": [],
-                        "created_by": [],
-                        "created_at": [],
-                        "updated_at": [],
-                        "updated_by": [],
-                        "workspace": [],
-                        "project": [],
-                        "initiated_by": [],
-                        "project_detail": [],
-                        "workspace_detail": [],
-                        "service": [],
-                        "status": [],
-                        "metadata": [],
-                        "config": [],
-                        "data": [],
-                        "token": [],
-                        "imported_data": [],
-                        "initiated_by_detail": [
-                            "id",
-                            "first_name",
-                            "last_name",
-                            "avatar",
-                            "is_bot",
-                            "display_name",
-                        ],
-                    },
+                    fields=[
+                        "id",
+                        "created_by",
+                        "created_at",
+                        "updated_at",
+                        "updated_by",
+                        "workspace",
+                        "project",
+                        "service",
+                        "status",
+                        "initiated_by",
+                        "metadata",
+                        "config",
+                        "data",
+                        "token",
+                        "imported_data",
+                        {
+                            "initiated_by_detail": [
+                                "id",
+                                "first_name",
+                                "last_name",
+                                "avatar",
+                                "is_bot",
+                                "display_name",
+                            ],
+                        },
+                        {
+                            "project_detail": [
+                                "id",
+                                "name",
+                                "cover_image",
+                                "icon_prop",
+                                "emoji",
+                                "description",
+                            ]
+                        },
+                        {"workspace_detail": ["id", "name", "slug"]},
+                    ],
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -311,11 +332,9 @@ class ImportServiceEndpoint(BaseAPIView):
                     "updated_by",
                     "workspace",
                     "project",
-                    "initiated_by",
-                    "project_detail",
-                    "workspace_detail",
                     "service",
                     "status",
+                    "initiated_by",
                     "metadata",
                     "config",
                     "data",
@@ -329,8 +348,19 @@ class ImportServiceEndpoint(BaseAPIView):
                             "avatar",
                             "is_bot",
                             "display_name",
+                        ],
+                    },
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
                         ]
                     },
+                    {"workspace_detail": ["id", "name", "slug"]},
                 ],
                 many=True,
             )
@@ -384,11 +414,9 @@ class ImportServiceEndpoint(BaseAPIView):
                     "updated_by",
                     "workspace",
                     "project",
-                    "initiated_by",
-                    "project_detail",
-                    "workspace_detail",
                     "service",
                     "status",
+                    "initiated_by",
                     "metadata",
                     "config",
                     "data",
@@ -402,8 +430,19 @@ class ImportServiceEndpoint(BaseAPIView):
                             "avatar",
                             "is_bot",
                             "display_name",
+                        ],
+                    },
+                    {
+                        "project_detail": [
+                            "id",
+                            "name",
+                            "cover_image",
+                            "icon_prop",
+                            "emoji",
+                            "description",
                         ]
                     },
+                    {"workspace_detail": ["id", "name", "slug"]},
                 ],
                 data=request.data,
                 partial=True,

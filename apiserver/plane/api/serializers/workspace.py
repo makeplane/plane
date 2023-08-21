@@ -39,7 +39,7 @@ class WorkSpaceSerializer(BaseSerializer):
 
 class WorkSpaceMemberSerializer(BaseSerializer):
     member = UserSerializer(
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name" ,"email"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name" ,"email"),
         read_only=True,
     )
     workspace = WorkSpaceSerializer(
@@ -57,7 +57,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
     created_by_detail = UserSerializer(
         source="created_by",
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
     )
 
@@ -69,7 +69,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
 class TeamSerializer(BaseSerializer):
     members_detail = UserSerializer(
         source="members",
-        fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
+        # fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
         read_only=True,
         many=True,
     )

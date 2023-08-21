@@ -53,7 +53,11 @@ class IssueFlatSerializer(BaseSerializer):
 
 
 class IssueProjectLiteSerializer(BaseSerializer):
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    project_detail = ProjectSerializer(
+        source="project",
+        fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"),
+        read_only=True,
+    )
 
     class Meta:
         model = Issue
@@ -70,13 +74,12 @@ class IssueProjectLiteSerializer(BaseSerializer):
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
     state_detail = StateSerializer(read_only=True, source="state")
-    created_by_detail = UserSerializer(source="created_by", read_only=True,)
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
-    workspace_detail = WorkSpaceSerializer(
-        source="workspace",
-        fields=("id", "name", "slug"),
+    created_by_detail = UserSerializer(
+        source="created_by",
         read_only=True,
     )
+    project_detail = ProjectSerializer(source="project", read_only=True)
+    workspace_detail = WorkSpaceSerializer(source="workspace", read_only=True)
 
     assignees_list = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
@@ -305,7 +308,11 @@ class IssueCreateSerializer(BaseSerializer):
 class IssueActivitySerializer(BaseSerializer):
     actor_detail = UserSerializer(source="actor", read_only=True)
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    project_detail = ProjectSerializer(
+        source="project",
+        fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"),
+        read_only=True,
+    )
 
     class Meta:
         model = IssueActivity
@@ -327,7 +334,11 @@ class LabelSerializer(BaseSerializer):
     workspace_detail = WorkSpaceSerializer(
         source="workspace", fields=("id", "name", "slug"), read_only=True
     )
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    project_detail = ProjectSerializer(
+        source="project",
+        fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"),
+        read_only=True,
+    )
 
     class Meta:
         model = Label
@@ -569,13 +580,17 @@ class IssueVoteSerializer(BaseSerializer):
 class IssueCommentSerializer(BaseSerializer):
     actor_detail = UserSerializer(source="actor", read_only=True)
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    project_detail = ProjectSerializer(
+        source="project",
+        fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"),
+        read_only=True,
+    )
 
     workspace_details = WorkSpaceSerializer(
         source="workspace",
         fields=("id", "name", "slug"),
         read_only=True,
-    ) 
+    )
     comment_reactions = CommentReactionLiteSerializer(read_only=True, many=True)
 
     class Meta:
@@ -595,7 +610,11 @@ class IssueCommentSerializer(BaseSerializer):
 
 class IssueStateFlatSerializer(BaseSerializer):
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    project_detail = ProjectSerializer(
+        source="project",
+        fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"),
+        read_only=True,
+    )
 
     class Meta:
         model = Issue
@@ -612,7 +631,11 @@ class IssueStateFlatSerializer(BaseSerializer):
 class IssueStateSerializer(BaseSerializer):
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    project_detail = ProjectSerializer(
+        source="project",
+        fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"),
+        read_only=True,
+    )
     assignee_details = UserSerializer(
         source="assignees",
         fields=("id", "first_name", "last_name", "avatar", "is_bot", "display_name"),
@@ -630,7 +653,11 @@ class IssueStateSerializer(BaseSerializer):
 
 
 class IssueSerializer(BaseSerializer):
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    project_detail = ProjectSerializer(
+        source="project",
+        fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"),
+        read_only=True,
+    )
     state_detail = StateSerializer(read_only=True, source="state")
     parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
@@ -669,8 +696,12 @@ class IssueLiteSerializer(BaseSerializer):
         source="workspace",
         fields=("id", "name", "slug"),
         read_only=True,
-    ) 
-    project_detail = ProjectSerializer(source="project", fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"), read_only=True)
+    )
+    project_detail = ProjectSerializer(
+        source="project",
+        fields=("id", "name", "cover_image", "icon_prop", "emoji", "description"),
+        read_only=True,
+    )
     state_detail = StateLiteSerializer(read_only=True, source="state")
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserSerializer(

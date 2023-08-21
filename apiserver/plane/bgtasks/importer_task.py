@@ -161,7 +161,47 @@ def service_importer(service, importer_id):
         if settings.PROXY_BASE_URL:
             headers = {"Content-Type": "application/json"}
             import_data_json = json.dumps(
-                ImporterSerializer(importer,fields=["id","created_by","created_at","updated_at","updated_by","workspace","project","initiated_by","project_detail","workspace_detail","service","status","metadata","config","data","token","imported_data",{"initiated_by_detail":["id", "first_name", "last_name", "avatar", "is_bot", "display_name"]}]).data,
+                ImporterSerializer(
+                    importer,
+                    fields=[
+                        "id",
+                        "created_by",
+                        "created_at",
+                        "updated_at",
+                        "updated_by",
+                        "workspace",
+                        "project",
+                        "service",
+                        "status",
+                        "initiated_by",
+                        "metadata",
+                        "config",
+                        "data",
+                        "token",
+                        "imported_data",
+                        {
+                            "initiated_by_detail": [
+                                "id",
+                                "first_name",
+                                "last_name",
+                                "avatar",
+                                "is_bot",
+                                "display_name",
+                            ],
+                        },
+                        {
+                            "project_detail": [
+                                "id",
+                                "name",
+                                "cover_image",
+                                "icon_prop",
+                                "emoji",
+                                "description",
+                            ]
+                        },
+                        {"workspace_detail": ["id", "name", "slug"]},
+                    ],
+                ).data,
                 cls=DjangoJSONEncoder,
             )
             res = requests.post(
