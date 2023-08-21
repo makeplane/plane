@@ -9,7 +9,6 @@ import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautif
 import { Disclosure, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
-import useTheme from "hooks/use-theme";
 import useUserAuth from "hooks/use-user-auth";
 import useProjects from "hooks/use-projects";
 // components
@@ -42,18 +41,15 @@ export const ProjectSidebarList: FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { user } = useUserAuth();
-
-  const { collapsed: sidebarCollapse } = useTheme();
   const { setToastAlert } = useToast();
 
   const { projects: allProjects } = useProjects();
 
   const joinedProjects = allProjects?.filter((p) => p.sort_order);
   const favoriteProjects = allProjects?.filter((p) => p.is_favorite);
-  const otherProjects = allProjects?.filter((p) => p.sort_order === null);
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
@@ -300,10 +296,10 @@ export const ProjectSidebarList: FC = () => {
           </Droppable>
         </DragDropContext>
 
-        {allProjects && allProjects.length === 0 && (
+        {joinedProjects && joinedProjects.length === 0 && (
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-custom-sidebar-text-200 mt-5"
+            className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
             onClick={() => {
               const e = new KeyboardEvent("keydown", {
                 key: "p",
