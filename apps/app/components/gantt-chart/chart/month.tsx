@@ -29,6 +29,7 @@ export const MonthChartView: FC<any> = () => {
                     block?.children.length > 0 &&
                     block?.children.map((monthDay, _idx) => (
                       <div
+                        key={`sub-title-${_idxRoot}-${_idx}`}
                         className="flex-shrink-0 border-b py-1 text-center capitalize border-custom-border-200"
                         style={{ width: `${currentViewData?.data.width}px` }}
                       >
@@ -56,7 +57,7 @@ export const MonthChartView: FC<any> = () => {
                   block?.children.length > 0 &&
                   block?.children.map((monthDay, _idx) => (
                     <div
-                      key={`sub-title-${_idxRoot}-${_idx}`}
+                      key={`column-${_idxRoot}-${_idx}`}
                       className="relative flex h-full flex-col overflow-hidden whitespace-nowrap"
                       style={{ width: `${currentViewData?.data.width}px` }}
                     >

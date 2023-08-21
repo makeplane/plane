@@ -8,7 +8,7 @@ import { IGanttBlock } from "../types";
 type Props = {
   children: any;
   block: IGanttBlock;
-  handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right") => void;
+  handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right" | "move") => void;
   enableLeftDrag: boolean;
   enableRightDrag: boolean;
 };
@@ -56,7 +56,7 @@ export const ChartDraggable: React.FC<Props> = ({
     return delWidth;
   };
 
-  const handleLeftDrag = () => {
+  const handleBlockLeftResize = () => {
     if (!currentViewData || !resizableRef.current || !block.position) return;
 
     const resizableDiv = resizableRef.current;
@@ -109,7 +109,7 @@ export const ChartDraggable: React.FC<Props> = ({
     document.addEventListener("mouseup", handleMouseUp);
   };
 
-  const handleRightDrag = () => {
+  const handleBlockRightResize = () => {
     if (!currentViewData || !resizableRef.current || !block.position) return;
 
     const resizableDiv = resizableRef.current;
@@ -153,18 +153,42 @@ export const ChartDraggable: React.FC<Props> = ({
     document.addEventListener("mouseup", handleMouseUp);
   };
 
-  const handleDragStart = () => {
-    const draggedDiv = resizableRef.current;
+  const handleBlockMove = () => {
+    if (!currentViewData || !resizableRef.current || !block.position) return;
 
-    if (!draggedDiv) return;
+    const resizableDiv = resizableRef.current;
+
+    const columnWidth = currentViewData.data.width;
+
+    const blockInitialMarginLeft =
+      parseInt(resizableDiv.style.marginLeft) ?? parseInt(block.position.width.toString());
+
+    let initialMarginLeft = parseInt(resizableDiv.style.marginLeft);
 
     const handleMouseMove = (e: MouseEvent) => {
-      console.log(e.clientX, e.clientY);
+      if (!window) return;
+
+      let delWidth = 0;
+
+      delWidth = checkScrollEnd(e);
+
+      // calculate new marginLeft and update the initial marginLeft using -=
+      const newMarginLeft = Math.round((initialMarginLeft += delWidth) / columnWidth) * columnWidth;
+
+      resizableDiv.style.marginLeft = `${newMarginLeft}px`;
+
+      if (block.position) block.position.marginLeft = newMarginLeft;
     };
 
     const handleMouseUp = () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+
+      const totalBlockShifts = Math.ceil(
+        (parseInt(resizableDiv.style.marginLeft) - blockInitialMarginLeft) / columnWidth
+      );
+
+      handleBlock(totalBlockShifts, "move");
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -184,7 +208,7 @@ export const ChartDraggable: React.FC<Props> = ({
       {enableLeftDrag && (
         <>
           <div
-            onMouseDown={handleLeftDrag}
+            onMouseDown={handleBlockLeftResize}
             onMouseEnter={() => setIsLeftResizing(true)}
             onMouseLeave={() => setIsLeftResizing(false)}
             className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[1] w-6 h-10 bg-brand-backdrop rounded-md cursor-col-resize"
@@ -196,11 +220,11 @@ export const ChartDraggable: React.FC<Props> = ({
           />
         </>
       )}
-      {React.cloneElement(children, { onMouseDown: handleDragStart })}
+      {React.cloneElement(children, { onMouseDown: handleBlockMove })}
       {enableRightDrag && (
         <>
           <div
-            onMouseDown={handleRightDrag}
+            onMouseDown={handleBlockRightResize}
             onMouseEnter={() => setIsRightResizing(true)}
             onMouseLeave={() => setIsRightResizing(false)}
             className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-6 bg-brand-backdrop rounded-md cursor-col-resize"

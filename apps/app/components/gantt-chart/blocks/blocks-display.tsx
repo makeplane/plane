@@ -24,28 +24,26 @@ export const GanttChartBlocks: FC<{
   const handleChartBlockPosition = (
     block: IGanttBlock,
     totalBlockShifts: number,
-    dragDirection: "left" | "right"
+    dragDirection: "left" | "right" | "move"
   ) => {
-    let updatedDate = new Date();
+    const originalStartDate = new Date(block.start_date);
+    const updatedStartDate = new Date(originalStartDate);
 
-    if (dragDirection === "left") {
-      const originalDate = new Date(block.start_date);
+    const originalTargetDate = new Date(block.target_date);
+    const updatedTargetDate = new Date(originalTargetDate);
 
-      const currentDay = originalDate.getDate();
-      updatedDate = new Date(originalDate);
-
-      updatedDate.setDate(currentDay - totalBlockShifts);
-    } else {
-      const originalDate = new Date(block.target_date);
-
-      const currentDay = originalDate.getDate();
-      updatedDate = new Date(originalDate);
-
-      updatedDate.setDate(currentDay + totalBlockShifts);
+    if (dragDirection === "left")
+      updatedStartDate.setDate(originalStartDate.getDate() - totalBlockShifts);
+    else if (dragDirection === "right")
+      updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
+    else if (dragDirection === "move") {
+      updatedStartDate.setDate(originalStartDate.getDate() + totalBlockShifts);
+      updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
     }
 
     blockUpdateHandler(block.data, {
-      [dragDirection === "left" ? "start_date" : "target_date"]: renderDateFormat(updatedDate),
+      start_date: renderDateFormat(updatedStartDate),
+      target_date: renderDateFormat(updatedTargetDate),
     });
   };
 
@@ -68,7 +66,7 @@ export const GanttChartBlocks: FC<{
                     enableLeftDrag={enableLeftDrag}
                     enableRightDrag={enableRightDrag}
                   >
-                    <div className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-8 w-full flex items-center transition-all">
+                    <div className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-8 w-full flex items-center">
                       {blockRender(block.data)}
                     </div>
                   </ChartDraggable>
