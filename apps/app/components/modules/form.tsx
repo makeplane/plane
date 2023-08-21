@@ -1,15 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
 // ui
 import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-// helper
-import { isDateRangeValid } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 
@@ -29,8 +25,6 @@ const defaultValues: Partial<IModule> = {
 };
 
 export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
-  const [isDateValid, setIsDateValid] = useState(true);
-  const { setToastAlert } = useToast();
   const {
     register,
     formState: { errors, isSubmitting },
@@ -56,6 +50,15 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
       ...data,
     });
   }, [data, reset]);
+
+  const startDate = watch("start_date");
+  const targetDate = watch("target_date");
+
+  const minDate = startDate ? new Date(startDate) : null;
+  minDate?.setDate(minDate.getDate());
+
+  const maxDate = targetDate ? new Date(targetDate) : null;
+  maxDate?.setDate(maxDate.getDate());
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
@@ -103,20 +106,8 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                   value={value}
                   onChange={(val) => {
                     onChange(val);
-                    if (val && watch("target_date")) {
-                      if (isDateRangeValid(val, `${watch("target_date")}`)) {
-                        setIsDateValid(true);
-                      } else {
-                        setIsDateValid(false);
-                        setToastAlert({
-                          type: "error",
-                          title: "Error!",
-                          message:
-                            "The date you have entered is invalid. Please check and enter a valid date.",
-                        });
-                      }
-                    }
                   }}
+                  maxDate={maxDate ?? undefined}
                 />
               )}
             />
@@ -129,20 +120,8 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                   value={value}
                   onChange={(val) => {
                     onChange(val);
-                    if (watch("start_date") && val) {
-                      if (isDateRangeValid(`${watch("start_date")}`, val)) {
-                        setIsDateValid(true);
-                      } else {
-                        setIsDateValid(false);
-                        setToastAlert({
-                          type: "error",
-                          title: "Error!",
-                          message:
-                            "The date you have entered is invalid. Please check and enter a valid date.",
-                        });
-                      }
-                    }
                   }}
+                  minDate={minDate ?? undefined}
                 />
               )}
             />
@@ -166,7 +145,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
       </div>
       <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-200 px-5 pt-5">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting || isDateValid ? false : true}>
+        <PrimaryButton type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating Module..."
