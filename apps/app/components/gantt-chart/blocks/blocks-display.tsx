@@ -68,12 +68,7 @@ export const GanttChartBlocks: FC<{
                     enableLeftDrag={enableLeftDrag}
                     enableRightDrag={enableRightDrag}
                   >
-                    <div
-                      className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-8 flex items-center transition-all"
-                      style={{
-                        width: `${block.position?.width}px`,
-                      }}
-                    >
+                    <div className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-8 w-full flex items-center transition-all">
                       {blockRender(block.data)}
                     </div>
                   </ChartDraggable>
