@@ -319,7 +319,10 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       </div>
 
       {/* content */}
-      <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200">
+      <div
+        id="gantt-container"
+        className="relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200"
+      >
         <div
           id="gantt-sidebar"
           className="h-full w-1/4 flex flex-col border-r border-custom-border-200 space-y-3"

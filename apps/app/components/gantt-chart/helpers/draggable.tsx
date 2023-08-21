@@ -32,12 +32,19 @@ export const ChartDraggable: React.FC<Props> = ({
   const checkScrollEnd = (e: MouseEvent): number => {
     let delWidth = 0;
 
+    const ganttContainer = document.querySelector("#gantt-container") as HTMLElement;
+    const ganttSidebar = document.querySelector("#gantt-sidebar") as HTMLElement;
+
     const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
-    const appSidebar = document.querySelector("#app-sidebar") as HTMLElement;
+
+    if (!ganttContainer || !ganttSidebar || !scrollContainer) return 0;
 
     const posFromLeft = e.clientX;
     // manually scroll to left if reached the left end while dragging
-    if (posFromLeft - appSidebar.clientWidth <= 70) {
+    if (
+      posFromLeft - (ganttContainer.getBoundingClientRect().left + ganttSidebar.clientWidth) <=
+      70
+    ) {
       if (e.movementX > 0) return 0;
 
       delWidth = -5;
@@ -46,7 +53,7 @@ export const ChartDraggable: React.FC<Props> = ({
     } else delWidth = e.movementX;
 
     // manually scroll to right if reached the right end while dragging
-    const posFromRight = window.innerWidth - e.clientX;
+    const posFromRight = ganttContainer.getBoundingClientRect().right - e.clientX;
     if (posFromRight <= 70) {
       if (e.movementX < 0) return 0;
 
@@ -72,8 +79,6 @@ export const ChartDraggable: React.FC<Props> = ({
     let initialMarginLeft = parseInt(resizableDiv.style.marginLeft);
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!window) return;
-
       let delWidth = 0;
 
       delWidth = checkScrollEnd(e);
@@ -124,8 +129,6 @@ export const ChartDraggable: React.FC<Props> = ({
     let initialWidth = resizableDiv.clientWidth ?? parseInt(block.position.width.toString(), 10);
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!window) return;
-
       let delWidth = 0;
 
       delWidth = checkScrollEnd(e);
@@ -168,8 +171,6 @@ export const ChartDraggable: React.FC<Props> = ({
     let initialMarginLeft = parseInt(resizableDiv.style.marginLeft);
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!window) return;
-
       let delWidth = 0;
 
       delWidth = checkScrollEnd(e);
@@ -213,7 +214,7 @@ export const ChartDraggable: React.FC<Props> = ({
             onMouseDown={handleBlockLeftResize}
             onMouseEnter={() => setIsLeftResizing(true)}
             onMouseLeave={() => setIsLeftResizing(false)}
-            className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[1] w-6 h-10 bg-brand-backdrop rounded-md cursor-col-resize"
+            className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[1] w-6 h-10 rounded-md cursor-col-resize"
           />
           <div
             className={`absolute top-1/2 -translate-y-1/2 w-1 h-4/5 rounded-sm bg-custom-background-80 transition-all duration-300 ${
@@ -229,10 +230,10 @@ export const ChartDraggable: React.FC<Props> = ({
             onMouseDown={handleBlockRightResize}
             onMouseEnter={() => setIsRightResizing(true)}
             onMouseLeave={() => setIsRightResizing(false)}
-            className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-6 bg-brand-backdrop rounded-md cursor-col-resize"
+            className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-6 rounded-md cursor-col-resize"
           />
           <div
-            className={`absolute top-1/2 -translate-y-1/2 w-1 h-4/5 rounded-sm bg-custom-background-80 transition-all duration-300 ${
+            className={`absolute top-1/2 -translate-y-1/2 w-1 h-4/5 z-[-1] rounded-sm bg-custom-background-80 transition-all duration-300 ${
               isRightResizing ? "-right-2.5" : "right-1"
             }`}
           />
