@@ -68,7 +68,7 @@ services:
                 env_file:
                         - .env
                 environment:
-                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_DEPLOY_URL}
+                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
                 depends_on:
                         - plane-api
                         - plane-worker

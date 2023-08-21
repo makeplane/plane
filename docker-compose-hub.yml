@@ -54,6 +54,22 @@ services:
                 depends_on:
                         - plane-api
                         - plane-worker
+                        
+        public-deploy:
+                container_name: plane_public_deploy
+                build:
+                        context: .
+                        dockerfile: ./apps/space/Dockerfile.space
+                restart: always
+                command: node apps/space/server.js
+                env_file:
+                        - .env
+                environment:
+                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+                depends_on:
+                        - plane-api
+                        - plane-worker
+                        - plane-web
 
         plane-api:
                 container_name: planebackend
