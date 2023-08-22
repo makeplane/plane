@@ -1,9 +1,10 @@
 // react-beautiful-dnd
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+// icons
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -82,7 +83,7 @@ export const GanttSidebar: React.FC<Props> = ({
                         >
                           <div
                             id={`sidebar-block-${block.id}`}
-                            className="group h-full w-full flex items-center gap-2"
+                            className="group h-full w-full flex items-center gap-2 hover:bg-custom-background-80 rounded px-2"
                           >
                             <button
                               type="button"
@@ -92,7 +93,7 @@ export const GanttSidebar: React.FC<Props> = ({
                               <EllipsisVerticalIcon className="h-4" />
                               <EllipsisVerticalIcon className="h-4 -ml-5" />
                             </button>
-                            <div className="flex-grow truncate w-full h-full hover:bg-custom-background-80 group-hover:bg-custom-background-80 rounded">
+                            <div className="flex-grow truncate w-full h-full">
                               {sidebarBlockRender(block.data)}
                             </div>
                           </div>

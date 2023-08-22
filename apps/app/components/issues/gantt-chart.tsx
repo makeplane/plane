@@ -33,7 +33,7 @@ export const IssueGanttChartView = () => {
   // rendering issues on gantt sidebar
   const GanttSidebarBlockView = ({ issue }: { issue: IIssue }) => (
     <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-      <a className="relative w-full flex items-center gap-2 h-full px-3">
+      <a className="relative w-full flex items-center gap-2 h-full">
         {getStateGroupIcon(issue?.state_detail?.group, "14", "14", issue?.state_detail?.color)}
         <div className="text-xs text-custom-text-300 flex-shrink-0">
           {issue?.project_detail?.identifier} {issue?.sequence_id}

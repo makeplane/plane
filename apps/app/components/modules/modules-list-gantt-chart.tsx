@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import { KeyedMutator } from "swr";
 
@@ -27,16 +28,12 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
   const { user } = useUser();
 
   // rendering issues on gantt sidebar
-  const GanttSidebarBlockView = ({ data }: any) => (
-    <div className="relative flex w-full h-full items-center p-1 overflow-hidden gap-1">
-      <div
-        className="rounded-sm flex-shrink-0 w-[10px] h-[10px] flex justify-center items-center"
-        style={{
-          backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color,
-        }}
-      />
-      <div className="text-custom-text-100 text-sm">{data?.name}</div>
-    </div>
+  const GanttSidebarBlockView = ({ module }: any) => (
+    <Link href={`/${workspaceSlug}/projects/${module?.project}/issues/${module?.id}`}>
+      <a className="relative w-full flex items-center gap-2 h-full">
+        <h6 className="text-sm font-medium flex-grow truncate">{module?.name}</h6>
+      </a>
+    </Link>
   );
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
@@ -98,7 +95,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
         loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
+        sidebarBlockRender={(data: any) => <GanttSidebarBlockView module={data} />}
         blockRender={(data: any) => <ModuleGanttBlock module={data as IModule} />}
       />
     </div>

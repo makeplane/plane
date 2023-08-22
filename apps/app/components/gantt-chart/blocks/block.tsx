@@ -76,11 +76,11 @@ export const ModuleGanttBlock = ({ module }: { module: IModule }) => {
 
   return (
     <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-      <a className="relative flex items-center w-full h-full shadow-sm transition-all duration-300">
-        <div
-          className="flex-shrink-0 w-0.5 h-full"
-          style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color }}
-        />
+      <a
+        className="relative flex items-center w-full h-full shadow-sm"
+        style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color }}
+      >
+        <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/40" />
         <Tooltip
           tooltipContent={
             <div className="space-y-1">
@@ -93,7 +93,7 @@ export const ModuleGanttBlock = ({ module }: { module: IModule }) => {
           }
           position="top-left"
         >
-          <div className="text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
+          <div className="relative text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
             {module.name}
           </div>
         </Tooltip>
