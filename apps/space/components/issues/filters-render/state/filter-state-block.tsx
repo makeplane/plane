@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter, useParams } from "next/navigation";
+
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx hook
@@ -12,9 +14,21 @@ import { issueGroupFilter } from "constants/data";
 export const RenderIssueState = observer(({ state }: { state: IIssueState }) => {
   const store = useMobxStore();
 
+  const router = useRouter();
+  const routerParams = useParams();
+
+  const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
+
   const stateGroup = issueGroupFilter(state.group);
 
-  const removeStateFromFilter = () => {};
+  const removeStateFromFilter = () => {
+    router.replace(
+      store.issue.getURLDefinition(workspace_slug, project_slug, {
+        key: "state",
+        value: state?.id,
+      })
+    );
+  };
 
   if (stateGroup === null) return <></>;
   return (

@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter, useParams } from "next/navigation";
+
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // components
@@ -13,7 +15,19 @@ import { RootStore } from "store/root";
 const IssueStateFilter = observer(() => {
   const store: RootStore = useMobxStore();
 
-  const clearStateFilters = () => {};
+  const router = useRouter();
+  const routerParams = useParams();
+
+  const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
+
+  const clearStateFilters = () => {
+    router.replace(
+      store.issue.getURLDefinition(workspace_slug, project_slug, {
+        key: "state",
+        removeAll: true,
+      })
+    );
+  };
 
   return (
     <>
@@ -21,7 +35,10 @@ const IssueStateFilter = observer(() => {
         <div className="flex-shrink-0 font-medium">State</div>
         <div className="relative flex flex-wrap items-center gap-1">
           {store?.issue?.states &&
-            store?.issue?.states.map((_state: IIssueState, _index: number) => <RenderIssueState state={_state} />)}
+            store?.issue?.states.map(
+              (_state: IIssueState, _index: number) =>
+                store.issue.getUserSelectedFilter("state", _state.id) && <RenderIssueState state={_state} />
+            )}
         </div>
         <div
           className="flex-shrink-0 w-[20px] h-[20px] cursor-pointer flex justify-center items-center overflow-hidden rounded-sm text-gray-500 hover:bg-gray-200/60 hover:text-gray-600"

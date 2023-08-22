@@ -50,16 +50,16 @@ const IssueNavbar = observer(() => {
         <NavbarSearch />
       </div>
 
+      {/* issue filters */}
+      <div className="flex-shrink-0 relative flex items-center gap-2">
+        <NavbarIssueFilter />
+        {/* <NavbarIssueView /> */}
+      </div>
+
       {/* issue views */}
       <div className="flex-shrink-0 relative flex items-center gap-1 transition-all ease-in-out delay-150">
         <NavbarIssueBoardView />
       </div>
-
-      {/* issue filters */}
-      {/* <div className="flex-shrink-0 relative flex items-center gap-2">
-        <NavbarIssueFilter />
-        <NavbarIssueView />
-      </div> */}
 
       {/* theming */}
       {/* <div className="flex-shrink-0 relative">

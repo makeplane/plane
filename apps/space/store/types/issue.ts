@@ -63,9 +63,28 @@ export interface IIssueStore {
 
   userSelectedStates: string[];
   userSelectedLabels: string[];
+  userSelectedPriorities: string[];
 
   getCountOfIssuesByState: (state: string) => number;
   getFilteredIssuesByState: (state: string) => IIssue[];
+
+  getUserSelectedFilter: (key: "state" | "priority" | "label", value: string) => boolean;
+
+  checkIfFilterExistsForKey: (key: "state" | "priority" | "label") => boolean;
+
+  clearUserSelectedFilter: (key: "state" | "priority" | "label" | "all") => void;
+
+  getIfFiltersIsEmpty: () => boolean;
+
+  getURLDefinition: (
+    workspaceSlug: string,
+    projectId: string,
+    action?: {
+      key: "state" | "priority" | "label" | "all";
+      value?: string;
+      removeAll?: boolean;
+    }
+  ) => string;
 
   setCurrentIssueBoardView: (view: TIssueBoardKeys) => void;
   getIssuesAsync: (workspace_slug: string, project_slug: string) => Promise<void>;

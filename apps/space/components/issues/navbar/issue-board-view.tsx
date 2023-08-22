@@ -1,7 +1,7 @@
 "use client";
 
 // next imports
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // constants
@@ -22,7 +22,21 @@ export const NavbarIssueBoardView = observer(() => {
 
   const handleCurrentBoardView = (boardView: TIssueBoardKeys) => {
     store?.issue?.setCurrentIssueBoardView(boardView);
-    router.replace(`/${workspace_slug}/${project_slug}?board=${boardView}`);
+    router.replace(
+      `/${workspace_slug}/${project_slug}?board=${boardView}${
+        store?.issue?.userSelectedLabels && store?.issue?.userSelectedLabels.length > 0
+          ? `&labels=${store?.issue?.userSelectedLabels.join(",")}`
+          : ""
+      }${
+        store?.issue?.userSelectedPriorities && store?.issue?.userSelectedPriorities.length > 0
+          ? `&priorities=${store?.issue?.userSelectedPriorities.join(",")}`
+          : ""
+      }${
+        store?.issue?.userSelectedStates && store?.issue?.userSelectedStates.length > 0
+          ? `&states=${store?.issue?.userSelectedStates.join(",")}`
+          : ""
+      }`
+    );
   };
 
   return (

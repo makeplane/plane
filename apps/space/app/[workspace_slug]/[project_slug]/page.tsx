@@ -26,7 +26,14 @@ const WorkspaceProjectPage = observer(() => {
 
   const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
   const board =
-    routerSearchparams && routerSearchparams.get("board") != null && (routerSearchparams.get("board") as TIssueBoardKeys | "");
+    routerSearchparams &&
+    routerSearchparams.get("board") != null &&
+    (routerSearchparams.get("board") as TIssueBoardKeys | "");
+
+  const states = routerSearchparams && routerSearchparams.get("states") != null && routerSearchparams.get("states");
+  const labels = routerSearchparams && routerSearchparams.get("labels") != null && routerSearchparams.get("labels");
+  const priorities =
+    routerSearchparams && routerSearchparams.get("priorities") != null && routerSearchparams.get("priorities");
 
   // updating default board view when we are in the issues page
   useEffect(() => {
@@ -42,29 +49,53 @@ const WorkspaceProjectPage = observer(() => {
         if (_key === "gantt" && workspacePRojectSettingViews.gantt === true) userAccessViews.push(_key);
       });
 
+      let url = `/${workspace_slug}/${project_slug}`;
+      let _board = board;
+
       if (userAccessViews && userAccessViews.length > 0) {
         if (!board) {
           store.issue.setCurrentIssueBoardView(userAccessViews[0]);
-          router.replace(`/${workspace_slug}/${project_slug}?board=${userAccessViews[0]}`);
+          _board = userAccessViews[0];
         } else {
           if (userAccessViews.includes(board)) {
             if (store.issue.currentIssueBoardView === null) store.issue.setCurrentIssueBoardView(board);
             else {
-              if (board === store.issue.currentIssueBoardView)
-                router.replace(`/${workspace_slug}/${project_slug}?board=${board}`);
-              else {
+              if (board === store.issue.currentIssueBoardView) {
+                _board = board;
+              } else {
+                _board = board;
                 store.issue.setCurrentIssueBoardView(board);
-                router.replace(`/${workspace_slug}/${project_slug}?board=${board}`);
               }
             }
           } else {
             store.issue.setCurrentIssueBoardView(userAccessViews[0]);
-            router.replace(`/${workspace_slug}/${project_slug}?board=${userAccessViews[0]}`);
+            _board = userAccessViews[0];
           }
         }
       }
+
+      _board = _board || "list";
+      url = `${url}?board=${_board}`;
+
+      if (states) url = `${url}&states=${states}`;
+      if (labels) url = `${url}&labels=${labels}`;
+      if (priorities) url = `${url}&priorities=${priorities}`;
+
+      url = decodeURIComponent(url);
+
+      router.replace(url);
     }
-  }, [workspace_slug, project_slug, board, router, store?.issue, store?.project?.workspaceProjectSettings]);
+  }, [
+    workspace_slug,
+    project_slug,
+    board,
+    router,
+    store?.issue,
+    store?.project?.workspaceProjectSettings,
+    states,
+    labels,
+    priorities,
+  ]);
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
