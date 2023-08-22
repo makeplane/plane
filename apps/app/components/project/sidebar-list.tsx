@@ -48,7 +48,7 @@ export const ProjectSidebarList: FC = () => {
 
   const { projects: allProjects } = useProjects();
 
-  const joinedProjects = allProjects?.filter((p) => p.sort_order);
+  const joinedProjects = allProjects?.filter((p) => p.is_member);
   const favoriteProjects = allProjects?.filter((p) => p.is_favorite);
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
@@ -201,7 +201,7 @@ export const ProjectSidebarList: FC = () => {
                               key={project.id}
                               draggableId={project.id}
                               index={index}
-                              isDragDisabled={project.sort_order === null}
+                              isDragDisabled={!project.is_member}
                             >
                               {(provided, snapshot) => (
                                 <div ref={provided.innerRef} {...provided.draggableProps}>
