@@ -3,8 +3,8 @@
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "web/",
+    "deploy/"
   ],
   "scripts": {
     "build": "turbo run build",
