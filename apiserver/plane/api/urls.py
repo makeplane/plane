@@ -174,6 +174,7 @@ from plane.api.views import (
     CommentReactionPublicViewSet,
     InboxIssuePublicViewSet,
     IssueVotePublicViewSet,
+    WorkspaceProjectDeployBoardEndpoint,
     ## End Public Boards
 )
 
@@ -1613,6 +1614,11 @@ urlpatterns = [
             }
         ),
         name="issue-vote-project-board",
+    ),
+    path(
+        "public/workspaces/<str:slug>/project-boards/",
+        WorkspaceProjectDeployBoardEndpoint.as_view(),
+        name="workspace-project-boards",
     ),
     ## End Public Boards
 ]
