@@ -1,5 +1,7 @@
 import { FC } from "react";
 
+// hooks
+import { useChart } from "../hooks";
 // helpers
 import { ChartDraggable } from "../helpers/draggable";
 import { renderDateFormat } from "helpers/date-time.helper";
@@ -23,6 +25,17 @@ export const GanttChartBlocks: FC<{
   enableBlockRightResize,
   enableBlockMove,
 }) => {
+  const { activeBlock, dispatch } = useChart();
+
+  const updateActiveBlock = (block: IGanttBlock | null) => {
+    dispatch({
+      type: "PARTIAL_UPDATE",
+      payload: {
+        activeBlock: block,
+      },
+    });
+  };
+
   const handleChartBlockPosition = (
     block: IGanttBlock,
     totalBlockShifts: number,
@@ -54,29 +67,32 @@ export const GanttChartBlocks: FC<{
       className="relative z-[5] mt-[72px] h-full overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
     >
-      <div className="w-full space-y-2">
-        {blocks &&
-          blocks.length > 0 &&
-          blocks.map(
-            (block) =>
-              block.start_date &&
-              block.target_date && (
-                <div key={`block-${block.id}`}>
-                  <ChartDraggable
-                    block={block}
-                    handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                    enableBlockLeftResize={enableBlockLeftResize}
-                    enableBlockRightResize={enableBlockRightResize}
-                    enableBlockMove={enableBlockMove}
-                  >
-                    <div className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-8 w-full flex items-center">
-                      {blockRender(block.data)}
-                    </div>
-                  </ChartDraggable>
-                </div>
-              )
-          )}
-      </div>
+      {blocks &&
+        blocks.length > 0 &&
+        blocks.map(
+          (block) =>
+            block.start_date &&
+            block.target_date && (
+              <div
+                key={`block-${block.id}`}
+                className={`h-11 ${activeBlock?.id === block.id ? "bg-custom-background-80" : ""}`}
+                onMouseEnter={() => updateActiveBlock(block)}
+                onMouseLeave={() => updateActiveBlock(null)}
+              >
+                <ChartDraggable
+                  block={block}
+                  handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                  enableBlockLeftResize={enableBlockLeftResize}
+                  enableBlockRightResize={enableBlockRightResize}
+                  enableBlockMove={enableBlockMove}
+                >
+                  <div className="rounded shadow-sm bg-custom-background-80 h-8 w-full flex items-center">
+                    {blockRender(block.data)}
+                  </div>
+                </ChartDraggable>
+              </div>
+            )
+        )}
     </div>
   );
 };

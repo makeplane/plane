@@ -17,7 +17,7 @@ export const IssueGanttBlock = ({ issue }: { issue: IIssue }) => {
   return (
     <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
       <a
-        className="flex items-center relative h-full w-full shadow-sm"
+        className="flex items-center relative h-full w-full rounded"
         style={{ backgroundColor: issue.state_detail?.color }}
       >
         <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
@@ -77,7 +77,7 @@ export const ModuleGanttBlock = ({ module }: { module: IModule }) => {
   return (
     <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
       <a
-        className="relative flex items-center w-full h-full shadow-sm"
+        className="relative flex items-center w-full h-full rounded"
         style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color }}
       >
         <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />

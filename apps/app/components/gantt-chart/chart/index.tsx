@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
+import { GanttSidebar } from "../sidebar";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
 // import { WeekChartView } from "./week";
@@ -25,12 +26,11 @@ import {
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
-import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
+import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
 import { currentViewDataWithView } from "../data";
 // context
 import { useChart } from "../hooks";
-import { GanttSidebar } from "../sidebar";
 
 type ChartViewRootProps = {
   border: boolean;
@@ -83,10 +83,10 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
   // blocks state management ends
 
-  const handleChartView = (key: string) => updateCurrentViewRenderPayload(null, key);
+  const handleChartView = (key: TGanttViews) => updateCurrentViewRenderPayload(null, key);
 
-  const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: string) => {
-    const selectedCurrentView = view;
+  const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: TGanttViews) => {
+    const selectedCurrentView: TGanttViews = view;
     const selectedCurrentViewData: ChartDataType | undefined =
       selectedCurrentView && selectedCurrentView === currentViewData?.key
         ? currentViewData
@@ -228,38 +228,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         border ? `border border-custom-border-200` : ``
       } flex h-full flex-col rounded-sm select-none bg-custom-background-100 shadow`}
     >
-      {/* chart title */}
-      {/* <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-custom-border-200">
-        {title && (
-          <div className="text-lg font-medium flex gap-2 items-center">
-            <div>{title}</div>
-            <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-custom-text-100">
-              Gantt View Beta
-            </div>
-          </div>
-        )}
-        {blocks === null ? (
-          <div className="text-sm font-medium ml-auto">Loading...</div>
-        ) : (
-          <div className="text-sm font-medium ml-auto">
-            {blocks.length} {loaderTitle}
-          </div>
-        )}
-      </div> */}
-
       {/* chart header */}
       <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap p-2">
-        {/* <div
-          className="transition-all border border-custom-border-200 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
-          onClick={() => setBlocksSidebarView(() => !blocksSidebarView)}
-        >
-          {blocksSidebarView ? (
-            <XMarkIcon className="h-5 w-5" />
-          ) : (
-            <Bars4Icon className="h-4 w-4" />
-          )}
-        </div> */}
-
         {title && (
           <div className="text-lg font-medium flex gap-2 items-center">
             <div>{title}</div>
@@ -339,7 +309,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
           id="scroll-container"
         >
-          {/* chart */}
           {/* {currentView && currentView === "hours" && <HourChartView />} */}
           {/* {currentView && currentView === "day" && <DayChartView />} */}
           {/* {currentView && currentView === "week" && <WeekChartView />} */}

@@ -1,6 +1,8 @@
 // react-beautiful-dnd
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+// hooks
+import { useChart } from "./hooks";
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 // types
@@ -19,6 +21,17 @@ export const GanttSidebar: React.FC<Props> = ({
   sidebarBlockRender,
   enableReorder,
 }) => {
+  const { activeBlock, dispatch } = useChart();
+
+  const updateActiveBlock = (block: IGanttBlock | null) => {
+    dispatch({
+      type: "PARTIAL_UPDATE",
+      payload: {
+        activeBlock: block,
+      },
+    });
+  };
+
   const handleOrderChange = (result: DropResult) => {
     if (!blocks) return;
 
@@ -60,7 +73,7 @@ export const GanttSidebar: React.FC<Props> = ({
       <StrictModeDroppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
-            className="h-full overflow-y-auto space-y-2 px-2.5"
+            className="h-full overflow-y-auto pl-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
@@ -75,15 +88,19 @@ export const GanttSidebar: React.FC<Props> = ({
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-8 ${
+                          className={`h-11 ${
                             snapshot.isDragging ? "bg-custom-background-80 rounded" : ""
                           }`}
+                          onMouseEnter={() => updateActiveBlock(block)}
+                          onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                         >
                           <div
                             id={`sidebar-block-${block.id}`}
-                            className="group h-full w-full flex items-center gap-2 hover:bg-custom-background-80 rounded px-2"
+                            className={`group h-full w-full flex items-center gap-2 rounded-l px-2 pr-4 ${
+                              activeBlock?.id === block.id ? "bg-custom-background-80" : ""
+                            }`}
                           >
                             <button
                               type="button"

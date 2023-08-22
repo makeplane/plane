@@ -32,11 +32,14 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     currentViewData: currentViewDataWithView(initialView),
     renderView: [],
     allViews: allViewsWithData,
+    activeBlock: null,
   });
 
   const handleDispatch = (action: ChartContextActionPayload): ChartContextData => {
     const newState = chartReducer(state, action);
+
     dispatch(() => newState);
+
     return newState;
   };
 
