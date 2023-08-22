@@ -2,6 +2,7 @@
 const path = require("path");
 
 const nextConfig = {
+  assetPrefix: '/spaces/',
   reactStrictMode: false,
   swcMinify: true,
   experimental: {

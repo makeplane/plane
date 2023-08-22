@@ -69,10 +69,13 @@ services:
                                 NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
                 restart: always
                 command: /usr/local/bin/start.sh apps/space/server.js space
+                expose:
+                        - 4000
                 env_file:
                         - .env
                 environment:
                         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+                        PORT: 4000
                 depends_on:
                         - plane-api
                         - plane-worker
