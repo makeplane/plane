@@ -20,7 +20,7 @@ export const IssueGanttBlock = ({ issue }: { issue: IIssue }) => {
         className="flex items-center relative h-full w-full shadow-sm"
         style={{ backgroundColor: issue.state_detail?.color }}
       >
-        <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/40" />
+        <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
         <Tooltip
           tooltipContent={
             <div className="space-y-1">
@@ -80,7 +80,7 @@ export const ModuleGanttBlock = ({ module }: { module: IModule }) => {
         className="relative flex items-center w-full h-full shadow-sm"
         style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color }}
       >
-        <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/40" />
+        <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
         <Tooltip
           tooltipContent={
             <div className="space-y-1">

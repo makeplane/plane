@@ -14,6 +14,8 @@ import {
 } from "components/gantt-chart";
 // icons
 import { getStateGroupIcon } from "components/icons";
+// helpers
+import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
@@ -31,17 +33,26 @@ export const IssueGanttChartView = () => {
   );
 
   // rendering issues on gantt sidebar
-  const GanttSidebarBlockView = ({ issue }: { issue: IIssue }) => (
-    <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-      <a className="relative w-full flex items-center gap-2 h-full">
-        {getStateGroupIcon(issue?.state_detail?.group, "14", "14", issue?.state_detail?.color)}
-        <div className="text-xs text-custom-text-300 flex-shrink-0">
-          {issue?.project_detail?.identifier} {issue?.sequence_id}
-        </div>
-        <h6 className="text-sm font-medium flex-grow truncate">{issue?.name}</h6>
-      </a>
-    </Link>
-  );
+  const GanttSidebarBlockView = ({ issue }: { issue: IIssue }) => {
+    const duration = findTotalDaysInRange(issue?.start_date ?? "", issue?.target_date ?? "", true);
+
+    return (
+      <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
+        <a className="relative w-full flex items-center gap-2 h-full">
+          {getStateGroupIcon(issue?.state_detail?.group, "14", "14", issue?.state_detail?.color)}
+          <div className="text-xs text-custom-text-300 flex-shrink-0">
+            {issue?.project_detail?.identifier} {issue?.sequence_id}
+          </div>
+          <div className="flex items-center justify-between gap-2 w-full flex-grow truncate">
+            <h6 className="text-sm font-medium flex-grow truncate">{issue?.name}</h6>
+            <span className="flex-shrink-0 text-sm text-custom-text-200">
+              {duration} day{duration > 1 ? "s" : ""}
+            </span>
+          </div>
+        </a>
+      </Link>
+    );
+  };
 
   return (
     <div className="w-full h-full">
