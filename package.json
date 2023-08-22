@@ -1,22 +1,16 @@
 {
+  "name": "plane",
   "repository": "https://github.com/makeplane/plane.git",
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
     "web/",
-    "deploy/"
+    "space/",
+    "packages/*"
   ],
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "start": "turbo run start",
-    "lint": "turbo run lint",
-    "clean": "turbo run clean"
-  },
   "devDependencies": {
     "eslint-config-custom": "*",
-    "prettier": "latest",
-    "turbo": "latest"
+    "prettier": "latest"
   },
   "packageManager": "yarn@1.22.19"
 }
