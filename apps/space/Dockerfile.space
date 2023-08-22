@@ -51,7 +51,7 @@ COPY --from=installer /app/apps/space/package.json .
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=captain:plane /app/apps/space/.next/standalone ./
 
-COPY --from=installer --chown=captain:plane /app/apps/space/.next ./apps/space/.next
+COPY --from=installer --chown=captain:plane /app/apps/space/.next/static ./apps/space/.next/static
 
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
@@ -62,9 +62,5 @@ COPY replace-env-vars.sh /usr/local/bin/
 COPY start.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/replace-env-vars.sh
 RUN chmod +x /usr/local/bin/start.sh
-
 USER captain
-
 ENV NEXT_TELEMETRY_DISABLED 1
-
-EXPOSE 3000

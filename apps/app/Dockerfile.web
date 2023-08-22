@@ -55,7 +55,8 @@ COPY --from=installer --chown=captain:plane /app/apps/app/.next ./apps/app/.next
 
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
-    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    NEXT_PUBLIC_DEPLOY_URL=$NEXT_PUBLIC_DEPLOY_URL
 
 USER root
 COPY replace-env-vars.sh /usr/local/bin/

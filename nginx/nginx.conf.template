@@ -16,7 +16,10 @@ server {
     }
 
     location /spaces/ {
-        proxy_pass http://planedeploy:3000/;
+        rewrite ^/spaces/(.*)$ /$1 break;
+        proxy_pass http://planedeploy:4000/;
+        sub_filter 'http://localhost/_next/static/' 'http://localhost/spaces/_next/static/';
+        sub_filter_once off;
     }
 
     location /api/ {
