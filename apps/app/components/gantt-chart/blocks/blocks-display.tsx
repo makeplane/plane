@@ -81,15 +81,12 @@ export const GanttChartBlocks: FC<{
               >
                 <ChartDraggable
                   block={block}
+                  blockRender={blockRender}
                   handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
                   enableBlockLeftResize={enableBlockLeftResize}
                   enableBlockRightResize={enableBlockRightResize}
                   enableBlockMove={enableBlockMove}
-                >
-                  <div className="rounded shadow-sm bg-custom-background-80 h-8 w-full flex items-center">
-                    {blockRender(block.data)}
-                  </div>
-                </ChartDraggable>
+                />
               </div>
             )
         )}

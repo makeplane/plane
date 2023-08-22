@@ -6,8 +6,8 @@ import { useChart } from "../hooks";
 import { IGanttBlock } from "../types";
 
 type Props = {
-  children: any;
   block: IGanttBlock;
+  blockRender: (data: any) => React.ReactNode;
   handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right" | "move") => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -15,8 +15,8 @@ type Props = {
 };
 
 export const ChartDraggable: React.FC<Props> = ({
-  children,
   block,
+  blockRender,
   handleBlock,
   enableBlockLeftResize,
   enableBlockRightResize,
@@ -30,6 +30,8 @@ export const ChartDraggable: React.FC<Props> = ({
   const { currentViewData } = useChart();
 
   const checkScrollEnd = (e: MouseEvent): number => {
+    const SCROLL_THRESHOLD = 70;
+
     let delWidth = 0;
 
     const ganttContainer = document.querySelector("#gantt-container") as HTMLElement;
@@ -43,7 +45,7 @@ export const ChartDraggable: React.FC<Props> = ({
     // manually scroll to left if reached the left end while dragging
     if (
       posFromLeft - (ganttContainer.getBoundingClientRect().left + ganttSidebar.clientWidth) <=
-      70
+      SCROLL_THRESHOLD
     ) {
       if (e.movementX > 0) return 0;
 
@@ -54,7 +56,7 @@ export const ChartDraggable: React.FC<Props> = ({
 
     // manually scroll to right if reached the right end while dragging
     const posFromRight = ganttContainer.getBoundingClientRect().right - e.clientX;
-    if (posFromRight <= 70) {
+    if (posFromRight <= SCROLL_THRESHOLD) {
       if (e.movementX < 0) return 0;
 
       delWidth = 5;
@@ -159,18 +161,20 @@ export const ChartDraggable: React.FC<Props> = ({
   };
 
   const handleBlockMove = () => {
+    console.log("Running...");
     if (!enableBlockMove || !currentViewData || !resizableRef.current || !block.position) return;
+    console.log("Inside");
 
     const resizableDiv = resizableRef.current;
 
     const columnWidth = currentViewData.data.width;
 
-    const blockInitialMarginLeft =
-      parseInt(resizableDiv.style.marginLeft) ?? parseInt(block.position.width.toString());
+    const blockInitialMarginLeft = parseInt(resizableDiv.style.marginLeft);
 
     let initialMarginLeft = parseInt(resizableDiv.style.marginLeft);
 
     const handleMouseMove = (e: MouseEvent) => {
+      console.log("Moving...");
       let delWidth = 0;
 
       delWidth = checkScrollEnd(e);
@@ -184,6 +188,7 @@ export const ChartDraggable: React.FC<Props> = ({
     };
 
     const handleMouseUp = () => {
+      console.log("Stopping...");
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
 
@@ -223,7 +228,12 @@ export const ChartDraggable: React.FC<Props> = ({
           />
         </>
       )}
-      {React.cloneElement(children, { onMouseDown: handleBlockMove })}
+      <div
+        className="rounded shadow-sm bg-custom-background-80 h-8 w-full flex items-center"
+        onMouseDown={handleBlockMove}
+      >
+        {blockRender(block.data)}
+      </div>
       {enableBlockRightResize && (
         <>
           <div
