@@ -15,10 +15,6 @@ server {
         proxy_pass http://planefrontend:3000/;       
     }
 
-    location /spaces/ {
-        proxy_pass http://planedeploy:3000/;
-    }
-
     location /api/ {
         proxy_pass http://planebackend:8000/api/;
     }

@@ -55,20 +55,6 @@ services:
                 depends_on:
                         - plane-api
                         - plane-worker
-                        
-        plane-deploy:
-                container_name: planedeploy
-                image: makeplane/plane-space:latest
-                restart: always
-                command: node apps/space/server.js space
-                env_file:
-                        - .env
-                environment:
-                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-                depends_on:
-                        - plane-api
-                        - plane-worker
-                        - plane-web
 
         plane-api:
                 container_name: planebackend
