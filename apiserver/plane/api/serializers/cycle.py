@@ -14,6 +14,11 @@ from plane.db.models import Cycle, CycleIssue, CycleFavorite
 
 class CycleWriteSerializer(BaseSerializer):
 
+    def validate(self, data):
+        if data.get("start_date", None) is not None and data.get("end_date", None) is not None and data.get("start_date", None) > data.get("end_date", None):
+            raise serializers.ValidationError("Start date cannot exceed end date")
+        return data
+
     class Meta:
         model = Cycle
         fields = "__all__"
@@ -35,6 +40,11 @@ class CycleSerializer(BaseSerializer):
     started_estimates = serializers.IntegerField(read_only=True)
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
+
+    def validate(self, data):
+        if data.get("start_date", None) is not None and data.get("end_date", None) is not None and data.get("start_date", None) > data.get("end_date", None):
+            raise serializers.ValidationError("Start date cannot exceed end date")
+        return data
     
     def get_assignees(self, obj):
         members = [
