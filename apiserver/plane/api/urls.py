@@ -1652,7 +1652,7 @@ urlpatterns = [
         name="issue-property-values",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-properties/<uuid:issue_property_id>/issue-property-values/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-property-values/<uuid:pk>/",
         IssuePropertyValueViewSet.as_view(
             {
                 "get": "retrieve",

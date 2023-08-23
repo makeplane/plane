@@ -14,6 +14,7 @@ from .base import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
     IssuePropertySerializer,
     IssuePropertyValueSerializer,
+    IssuePropertyReadSerializer,
 )
 from plane.db.models import (
     Workspace,
@@ -114,17 +115,48 @@ class IssuePropertyValueViewSet(BaseViewSet):
             bulk_issue_props = []
             for issue_property in issue_properties:
                 # get the requested property
-                value = request_data.get(str(issue_property.id))
-
-                bulk_issue_props.append(
-                    IssuePropertyValue(
-                        values=value,
-                        issue_property=issue_property,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        issue_id=issue_id,
+                if issue_property.type == "entity":
+                    values_uuid = request_data.get(str(issue_property.id))
+                    values = None
+                else:
+                    values = request_data.get(str(issue_property.id))
+                    values_uuid = None
+                if issue_property.is_multi:
+                    if values is not None:
+                        for value in values.split(","):
+                            bulk_issue_props.append(
+                                IssuePropertyValue(
+                                    values=value,
+                                    values_uuid=None,
+                                    issue_property=issue_property,
+                                    project_id=project_id,
+                                    workspace_id=workspace_id,
+                                    issue_id=issue_id,
+                                )
+                            )
+                    else:
+                        for value in values_uuid.split(","):
+                            bulk_issue_props.append(
+                                IssuePropertyValue(
+                                    values=None,
+                                    values_uuid=value,
+                                    issue_property=issue_property,
+                                    project_id=project_id,
+                                    workspace_id=workspace_id,
+                                    issue_id=issue_id,
+                                )
+                            )
+                else:
+                    bulk_issue_props.append(
+                        IssuePropertyValue(
+                            values=values,
+                            values_uuid=values_uuid,
+                            issue_property=issue_property,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            issue_id=issue_id,
+                        )
                     )
-                )
 
             issue_property_values = IssuePropertyValue.objects.bulk_create(
                 bulk_issue_props, batch_size=100, ignore_conflicts=True
@@ -136,23 +168,28 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-    def list(self, request, slug, project_id, issue_id):
-        try:
-            issue_property_values = IssuePropertyValue.objects.filter(
-                workspace__slug=slug, project_id=project_id, issue_id=issue_id
-            ).values("description", "values")
-            return Response(issue_property_values, status=status.HTTP_200_OK)
-        except Exception as e:
             print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    def list(self, request, slug, project_id, issue_id):
+        try:
+            issue_properties = (
+                IssueProperty.objects.filter(
+                    workspace__slug=slug,
+                    property_values__project_id=project_id,
+                )
+                .prefetch_related("children")
+                .prefetch_related("property_values")
+                .distinct()
+            )
+            serializer = IssuePropertyReadSerializer(issue_properties, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

@@ -98,4 +98,6 @@ from .exporter import ExporterHistorySerializer
 from .issue_property import (
     IssuePropertySerializer,
     IssuePropertyValueSerializer,
+    IssuePropertyReadSerializer,
+    IssuePropertyValueReadSerializer,
 )

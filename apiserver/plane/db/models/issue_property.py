@@ -73,11 +73,12 @@ class IssuePropertyValue(ProjectBaseModel):
         IssueProperty, on_delete=models.CASCADE, related_name="property_values"
     )
     description = models.TextField(blank=True, null=True)
-    values = models.TextField()
+    values = models.TextField(null=True, blank=True)
+    values_uuid = models.TextField(null=True, blank=True)
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="attribute_values"
     )
-    
+
 
     class Meta:
         verbose_name = "IssuePropertyValue"
