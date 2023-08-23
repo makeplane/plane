@@ -44,6 +44,7 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
     order_by: orderBy,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
     state_group: filters?.state_group ? filters?.state_group.join(",") : undefined,
+    start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
     type: filters?.type ? filters?.type : undefined,
     subscriber: filters?.subscriber ? filters?.subscriber.join(",") : undefined,

@@ -263,6 +263,7 @@ export const ProfileIssuesView = () => {
                   labels: null,
                   priority: null,
                   state_group: null,
+                  start_date: null,
                   target_date: null,
                   type: null,
                 })

@@ -89,14 +89,11 @@ export const MyIssuesViewOptions: React.FC = () => {
         onSelect={(option) => {
           const key = option.key as keyof typeof filters;
 
-          if (key === "target_date") {
-            const valueExists = checkIfArraysHaveSameElements(
-              filters?.target_date ?? [],
-              option.value
-            );
+          if (key === "start_date" || key === "target_date") {
+            const valueExists = checkIfArraysHaveSameElements(filters?.[key] ?? [], option.value);
 
             setFilters({
-              target_date: valueExists ? null : option.value,
+              [key]: valueExists ? null : option.value,
             });
           } else {
             const valueExists = filters[key]?.includes(option.value);

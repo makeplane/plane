@@ -7,6 +7,7 @@ import { CalendarBeforeIcon, CalendarAfterIcon, CalendarMonthIcon } from "compon
 // fetch-keys
 
 type Props = {
+  title: string;
   value: string;
   onChange: (value: string) => void;
 };
@@ -19,29 +20,31 @@ type DueDate = {
 
 const dueDateRange: DueDate[] = [
   {
-    name: "Due date before",
+    name: "before",
     value: "before",
     icon: <CalendarBeforeIcon className="h-4 w-4 " />,
   },
   {
-    name: "Due date after",
+    name: "after",
     value: "after",
     icon: <CalendarAfterIcon className="h-4 w-4 " />,
   },
   {
-    name: "Due date range",
+    name: "range",
     value: "range",
     icon: <CalendarMonthIcon className="h-4 w-4 " />,
   },
 ];
 
-export const DueDateFilterSelect: React.FC<Props> = ({ value, onChange }) => (
+export const DateFilterSelect: React.FC<Props> = ({ title, value, onChange }) => (
   <CustomSelect
     value={value}
     label={
       <div className="flex items-center gap-2 text-xs">
         {dueDateRange.find((item) => item.value === value)?.icon}
-        <span>{dueDateRange.find((item) => item.value === value)?.name}</span>
+        <span>
+          {title} {dueDateRange.find((item) => item.value === value)?.name}
+        </span>
       </div>
     }
     onChange={onChange}
@@ -50,7 +53,7 @@ export const DueDateFilterSelect: React.FC<Props> = ({ value, onChange }) => (
       <CustomSelect.Option key={index} value={option.value}>
         <>
           <span>{option.icon}</span>
-          {option.name}
+          {title} {option.name}
         </>
       </CustomSelect.Option>
     ))}

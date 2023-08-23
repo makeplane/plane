@@ -20,6 +20,7 @@ export interface IQuery {
   labels: string[] | null;
   priority: string[] | null;
   state: string[] | null;
+  start_date: string[] | null;
   target_date: string[] | null;
   type: "active" | "backlog" | null;
 }
