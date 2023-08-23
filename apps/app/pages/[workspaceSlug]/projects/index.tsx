@@ -28,6 +28,8 @@ import type { NextPage } from "next";
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+// types
+import { IProject } from "types";
 
 const ProjectsPage: NextPage = () => {
   // router
@@ -39,7 +41,7 @@ const ProjectsPage: NextPage = () => {
   const { user } = useUserAuth();
   // context data
   const { activeWorkspace } = useWorkspaces();
-  const { projects } = useProjects();
+  const { projects, mutateProjects } = useProjects();
   // states
   const [deleteProject, setDeleteProject] = useState<string | null>(null);
   const [selectedProjectToJoin, setSelectedProjectToJoin] = useState<string | null>(null);
@@ -101,6 +103,14 @@ const ProjectsPage: NextPage = () => {
             })
             .then(async () => {
               mutate(PROJECT_MEMBERS(project.id));
+              mutateProjects<IProject[]>(
+                (prevData) =>
+                  (prevData ?? []).map((p) => ({
+                    ...p,
+                    is_member: p.id === project.id ? true : p.is_member,
+                  })),
+                false
+              );
               setSelectedProjectToJoin(null);
             })
             .catch(() => {
