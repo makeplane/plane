@@ -27,6 +27,7 @@ export const ChartDraggable: React.FC<Props> = ({
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
+  const [posFromLeft, setPosFromLeft] = useState<number | null>(null);
 
   const resizableRef = useRef<HTMLDivElement>(null);
 
@@ -219,31 +220,38 @@ export const ChartDraggable: React.FC<Props> = ({
     scrollContainer.scrollLeft = block.position.marginLeft - 4;
   };
 
+  useEffect(() => {
+    const block = resizableRef.current;
+
+    if (!block) return;
+
+    setPosFromLeft(block.getBoundingClientRect().left);
+  }, [scrollLeft]);
+
   const isBlockHiddenOnLeft =
     block.position?.marginLeft &&
     block.position?.width &&
     scrollLeft > block.position.marginLeft + block.position.width;
-  const isBlockHiddenOnRight =
-    block.position?.marginLeft && block.position.width && scrollLeft < block.position?.marginLeft;
+  const isBlockHiddenOnRight = posFromLeft && window && posFromLeft > window.innerWidth;
 
   return (
     <>
       {isBlockHiddenOnLeft && (
         <div
-          className="fixed ml-2 mt-1.5 z-[1] h-8 w-8 grid place-items-center border border-custom-border-300 rounded cursor-pointer bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          className="fixed ml-1 mt-1.5 z-[1] h-8 w-8 grid place-items-center border border-custom-border-300 rounded cursor-pointer bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
           onClick={handleScrollToBlock}
         >
           <Icon iconName="arrow_back" />
         </div>
       )}
-      {/* {isBlockHiddenOnRight && (
+      {isBlockHiddenOnRight && (
         <div
-          className="fixed right-2 mt-1.5 z-[1] h-8 w-8 grid place-items-center border border-custom-border-300 rounded cursor-pointer bg-custom-background-80"
+          className="fixed right-1 mt-1.5 z-[1] h-8 w-8 grid place-items-center border border-custom-border-300 rounded cursor-pointer bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
           onClick={handleScrollToBlock}
         >
           <Icon iconName="arrow_forward" />
         </div>
-      )} */}
+      )}
       <div
         id={`block-${block.id}`}
         ref={resizableRef}
@@ -259,7 +267,7 @@ export const ChartDraggable: React.FC<Props> = ({
               onMouseDown={handleBlockLeftResize}
               onMouseEnter={() => setIsLeftResizing(true)}
               onMouseLeave={() => setIsLeftResizing(false)}
-              className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[1] w-6 h-full rounded-md cursor-col-resize"
+              className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[3] w-6 h-full rounded-md cursor-col-resize"
             />
             <div
               className={`absolute top-1/2 -translate-y-1/2 w-1 h-7 rounded-sm bg-custom-background-100 transition-all duration-300 ${
@@ -268,7 +276,10 @@ export const ChartDraggable: React.FC<Props> = ({
             />
           </>
         )}
-        <div className="rounded h-8 w-full flex items-center" onMouseDown={handleBlockMove}>
+        <div
+          className="relative z-[2] rounded h-8 w-full flex items-center"
+          onMouseDown={handleBlockMove}
+        >
           {blockRender(block.data)}
         </div>
         {enableBlockRightResize && (
@@ -277,7 +288,7 @@ export const ChartDraggable: React.FC<Props> = ({
               onMouseDown={handleBlockRightResize}
               onMouseEnter={() => setIsRightResizing(true)}
               onMouseLeave={() => setIsRightResizing(false)}
-              className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-full rounded-md cursor-col-resize"
+              className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[2] w-6 h-full rounded-md cursor-col-resize"
             />
             <div
               className={`absolute top-1/2 -translate-y-1/2 w-1 h-7 rounded-sm bg-custom-background-100 transition-all duration-300 ${
