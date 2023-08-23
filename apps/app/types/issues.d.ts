@@ -233,6 +233,7 @@ export type TIssueGroupByOptions =
   | "created_by"
   | "state_detail.group"
   | "project"
+  | "assignees"
   | null;
 
 export type TIssueOrderByOptions =
