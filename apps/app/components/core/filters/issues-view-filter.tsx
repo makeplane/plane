@@ -113,46 +113,44 @@ export const IssuesFilterView: React.FC = () => {
           ))}
         </div>
       )}
-      {issueView !== "gantt_chart" && (
-        <SelectFilters
-          filters={filters}
-          onSelect={(option) => {
-            const key = option.key as keyof typeof filters;
+      <SelectFilters
+        filters={filters}
+        onSelect={(option) => {
+          const key = option.key as keyof typeof filters;
 
-            if (key === "target_date") {
-              const valueExists = checkIfArraysHaveSameElements(
-                filters.target_date ?? [],
-                option.value
+          if (key === "target_date") {
+            const valueExists = checkIfArraysHaveSameElements(
+              filters.target_date ?? [],
+              option.value
+            );
+
+            setFilters({
+              target_date: valueExists ? null : option.value,
+            });
+          } else {
+            const valueExists = filters[key]?.includes(option.value);
+
+            if (valueExists)
+              setFilters(
+                {
+                  [option.key]: ((filters[key] ?? []) as any[])?.filter(
+                    (val) => val !== option.value
+                  ),
+                },
+                !Boolean(viewId)
               );
-
-              setFilters({
-                target_date: valueExists ? null : option.value,
-              });
-            } else {
-              const valueExists = filters[key]?.includes(option.value);
-
-              if (valueExists)
-                setFilters(
-                  {
-                    [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                      (val) => val !== option.value
-                    ),
-                  },
-                  !Boolean(viewId)
-                );
-              else
-                setFilters(
-                  {
-                    [option.key]: [...((filters[key] ?? []) as any[]), option.value],
-                  },
-                  !Boolean(viewId)
-                );
-            }
-          }}
-          direction="left"
-          height="rg"
-        />
-      )}
+            else
+              setFilters(
+                {
+                  [option.key]: [...((filters[key] ?? []) as any[]), option.value],
+                },
+                !Boolean(viewId)
+              );
+          }
+        }}
+        direction="left"
+        height="rg"
+      />
       <Popover className="relative">
         {({ open }) => (
           <>

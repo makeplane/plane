@@ -3,6 +3,8 @@ import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // hooks
 import { useChart } from "./hooks";
+// ui
+import { Loader } from "components/ui";
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 // types
@@ -78,8 +80,9 @@ export const GanttSidebar: React.FC<Props> = ({
             {...droppableProvided.droppableProps}
           >
             <>
-              {blocks && blocks.length > 0
-                ? blocks.map((block, index) => (
+              {blocks ? (
+                blocks.length > 0 ? (
+                  blocks.map((block, index) => (
                     <Draggable
                       key={`sidebar-block-${block.id}`}
                       draggableId={`sidebar-block-${block.id}`}
@@ -118,7 +121,17 @@ export const GanttSidebar: React.FC<Props> = ({
                       )}
                     </Draggable>
                   ))
-                : "No data found"}
+                ) : (
+                  "No data found"
+                )
+              ) : (
+                <Loader className="pr-2 space-y-3">
+                  <Loader.Item height="34px" />
+                  <Loader.Item height="34px" />
+                  <Loader.Item height="34px" />
+                  <Loader.Item height="34px" />
+                </Loader>
+              )}
               {droppableProvided.placeholder}
             </>
           </div>
