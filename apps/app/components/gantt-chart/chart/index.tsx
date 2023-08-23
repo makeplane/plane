@@ -34,7 +34,7 @@ import { useChart } from "../hooks";
 
 type ChartViewRootProps = {
   border: boolean;
-  title: null | string;
+  title: string;
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -68,7 +68,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   // blocks state management starts
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
 
-  const renderBlockStructure = (view: any, blocks: IGanttBlock[]) =>
+  const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
     blocks && blocks.length > 0
       ? blocks.map((block: any) => ({
           ...block,
@@ -77,7 +77,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       : [];
 
   useEffect(() => {
-    if (currentViewData && blocks && blocks.length > 0)
+    if (currentViewData && blocks)
       setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
   }, [currentViewData, blocks]);
 
@@ -299,6 +299,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         >
           <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0" />
           <GanttSidebar
+            title={title}
             blockUpdateHandler={blockUpdateHandler}
             blocks={chartBlocks}
             sidebarBlockRender={sidebarBlockRender}

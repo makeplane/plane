@@ -8,7 +8,7 @@ import { IBlockUpdateData, IGanttBlock } from "./types";
 
 type GanttChartRootProps = {
   border?: boolean;
-  title: null | string;
+  title: string;
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
@@ -22,7 +22,7 @@ type GanttChartRootProps = {
 
 export const GanttChartRoot: FC<GanttChartRootProps> = ({
   border = true,
-  title = null,
+  title,
   blocks,
   loaderTitle = "blocks",
   blockUpdateHandler,

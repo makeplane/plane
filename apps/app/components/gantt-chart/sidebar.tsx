@@ -11,6 +11,7 @@ import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { IBlockUpdateData, IGanttBlock } from "./types";
 
 type Props = {
+  title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
   sidebarBlockRender: (data: any) => React.ReactNode;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export const GanttSidebar: React.FC<Props> = ({
+  title,
   blockUpdateHandler,
   blocks,
   sidebarBlockRender,
@@ -122,7 +124,9 @@ export const GanttSidebar: React.FC<Props> = ({
                     </Draggable>
                   ))
                 ) : (
-                  "No data found"
+                  <div className="text-custom-text-200 text-sm text-center mt-8">
+                    No <span className="lowercase">{title}</span> found
+                  </div>
                 )
               ) : (
                 <Loader className="pr-2 space-y-3">

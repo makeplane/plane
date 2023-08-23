@@ -10,11 +10,10 @@ import modulesService from "services/modules.service";
 // hooks
 import useUser from "hooks/use-user";
 // components
-import { GanttChartRoot, IBlockUpdateData, ModuleGanttBlock } from "components/gantt-chart";
+import { GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
+import { ModuleGanttBlock, ModuleGanttSidebarBlock } from "components/modules";
 // types
 import { IModule } from "types";
-// constants
-import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   modules: IModule[];
@@ -26,15 +25,6 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
   const { workspaceSlug } = router.query;
 
   const { user } = useUser();
-
-  // rendering issues on gantt sidebar
-  const GanttSidebarBlockView = ({ module }: any) => (
-    <Link href={`/${workspaceSlug}/projects/${module?.project}/issues/${module?.id}`}>
-      <a className="relative w-full flex items-center gap-2 h-full">
-        <h6 className="text-sm font-medium flex-grow truncate">{module?.name}</h6>
-      </a>
-    </Link>
-  );
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
@@ -95,7 +85,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
         loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        sidebarBlockRender={(data: any) => <GanttSidebarBlockView module={data} />}
+        sidebarBlockRender={(data: any) => <ModuleGanttSidebarBlock module={data as IModule} />}
         blockRender={(data: any) => <ModuleGanttBlock module={data as IModule} />}
       />
     </div>
