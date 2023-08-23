@@ -27,6 +27,7 @@ export const GanttChartBlocks: FC<{
 }) => {
   const { activeBlock, dispatch } = useChart();
 
+  // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
     dispatch({
       type: "PARTIAL_UPDATE",
@@ -47,15 +48,19 @@ export const GanttChartBlocks: FC<{
     const originalTargetDate = new Date(block.target_date);
     const updatedTargetDate = new Date(originalTargetDate);
 
+    // update the start date on left resize
     if (dragDirection === "left")
       updatedStartDate.setDate(originalStartDate.getDate() - totalBlockShifts);
+    // update the target date on right resize
     else if (dragDirection === "right")
       updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
+    // update both the dates on x-axis move
     else if (dragDirection === "move") {
       updatedStartDate.setDate(originalStartDate.getDate() + totalBlockShifts);
       updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
     }
 
+    // call the block update handler with the updated dates
     blockUpdateHandler(block.data, {
       start_date: renderDateFormat(updatedStartDate),
       target_date: renderDateFormat(updatedTargetDate),

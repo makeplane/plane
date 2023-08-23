@@ -27,6 +27,7 @@ export const GanttSidebar: React.FC<Props> = ({
 }) => {
   const { activeBlock, dispatch } = useChart();
 
+  // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
     dispatch({
       type: "PARTIAL_UPDATE",
@@ -41,15 +42,20 @@ export const GanttSidebar: React.FC<Props> = ({
 
     const { source, destination } = result;
 
+    // return if dropped outside the list
     if (!destination) return;
 
+    // return if dropped on the same index
     if (source.index === destination.index) return;
 
     let updatedSortOrder = blocks[source.index].sort_order;
 
+    // update the sort order to the lowest if dropped at the top
     if (destination.index === 0) updatedSortOrder = blocks[0].sort_order - 1000;
+    // update the sort order to the highest if dropped at the bottom
     else if (destination.index === blocks.length - 1)
       updatedSortOrder = blocks[blocks.length - 1].sort_order + 1000;
+    // update the sort order to the average of the two adjacent blocks if dropped in between
     else {
       const destinationSortingOrder = blocks[destination.index].sort_order;
       const relativeDestinationSortingOrder =
@@ -60,9 +66,11 @@ export const GanttSidebar: React.FC<Props> = ({
       updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
     }
 
+    // extract the element from the source index and insert it at the destination index without updating the entire array
     const removedElement = blocks.splice(source.index, 1)[0];
     blocks.splice(destination.index, 0, removedElement);
 
+    // call the block update handler with the updated sort order, new and old index
     blockUpdateHandler(removedElement.data, {
       sort_order: {
         destinationIndex: destination.index,
