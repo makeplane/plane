@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - 'develop'
-      - 'master'
     tags:
-      - '*'
+      - '*.*.*'
 
 jobs:
   build_push_backend:
@@ -39,19 +38,55 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Extract metadata (tags, labels) for Docker (Docker Hub)
+      - name: Extract metadata (tags, labels) for Docker (Docker Hub) Develop
         id: ghmeta
         uses: docker/metadata-action@v4.3.0
         with:
           images: makeplane/plane-backend
+          flavor: |
+            latest=false
+          tags: |
+            type=semver,pattern={{version}}
 
       - name: Extract metadata (tags, labels) for Docker (Github)
         id: dkrmeta
         uses: docker/metadata-action@v4.3.0
         with:
           images: ghcr.io/${{ github.repository }}-backend
+          flavor: |
+            latest=false
+          tags: |
+            type=ref,event=tag
 
-      - name: Build and Push to GitHub Container Registry
+      - name: Build and Push to GitHub Container Registry Develop
+        if: startsWith(github.ref, 'refs/heads/develop')
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./apiserver
+          file: ./apiserver/Dockerfile.api
+          platforms: linux/arm64,linux/amd64
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha
+          tags: makeplane/plane-backend:develop
+          labels: ${{ steps.ghmeta.outputs.labels }}
+
+      - name: Build and Push to Docker Hub
+        id: build-and-push-image-develop
+        if: startsWith(github.ref, 'refs/heads/develop')
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./apiserver
+          file: ./apiserver/Dockerfile.api
+          platforms: linux/arm64,linux/amd64
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha
+          tags: makeplane/plane-backend:develop
+          labels: ${{ steps.dkrmeta.outputs.labels }}
+
+      - name: Build and Push to GitHub Container Registry Tag 
+        if: startsWith(github.ref, 'refs/tags/')
         uses: docker/build-push-action@v4.0.0
         with:
           context: ./apiserver
@@ -64,6 +99,8 @@ jobs:
           labels: ${{ steps.ghmeta.outputs.labels }}
 
       - name: Build and Push to Docker Hub
+        id: build-and-push-image-tag
+        if: startsWith(github.ref, 'refs/tags/')
         uses: docker/build-push-action@v4.0.0
         with:
           context: ./apiserver
@@ -74,4 +111,3 @@ jobs:
           cache-to: type=gha
           tags: ${{ steps.dkrmeta.outputs.tags }}
           labels: ${{ steps.dkrmeta.outputs.labels }}
-

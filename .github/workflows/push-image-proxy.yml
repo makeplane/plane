@@ -1,6 +1,7 @@
-name: Build and Push Frontend Docker Image
+name: Build and Push Proxy Docker Image
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'develop'
@@ -9,7 +10,7 @@ on:
 
 jobs:
   build_push_frontend:
-    name: Build Frontend Docker Image
+    name: Build Plane Proxy Docker Image
     runs-on: ubuntu-20.04
 
     steps:
@@ -42,7 +43,7 @@ jobs:
         id: ghmeta
         uses: docker/metadata-action@v4.3.0
         with:
-          images: makeplane/plane-frontend
+          images: makeplane/plane-proxy
           flavor: |
             latest=false
           tags: |
@@ -53,7 +54,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ghcr.io/${{ github.repository }}-frontend
+          images: ghcr.io/${{ github.repository }}-proxy
           flavor: |
             latest=false
           tags: |
@@ -64,12 +65,12 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
-          file: ./apps/app/Dockerfile.web
+          file: ./nginx/Dockerfile
           platforms: linux/arm64,linux/amd64
           push: true
           cache-from: type=gha
           cache-to: type=gha
-          tags: makeplane/plane-frontend:develop
+          tags: makeplane/plane-proxy:develop
           labels: ${{ steps.ghmeta.outputs.labels }}
       
       - name: Build and Push to Docker Container Registry
@@ -77,12 +78,12 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
-          file: ./apps/app/Dockerfile.web
+          file: ./nginx/Dockerfile
           platforms: linux/arm64,linux/amd64
           push: true
           cache-from: type=gha
           cache-to: type=gha
-          tags: makeplane/plane-backend:develop
+          tags: makeplane/plane-proxy:develop
           labels: ${{ steps.dkrmeta.outputs.labels }}
 
       - name: Build and Push to GitHub Container Registry Tags
@@ -90,7 +91,7 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
-          file: ./apps/app/Dockerfile.web
+          file: ./nginx/Dockerfile
           platforms: linux/arm64,linux/amd64
           push: true
           cache-from: type=gha
@@ -103,7 +104,7 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
-          file: ./apps/app/Dockerfile.web
+          file: ./nginx/Dockerfile
           platforms: linux/arm64,linux/amd64
           push: true
           cache-from: type=gha
