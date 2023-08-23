@@ -285,7 +285,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         user={user}
       />
       <div className="h-full w-full flex flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-        <div className="flex items-center justify-between pb-3">
+        <div className="flex items-center justify-between px-5 pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
           </h4>
@@ -327,7 +327,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           </div>
         </div>
 
-        <div className="h-full w-full overflow-y-auto">
+        <div className="h-full w-full px-5 overflow-y-auto">
           <div className={`divide-y-2 divide-custom-border-200 ${uneditable ? "opacity-60" : ""}`}>
             {showFirstSection && (
               <div className="py-1">
