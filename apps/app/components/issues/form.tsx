@@ -333,7 +333,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 </div>
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("description")) && (
-                <div id="tiptap-container" className="relative">
+                <div className="relative">
                   <div className="flex justify-end">
                     {issueName && issueName !== "" && (
                       <button
@@ -370,6 +370,7 @@ export const IssueForm: FC<IssueFormProps> = ({
 
                       return (
                         <TiptapEditor
+                          workspaceSlug={workspaceSlug as string}
                           ref={editorRef}
                           debouncedUpdatesEnabled={false}
                           value={

@@ -24,6 +24,7 @@ export interface IssueDetailsProps {
     description: string;
     description_html: string;
   };
+  workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
   isAllowed: boolean;
 }
@@ -31,6 +32,7 @@ export interface IssueDetailsProps {
 export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   issue,
   handleFormSubmit,
+  workspaceSlug,
   isAllowed,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -69,11 +71,15 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
+      setShowAlert(false);
       setTimeout(async () => {
         setIsSubmitting("saved");
       }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
     }
-  }, [isSubmitting]);
+  }, [isSubmitting, setShowAlert]);
+
 
   // reset form values
   useEffect(() => {
@@ -122,7 +128,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         )}
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
-      <div id="tiptap-container" className="relative">
+      <div className="relative">
         <Controller
           name="description_html"
           control={control}
@@ -138,11 +144,14 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
                     ? watch("description_html")
                     : value
                 }
+                workspaceSlug={workspaceSlug}
                 debouncedUpdatesEnabled={true}
+                setShouldShowAlert={setShowAlert}
                 setIsSubmitting={setIsSubmitting}
-                customClassName="min-h-[150px]"
+                customClassName="min-h-[150px] shadow-sm"
                 editorContentCustomClassNames="pb-9"
                 onChange={(description: Object, description_html: string) => {
+                  setShowAlert(true);
                   setIsSubmitting("submitting");
                   onChange(description_html);
                   setValue("description", description);
@@ -154,8 +163,11 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             );
           }}
         />
-        <div className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === 'saved' ? 'fadeOut' : 'fadeIn'}`}>
-          {isSubmitting === 'submitting' ? 'Saving...' : 'Saved'}
+        <div
+          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+            }`}
+        >
+          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
         </div>
       </div>
     </div>

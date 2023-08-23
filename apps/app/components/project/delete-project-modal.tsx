@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -27,6 +29,11 @@ type TConfirmProjectDeletionProps = {
   user: ICurrentUserResponse | undefined;
 };
 
+const defaultValues = {
+  projectName: "",
+  confirmDelete: "",
+};
+
 export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   isOpen,
   data,
@@ -34,51 +41,41 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   onSuccess,
   user,
 }) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-  const [confirmProjectName, setConfirmProjectName] = useState("");
-  const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
+  const {
+    control,
+    formState: { isSubmitting },
+    handleSubmit,
+    reset,
+    watch,
+  } = useForm({ defaultValues });
 
-  useEffect(() => {
-    if (data) setSelectedProject(data);
-    else {
-      const timer = setTimeout(() => {
-        setSelectedProject(null);
-        clearTimeout(timer);
-      }, 300);
-    }
-  }, [data]);
+  const canDelete =
+    watch("projectName") === data?.name && watch("confirmDelete") === "delete my project";
 
   const handleClose = () => {
-    setIsDeleteLoading(false);
-
     const timer = setTimeout(() => {
-      setConfirmProjectName("");
-      setConfirmDeleteMyProject(false);
+      reset(defaultValues);
       clearTimeout(timer);
     }, 350);
+
     onClose();
   };
 
-  const handleDeletion = async () => {
+  const onSubmit = async () => {
     if (!data || !workspaceSlug || !canDelete) return;
 
-    setIsDeleteLoading(true);
-
     await projectService
-      .deleteProject(workspaceSlug as string, data.id, user)
+      .deleteProject(workspaceSlug.toString(), data.id, user)
       .then(() => {
         handleClose();
 
         mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
+          PROJECTS_LIST(workspaceSlug.toString(), { is_favorite: "all" }),
           (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
           false
         );
@@ -91,8 +88,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         })
-      )
-      .finally(() => setIsDeleteLoading(false));
+      );
   };
 
   return (
@@ -122,7 +118,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
-                <div className="flex flex-col gap-6 p-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
                       <ExclamationTriangleIcon
@@ -137,28 +133,29 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete project{" "}
-                      <span className="break-words font-semibold">{selectedProject?.name}</span>?
-                      All of the data related to the project will be permanently removed. This
-                      action cannot be undone
+                      <span className="break-words font-semibold">{data?.name}</span>? All of the
+                      data related to the project will be permanently removed. This action cannot be
+                      undone
                     </p>
                   </span>
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
                       Enter the project name{" "}
-                      <span className="font-medium text-custom-text-100">
-                        {selectedProject?.name}
-                      </span>{" "}
-                      to continue:
+                      <span className="font-medium text-custom-text-100">{data?.name}</span> to
+                      continue:
                     </p>
-                    <Input
-                      type="text"
-                      placeholder="Project name"
-                      className="mt-2"
-                      value={confirmProjectName}
-                      onChange={(e) => {
-                        setConfirmProjectName(e.target.value);
-                      }}
+                    <Controller
+                      control={control}
                       name="projectName"
+                      render={({ field: { onChange, value } }) => (
+                        <Input
+                          type="text"
+                          placeholder="Project name"
+                          className="mt-2"
+                          value={value}
+                          onChange={onChange}
+                        />
+                      )}
                     />
                   </div>
                   <div className="text-custom-text-200">
@@ -167,31 +164,27 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                       <span className="font-medium text-custom-text-100">delete my project</span>{" "}
                       below:
                     </p>
-                    <Input
-                      type="text"
-                      placeholder="Enter 'delete my project'"
-                      className="mt-2"
-                      onChange={(e) => {
-                        if (e.target.value === "delete my project") {
-                          setConfirmDeleteMyProject(true);
-                        } else {
-                          setConfirmDeleteMyProject(false);
-                        }
-                      }}
-                      name="typeDelete"
+                    <Controller
+                      control={control}
+                      name="confirmDelete"
+                      render={({ field: { onChange, value } }) => (
+                        <Input
+                          type="text"
+                          placeholder="Enter 'delete my project'"
+                          className="mt-2"
+                          onChange={onChange}
+                          value={value}
+                        />
+                      )}
                     />
                   </div>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton
-                      onClick={handleDeletion}
-                      disabled={!canDelete}
-                      loading={isDeleteLoading}
-                    >
-                      {isDeleteLoading ? "Deleting..." : "Delete Project"}
+                    <DangerButton type="submit" disabled={!canDelete} loading={isSubmitting}>
+                      {isSubmitting ? "Deleting..." : "Delete Project"}
                     </DangerButton>
                   </div>
-                </div>
+                </form>
               </Dialog.Panel>
             </Transition.Child>
           </div>

@@ -87,21 +87,22 @@ export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false })
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div id="tiptap-container" className="issue-comments-section">
+        <div className="issue-comments-section">
           <Controller
             name="comment_html"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TiptapEditor
+                workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={
                   !value ||
-                  value === "" ||
-                  (typeof value === "object" && Object.keys(value).length === 0)
+                    value === "" ||
+                    (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("comment_html")
                     : value
                 }
-                customClassName="p-3 min-h-[50px]"
+                customClassName="p-3 min-h-[50px] shadow-sm"
                 debouncedUpdatesEnabled={false}
                 onChange={(comment_json: Object, comment_html: string) => {
                   onChange(comment_html);

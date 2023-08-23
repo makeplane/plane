@@ -105,9 +105,11 @@ export const ProfileSidebar = () => {
           </div>
           <div className="px-5">
             <div className="mt-[38px]">
-              <h4 className="text-lg font-semibold">{userProjectsData.user_data.display_name}</h4>
+              <h4 className="text-lg font-semibold">
+                {userProjectsData.user_data.first_name} {userProjectsData.user_data.last_name}
+              </h4>
               <h6 className="text-custom-text-200 text-sm">
-                {userProjectsData.user_data.display_name}
+                ({userProjectsData.user_data.display_name})
               </h6>
             </div>
             <div className="mt-6 space-y-5">
