@@ -89,7 +89,6 @@ from plane.api.views import (
     IssueCommentPublicViewSet,
     IssueReactionViewSet,
     CommentReactionViewSet,
-    ExportIssuesEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -175,6 +174,10 @@ from plane.api.views import (
     InboxIssuePublicViewSet,
     IssueVotePublicViewSet,
     ## End Public Boards
+    ## Exporter
+    ExportIssuesEndpoint,
+    ## End Exporter
+
 )
 
 
