@@ -17,10 +17,7 @@ WORKDIR /space
 COPY --from=deps /space/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN yarn build
 
@@ -48,9 +45,6 @@ COPY --from=builder --chown=nextjs:nodejs /space/.next/static ./.next/static
 USER nextjs
 
 EXPOSE 3000
-
-USER root
-RUN echo -e "@tiptap-pro:registry=https://registry.tiptap.dev/\n//registry.npmjs.org/:_authToken=hjdbasjhbdajshb" > .npmrc
 
 ENV PORT 3000
 # set hostname to localhost
