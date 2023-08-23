@@ -17,13 +17,7 @@ import useUser from "hooks/use-user";
 // ui
 import { Input, Spinner } from "components/ui";
 // icons
-import {
-  ChevronDownIcon,
-  PlusIcon,
-  RectangleGroupIcon,
-  TagIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, RectangleGroupIcon, TagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
@@ -281,18 +275,15 @@ export const SidebarLabelSelect: React.FC<Props> = ({
             <Popover className="relative">
               {({ open }) => (
                 <>
-                  <Popover.Button
-                    className={`flex items-center gap-1 rounded-md bg-custom-background-80 p-1 outline-none focus:ring-2 focus:ring-custom-primary`}
-                  >
+                  <Popover.Button className="grid place-items-center outline-none">
                     {watch("color") && watch("color") !== "" && (
                       <span
-                        className="h-5 w-5 rounded"
+                        className="h-6 w-6 rounded"
                         style={{
                           backgroundColor: watch("color") ?? "black",
                         }}
                       />
                     )}
-                    <ChevronDownIcon className="h-3 w-3" />
                   </Popover.Button>
 
                   <Transition
@@ -304,7 +295,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute right-0 bottom-8 z-10 mt-1 max-w-xs transform px-2 sm:px-0">
+                    <Popover.Panel className="absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0">
                       <Controller
                         name="color"
                         control={labelControl}
