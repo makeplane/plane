@@ -18,6 +18,7 @@ type GanttChartRootProps = {
   enableBlockRightResize?: boolean;
   enableBlockMove?: boolean;
   enableReorder?: boolean;
+  bottomSpacing?: boolean;
 };
 
 export const GanttChartRoot: FC<GanttChartRootProps> = ({
@@ -32,6 +33,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
   enableBlockRightResize = true,
   enableBlockMove = true,
   enableReorder = true,
+  bottomSpacing = false,
 }) => (
   <ChartContextProvider>
     <ChartViewRoot
@@ -46,6 +48,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
       enableBlockRightResize={enableBlockRightResize}
       enableBlockMove={enableBlockMove}
       enableReorder={enableReorder}
+      bottomSpacing={bottomSpacing}
     />
   </ChartContextProvider>
 );

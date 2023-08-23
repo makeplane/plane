@@ -42,6 +42,7 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
         sidebarBlockRender={(data: any) => <IssueGanttSidebarBlock issue={data} />}
         blockRender={(data: any) => <IssueGanttBlock issue={data as IIssue} />}
         enableReorder={orderBy === "sort_order"}
+        bottomSpacing
       />
     </div>
   );

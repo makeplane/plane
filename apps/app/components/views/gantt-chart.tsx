@@ -27,10 +27,11 @@ export const ViewIssuesGanttChartView: FC<Props> = ({}) => {
   );
 
   return (
-    <div className="w-full h-full p-3">
+    <div className="w-full h-full">
       <GanttChartRoot
-        title="Issue Views"
-        loaderTitle="Issue Views"
+        border={false}
+        title="Issues"
+        loaderTitle="Issues"
         blocks={ganttIssues ? renderIssueBlocksStructure(ganttIssues as IIssue[]) : null}
         blockUpdateHandler={(block, payload) =>
           updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())

@@ -38,6 +38,7 @@ export const CycleIssuesGanttChartView = () => {
         sidebarBlockRender={(data: any) => <IssueGanttSidebarBlock issue={data as IIssue} />}
         blockRender={(data: any) => <IssueGanttBlock issue={data as IIssue} />}
         enableReorder={orderBy === "sort_order"}
+        bottomSpacing
       />
     </div>
   );

@@ -108,7 +108,7 @@ export const allViewsWithData: ChartDataType[] = [
       startDate: new Date(),
       currentDate: new Date(),
       endDate: new Date(),
-      approxFilterRange: 8,
+      approxFilterRange: 6,
       width: 55, // it will preview monthly all dates with weekends highlighted with no limitations ex: title (1, 2, 3)
     },
   },

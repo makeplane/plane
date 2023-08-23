@@ -62,10 +62,10 @@ export const CycleGanttSidebarBlock = ({ cycle }: { cycle: ICycle }) => {
   const cycleStatus = getDateRangeStatus(cycle?.start_date, cycle?.end_date);
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${cycle?.project}/issues/${cycle?.id}`}>
+    <Link href={`/${workspaceSlug}/projects/${cycle?.project}/cycles/${cycle?.id}`}>
       <a className="relative w-full flex items-center gap-2 h-full">
         <ContrastIcon
-          className="h-5 w-5"
+          className="h-5 w-5 flex-shrink-0"
           color={`${
             cycleStatus === "current"
               ? "#09a953"

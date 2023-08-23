@@ -44,6 +44,7 @@ type ChartViewRootProps = {
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
   enableReorder: boolean;
+  bottomSpacing: boolean;
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = ({
@@ -58,15 +59,16 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   enableBlockRightResize,
   enableBlockMove,
   enableReorder,
+  bottomSpacing,
 }) => {
-  const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
-
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
-  const [blocksSidebarView, setBlocksSidebarView] = useState<boolean>(false);
 
   // blocks state management starts
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
+
+  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } =
+    useChart();
 
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
     blocks && blocks.length > 0
@@ -198,6 +200,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
     const currentScrollPosition: number = scrollContainer?.scrollLeft;
 
+    updateScrollLeft(currentScrollPosition);
+
     const approxRangeLeft: number =
       scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
     const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
@@ -207,16 +211,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     if (currentScrollPosition <= approxRangeLeft)
       updateCurrentViewRenderPayload("left", currentView);
   };
-
-  useEffect(() => {
-    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-
-    scrollContainer.addEventListener("scroll", onScroll);
-
-    return () => {
-      scrollContainer.removeEventListener("scroll", onScroll);
-    };
-  }, [renderView]);
 
   return (
     <div
@@ -291,7 +285,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       {/* content */}
       <div
         id="gantt-container"
-        className="relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200"
+        className={`relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200 ${
+          bottomSpacing ? "mb-8" : ""
+        }`}
       >
         <div
           id="gantt-sidebar"
@@ -307,8 +303,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           />
         </div>
         <div
-          className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
+          className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"
           id="scroll-container"
+          onScroll={onScroll}
         >
           {/* {currentView && currentView === "hours" && <HourChartView />} */}
           {/* {currentView && currentView === "day" && <DayChartView />} */}

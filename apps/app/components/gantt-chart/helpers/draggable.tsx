@@ -1,5 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
+// icons
+import { Icon } from "components/ui";
 // hooks
 import { useChart } from "../hooks";
 // types
@@ -24,10 +26,11 @@ export const ChartDraggable: React.FC<Props> = ({
 }) => {
   const [isLeftResizing, setIsLeftResizing] = useState(false);
   const [isRightResizing, setIsRightResizing] = useState(false);
+  const [isMoving, setIsMoving] = useState(false);
 
   const resizableRef = useRef<HTMLDivElement>(null);
 
-  const { currentViewData } = useChart();
+  const { currentViewData, scrollLeft } = useChart();
 
   const checkScrollEnd = (e: MouseEvent): number => {
     const SCROLL_THRESHOLD = 70;
@@ -161,9 +164,11 @@ export const ChartDraggable: React.FC<Props> = ({
   };
 
   const handleBlockMove = () => {
-    console.log("Running...");
+    // console.log("Running...");
     if (!enableBlockMove || !currentViewData || !resizableRef.current || !block.position) return;
-    console.log("Inside");
+    // console.log("Inside");
+
+    setIsMoving(true);
 
     const resizableDiv = resizableRef.current;
 
@@ -174,7 +179,7 @@ export const ChartDraggable: React.FC<Props> = ({
     let initialMarginLeft = parseInt(resizableDiv.style.marginLeft);
 
     const handleMouseMove = (e: MouseEvent) => {
-      console.log("Moving...");
+      // console.log("Moving...");
       let delWidth = 0;
 
       delWidth = checkScrollEnd(e);
@@ -188,7 +193,10 @@ export const ChartDraggable: React.FC<Props> = ({
     };
 
     const handleMouseUp = () => {
-      console.log("Stopping...");
+      // console.log("Stopping...");
+
+      setIsMoving(false);
+
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
 
@@ -203,52 +211,82 @@ export const ChartDraggable: React.FC<Props> = ({
     document.addEventListener("mouseup", handleMouseUp);
   };
 
+  const handleScrollToBlock = () => {
+    const scrollContainer = document.querySelector("#scroll-container") as HTMLElement;
+
+    if (!scrollContainer || !block.position) return;
+
+    scrollContainer.scrollLeft = block.position.marginLeft - 4;
+  };
+
+  const isBlockHiddenOnLeft =
+    block.position?.marginLeft &&
+    block.position?.width &&
+    scrollLeft > block.position.marginLeft + block.position.width;
+  const isBlockHiddenOnRight =
+    block.position?.marginLeft && block.position.width && scrollLeft < block.position?.marginLeft;
+
   return (
-    <div
-      id={`block-${block.id}`}
-      ref={resizableRef}
-      className="relative group cursor-pointer font-medium rounded shadow-sm h-full inline-flex items-center transition-all"
-      style={{
-        marginLeft: `${block.position?.marginLeft}px`,
-        width: `${block.position?.width}px`,
-      }}
-    >
-      {enableBlockLeftResize && (
-        <>
-          <div
-            onMouseDown={handleBlockLeftResize}
-            onMouseEnter={() => setIsLeftResizing(true)}
-            onMouseLeave={() => setIsLeftResizing(false)}
-            className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[1] w-6 h-full rounded-md cursor-col-resize"
-          />
-          <div
-            className={`absolute top-1/2 -translate-y-1/2 w-1 h-7 rounded-sm bg-custom-background-100 transition-all duration-300 ${
-              isLeftResizing ? "-left-2.5" : "left-1"
-            }`}
-          />
-        </>
+    <>
+      {isBlockHiddenOnLeft && (
+        <div
+          className="fixed ml-2 mt-1.5 z-[1] h-8 w-8 grid place-items-center border border-custom-border-300 rounded cursor-pointer bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100"
+          onClick={handleScrollToBlock}
+        >
+          <Icon iconName="arrow_back" />
+        </div>
       )}
+      {/* {isBlockHiddenOnRight && (
+        <div
+          className="fixed right-2 mt-1.5 z-[1] h-8 w-8 grid place-items-center border border-custom-border-300 rounded cursor-pointer bg-custom-background-80"
+          onClick={handleScrollToBlock}
+        >
+          <Icon iconName="arrow_forward" />
+        </div>
+      )} */}
       <div
-        className="rounded shadow-sm bg-custom-background-80 h-8 w-full flex items-center"
-        onMouseDown={handleBlockMove}
+        id={`block-${block.id}`}
+        ref={resizableRef}
+        className="relative group cursor-pointer font-medium rounded shadow-sm h-full inline-flex items-center transition-all"
+        style={{
+          marginLeft: `${block.position?.marginLeft}px`,
+          width: `${block.position?.width}px`,
+        }}
       >
-        {blockRender(block.data)}
+        {enableBlockLeftResize && (
+          <>
+            <div
+              onMouseDown={handleBlockLeftResize}
+              onMouseEnter={() => setIsLeftResizing(true)}
+              onMouseLeave={() => setIsLeftResizing(false)}
+              className="absolute top-1/2 -left-2.5 -translate-y-1/2 z-[1] w-6 h-full rounded-md cursor-col-resize"
+            />
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-1 h-7 rounded-sm bg-custom-background-100 transition-all duration-300 ${
+                isLeftResizing ? "-left-2.5" : "left-1"
+              }`}
+            />
+          </>
+        )}
+        <div className="rounded h-8 w-full flex items-center" onMouseDown={handleBlockMove}>
+          {blockRender(block.data)}
+        </div>
+        {enableBlockRightResize && (
+          <>
+            <div
+              onMouseDown={handleBlockRightResize}
+              onMouseEnter={() => setIsRightResizing(true)}
+              onMouseLeave={() => setIsRightResizing(false)}
+              className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-full rounded-md cursor-col-resize"
+            />
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-1 h-7 rounded-sm bg-custom-background-100 transition-all duration-300 ${
+                isRightResizing ? "-right-2.5" : "right-1"
+              }`}
+            />
+          </>
+        )}
       </div>
-      {enableBlockRightResize && (
-        <>
-          <div
-            onMouseDown={handleBlockRightResize}
-            onMouseEnter={() => setIsRightResizing(true)}
-            onMouseLeave={() => setIsRightResizing(false)}
-            className="absolute top-1/2 -right-2.5 -translate-y-1/2 z-[1] w-6 h-full rounded-md cursor-col-resize"
-          />
-          <div
-            className={`absolute top-1/2 -translate-y-1/2 w-1 h-7 rounded-sm bg-custom-background-100 transition-all duration-300 ${
-              isRightResizing ? "-right-2.5" : "right-1"
-            }`}
-          />
-        </>
-      )}
-    </div>
+    </>
   );
 };
