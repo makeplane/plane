@@ -10,8 +10,8 @@ export const IssueBlockPriority = ({ priority }: { priority: TIssuePriorityKey |
 
   if (priority_detail === null) return <></>;
   return (
-    <div className={`w-[24px] h-[24px] rounded-sm flex justify-center items-center ${priority_detail?.className}`}>
-      <span className="material-symbols-rounded text-[16px]">{priority_detail?.icon}</span>
+    <div className={`h-6 w-6 rounded flex justify-center items-center ${priority_detail?.className}`}>
+      <span className="material-symbols-rounded text-sm">{priority_detail?.icon}</span>
     </div>
   );
 };

@@ -56,31 +56,31 @@ export const issuePriorityFilters: IIssuePriorityFilters[] = [
   {
     key: "urgent",
     title: "Urgent",
-    className: "border border-red-500/50 bg-red-500/20 text-red-500",
+    className: "border border-gray-200 text-red-500",
     icon: "error",
   },
   {
     key: "high",
     title: "High",
-    className: "border border-orange-500/50 bg-orange-500/20 text-orange-500",
+    className: "border border-gray-200 text-orange-500",
     icon: "signal_cellular_alt",
   },
   {
     key: "medium",
     title: "Medium",
-    className: "border border-yellow-500/50 bg-yellow-500/20 text-yellow-500",
+    className: "border border-gray-200 text-yellow-500",
     icon: "signal_cellular_alt_2_bar",
   },
   {
     key: "low",
     title: "Low",
-    className: "border border-green-500/50 bg-green-500/20 text-green-500",
+    className: "border border-gray-200 text-green-500",
     icon: "signal_cellular_alt_1_bar",
   },
   {
     key: "none",
     title: "None",
-    className: "border border-gray-500/50 bg-gray-500/20 text-gray-500",
+    className: "border border-gray-200 text-gray-500",
     icon: "block",
   },
 ];

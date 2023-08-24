@@ -24,7 +24,7 @@ const validDate = (date: any, state: string): string => {
 
 export const IssueBlockDueDate = ({ due_date, state }: any) => (
   <div
-    className={`h-[24px] rounded-sm flex px-2 items-center border border-gray-300 gap-1 text-gray-700 text-xs font-medium 
+    className={`h-[24px] rounded-md flex px-2.5 py-1 items-center border border-gray-300 gap-1 text-gray-700 text-xs font-medium 
     ${validDate(due_date, state)}`}
   >
     {renderDateFormat(due_date)}
