@@ -287,7 +287,10 @@ class ProjectViewSet(BaseViewSet):
                 )
 
                 data = serializer.data
+                # Additional fields of the member
                 data["sort_order"] = project_member.sort_order
+                data["member_role"] = project_member.role
+                data["is_member"] = True
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors,
