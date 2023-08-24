@@ -25,6 +25,7 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workspace_slug: string;
   user: ICurrentUserResponse | undefined;
+  onSuccess: () => void;
 };
 
 type EmailRole = {
@@ -45,12 +46,8 @@ const defaultValues: FormValues = {
   ],
 };
 
-const SendWorkspaceInvitationModal: React.FC<Props> = ({
-  isOpen,
-  setIsOpen,
-  workspace_slug,
-  user,
-}) => {
+const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
+  const { isOpen, setIsOpen, workspace_slug, user, onSuccess } = props;
   const {
     control,
     reset,
@@ -88,6 +85,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
           title: "Success!",
           message: "Invitations sent successfully.",
         });
+        onSuccess();
       })
       .catch((err) => {
         setToastAlert({
