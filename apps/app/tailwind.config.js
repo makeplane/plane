@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       boxShadow: {
-        "custom-shadow-xxs": "var(--color-shadow-xxs)",
+        "custom-shadow-2xs": "var(--color-shadow-2xs)",
         "custom-shadow-xs": "var(--color-shadow-xs)",
         "custom-shadow-sm": "var(--color-shadow-sm)",
         "custom-shadow-rg": "var(--color-shadow-rg)",
@@ -15,7 +15,7 @@ module.exports = {
         "custom-shadow-xl": "var(--color-shadow-xl)",
         "custom-shadow-2xl": "var(--color-shadow-2xl)",
         "custom-shadow-3xl": "var(--color-shadow-3xl)",
-        "custom-sidebar-shadow-xxs": "var(--color-sidebar-shadow-xxs)",
+        "custom-sidebar-shadow-2xs": "var(--color-sidebar-shadow-2xs)",
         "custom-sidebar-shadow-xs": "var(--color-sidebar-shadow-xs)",
         "custom-sidebar-shadow-sm": "var(--color-sidebar-shadow-sm)",
         "custom-sidebar-shadow-rg": "var(--color-sidebar-shadow-rg)",
