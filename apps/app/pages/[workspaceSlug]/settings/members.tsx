@@ -99,6 +99,10 @@ const MembersSettings: NextPage = () => {
 
   const currentUser = workspaceMembers?.find((item) => item.member?.id === user?.id);
 
+  const handleInviteModalSuccess = () => {
+    mutateInvitations();
+  };
+
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
@@ -139,8 +143,9 @@ const MembersSettings: NextPage = () => {
                 });
               })
               .finally(() => {
-                mutateMembers((prevData: any) =>
-                  prevData?.filter((item: any) => item.id !== selectedRemoveMember)
+                mutateMembers(
+                  (prevData: any) =>
+                    prevData?.filter((item: any) => item.id !== selectedRemoveMember)
                 );
               });
           }
@@ -180,6 +185,7 @@ const MembersSettings: NextPage = () => {
         setIsOpen={setInviteModal}
         workspace_slug={workspaceSlug as string}
         user={user}
+        onSuccess={handleInviteModalSuccess}
       />
       <div className="p-8">
         <SettingsHeader />
