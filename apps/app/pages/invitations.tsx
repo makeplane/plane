@@ -34,6 +34,8 @@ import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
+// Todo: Convert this logic to checkboxes
+
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -49,6 +51,8 @@ const OnBoard: NextPage = () => {
   const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
   );
+
+  console.log("invitations", invitations);
 
   const handleInvitation = (
     workspace_invitation: IWorkspaceMemberInvitation,
@@ -78,10 +82,11 @@ const OnBoard: NextPage = () => {
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(() => {
-        mutateInvitations();
         mutate("USER_WORKSPACES");
-
         setIsJoiningWorkspaces(false);
+        const firstInviteId = invitationsRespond[0];
+        const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
+        router.push(`/${redirectWorkspace?.slug}`);
       })
       .catch(() => setIsJoiningWorkspaces(false));
   };
