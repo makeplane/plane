@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import Image from "next/image";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
@@ -175,10 +175,12 @@ const Profile: NextPage = () => {
                       </div>
                     ) : (
                       <div className="relative h-12 w-12 overflow-hidden">
-                        <img
+                        <Image
                           src={watch("avatar")}
                           className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
                           onClick={() => setIsImageUploadModalOpen(true)}
+                          layout="fill"
+                          objectFit="cover"
                           alt={myProfile.display_name}
                         />
                       </div>
