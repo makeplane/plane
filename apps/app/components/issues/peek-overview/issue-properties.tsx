@@ -9,8 +9,6 @@ import {
 } from "components/issues";
 // icons
 import { CustomDatePicker, Icon } from "components/ui";
-// helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
@@ -34,8 +32,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, 
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-sm">
         <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-          <Icon iconName="radio_button_checked" className="!text-base" />
-          State
+          <Icon iconName="radio_button_checked" className="!text-base flex-shrink-0" />
+          <span className="flex-grow truncate">State</span>
         </div>
         <div className="w-3/4">
           <SidebarStateSelect
@@ -47,8 +45,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, 
       </div>
       <div className="flex items-center gap-2 text-sm">
         <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-          <Icon iconName="group" className="!text-base" />
-          Assignees
+          <Icon iconName="group" className="!text-base flex-shrink-0" />
+          <span className="flex-grow truncate">Assignees</span>
         </div>
         <div className="w-3/4">
           <SidebarAssigneeSelect
@@ -60,8 +58,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, 
       </div>
       <div className="flex items-center gap-2 text-sm">
         <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-          <Icon iconName="signal_cellular_alt" className="!text-base" />
-          Priority
+          <Icon iconName="signal_cellular_alt" className="!text-base flex-shrink-0" />
+          <span className="flex-grow truncate">Priority</span>
         </div>
         <div className="w-3/4">
           <SidebarPrioritySelect
@@ -73,8 +71,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, 
       </div>
       <div className="flex items-center gap-2 text-sm">
         <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-          <Icon iconName="calendar_today" className="!text-base" />
-          Start date
+          <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
+          <span className="flex-grow truncate">Start date</span>
         </div>
         <div>
           {issue.start_date ? (
@@ -98,8 +96,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, 
       </div>
       <div className="flex items-center gap-2 text-sm">
         <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-          <Icon iconName="calendar_today" className="!text-base" />
-          Due date
+          <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
+          <span className="flex-grow truncate">Due date</span>
         </div>
         <div>
           {issue.target_date ? (
@@ -123,8 +121,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, 
       </div>
       <div className="flex items-center gap-2 text-sm">
         <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-          <Icon iconName="change_history" className="!text-base" />
-          Estimate
+          <Icon iconName="change_history" className="!text-base flex-shrink-0" />
+          <span className="flex-grow truncate">Estimate</span>
         </div>
         <div className="w-3/4">
           <SidebarEstimateSelect
@@ -132,12 +130,6 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, 
             onChange={(val: number | null) => onChange({ estimate_point: val })}
             disabled={readOnly}
           />
-        </div>
-      </div>
-      <div className="flex items-center gap-2 text-sm">
-        <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-          <Icon iconName="supervised_user_circle" className="!text-base" />
-          Parent
         </div>
       </div>
       <Disclosure as="div">
@@ -152,31 +144,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, 
               <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-base" />
             </Disclosure.Button>
             <Disclosure.Panel as="div" className="mt-4 space-y-4">
-              <div className="flex items-center gap-2 text-sm">
-                <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-                  <Icon iconName="radio_button_checked" className="!text-base" />
-                  State
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-                  <Icon iconName="group" className="!text-base" />
-                  Assignees
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-                  <Icon iconName="calendar_today" className="!text-base" />
-                  Due date
-                </div>
-                <div>
-                  {issue.target_date ? (
-                    renderShortDateWithYearFormat(issue.target_date)
-                  ) : (
-                    <span className="text-custom-text-200">Empty</span>
-                  )}
-                </div>
-              </div>
+              Disclosure Panel
             </Disclosure.Panel>
           </>
         )}
