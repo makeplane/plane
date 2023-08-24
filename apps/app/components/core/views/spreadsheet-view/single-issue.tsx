@@ -1,13 +1,12 @@
 import React, { useCallback, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
 // components
 import {
-  IssuePeakOverview,
+  IssuePeekOverview,
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
@@ -77,9 +76,9 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // issue peak overview
-  const [issuePeakOverview, setIssuePeakOverview] = useState(false);
-  const [issuePeakOverviewData, setIssuePeakOverviewData] = useState<IIssue | null>(null);
+  // issue peek overview
+  const [issuePeekOverview, setIssuePeekOverview] = useState(false);
+  const [issuePeekOverviewData, setIssuePeekOverviewData] = useState<IIssue | null>(null);
 
   const router = useRouter();
 
@@ -163,9 +162,9 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
   );
 
-  const openPeakOverview = useCallback((issue: IIssue) => {
-    setIssuePeakOverviewData(issue);
-    setIssuePeakOverview(true);
+  const openPeekOverview = useCallback((issue: IIssue) => {
+    setIssuePeekOverviewData(issue);
+    setIssuePeekOverview(true);
   }, []);
 
   const handleCopyText = () => {
@@ -190,11 +189,11 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   return (
     <>
-      <IssuePeakOverview
+      <IssuePeekOverview
         handleUpdateIssue={async (formData) => partialUpdateIssue(formData, issue)}
-        issue={issuePeakOverviewData}
-        isOpen={issuePeakOverview}
-        onClose={() => setIssuePeakOverview(false)}
+        issue={issuePeekOverviewData}
+        isOpen={issuePeekOverview}
+        onClose={() => setIssuePeekOverview(false)}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={isNotAllowed}
       />
@@ -286,7 +285,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <button
             type="button"
             className="truncate text-custom-text-100 text-left cursor-pointer w-full text-[0.825rem]"
-            onClick={() => openPeakOverview(issue)}
+            onClick={() => openPeekOverview(issue)}
           >
             {issue.name}
           </button>

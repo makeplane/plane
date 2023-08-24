@@ -20,7 +20,7 @@ type Props = {
   readOnly: boolean;
 };
 
-export const PeakOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, readOnly }) => {
+export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, onChange, readOnly }) => {
   const startDate = issue.start_date;
   const targetDate = issue.target_date;
 

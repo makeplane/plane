@@ -16,7 +16,7 @@ type Props = {
   readOnly: boolean;
 };
 
-export const PeakOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issue, readOnly }) => {
+export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issue, readOnly }) => {
   const { user } = useUser();
 
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(

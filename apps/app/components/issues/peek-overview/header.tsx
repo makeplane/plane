@@ -2,17 +2,17 @@
 import { CustomSelect, Icon } from "components/ui";
 // types
 import { IIssue } from "types";
-import { TPeakOverviewModes } from "./layout";
+import { TPeekOverviewModes } from "./layout";
 
 type Props = {
   handleClose: () => void;
   issue: IIssue;
-  mode: TPeakOverviewModes;
-  setMode: (mode: TPeakOverviewModes) => void;
+  mode: TPeekOverviewModes;
+  setMode: (mode: TPeekOverviewModes) => void;
 };
 
 const peekModes: {
-  key: TPeakOverviewModes;
+  key: TPeekOverviewModes;
   icon: string;
   label: string;
 }[] = [
@@ -29,7 +29,7 @@ const peekModes: {
   },
 ];
 
-export const PeakOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, setMode }) => (
+export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, setMode }) => (
   <div className="flex justify-between items-center">
     <div className="flex items-center gap-4">
       {mode === "side" && (
@@ -48,7 +48,7 @@ export const PeakOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
       )}
       <CustomSelect
         value={mode}
-        onChange={(val: TPeakOverviewModes) => setMode(val)}
+        onChange={(val: TPeekOverviewModes) => setMode(val)}
         customButton={
           <button type="button" className="grid place-items-center">
             <Icon iconName={peekModes.find((m) => m.key === mode)?.icon ?? ""} />

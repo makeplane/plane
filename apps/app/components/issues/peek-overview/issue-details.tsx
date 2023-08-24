@@ -10,7 +10,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const PeakOverviewIssueDetails: React.FC<Props> = ({
+export const PeekOverviewIssueDetails: React.FC<Props> = ({
   handleUpdateIssue,
   issue,
   readOnly,

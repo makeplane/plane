@@ -3,10 +3,10 @@ import React, { useState } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 import {
-  PeakOverviewHeader,
-  PeakOverviewIssueActivity,
-  PeakOverviewIssueDetails,
-  PeakOverviewIssueProperties,
+  PeekOverviewHeader,
+  PeekOverviewIssueActivity,
+  PeekOverviewIssueDetails,
+  PeekOverviewIssueProperties,
 } from "components/issues";
 // types
 import { IIssue } from "types";
@@ -20,9 +20,9 @@ type Props = {
   readOnly: boolean;
 };
 
-export type TPeakOverviewModes = "side" | "modal" | "full";
+export type TPeekOverviewModes = "side" | "modal" | "full";
 
-export const IssuePeakOverview: React.FC<Props> = ({
+export const IssuePeekOverview: React.FC<Props> = ({
   handleUpdateIssue,
   issue,
   isOpen,
@@ -30,11 +30,11 @@ export const IssuePeakOverview: React.FC<Props> = ({
   workspaceSlug,
   readOnly,
 }) => {
-  const [peakOverviewMode, setPeakOverviewMode] = useState<TPeakOverviewModes>("side");
+  const [peekOverviewMode, setPeekOverviewMode] = useState<TPeekOverviewModes>("side");
 
   const handleClose = () => {
     onClose();
-    setPeakOverviewMode("side");
+    setPeekOverviewMode("side");
   };
 
   if (!issue || !isOpen) return null;
@@ -43,7 +43,7 @@ export const IssuePeakOverview: React.FC<Props> = ({
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         {/* add backdrop conditionally */}
-        {(peakOverviewMode === "modal" || peakOverviewMode === "full") && (
+        {(peekOverviewMode === "modal" || peekOverviewMode === "full") && (
           <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         )}
 
@@ -58,26 +58,26 @@ export const IssuePeakOverview: React.FC<Props> = ({
         >
           <Dialog.Panel
             className={`fixed z-20 bg-custom-background-100 ${
-              peakOverviewMode === "side"
+              peekOverviewMode === "side"
                 ? "top-0 right-0 h-full w-1/2"
-                : peakOverviewMode === "modal"
+                : peekOverviewMode === "modal"
                 ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[70%] w-3/5 rounded-lg"
                 : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[95%] w-[95%] rounded-lg"
             }`}
           >
             <div className="flex flex-col h-full w-full overflow-hidden">
               <div className="p-5">
-                <PeakOverviewHeader
+                <PeekOverviewHeader
                   handleClose={handleClose}
                   issue={issue}
-                  mode={peakOverviewMode}
-                  setMode={setPeakOverviewMode}
+                  mode={peekOverviewMode}
+                  setMode={setPeekOverviewMode}
                 />
               </div>
               <div className="px-6 py-5 h-full w-full overflow-y-auto">
                 {/* issue title and description */}
                 <div className="w-full">
-                  <PeakOverviewIssueDetails
+                  <PeekOverviewIssueDetails
                     handleUpdateIssue={handleUpdateIssue}
                     issue={issue}
                     readOnly={readOnly}
@@ -86,7 +86,7 @@ export const IssuePeakOverview: React.FC<Props> = ({
                 </div>
                 {/* issue properties */}
                 <div className="mt-10 w-full">
-                  <PeakOverviewIssueProperties
+                  <PeekOverviewIssueProperties
                     issue={issue}
                     onChange={handleUpdateIssue}
                     readOnly={readOnly}
@@ -96,7 +96,7 @@ export const IssuePeakOverview: React.FC<Props> = ({
                 <div className="h-[1] w-full border-t border-custom-border-200 my-5" />
                 {/* issue activity/comments */}
                 <div className="w-full">
-                  <PeakOverviewIssueActivity
+                  <PeekOverviewIssueActivity
                     workspaceSlug={workspaceSlug}
                     issue={issue}
                     readOnly={readOnly}
