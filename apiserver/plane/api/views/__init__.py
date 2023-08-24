@@ -162,7 +162,7 @@ from .analytic import (
     DefaultAnalyticsEndpoint,
 )
 
-from .notification import NotificationViewSet, UnreadNotificationEndpoint
+from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkAllReadNotificationViewSet
 
 from .exporter import (
     ExportIssuesEndpoint,
