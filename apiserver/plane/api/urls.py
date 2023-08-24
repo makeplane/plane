@@ -89,7 +89,6 @@ from plane.api.views import (
     IssueCommentPublicViewSet,
     IssueReactionViewSet,
     CommentReactionViewSet,
-    ExportIssuesEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -174,11 +173,16 @@ from plane.api.views import (
     CommentReactionPublicViewSet,
     InboxIssuePublicViewSet,
     IssueVotePublicViewSet,
+    WorkspaceProjectDeployBoardEndpoint,
     ## End Public Boards
     # Issue Properties
     IssuePropertyViewSet,
     IssuePropertyValueViewSet,
     ## End Issue Properties
+    ## Exporter
+    ExportIssuesEndpoint,
+    ## End Exporter
+
 )
 
 
@@ -1617,6 +1621,11 @@ urlpatterns = [
             }
         ),
         name="issue-vote-project-board",
+    ),
+    path(
+        "public/workspaces/<str:slug>/project-boards/",
+        WorkspaceProjectDeployBoardEndpoint.as_view(),
+        name="workspace-project-boards",
     ),
     ## End Public Boards
     # Issue Property

@@ -1827,28 +1827,3 @@ class IssueVotePublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
-class ExportIssuesEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
-
-    def post(self, request, slug):
-        try:
-
-            issue_export_task.delay(
-                email=request.user.email, data=request.data, slug=slug ,exporter_name=request.user.first_name
-            )
-
-            return Response(
-                {
-                    "message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"
-                },
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
