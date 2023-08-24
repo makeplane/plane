@@ -33,8 +33,10 @@ import type { IWorkspaceMemberInvitation } from "types";
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+import userService from "services/user.service";
 
-// Todo: Convert this logic to checkboxes
+// TODO: Convert this logic to checkboxes
+// TODO: Add loading button for join workspace
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -81,12 +83,23 @@ const OnBoard: NextPage = () => {
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(() => {
         mutate("USER_WORKSPACES");
-        setIsJoiningWorkspaces(false);
         const firstInviteId = invitationsRespond[0];
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
-        router.push(`/${redirectWorkspace?.slug}`);
+        userService
+          .updateUser({ last_workspace_id: redirectWorkspace?.id })
+          .then(() => {
+            setIsJoiningWorkspaces(false);
+            router.push(`/${redirectWorkspace?.slug}`);
+          })
+          .catch(() => {
+            // todo: add toast message
+            setIsJoiningWorkspaces(false);
+          });
       })
-      .catch(() => setIsJoiningWorkspaces(false));
+      .catch(() => {
+        // todo: add toast message
+        setIsJoiningWorkspaces(false);
+      });
   };
 
   return (
