@@ -240,6 +240,34 @@ export const FiltersList: React.FC<Props> = ({
                           </div>
                         );
                       })
+                    : key === "start_date"
+                    ? filters.start_date?.map((date: string) => {
+                        if (filters.start_date && filters.start_date.length <= 0) return null;
+
+                        const splitDate = date.split(";");
+
+                        return (
+                          <div
+                            key={date}
+                            className="inline-flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-100 px-1 py-0.5"
+                          >
+                            <div className="h-1.5 w-1.5 rounded-full" />
+                            <span className="capitalize">
+                              {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
+                            </span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setFilters({
+                                  start_date: filters.start_date?.filter((d: any) => d !== date),
+                                })
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3" />
+                            </span>
+                          </div>
+                        );
+                      })
                     : key === "target_date"
                     ? filters.target_date?.map((date: string) => {
                         if (filters.target_date && filters.target_date.length <= 0) return null;

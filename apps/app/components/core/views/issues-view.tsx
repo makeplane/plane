@@ -478,6 +478,7 @@ export const IssuesView: React.FC<Props> = ({
                   labels: null,
                   priority: null,
                   state: null,
+                  start_date: null,
                   target_date: null,
                   type: null,
                 })

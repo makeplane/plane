@@ -215,6 +215,7 @@ export interface IIssueLite {
 export interface IIssueFilterOptions {
   type: "active" | "backlog" | null;
   assignees: string[] | null;
+  start_date: string[] | null;
   target_date: string[] | null;
   state: string[] | null;
   state_group: TStateGroups[] | null;

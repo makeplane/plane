@@ -11,15 +11,18 @@ import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 // components
-import { DueDateFilterSelect } from "./due-date-filter-select";
+import { DateFilterSelect } from "./date-filter-select";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { XMarkIcon } from "@heroicons/react/20/solid";
 // helpers
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { IIssueFilterOptions } from "types";
 
 type Props = {
+  title: string;
+  field: keyof IIssueFilterOptions;
   isOpen: boolean;
   handleClose: () => void;
 };
@@ -36,7 +39,7 @@ const defaultValues: TFormValues = {
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
 };
 
-export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => {
+export const DateFilterModal: React.FC<Props> = ({ title, field, isOpen, handleClose }) => {
   const { filters, setFilters } = useIssuesView();
 
   const router = useRouter();
@@ -51,11 +54,11 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
 
     if (filterType === "range") {
       setFilters(
-        { target_date: [`${renderDateFormat(date1)};after`, `${renderDateFormat(date2)};before`] },
+        { [field]: [`${renderDateFormat(date1)};after`, `${renderDateFormat(date2)};before`] },
         !Boolean(viewId)
       );
     } else {
-      const filteredArray = filters?.target_date?.filter((item) => {
+      const filteredArray = (filters?.[field] as string[])?.filter((item) => {
         if (item?.includes(filterType)) return false;
 
         return true;
@@ -64,13 +67,13 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
       const filterOne = filteredArray && filteredArray?.length > 0 ? filteredArray[0] : null;
       if (filterOne)
         setFilters(
-          { target_date: [filterOne, `${renderDateFormat(date1)};${filterType}`] },
+          { [field]: [filterOne, `${renderDateFormat(date1)};${filterType}`] },
           !Boolean(viewId)
         );
       else
         setFilters(
           {
-            target_date: [`${renderDateFormat(date1)};${filterType}`],
+            [field]: [`${renderDateFormat(date1)};${filterType}`],
           },
           !Boolean(viewId)
         );
@@ -116,7 +119,7 @@ export const DueDateFilterModal: React.FC<Props> = ({ isOpen, handleClose }) => 
                       control={control}
                       name="filterType"
                       render={({ field: { value, onChange } }) => (
-                        <DueDateFilterSelect value={value} onChange={onChange} />
+                        <DateFilterSelect title={title} value={value} onChange={onChange} />
                       )}
                     />
                     <XMarkIcon
