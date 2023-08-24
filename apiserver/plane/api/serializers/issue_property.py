@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import IssueProperty, IssuePropertyValue
+from plane.db.models import User, Issue, Cycle, Module, Page, IssueProperty, IssuePropertyValue
 
 
 class IssuePropertySerializer(BaseSerializer):
@@ -68,6 +68,23 @@ class IssuePropertyReadSerializer(BaseSerializer):
         return None
 
     def get_prop_value(self, obj):
+        MODEL_MAPPER = {
+            "User": User,
+            "Issue": Issue,
+            "Cycle": Cycle,
+            "Module": Module,
+            "Page": Page,
+        }
+
+        
+
+        if obj.type == "fk":
+            prop_values = obj.property_values.value_list("values_uuid")
+            model = obj.unit
+            
+
+            
+
         prop_values = obj.property_values.all()
         if prop_values:
             serializer = IssuePropertyValueReadSerializer(prop_values, many=True)
