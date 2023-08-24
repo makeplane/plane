@@ -52,8 +52,6 @@ const OnBoard: NextPage = () => {
     workspaceService.userWorkspaceInvitations()
   );
 
-  console.log("invitations", invitations);
-
   const handleInvitation = (
     workspace_invitation: IWorkspaceMemberInvitation,
     action: "accepted" | "withdraw"
