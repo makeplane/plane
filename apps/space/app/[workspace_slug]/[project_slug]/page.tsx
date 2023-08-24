@@ -117,13 +117,13 @@ const WorkspaceProjectPage = observer(() => {
               <>
                 {store?.issue?.currentIssueBoardView === "list" && (
                   <div className="relative w-full h-full overflow-y-auto">
-                    <div className="container mx-auto px-5 py-3">
+                    <div className="mx-auto px-4">
                       <IssueListView />
                     </div>
                   </div>
                 )}
                 {store?.issue?.currentIssueBoardView === "kanban" && (
-                  <div className="relative w-full h-full mx-auto px-5">
+                  <div className="relative w-full h-full mx-auto px-9 py-5">
                     <IssueKanbanView />
                   </div>
                 )}

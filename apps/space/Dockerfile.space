@@ -7,7 +7,7 @@ ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
 RUN yarn global add turbo
 COPY . .
 
-RUN turbo prune --scope=app --docker
+RUN turbo prune --scope=space --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
@@ -29,12 +29,12 @@ COPY replace-env-vars.sh /usr/local/bin/
 USER root
 RUN chmod +x /usr/local/bin/replace-env-vars.sh
 
-RUN yarn turbo run build --filter=app
+RUN yarn turbo run build --filter=space
 
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
     BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_DEPLOY_URL=${NEXT_PUBLIC_DEPLOY_URL}
-RUN /usr/local/bin/replace-env-vars.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_API_BASE_URL} app
+
+RUN /usr/local/bin/replace-env-vars.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_API_BASE_URL} space
 
 FROM node:18-alpine AS runner
 WORKDIR /app
@@ -44,14 +44,14 @@ RUN addgroup --system --gid 1001 plane
 RUN adduser --system --uid 1001 captain
 USER captain
 
-COPY --from=installer /app/apps/app/next.config.js .
-COPY --from=installer /app/apps/app/package.json .
+COPY --from=installer /app/apps/space/next.config.js .
+COPY --from=installer /app/apps/space/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone ./
+COPY --from=installer --chown=captain:plane /app/apps/space/.next/standalone ./
 
-COPY --from=installer --chown=captain:plane /app/apps/app/.next ./apps/app/.next
+COPY --from=installer --chown=captain:plane /app/apps/space/.next ./apps/space/.next
 
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
