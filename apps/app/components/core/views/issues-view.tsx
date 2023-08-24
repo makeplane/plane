@@ -514,7 +514,8 @@ export const IssuesView: React.FC<Props> = ({
         dragDisabled={
           selectedGroup === "created_by" ||
           selectedGroup === "labels" ||
-          selectedGroup === "state_detail.group"
+          selectedGroup === "state_detail.group" ||
+          selectedGroup === "assignees"
         }
         emptyState={{
           title: cycleId

@@ -183,7 +183,11 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                             >
                               {GROUP_BY_OPTIONS.map((option) => {
                                 if (issueView === "kanban" && option.key === null) return null;
-                                if (option.key === "state" || option.key === "created_by")
+                                if (
+                                  option.key === "state" ||
+                                  option.key === "created_by" ||
+                                  option.key === "assignees"
+                                )
                                   return null;
 
                                 return (
