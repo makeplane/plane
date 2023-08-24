@@ -9,6 +9,15 @@ const nextConfig = {
     appDir: true,
   },
   output: "standalone",
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "https://plane.so",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

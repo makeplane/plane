@@ -9,6 +9,7 @@ class ProjectStore implements IProjectStore {
   loader: boolean = false;
   error: any | null = null;
 
+  projectsList: IProject[] | null = null;
   workspace: IWorkspace | null = null;
   project: IProject | null = null;
   workspaceProjectSettings: IProjectSettings | null = null;
@@ -20,12 +21,14 @@ class ProjectStore implements IProjectStore {
   constructor(_rootStore: any | null = null) {
     makeObservable(this, {
       // observable
+      projectsList: observable.ref,
       workspace: observable.ref,
       project: observable.ref,
       workspaceProjectSettings: observable.ref,
       loader: observable,
       error: observable.ref,
       // action
+      getWorkspaceProjectsListAsync: action,
       getProjectSettingsAsync: action,
       // computed
     });
@@ -33,6 +36,43 @@ class ProjectStore implements IProjectStore {
     this.rootStore = _rootStore;
     this.projectService = new ProjectService();
   }
+
+  getWorkspaceProjectsListAsync = async (workspace_slug: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      const response = await this.projectService.getWorkspaceProjectsListAsync(workspace_slug);
+
+      if (response && response.length > 0) {
+        const _projectsList: IProject[] = response.map((_project: IProject) => {
+          const _p = { ..._project };
+          return {
+            id: _p?.id,
+            identifier: _p?.identifier,
+            name: _p?.name,
+            description: _p?.description,
+            cover_image: _p?.cover_image,
+            icon_prop: _p?.icon_prop,
+            emoji: _p?.emoji,
+          };
+        });
+
+        runInAction(() => {
+          this.projectsList = [..._projectsList];
+          this.loader = false;
+        });
+      } else {
+        this.loader = false;
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
 
   getProjectSettingsAsync = async (workspace_slug: string, project_slug: string) => {
     try {
@@ -61,7 +101,7 @@ class ProjectStore implements IProjectStore {
     } catch (error) {
       this.loader = false;
       this.error = error;
-      return error;
+      throw error;
     }
   };
 }

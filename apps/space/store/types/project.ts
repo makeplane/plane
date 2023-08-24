@@ -9,7 +9,6 @@ export interface IProject {
   identifier: string;
   name: string;
   description: string;
-  icon: string;
   cover_image: string | null;
   icon_prop: string | null;
   emoji: string | null;
@@ -32,9 +31,11 @@ export interface IProjectStore {
   loader: boolean;
   error: any | null;
 
+  projectsList: IProject[] | null;
   workspace: IWorkspace | null;
   project: IProject | null;
   workspaceProjectSettings: IProjectSettings | null;
 
+  getWorkspaceProjectsListAsync: (workspace_slug: string) => Promise<void>;
   getProjectSettingsAsync: (workspace_slug: string, project_slug: string) => Promise<void>;
 }
