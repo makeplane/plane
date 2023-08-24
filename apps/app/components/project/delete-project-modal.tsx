@@ -42,7 +42,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   user,
 }) => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -81,6 +81,8 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
         );
 
         if (onSuccess) onSuccess();
+
+        if (projectId && projectId === data.id) router.push(`/${workspaceSlug}/projects`);
       })
       .catch(() =>
         setToastAlert({
