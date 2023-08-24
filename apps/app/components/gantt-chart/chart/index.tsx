@@ -160,6 +160,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
   const updatingCurrentLeftScrollPosition = (width: number) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+
+    if (!scrollContainer) return;
+
     scrollContainer.scrollLeft = width + scrollContainer?.scrollLeft;
     setItemsContainerWidth(width + scrollContainer?.scrollLeft);
   };

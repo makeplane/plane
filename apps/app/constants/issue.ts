@@ -7,6 +7,7 @@ export const GROUP_BY_OPTIONS: Array<{
   { name: "Priority", key: "priority" },
   { name: "Project", key: "project" },
   { name: "Labels", key: "labels" },
+  { name: "Assignees", key: "assignees" },
   { name: "Created by", key: "created_by" },
   { name: "None", key: null },
 ];
