@@ -1286,3 +1286,38 @@ class ProjectDeployBoardIssuesPublicEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
+
+    permission_classes = [AllowAny,]
+
+    def get(self, request, slug):
+        try:
+            projects = (
+                Project.objects.filter(workspace__slug=slug)
+                .annotate(
+                    is_public=Exists(
+                        ProjectDeployBoard.objects.filter(
+                            workspace__slug=slug, project_id=OuterRef("pk")
+                        )
+                    )
+                )
+                .filter(is_public=True)
+            ).values(
+                "id",
+                "identifier",
+                "name",
+                "description",
+                "emoji",
+                "icon_prop",
+                "cover_image",
+            )
+
+            return Response(projects, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

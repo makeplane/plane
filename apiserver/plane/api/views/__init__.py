@@ -16,6 +16,7 @@ from .project import (
     ProjectDeployBoardViewSet,
     ProjectDeployBoardPublicSettingsEndpoint,
     ProjectMemberEndpoint,
+    WorkspaceProjectDeployBoardEndpoint,
 )
 from .user import (
     UserEndpoint,
