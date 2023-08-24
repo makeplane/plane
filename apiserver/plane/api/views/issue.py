@@ -73,6 +73,7 @@ from plane.db.models import (
     CommentReaction,
     ProjectDeployBoard,
     IssueVote,
+    ProjectPublicMember,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -769,7 +770,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
-            result = {item["state_group"]: item["state_count"] for item in state_distribution}
+            result = {
+                item["state_group"]: item["state_count"] for item in state_distribution
+            }
 
             serializer = IssueLiteSerializer(
                 sub_issues,
@@ -1379,6 +1382,15 @@ class IssueReactionViewSet(BaseViewSet):
         )
 
     def perform_create(self, serializer):
+        if not ProjectMember.objects.filter(
+            project_id=self.kwargs.get("project_id"),
+            member=self.request.user,
+        ).exists():
+            # Add the user for workspace tracking
+            _ = ProjectPublicMember.objects.get_or_create(
+                project_id=self.kwargs.get("project_id"),
+                member=self.request.user,
+            )
         serializer.save(
             issue_id=self.kwargs.get("issue_id"),
             project_id=self.kwargs.get("project_id"),
@@ -1429,6 +1441,15 @@ class CommentReactionViewSet(BaseViewSet):
         )
 
     def perform_create(self, serializer):
+        if not ProjectMember.objects.filter(
+            project_id=self.kwargs.get("project_id"),
+            member=self.request.user,
+        ).exists():
+            # Add the user for workspace tracking
+            _ = ProjectPublicMember.objects.get_or_create(
+                project_id=self.kwargs.get("project_id"),
+                member=self.request.user,
+            )
         serializer.save(
             actor=self.request.user,
             comment_id=self.kwargs.get("comment_id"),
@@ -1523,6 +1544,16 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     project_id=str(project_id),
                     current_instance=None,
                 )
+                if not ProjectMember.objects.filter(
+                    project_id=project_id,
+                    member=request.user,
+                ).exists():
+                    # Add the user for workspace tracking
+                    _ = ProjectPublicMember.objects.get_or_create(
+                        project_id=project_id,
+                        member=request.user,
+                    )
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -1567,7 +1598,8 @@ class IssueCommentPublicViewSet(BaseViewSet):
         except (IssueComment.DoesNotExist, ProjectDeployBoard.DoesNotExist):
             return Response(
                 {"error": "IssueComent Does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,)
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, slug, project_id, issue_id, pk):
         try:
@@ -1648,6 +1680,15 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 serializer.save(
                     project_id=project_id, issue_id=issue_id, actor=request.user
                 )
+                if not ProjectMember.objects.filter(
+                    project_id=project_id,
+                    member=request.user,
+                ).exists():
+                    # Add the user for workspace tracking
+                    _ = ProjectPublicMember.objects.get_or_create(
+                        project_id=project_id,
+                        member=request.user,
+                    )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except ProjectDeployBoard.DoesNotExist:
@@ -1733,6 +1774,14 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 serializer.save(
                     project_id=project_id, comment_id=comment_id, actor=request.user
                 )
+                if not ProjectMember.objects.filter(
+                    project_id=project_id, member=request.user
+                ).exists():
+                    # Add the user for workspace tracking
+                    _ = ProjectPublicMember.objects.get_or_create(
+                        project_id=project_id,
+                        member=request.user,
+                    )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except ProjectDeployBoard.DoesNotExist:
@@ -1801,6 +1850,14 @@ class IssueVotePublicViewSet(BaseViewSet):
                 issue_id=issue_id,
                 vote=request.data.get("vote", 1),
             )
+            # Add the user for workspace tracking
+            if not ProjectMember.objects.filter(
+                project_id=project_id, member=request.user
+            ).exists():
+                _ = ProjectPublicMember.objects.get_or_create(
+                    project_id=project_id,
+                    member=request.user,
+                )
             serializer = IssueVoteSerializer(issue_vote)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -1826,4 +1883,3 @@ class IssueVotePublicViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
