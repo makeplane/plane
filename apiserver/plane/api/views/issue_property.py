@@ -115,7 +115,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
             bulk_issue_props = []
             for issue_property in issue_properties:
                 # get the requested property
-                if issue_property.type == "entity":
+                if issue_property.type == "entity" or issue_property.type == "relation":
                     values_uuid = request_data.get(str(issue_property.id))
                     values = None
                 else:
@@ -188,7 +188,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
             serializer = IssuePropertyReadSerializer(issue_properties, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

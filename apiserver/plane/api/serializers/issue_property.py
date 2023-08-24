@@ -3,7 +3,46 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import User, Issue, Cycle, Module, Page, IssueProperty, IssuePropertyValue
+from plane.db.models import User, Issue, Cycle, Module, Page, IssueView, IssueProperty, IssuePropertyValue
+
+
+class UserSerializer(BaseSerializer):
+
+    class Meta:
+        model = User
+        fields = ["id", "display_name", "avatar",]
+        read_only_fields = fields
+
+class CycleSerializer(BaseSerializer):
+
+    class Meta:
+        model = Cycle
+        fields = ["id", "name",]
+        read_only_fields = fields
+
+
+class ModuleSerializer(BaseSerializer):
+
+    class Meta:
+        model = Module
+        fields = ["id", "name",]
+        read_only_fields = fields
+
+
+class PageSerializer(BaseSerializer):
+
+    class Meta:
+        model = Page
+        fields = ["id", "name",]
+        read_only_fields = fields
+
+
+class IssueViewSerializer(BaseSerializer):
+
+    class Meta:
+        model = IssueView
+        fields = ["id", "name",]
+        read_only_fields = fields
 
 
 class IssuePropertySerializer(BaseSerializer):
@@ -57,6 +96,7 @@ class IssuePropertyReadSerializer(BaseSerializer):
             "children",
             "prop_value",
             "id",
+            "unit",
         ]
         read_only = fields
 
@@ -74,19 +114,28 @@ class IssuePropertyReadSerializer(BaseSerializer):
             "Cycle": Cycle,
             "Module": Module,
             "Page": Page,
+            "View": IssueView,
         }
 
-        
+        SERIALIZER_MAPPER = {
+            "User": UserSerializer,
+            "Cycle": CycleSerializer, 
+            "Module": ModuleSerializer,
+            "Page": PageSerializer,
+            "View": IssueViewSerializer,
+        }
 
-        if obj.type == "fk":
-            prop_values = obj.property_values.value_list("values_uuid")
-            model = obj.unit
-            
-
-            
-
-        prop_values = obj.property_values.all()
-        if prop_values:
-            serializer = IssuePropertyValueReadSerializer(prop_values, many=True)
-            return serializer.data
-        return None
+        if obj.type == "relation":
+            prop_values = obj.property_values.all()
+            model = MODEL_MAPPER.get(obj.unit, None)
+            if model is not None:
+                serializer = SERIALIZER_MAPPER.get(obj.unit, None)
+                return serializer(model.objects.filter(pk__in=[(p.values) for p in prop_values]), many=True).data
+            else:
+                return None
+        else:
+            prop_values = obj.property_values.all()
+            if prop_values:
+                serializer = IssuePropertyValueReadSerializer(prop_values, many=True)
+                return serializer.data
+            return None
