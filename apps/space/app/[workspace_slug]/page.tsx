@@ -35,7 +35,7 @@ const WorkspaceProjectPage = observer(() => {
           <div className="font-medium">Plane Deploy</div>
         </div>
       </div>
-      <div className="w-full h-full relative bg-gray-100/50 overflow-hidden">
+      <div className="w-full h-full relative bg-white overflow-hidden">
         <div className="relative w-full h-full overflow-hidden">
           {projectStore?.loader ? (
             <div className="text-sm text-center py-10 text-gray-500">Loading...</div>
@@ -47,9 +47,9 @@ const WorkspaceProjectPage = observer(() => {
                 <div className="relative w-full h-full overflow-y-auto">
                   <div className="container mx-auto px-5 py-3">
                     {projectStore?.projectsList && projectStore?.projectsList.length > 0 ? (
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         <div className="text-xl font-medium capitalize">{workspace_slug} Projects</div>
-                        <div className="border border-gray-100 divide-y">
+                        <div className="space-y-2">
                           {projectStore?.projectsList.map((_project) => (
                             <div key={_project?.id}>
                               <ProjectCard project={_project} workspace_slug={workspace_slug} />

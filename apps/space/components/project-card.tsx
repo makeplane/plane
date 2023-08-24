@@ -25,15 +25,15 @@ const renderEmoji = (emoji: string | { name: string; color: string }) => {
 
 export const ProjectCard = ({ project, workspace_slug }: ProjectCardProps) => (
   <Link href={`/${workspace_slug}/${project.id}`}>
-    <div className="p-2 relative flex gap-2 items-center cursor-pointer bg-white group hover:bg-gray-100/40 transition-all">
-      <div className="flex-shrink-0 w-[24px] h-[24px] flex justify-center items-center overflow-hidden">
+    <div className="p-3 relative flex gap-4 items-center cursor-pointer bg-white group hover:bg-gray-50 transition-all border border-gray-200 rounded">
+      <div className="flex-shrink-0 w-[30px] h-[30px] rounded flex justify-center items-center overflow-hidden bg-gray-100">
         {project?.emoji ? (
           renderEmoji(project?.emoji)
         ) : (
           <Image src="/plane-logo.webp" alt="plane logo" className="w-[24px] h-[24px]" height="24" width="24" />
         )}
       </div>
-      <div className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{project?.name || ""}</div>
+      <div className="text-sm font-medium text-gray-700 group-hover:text-black line-clamp-1">{project?.name || ""}</div>
     </div>
   </Link>
 );
