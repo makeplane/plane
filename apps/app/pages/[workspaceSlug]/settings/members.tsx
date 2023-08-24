@@ -101,7 +101,6 @@ const MembersSettings: NextPage = () => {
 
   const handleInviteModalSuccess = () => {
     mutateInvitations();
-    mutateMembers();
   };
 
   return (
