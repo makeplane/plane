@@ -83,6 +83,7 @@ class Issue(ProjectBaseModel):
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
     archived_at = models.DateField(null=True)
+    issue_properties = models.JSONField(null=True, default=None)
 
     objects = models.Manager()
     issue_objects = IssueManager()

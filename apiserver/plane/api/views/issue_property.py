@@ -23,7 +23,7 @@ from plane.db.models import (
     Project,
 )
 from plane.api.permissions import WorkSpaceAdminPermission
-
+from plane.bgtasks.issue_property_task import issue_property_json_task
 
 def is_valid_uuid(uuid_string):
     try:
@@ -144,7 +144,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                     project_id=project_id,
                                     workspace_id=workspace_id,
                                     issue_id=issue_id,
-                                )
+                              )
                             )
                 else:
                     bulk_issue_props.append(
@@ -161,6 +161,8 @@ class IssuePropertyValueViewSet(BaseViewSet):
             issue_property_values = IssuePropertyValue.objects.bulk_create(
                 bulk_issue_props, batch_size=100, ignore_conflicts=True
             )
+            # Update the JSON for the issue property
+            issue_property_json_task.delay(slug=slug, project_id=project_id, issue_id=issue_id)
             serilaizer = IssuePropertyValueSerializer(issue_property_values, many=True)
             return Response(serilaizer.data, status=status.HTTP_201_CREATED)
         except Project.DoesNotExist:
