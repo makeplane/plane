@@ -32,23 +32,23 @@ const IssuePriorityFilter = observer(() => {
 
   return (
     <>
-      <div className="flex items-center gap-2 border border-gray-300 px-2 py-1 pr-1 rounded">
-        <div className="flex-shrink-0 font-medium">Priority</div>
+      <div className="flex items-center gap-2 border border-custom-border-300 px-2 py-1 rounded-full text-xs">
+        <div className="flex-shrink-0 text-custom-text-200">Priority</div>
         <div className="relative flex flex-wrap items-center gap-1">
           {issuePriorityFilters.map(
             (_priority: IIssuePriorityFilters, _index: number) =>
               store.issue.getUserSelectedFilter("priority", _priority.key) && (
-                <RenderIssuePriority priority={_priority} />
+                <RenderIssuePriority key={_priority.key} priority={_priority} />
               )
           )}
         </div>
         <div
-          className={`w-[20px] h-[20px] cursor-pointer flex justify-center items-center overflow-hidden rounded-sm text-gray-500 hover:bg-gray-200/60 hover:text-gray-600`}
+          className="flex-shrink-0 w-3 h-3 cursor-pointer flex justify-center items-center overflow-hidden rounded-sm"
           onClick={() => {
             clearPriorityFilters();
           }}
         >
-          <span className={`material-symbols-rounded text-[16px]`}>close</span>
+          <span className="material-symbols-rounded text-[12px]">close</span>
         </div>
       </div>
     </>

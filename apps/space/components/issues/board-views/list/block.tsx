@@ -17,19 +17,19 @@ export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
   const store: RootStore = useMobxStore();
 
   return (
-    <div className="flex items-center px-9 py-3.5 relative gap-10">
+    <div className="flex items-center px-9 py-3.5 relative gap-10 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0">
       <div className="relative flex items-center gap-6 w-full flex-grow overflow-hidden">
         {/* id */}
-        <div className="flex-shrink-0 text-sm text-gray-600 w-[60px]">
+        <div className="flex-shrink-0 text-sm w-[60px] text-custom-text-200">
           {store?.project?.project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
-        <div className="text-gray-800 h-full line-clamp-1 w-full overflow-ellipsis">
-          <p className="text-[0.825rem] font-medium text-sm truncate">{issue.name}</p>
+        <div className="h-full line-clamp-1 w-full overflow-ellipsis">
+          <p className="text-[0.825rem] font-medium text-sm truncate text-custom-text-100">{issue.name}</p>
         </div>
       </div>
 
-      <div className="inline-flex flex-shrink-0 items-center gap-2 text-xs text-gray-500">
+      <div className="inline-flex flex-shrink-0 items-center gap-2 text-xs">
         {/* priority */}
         {issue?.priority && (
           <div className="flex-shrink-0">

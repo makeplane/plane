@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // next imports
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 // mobx
@@ -11,18 +11,21 @@ import { IssueKanbanView } from "components/issues/board-views/kanban";
 import { IssueCalendarView } from "components/issues/board-views/calendar";
 import { IssueSpreadsheetView } from "components/issues/board-views/spreadsheet";
 import { IssueGanttView } from "components/issues/board-views/gantt";
+import { SidePeekView } from "components/issues/peek-overview";
 // mobx store
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 // types
 import { TIssueBoardKeys } from "store/types";
 
-const WorkspaceProjectPage = observer(() => {
+const WorkspaceProjectPage = () => {
   const store: RootStore = useMobxStore();
 
   const router = useRouter();
   const routerParams = useParams();
   const routerSearchparams = useSearchParams();
+
+  const [activeIssue, setActiveIssue] = useState<any>(null);
 
   const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
   const board =
@@ -104,14 +107,57 @@ const WorkspaceProjectPage = observer(() => {
     }
   }, [workspace_slug, project_slug, store?.project, store?.issue]);
 
+  // copy the first store.issue.issues[0] to activeIssue
+  // useEffect(() => {
+  //   if (store?.issue?.issues && store?.issue?.issues.length > 0) {
+  //     setActiveIssue(store?.issue?.issues[0]);
+  //   }
+  // }, [store?.issue?.issues]);
+
   return (
     <div className="relative w-full h-full overflow-hidden">
+      {activeIssue && (
+        <SidePeekView
+          handleClose={() => {
+            setActiveIssue(null);
+          }}
+          issue={activeIssue}
+          mode="side"
+          setMode={() => {}}
+          workspaceSlug={workspace_slug}
+        />
+      )}
+      <button
+        type="button"
+        onClick={() => {
+          store.user.requiredLogin(() => {
+            console.log("hahahah");
+          });
+        }}
+        className="fixed bottom-5 left-5 z-50 border px-2 py-1 rounded bg-gray-200"
+      >
+        Test Auth
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          store.user.requiredLogin(() => {
+            console.log("hahahah");
+          });
+        }}
+        className="fixed bottom-5 left-5 z-50 border px-2 py-1 rounded bg-gray-200"
+      >
+        Test Auth
+      </button>
+
       {store?.issue?.loader && !store.issue.issues ? (
-        <div className="text-sm text-center py-10 text-gray-500">Loading...</div>
+        <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
       ) : (
         <>
           {store?.issue?.error ? (
-            <div className="text-sm text-center py-10 text-gray-500">Something went wrong.</div>
+            <div className="text-sm text-center py-10  bg-custom-background-200 text-custom-text-100">
+              Something went wrong.
+            </div>
           ) : (
             store?.issue?.currentIssueBoardView && (
               <>
@@ -137,6 +183,6 @@ const WorkspaceProjectPage = observer(() => {
       )}
     </div>
   );
-});
+};
 
-export default WorkspaceProjectPage;
+export default observer(WorkspaceProjectPage);

@@ -49,10 +49,10 @@ export const NavbarIssueBoardView = observer(() => {
             store?.project?.workspaceProjectSettings?.views[_view?.key] && (
               <div
                 key={_view?.key}
-                className={`w-[28px] h-[28px] flex justify-center items-center rounded-sm cursor-pointer text-gray-500 ${
+                className={`w-[28px] h-[28px] flex justify-center items-center rounded-sm cursor-pointer ${
                   _view?.key === store?.issue?.currentIssueBoardView
-                    ? `bg-gray-200/60 text-gray-800`
-                    : `hover:bg-gray-200/60 text-gray-600`
+                    ? `bg-custom-background-200 text-custom-text-200`
+                    : `hover:bg-custom-background-200 text-custom-text-300`
                 }`}
                 onClick={() => handleCurrentBoardView(_view?.key)}
                 title={_view?.title}

@@ -19,17 +19,19 @@ export const IssueListView = observer(() => {
       {store?.issue?.states &&
         store?.issue?.states.length > 0 &&
         store?.issue?.states.map((_state: IIssueState) => (
-          <div className="relative w-full">
+          <div key={_state.id} className="relative w-full">
             <IssueListHeader state={_state} />
             {store.issue.getFilteredIssuesByState(_state.id) &&
             store.issue.getFilteredIssuesByState(_state.id).length > 0 ? (
-              <div className="bg-white divide-y">
+              <div className="divide-y">
                 {store.issue.getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
-                  <IssueListBlock issue={_issue} />
+                  <IssueListBlock key={_issue.id} issue={_issue} />
                 ))}
               </div>
             ) : (
-              <div className="bg-white px-9 py-3.5 text-sm text-gray-500">No Issues are available.</div>
+              <div className="px-9 py-3.5 text-sm text-custom-text-200 bg-custom-background-100">
+                No Issues are available.
+              </div>
             )}
           </div>
         ))}

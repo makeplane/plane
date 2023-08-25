@@ -13,6 +13,14 @@ class UserService extends APIService {
         throw error?.response;
       });
   }
+
+  async updateMe(data: any): Promise<any> {
+    return this.patch("/api/users/me/", data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export default UserService;

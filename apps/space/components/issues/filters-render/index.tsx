@@ -32,7 +32,7 @@ const IssueFilter = observer(() => {
   if (store.issue.getIfFiltersIsEmpty()) return null;
 
   return (
-    <div className="flex-shrink-0 min-h-[50px] h-auto py-1.5 border-b border-gray-300 relative flex items-center shadow-md bg-white select-none">
+    <div className="flex-shrink-0 min-h-[50px] h-auto py-1.5 border-b border-custom-border-200 relative flex items-center shadow-md bg-whiate select-none">
       <div className="container mx-auto px-5 flex justify-start items-center flex-wrap gap-2 text-sm">
         {/* state */}
         {store.issue.checkIfFilterExistsForKey("state") && <IssueStateFilter />}
@@ -42,10 +42,13 @@ const IssueFilter = observer(() => {
         {store.issue.checkIfFilterExistsForKey("priority") && <IssuePriorityFilter />}
         {/* clear all filters */}
         <div
-          className="flex items-center gap-2 border border-gray-300 px-2 py-1 pr-1 rounded cursor-pointer hover:bg-gray-200/60"
+          className="flex items-center gap-2 border border-custom-border-200 px-2 py-1 cursor-pointer text-xs rounded-full"
           onClick={clearAllFilters}
         >
           <div>Clear all filters</div>
+          <div className="flex-shrink-0 w-3 h-3 cursor-pointer flex justify-center items-center overflow-hidden rounded-sm">
+            <span className="material-symbols-rounded text-[12px]">close</span>
+          </div>
         </div>
       </div>
     </div>
