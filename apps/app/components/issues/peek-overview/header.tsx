@@ -7,6 +7,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 import { TPeekOverviewModes } from "./layout";
+import { ArrowRightAlt, CloseFullscreen, East, OpenInFull } from "@mui/icons-material";
 
 type Props = {
   handleClose: () => void;
@@ -65,16 +66,28 @@ export const PeekOverviewHeader: React.FC<Props> = ({
       <div className="flex items-center gap-4">
         {mode === "side" && (
           <button type="button" onClick={handleClose}>
-            <Icon iconName="arrow_right_alt" className="!text-base" />
+            <East
+              sx={{
+                fontSize: "14px",
+              }}
+            />
           </button>
         )}
         {mode === "modal" || mode === "full" ? (
           <button type="button" onClick={() => setMode("side")}>
-            <Icon iconName="close_fullscreen" />
+            <CloseFullscreen
+              sx={{
+                fontSize: "14px",
+              }}
+            />
           </button>
         ) : (
           <button type="button" onClick={() => setMode("modal")}>
-            <Icon iconName="open_in_full" />
+            <OpenInFull
+              sx={{
+                fontSize: "14px",
+              }}
+            />
           </button>
         )}
         <CustomSelect
