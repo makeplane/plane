@@ -78,7 +78,6 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   // issue peek overview
   const [issuePeekOverview, setIssuePeekOverview] = useState(false);
-  const [issuePeekOverviewData, setIssuePeekOverviewData] = useState<IIssue | null>(null);
 
   const router = useRouter();
 
@@ -162,11 +161,6 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
   );
 
-  const openPeekOverview = useCallback((issue: IIssue) => {
-    setIssuePeekOverviewData(issue);
-    setIssuePeekOverview(true);
-  }, []);
-
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -191,7 +185,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     <>
       <IssuePeekOverview
         handleUpdateIssue={async (formData) => partialUpdateIssue(formData, issue)}
-        issue={issuePeekOverviewData}
+        issue={issue}
         isOpen={issuePeekOverview}
         onClose={() => setIssuePeekOverview(false)}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
@@ -285,7 +279,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <button
             type="button"
             className="truncate text-custom-text-100 text-left cursor-pointer w-full text-[0.825rem]"
-            onClick={() => openPeekOverview(issue)}
+            onClick={() => setIssuePeekOverview(true)}
           >
             {issue.name}
           </button>

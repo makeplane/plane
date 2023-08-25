@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import issuesService from "services/issues.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
+import useToast from "hooks/use-toast";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
@@ -42,6 +43,8 @@ export const IssueMainContent: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, archivedIssueId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { user } = useUserAuth();
   const { memberRole } = useProjectMyMembership();
@@ -100,6 +103,29 @@ export const IssueMainContent: React.FC<Props> = ({
         user
       )
       .then(() => mutateIssueActivity());
+  };
+
+  const handleAddComment = async (formData: IIssueComment) => {
+    if (!workspaceSlug || !issueDetails) return;
+
+    await issuesService
+      .createIssueComment(
+        workspaceSlug.toString(),
+        issueDetails.project,
+        issueDetails.id,
+        formData,
+        user
+      )
+      .then(() => {
+        mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Comment could not be posted. Please try again.",
+        })
+      );
   };
 
   return (
@@ -194,11 +220,7 @@ export const IssueMainContent: React.FC<Props> = ({
           handleCommentUpdate={handleCommentUpdate}
           handleCommentDelete={handleCommentDelete}
         />
-        <AddComment
-          issueId={(archivedIssueId as string) ?? (issueId as string)}
-          user={user}
-          disabled={uneditable}
-        />
+        <AddComment onSubmit={handleAddComment} disabled={uneditable} />
       </div>
     </>
   );

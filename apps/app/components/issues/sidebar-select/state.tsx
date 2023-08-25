@@ -62,8 +62,8 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
       }
       value={value}
       onChange={onChange}
-      width="w-full"
-      position="right"
+      optionsClassName="w-min"
+      position="left"
       disabled={disabled}
     >
       {states ? (

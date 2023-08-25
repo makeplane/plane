@@ -43,21 +43,22 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
   return (
     <CustomSearchSelect
       value={value}
-      label={
-        <div className="flex items-center gap-2 text-custom-text-200">
+      customButton={
+        <>
           {value && value.length > 0 && Array.isArray(value) ? (
-            <div className="-my-0.5 flex items-center justify-center gap-2">
+            <div className="-my-0.5 flex items-center gap-2">
               <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className="text-custom-text-100">{value.length} Assignees</span>
+              <span className="text-custom-text-100 text-sm">{value.length} Assignees</span>
             </div>
           ) : (
-            "No assignees"
+            <button type="button" className="bg-custom-background-80 px-2.5 py-0.5 text-sm rounded">
+              No assignees
+            </button>
           )}
-        </div>
+        </>
       }
       options={options}
       onChange={onChange}
-      position="right"
       multiple
       disabled={disabled}
     />

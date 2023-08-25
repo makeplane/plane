@@ -144,7 +144,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 text-sm">
+        {/* <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
             <Icon iconName="change_history" className="!text-base flex-shrink-0" />
             <span className="flex-grow truncate">Estimate</span>
@@ -156,8 +156,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
               disabled={readOnly}
             />
           </div>
-        </div>
-        <Disclosure as="div">
+        </div> */}
+        {/* <Disclosure as="div">
           {({ open }) => (
             <>
               <Disclosure.Button
@@ -173,7 +173,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
               </Disclosure.Panel>
             </>
           )}
-        </Disclosure>
+        </Disclosure> */}
       </div>
     </div>
   );

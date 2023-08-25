@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // components
 import { AddComment, IssueActivitySection } from "components/issues";
@@ -8,6 +8,7 @@ import { AddComment, IssueActivitySection } from "components/issues";
 import issuesService from "services/issues.service";
 // hooks
 import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
 // types
 import { IIssue, IIssueComment } from "types";
 // fetch-keys
@@ -18,6 +19,8 @@ type Props = { issueDetails: IIssue };
 export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { user } = useUser();
 
@@ -66,6 +69,29 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
       .then(() => mutateIssueActivity());
   };
 
+  const handleAddComment = async (formData: IIssueComment) => {
+    if (!workspaceSlug || !issueDetails) return;
+
+    await issuesService
+      .createIssueComment(
+        workspaceSlug.toString(),
+        issueDetails.project,
+        issueDetails.id,
+        formData,
+        user
+      )
+      .then(() => {
+        mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Comment could not be posted. Please try again.",
+        })
+      );
+  };
+
   return (
     <div className="space-y-5">
       <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
@@ -74,7 +100,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
         handleCommentUpdate={handleCommentUpdate}
         handleCommentDelete={handleCommentDelete}
       />
-      <AddComment issueId={issueDetails.id} user={user} />
+      <AddComment onSubmit={handleAddComment} />
     </div>
   );
 };

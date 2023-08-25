@@ -52,7 +52,7 @@ export const SidePeekView: React.FC<Props> = ({
       {/* divider */}
       <div className="h-[1] w-full border-t border-custom-border-200 my-5" />
       {/* issue activity/comments */}
-      <div className="w-full">
+      <div className="w-full pb-5">
         <PeekOverviewIssueActivity
           workspaceSlug={workspaceSlug}
           issue={issue}

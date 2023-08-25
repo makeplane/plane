@@ -1,14 +1,16 @@
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
 // components
-import { IssueActivitySection } from "components/issues";
+import { AddComment, IssueActivitySection } from "components/issues";
 // types
 import { IIssue, IIssueComment } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-import useUser from "hooks/use-user";
 
 type Props = {
   workspaceSlug: string;
@@ -17,6 +19,8 @@ type Props = {
 };
 
 export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issue, readOnly }) => {
+  const { setToastAlert } = useToast();
+
   const { user } = useUser();
 
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
@@ -51,6 +55,23 @@ export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issu
       .then(() => mutateIssueActivity());
   };
 
+  const handleAddComment = async (formData: IIssueComment) => {
+    if (!workspaceSlug || !issue) return;
+
+    await issuesService
+      .createIssueComment(workspaceSlug.toString(), issue.project, issue.id, formData, user)
+      .then(() => {
+        mutate(PROJECT_ISSUES_ACTIVITY(issue.id));
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Comment could not be posted. Please try again.",
+        })
+      );
+  };
+
   return (
     <div>
       <h4 className="font-medium">Activity</h4>
@@ -60,6 +81,9 @@ export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issu
           handleCommentUpdate={handleCommentUpdate}
           handleCommentDelete={handleCommentDelete}
         />
+        <div className="mt-4">
+          <AddComment onSubmit={handleAddComment} />
+        </div>
       </div>
     </div>
   );
