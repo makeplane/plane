@@ -15,15 +15,26 @@ type Props = {
 
 export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabled = false }) => (
   <CustomSelect
-    label={
-      <div className="flex items-center gap-2 text-left capitalize">
-        <span className={`${value ? "text-custom-text-100" : "text-custom-text-200"}`}>
-          {getPriorityIcon(value ?? "None", "text-sm")}
+    customButton={
+      <button
+        type="button"
+        className={`flex items-center gap-1.5 text-left text-sm capitalize rounded px-2.5 py-0.5 ${
+          value === "urgent"
+            ? "border-red-500/20 bg-red-500/20 text-red-500"
+            : value === "high"
+            ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+            : value === "medium"
+            ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+            : value === "low"
+            ? "border-green-500/20 bg-green-500/20 text-green-500"
+            : "border-custom-border-200"
+        }`}
+      >
+        <span className="grid place-items-center -my-1">
+          {getPriorityIcon(value ?? "None", "!text-sm")}
         </span>
-        <span className={`${value ? "text-custom-text-100" : "text-custom-text-200"}`}>
-          {value ?? "None"}
-        </span>
-      </div>
+        <span>{value ?? "None"}</span>
+      </button>
     }
     value={value}
     onChange={onChange}

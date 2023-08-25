@@ -54,7 +54,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issu
   return (
     <div>
       <h4 className="font-medium">Activity</h4>
-      <div className="mt-6">
+      <div className="mt-4">
         <IssueActivitySection
           activity={issueActivity}
           handleCommentUpdate={handleCommentUpdate}

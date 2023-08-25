@@ -2,12 +2,7 @@ import React, { useState } from "react";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  PeekOverviewHeader,
-  PeekOverviewIssueActivity,
-  PeekOverviewIssueDetails,
-  PeekOverviewIssueProperties,
-} from "components/issues";
+import { FullScreenPeekView, SidePeekView } from "components/issues";
 // types
 import { IIssue } from "types";
 
@@ -44,68 +39,64 @@ export const IssuePeekOverview: React.FC<Props> = ({
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         {/* add backdrop conditionally */}
         {(peekOverviewMode === "modal" || peekOverviewMode === "full") && (
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
-        )}
-
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="translate-x-full sm:translate-x-0"
-          enterTo="translate-x-0"
-          leave="ease-in duration-300"
-          leaveFrom="translate-x-0"
-          leaveTo="translate-x-full sm:translate-x-0"
-        >
-          <Dialog.Panel
-            className={`fixed z-20 bg-custom-background-100 ${
-              peekOverviewMode === "side"
-                ? "top-0 right-0 h-full w-1/2"
-                : peekOverviewMode === "modal"
-                ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[70%] w-3/5 rounded-lg"
-                : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[95%] w-[95%] rounded-lg"
-            }`}
+          <Transition.Child
+            as={React.Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
-            <div className="flex flex-col h-full w-full overflow-hidden">
-              <div className="p-5">
-                <PeekOverviewHeader
-                  handleClose={handleClose}
-                  issue={issue}
-                  mode={peekOverviewMode}
-                  setMode={setPeekOverviewMode}
-                />
-              </div>
-              <div className="px-6 py-5 h-full w-full overflow-y-auto">
-                {/* issue title and description */}
-                <div className="w-full">
-                  <PeekOverviewIssueDetails
+            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          </Transition.Child>
+        )}
+        <div className="fixed inset-0 z-20 overflow-y-auto">
+          <div className="relative h-full w-full">
+            <Transition.Child
+              as={React.Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel
+                className={`absolute z-20 bg-custom-background-100 ${
+                  peekOverviewMode === "side"
+                    ? "top-0 right-0 h-full w-1/2 shadow-custom-shadow-md"
+                    : peekOverviewMode === "modal"
+                    ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[70%] w-3/5 rounded-lg shadow-custom-shadow-xl"
+                    : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[95%] w-[95%] rounded-lg shadow-custom-shadow-xl"
+                }`}
+              >
+                {(peekOverviewMode === "side" || peekOverviewMode === "modal") && (
+                  <SidePeekView
+                    handleClose={handleClose}
                     handleUpdateIssue={handleUpdateIssue}
                     issue={issue}
+                    mode={peekOverviewMode}
                     readOnly={readOnly}
+                    setMode={(mode) => setPeekOverviewMode(mode)}
                     workspaceSlug={workspaceSlug}
                   />
-                </div>
-                {/* issue properties */}
-                <div className="mt-10 w-full">
-                  <PeekOverviewIssueProperties
+                )}
+                {peekOverviewMode === "full" && (
+                  <FullScreenPeekView
+                    handleClose={handleClose}
+                    handleUpdateIssue={handleUpdateIssue}
                     issue={issue}
-                    onChange={handleUpdateIssue}
+                    mode={peekOverviewMode}
                     readOnly={readOnly}
-                  />
-                </div>
-                {/* divider */}
-                <div className="h-[1] w-full border-t border-custom-border-200 my-5" />
-                {/* issue activity/comments */}
-                <div className="w-full">
-                  <PeekOverviewIssueActivity
+                    setMode={(mode) => setPeekOverviewMode(mode)}
                     workspaceSlug={workspaceSlug}
-                    issue={issue}
-                    readOnly={readOnly}
                   />
-                </div>
-              </div>
-            </div>
-          </Dialog.Panel>
-        </Transition.Child>
+                )}
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
       </Dialog>
     </Transition.Root>
   );

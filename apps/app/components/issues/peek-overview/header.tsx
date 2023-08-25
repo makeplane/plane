@@ -37,7 +37,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
           <Icon iconName="arrow_right_alt" className="!text-base" />
         </button>
       )}
-      {mode === "modal" ? (
+      {mode === "modal" || mode === "full" ? (
         <button type="button" onClick={() => setMode("side")}>
           <Icon iconName="close_fullscreen" />
         </button>
@@ -50,7 +50,10 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
         value={mode}
         onChange={(val: TPeekOverviewModes) => setMode(val)}
         customButton={
-          <button type="button" className="grid place-items-center">
+          <button
+            type="button"
+            className={`grid place-items-center ${mode === "full" ? "rotate-45" : ""}`}
+          >
             <Icon iconName={peekModes.find((m) => m.key === mode)?.icon ?? ""} />
           </button>
         }
@@ -59,20 +62,27 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
         {peekModes.map((mode) => (
           <CustomSelect.Option key={mode.key} value={mode.key}>
             <div className="flex items-center gap-1.5">
-              <Icon iconName={mode.icon} className="!text-base flex-shrink-0 -my-1" />
+              <Icon
+                iconName={mode.icon}
+                className={`!text-base flex-shrink-0 -my-1 ${
+                  mode.key === "full" ? "rotate-45" : ""
+                }`}
+              />
               {mode.label}
             </div>
           </CustomSelect.Option>
         ))}
       </CustomSelect>
     </div>
-    <div className="flex items-center gap-2">
-      <button type="button" className="-rotate-45">
-        <Icon iconName="link" />
-      </button>
-      <button type="button">
-        <Icon iconName="delete" />
-      </button>
-    </div>
+    {(mode === "side" || mode === "modal") && (
+      <div className="flex items-center gap-2">
+        <button type="button" className="-rotate-45">
+          <Icon iconName="link" />
+        </button>
+        <button type="button">
+          <Icon iconName="delete" />
+        </button>
+      </div>
+    )}
   </div>
 );
