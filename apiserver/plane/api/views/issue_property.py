@@ -2,7 +2,7 @@
 import uuid
 
 # Django imports
-from django.db.models import Q, F, Case, When, Value
+from django.db.models import Prefetch
 
 # Third party imports
 from rest_framework.response import Response
@@ -168,7 +168,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -182,7 +182,16 @@ class IssuePropertyValueViewSet(BaseViewSet):
                     property_values__project_id=project_id,
                 )
                 .prefetch_related("children")
-                .prefetch_related("property_values")
+                .prefetch_related(
+                    Prefetch(
+                        "property_values",
+                        queryset=IssuePropertyValue.objects.filter(
+                            issue_id=issue_id,
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        ),
+                    )
+                )
                 .distinct()
             )
             serializer = IssuePropertyReadSerializer(issue_properties, many=True)
