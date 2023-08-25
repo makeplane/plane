@@ -14,8 +14,11 @@ RUN yarn
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /space
-COPY --from=deps /space/node_modules ./node_modules
+
 COPY . .
+
+COPY --from=deps /space/node_modules ./node_modules
+COPY --from=deps /space/yarn.lock .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 

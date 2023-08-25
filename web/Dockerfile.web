@@ -8,14 +8,21 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock .npmrc ./
-RUN yarn
-
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
 # Rebuild the source code only when needed
 FROM base AS builder
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+
 COPY . .
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/yarn.lock .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -50,4 +57,4 @@ ENV PORT 3000
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "web/server.js"]
+CMD ["node", "app/server.js"]
