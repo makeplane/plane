@@ -127,7 +127,7 @@ const ProjectModules: NextPage = () => {
             </div>
             {modulesView === "grid" && (
               <div className="h-full overflow-y-auto">
-                <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-9 lg:grid-cols-2 xl:grid-cols-3">
                   {modules.map((module) => (
                     <SingleModuleCard
                       key={module.id}
