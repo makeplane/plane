@@ -108,6 +108,8 @@ const MembersSettings: NextPage = () => {
 
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
+  const handleProjectInvitationSuccess = () => {};
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
@@ -167,6 +169,7 @@ const MembersSettings: NextPage = () => {
         setIsOpen={setInviteModal}
         members={members}
         user={user}
+        onSuccess={() => mutateMembers()}
       />
       <div className="p-8">
         <SettingsHeader />

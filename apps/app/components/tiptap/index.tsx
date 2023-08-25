@@ -73,9 +73,10 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     }, 500);
   }, 1000);
 
-  const editorClassNames = `relative w-full max-w-screen-lg sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md
-      ${noBorder ? "" : "border border-custom-border-200"} ${borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
-    } ${customClassName}`;
+  const editorClassNames = `relative w-full max-w-full sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md
+      ${noBorder ? "" : "border border-custom-border-200"} ${
+    borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
+  } ${customClassName}`;
 
   if (!editor) return null;
   editorRef.current = editor;

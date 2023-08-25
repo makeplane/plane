@@ -8,6 +8,7 @@ const paramsToKey = (params: any) => {
     assignees,
     created_by,
     labels,
+    start_date,
     target_date,
     sub_issue,
     start_target_date,
@@ -19,6 +20,7 @@ const paramsToKey = (params: any) => {
   let createdByKey = created_by ? created_by.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
   const startTargetDate = start_target_date ? `${start_target_date}`.toUpperCase() : "FALSE";
+  const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
@@ -31,7 +33,7 @@ const paramsToKey = (params: any) => {
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}_${sub_issue}_${startTargetDate}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}`;
 };
 
 const inboxParamsToKey = (params: any) => {
@@ -48,7 +50,16 @@ const inboxParamsToKey = (params: any) => {
 };
 
 const myIssuesParamsToKey = (params: any) => {
-  const { assignees, created_by, labels, priority, state_group, subscriber, target_date } = params;
+  const {
+    assignees,
+    created_by,
+    labels,
+    priority,
+    state_group,
+    subscriber,
+    start_date,
+    target_date,
+  } = params;
 
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
@@ -56,6 +67,7 @@ const myIssuesParamsToKey = (params: any) => {
   let subscriberKey = subscriber ? subscriber.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
+  const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
@@ -69,7 +81,7 @@ const myIssuesParamsToKey = (params: any) => {
   priorityKey = priorityKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${assigneesKey}_${createdByKey}_${stateGroupKey}_${subscriberKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${targetDateKey}`;
+  return `${assigneesKey}_${createdByKey}_${stateGroupKey}_${subscriberKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";

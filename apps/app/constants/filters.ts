@@ -1,7 +1,7 @@
 // helper
 import { renderDateFormat } from "helpers/date-time.helper";
 
-export const DUE_DATES = [
+export const DATE_FILTER_OPTIONS = [
   {
     name: "Last week",
     value: [

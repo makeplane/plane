@@ -26,6 +26,7 @@ const initialValues: IWorkspaceViewProps = {
     priority: null,
     state_group: null,
     subscriber: null,
+    start_date: null,
     target_date: null,
     type: null,
   },
