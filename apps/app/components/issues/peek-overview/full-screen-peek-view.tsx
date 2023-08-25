@@ -9,6 +9,7 @@ import { IIssue } from "types";
 
 type Props = {
   handleClose: () => void;
+  handleDeleteIssue: () => void;
   handleUpdateIssue: (issue: Partial<IIssue>) => Promise<void>;
   issue: IIssue;
   mode: TPeekOverviewModes;
@@ -19,6 +20,7 @@ type Props = {
 
 export const FullScreenPeekView: React.FC<Props> = ({
   handleClose,
+  handleDeleteIssue,
   handleUpdateIssue,
   issue,
   mode,
@@ -29,7 +31,14 @@ export const FullScreenPeekView: React.FC<Props> = ({
   <div className="h-full w-full grid grid-cols-10 divide-x divide-custom-border-200 overflow-hidden">
     <div className="h-full w-full flex flex-col col-span-7 overflow-hidden">
       <div className="w-full p-5">
-        <PeekOverviewHeader handleClose={handleClose} issue={issue} mode={mode} setMode={setMode} />
+        <PeekOverviewHeader
+          handleClose={handleClose}
+          handleDeleteIssue={handleDeleteIssue}
+          issue={issue}
+          mode={mode}
+          setMode={setMode}
+          workspaceSlug={workspaceSlug}
+        />
       </div>
       <div className="h-full w-full px-6 overflow-y-auto">
         {/* issue title and description */}
@@ -57,10 +66,12 @@ export const FullScreenPeekView: React.FC<Props> = ({
       {/* issue properties */}
       <div className="w-full px-6 py-5">
         <PeekOverviewIssueProperties
+          handleDeleteIssue={handleDeleteIssue}
           issue={issue}
           mode="full"
           onChange={handleUpdateIssue}
           readOnly={readOnly}
+          workspaceSlug={workspaceSlug}
         />
       </div>
     </div>

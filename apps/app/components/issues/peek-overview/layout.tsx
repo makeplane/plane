@@ -7,6 +7,7 @@ import { FullScreenPeekView, SidePeekView } from "components/issues";
 import { IIssue } from "types";
 
 type Props = {
+  handleDeleteIssue: () => void;
   handleUpdateIssue: (issue: Partial<IIssue>) => Promise<void>;
   issue: IIssue | null;
   isOpen: boolean;
@@ -18,6 +19,7 @@ type Props = {
 export type TPeekOverviewModes = "side" | "modal" | "full";
 
 export const IssuePeekOverview: React.FC<Props> = ({
+  handleDeleteIssue,
   handleUpdateIssue,
   issue,
   isOpen,
@@ -74,6 +76,7 @@ export const IssuePeekOverview: React.FC<Props> = ({
                 {(peekOverviewMode === "side" || peekOverviewMode === "modal") && (
                   <SidePeekView
                     handleClose={handleClose}
+                    handleDeleteIssue={handleDeleteIssue}
                     handleUpdateIssue={handleUpdateIssue}
                     issue={issue}
                     mode={peekOverviewMode}
@@ -85,6 +88,7 @@ export const IssuePeekOverview: React.FC<Props> = ({
                 {peekOverviewMode === "full" && (
                   <FullScreenPeekView
                     handleClose={handleClose}
+                    handleDeleteIssue={handleDeleteIssue}
                     handleUpdateIssue={handleUpdateIssue}
                     issue={issue}
                     mode={peekOverviewMode}

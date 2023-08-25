@@ -9,6 +9,7 @@ import { IIssue } from "types";
 
 type Props = {
   handleClose: () => void;
+  handleDeleteIssue: () => void;
   handleUpdateIssue: (issue: Partial<IIssue>) => Promise<void>;
   issue: IIssue;
   mode: TPeekOverviewModes;
@@ -19,6 +20,7 @@ type Props = {
 
 export const SidePeekView: React.FC<Props> = ({
   handleClose,
+  handleDeleteIssue,
   handleUpdateIssue,
   issue,
   mode,
@@ -28,7 +30,14 @@ export const SidePeekView: React.FC<Props> = ({
 }) => (
   <div className="h-full w-full flex flex-col overflow-hidden">
     <div className="w-full p-5">
-      <PeekOverviewHeader handleClose={handleClose} issue={issue} mode={mode} setMode={setMode} />
+      <PeekOverviewHeader
+        handleClose={handleClose}
+        handleDeleteIssue={handleDeleteIssue}
+        issue={issue}
+        mode={mode}
+        setMode={setMode}
+        workspaceSlug={workspaceSlug}
+      />
     </div>
     <div className="h-full w-full px-6 overflow-y-auto">
       {/* issue title and description */}
@@ -43,10 +52,12 @@ export const SidePeekView: React.FC<Props> = ({
       {/* issue properties */}
       <div className="w-full mt-10">
         <PeekOverviewIssueProperties
+          handleDeleteIssue={handleDeleteIssue}
           issue={issue}
           mode={mode}
           onChange={handleUpdateIssue}
           readOnly={readOnly}
+          workspaceSlug={workspaceSlug}
         />
       </div>
       {/* divider */}

@@ -11,22 +11,30 @@ import {
 } from "components/issues";
 // icons
 import { CustomDatePicker, Icon } from "components/ui";
+import { copyTextToClipboard } from "helpers/string.helper";
+import useToast from "hooks/use-toast";
 // types
 import { IIssue } from "types";
 
 type Props = {
+  handleDeleteIssue: () => void;
   issue: IIssue;
   mode: TPeekOverviewModes;
   onChange: (issueProperty: Partial<IIssue>) => void;
   readOnly: boolean;
+  workspaceSlug: string;
 };
 
 export const PeekOverviewIssueProperties: React.FC<Props> = ({
+  handleDeleteIssue,
   issue,
   mode,
   onChange,
   readOnly,
+  workspaceSlug,
 }) => {
+  const { setToastAlert } = useToast();
+
   const startDate = issue.start_date;
   const targetDate = issue.target_date;
 
@@ -35,6 +43,21 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
 
   const maxDate = targetDate ? new Date(targetDate) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const handleCopyLink = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link copied!",
+        message: "Issue link copied to clipboard",
+      });
+    });
+  };
 
   return (
     <div className={mode === "full" ? "divide-y divide-custom-border-200" : ""}>
@@ -45,10 +68,10 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
             {issue.project_detail.identifier}-{issue.sequence_id}
           </h6>
           <div className="flex items-center gap-2">
-            <button type="button" className="-rotate-45">
+            <button type="button" onClick={handleCopyLink} className="-rotate-45">
               <Icon iconName="link" />
             </button>
-            <button type="button">
+            <button type="button" onClick={handleDeleteIssue}>
               <Icon iconName="delete" />
             </button>
           </div>

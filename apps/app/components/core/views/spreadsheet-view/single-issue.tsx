@@ -184,6 +184,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   return (
     <>
       <IssuePeekOverview
+        handleDeleteIssue={() => handleDeleteIssue(issue)}
         handleUpdateIssue={async (formData) => partialUpdateIssue(formData, issue)}
         issue={issue}
         isOpen={issuePeekOverview}
