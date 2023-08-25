@@ -25,18 +25,10 @@ const ProfileActivity = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
-
-  if (!userActivity) {
-    return (
-      <Loader className="space-y-5">
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-      </Loader>
-    );
-  }
+  const { data: userActivity } = useSWR(
+    workspaceSlug ? USER_ACTIVITY : null,
+    workspaceSlug ? () => userService.getUserActivity(workspaceSlug.toString()) : null
+  );
 
   return (
     <WorkspaceAuthorizationLayout
@@ -56,7 +48,7 @@ const ProfileActivity = () => {
           </div>
           <SettingsNavbar profilePage />
         </div>
-        {userActivity && userActivity.results.length > 0 && (
+        {userActivity ? (
           <div>
             <ul role="list" className="-mb-4">
               {userActivity.results.map((activityItem: any, activityIdx: number) => {
@@ -226,6 +218,13 @@ const ProfileActivity = () => {
               })}
             </ul>
           </div>
+        ) : (
+          <Loader className="space-y-5">
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+          </Loader>
         )}
       </div>
     </WorkspaceAuthorizationLayout>
