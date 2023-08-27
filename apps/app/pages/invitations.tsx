@@ -35,9 +35,6 @@ import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
 import userService from "services/user.service";
 
-// TODO: Convert this logic to checkboxes
-// TODO: Add loading button for join workspace
-
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -92,12 +89,20 @@ const OnBoard: NextPage = () => {
             router.push(`/${redirectWorkspace?.slug}`);
           })
           .catch(() => {
-            // todo: add toast message
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "Something went wrong, Please try again.",
+            });
             setIsJoiningWorkspaces(false);
           });
       })
       .catch(() => {
-        // todo: add toast message
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong, Please try again.",
+        });
         setIsJoiningWorkspaces(false);
       });
   };
@@ -183,6 +188,7 @@ const OnBoard: NextPage = () => {
                       size="md"
                       onClick={submitInvitations}
                       disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
+                      loading={isJoiningWorkspaces}
                     >
                       Accept & Join
                     </PrimaryButton>
