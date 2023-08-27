@@ -492,6 +492,12 @@ class IssueActivityEndpoint(BaseAPIView):
                 .filter(project__project_projectmember__member=self.request.user)
                 .order_by("created_at")
                 .select_related("actor", "issue", "project", "workspace")
+                .prefetch_related(
+                    Prefetch(
+                        "comment_reactions",
+                        queryset=CommentReaction.objects.select_related("actor"),
+                    )
+                )
             )
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
@@ -769,7 +775,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
-            result = {item["state_group"]: item["state_count"] for item in state_distribution}
+            result = {
+                item["state_group"]: item["state_count"] for item in state_distribution
+            }
 
             serializer = IssueLiteSerializer(
                 sub_issues,
@@ -1567,7 +1575,8 @@ class IssueCommentPublicViewSet(BaseViewSet):
         except (IssueComment.DoesNotExist, ProjectDeployBoard.DoesNotExist):
             return Response(
                 {"error": "IssueComent Does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,)
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, slug, project_id, issue_id, pk):
         try:
@@ -1826,4 +1835,3 @@ class IssueVotePublicViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
