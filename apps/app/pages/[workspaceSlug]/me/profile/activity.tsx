@@ -27,7 +27,7 @@ const ProfileActivity = () => {
 
   const { data: userActivity } = useSWR(
     workspaceSlug ? USER_ACTIVITY : null,
-    workspaceSlug ? () => userService.getUserActivity(workspaceSlug.toString()) : null
+    workspaceSlug ? () => userService.getUserWorkspaceActivity(workspaceSlug.toString()) : null
   );
 
   return (
