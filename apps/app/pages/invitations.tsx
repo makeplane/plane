@@ -33,6 +33,7 @@ import type { IWorkspaceMemberInvitation } from "types";
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+import userService from "services/user.service";
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -78,12 +79,32 @@ const OnBoard: NextPage = () => {
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(() => {
-        mutateInvitations();
         mutate("USER_WORKSPACES");
-
-        setIsJoiningWorkspaces(false);
+        const firstInviteId = invitationsRespond[0];
+        const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
+        userService
+          .updateUser({ last_workspace_id: redirectWorkspace?.id })
+          .then(() => {
+            setIsJoiningWorkspaces(false);
+            router.push(`/${redirectWorkspace?.slug}`);
+          })
+          .catch(() => {
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "Something went wrong, Please try again.",
+            });
+            setIsJoiningWorkspaces(false);
+          });
       })
-      .catch(() => setIsJoiningWorkspaces(false));
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong, Please try again.",
+        });
+        setIsJoiningWorkspaces(false);
+      });
   };
 
   return (
@@ -167,6 +188,7 @@ const OnBoard: NextPage = () => {
                       size="md"
                       onClick={submitInvitations}
                       disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
+                      loading={isJoiningWorkspaces}
                     >
                       Accept & Join
                     </PrimaryButton>

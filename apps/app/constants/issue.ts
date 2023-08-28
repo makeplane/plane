@@ -19,6 +19,7 @@ export const ORDER_BY_OPTIONS: Array<{
   { name: "Manual", key: "sort_order" },
   { name: "Last created", key: "-created_at" },
   { name: "Last updated", key: "-updated_at" },
+  { name: "Start date", key: "start_date" },
   { name: "Priority", key: "priority" },
 ];
 

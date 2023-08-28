@@ -21,6 +21,7 @@ export const getStateGroupIcon = (
           width={width}
           height={height}
           color={color ?? STATE_GROUP_COLORS["backlog"]}
+          className="flex-shrink-0"
         />
       );
     case "unstarted":
@@ -29,6 +30,7 @@ export const getStateGroupIcon = (
           width={width}
           height={height}
           color={color ?? STATE_GROUP_COLORS["unstarted"]}
+          className="flex-shrink-0"
         />
       );
     case "started":
@@ -37,6 +39,7 @@ export const getStateGroupIcon = (
           width={width}
           height={height}
           color={color ?? STATE_GROUP_COLORS["started"]}
+          className="flex-shrink-0"
         />
       );
     case "completed":
@@ -45,6 +48,7 @@ export const getStateGroupIcon = (
           width={width}
           height={height}
           color={color ?? STATE_GROUP_COLORS["completed"]}
+          className="flex-shrink-0"
         />
       );
     case "cancelled":
@@ -53,6 +57,7 @@ export const getStateGroupIcon = (
           width={width}
           height={height}
           color={color ?? STATE_GROUP_COLORS["cancelled"]}
+          className="flex-shrink-0"
         />
       );
     default:

@@ -9,7 +9,8 @@ import cyclesService from "services/cycles.service";
 // hooks
 import useUser from "hooks/use-user";
 // components
-import { CycleGanttBlock, GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
+import { GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
+import { CycleGanttBlock, CycleGanttSidebarBlock } from "components/cycles";
 // types
 import { ICycle } from "types";
 
@@ -23,17 +24,6 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
   const { workspaceSlug } = router.query;
 
   const { user } = useUser();
-
-  // rendering issues on gantt sidebar
-  const GanttSidebarBlockView = ({ data }: any) => (
-    <div className="relative flex w-full h-full items-center p-1 overflow-hidden gap-1">
-      <div
-        className="rounded-sm flex-shrink-0 w-[10px] h-[10px] flex justify-center items-center"
-        style={{ backgroundColor: "rgb(var(--color-primary-100))" }}
-      />
-      <div className="text-custom-text-100 text-sm">{data?.name}</div>
-    </div>
-  );
 
   const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
@@ -88,10 +78,11 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
         loaderTitle="Cycles"
         blocks={cycles ? blockFormat(cycles) : null}
         blockUpdateHandler={(block, payload) => handleCycleUpdate(block, payload)}
-        sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
-        blockRender={(data: any) => <CycleGanttBlock cycle={data as ICycle} />}
-        enableLeftDrag={false}
-        enableRightDrag={false}
+        SidebarBlockRender={CycleGanttSidebarBlock}
+        BlockRender={CycleGanttBlock}
+        enableBlockLeftResize={false}
+        enableBlockRightResize={false}
+        enableBlockMove={false}
       />
     </div>
   );
