@@ -548,7 +548,7 @@ export const IssuesView: React.FC<Props> = ({
         }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
-        openIssuesListModal={openIssuesListModal ? openIssuesListModal : null}
+        openIssuesListModal={openIssuesListModal ?? null}
         removeIssue={cycleId ? removeIssueFromCycle : moduleId ? removeIssueFromModule : null}
         trashBox={trashBox}
         setTrashBox={setTrashBox}

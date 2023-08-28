@@ -3,10 +3,6 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
-
-// services
-import issuesService from "services/issues.service";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { CommentCard } from "components/issues/comment";
@@ -15,62 +11,23 @@ import { Icon, Loader } from "components/ui";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { ICurrentUserResponse, IIssueComment } from "types";
-// fetch-keys
-import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { IIssueActivity, IIssueComment } from "types";
 
 type Props = {
-  issueId: string;
-  user: ICurrentUserResponse | undefined;
+  activity: IIssueActivity[] | undefined;
+  handleCommentUpdate: (comment: IIssueComment) => Promise<void>;
+  handleCommentDelete: (commentId: string) => Promise<void>;
 };
 
-export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
+export const IssueActivitySection: React.FC<Props> = ({
+  activity,
+  handleCommentUpdate,
+  handleCommentDelete,
+}) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUES_ACTIVITY(issueId) : null,
-    workspaceSlug && projectId
-      ? () =>
-          issuesService.getIssueActivities(workspaceSlug as string, projectId as string, issueId)
-      : null
-  );
-
-  const handleCommentUpdate = async (comment: IIssueComment) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-
-    await issuesService
-      .patchIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        comment.id,
-        comment,
-        user
-      )
-      .then((res) => mutateIssueActivities());
-  };
-
-  const handleCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
-
-    mutateIssueActivities(
-      (prevData: any) => prevData?.filter((p: any) => p.id !== commentId),
-      false
-    );
-
-    await issuesService
-      .deleteIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        commentId,
-        user
-      )
-      .then(() => mutateIssueActivities());
-  };
-
-  if (!issueActivities) {
+  if (!activity)
     return (
       <Loader className="space-y-4">
         <div className="space-y-2">
@@ -87,12 +44,11 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
         </div>
       </Loader>
     );
-  }
 
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-4">
-        {issueActivities.map((activityItem, index) => {
+        {activity.map((activityItem, index) => {
           // determines what type of action is performed
           const message = activityItem.field ? (
             <ActivityMessage activity={activityItem} />
@@ -104,7 +60,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueId, user }) => {
             return (
               <li key={activityItem.id}>
                 <div className="relative pb-1">
-                  {issueActivities.length > 1 && index !== issueActivities.length - 1 ? (
+                  {activity.length > 1 && index !== activity.length - 1 ? (
                     <span
                       className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-custom-background-80"
                       aria-hidden="true"
