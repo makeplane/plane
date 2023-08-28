@@ -85,6 +85,7 @@ from .issue import (
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
     IssueVotePublicViewSet,
+    IssueRelationViewSet,
 )
 
 from .auth_extended import (
@@ -164,6 +165,4 @@ from .analytic import (
 
 from .notification import NotificationViewSet, UnreadNotificationEndpoint
 
-from .exporter import (
-    ExportIssuesEndpoint,
-)
+from .exporter import ExportIssuesEndpoint

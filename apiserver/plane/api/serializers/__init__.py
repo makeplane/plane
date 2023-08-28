@@ -30,8 +30,6 @@ from .issue import (
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssuePropertySerializer,
-    BlockerIssueSerializer,
-    BlockedIssueSerializer,
     IssueAssigneeSerializer,
     LabelSerializer,
     IssueSerializer,
@@ -44,6 +42,8 @@ from .issue import (
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
+    IssueRelationSerializer,
+    RelatedIssueSerializer,
 )
 
 from .module import (
