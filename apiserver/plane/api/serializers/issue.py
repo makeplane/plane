@@ -696,6 +696,7 @@ class IssuePublicSerializer(BaseSerializer):
             "workspace",
             "priority",
             "target_date",
+            "issue_reactions",
         ]
         read_only_fields = fields
 

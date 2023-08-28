@@ -174,7 +174,7 @@ from plane.api.views import (
     InboxIssuePublicViewSet,
     IssueVotePublicViewSet,
     WorkspaceProjectDeployBoardEndpoint,
-    IssueRetrievePublicViewSet,
+    IssueRetrievePublicEndpoint,
     ## End Public Boards
     ## Exporter
     ExportIssuesEndpoint,
@@ -1529,6 +1529,11 @@ urlpatterns = [
         name="project-deploy-board",
     ),
     path(
+        "public/workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/",
+        IssueRetrievePublicEndpoint.as_view(),
+        name="workspace-project-boards",
+    ),
+    path(
         "public/workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/comments/",
         IssueCommentPublicViewSet.as_view(
             {
@@ -1621,11 +1626,6 @@ urlpatterns = [
     ),
     path(
         "public/workspaces/<str:slug>/project-boards/",
-        WorkspaceProjectDeployBoardEndpoint.as_view(),
-        name="workspace-project-boards",
-    ),
-    path(
-        "public/workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/",
         WorkspaceProjectDeployBoardEndpoint.as_view(),
         name="workspace-project-boards",
     ),

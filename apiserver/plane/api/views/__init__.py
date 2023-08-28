@@ -84,7 +84,7 @@ from .issue import (
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
     IssueVotePublicViewSet,
-    IssueRetrievePublicViewSet,
+    IssueRetrievePublicEndpoint,
     ProjectIssuesPublicEndpoint,
 )
 

@@ -1833,15 +1833,15 @@ class IssueVotePublicViewSet(BaseViewSet):
             )
 
 
-class IssueRetrievePublicViewSet(BaseAPIView):
+class IssueRetrievePublicEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
 
-    def get(self, slug, project_id, issue_id):
+    def get(self, request, slug, project_id, issue_id):
         try:
             issue = Issue.objects.get(
-                workspace__slug=slug, project_id=project_id, issue_id=issue_id
+                workspace__slug=slug, project_id=project_id, pk=issue_id
             )
             serializer = IssuePublicSerializer(issue)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -1850,7 +1850,7 @@ class IssueRetrievePublicViewSet(BaseAPIView):
                 {"error": "Issue Does not exist"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
