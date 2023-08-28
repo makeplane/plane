@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import issuesService from "services/issues.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
+import useToast from "hooks/use-toast";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
@@ -25,9 +26,9 @@ import { CustomMenu } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
 import { MinusCircleIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueComment } from "types";
 // fetch-keys
-import { SUB_ISSUES } from "constants/fetch-keys";
+import { PROJECT_ISSUES_ACTIVITY, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issueDetails: IIssue;
@@ -43,6 +44,8 @@ export const IssueMainContent: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, archivedIssueId } = router.query;
 
+  const { setToastAlert } = useToast();
+
   const { user } = useUserAuth();
   const { memberRole } = useProjectMyMembership();
 
@@ -50,14 +53,80 @@ export const IssueMainContent: React.FC<Props> = ({
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
     workspaceSlug && projectId && issueDetails?.parent
       ? () =>
-        issuesService.subIssues(
-          workspaceSlug as string,
-          projectId as string,
-          issueDetails.parent ?? ""
-        )
+          issuesService.subIssues(
+            workspaceSlug as string,
+            projectId as string,
+            issueDetails.parent ?? ""
+          )
       : null
   );
   const siblingIssuesList = siblingIssues?.sub_issues.filter((i) => i.id !== issueDetails.id);
+
+  const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
+    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId.toString()) : null,
+    workspaceSlug && projectId && issueId
+      ? () =>
+          issuesService.getIssueActivities(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            issueId.toString()
+          )
+      : null
+  );
+
+  const handleCommentUpdate = async (comment: IIssueComment) => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+
+    await issuesService
+      .patchIssueComment(
+        workspaceSlug as string,
+        projectId as string,
+        issueId as string,
+        comment.id,
+        comment,
+        user
+      )
+      .then(() => mutateIssueActivity());
+  };
+
+  const handleCommentDelete = async (commentId: string) => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+
+    mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
+
+    await issuesService
+      .deleteIssueComment(
+        workspaceSlug as string,
+        projectId as string,
+        issueId as string,
+        commentId,
+        user
+      )
+      .then(() => mutateIssueActivity());
+  };
+
+  const handleAddComment = async (formData: IIssueComment) => {
+    if (!workspaceSlug || !issueDetails) return;
+
+    await issuesService
+      .createIssueComment(
+        workspaceSlug.toString(),
+        issueDetails.project,
+        issueDetails.id,
+        formData,
+        user
+      )
+      .then(() => {
+        mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Comment could not be posted. Please try again.",
+        })
+      );
+  };
 
   return (
     <>
@@ -97,8 +166,9 @@ export const IssueMainContent: React.FC<Props> = ({
                       <CustomMenu.MenuItem
                         key={issue.id}
                         renderAs="a"
-                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id
-                          }`}
+                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                          issue.id
+                        }`}
                         className="flex items-center gap-2 py-2"
                       >
                         <LayerDiagonalIcon className="h-4 w-4" />
@@ -146,14 +216,11 @@ export const IssueMainContent: React.FC<Props> = ({
       <div className="space-y-5 pt-3">
         <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
         <IssueActivitySection
-          issueId={(archivedIssueId as string) ?? (issueId as string)}
-          user={user}
+          activity={issueActivity}
+          handleCommentUpdate={handleCommentUpdate}
+          handleCommentDelete={handleCommentDelete}
         />
-        <AddComment
-          issueId={(archivedIssueId as string) ?? (issueId as string)}
-          user={user}
-          disabled={uneditable}
-        />
+        <AddComment onSubmit={handleAddComment} disabled={uneditable} />
       </div>
     </>
   );

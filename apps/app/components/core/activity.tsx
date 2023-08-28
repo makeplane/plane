@@ -53,7 +53,11 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 
 const activityDetails: {
   [key: string]: {
-    message: (activity: IIssueActivity, showIssue: boolean) => React.ReactNode;
+    message: (
+      activity: IIssueActivity,
+      showIssue: boolean,
+      workspaceSlug: string
+    ) => React.ReactNode;
     icon: React.ReactNode;
   };
 } = {
@@ -173,26 +177,50 @@ const activityDetails: {
     icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
   },
   cycles: {
-    message: (activity) => {
+    message: (activity, showIssue, workspaceSlug) => {
       if (activity.verb === "created")
         return (
           <>
             added this issue to the cycle{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              {activity.new_value}
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
           </>
         );
       else if (activity.verb === "updated")
         return (
           <>
             set the cycle to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              {activity.new_value}
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
           </>
         );
       else
         return (
           <>
             removed the issue from the cycle{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              {activity.old_value}
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
           </>
         );
     },
@@ -351,26 +379,50 @@ const activityDetails: {
     icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
   },
   modules: {
-    message: (activity) => {
+    message: (activity, showIssue, workspaceSlug) => {
       if (activity.verb === "created")
         return (
           <>
             added this issue to the module{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              {activity.new_value}
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
           </>
         );
       else if (activity.verb === "updated")
         return (
           <>
             set the module to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              {activity.new_value}
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
           </>
         );
       else
         return (
           <>
             removed the issue from the module{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              {activity.old_value}
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
           </>
         );
     },
@@ -538,8 +590,17 @@ export const ActivityMessage = ({
 }: {
   activity: IIssueActivity;
   showIssue?: boolean;
-}) => (
-  <>
-    {activityDetails[activity.field as keyof typeof activityDetails]?.message(activity, showIssue)}
-  </>
-);
+}) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  return (
+    <>
+      {activityDetails[activity.field as keyof typeof activityDetails]?.message(
+        activity,
+        showIssue,
+        workspaceSlug?.toString() ?? ""
+      )}
+    </>
+  );
+};

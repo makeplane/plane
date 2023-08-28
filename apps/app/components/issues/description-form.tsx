@@ -4,24 +4,21 @@ import { FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
+import { useDebouncedCallback } from "use-debounce";
 // components
 import { TextArea } from "components/ui";
-
+import Tiptap from "components/tiptap";
 // types
 import { IIssue } from "types";
-import Tiptap from "components/tiptap";
-import { useDebouncedCallback } from "use-debounce";
 
 export interface IssueDescriptionFormValues {
   name: string;
-  description: any;
   description_html: string;
 }
 
 export interface IssueDetailsProps {
   issue: {
     name: string;
-    description: string;
     description_html: string;
   };
   workspaceSlug: string;
@@ -43,7 +40,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   const {
     handleSubmit,
     watch,
-    setValue,
     reset,
     register,
     control,
@@ -51,7 +47,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   } = useForm<IIssue>({
     defaultValues: {
       name: "",
-      description: "",
       description_html: "",
     },
   });
@@ -62,7 +57,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
       await handleFormSubmit({
         name: formData.name ?? "",
-        description: formData.description ?? "",
         description_html: formData.description_html ?? "<p></p>",
       });
     },
@@ -79,7 +73,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
       setShowAlert(true);
     }
   }, [isSubmitting, setShowAlert]);
-
 
   // reset form values
   useEffect(() => {
@@ -99,27 +92,32 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   return (
     <div className="relative">
       <div className="relative">
-        <TextArea
-          id="name"
-          name="name"
-          placeholder="Enter issue name"
-          register={register}
-          onFocus={() => setCharacterLimit(true)}
-          onChange={(e) => {
-            setCharacterLimit(false);
-            setIsSubmitting("submitting");
-            debouncedTitleSave();
-          }}
-          required={true}
-          className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
-          role="textbox"
-          disabled={!isAllowed}
-        />
-        {characterLimit && (
+        {isAllowed ? (
+          <TextArea
+            id="name"
+            name="name"
+            placeholder="Enter issue name"
+            register={register}
+            onFocus={() => setCharacterLimit(true)}
+            onChange={(e) => {
+              setCharacterLimit(false);
+              setIsSubmitting("submitting");
+              debouncedTitleSave();
+            }}
+            required={true}
+            className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
+            role="textbox"
+            disabled={!isAllowed}
+          />
+        ) : (
+          <h4 className="break-words text-2xl font-semibold">{issue.name}</h4>
+        )}
+        {characterLimit && isAllowed && (
           <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
             <span
-              className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
-                }`}
+              className={`${
+                watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
+              }`}
             >
               {watch("name").length}
             </span>
@@ -133,39 +131,42 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
           name="description_html"
           control={control}
           render={({ field: { value, onChange } }) => {
-            if (!value && !watch("description_html")) return <></>;
+            if (!value) return <></>;
 
             return (
               <Tiptap
                 value={
                   !value ||
-                    value === "" ||
-                    (typeof value === "object" && Object.keys(value).length === 0)
-                    ? watch("description_html")
+                  value === "" ||
+                  (typeof value === "object" && Object.keys(value).length === 0)
+                    ? "<p></p>"
                     : value
                 }
                 workspaceSlug={workspaceSlug}
                 debouncedUpdatesEnabled={true}
                 setShouldShowAlert={setShowAlert}
                 setIsSubmitting={setIsSubmitting}
-                customClassName="min-h-[150px] shadow-sm"
-                editorContentCustomClassNames="pb-9"
+                customClassName={
+                  isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"
+                }
+                noBorder={!isAllowed}
                 onChange={(description: Object, description_html: string) => {
                   setShowAlert(true);
                   setIsSubmitting("submitting");
                   onChange(description_html);
-                  setValue("description", description);
-                  handleSubmit(handleDescriptionFormSubmit)().finally(() => {
-                    setIsSubmitting("submitted");
-                  });
+                  handleSubmit(handleDescriptionFormSubmit)().finally(() =>
+                    setIsSubmitting("submitted")
+                  );
                 }}
+                editable={isAllowed}
               />
             );
           }}
         />
         <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-            }`}
+          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
+            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+          }`}
         >
           {isSubmitting === "submitting" ? "Saving..." : "Saved"}
         </div>

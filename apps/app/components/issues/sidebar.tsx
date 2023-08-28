@@ -33,7 +33,16 @@ import {
 // ui
 import { CustomDatePicker, Icon } from "components/ui";
 // icons
-import { LinkIcon, CalendarDaysIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  LinkIcon,
+  CalendarDaysIcon,
+  TrashIcon,
+  PlusIcon,
+  Squares2X2Icon,
+  ChartBarIcon,
+  UserGroupIcon,
+  PlayIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -332,60 +341,90 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             {showFirstSection && (
               <div className="py-1">
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
-                  <Controller
-                    control={control}
-                    name="state"
-                    render={({ field: { value } }) => (
-                      <SidebarStateSelect
-                        value={value}
-                        onChange={(val: string) => submitChanges({ state: val })}
-                        userAuth={memberRole}
-                        disabled={uneditable}
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
+                      <p>State</p>
+                    </div>
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="state"
+                        render={({ field: { value } }) => (
+                          <SidebarStateSelect
+                            value={value}
+                            onChange={(val: string) => submitChanges({ state: val })}
+                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                          />
+                        )}
                       />
-                    )}
-                  />
+                    </div>
+                  </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("assignee")) && (
-                  <Controller
-                    control={control}
-                    name="assignees_list"
-                    render={({ field: { value } }) => (
-                      <SidebarAssigneeSelect
-                        value={value}
-                        onChange={(val: string[]) => submitChanges({ assignees_list: val })}
-                        userAuth={memberRole}
-                        disabled={uneditable}
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
+                      <p>Assignees</p>
+                    </div>
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="assignees_list"
+                        render={({ field: { value } }) => (
+                          <SidebarAssigneeSelect
+                            value={value}
+                            onChange={(val: string[]) => submitChanges({ assignees_list: val })}
+                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                          />
+                        )}
                       />
-                    )}
-                  />
+                    </div>
+                  </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
-                  <Controller
-                    control={control}
-                    name="priority"
-                    render={({ field: { value } }) => (
-                      <SidebarPrioritySelect
-                        value={value}
-                        onChange={(val: string) => submitChanges({ priority: val })}
-                        userAuth={memberRole}
-                        disabled={uneditable}
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
+                      <p>Priority</p>
+                    </div>
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="priority"
+                        render={({ field: { value } }) => (
+                          <SidebarPrioritySelect
+                            value={value}
+                            onChange={(val: string) => submitChanges({ priority: val })}
+                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                          />
+                        )}
                       />
-                    )}
-                  />
+                    </div>
+                  </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
-                  <Controller
-                    control={control}
-                    name="estimate_point"
-                    render={({ field: { value } }) => (
-                      <SidebarEstimateSelect
-                        value={value}
-                        onChange={(val: number | null) => submitChanges({ estimate_point: val })}
-                        userAuth={memberRole}
-                        disabled={uneditable}
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <PlayIcon className="h-4 w-4 flex-shrink-0 -rotate-90" />
+                      <p>Estimate</p>
+                    </div>
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="estimate_point"
+                        render={({ field: { value } }) => (
+                          <SidebarEstimateSelect
+                            value={value}
+                            onChange={(val: number | null) =>
+                              submitChanges({ estimate_point: val })
+                            }
+                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                          />
+                        )}
                       />
-                    )}
-                  />
+                    </div>
+                  </div>
                 )}
               </div>
             )}
