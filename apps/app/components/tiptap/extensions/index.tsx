@@ -20,6 +20,10 @@ import "highlight.js/styles/github-dark.css";
 import UniqueID from "@tiptap-pro/extension-unique-id";
 import UpdatedImage from "./updated-image";
 import isValidHttpUrl from "../bubble-menu/utils/link-validator";
+import { CustomTableCell } from "./table/table-cell";
+import { Table } from "./table/table";
+import { TableHeader } from "./table/table-header";
+import { TableRow } from "@tiptap/extension-table-row";
 
 lowlight.registerLanguage("ts", ts);
 
@@ -101,8 +105,12 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
   }),
   Placeholder.configure({
     placeholder: ({ node }) => {
+      console.log(node.type.name)
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
+      }
+      if (node.type.name === "image" || node.type.name === "table") {
+        return ""
       }
 
       return "Press '/' for commands...";
@@ -134,4 +142,8 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
     html: true,
     transformCopiedText: true,
   }),
+  Table,
+  TableHeader,
+  CustomTableCell,
+  TableRow
 ];

@@ -5,6 +5,7 @@ import { TiptapExtensions } from "./extensions";
 import { TiptapEditorProps } from "./props";
 import { useImperativeHandle, useRef } from "react";
 import { ImageResizer } from "./extensions/image-resize";
+import { TableMenu } from "./table-menu";
 
 export interface ITiptapRichTextEditor {
   value: string;
@@ -91,6 +92,7 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className={`${editorContentCustomClassNames}`}>
         <EditorContent editor={editor} />
+        {editor?.isActive("table") && <TableMenu editor={editor} />}
         {editor?.isActive("image") && <ImageResizer editor={editor} />}
       </div>
     </div>

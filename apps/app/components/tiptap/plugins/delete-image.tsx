@@ -16,7 +16,7 @@ const TrackImageDeletionPlugin = () =>
         oldState.doc.descendants((oldNode, oldPos) => {
           if (oldNode.type.name !== 'image') return;
 
-          if (!newState.doc.resolve(oldPos).parent) return;
+          // if (!newState.doc.resolve(oldPos).parent) return;
           const newNode = newState.doc.nodeAt(oldPos);
 
           // Check if the node has been deleted or replaced

@@ -4,7 +4,7 @@ import UploadImagesPlugin from "../plugins/upload-image";
 
 const UpdatedImage = Image.extend({
   addProseMirrorPlugins() {
-    return [UploadImagesPlugin(), TrackImageDeletionPlugin()];
+    return [UploadImagesPlugin()];
   },
   addAttributes() {
     return {

@@ -15,6 +15,7 @@ import {
   MinusSquare,
   CheckSquare,
   ImageIcon,
+  Table,
 } from "lucide-react";
 import { startImageUpload } from "../plugins/upload-image";
 import { cn } from "../utils";
@@ -60,6 +61,7 @@ const getSuggestionItems = (workspaceSlug: string, setIsSubmitting?: (isSubmitti
       searchTerms: ["p", "paragraph"],
       icon: <Text size={18} />,
       command: ({ editor, range }: CommandProps) => {
+        console.log("focused")
         editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
       },
     },
@@ -115,6 +117,15 @@ const getSuggestionItems = (workspaceSlug: string, setIsSubmitting?: (isSubmitti
       icon: <MinusSquare size={18} />,
       command: ({ editor, range }: CommandProps) => {
         editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+      },
+    },
+    {
+      title: "Table",
+      description: "Create a Table",
+      searchTerms: ["table", "cell", "db", "data", "tabular"],
+      icon: <Table size={18} />,
+      command: ({ editor, range }: CommandProps) => {
+        editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
       },
     },
     {
