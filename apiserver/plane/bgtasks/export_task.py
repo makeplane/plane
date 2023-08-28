@@ -5,6 +5,7 @@ import json
 import boto3
 import zipfile
 from urllib.parse import urlparse, urlunparse
+
 # Django imports
 from django.conf import settings
 from django.utils import timezone
@@ -91,19 +92,8 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
             ExpiresIn=expires_in,
         )
         # Create the new url with updated domain and protocol
-        parsed_url = urlparse(presigned_url)
-        path_parts = parsed_url.path.split("/")
-        new_path_parts = [part for part in path_parts if part != "uploads"]
-        new_path = "/".join(new_path_parts)
-        new_url_tuple = (
-            settings.AWS_S3_URL_PROTOCOL,
-            settings.AWS_S3_CUSTOM_DOMAIN,
-            new_path,
-            parsed_url.params,
-            parsed_url.query,
-            parsed_url.fragment
-        )
-        presigned_url = urlunparse(new_url_tuple)
+        new_path = "/".join(urlparse(presigned_url).path.split("/")[3:])
+        presigned_url = f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/{new_path}?{urlparse(presigned_url).query}"
     else:
         s3 = boto3.client(
             "s3",
@@ -278,8 +268,9 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
         workspace_issues = (
             (
                 Issue.objects.filter(
-                    workspace__id=workspace_id, project_id__in=project_ids,
-                    project__project_projectmember__member=exporter_instance.initiated_by_id
+                    workspace__id=workspace_id,
+                    project_id__in=project_ids,
+                    project__project_projectmember__member=exporter_instance.initiated_by_id,
                 )
                 .select_related("project", "workspace", "state", "parent", "created_by")
                 .prefetch_related(
