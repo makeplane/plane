@@ -374,3 +374,32 @@ export const getAllTimeIn30MinutesInterval = (): Array<{
   { label: "11:00", value: "11:00" },
   { label: "11:30", value: "11:30" },
 ];
+
+/**
+ * @returns {number} total number of days in range
+ * @description Returns total number of days in range
+ * @param {string} startDate
+ * @param {string} endDate
+ * @param {boolean} inclusive
+ * @example checkIfStringIsDate("2021-01-01", "2021-01-08") // 8
+ */
+
+export const findTotalDaysInRange = (
+  startDate: Date | string,
+  endDate: Date | string,
+  inclusive: boolean
+): number => {
+  if (!startDate || !endDate) return 0;
+
+  startDate = new Date(startDate);
+  endDate = new Date(endDate);
+
+  // find number of days between startDate and endDate
+  const diffInTime = endDate.getTime() - startDate.getTime();
+  const diffInDays = diffInTime / (1000 * 3600 * 24);
+
+  // if inclusive is true, add 1 to diffInDays
+  if (inclusive) return diffInDays + 1;
+
+  return diffInDays;
+};

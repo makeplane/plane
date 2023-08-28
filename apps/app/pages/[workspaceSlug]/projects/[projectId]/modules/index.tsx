@@ -18,10 +18,10 @@ import {
   SingleModuleCard,
 } from "components/modules";
 // ui
-import { EmptyState, Loader, PrimaryButton } from "components/ui";
+import { EmptyState, Icon, Loader, PrimaryButton, Tooltip } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // images
 import emptyModule from "public/empty-state/module.svg";
 // types
@@ -30,7 +30,18 @@ import type { NextPage } from "next";
 // fetch-keys
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
-import { truncateText } from "helpers/string.helper";
+import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
+
+const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
+  {
+    type: "gantt_chart",
+    icon: "view_timeline",
+  },
+  {
+    type: "grid",
+    icon: "table_rows",
+  },
+];
 
 const ProjectModules: NextPage = () => {
   const [selectedModule, setSelectedModule] = useState<SelectModuleType>();
@@ -64,6 +75,7 @@ const ProjectModules: NextPage = () => {
 
   useEffect(() => {
     if (createUpdateModule) return;
+
     const timer = setTimeout(() => {
       setSelectedModule(undefined);
       clearTimeout(timer);
@@ -79,16 +91,42 @@ const ProjectModules: NextPage = () => {
         </Breadcrumbs>
       }
       right={
-        <PrimaryButton
-          className="flex items-center gap-2"
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "m" });
-            document.dispatchEvent(e);
-          }}
-        >
-          <PlusIcon className="h-4 w-4" />
-          Add Module
-        </PrimaryButton>
+        <div className="flex items-center gap-2">
+          {moduleViewOptions.map((option) => (
+            <Tooltip
+              key={option.type}
+              tooltipContent={
+                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
+              }
+              position="bottom"
+            >
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                  modulesView === option.type
+                    ? "bg-custom-sidebar-background-80"
+                    : "text-custom-sidebar-text-200"
+                }`}
+                onClick={() => setModulesView(option.type)}
+              >
+                <Icon
+                  iconName={option.icon}
+                  className={`!text-base ${option.type === "grid" ? "rotate-90" : ""}`}
+                />
+              </button>
+            </Tooltip>
+          ))}
+          <PrimaryButton
+            className="flex items-center gap-2"
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", { key: "m" });
+              document.dispatchEvent(e);
+            }}
+          >
+            <PlusIcon className="h-4 w-4" />
+            Add Module
+          </PrimaryButton>
+        </div>
       }
     >
       <CreateUpdateModuleModal
@@ -99,34 +137,9 @@ const ProjectModules: NextPage = () => {
       />
       {modules ? (
         modules.length > 0 ? (
-          <div className="space-y-5 p-8 flex flex-col h-full overflow-hidden">
-            <div className="flex gap-4 justify-between">
-              <h3 className="text-2xl font-semibold text-custom-text-100">Modules</h3>
-              <div className="flex items-center gap-x-1">
-                <button
-                  type="button"
-                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                    modulesView === "grid" ? "bg-custom-background-80" : ""
-                  }`}
-                  onClick={() => setModulesView("grid")}
-                >
-                  <Squares2X2Icon className="h-4 w-4 text-custom-text-200" />
-                </button>
-                <button
-                  type="button"
-                  className={`grid h-7 w-7 place-items-center rounded outline-none duration-300 hover:bg-custom-background-80 ${
-                    modulesView === "gantt_chart" ? "bg-custom-background-80" : ""
-                  }`}
-                  onClick={() => setModulesView("gantt_chart")}
-                >
-                  <span className="material-symbols-rounded text-custom-text-200 text-[18px] rotate-90">
-                    waterfall_chart
-                  </span>
-                </button>
-              </div>
-            </div>
+          <>
             {modulesView === "grid" && (
-              <div className="h-full overflow-y-auto">
+              <div className="h-full overflow-y-auto p-8">
                 <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
                   {modules.map((module) => (
                     <SingleModuleCard
@@ -142,7 +155,7 @@ const ProjectModules: NextPage = () => {
             {modulesView === "gantt_chart" && (
               <ModulesListGanttChartView modules={modules} mutateModules={mutateModules} />
             )}
-          </div>
+          </>
         ) : (
           <EmptyState
             title="Manage your project with modules"

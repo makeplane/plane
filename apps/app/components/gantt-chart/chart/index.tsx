@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
+import { GanttSidebar } from "../sidebar";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
 // import { WeekChartView } from "./week";
@@ -25,7 +26,7 @@ import {
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
-import { ChartDataType, IBlockUpdateData, IGanttBlock } from "../types";
+import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
 import { currentViewDataWithView } from "../data";
 // context
@@ -33,15 +34,17 @@ import { useChart } from "../hooks";
 
 type ChartViewRootProps = {
   border: boolean;
-  title: null | string;
+  title: string;
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  sidebarBlockRender: FC<any>;
-  blockRender: FC<any>;
-  enableLeftDrag: boolean;
-  enableRightDrag: boolean;
+  SidebarBlockRender: React.FC<any>;
+  BlockRender: React.FC<any>;
+  enableBlockLeftResize: boolean;
+  enableBlockRightResize: boolean;
+  enableBlockMove: boolean;
   enableReorder: boolean;
+  bottomSpacing: boolean;
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = ({
@@ -50,22 +53,24 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blocks = null,
   loaderTitle,
   blockUpdateHandler,
-  sidebarBlockRender,
-  blockRender,
-  enableLeftDrag,
-  enableRightDrag,
+  SidebarBlockRender,
+  BlockRender,
+  enableBlockLeftResize,
+  enableBlockRightResize,
+  enableBlockMove,
   enableReorder,
+  bottomSpacing,
 }) => {
-  const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
-
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
-  const [blocksSidebarView, setBlocksSidebarView] = useState<boolean>(false);
 
   // blocks state management starts
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
 
-  const renderBlockStructure = (view: any, blocks: IGanttBlock[]) =>
+  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } =
+    useChart();
+
+  const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
     blocks && blocks.length > 0
       ? blocks.map((block: any) => ({
           ...block,
@@ -74,16 +79,16 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       : [];
 
   useEffect(() => {
-    if (currentViewData && blocks && blocks.length > 0)
+    if (currentViewData && blocks)
       setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
   }, [currentViewData, blocks]);
 
   // blocks state management ends
 
-  const handleChartView = (key: string) => updateCurrentViewRenderPayload(null, key);
+  const handleChartView = (key: TGanttViews) => updateCurrentViewRenderPayload(null, key);
 
-  const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: string) => {
-    const selectedCurrentView = view;
+  const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: TGanttViews) => {
+    const selectedCurrentView: TGanttViews = view;
     const selectedCurrentViewData: ChartDataType | undefined =
       selectedCurrentView && selectedCurrentView === currentViewData?.key
         ? currentViewData
@@ -155,6 +160,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
   const updatingCurrentLeftScrollPosition = (width: number) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+
+    if (!scrollContainer) return;
+
     scrollContainer.scrollLeft = width + scrollContainer?.scrollLeft;
     setItemsContainerWidth(width + scrollContainer?.scrollLeft);
   };
@@ -195,6 +203,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
     const currentScrollPosition: number = scrollContainer?.scrollLeft;
 
+    updateScrollLeft(currentScrollPosition);
+
     const approxRangeLeft: number =
       scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
     const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
@@ -204,16 +214,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     if (currentScrollPosition <= approxRangeLeft)
       updateCurrentViewRenderPayload("left", currentView);
   };
-
-  useEffect(() => {
-    const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
-
-    scrollContainer.addEventListener("scroll", onScroll);
-
-    return () => {
-      scrollContainer.removeEventListener("scroll", onScroll);
-    };
-  }, [renderView]);
 
   return (
     <div
@@ -225,44 +225,14 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         border ? `border border-custom-border-200` : ``
       } flex h-full flex-col rounded-sm select-none bg-custom-background-100 shadow`}
     >
-      {/* chart title */}
-      {/* <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-5 gap-y-3 whitespace-nowrap p-2 border-b border-custom-border-200">
-        {title && (
-          <div className="text-lg font-medium flex gap-2 items-center">
-            <div>{title}</div>
-            <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-custom-text-100">
-              Gantt View Beta
-            </div>
-          </div>
-        )}
-        {blocks === null ? (
-          <div className="text-sm font-medium ml-auto">Loading...</div>
-        ) : (
-          <div className="text-sm font-medium ml-auto">
-            {blocks.length} {loaderTitle}
-          </div>
-        )}
-      </div> */}
-
       {/* chart header */}
-      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap p-2">
-        {/* <div
-          className="transition-all border border-custom-border-200 w-[30px] h-[30px] flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
-          onClick={() => setBlocksSidebarView(() => !blocksSidebarView)}
-        >
-          {blocksSidebarView ? (
-            <XMarkIcon className="h-5 w-5" />
-          ) : (
-            <Bars4Icon className="h-4 w-4" />
-          )}
-        </div> */}
-
+      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2">
         {title && (
           <div className="text-lg font-medium flex gap-2 items-center">
             <div>{title}</div>
-            <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-custom-text-100">
+            {/* <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-custom-text-100">
               Gantt View Beta
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -282,7 +252,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             allViews.map((_chatView: any, _idx: any) => (
               <div
                 key={_chatView?.key}
-                className={`cursor-pointer rounded-sm border border-custom-border-200 p-1 px-2 text-xs ${
+                className={`cursor-pointer rounded-sm p-1 px-2 text-xs ${
                   currentView === _chatView?.key
                     ? `bg-custom-background-80`
                     : `hover:bg-custom-background-90`
@@ -296,7 +266,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
         <div className="flex items-center gap-1">
           <div
-            className={`cursor-pointer rounded-sm border border-custom-border-200 p-1 px-2 text-xs hover:bg-custom-background-80`}
+            className="cursor-pointer rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
             onClick={handleToday}
           >
             Today
@@ -316,26 +286,30 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       </div>
 
       {/* content */}
-      <div className="relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200">
+      <div
+        id="gantt-container"
+        className={`relative flex h-full w-full flex-1 overflow-hidden border-t border-custom-border-200 ${
+          bottomSpacing ? "mb-8" : ""
+        }`}
+      >
         <div
-          className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
-          id="scroll-container"
+          id="gantt-sidebar"
+          className="h-full w-1/4 flex flex-col border-r border-custom-border-200 space-y-3"
         >
-          {/* blocks components */}
-          {currentView && currentViewData && (
-            <GanttChartBlocks
-              itemsContainerWidth={itemsContainerWidth}
-              blocks={chartBlocks}
-              sidebarBlockRender={sidebarBlockRender}
-              blockRender={blockRender}
-              blockUpdateHandler={blockUpdateHandler}
-              enableLeftDrag={enableLeftDrag}
-              enableRightDrag={enableRightDrag}
-              enableReorder={enableReorder}
-            />
-          )}
-
-          {/* chart */}
+          <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0" />
+          <GanttSidebar
+            title={title}
+            blockUpdateHandler={blockUpdateHandler}
+            blocks={chartBlocks}
+            SidebarBlockRender={SidebarBlockRender}
+            enableReorder={enableReorder}
+          />
+        </div>
+        <div
+          className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"
+          id="scroll-container"
+          onScroll={onScroll}
+        >
           {/* {currentView && currentView === "hours" && <HourChartView />} */}
           {/* {currentView && currentView === "day" && <DayChartView />} */}
           {/* {currentView && currentView === "week" && <WeekChartView />} */}
@@ -343,6 +317,19 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           {currentView && currentView === "month" && <MonthChartView />}
           {/* {currentView && currentView === "quarter" && <QuarterChartView />} */}
           {/* {currentView && currentView === "year" && <YearChartView />} */}
+
+          {/* blocks */}
+          {currentView && currentViewData && (
+            <GanttChartBlocks
+              itemsContainerWidth={itemsContainerWidth}
+              blocks={chartBlocks}
+              BlockRender={BlockRender}
+              blockUpdateHandler={blockUpdateHandler}
+              enableBlockLeftResize={enableBlockLeftResize}
+              enableBlockRightResize={enableBlockRightResize}
+              enableBlockMove={enableBlockMove}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ const useGanttChartViewIssues = (
   // all issues under the view
   const { data: ganttIssues, mutate: mutateGanttIssues } = useSWR(
     workspaceSlug && projectId && viewId
-      ? VIEW_ISSUES(viewId.toString(), { ...viewGanttParams, start_target_date: true })
+      ? VIEW_ISSUES(viewId.toString(), { ...viewGanttParams, order_by, start_target_date: true })
       : null,
     workspaceSlug && projectId && viewId
       ? () =>
