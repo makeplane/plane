@@ -106,6 +106,7 @@ function RadialProgressBar({ progress }: progress) {
     </div>
   );
 }
+
 export const SingleCycleList: React.FC<TSingleStatProps> = ({
   cycle,
   handleEditCycle,
