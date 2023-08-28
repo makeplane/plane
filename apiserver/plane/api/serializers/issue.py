@@ -113,7 +113,11 @@ class IssueCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
-        if data.get("start_date", None) is not None and data.get("target_date", None) is not None and data.get("start_date", None) > data.get("target_date", None):
+        if (
+            data.get("start_date", None) is not None
+            and data.get("target_date", None) is not None
+            and data.get("start_date", None) > data.get("target_date", None)
+        ):
             raise serializers.ValidationError("Start date cannot exceed target date")
         return data
 
@@ -554,9 +558,7 @@ class CommentReactionSerializer(BaseSerializer):
         read_only_fields = ["workspace", "project", "comment", "actor"]
 
 
-
 class IssueVoteSerializer(BaseSerializer):
-
     class Meta:
         model = IssueVote
         fields = ["issue", "vote", "workspace_id", "project_id", "actor"]
@@ -569,7 +571,6 @@ class IssueCommentSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     comment_reactions = CommentReactionLiteSerializer(read_only=True, many=True)
-
 
     class Meta:
         model = IssueComment
@@ -674,6 +675,29 @@ class IssueLiteSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class IssuePublicSerializer(BaseSerializer):
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+    state_detail = StateLiteSerializer(read_only=True, source="state")
+    issue_reactions = IssueReactionLiteSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "name",
+            "description_html",
+            "sequence_id",
+            "state",
+            "state_detail",
+            "project",
+            "project_detail",
+            "workspace",
+            "priority",
+            "target_date",
+        ]
+        read_only_fields = fields
 
 
 class IssueSubscriberSerializer(BaseSerializer):

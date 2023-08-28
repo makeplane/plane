@@ -28,6 +28,7 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import AllowAny
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -49,6 +50,7 @@ from plane.api.serializers import (
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
+    IssuePublicSerializer,
 )
 from plane.api.permissions import (
     WorkspaceEntityPermission,
@@ -769,7 +771,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
-            result = {item["state_group"]: item["state_count"] for item in state_distribution}
+            result = {
+                item["state_group"]: item["state_count"] for item in state_distribution
+            }
 
             serializer = IssueLiteSerializer(
                 sub_issues,
@@ -1567,7 +1571,8 @@ class IssueCommentPublicViewSet(BaseViewSet):
         except (IssueComment.DoesNotExist, ProjectDeployBoard.DoesNotExist):
             return Response(
                 {"error": "IssueComent Does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,)
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, slug, project_id, issue_id, pk):
         try:
@@ -1827,3 +1832,26 @@ class IssueVotePublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
+class IssueRetrievePublicViewSet(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, slug, project_id, issue_id):
+        try:
+            issue = Issue.objects.get(
+                workspace__slug=slug, project_id=project_id, issue_id=issue_id
+            )
+            serializer = IssuePublicSerializer(issue)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

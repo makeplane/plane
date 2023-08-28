@@ -85,6 +85,7 @@ from .issue import (
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
     IssueVotePublicViewSet,
+    IssueRetrievePublicViewSet,
 )
 
 from .auth_extended import (
