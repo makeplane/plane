@@ -85,4 +85,9 @@ class Migration(migrations.Migration):
             name='workspace',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='issue_properties', to='db.workspace'),
         ),
+        migrations.AddField(
+            model_name='issue',
+            name='issue_properties',
+            field=models.JSONField(default=None, null=True),
+        ),
     ]
