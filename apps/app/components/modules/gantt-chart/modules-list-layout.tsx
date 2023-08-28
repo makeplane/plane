@@ -85,8 +85,8 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
         loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        sidebarBlockRender={(data: any) => <ModuleGanttSidebarBlock module={data as IModule} />}
-        blockRender={(data: any) => <ModuleGanttBlock module={data as IModule} />}
+        SidebarBlockRender={ModuleGanttSidebarBlock}
+        BlockRender={ModuleGanttBlock}
       />
     </div>
   );

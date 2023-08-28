@@ -78,8 +78,8 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
         loaderTitle="Cycles"
         blocks={cycles ? blockFormat(cycles) : null}
         blockUpdateHandler={(block, payload) => handleCycleUpdate(block, payload)}
-        sidebarBlockRender={(data: any) => <CycleGanttSidebarBlock cycle={data as ICycle} />}
-        blockRender={(data: any) => <CycleGanttBlock cycle={data as ICycle} />}
+        SidebarBlockRender={CycleGanttSidebarBlock}
+        BlockRender={CycleGanttBlock}
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}

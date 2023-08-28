@@ -35,8 +35,8 @@ export const CycleIssuesGanttChartView = () => {
         blockUpdateHandler={(block, payload) =>
           updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())
         }
-        sidebarBlockRender={(data: any) => <IssueGanttSidebarBlock issue={data as IIssue} />}
-        blockRender={(data: any) => <IssueGanttBlock issue={data as IIssue} />}
+        SidebarBlockRender={IssueGanttSidebarBlock}
+        BlockRender={IssueGanttBlock}
         enableReorder={orderBy === "sort_order"}
         bottomSpacing
       />

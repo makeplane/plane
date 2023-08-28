@@ -11,7 +11,7 @@ import { IBlockUpdateData, IGanttBlock } from "../types";
 export const GanttChartBlocks: FC<{
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
-  blockRender: (data: any) => React.ReactNode;
+  BlockRender: React.FC<any>;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -19,7 +19,7 @@ export const GanttChartBlocks: FC<{
 }> = ({
   itemsContainerWidth,
   blocks,
-  blockRender,
+  BlockRender,
   blockUpdateHandler,
   enableBlockLeftResize,
   enableBlockRightResize,
@@ -86,7 +86,7 @@ export const GanttChartBlocks: FC<{
               >
                 <ChartDraggable
                   block={block}
-                  blockRender={blockRender}
+                  BlockRender={BlockRender}
                   handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
                   enableBlockLeftResize={enableBlockLeftResize}
                   enableBlockRightResize={enableBlockRightResize}

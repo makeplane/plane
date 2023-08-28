@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 // hooks
 import useIssuesView from "hooks/use-issues-view";
@@ -9,10 +8,6 @@ import { updateGanttIssue } from "components/gantt-chart/hooks/block-update";
 // components
 import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
 import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
-// icons
-import { getStateGroupIcon } from "components/icons";
-// helpers
-import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
@@ -39,8 +34,8 @@ export const IssueGanttChartView = () => {
         blockUpdateHandler={(block, payload) =>
           updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())
         }
-        blockRender={(data: any) => <IssueGanttBlock issue={data as IIssue} />}
-        sidebarBlockRender={(data: any) => <IssueGanttSidebarBlock issue={data as IIssue} />}
+        BlockRender={IssueGanttBlock}
+        SidebarBlockRender={IssueGanttSidebarBlock}
         enableReorder={orderBy === "sort_order"}
         bottomSpacing
       />

@@ -10,14 +10,14 @@ import { getDateRangeStatus, renderShortDate } from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
 
-export const CycleGanttBlock = ({ cycle }: { cycle: ICycle }) => {
+export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const cycleStatus = getDateRangeStatus(cycle?.start_date, cycle?.end_date);
+  const cycleStatus = getDateRangeStatus(data?.start_date, data?.end_date);
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${cycle?.project}/cycles/${cycle?.id}`}>
+    <Link href={`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`}>
       <a
         className="flex items-center relative h-full w-full rounded"
         style={{
@@ -37,17 +37,16 @@ export const CycleGanttBlock = ({ cycle }: { cycle: ICycle }) => {
         <Tooltip
           tooltipContent={
             <div className="space-y-1">
-              <h5>{cycle?.name}</h5>
+              <h5>{data?.name}</h5>
               <div>
-                {renderShortDate(cycle?.start_date ?? "")} to{" "}
-                {renderShortDate(cycle?.end_date ?? "")}
+                {renderShortDate(data?.start_date ?? "")} to {renderShortDate(data?.end_date ?? "")}
               </div>
             </div>
           }
           position="top-left"
         >
           <div className="relative text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
-            {cycle?.name}
+            {data?.name}
           </div>
         </Tooltip>
       </a>
@@ -55,14 +54,14 @@ export const CycleGanttBlock = ({ cycle }: { cycle: ICycle }) => {
   );
 };
 
-export const CycleGanttSidebarBlock = ({ cycle }: { cycle: ICycle }) => {
+export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const cycleStatus = getDateRangeStatus(cycle?.start_date, cycle?.end_date);
+  const cycleStatus = getDateRangeStatus(data?.start_date, data?.end_date);
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${cycle?.project}/cycles/${cycle?.id}`}>
+    <Link href={`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`}>
       <a className="relative w-full flex items-center gap-2 h-full">
         <ContrastIcon
           className="h-5 w-5 flex-shrink-0"
@@ -78,7 +77,7 @@ export const CycleGanttSidebarBlock = ({ cycle }: { cycle: ICycle }) => {
               : ""
           }`}
         />
-        <h6 className="text-sm font-medium flex-grow truncate">{cycle?.name}</h6>
+        <h6 className="text-sm font-medium flex-grow truncate">{data?.name}</h6>
       </a>
     </Link>
   );

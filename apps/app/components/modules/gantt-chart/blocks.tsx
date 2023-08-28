@@ -10,31 +10,31 @@ import { IModule } from "types";
 // constants
 import { MODULE_STATUS } from "constants/module";
 
-export const ModuleGanttBlock = ({ module }: { module: IModule }) => {
+export const ModuleGanttBlock = ({ data }: { data: IModule }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${module?.project}/modules/${module?.id}`}>
+    <Link href={`/${workspaceSlug}/projects/${data?.project}/modules/${data?.id}`}>
       <a
         className="relative flex items-center w-full h-full rounded"
-        style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === module?.status)?.color }}
+        style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data?.status)?.color }}
       >
         <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
         <Tooltip
           tooltipContent={
             <div className="space-y-1">
-              <h5>{module?.name}</h5>
+              <h5>{data?.name}</h5>
               <div>
-                {renderShortDate(module?.start_date ?? "")} to{" "}
-                {renderShortDate(module?.target_date ?? "")}
+                {renderShortDate(data?.start_date ?? "")} to{" "}
+                {renderShortDate(data?.target_date ?? "")}
               </div>
             </div>
           }
           position="top-left"
         >
           <div className="relative text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
-            {module?.name}
+            {data?.name}
           </div>
         </Tooltip>
       </a>
@@ -42,14 +42,14 @@ export const ModuleGanttBlock = ({ module }: { module: IModule }) => {
   );
 };
 
-export const ModuleGanttSidebarBlock = ({ module }: { module: IModule }) => {
+export const ModuleGanttSidebarBlock = ({ data }: { data: IModule }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${module?.project}/issues/${module?.id}`}>
+    <Link href={`/${workspaceSlug}/projects/${data?.project}/modules/${data.id}`}>
       <a className="relative w-full flex items-center gap-2 h-full">
-        <h6 className="text-sm font-medium flex-grow truncate">{module?.name}</h6>
+        <h6 className="text-sm font-medium flex-grow truncate">{data.name}</h6>
       </a>
     </Link>
   );

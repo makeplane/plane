@@ -36,8 +36,8 @@ export const ViewIssuesGanttChartView: FC<Props> = ({}) => {
         blockUpdateHandler={(block, payload) =>
           updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())
         }
-        sidebarBlockRender={(data: any) => <IssueGanttSidebarBlock issue={data} />}
-        blockRender={(data: any) => <IssueGanttBlock issue={data as IIssue} />}
+        SidebarBlockRender={IssueGanttSidebarBlock}
+        BlockRender={IssueGanttBlock}
       />
     </div>
   );

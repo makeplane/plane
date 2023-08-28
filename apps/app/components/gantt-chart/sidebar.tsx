@@ -14,7 +14,7 @@ type Props = {
   title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
-  sidebarBlockRender: (data: any) => React.ReactNode;
+  SidebarBlockRender: React.FC<any>;
   enableReorder: boolean;
 };
 
@@ -22,7 +22,7 @@ export const GanttSidebar: React.FC<Props> = ({
   title,
   blockUpdateHandler,
   blocks,
-  sidebarBlockRender,
+  SidebarBlockRender,
   enableReorder,
 }) => {
   const { activeBlock, dispatch } = useChart();
@@ -124,7 +124,7 @@ export const GanttSidebar: React.FC<Props> = ({
                               <EllipsisVerticalIcon className="h-4 -ml-5" />
                             </button>
                             <div className="flex-grow truncate w-full h-full">
-                              {sidebarBlockRender(block.data)}
+                              <SidebarBlockRender data={block.data} />
                             </div>
                           </div>
                         </div>
