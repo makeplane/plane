@@ -306,11 +306,11 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
             # Filter for snoozed notifications
             if snoozed:
                 notifications = notifications.filter(
-                    Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+                    Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
                 )
             else:
                 notifications = notifications.filter(
-                    Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
+                    Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 )
 
             # Filter for archived or unarchive
