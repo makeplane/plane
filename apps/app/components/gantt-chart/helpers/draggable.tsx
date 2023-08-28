@@ -170,8 +170,11 @@ export const ChartDraggable: React.FC<Props> = ({
   };
 
   // handle block x-axis move
-  const handleBlockMove = () => {
+  const handleBlockMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!enableBlockMove || !currentViewData || !resizableRef.current || !block.position) return;
+
+    e.preventDefault();
+    e.stopPropagation();
 
     setIsMoving(true);
 
