@@ -1,21 +1,12 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // react-hook-form
 import { useForm, Controller } from "react-hook-form";
-// ui
+// components
 import { SecondaryButton } from "components/ui";
+import { TipTapEditor } from "components/tiptap";
 // types
 import type { IIssueComment } from "types";
-// fetch-keys
-import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
-
-const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
-  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
-);
-
-TiptapEditor.displayName = "TiptapEditor";
 
 const defaultValues: Partial<IIssueComment> = {
   comment_json: "",
@@ -59,7 +50,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
             name="comment_html"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <TiptapEditor
+              <TipTapEditor
                 workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={
