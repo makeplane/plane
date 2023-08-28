@@ -665,7 +665,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
-                            <DiscordIcon className="h-4 w-4" color="#6b7280" />
+                            <DiscordIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
                             Join our Discord
                           </div>
                         </Command.Item>

@@ -2,17 +2,17 @@
 import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Icon } from "components/ui";
+// icons
+import { CloseFullscreen, East, OpenInFull } from "@mui/icons-material";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 import { TPeekOverviewModes } from "./layout";
-import { ArrowRightAlt, CloseFullscreen, East, OpenInFull } from "@mui/icons-material";
 
 type Props = {
   handleClose: () => void;
-  handleDeleteIssue: () => void;
-  issue: IIssue;
+  issue: IIssue | undefined;
   mode: TPeekOverviewModes;
   setMode: (mode: TPeekOverviewModes) => void;
   workspaceSlug: string;
@@ -39,7 +39,6 @@ const peekModes: {
 export const PeekOverviewHeader: React.FC<Props> = ({
   issue,
   handleClose,
-  handleDeleteIssue,
   mode,
   setMode,
   workspaceSlug,
@@ -47,12 +46,9 @@ export const PeekOverviewHeader: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const handleCopyLink = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const urlToCopy = window.location.href;
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`
-    ).then(() => {
+    copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
@@ -123,9 +119,9 @@ export const PeekOverviewHeader: React.FC<Props> = ({
           <button type="button" onClick={handleCopyLink} className="-rotate-45">
             <Icon iconName="link" />
           </button>
-          <button type="button" onClick={handleDeleteIssue}>
+          {/* <button type="button" onClick={handleDeleteIssue}>
             <Icon iconName="delete" />
-          </button>
+          </button> */}
         </div>
       )}
     </div>

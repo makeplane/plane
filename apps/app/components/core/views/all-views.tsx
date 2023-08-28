@@ -20,6 +20,7 @@ import {
   SpreadsheetView,
   GanttChartView,
 } from "components/core";
+import { IssuePeekOverview } from "components/issues";
 // ui
 import { EmptyState, Spinner } from "components/ui";
 // icons
@@ -96,109 +97,116 @@ export const AllViews: React.FC<Props> = ({
   );
 
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <StrictModeDroppable droppableId="trashBox">
-        {(provided, snapshot) => (
-          <div
-            className={`${
-              trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-            } fixed top-4 left-1/2 -translate-x-1/2 z-40 w-72 flex items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-              snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
-            } transition duration-300`}
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            <TrashIcon className="h-4 w-4" />
-            Drop here to delete the issue.
+    <>
+      <IssuePeekOverview
+        projectId={projectId?.toString() ?? ""}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        readOnly={disableUserActions}
+      />
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <StrictModeDroppable droppableId="trashBox">
+          {(provided, snapshot) => (
+            <div
+              className={`${
+                trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+              } fixed top-4 left-1/2 -translate-x-1/2 z-40 w-72 flex items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+                snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
+              } transition duration-300`}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <TrashIcon className="h-4 w-4" />
+              Drop here to delete the issue.
+            </div>
+          )}
+        </StrictModeDroppable>
+        {groupedIssues ? (
+          !isEmpty ||
+          issueView === "kanban" ||
+          issueView === "calendar" ||
+          issueView === "gantt_chart" ? (
+            <>
+              {issueView === "list" ? (
+                <AllLists
+                  states={states}
+                  addIssueToGroup={addIssueToGroup}
+                  handleIssueAction={handleIssueAction}
+                  openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
+                  removeIssue={removeIssue}
+                  disableUserActions={disableUserActions}
+                  user={user}
+                  userAuth={memberRole}
+                  viewProps={viewProps}
+                />
+              ) : issueView === "kanban" ? (
+                <AllBoards
+                  addIssueToGroup={addIssueToGroup}
+                  disableUserActions={disableUserActions}
+                  dragDisabled={dragDisabled}
+                  handleIssueAction={handleIssueAction}
+                  handleTrashBox={handleTrashBox}
+                  openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
+                  removeIssue={removeIssue}
+                  states={states}
+                  user={user}
+                  userAuth={memberRole}
+                  viewProps={viewProps}
+                />
+              ) : issueView === "calendar" ? (
+                <CalendarView
+                  handleIssueAction={handleIssueAction}
+                  addIssueToDate={addIssueToDate}
+                  disableUserActions={disableUserActions}
+                  user={user}
+                  userAuth={memberRole}
+                />
+              ) : issueView === "spreadsheet" ? (
+                <SpreadsheetView
+                  handleIssueAction={handleIssueAction}
+                  openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
+                  disableUserActions={disableUserActions}
+                  user={user}
+                  userAuth={memberRole}
+                />
+              ) : (
+                issueView === "gantt_chart" && <GanttChartView />
+              )}
+            </>
+          ) : router.pathname.includes("archived-issues") ? (
+            <EmptyState
+              title="Archived Issues will be shown here"
+              description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
+              image={emptyIssueArchive}
+              primaryButton={{
+                text: "Go to Automation Settings",
+                onClick: () => {
+                  router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
+                },
+              }}
+            />
+          ) : (
+            <EmptyState
+              title={emptyState.title}
+              description={emptyState.description}
+              image={emptyIssue}
+              primaryButton={
+                emptyState.primaryButton
+                  ? {
+                      icon: emptyState.primaryButton.icon,
+                      text: emptyState.primaryButton.text,
+                      onClick: emptyState.primaryButton.onClick,
+                    }
+                  : undefined
+              }
+              secondaryButton={emptyState.secondaryButton}
+            />
+          )
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Spinner />
           </div>
         )}
-      </StrictModeDroppable>
-      {groupedIssues ? (
-        !isEmpty ||
-        issueView === "kanban" ||
-        issueView === "calendar" ||
-        issueView === "gantt_chart" ? (
-          <>
-            {issueView === "list" ? (
-              <AllLists
-                states={states}
-                addIssueToGroup={addIssueToGroup}
-                handleIssueAction={handleIssueAction}
-                openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
-                removeIssue={removeIssue}
-                disableUserActions={disableUserActions}
-                user={user}
-                userAuth={memberRole}
-                viewProps={viewProps}
-              />
-            ) : issueView === "kanban" ? (
-              <AllBoards
-                addIssueToGroup={addIssueToGroup}
-                disableUserActions={disableUserActions}
-                dragDisabled={dragDisabled}
-                handleIssueAction={handleIssueAction}
-                handleTrashBox={handleTrashBox}
-                openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
-                removeIssue={removeIssue}
-                states={states}
-                user={user}
-                userAuth={memberRole}
-                viewProps={viewProps}
-              />
-            ) : issueView === "calendar" ? (
-              <CalendarView
-                handleIssueAction={handleIssueAction}
-                addIssueToDate={addIssueToDate}
-                disableUserActions={disableUserActions}
-                user={user}
-                userAuth={memberRole}
-              />
-            ) : issueView === "spreadsheet" ? (
-              <SpreadsheetView
-                handleIssueAction={handleIssueAction}
-                openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
-                disableUserActions={disableUserActions}
-                user={user}
-                userAuth={memberRole}
-              />
-            ) : (
-              issueView === "gantt_chart" && <GanttChartView />
-            )}
-          </>
-        ) : router.pathname.includes("archived-issues") ? (
-          <EmptyState
-            title="Archived Issues will be shown here"
-            description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
-            image={emptyIssueArchive}
-            primaryButton={{
-              text: "Go to Automation Settings",
-              onClick: () => {
-                router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
-              },
-            }}
-          />
-        ) : (
-          <EmptyState
-            title={emptyState.title}
-            description={emptyState.description}
-            image={emptyIssue}
-            primaryButton={
-              emptyState.primaryButton
-                ? {
-                    icon: emptyState.primaryButton.icon,
-                    text: emptyState.primaryButton.text,
-                    onClick: emptyState.primaryButton.onClick,
-                  }
-                : undefined
-            }
-            secondaryButton={emptyState.secondaryButton}
-          />
-        )
-      ) : (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
-        </div>
-      )}
-    </DragDropContext>
+      </DragDropContext>
+    </>
   );
 };
