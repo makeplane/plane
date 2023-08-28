@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 // components
 import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
-import { CustomMenu, Icon, Spinner } from "components/ui";
+import { CustomMenu, Spinner } from "components/ui";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
