@@ -115,14 +115,16 @@ export const GanttSidebar: React.FC<Props> = ({
                               activeBlock?.id === block.id ? "bg-custom-background-80" : ""
                             }`}
                           >
-                            <button
-                              type="button"
-                              className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
-                              {...provided.dragHandleProps}
-                            >
-                              <EllipsisVerticalIcon className="h-4" />
-                              <EllipsisVerticalIcon className="h-4 -ml-5" />
-                            </button>
+                            {enableReorder && (
+                              <button
+                                type="button"
+                                className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
+                                {...provided.dragHandleProps}
+                              >
+                                <EllipsisVerticalIcon className="h-4" />
+                                <EllipsisVerticalIcon className="h-4 -ml-5" />
+                              </button>
+                            )}
                             <div className="flex-grow truncate w-full h-full">
                               <SidebarBlockRender data={block.data} />
                             </div>

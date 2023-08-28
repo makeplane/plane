@@ -226,13 +226,13 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       } flex h-full flex-col rounded-sm select-none bg-custom-background-100 shadow`}
     >
       {/* chart header */}
-      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap p-2">
+      <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2">
         {title && (
           <div className="text-lg font-medium flex gap-2 items-center">
             <div>{title}</div>
-            <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-custom-text-100">
+            {/* <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-custom-text-100">
               Gantt View Beta
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -252,7 +252,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             allViews.map((_chatView: any, _idx: any) => (
               <div
                 key={_chatView?.key}
-                className={`cursor-pointer rounded-sm border border-custom-border-200 p-1 px-2 text-xs ${
+                className={`cursor-pointer rounded-sm p-1 px-2 text-xs ${
                   currentView === _chatView?.key
                     ? `bg-custom-background-80`
                     : `hover:bg-custom-background-90`
@@ -266,7 +266,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
         <div className="flex items-center gap-1">
           <div
-            className={`cursor-pointer rounded-sm border border-custom-border-200 p-1 px-2 text-xs hover:bg-custom-background-80`}
+            className="cursor-pointer rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
             onClick={handleToday}
           >
             Today
