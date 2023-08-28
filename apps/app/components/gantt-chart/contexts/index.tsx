@@ -24,7 +24,7 @@ const chartReducer = (
   }
 };
 
-const initialView = "month";
+const initialView = "year";
 
 export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useState<ChartContextData>({

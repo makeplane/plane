@@ -10,7 +10,7 @@ import { GanttSidebar } from "../sidebar";
 // import { BiWeekChartView } from "./bi-week";
 import { MonthChartView } from "./month";
 // import { QuarterChartView } from "./quarter";
-// import { YearChartView } from "./year";
+import { YearChartView } from "./year";
 // views
 import {
   // generateHourChart,
@@ -105,8 +105,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     if (selectedCurrentView === "month")
       currentRender = generateMonthChart(selectedCurrentViewData, side);
     // if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
-    // if (selectedCurrentView === "year")
-    //   currentRender = generateYearChart(selectedCurrentViewData, side);
+    if (selectedCurrentView === "year")
+      currentRender = generateYearChart(selectedCurrentViewData, side);
 
     // updating the prevData, currentData and nextData
     if (currentRender.payload.length > 0) {
@@ -316,7 +316,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           {/* {currentView && currentView === "bi_week" && <BiWeekChartView />} */}
           {currentView && currentView === "month" && <MonthChartView />}
           {/* {currentView && currentView === "quarter" && <QuarterChartView />} */}
-          {/* {currentView && currentView === "year" && <YearChartView />} */}
+          {currentView && currentView === "year" && <YearChartView />}
 
           {/* blocks */}
           {currentView && currentViewData && (

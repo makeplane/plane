@@ -5,7 +5,33 @@ import { weeks, months } from "../data";
 // helpers
 import { getDatesBetweenTwoDates, getWeeksByMonthAndYear } from "./helpers";
 
-const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number) => {
+interface IYearChild {
+  active: boolean;
+  date: Date;
+  day: number;
+  dayData: {
+    key: number;
+    shortTitle: string;
+    title: string;
+  };
+  title: string;
+  today: boolean;
+  weekNumber: number;
+}
+export interface IYearBlock {
+  children: IYearChild[];
+  month: number;
+  monthData: {
+    key: number;
+    shortTitle: string;
+    title: string;
+  };
+  title: string;
+  year: number;
+}
+[];
+
+const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number): IYearBlock => {
   const currentMonth: number = month;
   const currentYear: number = year;
   const today = new Date();

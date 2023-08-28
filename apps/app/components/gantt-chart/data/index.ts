@@ -123,17 +123,17 @@ export const allViewsWithData: ChartDataType[] = [
   //     width: 100, // it will preview week starting dates all months data and there is 3 months limitation for preview ex: title (2, 9, 16, 23, 30)
   //   },
   // },
-  // {
-  //   key: "year",
-  //   title: "Year",
-  //   data: {
-  //     startDate: new Date(),
-  //     currentDate: new Date(),
-  //     endDate: new Date(),
-  //     approxFilterRange: 10,
-  //     width: 80, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
-  //   },
-  // },
+  {
+    key: "year",
+    title: "Year",
+    data: {
+      startDate: new Date(),
+      currentDate: new Date(),
+      endDate: new Date(),
+      approxFilterRange: 10,
+      width: 55, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
+    },
+  },
 ];
 
 export const currentViewDataWithView = (view: string = "month") => {
