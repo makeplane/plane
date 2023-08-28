@@ -167,7 +167,7 @@ from plane.api.views import (
     ## End Notification
     # Public Boards
     ProjectDeployBoardViewSet,
-    ProjectDeployBoardIssuesPublicEndpoint,
+    ProjectIssuesPublicEndpoint,
     ProjectDeployBoardPublicSettingsEndpoint,
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
@@ -1525,7 +1525,7 @@ urlpatterns = [
     ),
     path(
         "public/workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/",
-        ProjectDeployBoardIssuesPublicEndpoint.as_view(),
+        ProjectIssuesPublicEndpoint.as_view(),
         name="project-deploy-board",
     ),
     path(

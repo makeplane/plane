@@ -12,7 +12,6 @@ from .project import (
     ProjectUserViewsEndpoint,
     ProjectMemberUserEndpoint,
     ProjectFavoritesViewSet,
-    ProjectDeployBoardIssuesPublicEndpoint,
     ProjectDeployBoardViewSet,
     ProjectDeployBoardPublicSettingsEndpoint,
     ProjectMemberEndpoint,
@@ -86,6 +85,7 @@ from .issue import (
     CommentReactionPublicViewSet,
     IssueVotePublicViewSet,
     IssueRetrievePublicViewSet,
+    ProjectIssuesPublicEndpoint,
 )
 
 from .auth_extended import (
