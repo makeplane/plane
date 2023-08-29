@@ -155,10 +155,11 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   table {
     border-collapse: collapse;
     table-layout: fixed;
+    margin: 0;
+    margin-bottom: 2rem;
     border: 2px solid rgb(var(--color-border-100));
     border-radius: 10px;
     width: 100%;
-    margin: 0;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 
     td,

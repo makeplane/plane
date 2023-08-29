@@ -1,94 +1,82 @@
-import { BubbleMenu, BubbleMenuProps } from "@tiptap/react";
-import { FC, useState, useEffect } from "react";
-import { Rows, Columns, BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
-
+import { useState, useEffect } from "react";
+import { Rows, Columns } from "lucide-react";
 import { cn } from "../utils";
-import { ToggleOn } from "@mui/icons-material";
 
-export interface TableMenuItem {
+interface TableMenuItem {
   name: string;
-  isActive?: () => boolean;
   command: () => void;
-  icon: typeof Rows;
+  icon: any;
 }
 
-type EditorTableMenuProps = Omit<BubbleMenuProps, "children">;
+const findTableAncestor = (node: Node | null): HTMLTableElement | null => {
+  while (node !== null && node.nodeName !== "TABLE") {
+    node = node.parentNode;
+  }
+  return node as HTMLTableElement;
+};
 
-export const TableMenu: FC<EditorTableMenuProps> = (props: any) => {
+export const TableMenu = ({ editor }: { editor: any }) => {
+  const [tableLocation, setTableLocation] = useState(0);
   const items: TableMenuItem[] = [
     {
-      name: "Add Column to Right",
-      command: () => props.editor?.chain().focus().addColumnAfter().run(),
+      name: "Insert column right",
+      command: () => editor.chain().focus().addColumnBefore().run(),
       icon: Columns,
     },
     {
-      name: "Toggle table header",
-      command: () => props.editor?.chain().focus().toggleHeaderRow().run(),
-      icon: ToggleOn,
-    },
-    {
-      name: "Add Column to Left",
-      command: () => props.editor?.chain().focus().addColumnBefore().run(),
-      icon: Columns,
-    },
-    {
-      name: "Add Row to Top",
-      command: () => props.editor?.chain().focus().addRowBefore().run(),
-      icon: Rows,
-    },
-    {
-      name: "Add Row Below",
-      command: () => props.editor?.chain().focus().addRowAfter().run(),
+      name: "Insert row below",
+      command: () => editor.chain().focus().addRowAfter().run(),
       icon: Rows,
     },
     {
       name: "Delete Column",
-      command: () => props.editor?.chain().focus().deleteColumn().run(),
+      command: () => editor.chain().focus().deleteColumn().run(),
       icon: Columns,
     },
     {
       name: "Delete Rows",
-      command: () => props.editor?.chain().focus().deleteRow().run(),
+      command: () => editor.chain().focus().deleteRow().run(),
       icon: Rows,
     }
   ];
 
-  const tableMenuProps: EditorTableMenuProps = {
-    ...props,
-    shouldShow: ({ editor }) => {
-      if (!editor.isEditable) {
-        return false;
+  useEffect(() => {
+    const handleWindowClick = () => {
+      const selection: any = window.getSelection();
+      const range = selection.getRangeAt(0);
+      const tableNode = findTableAncestor(range.startContainer);
+      if (tableNode) {
+        const tableBottom = tableNode.getBoundingClientRect().bottom;
+        tableLocation !== tableBottom && setTableLocation(tableBottom);
       }
-      if (editor?.isActive("table")) {
-        return true;
-      }
-    },
-    tippyOptions: {
-      moveTransition: "transform 0.15s ease-out",
-    },
-  };
+    };
+
+    window.addEventListener("click", handleWindowClick);
+
+    return () => {
+      window.removeEventListener("click", handleWindowClick);
+    };
+  }, [tableLocation]);
 
   return (
-    <BubbleMenu
-      {...tableMenuProps}
-      className="flex w-fit divide-x divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
+    <section
+      className="fixed left-2/4 transform -translate-x-2/4 overflow-hidden rounded border border-stone-200 bg-white shadow-xl"
+      style={{ bottom: `calc(100vh - ${tableLocation + 50}px)` }}
     >
-      <div className="flex">
-        {items.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={item.command}
-            className={cn(
-              "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"
-            )}
-          >
-            <item.icon
-              className={cn("h-4 w-4")}
-            />
-          </button>
-        ))}
-      </div>
-    </BubbleMenu>
+      {items.map((item, index) => (
+        <button
+          key={index}
+          onClick={item.command}
+          className="p-2 text-stone-600 hover:bg-stone-100 active:bg-stone-200"
+          title={item.name}
+        >
+          <item.icon
+            className={cn("h-5 w-5 text-lg", {
+              "text-red-600": item.name.includes("Delete"),
+            })}
+          />
+        </button>
+      ))}
+    </section>
   );
 };

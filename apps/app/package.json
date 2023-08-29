@@ -16,7 +16,6 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^2.0.12",
     "@jitsu/nextjs": "^3.1.5",
-    "@mdi/js": "^7.2.96",
     "@mui/icons-material": "^5.14.1",
     "@mui/material": "^5.14.1",
     "@nivo/bar": "0.80.0",
