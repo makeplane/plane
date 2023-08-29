@@ -2,13 +2,14 @@ import { useRouter } from "next/router";
 
 // ui
 import { Tooltip } from "components/ui";
+// icons
+import { ModuleStatusIcon } from "components/icons";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 // constants
 import { MODULE_STATUS } from "constants/module";
-import { ModuleStatusIcon } from "components/icons";
 
 export const ModuleGanttBlock = ({ data }: { data: IModule }) => {
   const router = useRouter();
