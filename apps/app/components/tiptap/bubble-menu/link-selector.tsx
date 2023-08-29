@@ -7,10 +7,11 @@ interface LinkSelectorProps {
   editor: Editor;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setisTableSelected: Dispatch<SetStateAction<boolean>>;
 }
 
 
-export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen }) => {
+export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen, setisTableSelected }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onLinkSubmit = useCallback(() => {
@@ -36,6 +37,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
         )}
         onClick={() => {
           setIsOpen(!isOpen);
+          setisTableSelected(true);
         }}
       >
         <p className="text-base">↗</p>
@@ -52,7 +54,8 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
           className="fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 dow-xl animate-in fade-in slide-in-from-top-1"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              e.preventDefault(); onLinkSubmit();
+              e.preventDefault();
+              onLinkSubmit();
             }
           }}
         >

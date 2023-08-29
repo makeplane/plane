@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { startImageUpload } from "../plugins/upload-image";
 import { cn } from "../utils";
+import { findTableAncestor } from "../table-menu";
 
 interface CommandItemProps {
   title: string;
@@ -35,6 +36,20 @@ const Command = Extension.create({
   name: "slash-command",
   addOptions() {
     return {
+      isEnabled: () => {
+        if (typeof window !== "undefined") {
+          const selection: any = window?.getSelection();
+          if (selection.rangeCount !== 0) {
+            const range = selection.getRangeAt(0);
+            if (findTableAncestor(range.startContainer)) {
+              return false;
+            }
+            else {
+              return true;
+            }
+          }
+        }
+      },
       suggestion: {
         char: "/",
         command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
@@ -44,12 +59,15 @@ const Command = Extension.create({
     };
   },
   addProseMirrorPlugins() {
-    return [
-      Suggestion({
-        editor: this.editor,
-        ...this.options.suggestion,
-      }),
-    ];
+    if (this.options.isEnabled()) {
+      return [
+        Suggestion({
+          editor: this.editor,
+          ...this.options.suggestion,
+        }),
+      ];
+    }
+    return [];
   },
 });
 
@@ -61,7 +79,6 @@ const getSuggestionItems = (workspaceSlug: string, setIsSubmitting?: (isSubmitti
       searchTerms: ["p", "paragraph"],
       icon: <Text size={18} />,
       command: ({ editor, range }: CommandProps) => {
-        console.log("focused")
         editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
       },
     },

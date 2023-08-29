@@ -156,7 +156,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     border-collapse: collapse;
     table-layout: fixed;
     margin: 0;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     border: 2px solid rgb(var(--color-border-100));
     width: 100%;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);

@@ -5,6 +5,7 @@ import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from
 import { NodeSelector } from "./node-selector";
 import { LinkSelector } from "./link-selector";
 import { cn } from "../utils";
+import { findTableAncestor } from "../table-menu";
 
 export interface BubbleMenuItem {
   name: string;
@@ -16,6 +17,7 @@ export interface BubbleMenuItem {
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
+  const [isTableSelected, setisTableSelected] = useState(false)
   const items: BubbleMenuItem[] = [
     {
       name: "bold",
@@ -58,6 +60,15 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
       if (editor.isActive("image")) {
         return false;
       }
+      const selection: any = window?.getSelection();
+      if (selection.rangeCount !== 0) {
+        const range = selection.getRangeAt(0);
+        if (findTableAncestor(range.startContainer)) {
+          setisTableSelected(true)
+        } else {
+          setisTableSelected(false)
+        }
+      }
       return editor.view.state.selection.content().size > 0;
     },
     tippyOptions: {
@@ -77,22 +88,23 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
       {...bubbleMenuProps}
       className="flex w-fit divide-x divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
     >
-      <NodeSelector
+      {!isTableSelected && <NodeSelector
         editor={props.editor!}
         isOpen={isNodeSelectorOpen}
         setIsOpen={() => {
           setIsNodeSelectorOpen(!isNodeSelectorOpen);
           setIsLinkSelectorOpen(false);
         }}
-      />
-      <LinkSelector
+      />}
+      {!isTableSelected && <LinkSelector
+        setisTableSelected={setisTableSelected}
         editor={props.editor!!}
         isOpen={isLinkSelectorOpen}
         setIsOpen={() => {
           setIsLinkSelectorOpen(!isLinkSelectorOpen);
           setIsNodeSelectorOpen(false);
         }}
-      />
+      />}
       <div className="flex">
         {items.map((item, index) => (
           <button

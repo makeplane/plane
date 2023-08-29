@@ -8,7 +8,7 @@ interface TableMenuItem {
   icon: any;
 }
 
-const findTableAncestor = (node: Node | null): HTMLTableElement | null => {
+export const findTableAncestor = (node: Node | null): HTMLTableElement | null => {
   while (node !== null && node.nodeName !== "TABLE") {
     node = node.parentNode;
   }
@@ -66,14 +66,14 @@ export const TableMenu = ({ editor }: { editor: any }) => {
 
   return (
     <section
-      className="fixed left-2/4 transform -translate-x-2/4 overflow-hidden rounded border border-stone-200 bg-white shadow-xl"
-      style={{ bottom: `calc(100vh - ${tableLocation + 50}px)` }}
+      className="fixed left-2/4 transform -translate-x-2/4 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
+      style={{ bottom: `calc(100vh - ${tableLocation + 45}px)` }}
     >
       {items.map((item, index) => (
         <button
           key={index}
           onClick={item.command}
-          className="p-2 text-stone-600 hover:bg-stone-100 active:bg-stone-200"
+          className="p-2 text-custom-text-200 hover:bg-text-custom-text-100 hover:bg-custom-primary-100/10 active:bg-custom-background-100"
           title={item.name}
         >
           <item.icon
