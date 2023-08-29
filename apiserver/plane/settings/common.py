@@ -49,6 +49,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
+    "plane.middleware.timezone_middleware.TimezoneMiddleware",
 ]
 
 REST_FRAMEWORK = {
@@ -161,7 +162,7 @@ MEDIA_URL = "/media/"
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Asia/Kolkata"
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
