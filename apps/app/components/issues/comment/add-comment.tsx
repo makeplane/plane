@@ -22,14 +22,14 @@ type Props = {
 
 const commentAccess = [
   {
-    icon: "public",
-    key: "EXTERNAL",
-    label: "Public",
-  },
-  {
     icon: "lock",
     key: "INTERNAL",
     label: "Private",
+  },
+  {
+    icon: "public",
+    key: "EXTERNAL",
+    label: "Public",
   },
 ];
 
