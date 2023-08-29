@@ -79,15 +79,8 @@ export const SidePeekView: React.FC<Props> = ({
         <Loader.Item height="30px" />
         <div className="space-y-2 mt-3">
           <Loader.Item height="20px" width="70%" />
-          <Loader.Item height="20px" width="70%" />
-        </div>
-        <div className="mt-6">
-          <Loader.Item height="70px" />
-        </div>
-        <div className="space-y-4 mt-10">
-          <Loader.Item height="30px" width="50%" />
-          <Loader.Item height="30px" width="50%" />
-          <Loader.Item height="30px" width="50%" />
+          <Loader.Item height="20px" width="60%" />
+          <Loader.Item height="20px" width="60%" />
         </div>
       </Loader>
     )}

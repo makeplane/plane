@@ -1,9 +1,7 @@
 // mobx
 import { action, observable, runInAction, makeAutoObservable } from "mobx";
-
 // services
 import issueService from "services/issues.service";
-
 // types
 import type { ICurrentUserResponse, IIssue } from "types";
 
@@ -65,7 +63,7 @@ class IssuesStore {
 
       const issues = {
         ...this.issues,
-        [issueResponse.id]: { ...issueResponse },
+        [issueId]: { ...issueResponse },
       };
 
       runInAction(() => {
@@ -77,16 +75,6 @@ class IssuesStore {
       throw error;
     }
   };
-
-  /**
-   * For provided query, this function returns all issues that contain query in their name from the issues store.
-   * @param query - query string
-   * @returns {IIssue[]} array of issues that contain query in their name
-   * @example
-   * getFilteredIssues("issue") // [{ id: "", name: "issue", description: "", parent: null }]
-   */
-  // getFilteredIssues = (query: string): IIssue[] =>
-  //   this.issues.filter((i) => i.name.includes(query));
 
   createIssue = async (
     workspaceSlug: string,
@@ -124,15 +112,18 @@ class IssuesStore {
     issueForm: Partial<IIssue>,
     user: ICurrentUserResponse
   ) => {
-    // immediately update the issue in the store
-    const issues = { ...this.issues };
-    issues[issueId] = { ...this.issues[issueId], ...issueForm };
+    // keep a copy of the issue in the store
+    const originalIssue = { ...this.issues[issueId] };
 
-    runInAction(() => {
-      this.issues = issues;
-    });
+    // immediately update the issue in the store
+    let updatedIssue = { ...this.issues[issueId] };
+    updatedIssue = { ...updatedIssue, ...issueForm };
 
     try {
+      runInAction(() => {
+        this.issues[issueId] = updatedIssue;
+      });
+
       // make a patch request to update the issue
       const issueResponse: IIssue = await issueService.patchIssue(
         workspaceSlug,
@@ -149,6 +140,11 @@ class IssuesStore {
         this.issues = updatedIssues;
       });
     } catch (error) {
+      // if there is an error, revert the changes
+      runInAction(() => {
+        this.issues[issueId] = originalIssue;
+      });
+
       return error;
     }
   };
@@ -159,15 +155,15 @@ class IssuesStore {
     issueId: string,
     user: ICurrentUserResponse
   ) => {
+    const issues = { ...this.issues };
+    delete issues[issueId];
+
     try {
-      issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
-
-      const issues = { ...this.issues };
-      delete issues[issueId];
-
       runInAction(() => {
         this.issues = issues;
       });
+
+      issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
     } catch (error) {
       console.error("Deleting issue error", error);
     }
