@@ -1497,6 +1497,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 .get_queryset()
                 .filter(workspace__slug=self.kwargs.get("slug"))
                 .filter(issue_id=self.kwargs.get("issue_id"))
+                .filter(access="EXTERNAL")
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("issue")
