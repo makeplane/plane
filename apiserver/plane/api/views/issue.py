@@ -493,6 +493,12 @@ class IssueActivityEndpoint(BaseAPIView):
                 .filter(project__project_projectmember__member=self.request.user)
                 .order_by("created_at")
                 .select_related("actor", "issue", "project", "workspace")
+                .prefetch_related(
+                    Prefetch(
+                        "comment_reactions",
+                        queryset=CommentReaction.objects.select_related("actor"),
+                    )
+                )
             )
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
