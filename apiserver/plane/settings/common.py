@@ -49,8 +49,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "plane.middleware.timezone_middleware.TimezoneMiddleware",
-]
+ ]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
