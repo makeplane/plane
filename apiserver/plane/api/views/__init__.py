@@ -55,7 +55,7 @@ from .workspace import (
     WorkspaceMembersEndpoint,
 )
 from .state import StateViewSet
-from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
+from .view import WorkspaceViewViewSet, WorkspaceViewIssuesEndpoint, IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,

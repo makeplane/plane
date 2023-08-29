@@ -98,6 +98,8 @@ from plane.api.views import (
     BulkEstimatePointEndpoint,
     ## End Estimates
     # Views
+    WorkspaceViewViewSet,
+    WorkspaceViewIssuesEndpoint,
     IssueViewViewSet,
     ViewIssuesEndpoint,
     IssueViewFavoriteViewSet,
@@ -632,6 +634,33 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:view_id>/issues/",
         ViewIssuesEndpoint.as_view(),
         name="project-view-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/views/",
+        WorkspaceViewViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="workspace-view",
+    ),
+    path(
+        "workspaces/<str:slug>/views/<uuid:pk>/",
+        WorkspaceViewViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-view",
+    ),
+    path(
+        "workspaces/<str:slug>/views/<uuid:view_id>/issues/",
+        WorkspaceViewIssuesEndpoint.as_view(),
+        name="workspace-view-issues",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",

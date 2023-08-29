@@ -3,7 +3,30 @@ from django.db import models
 from django.conf import settings
 
 # Module import
-from . import ProjectBaseModel
+from . import ProjectBaseModel, BaseModel
+
+
+class WorkspaceView(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_views"
+    )
+    name = models.CharField(max_length=255, verbose_name="View Name")
+    description = models.TextField(verbose_name="View Description", blank=True)
+    query = models.JSONField(verbose_name="View Query")
+    access = models.PositiveSmallIntegerField(
+        default=1, choices=((0, "Private"), (1, "Public"))
+    )
+    query_data = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Workspace View"
+        verbose_name_plural = "Workspace Views"
+        db_table = "workspace_views"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return name of the View"""
+        return f"{self.name} <{self.workspace.name}>"
 
 
 class IssueView(ProjectBaseModel):

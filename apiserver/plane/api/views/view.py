@@ -10,18 +10,88 @@ from sentry_sdk import capture_exception
 # Module imports
 from . import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
+    WorkspaceViewSerializer,
     IssueViewSerializer,
     IssueLiteSerializer,
     IssueViewFavoriteSerializer,
 )
-from plane.api.permissions import ProjectEntityPermission
+from plane.api.permissions import WorkspaceEntityPermission, ProjectEntityPermission
 from plane.db.models import (
+    Workspace,
+    WorkspaceView,
     IssueView,
     Issue,
     IssueViewFavorite,
     IssueReaction,
 )
 from plane.utils.issue_filters import issue_filters
+
+
+class WorkspaceViewViewSet(BaseViewSet):
+    serializer_class = WorkspaceViewSerializer
+    model = WorkspaceView
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def perform_create(self, serializer):
+        workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
+        serializer.save(workspace_id=workspace.id)
+
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace")
+            .order_by("-created_at")
+            .distinct()
+        )
+
+
+class WorkspaceViewIssuesEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug, view_id):
+        try:
+            view = WorkspaceView.objects.get(pk=view_id)
+            queries = view.query
+
+            filters = issue_filters(request.query_params, "GET")
+
+            issues = (
+                Issue.issue_objects.filter(
+                    **queries,
+                    workspace__slug=slug,
+                )
+                .filter(**filters)
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "issue_reactions",
+                        queryset=IssueReaction.objects.select_related("actor"),
+                    )
+                )
+            )
+
+            serializer = IssueLiteSerializer(issues, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except WorkspaceView.DoesNotExist:
+            return Response(
+                {"error": "Workspace View does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class IssueViewViewSet(BaseViewSet):

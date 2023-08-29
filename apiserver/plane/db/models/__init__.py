@@ -48,7 +48,7 @@ from .state import State
 
 from .cycle import Cycle, CycleIssue, CycleFavorite
 
-from .view import IssueView, IssueViewFavorite
+from .view import WorkspaceView, IssueView, IssueViewFavorite
 
 from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 
