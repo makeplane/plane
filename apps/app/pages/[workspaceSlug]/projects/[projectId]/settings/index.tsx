@@ -183,9 +183,6 @@ const GeneralSettings: NextPage = () => {
         data={projectDetails ?? null}
         isOpen={Boolean(selectProject)}
         onClose={() => setSelectedProject(null)}
-        onSuccess={() => {
-          router.push(`/${workspaceSlug}/projects`);
-        }}
         user={user}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="p-8">

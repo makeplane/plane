@@ -31,18 +31,11 @@ import {
   SecondaryButton,
   ToggleSwitch,
 } from "components/ui";
+import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
-import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
-// rich-text-editor
-
-const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
-  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
-);
-
-TiptapEditor.displayName = "TiptapEditor";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -369,7 +362,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                       if (!value && !watch("description_html")) return <></>;
 
                       return (
-                        <TiptapEditor
+                        <TipTapEditor
                           workspaceSlug={workspaceSlug as string}
                           ref={editorRef}
                           debouncedUpdatesEnabled={false}

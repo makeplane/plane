@@ -1,8 +1,7 @@
 import { FC } from "react";
 
-// react-beautiful-dnd
-import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+// hooks
+import { useChart } from "../hooks";
 // helpers
 import { ChartDraggable } from "../helpers/draggable";
 import { renderDateFormat } from "helpers/date-time.helper";
@@ -12,90 +11,59 @@ import { IBlockUpdateData, IGanttBlock } from "../types";
 export const GanttChartBlocks: FC<{
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
-  sidebarBlockRender: FC;
-  blockRender: FC;
+  BlockRender: React.FC<any>;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  enableLeftDrag: boolean;
-  enableRightDrag: boolean;
-  enableReorder: boolean;
+  enableBlockLeftResize: boolean;
+  enableBlockRightResize: boolean;
+  enableBlockMove: boolean;
 }> = ({
   itemsContainerWidth,
   blocks,
-  sidebarBlockRender,
-  blockRender,
+  BlockRender,
   blockUpdateHandler,
-  enableLeftDrag,
-  enableRightDrag,
-  enableReorder,
+  enableBlockLeftResize,
+  enableBlockRightResize,
+  enableBlockMove,
 }) => {
-  const handleChartBlockPosition = (
-    block: IGanttBlock,
-    totalBlockShifts: number,
-    dragDirection: "left" | "right"
-  ) => {
-    let updatedDate = new Date();
+  const { activeBlock, dispatch } = useChart();
 
-    if (dragDirection === "left") {
-      const originalDate = new Date(block.start_date);
-
-      const currentDay = originalDate.getDate();
-      updatedDate = new Date(originalDate);
-
-      updatedDate.setDate(currentDay - totalBlockShifts);
-    } else {
-      const originalDate = new Date(block.target_date);
-
-      const currentDay = originalDate.getDate();
-      updatedDate = new Date(originalDate);
-
-      updatedDate.setDate(currentDay + totalBlockShifts);
-    }
-
-    blockUpdateHandler(block.data, {
-      [dragDirection === "left" ? "start_date" : "target_date"]: renderDateFormat(updatedDate),
+  // update the active block on hover
+  const updateActiveBlock = (block: IGanttBlock | null) => {
+    dispatch({
+      type: "PARTIAL_UPDATE",
+      payload: {
+        activeBlock: block,
+      },
     });
   };
 
-  const handleOrderChange = (result: DropResult) => {
-    if (!blocks) return;
+  const handleChartBlockPosition = (
+    block: IGanttBlock,
+    totalBlockShifts: number,
+    dragDirection: "left" | "right" | "move"
+  ) => {
+    const originalStartDate = new Date(block.start_date);
+    const updatedStartDate = new Date(originalStartDate);
 
-    const { source, destination, draggableId } = result;
+    const originalTargetDate = new Date(block.target_date);
+    const updatedTargetDate = new Date(originalTargetDate);
 
-    if (!destination) return;
-
-    if (source.index === destination.index && document) {
-      // const draggedBlock = document.querySelector(`#${draggableId}`) as HTMLElement;
-      // const blockStyles = window.getComputedStyle(draggedBlock);
-
-      // console.log(blockStyles.marginLeft);
-
-      return;
+    // update the start date on left resize
+    if (dragDirection === "left")
+      updatedStartDate.setDate(originalStartDate.getDate() - totalBlockShifts);
+    // update the target date on right resize
+    else if (dragDirection === "right")
+      updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
+    // update both the dates on x-axis move
+    else if (dragDirection === "move") {
+      updatedStartDate.setDate(originalStartDate.getDate() + totalBlockShifts);
+      updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
     }
 
-    let updatedSortOrder = blocks[source.index].sort_order;
-
-    if (destination.index === 0) updatedSortOrder = blocks[0].sort_order - 1000;
-    else if (destination.index === blocks.length - 1)
-      updatedSortOrder = blocks[blocks.length - 1].sort_order + 1000;
-    else {
-      const destinationSortingOrder = blocks[destination.index].sort_order;
-      const relativeDestinationSortingOrder =
-        source.index < destination.index
-          ? blocks[destination.index + 1].sort_order
-          : blocks[destination.index - 1].sort_order;
-
-      updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
-    }
-
-    const removedElement = blocks.splice(source.index, 1)[0];
-    blocks.splice(destination.index, 0, removedElement);
-
-    blockUpdateHandler(removedElement.data, {
-      sort_order: {
-        destinationIndex: destination.index,
-        newSortOrder: updatedSortOrder,
-        sourceIndex: source.index,
-      },
+    // call the block update handler with the updated dates
+    blockUpdateHandler(block.data, {
+      start_date: renderDateFormat(updatedStartDate),
+      target_date: renderDateFormat(updatedTargetDate),
     });
   };
 
@@ -104,75 +72,29 @@ export const GanttChartBlocks: FC<{
       className="relative z-[5] mt-[72px] h-full overflow-hidden overflow-y-auto"
       style={{ width: `${itemsContainerWidth}px` }}
     >
-      <DragDropContext onDragEnd={handleOrderChange}>
-        <StrictModeDroppable droppableId="gantt">
-          {(droppableProvided, droppableSnapshot) => (
-            <div
-              className="w-full space-y-2"
-              ref={droppableProvided.innerRef}
-              {...droppableProvided.droppableProps}
-            >
-              <>
-                {blocks &&
-                  blocks.length > 0 &&
-                  blocks.map(
-                    (block, index: number) =>
-                      block.start_date &&
-                      block.target_date && (
-                        <Draggable
-                          key={`block-${block.id}`}
-                          draggableId={`block-${block.id}`}
-                          index={index}
-                          isDragDisabled={!enableReorder}
-                        >
-                          {(provided) => (
-                            <div
-                              className={
-                                droppableSnapshot.isDraggingOver ? "bg-custom-border-100/10" : ""
-                              }
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                            >
-                              <ChartDraggable
-                                block={block}
-                                handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
-                                enableLeftDrag={enableLeftDrag}
-                                enableRightDrag={enableRightDrag}
-                                provided={provided}
-                              >
-                                <div
-                                  className="rounded shadow-sm bg-custom-background-80 overflow-hidden h-9 flex items-center transition-all"
-                                  style={{
-                                    width: `${block.position?.width}px`,
-                                  }}
-                                >
-                                  {blockRender({
-                                    ...block.data,
-                                  })}
-                                </div>
-                              </ChartDraggable>
-                            </div>
-                          )}
-                        </Draggable>
-                      )
-                  )}
-                {droppableProvided.placeholder}
-              </>
-            </div>
-          )}
-        </StrictModeDroppable>
-      </DragDropContext>
-
-      {/* sidebar */}
-      {/* <div className="fixed top-0 bottom-0 w-[300px] flex-shrink-0 divide-y divide-custom-border-200 border-r border-custom-border-200 overflow-y-auto">
-        {blocks &&
-          blocks.length > 0 &&
-          blocks.map((block: any, _idx: number) => (
-            <div className="relative h-[40px] bg-custom-background-100" key={`sidebar-blocks-${_idx}`}>
-              {sidebarBlockRender(block?.data)}
-            </div>
-          ))}
-      </div> */}
+      {blocks &&
+        blocks.length > 0 &&
+        blocks.map(
+          (block) =>
+            block.start_date &&
+            block.target_date && (
+              <div
+                key={`block-${block.id}`}
+                className={`h-11 ${activeBlock?.id === block.id ? "bg-custom-background-80" : ""}`}
+                onMouseEnter={() => updateActiveBlock(block)}
+                onMouseLeave={() => updateActiveBlock(null)}
+              >
+                <ChartDraggable
+                  block={block}
+                  BlockRender={BlockRender}
+                  handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
+                  enableBlockLeftResize={enableBlockLeftResize}
+                  enableBlockRightResize={enableBlockRightResize}
+                  enableBlockMove={enableBlockMove}
+                />
+              </div>
+            )
+        )}
     </div>
   );
 };

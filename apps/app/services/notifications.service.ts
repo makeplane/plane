@@ -9,6 +9,7 @@ import type {
   INotificationParams,
   NotificationCount,
   PaginatedUserNotification,
+  IMarkAllAsReadPayload,
 } from "types";
 
 class UserNotificationsServices extends APIService {
@@ -167,6 +168,19 @@ class UserNotificationsServices extends APIService {
 
   async getNotifications(url: string): Promise<PaginatedUserNotification> {
     return this.get(url)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async markAllNotificationsAsRead(
+    workspaceSlug: string,
+    payload: IMarkAllAsReadPayload
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/users/notifications/mark-all-read/`, {
+      ...payload,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -287,7 +287,10 @@ class ProjectViewSet(BaseViewSet):
                 )
 
                 data = serializer.data
+                # Additional fields of the member
                 data["sort_order"] = project_member.sort_order
+                data["member_role"] = project_member.role
+                data["is_member"] = True
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors,
@@ -1280,6 +1283,41 @@ class ProjectDeployBoardIssuesPublicEndpoint(BaseAPIView):
             return Response(
                 {"error": "Board does not exists"}, status=status.HTTP_404_NOT_FOUND
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
+
+    permission_classes = [AllowAny,]
+
+    def get(self, request, slug):
+        try:
+            projects = (
+                Project.objects.filter(workspace__slug=slug)
+                .annotate(
+                    is_public=Exists(
+                        ProjectDeployBoard.objects.filter(
+                            workspace__slug=slug, project_id=OuterRef("pk")
+                        )
+                    )
+                )
+                .filter(is_public=True)
+            ).values(
+                "id",
+                "identifier",
+                "name",
+                "description",
+                "emoji",
+                "icon_prop",
+                "cover_image",
+            )
+
+            return Response(projects, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

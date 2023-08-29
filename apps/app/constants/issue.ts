@@ -7,6 +7,7 @@ export const GROUP_BY_OPTIONS: Array<{
   { name: "Priority", key: "priority" },
   { name: "Project", key: "project" },
   { name: "Labels", key: "labels" },
+  { name: "Assignees", key: "assignees" },
   { name: "Created by", key: "created_by" },
   { name: "None", key: null },
 ];
@@ -18,6 +19,7 @@ export const ORDER_BY_OPTIONS: Array<{
   { name: "Manual", key: "sort_order" },
   { name: "Last created", key: "-created_at" },
   { name: "Last updated", key: "-updated_at" },
+  { name: "Start date", key: "start_date" },
   { name: "Priority", key: "priority" },
 ];
 

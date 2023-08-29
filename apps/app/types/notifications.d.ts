@@ -71,3 +71,9 @@ export type NotificationCount = {
   my_issues: number;
   watching_issues: number;
 };
+
+export interface IMarkAllAsReadPayload {
+  archived?: boolean;
+  snoozed?: boolean;
+  type?: NotificationType;
+}

@@ -27,6 +27,7 @@ const useMyIssues = (workspaceSlug: string | undefined) => {
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
     state_group: filters?.state_group ? filters?.state_group.join(",") : undefined,
     subscriber: filters?.subscriber ? filters?.subscriber.join(",") : undefined,
+    start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
     type: filters?.type ? filters?.type : undefined,
   };

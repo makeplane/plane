@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 
@@ -28,7 +28,7 @@ import useToast from "hooks/use-toast";
 // types
 import { ICurrentUserResponse } from "types";
 // fetch-keys
-import { PROJECT_MEMBERS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 
@@ -37,6 +37,7 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   members: any[];
   user: ICurrentUserResponse | undefined;
+  onSuccess: () => void;
 };
 
 type member = {
@@ -57,7 +58,9 @@ const defaultValues: FormValues = {
   ],
 };
 
-const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, members, user }) => {
+const SendProjectInvitationModal: React.FC<Props> = (props) => {
+  const { isOpen, setIsOpen, members, user, onSuccess } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -98,13 +101,13 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
           type: "success",
           message: "Member added successfully",
         });
+        onSuccess();
       })
       .catch((error) => {
         console.log(error);
       })
       .finally(() => {
         reset(defaultValues);
-        mutate(PROJECT_MEMBERS(projectId.toString()));
       });
   };
 

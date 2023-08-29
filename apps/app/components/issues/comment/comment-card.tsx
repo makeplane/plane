@@ -9,17 +9,11 @@ import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "components/ui";
 import { CommentReaction } from "components/issues";
+import { TipTapEditor } from "components/tiptap";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
-import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
-
-const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
-  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
-);
-
-TiptapEditor.displayName = "TiptapEditor";
 
 type Props = {
   workspaceSlug: string;
@@ -28,7 +22,12 @@ type Props = {
   handleCommentDeletion: (comment: string) => void;
 };
 
-export const CommentCard: React.FC<Props> = ({ comment, workspaceSlug, onSubmit, handleCommentDeletion }) => {
+export const CommentCard: React.FC<Props> = ({
+  comment,
+  workspaceSlug,
+  onSubmit,
+  handleCommentDeletion,
+}) => {
   const { user } = useUser();
 
   const editorRef = React.useRef<any>(null);
@@ -109,7 +108,7 @@ export const CommentCard: React.FC<Props> = ({ comment, workspaceSlug, onSubmit,
             onSubmit={handleSubmit(onEnter)}
           >
             <div>
-              <TiptapEditor
+              <TipTapEditor
                 workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={watch("comment_html")}
@@ -139,7 +138,7 @@ export const CommentCard: React.FC<Props> = ({ comment, workspaceSlug, onSubmit,
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <TiptapEditor
+            <TipTapEditor
               workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
               value={comment.comment_html}

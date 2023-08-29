@@ -1,28 +1,12 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
 // react-hook-form
 import { useForm, Controller } from "react-hook-form";
-// services
-import issuesServices from "services/issues.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
+// components
 import { SecondaryButton } from "components/ui";
+import { TipTapEditor } from "components/tiptap";
 // types
-import type { ICurrentUserResponse, IIssueComment } from "types";
-// fetch-keys
-import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
-
-const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>(
-  (props, ref) => <Tiptap {...props} forwardedRef={ref} />
-);
-
-TiptapEditor.displayName = "TiptapEditor";
+import type { IIssueComment } from "types";
 
 const defaultValues: Partial<IIssueComment> = {
   comment_json: "",
@@ -30,75 +14,49 @@ const defaultValues: Partial<IIssueComment> = {
 };
 
 type Props = {
-  issueId: string;
-  user: ICurrentUserResponse | undefined;
   disabled?: boolean;
+  onSubmit: (data: IIssueComment) => Promise<void>;
 };
 
-export const AddComment: React.FC<Props> = ({ issueId, user, disabled = false }) => {
+export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
   const {
-    handleSubmit,
     control,
+    formState: { isSubmitting },
+    handleSubmit,
+    reset,
     setValue,
     watch,
-    formState: { isSubmitting },
-    reset,
   } = useForm<IIssueComment>({ defaultValues });
 
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const { setToastAlert } = useToast();
+  const handleAddComment = async (formData: IIssueComment) => {
+    if (!formData.comment_html || !formData.comment_json || isSubmitting) return;
 
-  const onSubmit = async (formData: IIssueComment) => {
-    if (
-      !workspaceSlug ||
-      !projectId ||
-      !issueId ||
-      isSubmitting ||
-      !formData.comment_html ||
-      !formData.comment_json
-    )
-      return;
-    await issuesServices
-      .createIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        formData,
-        user
-      )
-      .then(() => {
-        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-        reset(defaultValues);
-        editorRef.current?.clearEditor();
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Comment could not be posted. Please try again.",
-        })
-      );
+    await onSubmit(formData).then(() => {
+      reset(defaultValues);
+      editorRef.current?.clearEditor();
+    });
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(handleAddComment)}>
         <div className="issue-comments-section">
           <Controller
             name="comment_html"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <TiptapEditor
+              <TipTapEditor
                 workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={
                   !value ||
-                    value === "" ||
-                    (typeof value === "object" && Object.keys(value).length === 0)
+                  value === "" ||
+                  (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("comment_html")
                     : value
                 }

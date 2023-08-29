@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import { KeyedMutator } from "swr";
 
@@ -9,11 +10,10 @@ import modulesService from "services/modules.service";
 // hooks
 import useUser from "hooks/use-user";
 // components
-import { GanttChartRoot, IBlockUpdateData, ModuleGanttBlock } from "components/gantt-chart";
+import { GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
+import { ModuleGanttBlock, ModuleGanttSidebarBlock } from "components/modules";
 // types
 import { IModule } from "types";
-// constants
-import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   modules: IModule[];
@@ -25,19 +25,6 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
   const { workspaceSlug } = router.query;
 
   const { user } = useUser();
-
-  // rendering issues on gantt sidebar
-  const GanttSidebarBlockView = ({ data }: any) => (
-    <div className="relative flex w-full h-full items-center p-1 overflow-hidden gap-1">
-      <div
-        className="rounded-sm flex-shrink-0 w-[10px] h-[10px] flex justify-center items-center"
-        style={{
-          backgroundColor: MODULE_STATUS.find((s) => s.value === data.status)?.color,
-        }}
-      />
-      <div className="text-custom-text-100 text-sm">{data?.name}</div>
-    </div>
-  );
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
@@ -98,8 +85,8 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
         loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        sidebarBlockRender={(data: any) => <GanttSidebarBlockView data={data} />}
-        blockRender={(data: any) => <ModuleGanttBlock module={data as IModule} />}
+        SidebarBlockRender={ModuleGanttSidebarBlock}
+        BlockRender={ModuleGanttBlock}
       />
     </div>
   );
