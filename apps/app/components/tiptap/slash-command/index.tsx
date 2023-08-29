@@ -36,20 +36,6 @@ const Command = Extension.create({
   name: "slash-command",
   addOptions() {
     return {
-      isEnabled: () => {
-        if (typeof window !== "undefined") {
-          const selection: any = window?.getSelection();
-          if (selection.rangeCount !== 0) {
-            const range = selection.getRangeAt(0);
-            if (findTableAncestor(range.startContainer)) {
-              return false;
-            }
-            else {
-              return true;
-            }
-          }
-        }
-      },
       suggestion: {
         char: "/",
         command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
@@ -59,15 +45,12 @@ const Command = Extension.create({
     };
   },
   addProseMirrorPlugins() {
-    if (this.options.isEnabled()) {
-      return [
-        Suggestion({
-          editor: this.editor,
-          ...this.options.suggestion,
-        }),
-      ];
-    }
-    return [];
+    return [
+      Suggestion({
+        editor: this.editor,
+        ...this.options.suggestion,
+      }),
+    ];
   },
 });
 
