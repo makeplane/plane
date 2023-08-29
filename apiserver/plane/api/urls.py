@@ -164,6 +164,7 @@ from plane.api.views import (
     # Notification
     NotificationViewSet,
     UnreadNotificationEndpoint,
+    MarkAllReadNotificationViewSet,
     ## End Notification
     # Public Boards
     ProjectDeployBoardViewSet,
@@ -236,7 +237,7 @@ urlpatterns = [
         UpdateUserTourCompletedEndpoint.as_view(),
         name="user-tour",
     ),
-    path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
+    path("users/workspaces/<str:slug>/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces
     path(
         "users/me/workspaces/",
@@ -1494,6 +1495,15 @@ urlpatterns = [
         "workspaces/<str:slug>/users/notifications/unread/",
         UnreadNotificationEndpoint.as_view(),
         name="unread-notifications",
+    ),
+    path(
+        "workspaces/<str:slug>/users/notifications/mark-all-read/",
+        MarkAllReadNotificationViewSet.as_view(
+            {
+                "post": "create",
+            }
+        ),
+        name="mark-all-read-notifications",
     ),
     ## End Notification
     # Public Boards

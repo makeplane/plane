@@ -1,6 +1,4 @@
 import React from "react";
-// next imports
-import Link from "next/link";
 // ui
 import { PrimaryButton } from "components/ui"; // icons
 // helpers
@@ -65,11 +63,11 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
         <>
           {service.status == "completed" && (
             <div>
-              <Link href={service?.url}>
+              <a target="_blank" href={service?.url} rel="noopener noreferrer">
                 <PrimaryButton className="w-full text-center">
                   {isLoading ? "Downloading..." : "Download"}
                 </PrimaryButton>
-              </Link>
+              </a>
             </div>
           )}
         </>

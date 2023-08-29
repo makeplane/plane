@@ -10,7 +10,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
+import { TipTapEditor } from "components/tiptap";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
@@ -27,7 +27,7 @@ const ProfileActivity = () => {
 
   const { data: userActivity } = useSWR(
     workspaceSlug ? USER_ACTIVITY : null,
-    workspaceSlug ? () => userService.getUserActivity(workspaceSlug.toString()) : null
+    workspaceSlug ? () => userService.getUserWorkspaceActivity(workspaceSlug.toString()) : null
   );
 
   return (
@@ -97,7 +97,7 @@ const ProfileActivity = () => {
                             </p>
                           </div>
                           <div className="issue-comments-section p-0">
-                            <Tiptap
+                            <TipTapEditor
                               workspaceSlug={workspaceSlug as string}
                               value={
                                 activityItem?.new_value !== ""
