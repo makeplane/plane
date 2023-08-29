@@ -14,9 +14,7 @@ type Props = {
 };
 
 export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
-  const { isEstimateActive, estimatePoints } = useEstimateOption();
-
-  if (!isEstimateActive) return null;
+  const { estimatePoints } = useEstimateOption();
 
   return (
     <CustomSelect
