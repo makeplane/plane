@@ -65,6 +65,7 @@ class WorkspaceViewIssuesEndpoint(BaseAPIView):
                 Issue.issue_objects.filter(
                     **queries,
                     workspace__slug=slug,
+                    project__project_projectmember__member=self.request.user
                 )
                 .filter(**filters)
                 .select_related("workspace")
