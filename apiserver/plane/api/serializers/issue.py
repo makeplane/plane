@@ -569,7 +569,7 @@ class IssueCommentSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     comment_reactions = CommentReactionLiteSerializer(read_only=True, many=True)
-
+    is_member = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = IssueComment
