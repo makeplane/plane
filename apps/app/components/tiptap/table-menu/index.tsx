@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Rows, Columns } from "lucide-react";
+import { Rows, Columns, ToggleRight } from "lucide-react";
 import { cn } from "../utils";
 
 interface TableMenuItem {
@@ -19,12 +19,12 @@ export const TableMenu = ({ editor }: { editor: any }) => {
   const [tableLocation, setTableLocation] = useState(0);
   const items: TableMenuItem[] = [
     {
-      name: "Insert column right",
+      name: "Insert Column right",
       command: () => editor.chain().focus().addColumnBefore().run(),
       icon: Columns,
     },
     {
-      name: "Insert row below",
+      name: "Insert Row below",
       command: () => editor.chain().focus().addRowAfter().run(),
       icon: Rows,
     },
@@ -37,7 +37,13 @@ export const TableMenu = ({ editor }: { editor: any }) => {
       name: "Delete Rows",
       command: () => editor.chain().focus().deleteRow().run(),
       icon: Rows,
+    },
+    {
+      name: "Toggle Header Row",
+      command: () => editor.chain().focus().toggleHeaderRow().run(),
+      icon: ToggleRight,
     }
+
   ];
 
   useEffect(() => {

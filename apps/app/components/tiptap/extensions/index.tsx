@@ -105,7 +105,6 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
   }),
   Placeholder.configure({
     placeholder: ({ node }) => {
-      console.log(node.type.name)
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
       }
