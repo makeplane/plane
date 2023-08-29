@@ -10,6 +10,14 @@ import type {
   linkDetails,
 } from "types";
 
+export type TModuleStatus =
+  | "backlog"
+  | "planned"
+  | "in-progress"
+  | "paused"
+  | "completed"
+  | "cancelled";
+
 export interface IModule {
   backlog_issues: number;
   cancelled_issues: number;
@@ -39,7 +47,7 @@ export interface IModule {
   sort_order: number;
   start_date: string | null;
   started_issues: number;
-  status: "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled" | null;
+  status: TModuleStatus;
   target_date: string | null;
   total_issues: number;
   unstarted_issues: number;

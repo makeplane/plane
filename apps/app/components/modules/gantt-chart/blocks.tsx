@@ -8,6 +8,7 @@ import { renderShortDate } from "helpers/date-time.helper";
 import { IModule } from "types";
 // constants
 import { MODULE_STATUS } from "constants/module";
+import { ModuleStatusIcon } from "components/icons";
 
 export const ModuleGanttBlock = ({ data }: { data: IModule }) => {
   const router = useRouter();
@@ -49,6 +50,7 @@ export const ModuleGanttSidebarBlock = ({ data }: { data: IModule }) => {
       className="relative w-full flex items-center gap-2 h-full"
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/modules/${data.id}`)}
     >
+      <ModuleStatusIcon status={data?.status ?? "backlog"} height="16px" width="16px" />
       <h6 className="text-sm font-medium flex-grow truncate">{data.name}</h6>
     </div>
   );

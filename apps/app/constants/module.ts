@@ -1,8 +1,15 @@
-export const MODULE_STATUS = [
-  { label: "Backlog", value: "backlog", color: "#5e6ad2" },
-  { label: "Planned", value: "planned", color: "#26b5ce" },
-  { label: "In Progress", value: "in-progress", color: "#f2c94c" },
-  { label: "Paused", value: "paused", color: "#ff6900" },
-  { label: "Completed", value: "completed", color: "#4cb782" },
-  { label: "Cancelled", value: "cancelled", color: "#cc1d10" },
+// types
+import { TModuleStatus } from "types";
+
+export const MODULE_STATUS: {
+  label: string;
+  value: TModuleStatus;
+  color: string;
+}[] = [
+  { label: "Backlog", value: "backlog", color: "#a3a3a2" },
+  { label: "Planned", value: "planned", color: "#3f76ff" },
+  { label: "In Progress", value: "in-progress", color: "#f39e1f" },
+  { label: "Paused", value: "paused", color: "#525252" },
+  { label: "Completed", value: "completed", color: "#16a34a" },
+  { label: "Cancelled", value: "cancelled", color: "#ef4444" },
 ];
