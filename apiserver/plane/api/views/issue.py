@@ -1822,8 +1822,9 @@ class IssueVotePublicViewSet(BaseViewSet):
                 actor_id=request.user.id,
                 project_id=project_id,
                 issue_id=issue_id,
-                vote=request.data.get("vote", 1),
             )
+            issue_vote.vote = request.data.get("vote", 1)
+            issue_vote.save()
             serializer = IssueVoteSerializer(issue_vote)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
