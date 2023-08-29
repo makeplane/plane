@@ -77,6 +77,7 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
+from plane.bgtasks.export_task import issue_export_task
 
 
 class IssueViewSet(BaseViewSet):
@@ -588,6 +589,15 @@ class IssueCommentViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
+            .annotate(
+                is_member=Exists(
+                    ProjectMember.objects.filter(
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=self.kwargs.get("project_id"),
+                        member_id=self.request.user.id,
+                    )
+                )
+            )
             .distinct()
         )
 
@@ -769,7 +779,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
-            result = {item["state_group"]: item["state_count"] for item in state_distribution}
+            result = {
+                item["state_group"]: item["state_count"] for item in state_distribution
+            }
 
             serializer = IssueLiteSerializer(
                 sub_issues,
@@ -1482,6 +1494,15 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("issue")
+                .annotate(
+                    is_member=Exists(
+                        ProjectMember.objects.filter(
+                            workspace__slug=self.kwargs.get("slug"),
+                            project_id=self.kwargs.get("project_id"),
+                            member_id=self.request.user.id,
+                        )
+                    )
+                )
                 .distinct()
             )
         else:
@@ -1499,21 +1520,13 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            access = (
-                "INTERNAL"
-                if ProjectMember.objects.filter(
-                    project_id=project_id, member=request.user
-                ).exists()
-                else "EXTERNAL"
-            )
-
             serializer = IssueCommentSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
                     project_id=project_id,
                     issue_id=issue_id,
                     actor=request.user,
-                    access=access,
+                    access="EXTERNAL",
                 )
                 issue_activity.delay(
                     type="comment.activity.created",
@@ -1567,7 +1580,8 @@ class IssueCommentPublicViewSet(BaseViewSet):
         except (IssueComment.DoesNotExist, ProjectDeployBoard.DoesNotExist):
             return Response(
                 {"error": "IssueComent Does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,)
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, slug, project_id, issue_id, pk):
         try:
@@ -1826,4 +1840,3 @@ class IssueVotePublicViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
