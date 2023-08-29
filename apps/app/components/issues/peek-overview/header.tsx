@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -7,13 +9,12 @@ import useUser from "hooks/use-user";
 // ui
 import { CustomSelect, Icon } from "components/ui";
 // icons
-import { CloseFullscreen, East, OpenInFull } from "@mui/icons-material";
+import { East, OpenInFull } from "@mui/icons-material";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 import { TPeekOverviewModes } from "./layout";
-import Link from "next/link";
 
 type Props = {
   handleClose: () => void;
@@ -80,23 +81,15 @@ export const PeekOverviewHeader: React.FC<Props> = observer(
               />
             </button>
           )}
-          {mode === "modal" || mode === "full" ? (
-            <button type="button" onClick={() => setMode("side")}>
-              <CloseFullscreen
-                sx={{
-                  fontSize: "14px",
-                }}
-              />
-            </button>
-          ) : (
-            <button type="button" onClick={() => setMode("modal")}>
+          <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
+            <a>
               <OpenInFull
                 sx={{
                   fontSize: "14px",
                 }}
               />
-            </button>
-          )}
+            </a>
+          </Link>
           <CustomSelect
             value={mode}
             onChange={(val: TPeekOverviewModes) => setMode(val)}
@@ -127,11 +120,6 @@ export const PeekOverviewHeader: React.FC<Props> = observer(
         </div>
         {(mode === "side" || mode === "modal") && (
           <div className="flex items-center gap-2">
-            <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
-              <a className="text-xs hover:bg-custom-background-80 px-1.5 py-1 rounded font-medium">
-                Open issue
-              </a>
-            </Link>
             <button type="button" onClick={handleCopyLink} className="-rotate-45">
               <Icon iconName="link" />
             </button>

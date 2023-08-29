@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
@@ -80,11 +78,6 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(
               {issue.project_detail.identifier}-{issue.sequence_id}
             </h6>
             <div className="flex items-center gap-2">
-              <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
-                <a className="text-xs hover:bg-custom-background-80 px-1.5 py-1 rounded font-medium">
-                  Open issue
-                </a>
-              </Link>
               <button type="button" onClick={handleCopyLink} className="-rotate-45">
                 <Icon iconName="link" />
               </button>
