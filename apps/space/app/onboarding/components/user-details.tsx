@@ -56,11 +56,7 @@ export const UserDetails: React.FC<Props> = observer(({ user }) => {
     defaultValues,
   });
 
-  console.log("errors", errors);
-
   const onSubmit = async (formData: any) => {
-    // if (!user) return;
-
     const payload = {
       ...formData,
       onboarding_step: {
@@ -69,26 +65,11 @@ export const UserDetails: React.FC<Props> = observer(({ user }) => {
       },
     };
 
-    console.log("payload", payload);
-
     const userService = new UserService();
 
     await userService
       .updateMe(payload)
       .then((response) => {
-        // mutate<ICurrentUserResponse>(
-        //   CURRENT_USER,
-        //   (prevData) => {
-        //     if (!prevData) return prevData;
-
-        //     return {
-        //       ...prevData,
-        //       ...payload,
-        //     };
-        //   },
-        //   false
-        // );
-
         userStore.setCurrentUser(response);
 
         const nextPath = searchParams?.get("next_path") || "/";
@@ -100,9 +81,7 @@ export const UserDetails: React.FC<Props> = observer(({ user }) => {
           message: "Details updated successfully.",
         });
       })
-      .catch((err) => {
-        // mutate(CURRENT_USER);
-      });
+      .catch((err) => {});
   };
 
   useEffect(() => {

@@ -43,8 +43,7 @@ const HomePage = () => {
   };
 
   const onSignInSuccess = (response: any) => {
-    // const isOnboarded = response?.user?.onboarding_step?.profile_complete||false;
-    const isOnboarded = false;
+    const isOnboarded = response?.user?.onboarding_step?.profile_complete || false;
     const nextPath = searchParams?.get("next_path") || "/";
 
     userStore.setCurrentUser(response?.user);
@@ -68,11 +67,6 @@ const HomePage = () => {
         const response = await authenticationService.socialAuth(socialAuthPayload);
 
         onSignInSuccess(response);
-
-        if (response && response?.user) {
-          // mutateUser();
-          // handleTheme(response?.user);
-        }
       } else {
         throw Error("Cant find credentials");
       }
@@ -91,10 +85,6 @@ const HomePage = () => {
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
         onSignInSuccess(response);
-        if (response && response?.user) {
-          // mutateUser();
-          // handleTheme(response?.user);
-        }
       } else {
         throw Error("Cant find credentials");
       }
@@ -110,8 +100,6 @@ const HomePage = () => {
         try {
           if (response) {
             onSignInSuccess(response);
-            // mutateUser();
-            // handleTheme(response?.user);
           }
         } catch (err: any) {
           onSignInError(err);
@@ -124,11 +112,6 @@ const HomePage = () => {
     try {
       if (response) {
         onSignInSuccess(response);
-
-        // userStore.setCurrentUser(response);
-
-        // mutateUser();
-        // handleTheme(response?.user);
       }
     } catch (err: any) {
       onSignInError(err);

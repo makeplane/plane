@@ -6,8 +6,10 @@ class IssueService extends APIService {
     super(process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async getPublicIssues(workspace_slug: string, project_slug: string): Promise<any> {
-    return this.get(`/api/public/workspaces/${workspace_slug}/project-boards/${project_slug}/issues/`)
+  async getPublicIssues(workspace_slug: string, project_slug: string, params: any): Promise<any> {
+    return this.get(`/api/public/workspaces/${workspace_slug}/project-boards/${project_slug}/issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -30,8 +32,11 @@ class IssueService extends APIService {
       });
   }
 
-  async createIssueVote(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.post(`/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/votes/`)
+  async createIssueVote(workspaceSlug: string, projectId: string, issueId: string, data: any): Promise<any> {
+    return this.post(
+      `/api/public/workspaces/${workspaceSlug}/project-boards/${projectId}/issues/${issueId}/votes/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

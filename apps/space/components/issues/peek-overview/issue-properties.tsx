@@ -1,17 +1,38 @@
 // headless ui
 import { Disclosure } from "@headlessui/react";
 // import { getStateGroupIcon } from "components/icons";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import { TPeekOverviewModes } from "components/issues/peek-overview";
 // icons
 import { Icon } from "components/ui";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "helpers/string.helper";
-import useToast from "hooks/use-toast";
+
+// types
+import { IIssue } from "store/types";
+
+// constants
+import { issueGroupFilter, issuePriorityFilter } from "constants/data";
+import { useEffect } from "react";
+import { renderDateFormat } from "constants/helpers";
 
 type Props = {
-  issue: any;
+  issue: IIssue;
   mode: TPeekOverviewModes;
   workspaceSlug: string;
+};
+
+const validDate = (date: any, state: string): string => {
+  if (date === null || ["backlog", "unstarted", "cancelled"].includes(state))
+    return `bg-gray-500/10 text-gray-500 border-gray-500/50`;
+  else {
+    const today = new Date();
+    const dueDate = new Date(date);
+
+    if (dueDate < today) return `bg-red-500/10 text-red-500 border-red-500/50`;
+    else return `bg-green-500/10 text-green-500 border-green-500/50`;
+  }
 };
 
 export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, workspaceSlug }) => {
@@ -25,6 +46,11 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, work
 
   const maxDate = targetDate ? new Date(targetDate) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const state = issue.state_detail;
+  const stateGroup = issueGroupFilter(state.group);
+
+  const priority = issue.priority ? issuePriorityFilter(issue.priority) : null;
 
   const handleCopyLink = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -60,20 +86,14 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, work
             <span className="flex-grow truncate">State</span>
           </div>
           <div className="w-3/4">
-            <button type="button" className="bg-custom-background-80 text-sm rounded px-2.5 py-0.5">
-              {issue.state && (
+            {stateGroup && (
+              <div className="inline-flex bg-custom-background-80 text-sm rounded px-2.5 py-0.5">
                 <div className="flex items-center gap-1.5 text-left text-custom-text-100">
-                  {/* {getStateGroupIcon(issue.state?.group ?? "backlog", "14", "14", issue.state?.color ?? "")}
-                  {addSpaceIfCamelCase(selectedState?.name ?? "")} */}
+                  <stateGroup.icon />
+                  {addSpaceIfCamelCase(state?.name ?? "")}
                 </div>
-              )}
-            </button>
-
-            {/* <SidebarStateSelect
-              value={issue.state}
-              onChange={(val: string) => onChange({ state: val })}
-              disabled={readOnly}
-            /> */}
+              </div>
+            )}
           </div>
         </div>
 
@@ -83,23 +103,26 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, work
             <span className="flex-grow truncate">Priority</span>
           </div>
           <div className="w-3/4">
-            {/* <button
-              type="button"
-              className={`flex items-center gap-1.5 text-left text-sm capitalize rounded px-2.5 py-0.5 ${
-                value === "urgent"
+            <div
+              className={`inline-flex items-center gap-1.5 text-left text-sm capitalize rounded px-2.5 py-0.5 ${
+                priority?.key === "urgent"
                   ? "border-red-500/20 bg-red-500/20 text-red-500"
-                  : value === "high"
+                  : priority?.key === "high"
                   ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
-                  : value === "medium"
+                  : priority?.key === "medium"
                   ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
-                  : value === "low"
+                  : priority?.key === "low"
                   ? "border-green-500/20 bg-green-500/20 text-green-500"
                   : "bg-custom-background-80 border-custom-border-200"
               }`}
             >
-              <span className="grid place-items-center -my-1">{getPriorityIcon(value ?? "None", "!text-sm")}</span>
-              <span>{value ?? "None"}</span>
-            </button> */}
+              {priority && (
+                <span className="grid place-items-center -my-1">
+                  <Icon iconName={priority?.icon!} />
+                </span>
+              )}
+              <span>{priority?.title ?? "None"}</span>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2 text-sm">
@@ -107,56 +130,19 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, work
             <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
             <span className="flex-grow truncate">Due date</span>
           </div>
-          {/* <div>
+          <div>
             {issue.target_date ? (
-              <CustomDatePicker
-                placeholder="Due date"
-                value={issue.target_date}
-                onChange={(val) =>
-                  onChange({
-                    target_date: val,
-                  })
-                }
-                className="bg-custom-background-100"
-                wrapperClassName="w-full"
-                minDate={minDate ?? undefined}
-                disabled={readOnly}
-              />
+              <div
+                className={`h-[24px] rounded-md flex px-2.5 py-1 items-center border border-custom-border-100 gap-1 text-custom-text-100 text-xs font-medium 
+                ${validDate(issue.target_date, state)}`}
+              >
+                {renderDateFormat(issue.target_date)}
+              </div>
             ) : (
               <span className="text-custom-text-200">Empty</span>
             )}
-          </div> */}
+          </div>
         </div>
-        {/* <div className="flex items-center gap-2 text-sm">
-          <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="change_history" className="!text-base flex-shrink-0" />
-            <span className="flex-grow truncate">Estimate</span>
-          </div>
-          <div className="w-3/4">
-            <SidebarEstimateSelect
-              value={issue.estimate_point}
-              onChange={(val: number | null) => onChange({ estimate_point: val })}
-              disabled={readOnly}
-            />
-          </div>
-        </div> */}
-        {/* <Disclosure as="div">
-          {({ open }) => (
-            <>
-              <Disclosure.Button
-                as="button"
-                type="button"
-                className="flex items-center gap-1 text-sm text-custom-text-200"
-              >
-                Show {open ? "Less" : "More"}
-                <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-base" />
-              </Disclosure.Button>
-              <Disclosure.Panel as="div" className="mt-4 space-y-4">
-                Disclosure Panel
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure> */}
       </div>
     </div>
   );

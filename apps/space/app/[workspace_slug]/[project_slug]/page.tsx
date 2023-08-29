@@ -11,7 +11,7 @@ import { IssueKanbanView } from "components/issues/board-views/kanban";
 import { IssueCalendarView } from "components/issues/board-views/calendar";
 import { IssueSpreadsheetView } from "components/issues/board-views/spreadsheet";
 import { IssueGanttView } from "components/issues/board-views/gantt";
-import { SidePeekView } from "components/issues/peek-overview";
+import { IssuePeekOverview } from "components/issues/peek-overview";
 // mobx store
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -25,7 +25,7 @@ const WorkspaceProjectPage = () => {
   const routerParams = useParams();
   const routerSearchparams = useSearchParams();
 
-  const [activeIssue, setActiveIssue] = useState<any>(null);
+  const activeIssueId = store.issue.activePeekOverviewIssueId;
 
   const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
   const board =
@@ -101,54 +101,26 @@ const WorkspaceProjectPage = () => {
   ]);
 
   useEffect(() => {
-    if (workspace_slug && project_slug) {
-      store?.project?.getProjectSettingsAsync(workspace_slug, project_slug);
-      store?.issue?.getIssuesAsync(workspace_slug, project_slug);
-    }
-  }, [workspace_slug, project_slug, store?.project, store?.issue]);
+    if (!workspace_slug || !project_slug) return;
 
-  // copy the first store.issue.issues[0] to activeIssue
-  // useEffect(() => {
-  //   if (store?.issue?.issues && store?.issue?.issues.length > 0) {
-  //     setActiveIssue(store?.issue?.issues[0]);
-  //   }
-  // }, [store?.issue?.issues]);
+    const params = {
+      state: states || null,
+      labels: labels || null,
+      priority: priorities || null,
+    };
+
+    store?.project?.getProjectSettingsAsync(workspace_slug, project_slug);
+    store?.issue?.getIssuesAsync(workspace_slug, project_slug, params);
+  }, [workspace_slug, project_slug, store?.project, store?.issue, states, labels, priorities]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {activeIssue && (
-        <SidePeekView
-          handleClose={() => {
-            setActiveIssue(null);
-          }}
-          issue={activeIssue}
-          mode="side"
-          setMode={() => {}}
-          workspaceSlug={workspace_slug}
-        />
-      )}
-      <button
-        type="button"
-        onClick={() => {
-          store.user.requiredLogin(() => {
-            console.log("hahahah");
-          });
-        }}
-        className="fixed bottom-5 left-5 z-50 border px-2 py-1 rounded bg-gray-200"
-      >
-        Test Auth
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          store.user.requiredLogin(() => {
-            console.log("hahahah");
-          });
-        }}
-        className="fixed bottom-5 left-5 z-50 border px-2 py-1 rounded bg-gray-200"
-      >
-        Test Auth
-      </button>
+      <IssuePeekOverview
+        isOpen={Boolean(activeIssueId)}
+        onClose={() => store.issue.setActivePeekOverviewIssueId(null)}
+        issue={store?.issue?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
+        workspaceSlug={workspace_slug}
+      />
 
       {store?.issue?.loader && !store.issue.issues ? (
         <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>

@@ -15,8 +15,6 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = ({ handleSignIn }) => {
   const loadScript = useCallback(() => {
     if (!googleSignInButton.current || gsiScriptLoaded) return;
 
-    console.log("process.env.NEXT_PUBLIC_GOOGLE_CLIENTID: ", process.env.NEXT_PUBLIC_GOOGLE_CLIENTID);
-
     (window as any)?.google?.accounts.id.initialize({
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENTID || "",
       callback: handleSignIn,

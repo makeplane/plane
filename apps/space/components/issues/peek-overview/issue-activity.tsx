@@ -1,92 +1,42 @@
-import useSWR, { mutate } from "swr";
-
+import React, { useEffect } from "react";
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 
-// services
-// import issuesService from "services/issues.service";
-// hooks
-import useToast from "hooks/use-toast";
-// components
-// import { AddComment, IssueActivitySection } from "components/issues";
-// fetch-keys
-// import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { CommentCard, AddComment } from "components/issues/peek-overview";
 
 type Props = {
   workspaceSlug: string;
-  issue: any;
 };
 
-export const PeekOverviewIssueActivity: React.FC<Props> = observer(({ workspaceSlug, issue }) => {
-  const { setToastAlert } = useToast();
+export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
+  const { workspaceSlug } = props;
 
-  const { user: userStore } = useMobxStore();
+  const { issue: issueStore, user: userStore } = useMobxStore();
 
-  const user = userStore?.currentUser;
+  const issueId = issueStore?.activePeekOverviewIssueId;
+  const comments = issueStore?.issue_detail[issueId ?? ""]?.comments ?? [];
 
-  // const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
-  //   workspaceSlug && issue ? PROJECT_ISSUES_ACTIVITY(issue.id) : null,
-  //   workspaceSlug && issue
-  //     ? () => issuesService.getIssueActivities(workspaceSlug.toString(), issue?.project, issue?.id)
-  //     : null
-  // );
+  useEffect(() => {
+    if (userStore.currentUser) return;
 
-  // const handleCommentUpdate = async (comment: any) => {
-  //   if (!workspaceSlug || !issue) return;
-
-  //   await issuesService
-  //     .patchIssueComment(
-  //       workspaceSlug as string,
-  //       issue.project,
-  //       issue.id,
-  //       comment.id,
-  //       comment,
-  //       user
-  //     )
-  //     .then(() => mutateIssueActivity());
-  // };
-
-  // const handleCommentDelete = async (commentId: string) => {
-  //   if (!workspaceSlug || !issue) return;
-
-  //   mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
-
-  //   await issuesService
-  //     .deleteIssueComment(workspaceSlug as string, issue.project, issue.id, commentId, user)
-  //     .then(() => mutateIssueActivity());
-  // };
-
-  // const handleAddComment = async (formData: IIssueComment) => {
-  //   if (!workspaceSlug || !issue) return;
-
-  //   await issuesService
-  //     .createIssueComment(workspaceSlug.toString(), issue.project, issue.id, formData, user)
-  //     .then(() => {
-  //       mutate(PROJECT_ISSUES_ACTIVITY(issue.id));
-  //     })
-  //     .catch(() =>
-  //       setToastAlert({
-  //         type: "error",
-  //         title: "Error!",
-  //         message: "Comment could not be posted. Please try again.",
-  //       })
-  //     );
-  // };
+    userStore.getUserAsync();
+  }, [userStore]);
 
   return (
     <div>
       <h4 className="font-medium">Activity</h4>
-      {/* <div className="mt-4">
-        <IssueActivitySection
-          activity={issueActivity}
-          handleCommentUpdate={handleCommentUpdate}
-          handleCommentDelete={handleCommentDelete}
-        />
-        <div className="mt-4">
-          <AddComment onSubmit={handleAddComment} />
+
+      <div className="mt-4">
+        <div className="space-y-4">
+          {comments.map((comment) => (
+            <CommentCard comment={comment} workspaceSlug={workspaceSlug} />
+          ))}
         </div>
-      </div> */}
+        <div className="mt-4">
+          <AddComment disabled={!userStore.currentUser} issueId={issueId} />
+        </div>
+      </div>
     </div>
   );
 });

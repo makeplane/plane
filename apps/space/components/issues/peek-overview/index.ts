@@ -6,3 +6,7 @@ export * from "./issue-properties";
 export * from "./layout";
 export * from "./side-peek-view";
 export * from "./issue-reaction";
+export * from "./issue-vote-reactions";
+export * from "./issue-emoji-reactions";
+export * from "./comment-detail-card";
+export * from "./add-comment";

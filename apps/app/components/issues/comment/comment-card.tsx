@@ -28,7 +28,12 @@ type Props = {
   handleCommentDeletion: (comment: string) => void;
 };
 
-export const CommentCard: React.FC<Props> = ({ comment, workspaceSlug, onSubmit, handleCommentDeletion }) => {
+export const CommentCard: React.FC<Props> = ({
+  comment,
+  workspaceSlug,
+  onSubmit,
+  handleCommentDeletion,
+}) => {
   const { user } = useUser();
 
   const editorRef = React.useRef<any>(null);

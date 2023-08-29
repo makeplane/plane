@@ -33,7 +33,7 @@ const IssueFilter = observer(() => {
 
   return (
     <div className="flex-shrink-0 min-h-[50px] h-auto py-1.5 border-b border-custom-border-200 relative flex items-center shadow-md bg-whiate select-none">
-      <div className="container mx-auto px-5 flex justify-start items-center flex-wrap gap-2 text-sm">
+      <div className="px-5 flex justify-start items-center flex-wrap gap-2 text-sm">
         {/* state */}
         {store.issue.checkIfFilterExistsForKey("state") && <IssueStateFilter />}
         {/* labels */}

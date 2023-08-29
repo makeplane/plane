@@ -40,7 +40,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
   const handleCopyLink = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${issue.project}/`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
@@ -53,7 +53,12 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-4">
         {mode === "side" && (
-          <button type="button" onClick={handleClose}>
+          <button
+            type="button"
+            onClick={() => {
+              handleClose();
+            }}
+          >
             <East
               sx={{
                 fontSize: "14px",

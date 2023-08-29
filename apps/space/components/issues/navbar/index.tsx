@@ -62,9 +62,9 @@ const IssueNavbar = observer(() => {
       </div>
 
       {/* theming */}
-      {/* <div className="flex-shrink-0 relative">
+      <div className="flex-shrink-0 relative">
         <NavbarTheme />
-      </div> */}
+      </div>
     </div>
   );
 });

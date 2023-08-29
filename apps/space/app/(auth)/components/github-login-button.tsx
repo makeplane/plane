@@ -10,8 +10,6 @@ import { useTheme } from "next-themes";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 
-const { NEXT_PUBLIC_GITHUB_ID } = process.env;
-
 export interface GithubLoginButtonProps {
   handleSignIn: React.Dispatch<string>;
 }

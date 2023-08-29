@@ -179,5 +179,7 @@ module.exports = {
       custom: ["Inter", "sans-serif"],
     },
   },
-  plugins: [],
+  plugins: [
+    require("@tailwindcss/typography"),
+  ],
 };

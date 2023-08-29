@@ -1,12 +1,13 @@
 // mobx
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, computed, makeObservable, runInAction, reaction } from "mobx";
 // service
 import IssueService from "services/issue.service";
 // types
-import { TIssueBoardKeys } from "store/types/issue";
+import { IssueDetailType, TIssueBoardKeys } from "store/types/issue";
 import { IIssueStore, IIssue, IIssueState, IIssueLabel } from "./types";
 
-class IssueStore implements IIssueStore {
+// class IssueStore implements IIssueStore {
+class IssueStore {
   currentIssueBoardView: TIssueBoardKeys | null = null;
 
   loader: boolean = false;
@@ -15,6 +16,10 @@ class IssueStore implements IIssueStore {
   states: IIssueState[] | null = null;
   labels: IIssueLabel[] | null = null;
   issues: IIssue[] | null = null;
+
+  issue_detail: IssueDetailType = {};
+
+  activePeekOverviewIssueId: string | null = null;
 
   userSelectedStates: string[] = [];
   userSelectedLabels: string[] = [];
@@ -35,6 +40,9 @@ class IssueStore implements IIssueStore {
       states: observable.ref,
       labels: observable.ref,
       issues: observable.ref,
+      issue_detail: observable.ref,
+
+      activePeekOverviewIssueId: observable.ref,
 
       userSelectedStates: observable.ref,
       userSelectedLabels: observable.ref,
@@ -57,6 +65,8 @@ class IssueStore implements IIssueStore {
   getFilteredIssuesByState(state_id: string): IIssue[] | [] {
     return this.issues?.filter((issue) => issue.state == state_id) || [];
   }
+
+  setActivePeekOverviewIssueId = (issueId: string | null) => (this.activePeekOverviewIssueId = issueId);
 
   /**
    *
@@ -157,12 +167,12 @@ class IssueStore implements IIssueStore {
     this.currentIssueBoardView = view;
   };
 
-  getIssuesAsync = async (workspace_slug: string, project_slug: string) => {
+  getIssuesAsync = async (workspaceSlug: string, projectId: string, params: any) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const response = await this.issueService.getPublicIssues(workspace_slug, project_slug);
+      const response = await this.issueService.getPublicIssues(workspaceSlug, projectId, params);
 
       if (response) {
         const _states: IIssueState[] = [...response?.states];
@@ -180,6 +190,344 @@ class IssueStore implements IIssueStore {
       this.loader = false;
       this.error = error;
       return error;
+    }
+  };
+
+  getIssueByIdAsync = async (workspaceSlug: string, projectId: string, issueId: string): Promise<IssueDetailType> => {
+    try {
+      const response = this.issues?.find((issue) => issue.id === issueId);
+
+      if (response) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            issue: response,
+            comments: [],
+            reactions: [],
+            votes: [],
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+
+        this.getIssueReactionsAsync(workspaceSlug, projectId, issueId);
+        this.getIssueVotesAsync(workspaceSlug, projectId, issueId);
+        this.getIssueCommentsAsync(workspaceSlug, projectId, issueId);
+      }
+
+      return this.issue_detail[issueId] as any;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  getIssueVotesAsync = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const response = await this.issueService.getIssueVotes(workspaceSlug, projectId, issueId);
+
+      if (response) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            votes: response,
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  createIssueVoteAsync = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: {
+      vote: 1 | -1;
+    }
+  ) => {
+    try {
+      const response = await this.issueService.createIssueVote(workspaceSlug, projectId, issueId, data);
+
+      if (response) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            votes: [
+              ...{ ...this.issue_detail }[issueId].votes.filter(
+                (vote) => vote.actor !== this.rootStore?.user?.currentUser?.id
+              ),
+              response,
+            ],
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  deleteIssueVoteAsync = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const _votes = (this.issue_detail[issueId].votes = this.issue_detail[issueId].votes.filter(
+        (vote) => vote.actor !== this.rootStore?.user?.user?.id
+      ));
+
+      runInAction(() => {
+        this.issue_detail[issueId].votes = _votes;
+      });
+
+      const response = await this.issueService.deleteIssueVote(workspaceSlug, projectId, issueId);
+
+      const votesAfterCall = await this.issueService.getIssueVotes(workspaceSlug, projectId, issueId);
+
+      if (votesAfterCall)
+        runInAction(() => {
+          this.issue_detail[issueId].votes = votesAfterCall;
+        });
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  getIssueReactionsAsync = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const response = await this.issueService.getIssueReactions(workspaceSlug, projectId, issueId);
+
+      if (response) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            reactions: response,
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  createIssueReactionAsync = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
+    try {
+      const response = await this.issueService.createIssueReaction(workspaceSlug, projectId, issueId, data);
+
+      if (response) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            reactions: [...this.issue_detail[issueId].reactions, response],
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  deleteIssueReactionAsync = async (workspaceSlug: string, projectId: string, issueId: string, reactionHex: string) => {
+    try {
+      const newReactionsList = this.issue_detail[issueId].reactions.filter(
+        (reaction) => reaction.reaction !== reactionHex
+      );
+
+      const _issue_detail = {
+        ...this.issue_detail,
+        [issueId]: {
+          ...this.issue_detail[issueId],
+          reactions: newReactionsList,
+        },
+      };
+
+      runInAction(() => {
+        this.issue_detail = _issue_detail;
+      });
+
+      const response = await this.issueService.deleteIssueReaction(workspaceSlug, projectId, issueId, reactionHex);
+
+      const reactionsAfterCall = await this.issueService.getIssueReactions(workspaceSlug, projectId, issueId);
+
+      if (reactionsAfterCall) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            reactions: reactionsAfterCall,
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  getIssueCommentsAsync = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const response = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+
+      if (response) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            comments: response,
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  createIssueCommentAsync = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
+    try {
+      const response = await this.issueService.createIssueComment(workspaceSlug, projectId, issueId, data);
+
+      if (response) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            comments: [...this.issue_detail[issueId].comments, response],
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  updateIssueCommentAsync = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    commentId: string,
+    data: any
+  ) => {
+    try {
+      const response = await this.issueService.updateIssueComment(workspaceSlug, projectId, issueId, commentId, data);
+
+      if (response) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            comments: [
+              ...this.issue_detail[issueId].comments.filter((comment) => comment.id !== response.id),
+              response,
+            ],
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
+    }
+  };
+
+  deleteIssueCommentAsync = async (workspaceSlug: string, projectId: string, issueId: string, commentId: string) => {
+    try {
+      const newCommentsList = this.issue_detail[issueId].comments.filter((comment) => comment.id !== commentId);
+
+      const _issue_detail = {
+        ...this.issue_detail,
+        [issueId]: {
+          ...this.issue_detail[issueId],
+          comments: newCommentsList,
+        },
+      };
+
+      runInAction(() => {
+        this.issue_detail = _issue_detail;
+      });
+
+      const response = await this.issueService.deleteIssueComment(workspaceSlug, projectId, issueId, commentId);
+
+      const commentsAfterCall = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+
+      if (commentsAfterCall) {
+        const _issue_detail = {
+          ...this.issue_detail,
+          [issueId]: {
+            ...this.issue_detail[issueId],
+            comments: commentsAfterCall,
+          },
+        };
+        runInAction(() => {
+          this.issue_detail = _issue_detail;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
+      throw error;
     }
   };
 }

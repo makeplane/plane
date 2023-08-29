@@ -13,7 +13,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { IIssue } from "store/types/issue";
 import { RootStore } from "store/root";
 
-export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
+export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
   const store: RootStore = useMobxStore();
 
   return (
@@ -24,8 +24,15 @@ export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
           {store?.project?.project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
-        <div className="h-full line-clamp-1 w-full overflow-ellipsis">
-          <p className="text-[0.825rem] font-medium text-sm truncate text-custom-text-100">{issue.name}</p>
+        <div className="h-full line-clamp-1 w-full overflow-ellipsis cursor-pointer">
+          <p
+            onClick={() => {
+              store.issue.setActivePeekOverviewIssueId(issue.id);
+            }}
+            className="text-[0.825rem] font-medium text-sm truncate text-custom-text-100"
+          >
+            {issue.name}
+          </p>
         </div>
       </div>
 
@@ -60,4 +67,4 @@ export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
       </div>
     </div>
   );
-};
+});

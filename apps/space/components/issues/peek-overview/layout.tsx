@@ -4,26 +4,23 @@ import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { FullScreenPeekView, SidePeekView } from "components/issues/peek-overview";
 
+// types
+import type { IIssue } from "store/types";
+
 type Props = {
-  handleDeleteIssue: () => void;
-  handleUpdateIssue: (issue: Partial<any>) => Promise<void>;
-  issue: any | null;
+  issue: IIssue | null;
   isOpen: boolean;
   onClose: () => void;
   workspaceSlug: string;
-  readOnly: boolean;
 };
 
 export type TPeekOverviewModes = "side" | "modal" | "full";
 
 export const IssuePeekOverview: React.FC<Props> = ({
-  handleDeleteIssue,
-  handleUpdateIssue,
   issue,
   isOpen,
   onClose,
   workspaceSlug,
-  readOnly,
 }) => {
   const [peekOverviewMode, setPeekOverviewMode] = useState<TPeekOverviewModes>("side");
 
@@ -74,25 +71,21 @@ export const IssuePeekOverview: React.FC<Props> = ({
                 {(peekOverviewMode === "side" || peekOverviewMode === "modal") && (
                   <SidePeekView
                     handleClose={handleClose}
-                    handleDeleteIssue={handleDeleteIssue}
-                    handleUpdateIssue={handleUpdateIssue}
-                    issue={issue}
+                    issueId={issue.id}
+                    projectId={issue.project}
                     mode={peekOverviewMode}
-                    readOnly={readOnly}
                     setMode={(mode) => setPeekOverviewMode(mode)}
                     workspaceSlug={workspaceSlug}
                   />
                 )}
                 {peekOverviewMode === "full" && (
                   <FullScreenPeekView
-                    handleClose={handleClose}
-                    handleDeleteIssue={handleDeleteIssue}
-                    handleUpdateIssue={handleUpdateIssue}
-                    issue={issue}
-                    mode={peekOverviewMode}
-                    readOnly={readOnly}
-                    setMode={(mode) => setPeekOverviewMode(mode)}
+                    issueId={issue.id}
                     workspaceSlug={workspaceSlug}
+                    projectId={issue.project}
+                    handleClose={handleClose}
+                    mode={peekOverviewMode}
+                    setMode={(mode) => setPeekOverviewMode(mode)}
                   />
                 )}
               </Dialog.Panel>

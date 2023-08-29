@@ -14,12 +14,11 @@ const reactionEmojis = ["128077", "128078", "128516", "128165", "128533", "12950
 interface Props {
   size?: "sm" | "md" | "lg";
   position?: "top" | "bottom";
-  value?: string | string[] | null;
   onSelect: (emoji: string) => void;
 }
 
 export const ReactionSelector: React.FC<Props> = (props) => {
-  const { value, onSelect, position, size } = props;
+  const { onSelect, position, size } = props;
 
   return (
     <Popover className="relative">
@@ -64,7 +63,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                       }}
                       className="flex select-none items-center justify-between rounded-md text-sm p-1 hover:bg-custom-sidebar-background-90"
                     >
-                      {() => renderEmoji(emoji)}
+                      {renderEmoji(emoji)}
                     </button>
                   ))}
                 </div>

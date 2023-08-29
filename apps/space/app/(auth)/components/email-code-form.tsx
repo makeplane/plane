@@ -11,8 +11,7 @@ import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
 
 // ui
-import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { Input, PrimaryButton } from "components/ui";
 
 // types
 type EmailCodeFormValues = {
@@ -41,7 +40,6 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailCodeFormValues>({
     defaultValues: {
-      // TODO: remove this before pushing
       email: "",
       key: "",
       token: "",
@@ -58,7 +56,6 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
       await authenticationService
         .emailCode({ email })
         .then((res) => {
-          console.log("res", res);
           setValue("key", res.key);
           setCodeSent(true);
         })
