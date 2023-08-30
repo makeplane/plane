@@ -30,6 +30,7 @@
     "@tiptap-pro/extension-unique-id": "^2.1.0",
     "@tiptap/extension-code-block-lowlight": "^2.0.4",
     "@tiptap/extension-color": "^2.0.4",
+    "@tiptap/extension-gapcursor": "^2.1.7",
     "@tiptap/extension-highlight": "^2.0.4",
     "@tiptap/extension-horizontal-rule": "^2.0.4",
     "@tiptap/extension-image": "^2.0.4",

@@ -13,6 +13,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { lowlight } from "lowlight/lib/core";
 import SlashCommand from "../slash-command";
 import { InputRule } from "@tiptap/core";
+import Gapcursor from '@tiptap/extension-gapcursor'
 
 import ts from "highlight.js/lib/languages/typescript";
 
@@ -90,6 +91,7 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
       class: "mb-6 border-t border-custom-border-300",
     },
   }),
+  Gapcursor,
   TiptapLink.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),

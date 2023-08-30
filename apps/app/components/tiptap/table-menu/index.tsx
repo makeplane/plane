@@ -16,7 +16,7 @@ const findTableAncestor = (node: Node | null): HTMLTableElement | null => {
 };
 
 export const TableMenu = ({ editor }: { editor: any }) => {
-  const [tableLocation, setTableLocation] = useState(0);
+  const [tableLocation, setTableLocation] = useState({ bottom: 0, left: 0 });
   const items: TableMenuItem[] = [
     {
       name: "Insert Column right",
@@ -47,27 +47,35 @@ export const TableMenu = ({ editor }: { editor: any }) => {
   ];
 
   useEffect(() => {
-    const handleWindowClick = () => {
-      const selection: any = window.getSelection();
-      const range = selection.getRangeAt(0);
-      const tableNode = findTableAncestor(range.startContainer);
-      if (tableNode) {
-        const tableBottom = tableNode.getBoundingClientRect().bottom;
-        tableLocation !== tableBottom && setTableLocation(tableBottom);
+    if (typeof window !== "undefined") {
+      const handleWindowClick = () => {
+        const selection: any = window?.getSelection();
+        if (selection.rangeCount !== 0) {
+          const range = selection.getRangeAt(0);
+          const tableNode = findTableAncestor(range.startContainer);
+          if (tableNode) {
+            const tableRect = tableNode.getBoundingClientRect();
+            const tableCenter = tableRect.left + tableRect.width / 2;
+            const menuWidth = 45;
+            const menuLeft = tableCenter - menuWidth / 2;
+            const tableBottom = tableRect.bottom;
+            setTableLocation({ bottom: tableBottom, left: menuLeft });
+          }
+        }
       }
-    };
 
-    window.addEventListener("click", handleWindowClick);
+      window.addEventListener("click", handleWindowClick);
 
-    return () => {
-      window.removeEventListener("click", handleWindowClick);
-    };
+      return () => {
+        window.removeEventListener("click", handleWindowClick);
+      };
+    }
   }, [tableLocation]);
 
   return (
     <section
-      className="fixed left-2/4 transform -translate-x-2/4 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
-      style={{ bottom: `calc(100vh - ${tableLocation + 45}px)` }}
+      className="fixed left-1/2 transform -translate-x-1/2 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
+      style={{ bottom: `calc(100vh - ${tableLocation.bottom + 45}px)`, left: `${tableLocation.left}px` }}
     >
       {items.map((item, index) => (
         <button

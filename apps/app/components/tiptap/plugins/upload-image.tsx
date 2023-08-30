@@ -60,8 +60,6 @@ function findPlaceholder(state: EditorState, id: {}) {
 export async function startImageUpload(file: File, view: EditorView, pos: number, workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void) {
   if (!file.type.includes("image/")) {
     return;
-  } else if (file.size / 1024 / 1024 > 20) {
-    return;
   }
 
   const id = {};

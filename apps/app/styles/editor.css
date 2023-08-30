@@ -30,6 +30,10 @@
   }
 }
 
+.ProseMirror-gapcursor:after {
+  border-top: 1px solid rgb(var(--color-text-100)) !important;
+}
+
 /* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
 
 ul[data-type="taskList"] li > label {
@@ -156,7 +160,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     border-collapse: collapse;
     table-layout: fixed;
     margin: 0;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
     border: 2px solid rgb(var(--color-border-100));
     width: 100%;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
