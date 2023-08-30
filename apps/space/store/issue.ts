@@ -4,9 +4,41 @@ import { observable, action, computed, makeObservable, runInAction, reaction } f
 import IssueService from "services/issue.service";
 // types
 import { IssueDetailType, TIssueBoardKeys } from "store/types/issue";
-import { IIssueStore, IIssue, IIssueState, IIssueLabel } from "./types";
+import { IIssue, IIssueState, IIssueLabel } from "./types";
 
-// class IssueStore implements IIssueStore {
+export interface IIssueStore {
+  currentIssueBoardView: TIssueBoardKeys | null;
+  loader: boolean;
+  error: any | null;
+  states: IIssueState[] | null;
+  labels: IIssueLabel[] | null;
+  issues: IIssue[] | null;
+  issue_detail: IssueDetailType;
+  userSelectedStates: string[];
+  userSelectedLabels: string[];
+  userSelectedPriorities: string[];
+  activePeekOverviewIssueId: string | null;
+  getCountOfIssuesByState: (state: string) => number;
+  getFilteredIssuesByState: (state: string) => IIssue[];
+  getUserSelectedFilter: (key: "state" | "priority" | "label", value: string) => boolean;
+  checkIfFilterExistsForKey: (key: "state" | "priority" | "label") => boolean;
+  clearUserSelectedFilter: (key: "state" | "priority" | "label" | "all") => void;
+  getIfFiltersIsEmpty: () => boolean;
+  getURLDefinition: (
+    workspaceSlug: string,
+    projectId: string,
+    action?: {
+      key: "state" | "priority" | "label" | "all";
+      value?: string;
+      removeAll?: boolean;
+    }
+  ) => string;
+  setActivePeekOverviewIssueId: (value: any) => void;
+  setCurrentIssueBoardView: (view: TIssueBoardKeys) => void;
+  fetchPublicIssues: (workspaceSlug: string, projectId: string, params: any) => Promise<void>;
+  getIssueByIdAsync: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IssueDetailType>;
+}
+
 class IssueStore {
   currentIssueBoardView: TIssueBoardKeys | null = null;
 
@@ -49,7 +81,7 @@ class IssueStore {
       userSelectedPriorities: observable.ref,
       // action
       setCurrentIssueBoardView: action,
-      getIssuesAsync: action,
+      fetchPublicIssues: action,
       // computed
     });
 
@@ -167,7 +199,7 @@ class IssueStore {
     this.currentIssueBoardView = view;
   };
 
-  getIssuesAsync = async (workspaceSlug: string, projectId: string, params: any) => {
+  fetchPublicIssues = async (workspaceSlug: string, projectId: string, params: any) => {
     try {
       this.loader = true;
       this.error = null;

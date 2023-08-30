@@ -27,14 +27,3 @@ export interface IProjectSettings {
     spreadsheet: boolean;
   };
 }
-
-export interface IProjectStore {
-  loader: boolean;
-  error: any | null;
-
-  workspace: IWorkspace | null;
-  project: IProject | null;
-  workspaceProjectSettings: IProjectSettings | null;
-
-  getProjectSettingsAsync: (workspace_slug: string, project_slug: string) => Promise<void>;
-}

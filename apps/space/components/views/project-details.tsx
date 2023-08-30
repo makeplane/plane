@@ -10,52 +10,64 @@ import { IssuePeekOverview } from "components/issues/peek-overview";
 // mobx store
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
+import { useEffect } from "react";
 
 export const ProjectDetailsView = () => {
   const router = useRouter();
-  const { workspace_slug } = router.query;
+  const { workspace_slug, project_slug, states, labels, priorities } = router.query;
 
-  const store: RootStore = useMobxStore();
+  const { issue: issueStore }: RootStore = useMobxStore();
 
-  const activeIssueId = store.issue.activePeekOverviewIssueId;
+  const activeIssueId = issueStore.activePeekOverviewIssueId;
+
+  useEffect(() => {
+    if (workspace_slug && project_slug) {
+      const params = {
+        state: states || null,
+        labels: labels || null,
+        priority: priorities || null,
+      };
+      issueStore.fetchPublicIssues(workspace_slug?.toString(), project_slug.toString(), params);
+    }
+  }, [workspace_slug, project_slug, issueStore, states, labels, priorities]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
       {workspace_slug && (
         <IssuePeekOverview
           isOpen={Boolean(activeIssueId)}
-          onClose={() => store.issue.setActivePeekOverviewIssueId(null)}
-          issue={store?.issue?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
+          onClose={() => issueStore.setActivePeekOverviewIssueId(null)}
+          issue={issueStore?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
           workspaceSlug={workspace_slug.toString()}
         />
       )}
 
-      {store?.issue?.loader && !store.issue.issues ? (
+      {issueStore?.loader && !issueStore.issues ? (
         <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
       ) : (
         <>
-          {store?.issue?.error ? (
+          {issueStore?.error ? (
             <div className="text-sm text-center py-10  bg-custom-background-200 text-custom-text-100">
               Something went wrong.
             </div>
           ) : (
-            store?.issue?.currentIssueBoardView && (
+            issueStore?.currentIssueBoardView && (
               <>
-                {store?.issue?.currentIssueBoardView === "list" && (
+                {issueStore?.currentIssueBoardView === "list" && (
                   <div className="relative w-full h-full overflow-y-auto">
                     <div className="mx-auto px-4">
                       <IssueListView />
                     </div>
                   </div>
                 )}
-                {store?.issue?.currentIssueBoardView === "kanban" && (
+                {issueStore?.currentIssueBoardView === "kanban" && (
                   <div className="relative w-full h-full mx-auto px-9 py-5">
                     <IssueKanbanView />
                   </div>
                 )}
-                {store?.issue?.currentIssueBoardView === "calendar" && <IssueCalendarView />}
-                {store?.issue?.currentIssueBoardView === "spreadsheet" && <IssueSpreadsheetView />}
-                {store?.issue?.currentIssueBoardView === "gantt" && <IssueGanttView />}
+                {issueStore?.currentIssueBoardView === "calendar" && <IssueCalendarView />}
+                {issueStore?.currentIssueBoardView === "spreadsheet" && <IssueSpreadsheetView />}
+                {issueStore?.currentIssueBoardView === "gantt" && <IssueGanttView />}
               </>
             )
           )}

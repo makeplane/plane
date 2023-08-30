@@ -1,11 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
+import { observer } from "mobx-react-lite";
 // components
 import IssueNavbar from "components/issues/navbar";
-
-type LayoutProps = {
-  params: { workspace_slug: string; project_slug: string };
-};
 
 const ProjectLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="relative w-screen min-h-[500px] h-screen overflow-hidden flex flex-col">
@@ -28,4 +25,4 @@ const ProjectLayout = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-export default ProjectLayout;
+export default observer(ProjectLayout);

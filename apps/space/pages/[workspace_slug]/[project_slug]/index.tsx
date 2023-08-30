@@ -109,12 +109,12 @@ const WorkspaceProjectPage = (props: any) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<any> = async ({ query: { workspace_slug, project_slug } }) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/workspaces/${workspace_slug}/project-boards/${project_slug}/settings/`
-  );
-  const project_settings = await res.json();
-  return { props: { project_settings } };
-};
+// export const getServerSideProps: GetServerSideProps<any> = async ({ query: { workspace_slug, project_slug } }) => {
+//   const res = await fetch(
+//     `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/workspaces/${workspace_slug}/project-boards/${project_slug}/settings/`
+//   );
+//   const project_settings = await res.json();
+//   return { props: { project_settings } };
+// };
 
 export default WorkspaceProjectPage;
