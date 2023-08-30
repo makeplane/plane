@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 
 // ui
 import { Tooltip } from "components/ui";
+// icons
+import { ModuleStatusIcon } from "components/icons";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
@@ -49,6 +51,7 @@ export const ModuleGanttSidebarBlock = ({ data }: { data: IModule }) => {
       className="relative w-full flex items-center gap-2 h-full"
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/modules/${data.id}`)}
     >
+      <ModuleStatusIcon status={data?.status ?? "backlog"} height="16px" width="16px" />
       <h6 className="text-sm font-medium flex-grow truncate">{data.name}</h6>
     </div>
   );

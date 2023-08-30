@@ -48,7 +48,7 @@ const defaultValues: Partial<IModule> = {
   members_list: [],
   start_date: null,
   target_date: null,
-  status: null,
+  status: "backlog",
 };
 
 type Props = {

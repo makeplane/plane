@@ -75,6 +75,7 @@ from plane.db.models import (
     CommentReaction,
     ProjectDeployBoard,
     IssueVote,
+    ProjectPublicMember,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -1588,6 +1589,16 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     project_id=str(project_id),
                     current_instance=None,
                 )
+                if not ProjectMember.objects.filter(
+                    project_id=project_id,
+                    member=request.user,
+                ).exists():
+                    # Add the user for workspace tracking
+                    _ = ProjectPublicMember.objects.get_or_create(
+                        project_id=project_id,
+                        member=request.user,
+                    )
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -1714,6 +1725,15 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 serializer.save(
                     project_id=project_id, issue_id=issue_id, actor=request.user
                 )
+                if not ProjectMember.objects.filter(
+                    project_id=project_id,
+                    member=request.user,
+                ).exists():
+                    # Add the user for workspace tracking
+                    _ = ProjectPublicMember.objects.get_or_create(
+                        project_id=project_id,
+                        member=request.user,
+                    )
                 issue_activity.delay(
                     type="issue_reaction.activity.created",
                     requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
@@ -1721,7 +1741,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                     issue_id=str(self.kwargs.get("issue_id", None)),
                     project_id=str(self.kwargs.get("project_id", None)),
                     current_instance=None,
-                )
+                )    
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except ProjectDeployBoard.DoesNotExist:
@@ -1820,6 +1840,14 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 serializer.save(
                     project_id=project_id, comment_id=comment_id, actor=request.user
                 )
+                if not ProjectMember.objects.filter(
+                    project_id=project_id, member=request.user
+                ).exists():
+                    # Add the user for workspace tracking
+                    _ = ProjectPublicMember.objects.get_or_create(
+                        project_id=project_id,
+                        member=request.user,
+                    )
                 issue_activity.delay(
                     type="comment_reaction.activity.created",
                     requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
@@ -1827,7 +1855,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                     issue_id=None,
                     project_id=str(self.kwargs.get("project_id", None)),
                     current_instance=None,
-                )
+                )    
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IssueComment.DoesNotExist:
@@ -1914,6 +1942,14 @@ class IssueVotePublicViewSet(BaseViewSet):
                 project_id=project_id,
                 issue_id=issue_id,
             )
+            # Add the user for workspace tracking
+            if not ProjectMember.objects.filter(
+                project_id=project_id, member=request.user
+            ).exists():
+                _ = ProjectPublicMember.objects.get_or_create(
+                    project_id=project_id,
+                    member=request.user,
+                )
             issue_vote.vote = request.data.get("vote", 1)
             issue_vote.save()
             issue_activity.delay(
@@ -2134,3 +2170,4 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+

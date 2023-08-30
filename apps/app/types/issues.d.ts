@@ -198,6 +198,7 @@ export interface IIssueActivity {
 }
 
 export interface IIssueComment extends IIssueActivity {
+  access: "EXTERNAL" | "INTERNAL";
   comment_html: string;
   comment_json: any;
   comment_stripped: string;
