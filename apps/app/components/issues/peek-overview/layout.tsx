@@ -15,15 +15,16 @@ import { FullScreenPeekView, SidePeekView } from "components/issues";
 import { IIssue } from "types";
 
 type Props = {
+  handleMutation: () => void;
   projectId: string;
-  workspaceSlug: string;
   readOnly: boolean;
+  workspaceSlug: string;
 };
 
 export type TPeekOverviewModes = "side" | "modal" | "full";
 
 export const IssuePeekOverview: React.FC<Props> = observer(
-  ({ projectId, workspaceSlug, readOnly }) => {
+  ({ handleMutation, projectId, readOnly, workspaceSlug }) => {
     const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
     const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
     const [peekOverviewMode, setPeekOverviewMode] = useState<TPeekOverviewModes>("side");
@@ -32,7 +33,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
     const { peekIssue } = router.query;
 
     const { issues: issuesStore } = useMobxStore();
-    const { getIssueById, issues, updateIssue } = issuesStore;
+    const { deleteIssue, getIssueById, issues, updateIssue } = issuesStore;
 
     const issue = issues[peekIssue?.toString() ?? ""];
 
@@ -52,6 +53,16 @@ export const IssuePeekOverview: React.FC<Props> = observer(
       if (!issue || !user) return;
 
       await updateIssue(workspaceSlug, projectId, issue.id, formData, user);
+      handleMutation();
+    };
+
+    const handleDeleteIssue = async () => {
+      if (!issue || !user) return;
+
+      await deleteIssue(workspaceSlug, projectId, issue.id, user);
+      handleMutation();
+
+      handleClose();
     };
 
     useEffect(() => {
@@ -94,6 +105,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
                   <Dialog.Panel className="absolute z-20 bg-custom-background-100 top-0 right-0 h-full w-1/2 shadow-custom-shadow-md">
                     <SidePeekView
                       handleClose={handleClose}
+                      handleDeleteIssue={handleDeleteIssue}
                       handleUpdateIssue={handleUpdateIssue}
                       issue={issue}
                       mode={peekOverviewMode}
@@ -139,6 +151,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
                     {peekOverviewMode === "modal" && (
                       <SidePeekView
                         handleClose={handleClose}
+                        handleDeleteIssue={handleDeleteIssue}
                         handleUpdateIssue={handleUpdateIssue}
                         issue={issue}
                         mode={peekOverviewMode}
@@ -150,6 +163,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
                     {peekOverviewMode === "full" && (
                       <FullScreenPeekView
                         handleClose={handleClose}
+                        handleDeleteIssue={handleDeleteIssue}
                         handleUpdateIssue={handleUpdateIssue}
                         issue={issue}
                         mode={peekOverviewMode}

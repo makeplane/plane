@@ -13,6 +13,7 @@ import { IIssue } from "types";
 
 type Props = {
   handleClose: () => void;
+  handleDeleteIssue: () => void;
   handleUpdateIssue: (formData: Partial<IIssue>) => Promise<void>;
   issue: IIssue | undefined;
   mode: TPeekOverviewModes;
@@ -23,6 +24,7 @@ type Props = {
 
 export const FullScreenPeekView: React.FC<Props> = ({
   handleClose,
+  handleDeleteIssue,
   handleUpdateIssue,
   issue,
   mode,
@@ -35,6 +37,7 @@ export const FullScreenPeekView: React.FC<Props> = ({
       <div className="w-full p-5">
         <PeekOverviewHeader
           handleClose={handleClose}
+          handleDeleteIssue={handleDeleteIssue}
           issue={issue}
           mode={mode}
           setMode={setMode}
@@ -79,6 +82,7 @@ export const FullScreenPeekView: React.FC<Props> = ({
       <div className="w-full px-6 py-5">
         {issue ? (
           <PeekOverviewIssueProperties
+            handleDeleteIssue={handleDeleteIssue}
             handleUpdateIssue={handleUpdateIssue}
             issue={issue}
             mode="full"

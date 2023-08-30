@@ -20,7 +20,6 @@ import {
   SpreadsheetView,
   GanttChartView,
 } from "components/core";
-import { IssuePeekOverview } from "components/issues";
 // ui
 import { EmptyState, Spinner } from "components/ui";
 // icons
@@ -98,11 +97,6 @@ export const AllViews: React.FC<Props> = ({
 
   return (
     <>
-      <IssuePeekOverview
-        projectId={projectId?.toString() ?? ""}
-        workspaceSlug={workspaceSlug?.toString() ?? ""}
-        readOnly={disableUserActions}
-      />
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">
           {(provided, snapshot) => (

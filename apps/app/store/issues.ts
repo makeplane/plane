@@ -116,8 +116,7 @@ class IssuesStore {
     const originalIssue = { ...this.issues[issueId] };
 
     // immediately update the issue in the store
-    let updatedIssue = { ...this.issues[issueId] };
-    updatedIssue = { ...updatedIssue, ...issueForm };
+    const updatedIssue = { ...originalIssue, ...issueForm };
 
     try {
       runInAction(() => {
