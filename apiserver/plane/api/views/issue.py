@@ -1400,15 +1400,6 @@ class IssueReactionViewSet(BaseViewSet):
         )
 
     def perform_create(self, serializer):
-        if not ProjectMember.objects.filter(
-            project_id=self.kwargs.get("project_id"),
-            member=self.request.user,
-        ).exists():
-            # Add the user for workspace tracking
-            _ = ProjectPublicMember.objects.get_or_create(
-                project_id=self.kwargs.get("project_id"),
-                member=self.request.user,
-            )
         serializer.save(
             issue_id=self.kwargs.get("issue_id"),
             project_id=self.kwargs.get("project_id"),
@@ -1459,15 +1450,6 @@ class CommentReactionViewSet(BaseViewSet):
         )
 
     def perform_create(self, serializer):
-        if not ProjectMember.objects.filter(
-            project_id=self.kwargs.get("project_id"),
-            member=self.request.user,
-        ).exists():
-            # Add the user for workspace tracking
-            _ = ProjectPublicMember.objects.get_or_create(
-                project_id=self.kwargs.get("project_id"),
-                member=self.request.user,
-            )
         serializer.save(
             actor=self.request.user,
             comment_id=self.kwargs.get("comment_id"),
