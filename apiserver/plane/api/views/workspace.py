@@ -1197,6 +1197,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             projects = request.query_params.getlist("project", [])
 
             queryset = IssueActivity.objects.filter(
+                ~Q(field__in=["comment", "vote", "reaction"]),
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
                 actor=user_id,

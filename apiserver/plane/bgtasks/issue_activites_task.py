@@ -24,6 +24,9 @@ from plane.db.models import (
     IssueSubscriber,
     Notification,
     IssueAssignee,
+    IssueReaction,
+    CommentReaction,
+    IssueComment,
 )
 from plane.api.serializers import IssueActivitySerializer
 
@@ -629,7 +632,7 @@ def update_issue_activity(
         "parent": track_parent,
         "priority": track_priority,
         "state": track_state,
-        "description": track_description,
+        "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
         "labels_list": track_labels,
@@ -1022,6 +1025,150 @@ def delete_attachment_activity(
         )
     )
 
+def create_issue_reaction_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    if requested_data and requested_data.get("reaction") is not None:
+        issue_reaction = IssueReaction.objects.filter(reaction=requested_data.get("reaction"), project=project, actor=actor).values_list('id', flat=True).first()
+        if issue_reaction is not None:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    actor=actor,
+                    verb="created",
+                    old_value=None,
+                    new_value=requested_data.get("reaction"),
+                    field="reaction",
+                    project=project,
+                    workspace=project.workspace,
+                    comment="added the reaction",
+                    old_identifier=None,
+                    new_identifier=issue_reaction,
+                )
+            )
+
+
+def delete_issue_reaction_activity(
+        requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+    if current_instance and current_instance.get("reaction") is not None:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor=actor,
+                verb="deleted",
+                old_value=current_instance.get("reaction"),
+                new_value=None,
+                field="reaction",
+                project=project,
+                workspace=project.workspace,
+                comment="removed the reaction",
+                old_identifier=current_instance.get("identifier"),
+                new_identifier=None,
+            )
+        )
+
+
+def create_comment_reaction_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    if requested_data and requested_data.get("reaction") is not None:
+        comment_reaction_id, comment_id = CommentReaction.objects.filter(reaction=requested_data.get("reaction"), project=project, actor=actor).values_list('id', 'comment__id').first()
+        comment = IssueComment.objects.get(pk=comment_id,project=project)
+        if comment is not None and comment_reaction_id is not None and comment_id is not None:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=comment.issue_id,
+                    actor=actor,
+                    verb="created",
+                    old_value=None,
+                    new_value=requested_data.get("reaction"),
+                    field="reaction",
+                    project=project,
+                    workspace=project.workspace,
+                    comment="added the reaction",
+                    old_identifier=None,
+                    new_identifier=comment_reaction_id,
+                )
+            )
+
+
+def delete_comment_reaction_activity(
+        requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+    if current_instance and current_instance.get("reaction") is not None:
+        issue_id = IssueComment.objects.filter(pk=current_instance.get("comment_id"), project=project).values_list('issue_id', flat=True).first()
+        if issue_id is not None:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    actor=actor,
+                    verb="deleted",
+                    old_value=current_instance.get("reaction"),
+                    new_value=None,
+                    field="reaction",
+                    project=project,
+                    workspace=project.workspace,
+                    comment="removed the reaction",
+                    old_identifier=current_instance.get("identifier"),
+                    new_identifier=None,
+                )
+            )
+
+
+def create_issue_vote_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    if requested_data and requested_data.get("vote") is not None:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor=actor,
+                verb="created",
+                old_value=None,
+                new_value=requested_data.get("vote"),
+                field="vote",
+                project=project,
+                workspace=project.workspace,
+                comment="added the vote",
+                old_identifier=None,
+                new_identifier=None,
+            )
+        )
+
+
+def delete_issue_vote_activity(
+        requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+    if current_instance and current_instance.get("vote") is not None:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor=actor,
+                verb="deleted",
+                old_value=current_instance.get("vote"),
+                new_value=None,
+                field="vote",
+                project=project,
+                workspace=project.workspace,
+                comment="removed the vote",
+                old_identifier=current_instance.get("identifier"),
+                new_identifier=None,
+            )
+        )
+
 
 # Receive message from room group
 @shared_task
@@ -1045,6 +1192,12 @@ def issue_activity(
             "cycle.activity.deleted",
             "module.activity.created",
             "module.activity.deleted",
+            "issue_reaction.activity.created",
+            "issue_reaction.activity.deleted",
+            "comment_reaction.activity.created",
+            "comment_reaction.activity.deleted",
+            "issue_vote.activity.created",
+            "issue_vote.activity.deleted",
         ]:
             issue = Issue.objects.filter(pk=issue_id).first()
 
@@ -1080,6 +1233,12 @@ def issue_activity(
             "link.activity.deleted": delete_link_activity,
             "attachment.activity.created": create_attachment_activity,
             "attachment.activity.deleted": delete_attachment_activity,
+            "issue_reaction.activity.created": create_issue_reaction_activity,
+            "issue_reaction.activity.deleted": delete_issue_reaction_activity,
+            "comment_reaction.activity.created": create_comment_reaction_activity,
+            "comment_reaction.activity.deleted": delete_comment_reaction_activity,
+            "issue_vote.activity.created": create_issue_vote_activity,
+            "issue_vote.activity.deleted": delete_issue_vote_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)
@@ -1119,6 +1278,12 @@ def issue_activity(
             "cycle.activity.deleted",
             "module.activity.created",
             "module.activity.deleted",
+            "issue_reaction.activity.created",
+            "issue_reaction.activity.deleted",
+            "comment_reaction.activity.created",
+            "comment_reaction.activity.deleted",
+            "issue_vote.activity.created",
+            "issue_vote.activity.deleted",
         ]:
             # Create Notifications
             bulk_notifications = []
