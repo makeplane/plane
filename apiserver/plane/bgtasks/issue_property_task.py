@@ -1,6 +1,9 @@
+# Python imports
+import json
+
 # Django imports
 from django.db.models import Prefetch
-
+from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from celery import shared_task
 from sentry_sdk import capture_exception
@@ -35,7 +38,7 @@ def issue_property_json_task(slug, project_id, issue_id):
             .distinct()
         )
         serializer = IssuePropertyReadSerializer(issue_properties, many=True)
-        issue.issue_properties = serializer.data
+        issue.issue_properties = json.loads(json.dumps(serializer.data, cls=DjangoJSONEncoder))
         issue.save(update_fields=["issue_properties"])
         return
     except Exception as e:

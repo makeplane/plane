@@ -114,20 +114,14 @@ class IssuePropertyValueViewSet(BaseViewSet):
 
             bulk_issue_props = []
             for issue_property in issue_properties:
-                # get the requested property
-                if issue_property.type == "entity" or issue_property.type == "relation":
-                    values_uuid = request_data.get(str(issue_property.id))
-                    values = None
-                else:
-                    values = request_data.get(str(issue_property.id))
-                    values_uuid = None
-                if issue_property.is_multi:
-                    if values is not None:
-                        for value in values.split(","):
+                prop_values = request_data.get(str(issue_property.id))
+                if issue_property.is_multi and isinstance(prop_values, list):
+                    if issue_property.type == "entity" or issue_property.type == "relation" or issue_property.type == "mselect":
+                        for prop_value in prop_values:
                             bulk_issue_props.append(
                                 IssuePropertyValue(
-                                    values=value,
-                                    values_uuid=None,
+                                    values_uuid=prop_value,
+                                    values=None,
                                     issue_property=issue_property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
@@ -135,28 +129,40 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                 )
                             )
                     else:
-                        for value in values_uuid.split(","):
+                        for prop_value in prop_values:
                             bulk_issue_props.append(
                                 IssuePropertyValue(
+                                    values_uuid=None,
                                     values=None,
-                                    values_uuid=value,
                                     issue_property=issue_property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
                                     issue_id=issue_id,
-                              )
+                                )
                             )
                 else:
-                    bulk_issue_props.append(
-                        IssuePropertyValue(
-                            values=values,
-                            values_uuid=values_uuid,
-                            issue_property=issue_property,
-                            project_id=project_id,
-                            workspace_id=workspace_id,
-                            issue_id=issue_id,
-                        )
-                    )
+                    if issue_property.type == "entity" or issue_property.type == "relation" or issue_property.type == "mselect":
+                            bulk_issue_props.append(
+                                IssuePropertyValue(
+                                    values_uuid=prop_value,
+                                    values=None,
+                                    issue_property=issue_property,
+                                    project_id=project_id,
+                                    workspace_id=workspace_id,
+                                    issue_id=issue_id,
+                                )
+                            )
+                    else:
+                            bulk_issue_props.append(
+                                IssuePropertyValue(
+                                    values_uuid=None,
+                                    values=None,
+                                    issue_property=issue_property,
+                                    project_id=project_id,
+                                    workspace_id=workspace_id,
+                                    issue_id=issue_id,
+                                )
+                            )
 
             issue_property_values = IssuePropertyValue.objects.bulk_create(
                 bulk_issue_props, batch_size=100, ignore_conflicts=True
@@ -170,7 +176,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -199,7 +205,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
             serializer = IssuePropertyReadSerializer(issue_properties, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

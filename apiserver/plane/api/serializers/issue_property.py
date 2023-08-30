@@ -130,7 +130,7 @@ class IssuePropertyReadSerializer(BaseSerializer):
             model = MODEL_MAPPER.get(obj.unit, None)
             if model is not None:
                 serializer = SERIALIZER_MAPPER.get(obj.unit, None)
-                return serializer(model.objects.filter(pk__in=[(p.values) for p in prop_values]), many=True).data
+                return serializer(model.objects.filter(pk__in=[(p.values_uuid) for p in prop_values]), many=True).data
             else:
                 return None
         else:
