@@ -60,7 +60,7 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
     codeBlock: false,
     horizontalRule: false,
     dropcursor: {
-      color: "#DBEAFE",
+      color: "rgba(var(--color-text-100))",
       width: 2,
     },
     gapcursor: false,

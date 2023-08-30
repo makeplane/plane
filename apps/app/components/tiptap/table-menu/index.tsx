@@ -8,7 +8,7 @@ interface TableMenuItem {
   icon: any;
 }
 
-const findTableAncestor = (node: Node | null): HTMLTableElement | null => {
+export const findTableAncestor = (node: Node | null): HTMLTableElement | null => {
   while (node !== null && node.nodeName !== "TABLE") {
     node = node.parentNode;
   }
