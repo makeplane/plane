@@ -27,6 +27,7 @@ export const NavbarTheme = observer(() => {
     document?.documentElement.setAttribute("data-theme", theme ?? store?.theme?.theme);
   }, [theme, store]);
 
+  // TODO: check these styles
   return (
     <div
       className="relative w-[28px] h-[28px] flex justify-center rounded-md items-center rounded-sm cursor-pointer bg-custom-background-100 hover:bg-custom-background-200 hover:bg-custom-background-200/60 text-custom-text-100 transition-all"

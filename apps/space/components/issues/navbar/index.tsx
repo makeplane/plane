@@ -1,12 +1,8 @@
-"use client";
-
-// next imports
 import Image from "next/image";
 // components
 import { NavbarSearch } from "./search";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarIssueFilter } from "./issue-filter";
-import { NavbarIssueView } from "./issue-view";
 import { NavbarTheme } from "./theme";
 // mobx react lite
 import { observer } from "mobx-react-lite";
