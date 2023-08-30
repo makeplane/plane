@@ -42,7 +42,7 @@ const HomePage: NextPage = observer(() => {
   const store: any = useMobxStore();
   const { setTheme } = useTheme();
 
-  const { isLoading, mutateUser } = useUserAuth("sign-in");
+  const { isLoading, mutateUser, oidcSettings } = useUserAuth("sign-in");
 
   const { setToastAlert } = useToast();
 
@@ -106,10 +106,10 @@ const HomePage: NextPage = observer(() => {
 
   const handleOidcSignIn = async (credential: string) => {
     try {
-      if (process.env.NEXT_PUBLIC_OIDC_CLIENT_ID && credential) {
+      if (oidcSettings?.client_id && credential) {
         const oidcAuthPayload = {
           credential,
-          clientId: process.env.NEXT_PUBLIC_OIDC_CLIENT_ID,
+          clientId: oidcSettings.client_id,
         };
         const response = await authenticationService.oidcAuth(oidcAuthPayload);
         if (response && response?.user) mutateUser();
@@ -195,12 +195,12 @@ const HomePage: NextPage = observer(() => {
           <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
             <div>
               {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ||
-              parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
+              oidcSettings?.enabled ? (
                 <>
                   <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
                     Sign in to Plane
                   </h1>
-                  {parseInt(process.env.NEXT_PUBLIC_AUTO_OIDC || "0") ? (
+                  {oidcSettings?.auto ? (
                     <></>
                   ) : (
                     <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
@@ -212,8 +212,8 @@ const HomePage: NextPage = observer(() => {
                         <GithubLoginButton handleSignIn={handleGitHubSignIn} />
                       </>
                     ) : null}
-                    {parseInt(process.env.NEXT_PUBLIC_ENABLE_OIDC || "0") ? (
-                      <OidcLoginButton handleSignIn={handleOidcSignIn} />
+                    {oidcSettings?.auto ? (
+                      <OidcLoginButton handleSignIn={handleOidcSignIn} oidcSettings={oidcSettings} />
                     ) : null}
                   </div>
                 </>

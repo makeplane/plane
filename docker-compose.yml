@@ -58,10 +58,10 @@ services:
                         NEXT_PUBLIC_ENABLE_SENTRY: "0"
                         NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
                         NEXT_PUBLIC_TRACK_EVENTS: "0"
-                        NEXT_PUBLIC_AUTO_OIDC: ${NEXT_PUBLIC_AUTO_OIDC}
-                        NEXT_PUBLIC_ENABLE_OIDC: ${NEXT_PUBLIC_ENABLE_OIDC}
-                        NEXT_PUBLIC_OIDC_CLIENT_ID: ${NEXT_PUBLIC_OIDC_CLIENT_ID}
-                        NEXT_PUBLIC_OIDC_URL_AUTHORIZE: ${NEXT_PUBLIC_OIDC_URL_AUTHORIZE}
+                        OIDC_AUTO: ${OIDC_AUTO}
+                        OIDC_ENABLED: ${OIDC_ENABLED}
+                        OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+                        OIDC_URL_AUTHORIZE: ${OIDC_URL_AUTHORIZE}
                 depends_on:
                         - plane-api
                         - plane-worker

@@ -8,8 +8,10 @@ import { CURRENT_USER } from "constants/fetch-keys";
 // services
 import userService from "services/user.service";
 import workspaceService from "services/workspace.service";
+import oidcService from "services/oidc.service";
 // types
 import type { IWorkspace, ICurrentUserResponse } from "types";
+import { IOidcSettings } from "types/oidc";
 
 const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
   const router = useRouter();
@@ -25,6 +27,15 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
   } = useSWR<ICurrentUserResponse>(CURRENT_USER, () => userService.currentUser(), {
     refreshInterval: 0,
     shouldRetryOnError: false,
+  });
+
+  const {
+    data: oidcSettings,
+    isLoading: oidcSettingsLoading,
+    error: oidcSettingsError,
+  } = useSWR<IOidcSettings>("OIDC-SETTINGS", () => oidcService.getSettings(), {
+    refreshInterval: 0,
+    shouldRetryOnError: true,
   });
 
   useEffect(() => {
@@ -106,8 +117,9 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
   }, [user, isLoading, routeAuth, router, next_url]);
 
   return {
-    isLoading: isRouteAccess,
+    isLoading: isRouteAccess || oidcSettingsLoading,
     user: error ? undefined : user,
+    oidcSettings: oidcSettingsError ? undefined : oidcSettings,
     mutateUser: mutate,
     assignedIssuesLength: user?.assigned_issues ?? 0,
     workspaceInvitesLength: user?.workspace_invites ?? 0,

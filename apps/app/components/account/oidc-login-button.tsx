@@ -5,13 +5,15 @@ import { useRouter } from "next/router";
 // images
 import userImage from "/public/user.png";
 import { Loader, Spinner } from "components/ui";
+import { IOidcSettings } from "types/oidc";
 
 export interface OidcLoginButtonProps {
   handleSignIn: React.Dispatch<string>;
+  oidcSettings: IOidcSettings;
 }
 
 export const OidcLoginButton: FC<OidcLoginButtonProps> = (props) => {
-  const { handleSignIn } = props;
+  const { handleSignIn, oidcSettings } = props;
   // router
   const {
     push: routerPush,
@@ -21,7 +23,7 @@ export const OidcLoginButton: FC<OidcLoginButtonProps> = (props) => {
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
   const [oidcCode, setOidcCode] = useState<null | string>(null);
 
-  const oidcRedirect = `${process.env.NEXT_PUBLIC_OIDC_URL_AUTHORIZE}?client_id=${process.env.NEXT_PUBLIC_OIDC_CLIENT_ID}&redirect_uri=${loginCallBackURL}&scope=openid%20profile%20email&response_type=code`;
+  const oidcRedirect = `${oidcSettings.url_authorize}?client_id=${oidcSettings.client_id}&redirect_uri=${loginCallBackURL}&scope=openid%20profile%20email&response_type=code`;
 
   useEffect(() => {
     if (code && !oidcCode) {
@@ -29,7 +31,7 @@ export const OidcLoginButton: FC<OidcLoginButtonProps> = (props) => {
       handleSignIn(code.toString());
     }
     if (
-      parseInt(process.env.NEXT_PUBLIC_AUTO_OIDC || "0") &&
+      oidcSettings.auto &&
       (!code || !oidcCode) &&
       loginCallBackURL
     ) {
@@ -45,7 +47,7 @@ export const OidcLoginButton: FC<OidcLoginButtonProps> = (props) => {
 
   return (
     <div className="w-full flex justify-center items-center px-[3px]">
-      {parseInt(process.env.NEXT_PUBLIC_AUTO_OIDC || "0") || code ? (
+      {oidcSettings.auto || code ? (
         <Spinner />
       ) : (
         <Link href={oidcRedirect}>
