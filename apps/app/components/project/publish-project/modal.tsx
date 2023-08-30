@@ -83,6 +83,8 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
 
   const handleClose = () => {
     projectPublish.handleProjectModal(null);
+
+    setIsUpdateRequired(false);
     reset({ ...defaultValues });
   };
 

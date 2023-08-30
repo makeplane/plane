@@ -26,7 +26,6 @@ import {
   SettingsOutlined,
 } from "@mui/icons-material";
 // helpers
-import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject } from "types";
@@ -265,11 +264,10 @@ export const SingleSidebarProject: React.FC<Props> = observer(
                     >
                       <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
                         <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
-                          <span className="material-symbols-rounded text-[16px]">ios_share</span>
+                          <Icon iconName="ios_share" className="!text-base" />
                         </div>
-                        <div>Publish</div>
+                        <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
                       </div>
-                      {/* <PublishProjectModal /> */}
                     </CustomMenu.MenuItem>
                   )}
 
