@@ -64,7 +64,7 @@ def archive_old_issues():
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
-                Issue.objects.bulk_update(
+                updated_issues = Issue.objects.bulk_update(
                     issues_to_update, ["archived_at"], batch_size=100
                 )
                 [
@@ -77,7 +77,7 @@ def archive_old_issues():
                         current_instance=None,
                         subscriber=False,
                     )
-                    for issue in issues_to_update
+                    for issue in updated_issues
                 ]
         return
     except Exception as e:
@@ -136,7 +136,7 @@ def close_old_issues():
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
-                Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
+                updated_issues = Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
                 [
                     issue_activity.delay(
                         type="issue.activity.updated",
@@ -147,7 +147,7 @@ def close_old_issues():
                         current_instance=None,
                         subscriber=False,
                     )
-                    for issue in issues_to_update
+                    for issue in updated_issues
                 ]
         return
     except Exception as e:

@@ -10,7 +10,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
+import { TipTapEditor } from "components/tiptap";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
@@ -25,18 +25,10 @@ const ProfileActivity = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
-
-  if (!userActivity) {
-    return (
-      <Loader className="space-y-5">
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-        <Loader.Item height="40px" />
-      </Loader>
-    );
-  }
+  const { data: userActivity } = useSWR(
+    workspaceSlug ? USER_ACTIVITY : null,
+    workspaceSlug ? () => userService.getUserWorkspaceActivity(workspaceSlug.toString()) : null
+  );
 
   return (
     <WorkspaceAuthorizationLayout
@@ -56,7 +48,7 @@ const ProfileActivity = () => {
           </div>
           <SettingsNavbar profilePage />
         </div>
-        {userActivity && userActivity.results.length > 0 && (
+        {userActivity ? (
           <div>
             <ul role="list" className="-mb-4">
               {userActivity.results.map((activityItem: any, activityIdx: number) => {
@@ -105,7 +97,7 @@ const ProfileActivity = () => {
                             </p>
                           </div>
                           <div className="issue-comments-section p-0">
-                            <Tiptap
+                            <TipTapEditor
                               workspaceSlug={workspaceSlug as string}
                               value={
                                 activityItem?.new_value !== ""
@@ -226,6 +218,13 @@ const ProfileActivity = () => {
               })}
             </ul>
           </div>
+        ) : (
+          <Loader className="space-y-5">
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+          </Loader>
         )}
       </div>
     </WorkspaceAuthorizationLayout>

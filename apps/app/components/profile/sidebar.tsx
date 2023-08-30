@@ -162,19 +162,21 @@ export const ProfileSidebar = () => {
                             </div>
                           </div>
                           <div className="flex-shrink-0 flex items-center gap-2">
-                            <Tooltip tooltipContent="Completion percentage" position="left">
-                              <div
-                                className={`px-1 py-0.5 text-xs font-medium rounded ${
-                                  completedIssuePercentage <= 35
-                                    ? "bg-red-500/10 text-red-500"
-                                    : completedIssuePercentage <= 70
-                                    ? "bg-yellow-500/10 text-yellow-500"
-                                    : "bg-green-500/10 text-green-500"
-                                }`}
-                              >
-                                {completedIssuePercentage}%
-                              </div>
-                            </Tooltip>
+                            {project.assigned_issues > 0 && (
+                              <Tooltip tooltipContent="Completion percentage" position="left">
+                                <div
+                                  className={`px-1 py-0.5 text-xs font-medium rounded ${
+                                    completedIssuePercentage <= 35
+                                      ? "bg-red-500/10 text-red-500"
+                                      : completedIssuePercentage <= 70
+                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      : "bg-green-500/10 text-green-500"
+                                  }`}
+                                >
+                                  {completedIssuePercentage}%
+                                </div>
+                              </Tooltip>
+                            )}
                             <Icon iconName="arrow_drop_down" className="!text-lg" />
                           </div>
                         </Disclosure.Button>

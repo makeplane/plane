@@ -45,6 +45,7 @@ from .issue import (
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
+    IssuePublicSerializer,
 )
 
 from .module import (

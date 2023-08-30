@@ -9,29 +9,20 @@ import stateService from "services/state.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import { getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
-// types
-import { UserAuth } from "types";
 // constants
 import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   value: string;
   onChange: (val: string) => void;
-  userAuth: UserAuth;
   disabled?: boolean;
 };
 
-export const SidebarStateSelect: React.FC<Props> = ({
-  value,
-  onChange,
-  userAuth,
-  disabled = false,
-}) => {
+export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
@@ -45,60 +36,52 @@ export const SidebarStateSelect: React.FC<Props> = ({
 
   const selectedState = states?.find((s) => s.id === value);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
-
   return (
-    <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-        <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
-        <p>State</p>
-      </div>
-      <div className="sm:basis-1/2">
-        <CustomSelect
-          label={
-            selectedState ? (
-              <div className="flex items-center gap-2 text-left text-custom-text-100">
-                {getStateGroupIcon(
-                  selectedState?.group ?? "backlog",
-                  "16",
-                  "16",
-                  selectedState?.color ?? ""
-                )}
-                {addSpaceIfCamelCase(selectedState?.name ?? "")}
-              </div>
-            ) : inboxIssueId ? (
-              <div className="flex items-center gap-2 text-left text-custom-text-100">
-                {getStateGroupIcon("backlog", "16", "16", "#ff7700")}
-                Triage
-              </div>
-            ) : (
-              "None"
-            )
-          }
-          value={value}
-          onChange={onChange}
-          width="w-full"
-          position="right"
-          disabled={isNotAllowed}
-        >
-          {states ? (
-            states.length > 0 ? (
-              states.map((state) => (
-                <CustomSelect.Option key={state.id} value={state.id}>
-                  <>
-                    {getStateGroupIcon(state.group, "16", "16", state.color)}
-                    {state.name}
-                  </>
-                </CustomSelect.Option>
-              ))
-            ) : (
-              <div className="text-center">No states found</div>
-            )
+    <CustomSelect
+      customButton={
+        <button type="button" className="bg-custom-background-80 text-xs rounded px-2.5 py-0.5">
+          {selectedState ? (
+            <div className="flex items-center gap-1.5 text-left text-custom-text-100">
+              {getStateGroupIcon(
+                selectedState?.group ?? "backlog",
+                "14",
+                "14",
+                selectedState?.color ?? ""
+              )}
+              {addSpaceIfCamelCase(selectedState?.name ?? "")}
+            </div>
+          ) : inboxIssueId ? (
+            <div className="flex items-center gap-1.5 text-left text-custom-text-100">
+              {getStateGroupIcon("backlog", "14", "14", "#ff7700")}
+              Triage
+            </div>
           ) : (
-            <Spinner />
+            "None"
           )}
-        </CustomSelect>
-      </div>
-    </div>
+        </button>
+      }
+      value={value}
+      onChange={onChange}
+      optionsClassName="w-min"
+      position="left"
+      disabled={disabled}
+    >
+      {states ? (
+        states.length > 0 ? (
+          states.map((state) => (
+            <CustomSelect.Option key={state.id} value={state.id}>
+              <>
+                {getStateGroupIcon(state.group, "16", "16", state.color)}
+                {state.name}
+              </>
+            </CustomSelect.Option>
+          ))
+        ) : (
+          <div className="text-center">No states found</div>
+        )
+      ) : (
+        <Spinner />
+      )}
+    </CustomSelect>
   );
 };

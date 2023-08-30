@@ -198,6 +198,7 @@ export interface IIssueActivity {
 }
 
 export interface IIssueComment extends IIssueActivity {
+  access: "EXTERNAL" | "INTERNAL";
   comment_html: string;
   comment_json: any;
   comment_stripped: string;
@@ -251,7 +252,9 @@ export type TIssueOrderByOptions =
   | "target_date"
   | "-target_date"
   | "estimate__point"
-  | "-estimate__point";
+  | "-estimate__point"
+  | "start_date"
+  | "-start_date";
 
 export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;

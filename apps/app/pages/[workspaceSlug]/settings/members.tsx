@@ -69,19 +69,6 @@ const MembersSettings: NextPage = () => {
   );
 
   const members = [
-    ...(workspaceMembers?.map((item) => ({
-      id: item.id,
-      memberId: item.member?.id,
-      avatar: item.member?.avatar,
-      first_name: item.member?.first_name,
-      last_name: item.member?.last_name,
-      email: item.member?.email,
-      display_name: item.member?.display_name,
-      role: item.role,
-      status: true,
-      member: true,
-      accountCreated: true,
-    })) || []),
     ...(workspaceInvitations?.map((item) => ({
       id: item.id,
       memberId: item.id,
@@ -94,6 +81,19 @@ const MembersSettings: NextPage = () => {
       status: item.accepted,
       member: false,
       accountCreated: item?.accepted ? false : true,
+    })) || []),
+    ...(workspaceMembers?.map((item) => ({
+      id: item.id,
+      memberId: item.member?.id,
+      avatar: item.member?.avatar,
+      first_name: item.member?.first_name,
+      last_name: item.member?.last_name,
+      email: item.member?.email,
+      display_name: item.member?.display_name,
+      role: item.role,
+      status: true,
+      member: true,
+      accountCreated: true,
     })) || []),
   ];
 
