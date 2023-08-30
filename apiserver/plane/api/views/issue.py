@@ -1405,7 +1405,7 @@ class IssueReactionViewSet(BaseViewSet):
             actor=self.request.user,
         )
         issue_activity.delay(
-            type="issue-reaction.activity.created",
+            type="issue_reaction.activity.created",
             requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
@@ -1423,7 +1423,7 @@ class IssueReactionViewSet(BaseViewSet):
                 actor=request.user,
             )
             issue_activity.delay(
-                type="issue-reaction.activity.deleted",
+                type="issue_reaction.activity.deleted",
                 requested_data=None,
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
@@ -1475,12 +1475,11 @@ class CommentReactionViewSet(BaseViewSet):
             comment_id=self.kwargs.get("comment_id"),
             project_id=self.kwargs.get("project_id"),
         )
-        comment = IssueComment.objects.get(pk=self.kwargs.get("comment_id"),project_id=self.kwargs.get("project_id"))
         issue_activity.delay(
-            type="comment-reaction.activity.created",
+            type="comment_reaction.activity.created",
             requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
             actor_id=str(self.request.user.id),
-            issue_id=str(comment.issue_id),
+            issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
         )
@@ -1494,17 +1493,17 @@ class CommentReactionViewSet(BaseViewSet):
                 reaction=reaction_code,
                 actor=request.user,
             )
-            comment = IssueComment.objects.get(pk=self.kwargs.get("comment_id"),project_id=project_id)
             issue_activity.delay(
-                type="comment-reaction.activity.deleted",
+                type="comment_reaction.activity.deleted",
                 requested_data=None,
                 actor_id=str(self.request.user.id),
-                issue_id=str(comment.issue_id),
+                issue_id=None,
                 project_id=str(self.kwargs.get("project_id", None)),
                 current_instance=json.dumps(
                     {
                         "reaction": str(reaction_code),
                         "identifier": str(comment_reaction.id),
+                        "comment_id": str(comment_id)
                     }
                 ),
             )
@@ -1716,7 +1715,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                     project_id=project_id, issue_id=issue_id, actor=request.user
                 )
                 issue_activity.delay(
-                    type="issue-reaction.activity.created",
+                    type="issue_reaction.activity.created",
                     requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                     actor_id=str(self.request.user.id),
                     issue_id=str(self.kwargs.get("issue_id", None)),
@@ -1755,7 +1754,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 actor=request.user,
             )
             issue_activity.delay(
-                type="issue-reaction.activity.deleted",
+                type="issue_reaction.activity.deleted",
                 requested_data=None,
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
@@ -1821,12 +1820,11 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 serializer.save(
                     project_id=project_id, comment_id=comment_id, actor=request.user
                 )
-                comment = IssueComment.objects.get(pk=self.kwargs.get("comment_id"),project_id=project_id)
                 issue_activity.delay(
-                    type="comment-reaction.activity.created",
+                    type="comment_reaction.activity.created",
                     requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                     actor_id=str(self.request.user.id),
-                    issue_id=str(comment.issue_id),
+                    issue_id=None,
                     project_id=str(self.kwargs.get("project_id", None)),
                     current_instance=None,
                 )
@@ -1867,17 +1865,17 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 reaction=reaction_code,
                 actor=request.user,
             )
-            comment = IssueComment.objects.get(pk=self.kwargs.get("comment_id"),project_id=project_id)
             issue_activity.delay(
-                type="comment-reaction.activity.deleted",
+                type="comment_reaction.activity.deleted",
                 requested_data=None,
                 actor_id=str(self.request.user.id),
-                issue_id=str(comment.issue_id),
+                issue_id=None,
                 project_id=str(self.kwargs.get("project_id", None)),
                 current_instance=json.dumps(
                     {
                         "reaction": str(reaction_code),
                         "identifier": str(comment_reaction.id),
+                        "comment_id": str(comment_id)
                     }
                 ),
             )
@@ -1919,7 +1917,7 @@ class IssueVotePublicViewSet(BaseViewSet):
             issue_vote.vote = request.data.get("vote", 1)
             issue_vote.save()
             issue_activity.delay(
-                    type="issue-vote.activity.created",
+                    type="issue_vote.activity.created",
                     requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                     actor_id=str(self.request.user.id),
                     issue_id=str(self.kwargs.get("issue_id", None)),
@@ -1944,7 +1942,7 @@ class IssueVotePublicViewSet(BaseViewSet):
                 actor_id=request.user.id,
             )
             issue_activity.delay(
-                type="issue-vote.activity.deleted",
+                type="issue_vote.activity.deleted",
                 requested_data=None,
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
