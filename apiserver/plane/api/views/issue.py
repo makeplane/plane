@@ -485,7 +485,7 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities = (
                 IssueActivity.objects.filter(issue_id=issue_id)
                 .filter(
-                    ~Q(field="comment"),
+                    ~Q(field__in=["comment", "vote", "reaction"]),
                     project__project_projectmember__member=self.request.user,
                 )
                 .select_related("actor", "workspace", "issue", "project")
@@ -1404,6 +1404,14 @@ class IssueReactionViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             actor=self.request.user,
         )
+        issue_activity.delay(
+            type="issue-reaction.activity.created",
+            requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+        )
 
     def destroy(self, request, slug, project_id, issue_id, reaction_code):
         try:
@@ -1413,6 +1421,19 @@ class IssueReactionViewSet(BaseViewSet):
                 issue_id=issue_id,
                 reaction=reaction_code,
                 actor=request.user,
+            )
+            issue_activity.delay(
+                type="issue-reaction.activity.deleted",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "reaction": str(reaction_code),
+                        "identifier": str(issue_reaction.id),
+                    }
+                ),
             )
             issue_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1454,6 +1475,15 @@ class CommentReactionViewSet(BaseViewSet):
             comment_id=self.kwargs.get("comment_id"),
             project_id=self.kwargs.get("project_id"),
         )
+        comment = IssueComment.objects.get(pk=self.kwargs.get("comment_id"),project_id=self.kwargs.get("project_id"))
+        issue_activity.delay(
+            type="comment-reaction.activity.created",
+            requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+            actor_id=str(self.request.user.id),
+            issue_id=str(comment.issue_id),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+        )
 
     def destroy(self, request, slug, project_id, comment_id, reaction_code):
         try:
@@ -1463,6 +1493,20 @@ class CommentReactionViewSet(BaseViewSet):
                 comment_id=comment_id,
                 reaction=reaction_code,
                 actor=request.user,
+            )
+            comment = IssueComment.objects.get(pk=self.kwargs.get("comment_id"),project_id=project_id)
+            issue_activity.delay(
+                type="comment-reaction.activity.deleted",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(comment.issue_id),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "reaction": str(reaction_code),
+                        "identifier": str(comment_reaction.id),
+                    }
+                ),
             )
             comment_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1671,6 +1715,14 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 serializer.save(
                     project_id=project_id, issue_id=issue_id, actor=request.user
                 )
+                issue_activity.delay(
+                    type="issue-reaction.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(self.request.user.id),
+                    issue_id=str(self.kwargs.get("issue_id", None)),
+                    project_id=str(self.kwargs.get("project_id", None)),
+                    current_instance=None,
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except ProjectDeployBoard.DoesNotExist:
@@ -1701,6 +1753,19 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 issue_id=issue_id,
                 reaction=reaction_code,
                 actor=request.user,
+            )
+            issue_activity.delay(
+                type="issue-reaction.activity.deleted",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "reaction": str(reaction_code),
+                        "identifier": str(issue_reaction.id),
+                    }
+                ),
             )
             issue_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1756,8 +1821,22 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 serializer.save(
                     project_id=project_id, comment_id=comment_id, actor=request.user
                 )
+                comment = IssueComment.objects.get(pk=self.kwargs.get("comment_id"),project_id=project_id)
+                issue_activity.delay(
+                    type="comment-reaction.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(self.request.user.id),
+                    issue_id=str(comment.issue_id),
+                    project_id=str(self.kwargs.get("project_id", None)),
+                    current_instance=None,
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IssueComment.DoesNotExist:
+            return Response(
+                {"error": "Comment does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except ProjectDeployBoard.DoesNotExist:
             return Response(
                 {"error": "Project board does not exist"},
@@ -1787,6 +1866,20 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 comment_id=comment_id,
                 reaction=reaction_code,
                 actor=request.user,
+            )
+            comment = IssueComment.objects.get(pk=self.kwargs.get("comment_id"),project_id=project_id)
+            issue_activity.delay(
+                type="comment-reaction.activity.deleted",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(comment.issue_id),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "reaction": str(reaction_code),
+                        "identifier": str(comment_reaction.id),
+                    }
+                ),
             )
             comment_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1825,6 +1918,14 @@ class IssueVotePublicViewSet(BaseViewSet):
             )
             issue_vote.vote = request.data.get("vote", 1)
             issue_vote.save()
+            issue_activity.delay(
+                    type="issue-vote.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(self.request.user.id),
+                    issue_id=str(self.kwargs.get("issue_id", None)),
+                    project_id=str(self.kwargs.get("project_id", None)),
+                    current_instance=None,
+                )
             serializer = IssueVoteSerializer(issue_vote)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -1841,6 +1942,19 @@ class IssueVotePublicViewSet(BaseViewSet):
                 project_id=project_id,
                 issue_id=issue_id,
                 actor_id=request.user.id,
+            )
+            issue_activity.delay(
+                type="issue-vote.activity.deleted",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "vote": str(issue_vote.vote),
+                        "identifier": str(issue_vote.id),
+                    }
+                ),
             )
             issue_vote.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
