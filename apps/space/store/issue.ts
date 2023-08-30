@@ -24,7 +24,7 @@ export interface IIssueStore {
   issueService: any;
   // actions
   fetchPublicIssues: (workspace_slug: string, project_slug: string, params: any) => void;
-  setPeekId: (issueId: string) => void;
+  setPeekId: (issueId: string | null) => void;
   getFilteredIssuesByState: (state: string) => IIssue[];
 }
 
@@ -98,7 +98,7 @@ class IssueStore implements IIssueStore {
     }
   };
 
-  setPeekId = (issueId: string) => {
+  setPeekId = (issueId: string | null) => {
     this.peekId = issueId;
   };
 

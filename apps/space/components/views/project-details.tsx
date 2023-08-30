@@ -35,14 +35,14 @@ export const ProjectDetailsView = observer(() => {
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {/* {workspace_slug && (
+      {workspace_slug && (
         <IssuePeekOverview
           isOpen={Boolean(activeIssueId)}
-          onClose={() => issueStore.setActivePeekOverviewIssueId(null)}
+          onClose={() => issueStore.setPeekId(null)}
           issue={issueStore?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
           workspaceSlug={workspace_slug.toString()}
         />
-      )} */}
+      )}
 
       {issueStore?.loader && !issueStore.issues ? (
         <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
