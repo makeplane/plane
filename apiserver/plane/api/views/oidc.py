@@ -32,17 +32,17 @@ def get_tokens_for_user(user):
 
 
 def get_access_token(request_token: str, client_id: str) -> str:
-    """Obtain the request token from github.
-    Given the client id, client secret and request issued out by GitHub, this method
+    """Obtain the request token from OIDC Provider.
+    Given the client id, client secret and request issued out by the OIDC Provider, this method
     should give back an access token
     Parameters
     ----------
     CLIENT_ID: str
-        A string representing the client id issued out by github
+        A string representing the client id issued out by the OIDC Provider
     CLIENT_SECRET: str
-        A string representing the client secret issued out by github
+        A string representing the client secret issued out by the OIDC Provider
     request_token: str
-        A string representing the request token issued out by github
+        A string representing the request token issued out by the OIDC Provider
     Throws
     ------
     ValueError:
@@ -50,7 +50,7 @@ def get_access_token(request_token: str, client_id: str) -> str:
     Returns
     -------
     access_token: str
-        A string representing the access token issued out by github
+        A string representing the access token issued out by the OIDC Provider
     """
 
     if not request_token:
@@ -83,7 +83,7 @@ def get_access_token(request_token: str, client_id: str) -> str:
 
 def get_user_data(access_token: str) -> dict:
     """
-    Obtain the user data from github.
+    Obtain the user data from OIDC Provider.
     Given the access token, this method should give back the user data
     """
     if not access_token:
