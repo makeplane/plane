@@ -1,18 +1,21 @@
+import Link from "next/link";
+
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Icon } from "components/ui";
+// icons
+import { East, OpenInFull } from "@mui/icons-material";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 import { TPeekOverviewModes } from "./layout";
-import { ArrowRightAlt, CloseFullscreen, East, OpenInFull } from "@mui/icons-material";
 
 type Props = {
   handleClose: () => void;
   handleDeleteIssue: () => void;
-  issue: IIssue;
+  issue: IIssue | undefined;
   mode: TPeekOverviewModes;
   setMode: (mode: TPeekOverviewModes) => void;
   workspaceSlug: string;
@@ -47,12 +50,9 @@ export const PeekOverviewHeader: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const handleCopyLink = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const urlToCopy = window.location.href;
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`
-    ).then(() => {
+    copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
@@ -73,23 +73,15 @@ export const PeekOverviewHeader: React.FC<Props> = ({
             />
           </button>
         )}
-        {mode === "modal" || mode === "full" ? (
-          <button type="button" onClick={() => setMode("side")}>
-            <CloseFullscreen
-              sx={{
-                fontSize: "14px",
-              }}
-            />
-          </button>
-        ) : (
-          <button type="button" onClick={() => setMode("modal")}>
+        <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
+          <a>
             <OpenInFull
               sx={{
                 fontSize: "14px",
               }}
             />
-          </button>
-        )}
+          </a>
+        </Link>
         <CustomSelect
           value={mode}
           onChange={(val: TPeekOverviewModes) => setMode(val)}
@@ -119,7 +111,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({
         </CustomSelect>
       </div>
       {(mode === "side" || mode === "modal") && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <button type="button" onClick={handleCopyLink} className="-rotate-45">
             <Icon iconName="link" />
           </button>

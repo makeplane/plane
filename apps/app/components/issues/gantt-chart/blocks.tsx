@@ -15,7 +15,7 @@ export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
 
   return (
     <div
-      className="flex items-center relative h-full w-full rounded"
+      className="flex items-center relative h-full w-full rounded cursor-pointer"
       style={{ backgroundColor: data?.state_detail?.color }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/issues/${data?.id}`)}
     >
@@ -49,7 +49,7 @@ export const IssueGanttSidebarBlock = ({ data }: { data: IIssue }) => {
 
   return (
     <div
-      className="relative w-full flex items-center gap-2 h-full"
+      className="relative w-full flex items-center gap-2 h-full cursor-pointer"
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/issues/${data?.id}`)}
     >
       {getStateGroupIcon(data?.state_detail?.group, "14", "14", data?.state_detail?.color)}
