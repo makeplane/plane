@@ -11,23 +11,13 @@ import { IIssue } from "types";
 
 export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
   const router = useRouter();
-
-  const openPeekOverview = () => {
-    if (!data) return;
-
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssue: data.id },
-    });
-  };
+  const { workspaceSlug } = router.query;
 
   return (
     <div
-      className="flex items-center relative h-full w-full rounded"
+      className="flex items-center relative h-full w-full rounded cursor-pointer"
       style={{ backgroundColor: data?.state_detail?.color }}
-      onClick={openPeekOverview}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/issues/${data?.id}`)}
     >
       <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
@@ -53,24 +43,14 @@ export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
 // rendering issues on gantt sidebar
 export const IssueGanttSidebarBlock = ({ data }: { data: IIssue }) => {
   const router = useRouter();
-
-  const openPeekOverview = () => {
-    if (!data) return;
-
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssue: data.id },
-    });
-  };
+  const { workspaceSlug } = router.query;
 
   const duration = findTotalDaysInRange(data?.start_date ?? "", data?.target_date ?? "", true);
 
   return (
     <div
       className="relative w-full flex items-center gap-2 h-full cursor-pointer"
-      onClick={openPeekOverview}
+      onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/issues/${data?.id}`)}
     >
       {getStateGroupIcon(data?.state_detail?.group, "14", "14", data?.state_detail?.color)}
       <div className="text-xs text-custom-text-300 flex-shrink-0">
