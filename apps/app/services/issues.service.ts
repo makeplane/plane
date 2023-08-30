@@ -182,7 +182,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: any,
+    data: Partial<IIssueComment>,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.post(
@@ -468,19 +468,17 @@ class ProjectIssuesServices extends APIService {
       metadata: any;
       title: string;
       url: string;
-    },
-
+    }
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`,
       data
     )
-    .then((response) => response?.data)
-    .catch((error) => {
-      throw error?.response;
-    });
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
   }
-
 
   async deleteIssueLink(
     workspaceSlug: string,

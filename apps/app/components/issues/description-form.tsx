@@ -7,7 +7,7 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { useDebouncedCallback } from "use-debounce";
 // components
 import { TextArea } from "components/ui";
-import Tiptap from "components/tiptap";
+import { TipTapEditor } from "components/tiptap";
 // types
 import { IIssue } from "types";
 
@@ -134,7 +134,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             if (!value) return <></>;
 
             return (
-              <Tiptap
+              <TipTapEditor
                 value={
                   !value ||
                   value === "" ||

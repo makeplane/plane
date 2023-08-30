@@ -8,6 +8,7 @@ import issuesService from "services/issues.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
+import useProjectDetails from "hooks/use-project-details";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
@@ -48,6 +49,8 @@ export const IssueMainContent: React.FC<Props> = ({
 
   const { user } = useUserAuth();
   const { memberRole } = useProjectMyMembership();
+
+  const { projectDetails } = useProjectDetails();
 
   const { data: siblingIssues } = useSWR(
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
@@ -220,7 +223,11 @@ export const IssueMainContent: React.FC<Props> = ({
           handleCommentUpdate={handleCommentUpdate}
           handleCommentDelete={handleCommentDelete}
         />
-        <AddComment onSubmit={handleAddComment} disabled={uneditable} />
+        <AddComment
+          onSubmit={handleAddComment}
+          disabled={uneditable}
+          showAccessSpecifier={projectDetails && projectDetails.is_deployed}
+        />
       </div>
     </>
   );

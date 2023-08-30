@@ -23,6 +23,7 @@ const useGanttChartModuleIssues = (
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
+    start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
     start_target_date: true, // to fetch only issues with a start and target date
   };
