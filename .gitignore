@@ -72,4 +72,5 @@ package-lock.json
 pnpm-lock.yaml
 pnpm-workspace.yaml
 
+# npm config file
 .npmrc

@@ -74,7 +74,7 @@ chmod +x setup.sh
 - Run Docker compose up
 
 ```bash
-docker compose up -d
+docker-compose up -d
 ```
 
 <strong>You can use the default email and password for your first login `captain@plane.so` and `password123`.</strong> 
