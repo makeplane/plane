@@ -8,10 +8,13 @@ type Props = {
   renderAs?: "input" | "button";
   value: Date | string | null | undefined;
   onChange: (val: string | null) => void;
+  handleOnOpen?: () => void;
+  handleOnClose?: () => void;
   placeholder?: string;
   displayShortForm?: boolean;
   error?: boolean;
   noBorder?: boolean;
+  wrapperClassName?: string;
   className?: string;
   isClearable?: boolean;
   disabled?: boolean;
@@ -23,10 +26,13 @@ export const CustomDatePicker: React.FC<Props> = ({
   renderAs = "button",
   value,
   onChange,
+  handleOnOpen,
+  handleOnClose,
   placeholder = "Select date",
   displayShortForm = false,
   error = false,
   noBorder = false,
+  wrapperClassName = "",
   className = "",
   isClearable = true,
   disabled = false,
@@ -40,6 +46,9 @@ export const CustomDatePicker: React.FC<Props> = ({
       if (!val) onChange(null);
       else onChange(renderDateFormat(val));
     }}
+    onCalendarOpen={handleOnOpen}
+    onCalendarClose={handleOnClose}
+    wrapperClassName={wrapperClassName}
     className={`${
       renderAs === "input"
         ? "block px-2 py-2 text-sm focus:outline-none"

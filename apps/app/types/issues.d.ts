@@ -56,6 +56,16 @@ export interface IIssueLink {
   url: string;
 }
 
+export interface linkDetails {
+  created_at: Date;
+  created_by: string;
+  created_by_detail: IUserLite;
+  id: string;
+  metadata: any;
+  title: string;
+  url: string;
+}
+
 export interface IIssue {
   archived_at: string;
   assignees: string[];
@@ -80,15 +90,7 @@ export interface IIssue {
   estimate_point: number | null;
   id: string;
   issue_cycle: IIssueCycle | null;
-  issue_link: {
-    created_at: Date;
-    created_by: string;
-    created_by_detail: IUserLite;
-    id: string;
-    metadata: any;
-    title: string;
-    url: string;
-  }[];
+  issue_link: linkDetails[];
   issue_module: IIssueModule | null;
   labels: string[];
   label_details: any[];
@@ -196,6 +198,7 @@ export interface IIssueActivity {
 }
 
 export interface IIssueComment extends IIssueActivity {
+  access: "EXTERNAL" | "INTERNAL";
   comment_html: string;
   comment_json: any;
   comment_stripped: string;
@@ -205,13 +208,15 @@ export interface IIssueLite {
   id: string;
   name: string;
   project_id: string;
-  target_date: string;
+  start_date?: string | null;
+  target_date?: string | null;
   workspace__slug: string;
 }
 
 export interface IIssueFilterOptions {
   type: "active" | "backlog" | null;
   assignees: string[] | null;
+  start_date: string[] | null;
   target_date: string[] | null;
   state: string[] | null;
   state_group: TStateGroups[] | null;
@@ -230,6 +235,7 @@ export type TIssueGroupByOptions =
   | "created_by"
   | "state_detail.group"
   | "project"
+  | "assignees"
   | null;
 
 export type TIssueOrderByOptions =
@@ -246,7 +252,9 @@ export type TIssueOrderByOptions =
   | "target_date"
   | "-target_date"
   | "estimate__point"
-  | "-estimate__point";
+  | "-estimate__point"
+  | "start_date"
+  | "-start_date";
 
 export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;

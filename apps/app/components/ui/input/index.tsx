@@ -29,9 +29,9 @@ export const Input: React.FC<Props> = ({
       type={type}
       id={id}
       value={value}
-      {...(register && register(name, validations))}
+      {...(register && register(name ?? "", validations))}
       onChange={(e) => {
-        register && register(name).onChange(e);
+        register && register(name ?? "").onChange(e);
         onChange && onChange(e);
       }}
       className={`block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${

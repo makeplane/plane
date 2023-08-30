@@ -1,9 +1,9 @@
 // services images
 import GithubLogo from "public/services/github.png";
 import JiraLogo from "public/services/jira.png";
-import CSVLogo from "public/services/csv.png";
-import ExcelLogo from "public/services/excel.png";
-import JSONLogo from "public/services/json.png";
+import CSVLogo from "public/services/csv.svg";
+import ExcelLogo from "public/services/excel.svg";
+import JSONLogo from "public/services/json.svg";
 
 export const ROLE = {
   5: "Guest",

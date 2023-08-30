@@ -32,16 +32,27 @@ export const ChartContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     currentViewData: currentViewDataWithView(initialView),
     renderView: [],
     allViews: allViewsWithData,
+    activeBlock: null,
   });
+
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const handleDispatch = (action: ChartContextActionPayload): ChartContextData => {
     const newState = chartReducer(state, action);
+
     dispatch(() => newState);
+
     return newState;
   };
 
+  const updateScrollLeft = (scrollLeft: number) => {
+    setScrollLeft(scrollLeft);
+  };
+
   return (
-    <ChartContext.Provider value={{ ...state, dispatch: handleDispatch }}>
+    <ChartContext.Provider
+      value={{ ...state, scrollLeft, updateScrollLeft, dispatch: handleDispatch }}
+    >
       {children}
     </ChartContext.Provider>
   );

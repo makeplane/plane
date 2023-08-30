@@ -45,7 +45,6 @@ type TSingleStatProps = {
   handleDeleteCycle: () => void;
   handleAddToFavorites: () => void;
   handleRemoveFromFavorites: () => void;
-  isCompleted?: boolean;
 };
 
 const stateGroups = [
@@ -82,7 +81,6 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   handleDeleteCycle,
   handleAddToFavorites,
   handleRemoveFromFavorites,
-  isCompleted = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -90,6 +88,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const { setToastAlert } = useToast();
 
   const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+  const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
 

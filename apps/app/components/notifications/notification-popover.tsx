@@ -51,6 +51,7 @@ export const NotificationPopover = () => {
     hasMore,
     isRefreshing,
     setFetchNotifications,
+    markAllNotificationsAsRead,
   } = useUserNotification();
 
   // theme context
@@ -112,7 +113,7 @@ export const NotificationPopover = () => {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 -top-44 md:w-[36rem] w-[20rem] h-[75vh] border border-custom-border-300 shadow-lg rounded-xl">
+                <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 -top-36 md:w-[36rem] w-[20rem] h-[50vh] border border-custom-border-300 shadow-lg rounded-xl">
                   <NotificationHeader
                     notificationCount={notificationCount}
                     notificationMutate={notificationMutate}
@@ -126,6 +127,7 @@ export const NotificationPopover = () => {
                     setArchived={setArchived}
                     setReadNotification={setReadNotification}
                     setSelectedTab={setSelectedTab}
+                    markAllNotificationsAsRead={markAllNotificationsAsRead}
                   />
 
                   {notifications ? (

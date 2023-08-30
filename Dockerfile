@@ -5,9 +5,11 @@ WORKDIR /app
 ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
 
 RUN yarn global add turbo
+RUN apk add tree
 COPY . .
 
-RUN turbo prune --scope=app --docker
+RUN turbo prune --scope=app --scope=plane-deploy --docker
+CMD tree -I node_modules/
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
@@ -21,14 +23,14 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn install
 
-# Build the project
+# # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 COPY replace-env-vars.sh /usr/local/bin/
 USER root
 RUN chmod +x /usr/local/bin/replace-env-vars.sh
 
-RUN yarn turbo run build --filter=app
+RUN yarn turbo run build
 
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
     BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
@@ -96,10 +98,15 @@ RUN adduser --system --uid 1001 captain
 
 COPY --from=installer /app/apps/app/next.config.js .
 COPY --from=installer /app/apps/app/package.json .
+COPY --from=installer /app/apps/space/next.config.js .
+COPY --from=installer /app/apps/space/package.json .
 
 COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone ./
 
 COPY --from=installer --chown=captain:plane /app/apps/app/.next/static ./apps/app/.next/static
+
+COPY --from=installer --chown=captain:plane /app/apps/space/.next/standalone ./
+COPY --from=installer --chown=captain:plane /app/apps/space/.next ./apps/space/.next
 
 ENV NEXT_TELEMETRY_DISABLED 1
 

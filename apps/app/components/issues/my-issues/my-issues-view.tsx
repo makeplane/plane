@@ -249,6 +249,7 @@ export const MyIssuesView: React.FC<Props> = ({
                   labels: null,
                   priority: null,
                   state_group: null,
+                  start_date: null,
                   target_date: null,
                   type: null,
                 })
@@ -270,16 +271,18 @@ export const MyIssuesView: React.FC<Props> = ({
             ? "You have not created any issue yet."
             : "You have not subscribed to any issue yet.",
           description: "Keep track of your work in a single place.",
-          primaryButton: {
-            icon: <PlusIcon className="h-4 w-4" />,
-            text: "New Issue",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            },
-          },
+          primaryButton: filters.subscriber
+            ? undefined
+            : {
+                icon: <PlusIcon className="h-4 w-4" />,
+                text: "New Issue",
+                onClick: () => {
+                  const e = new KeyboardEvent("keydown", {
+                    key: "c",
+                  });
+                  document.dispatchEvent(e);
+                },
+              },
         }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}

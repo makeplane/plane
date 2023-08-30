@@ -72,6 +72,7 @@ export const initialState: StateType = {
     state_group: null,
     subscriber: null,
     created_by: null,
+    start_date: null,
     target_date: null,
   },
   properties: {
@@ -196,23 +197,26 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setIssueView = useCallback((property: TIssueViewOptions) => {
-    dispatch({
-      type: "SET_ISSUE_VIEW",
-      payload: {
-        issueView: property,
-      },
-    });
-
-    if (property === "kanban") {
+  const setIssueView = useCallback(
+    (property: TIssueViewOptions) => {
       dispatch({
-        type: "SET_GROUP_BY_PROPERTY",
+        type: "SET_ISSUE_VIEW",
         payload: {
-          groupByProperty: "state_detail.group",
+          issueView: property,
         },
       });
-    }
-  }, []);
+
+      if (property === "kanban" && state.groupByProperty === null) {
+        dispatch({
+          type: "SET_GROUP_BY_PROPERTY",
+          payload: {
+            groupByProperty: "state_detail.group",
+          },
+        });
+      }
+    },
+    [state]
+  );
 
   const setGroupByProperty = useCallback((property: TIssueGroupByOptions) => {
     dispatch({

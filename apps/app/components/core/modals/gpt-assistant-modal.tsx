@@ -1,8 +1,5 @@
-import { useEffect, useState, forwardRef, useRef } from "react";
-
+import React, { useEffect, useState, forwardRef, useRef } from "react";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
@@ -13,8 +10,10 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
-
+import { TipTapEditor } from "components/tiptap";
+// types
 import { IIssue, IPageBlock } from "types";
+
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -31,18 +30,6 @@ type FormData = {
   prompt: string;
   task: string;
 };
-
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-});
-
-import { IRemirrorRichTextEditor } from "components/rich-text-editor";
-
-const WrappedRemirrorRichTextEditor = forwardRef<IRemirrorRichTextEditor, IRemirrorRichTextEditor>(
-  (props, ref) => <RemirrorRichTextEditor {...props} forwardedRef={ref} />
-);
-
-WrappedRemirrorRichTextEditor.displayName = "WrappedRemirrorRichTextEditor";
 
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
@@ -151,10 +138,11 @@ export const GptAssistantModal: React.FC<Props> = ({
       }`}
     >
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
-        <div className="remirror-section text-sm">
+        <div className="text-sm">
           Content:
-          <WrappedRemirrorRichTextEditor
-            value={htmlContent ?? <p>{content}</p>}
+          <TipTapEditor
+            workspaceSlug={workspaceSlug as string}
+            value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
             noBorder
             borderOnFocus={false}
@@ -166,7 +154,8 @@ export const GptAssistantModal: React.FC<Props> = ({
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <RemirrorRichTextEditor
+          <TipTapEditor
+            workspaceSlug={workspaceSlug as string}
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder

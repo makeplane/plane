@@ -9,11 +9,10 @@ import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautif
 import { Disclosure, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
-import useTheme from "hooks/use-theme";
 import useUserAuth from "hooks/use-user-auth";
 import useProjects from "hooks/use-projects";
 // components
-import { DeleteProjectModal, SingleSidebarProject } from "components/project";
+import { CreateProjectModal, DeleteProjectModal, SingleSidebarProject } from "components/project";
 // services
 import projectService from "services/project.service";
 // icons
@@ -32,6 +31,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 export const ProjectSidebarList: FC = () => {
   const store: any = useMobxStore();
 
+  const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [deleteProjectModal, setDeleteProjectModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
 
@@ -41,18 +42,15 @@ export const ProjectSidebarList: FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { user } = useUserAuth();
-
-  const { collapsed: sidebarCollapse } = useTheme();
   const { setToastAlert } = useToast();
 
   const { projects: allProjects } = useProjects();
 
-  const joinedProjects = allProjects?.filter((p) => p.sort_order);
+  const joinedProjects = allProjects?.filter((p) => p.is_member);
   const favoriteProjects = allProjects?.filter((p) => p.is_favorite);
-  const otherProjects = allProjects?.filter((p) => p.sort_order === null);
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
@@ -151,6 +149,12 @@ export const ProjectSidebarList: FC = () => {
 
   return (
     <>
+      <CreateProjectModal
+        isOpen={isProjectModalOpen}
+        setIsOpen={setIsProjectModalOpen}
+        setToFavorite={isFavoriteProjectCreate}
+        user={user}
+      />
       <DeleteProjectModal
         isOpen={deleteProjectModal}
         onClose={() => setDeleteProjectModal(false)}
@@ -172,17 +176,28 @@ export const ProjectSidebarList: FC = () => {
                     {({ open }) => (
                       <>
                         {!store?.theme?.sidebarCollapsed && (
-                          <Disclosure.Button
-                            as="button"
-                            type="button"
-                            className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
-                          >
-                            Favorites
-                            <Icon
-                              iconName={open ? "arrow_drop_down" : "arrow_right"}
-                              className="group-hover:opacity-100 opacity-0 !text-lg"
-                            />
-                          </Disclosure.Button>
+                          <div className="group flex justify-between items-center text-xs px-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
+                            <Disclosure.Button
+                              as="button"
+                              type="button"
+                              className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
+                            >
+                              Favorites
+                              <Icon
+                                iconName={open ? "arrow_drop_down" : "arrow_right"}
+                                className="group-hover:opacity-100 opacity-0 !text-lg"
+                              />
+                            </Disclosure.Button>
+                            <button
+                              className="group-hover:opacity-100 opacity-0"
+                              onClick={() => {
+                                setIsFavoriteProjectCreate(true);
+                                setIsProjectModalOpen(true);
+                              }}
+                            >
+                              <Icon iconName="add" />
+                            </button>
+                          </div>
                         )}
                         <Disclosure.Panel as="div" className="space-y-2">
                           {orderedFavProjects.map((project, index) => (
@@ -190,7 +205,7 @@ export const ProjectSidebarList: FC = () => {
                               key={project.id}
                               draggableId={project.id}
                               index={index}
-                              isDragDisabled={project.sort_order === null}
+                              isDragDisabled={!project.is_member}
                             >
                               {(provided, snapshot) => (
                                 <div ref={provided.innerRef} {...provided.draggableProps}>
@@ -242,8 +257,8 @@ export const ProjectSidebarList: FC = () => {
                             <button
                               className="group-hover:opacity-100 opacity-0"
                               onClick={() => {
-                                const e = new KeyboardEvent("keydown", { key: "p" });
-                                document.dispatchEvent(e);
+                                setIsFavoriteProjectCreate(false);
+                                setIsProjectModalOpen(true);
                               }}
                             >
                               <Icon iconName="add" />
@@ -288,10 +303,10 @@ export const ProjectSidebarList: FC = () => {
           </Droppable>
         </DragDropContext>
 
-        {allProjects && allProjects.length === 0 && (
+        {joinedProjects && joinedProjects.length === 0 && (
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-custom-sidebar-text-200 mt-5"
+            className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
             onClick={() => {
               const e = new KeyboardEvent("keydown", {
                 key: "p",

@@ -9,17 +9,22 @@ import useSWRInfinite from "swr/infinite";
 // services
 import userNotificationServices from "services/notifications.service";
 
+// hooks
+import useToast from "./use-toast";
+
 // fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 
 // type
-import type { NotificationType, NotificationCount } from "types";
+import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "types";
 
 const PER_PAGE = 30;
 
 const useUserNotification = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const [snoozed, setSnoozed] = useState<boolean>(false);
   const [archived, setArchived] = useState<boolean>(false);
@@ -75,7 +80,7 @@ const useUserNotification = () => {
   const handleReadMutation = (action: "read" | "unread") => {
     const notificationCountNumber = action === "read" ? -1 : 1;
 
-    mutateNotificationCount((prev) => {
+    mutateNotificationCount((prev: any) => {
       if (!prev) return prev;
 
       const notificationType: keyof NotificationCount =
@@ -93,18 +98,18 @@ const useUserNotification = () => {
   };
 
   const mutateNotification = (notificationId: string, value: Object) => {
-    notificationMutate((previousNotifications) => {
+    notificationMutate((previousNotifications: any) => {
       if (!previousNotifications) return previousNotifications;
 
       const notificationIndex = Math.floor(
         previousNotifications
-          .map((d) => d.results)
+          .map((d: any) => d.results)
           .flat()
-          .findIndex((notification) => notification.id === notificationId) / PER_PAGE
+          .findIndex((notification: any) => notification.id === notificationId) / PER_PAGE
       );
 
       let notificationIndexInPage = previousNotifications[notificationIndex].results.findIndex(
-        (notification) => notification.id === notificationId
+        (notification: any) => notification.id === notificationId
       );
 
       if (notificationIndexInPage === -1) return previousNotifications;
@@ -126,18 +131,18 @@ const useUserNotification = () => {
   };
 
   const removeNotification = (notificationId: string) => {
-    notificationMutate((previousNotifications) => {
+    notificationMutate((previousNotifications: any) => {
       if (!previousNotifications) return previousNotifications;
 
       const notificationIndex = Math.floor(
         previousNotifications
-          .map((d) => d.results)
+          .map((d: any) => d.results)
           .flat()
-          .findIndex((notification) => notification.id === notificationId) / PER_PAGE
+          .findIndex((notification: any) => notification.id === notificationId) / PER_PAGE
       );
 
       let notificationIndexInPage = previousNotifications[notificationIndex].results.findIndex(
-        (notification) => notification.id === notificationId
+        (notification: any) => notification.id === notificationId
       );
 
       if (notificationIndexInPage === -1) return previousNotifications;
@@ -274,6 +279,29 @@ const useUserNotification = () => {
     }
   };
 
+  const markAllNotificationsAsRead = async () => {
+    if (!workspaceSlug) return;
+
+    let markAsReadParams: IMarkAllAsReadPayload;
+
+    if (snoozed) markAsReadParams = { archived: false, snoozed: true };
+    else if (archived) markAsReadParams = { archived: true, snoozed: false };
+    else markAsReadParams = { archived: false, snoozed: false, type: selectedTab };
+
+    await userNotificationServices
+      .markAllNotificationsAsRead(workspaceSlug.toString(), markAsReadParams)
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
+      })
+      .finally(() => {
+        notificationMutate();
+      });
+  };
+
   return {
     notifications,
     notificationMutate,
@@ -304,6 +332,7 @@ const useUserNotification = () => {
     isRefreshing,
     setFetchNotifications,
     markNotificationAsRead,
+    markAllNotificationsAsRead,
   };
 };
 

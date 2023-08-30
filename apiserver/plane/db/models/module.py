@@ -98,7 +98,7 @@ class ModuleIssue(ProjectBaseModel):
 
 
 class ModuleLink(ProjectBaseModel):
-    title = models.CharField(max_length=255, null=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
     url = models.URLField()
     module = models.ForeignKey(
         Module, on_delete=models.CASCADE, related_name="link_module"

@@ -108,6 +108,8 @@ const MembersSettings: NextPage = () => {
 
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
+  const handleProjectInvitationSuccess = () => {};
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
@@ -139,7 +141,7 @@ const MembersSettings: NextPage = () => {
               selectedRemoveMember
             );
             mutateMembers(
-              (prevData) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
+              (prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
               false
             );
           }
@@ -150,7 +152,8 @@ const MembersSettings: NextPage = () => {
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData: any) =>
+                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }
@@ -166,6 +169,7 @@ const MembersSettings: NextPage = () => {
         setIsOpen={setInviteModal}
         members={members}
         user={user}
+        onSuccess={() => mutateMembers()}
       />
       <div className="p-8">
         <SettingsHeader />

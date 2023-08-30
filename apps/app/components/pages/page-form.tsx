@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 
-import dynamic from "next/dynamic";
-
 // react-hook-form
 import { useForm } from "react-hook-form";
 // ui
@@ -15,16 +13,6 @@ type Props = {
   status: boolean;
   data?: IPage | null;
 };
-
-// rich-text-editor
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader>
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
 
 const defaultValues = {
   name: "",

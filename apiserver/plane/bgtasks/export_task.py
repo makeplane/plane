@@ -4,10 +4,11 @@ import io
 import json
 import boto3
 import zipfile
-from datetime import datetime
+from urllib.parse import urlparse, urlunparse
 
 # Django imports
 from django.conf import settings
+from django.utils import timezone
 
 # Third party imports
 from celery import shared_task
@@ -23,9 +24,11 @@ def dateTimeConverter(time):
     if time:
         return time.strftime("%a, %d %b %Y %I:%M:%S %Z%z")
 
+
 def dateConverter(time):
     if time:
-        return time.strftime("%a, %d %b %Y")    
+        return time.strftime("%a, %d %b %Y")
+
 
 def create_csv_file(data):
     csv_buffer = io.StringIO()
@@ -46,10 +49,8 @@ def create_xlsx_file(data):
     workbook = Workbook()
     sheet = workbook.active
 
-
     for row in data:
         sheet.append(row)
-
 
     xlsx_buffer = io.BytesIO()
     workbook.save(xlsx_buffer)
@@ -67,29 +68,54 @@ def create_zip_file(files):
     return zip_buffer
 
 
-def upload_to_s3(zip_file, workspace_id, token_id):
-    s3 = boto3.client(
-        "s3",
-        region_name="ap-south-1",
-        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        config=Config(signature_version="s3v4"),
-    )
-    file_name = f"{workspace_id}/issues-{datetime.now().date()}.zip"
-
-    s3.upload_fileobj(
-        zip_file,
-        settings.AWS_S3_BUCKET_NAME,
-        file_name,
-        ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
-    )
-
+def upload_to_s3(zip_file, workspace_id, token_id, slug):
+    file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{timezone.now()}.zip"
     expires_in = 7 * 24 * 60 * 60
-    presigned_url = s3.generate_presigned_url(
-        "get_object",
-        Params={"Bucket": settings.AWS_S3_BUCKET_NAME, "Key": file_name},
-        ExpiresIn=expires_in,
-    )
+
+    if settings.DOCKERIZED and settings.USE_MINIO:
+        s3 = boto3.client(
+            "s3",
+            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            config=Config(signature_version="s3v4"),
+        )
+        s3.upload_fileobj(
+            zip_file,
+            settings.AWS_STORAGE_BUCKET_NAME,
+            file_name,
+            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
+        )
+        presigned_url = s3.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
+            ExpiresIn=expires_in,
+        )
+        # Create the new url with updated domain and protocol
+        presigned_url = presigned_url.replace(
+            "http://plane-minio:9000/uploads/",
+            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/",
+        )
+    else:
+        s3 = boto3.client(
+            "s3",
+            region_name=settings.AWS_REGION,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            config=Config(signature_version="s3v4"),
+        )
+        s3.upload_fileobj(
+            zip_file,
+            settings.AWS_S3_BUCKET_NAME,
+            file_name,
+            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
+        )
+
+        presigned_url = s3.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": settings.AWS_S3_BUCKET_NAME, "Key": file_name},
+            ExpiresIn=expires_in,
+        )
 
     exporter_instance = ExporterHistory.objects.get(token=token_id)
 
@@ -100,7 +126,7 @@ def upload_to_s3(zip_file, workspace_id, token_id):
     else:
         exporter_instance.status = "failed"
 
-    exporter_instance.save(update_fields=["status", "url","key"])
+    exporter_instance.save(update_fields=["status", "url", "key"])
 
 
 def generate_table_row(issue):
@@ -147,7 +173,7 @@ def generate_json_row(issue):
         else "",
         "Labels": issue["labels__name"],
         "Cycle Name": issue["issue_cycle__cycle__name"],
-        "Cycle Start Date":  dateConverter(issue["issue_cycle__cycle__start_date"]),
+        "Cycle Start Date": dateConverter(issue["issue_cycle__cycle__start_date"]),
         "Cycle End Date": dateConverter(issue["issue_cycle__cycle__end_date"]),
         "Module Name": issue["issue_module__module__name"],
         "Module Start Date": dateConverter(issue["issue_module__module__start_date"]),
@@ -235,7 +261,7 @@ def generate_xlsx(header, project_id, issues, files):
 
 
 @shared_task
-def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
+def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
@@ -244,7 +270,9 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
         workspace_issues = (
             (
                 Issue.objects.filter(
-                    workspace__id=workspace_id, project_id__in=project_ids
+                    workspace__id=workspace_id,
+                    project_id__in=project_ids,
+                    project__project_projectmember__member=exporter_instance.initiated_by_id,
                 )
                 .select_related("project", "workspace", "state", "parent", "created_by")
                 .prefetch_related(
@@ -277,7 +305,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
                     "labels__name",
                 )
             )
-            .order_by("project__identifier","sequence_id")
+            .order_by("project__identifier", "sequence_id")
             .distinct()
         )
         # CSV header
@@ -333,14 +361,13 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple):
                 )
 
         zip_buffer = create_zip_file(files)
-        upload_to_s3(zip_buffer, workspace_id, token_id)
+        upload_to_s3(zip_buffer, workspace_id, token_id, slug)
 
     except Exception as e:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "failed"
         exporter_instance.reason = str(e)
         exporter_instance.save(update_fields=["status", "reason"])
-
         # Print logs if in DEBUG mode
         if settings.DEBUG:
             print(e)

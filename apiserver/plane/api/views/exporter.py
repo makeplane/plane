@@ -48,6 +48,7 @@ class ExportIssuesEndpoint(BaseAPIView):
                     project_ids=project_ids,
                     token_id=exporter.token,
                     multiple=multiple,
+                    slug=slug,
                 )
                 return Response(
                     {

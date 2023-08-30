@@ -4,6 +4,7 @@ export * from "./delete-issue-modal";
 export * from "./filters-dropdown";
 export * from "./filters-list";
 export * from "./inbox-action-headers";
+export * from "./inbox-issue-activity";
 export * from "./inbox-issue-card";
 export * from "./inbox-main-content";
 export * from "./issues-list-sidebar";

@@ -1,11 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // hooks
-import useTheme from "hooks/use-theme";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // components
@@ -26,8 +23,10 @@ import inboxService from "services/inbox.service";
 import { INBOX_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+import { observable } from "mobx";
+import { observer } from "mobx-react-lite";
 
-export const CommandPalette: React.FC = () => {
+export const CommandPalette: React.FC = observer(() => {
   const store: any = useMobxStore();
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -47,13 +46,12 @@ export const CommandPalette: React.FC = () => {
   const { user } = useUser();
 
   const { setToastAlert } = useToast();
-  const { toggleCollapsed } = useTheme();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
-          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+        issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -78,55 +76,52 @@ export const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
+      if (!key) return;
+
+      const keyPressed = key.toLowerCase();
+      const cmdClicked = ctrlKey || metaKey;
       // if on input, textarea or editor, don't do anything
       if (
         e.target instanceof HTMLTextAreaElement ||
         e.target instanceof HTMLInputElement ||
-        (e.target as Element).classList?.contains("remirror-editor")
+        (e.target as Element).classList?.contains("ProseMirror")
       )
         return;
 
-      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
-
-      if (!key) return;
-
-      const keyPressed = key.toLowerCase();
-
-      const cmdClicked = ctrlKey || metaKey;
-
-      if (cmdClicked) {
-        if (keyPressed === "k") {
-          e.preventDefault();
-          setIsPaletteOpen(true);
-        } else if (keyPressed === "c" && altKey) {
-          e.preventDefault();
-          copyIssueUrlToClipboard();
-        } else if (keyPressed === "b") {
-          e.preventDefault();
-          toggleCollapsed();
+        if (cmdClicked) {
+          if (keyPressed === "k") {
+            e.preventDefault();
+            setIsPaletteOpen(true);
+          } else if (keyPressed === "c" && altKey) {
+            e.preventDefault();
+            copyIssueUrlToClipboard();
+          } else if (keyPressed === "b") {
+            e.preventDefault();
+            store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed);
+          }
+        } else {
+          if (keyPressed === "c") {
+            setIsIssueModalOpen(true);
+          } else if (keyPressed === "p") {
+            setIsProjectModalOpen(true);
+          } else if (keyPressed === "v") {
+            setIsCreateViewModalOpen(true);
+          } else if (keyPressed === "d") {
+            setIsCreateUpdatePageModalOpen(true);
+          } else if (keyPressed === "h") {
+            setIsShortcutsModalOpen(true);
+          } else if (keyPressed === "q") {
+            setIsCreateCycleModalOpen(true);
+          } else if (keyPressed === "m") {
+            setIsCreateModuleModalOpen(true);
+          } else if (keyPressed === "backspace" || keyPressed === "delete") {
+            e.preventDefault();
+            setIsBulkDeleteIssuesModalOpen(true);
+          }
         }
-      } else {
-        if (keyPressed === "c") {
-          setIsIssueModalOpen(true);
-        } else if (keyPressed === "p") {
-          setIsProjectModalOpen(true);
-        } else if (keyPressed === "v") {
-          setIsCreateViewModalOpen(true);
-        } else if (keyPressed === "d") {
-          setIsCreateUpdatePageModalOpen(true);
-        } else if (keyPressed === "h") {
-          setIsShortcutsModalOpen(true);
-        } else if (keyPressed === "q") {
-          setIsCreateCycleModalOpen(true);
-        } else if (keyPressed === "m") {
-          setIsCreateModuleModalOpen(true);
-        } else if (keyPressed === "backspace" || keyPressed === "delete") {
-          e.preventDefault();
-          setIsBulkDeleteIssuesModalOpen(true);
-        }
-      }
     },
-    [copyIssueUrlToClipboard, toggleCollapsed]
+    [copyIssueUrlToClipboard]
   );
 
   useEffect(() => {
@@ -201,4 +196,4 @@ export const CommandPalette: React.FC = () => {
       />
     </>
   );
-};
+})

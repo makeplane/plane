@@ -49,8 +49,6 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
 
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
-  const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
-
   useOutsideClickDetector(helpOptionsRef, () => setIsNeedHelpOpen(false));
 
   return (

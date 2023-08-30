@@ -36,8 +36,20 @@ export interface IUser {
   theme: ICustomTheme;
   updated_at: readonly Date;
   username: string;
+  user_timezone: string;
 
   [...rest: string]: any;
+}
+
+export interface ICustomTheme {
+  background: string;
+  text: string;
+  primary: string;
+  sidebarBackground: string;
+  sidebarText: string;
+  darkPalette: boolean;
+  palette: string;
+  theme: string;
 }
 
 export interface ICurrentUserResponse extends IUser {

@@ -94,9 +94,10 @@ export const SingleList: React.FC<Props> = ({
       case "project":
         title = projects?.find((p) => p.id === groupTitle)?.name ?? "None";
         break;
+      case "assignees":
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        title = member?.display_name ?? "";
+        title = member ? member.display_name : "None";
         break;
     }
 
@@ -137,9 +138,10 @@ export const SingleList: React.FC<Props> = ({
           />
         );
         break;
+      case "assignees":
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        icon = <Avatar user={member} height="24px" width="24px" fontSize="12px" />;
+        icon = member ? <Avatar user={member} height="24px" width="24px" fontSize="12px" /> : <></>;
 
         break;
     }

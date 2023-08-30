@@ -7,7 +7,7 @@ import useSWR from "swr";
 // services
 import issuesService from "services/issues.service";
 // components
-import { DueDateFilterModal } from "components/core";
+import { DateFilterModal } from "components/core";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
@@ -20,7 +20,7 @@ import { IIssueFilterOptions, IQuery } from "types";
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES, PRIORITIES } from "constants/project";
-import { DUE_DATES } from "constants/due-dates";
+import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   filters: Partial<IIssueFilterOptions> | IQuery;
@@ -35,7 +35,14 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
   direction = "right",
   height = "md",
 }) => {
-  const [isDueDateFilterModalOpen, setIsDueDateFilterModalOpen] = useState(false);
+  const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
+  const [dateFilterType, setDateFilterType] = useState<{
+    title: string;
+    type: "start_date" | "target_date";
+  }>({
+    title: "",
+    type: "start_date",
+  });
   const [fetchLabels, setFetchLabels] = useState(false);
 
   const router = useRouter();
@@ -50,10 +57,12 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
 
   return (
     <>
-      {isDueDateFilterModalOpen && (
-        <DueDateFilterModal
-          isOpen={isDueDateFilterModalOpen}
-          handleClose={() => setIsDueDateFilterModalOpen(false)}
+      {isDateFilterModalOpen && (
+        <DateFilterModal
+          title={dateFilterType.title}
+          field={dateFilterType.type}
+          isOpen={isDateFilterModalOpen}
+          handleClose={() => setIsDateFilterModalOpen(false)}
         />
       )}
       <MultiLevelDropdown
@@ -132,12 +141,48 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
             })),
           },
           {
-            id: "target_date",
-            label: "Due date",
-            value: DUE_DATES,
+            id: "start_date",
+            label: "Start date",
+            value: DATE_FILTER_OPTIONS,
             hasChildren: true,
             children: [
-              ...(DUE_DATES?.map((option) => ({
+              ...(DATE_FILTER_OPTIONS?.map((option) => ({
+                id: option.name,
+                label: option.name,
+                value: {
+                  key: "start_date",
+                  value: option.value,
+                },
+                selected: checkIfArraysHaveSameElements(filters?.start_date ?? [], option.value),
+              })) ?? []),
+              {
+                id: "custom",
+                label: "Custom",
+                value: "custom",
+                element: (
+                  <button
+                    onClick={() => {
+                      setIsDateFilterModalOpen(true);
+                      setDateFilterType({
+                        title: "Start date",
+                        type: "start_date",
+                      });
+                    }}
+                    className="w-full rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                  >
+                    Custom
+                  </button>
+                ),
+              },
+            ],
+          },
+          {
+            id: "target_date",
+            label: "Due date",
+            value: DATE_FILTER_OPTIONS,
+            hasChildren: true,
+            children: [
+              ...(DATE_FILTER_OPTIONS?.map((option) => ({
                 id: option.name,
                 label: option.name,
                 value: {
@@ -152,7 +197,13 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
                 value: "custom",
                 element: (
                   <button
-                    onClick={() => setIsDueDateFilterModalOpen(true)}
+                    onClick={() => {
+                      setIsDateFilterModalOpen(true);
+                      setDateFilterType({
+                        title: "Due date",
+                        type: "target_date",
+                      });
+                    }}
                     className="w-full rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                   >
                     Custom

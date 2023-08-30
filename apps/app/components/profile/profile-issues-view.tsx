@@ -110,7 +110,7 @@ export const ProfileIssuesView = () => {
 
         draggedItem[groupByProperty] = destinationGroup;
 
-        mutateProfileIssues((prevData) => {
+        mutateProfileIssues((prevData: any) => {
           if (!prevData) return prevData;
 
           const sourceGroupArray = [...groupedIssues[sourceGroup]];
@@ -263,6 +263,7 @@ export const ProfileIssuesView = () => {
                   labels: null,
                   priority: null,
                   state_group: null,
+                  start_date: null,
                   target_date: null,
                   type: null,
                 })
