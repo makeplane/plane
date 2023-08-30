@@ -28,13 +28,23 @@ const IssueNavbar = observer(() => {
   const { project: projectStore }: RootStore = useMobxStore();
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug } = router.query;
+  const { workspace_slug, project_slug, board } = router.query;
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
       projectStore.fetchProjectSettings(workspace_slug.toString(), project_slug.toString());
     }
   }, [projectStore, workspace_slug, project_slug]);
+
+  useEffect(() => {
+    if (workspace_slug && projectStore) {
+      if (board) {
+        projectStore.setActiveBoard(board.toString());
+      } else {
+        router.push(`/${workspace_slug}/${project_slug}?board=list`);
+      }
+    }
+  }, [board, router, projectStore, workspace_slug, project_slug]);
 
   return (
     <div className="px-5 relative w-full flex items-center gap-4">

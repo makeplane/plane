@@ -12,7 +12,9 @@ export interface IProjectStore {
   project: IProject | null;
   projectDeploySettings: IProjectSettings | null;
   viewOptions: any;
+  activeBoard: string | null;
   fetchProjectSettings: (workspace_slug: string, project_slug: string) => Promise<void>;
+  setActiveBoard: (value: string) => void;
 }
 
 class ProjectStore implements IProjectStore {
@@ -23,6 +25,7 @@ class ProjectStore implements IProjectStore {
   project: IProject | null = null;
   projectDeploySettings: IProjectSettings | null = null;
   viewOptions: any = null;
+  activeBoard: string | null = null;
   // root store
   rootStore;
   // service
@@ -38,8 +41,10 @@ class ProjectStore implements IProjectStore {
       project: observable.ref,
       projectDeploySettings: observable.ref,
       viewOptions: observable.ref,
+      activeBoard: observable.ref,
       // actions
       fetchProjectSettings: action,
+      setActiveBoard: action,
       // computed
     });
 
@@ -71,6 +76,10 @@ class ProjectStore implements IProjectStore {
       this.error = error;
       return error;
     }
+  };
+
+  setActiveBoard = (boardValue: string) => {
+    this.activeBoard = boardValue;
   };
 }
 

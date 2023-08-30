@@ -18,38 +18,18 @@ import {
 } from "components/icons";
 
 // all issue views
-export const issueViews: IIssueBoardViews[] = [
-  {
-    key: "list",
+export const issueViews: any = {
+  list: {
     title: "List View",
     icon: "format_list_bulleted",
     className: "",
   },
-  {
-    key: "kanban",
+  kanban: {
     title: "Board View",
     icon: "grid_view",
     className: "",
   },
-  // {
-  //   key: "calendar",
-  //   title: "Calendar View",
-  //   icon: "calendar_month",
-  //   className: "",
-  // },
-  // {
-  //   key: "spreadsheet",
-  //   title: "Spreadsheet View",
-  //   icon: "table_chart",
-  //   className: "",
-  // },
-  // {
-  //   key: "gantt",
-  //   title: "Gantt Chart View",
-  //   icon: "waterfall_chart",
-  //   className: "rotate-90",
-  // },
-];
+};
 
 // issue priority filters
 export const issuePriorityFilters: IIssuePriorityFilters[] = [
