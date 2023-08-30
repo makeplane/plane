@@ -6,12 +6,11 @@ import isValidHttpUrl from "./utils/link-validator";
 interface LinkSelectorProps {
   editor: Editor;
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-  setisTableSelected: Dispatch<SetStateAction<boolean>>;
+  setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
 
-export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen, setisTableSelected }) => {
+export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onLinkSubmit = useCallback(() => {
@@ -37,7 +36,6 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen,
         )}
         onClick={() => {
           setIsOpen(!isOpen);
-          setisTableSelected(true);
         }}
       >
         <p className="text-base">↗</p>

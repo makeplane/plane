@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { startImageUpload } from "../plugins/upload-image";
 import { cn } from "../utils";
-import { findTableAncestor } from "../table-menu";
 
 interface CommandItemProps {
   title: string;
@@ -48,6 +47,9 @@ const Command = Extension.create({
     return [
       Suggestion({
         editor: this.editor,
+        allow({ editor }) {
+          return !editor.isActive("table");
+        },
         ...this.options.suggestion,
       }),
     ];
