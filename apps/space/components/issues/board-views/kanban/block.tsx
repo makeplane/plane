@@ -2,29 +2,36 @@
 
 // mobx react lite
 import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 // components
 import { IssueBlockPriority } from "components/issues/board-views/block-priority";
 import { IssueBlockState } from "components/issues/board-views/block-state";
 import { IssueBlockLabels } from "components/issues/board-views/block-labels";
 import { IssueBlockDueDate } from "components/issues/board-views/block-due-date";
-// mobx hook
-import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
 import { IIssue } from "store/types/issue";
 import { RootStore } from "store/root";
 
-export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
+export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
   const store: RootStore = useMobxStore();
 
+  const { issue: issueStore } = store;
+
   return (
-    <div className="p-2 px-3 bg-white space-y-2 rounded-sm shadow">
+    <div className="p-3.5 h-[118px] flex flex-col justify-between bg-custom-background-100 space-y-2 rounded shadow">
       {/* id */}
-      <div className="flex-shrink-0 text-sm text-gray-600 w-[60px]">
+      <div className="flex-shrink-0 text-xs font-medium text-custom-text-200 w-[60px]">
         {store?.project?.project?.identifier}-{issue?.sequence_id}
       </div>
 
       {/* name */}
-      <div className="font-medium text-gray-800 h-full line-clamp-2">{issue.name}</div>
+      <div
+        onClick={() => issueStore?.setActivePeekOverviewIssueId(issue?.id)}
+        className="text-custom-text-100 text-sm font-medium h-full break-words line-clamp-2 cursor-pointer"
+      >
+        {issue.name}
+      </div>
 
       {/* priority */}
       <div className="relative flex flex-wrap items-center gap-2 w-full">
@@ -54,4 +61,4 @@ export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
       </div>
     </div>
   );
-};
+});

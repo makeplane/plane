@@ -6,14 +6,14 @@ import ThemeStore from "./theme";
 import IssueStore from "./issue";
 import ProjectStore from "./project";
 // types
-import { IIssueStore, IProjectStore, IThemeStore, IUserStore } from "./types";
+import { IIssueStore, IProjectStore, IThemeStore } from "./types";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
-  user: IUserStore;
+  user: UserStore;
   theme: IThemeStore;
-  issue: IIssueStore;
+  issue: IssueStore;
   project: IProjectStore;
 
   constructor() {

@@ -1,7 +1,7 @@
 "use client";
 
 // next imports
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // constants
@@ -22,7 +22,21 @@ export const NavbarIssueBoardView = observer(() => {
 
   const handleCurrentBoardView = (boardView: TIssueBoardKeys) => {
     store?.issue?.setCurrentIssueBoardView(boardView);
-    router.replace(`/${workspace_slug}/${project_slug}?board=${boardView}`);
+    router.replace(
+      `/${workspace_slug}/${project_slug}?board=${boardView}${
+        store?.issue?.userSelectedLabels && store?.issue?.userSelectedLabels.length > 0
+          ? `&labels=${store?.issue?.userSelectedLabels.join(",")}`
+          : ""
+      }${
+        store?.issue?.userSelectedPriorities && store?.issue?.userSelectedPriorities.length > 0
+          ? `&priorities=${store?.issue?.userSelectedPriorities.join(",")}`
+          : ""
+      }${
+        store?.issue?.userSelectedStates && store?.issue?.userSelectedStates.length > 0
+          ? `&states=${store?.issue?.userSelectedStates.join(",")}`
+          : ""
+      }`
+    );
   };
 
   return (
@@ -35,10 +49,10 @@ export const NavbarIssueBoardView = observer(() => {
             store?.project?.workspaceProjectSettings?.views[_view?.key] && (
               <div
                 key={_view?.key}
-                className={`w-[28px] h-[28px] flex justify-center items-center rounded-sm cursor-pointer text-gray-500 ${
+                className={`w-[28px] h-[28px] flex justify-center items-center rounded-sm cursor-pointer ${
                   _view?.key === store?.issue?.currentIssueBoardView
-                    ? `bg-gray-200/60 text-gray-800`
-                    : `hover:bg-gray-200/60 text-gray-600`
+                    ? `bg-custom-background-200 text-custom-text-200`
+                    : `hover:bg-custom-background-200 text-custom-text-300`
                 }`}
                 onClick={() => handleCurrentBoardView(_view?.key)}
                 title={_view?.title}

@@ -6,11 +6,13 @@ export const IssueBlockLabels = ({ labels }: any) => (
       labels.length > 0 &&
       labels.map((_label: any) => (
         <div
-          className={`h-[24px] rounded-sm flex px-1 items-center border gap-1 !bg-transparent !text-gray-700`}
-          style={{ backgroundColor: `${_label?.color}10`, borderColor: `${_label?.color}50` }}
+          key={_label?.id}
+          className="flex cursor-default items-center flex-shrink-0 rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm"
         >
-          <div className="w-[10px] h-[10px] rounded-full" style={{ backgroundColor: `${_label?.color}` }} />
-          <div className="text-sm">{_label?.name}</div>
+          <div className="flex items-center gap-1.5 text-custom-text-200">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: `${_label?.color}` }} />
+            <div className="text-xs">{_label?.name}</div>
+          </div>
         </div>
       ))}
   </div>

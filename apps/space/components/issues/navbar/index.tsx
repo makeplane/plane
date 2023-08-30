@@ -33,7 +33,7 @@ const IssueNavbar = observer(() => {
     <div className="px-5 relative w-full flex items-center gap-4">
       {/* project detail */}
       <div className="flex-shrink-0 flex items-center gap-2">
-        <div className="w-[32px] h-[32px] rounded-sm flex justify-center items-center bg-gray-100 text-[24px]">
+        <div className="w-[32px] h-[32px] rounded-sm flex justify-center items-center text-[24px]">
           {store?.project?.project && store?.project?.project?.emoji ? (
             renderEmoji(store?.project?.project?.emoji)
           ) : (
@@ -50,21 +50,21 @@ const IssueNavbar = observer(() => {
         <NavbarSearch />
       </div>
 
+      {/* issue filters */}
+      <div className="flex-shrink-0 relative flex items-center gap-2">
+        <NavbarIssueFilter />
+        {/* <NavbarIssueView /> */}
+      </div>
+
       {/* issue views */}
       <div className="flex-shrink-0 relative flex items-center gap-1 transition-all ease-in-out delay-150">
         <NavbarIssueBoardView />
       </div>
 
-      {/* issue filters */}
-      {/* <div className="flex-shrink-0 relative flex items-center gap-2">
-        <NavbarIssueFilter />
-        <NavbarIssueView />
-      </div> */}
-
       {/* theming */}
-      {/* <div className="flex-shrink-0 relative">
+      <div className="flex-shrink-0 relative">
         <NavbarTheme />
-      </div> */}
+      </div>
     </div>
   );
 });

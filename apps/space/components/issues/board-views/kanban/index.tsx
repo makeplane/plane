@@ -19,7 +19,7 @@ export const IssueKanbanView = observer(() => {
       {store?.issue?.states &&
         store?.issue?.states.length > 0 &&
         store?.issue?.states.map((_state: IIssueState) => (
-          <div className="flex-shrink-0 relative w-[340px] h-full flex flex-col">
+          <div key={_state.id} className="flex-shrink-0 relative w-[340px] h-full flex flex-col">
             <div className="flex-shrink-0">
               <IssueListHeader state={_state} />
             </div>
@@ -28,11 +28,11 @@ export const IssueKanbanView = observer(() => {
               store.issue.getFilteredIssuesByState(_state.id).length > 0 ? (
                 <div className="space-y-3 pb-2">
                   {store.issue.getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
-                    <IssueListBlock issue={_issue} />
+                    <IssueListBlock key={_issue.id} issue={_issue} />
                   ))}
                 </div>
               ) : (
-                <div className="relative w-full h-full flex justify-center items-center p-10 text-center text-sm text-gray-600">
+                <div className="relative w-full h-full flex justify-center items-center p-10 text-center text-sm text-custom-text-200">
                   No Issues are available.
                 </div>
               )}

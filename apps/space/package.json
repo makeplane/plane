@@ -21,6 +21,7 @@
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
     "next": "^13.4.16",
+    "next-theme": "^0.1.5",
     "nprogress": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,6 +29,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.9",
     "@types/js-cookie": "^3.0.3",
     "@types/uuid": "^9.0.1",
     "autoprefixer": "^10.4.13",
