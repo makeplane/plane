@@ -1,21 +1,15 @@
-"use client";
-
-// react
 import { useState, useEffect, useRef } from "react";
-
-// next
-import { useParams } from "next/navigation";
-
-// mobx
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
+// lib
 import { useMobxStore } from "lib/mobx/store-provider";
 
 export const IssueVotes: React.FC = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const routerParams = useParams();
+  const router = useRouter();
 
-  const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
+  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const { user: userStore, issue: issueStore } = useMobxStore();
 

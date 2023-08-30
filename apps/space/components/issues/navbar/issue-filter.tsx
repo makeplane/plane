@@ -1,18 +1,12 @@
-"use client";
-
-import { useRouter, usePathname } from "next/navigation";
-
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-
-// mobx react lite
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+// icons
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-
 // components
 import { Dropdown } from "components/ui/dropdown";
-
 // constants
 import { issueGroupFilter } from "constants/data";
 
@@ -22,7 +16,7 @@ export const NavbarIssueFilter = observer(() => {
   const store: RootStore = useMobxStore();
 
   const router = useRouter();
-  const pathName = usePathname();
+  const pathName = router.asPath;
 
   const handleOnSelect = (key: "states" | "labels" | "priorities", value: string) => {
     if (key === "states") {

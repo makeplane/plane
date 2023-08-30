@@ -1,25 +1,17 @@
-"use client";
-
-// react
 import { useEffect } from "react";
-
-// next
-import { useParams } from "next/navigation";
-
-// mobx
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+// lib
 import { useMobxStore } from "lib/mobx/store-provider";
-
 // helpers
 import { groupReactions, renderEmoji } from "helpers/emoji.helper";
-
-// ui
+// components
 import { ReactionSelector } from "components/ui";
 
 export const IssueEmojiReactions: React.FC = observer(() => {
-  const routerParams = useParams();
+  const router = useRouter();
 
-  const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
+  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const { user: userStore, issue: issueStore } = useMobxStore();
 

@@ -1,28 +1,19 @@
-"use client";
-
 import React, { useEffect } from "react";
-
-// next
 import Image from "next/image";
-
 // assets
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-
 // services
 import authenticationService from "services/authentication.service";
-
 // hooks
 import useToast from "hooks/use-toast";
-
 // components
-import { UserDetails } from "./components/user-details";
+import { OnBoardingForm } from "components/accounts/onboarding-form";
 
-const HomePage = () => {
+const OnBoardingPage = () => {
   const { user: userStore } = useMobxStore();
 
   const user = userStore?.currentUser;
@@ -52,11 +43,11 @@ const HomePage = () => {
           </div>
         </div>
         <div className="relative flex justify-center sm:items-center h-full px-8 pb-0 sm:px-0 sm:py-12 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5 overflow-hidden">
-          <UserDetails user={user} />
+          <OnBoardingForm user={user} />
         </div>
       </div>
     </div>
   );
 };
 
-export default observer(HomePage);
+export default observer(OnBoardingPage);

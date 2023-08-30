@@ -1,7 +1,4 @@
-"use client";
-
-import { useRouter, useParams } from "next/navigation";
-
+import { useRouter } from "next/router";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx hook
@@ -15,9 +12,7 @@ export const RenderIssueState = observer(({ state }: { state: IIssueState }) => 
   const store = useMobxStore();
 
   const router = useRouter();
-  const routerParams = useParams();
-
-  const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
+  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const stateGroup = issueGroupFilter(state.group);
 

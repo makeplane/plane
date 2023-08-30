@@ -1,30 +1,20 @@
 import { useEffect, Fragment } from "react";
-
-// next
-import { useSearchParams, useRouter } from "next/navigation";
-
+import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
-
 // icons
 import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
-
 // constants
 import { USER_ROLES } from "constants/workspace";
-
 // hooks
 import useToast from "hooks/use-toast";
-
 // services
 import UserService from "services/user.service";
-
 // ui
 import { Input, PrimaryButton } from "components/ui";
 
@@ -38,11 +28,11 @@ type Props = {
   user?: any;
 };
 
-export const UserDetails: React.FC<Props> = observer(({ user }) => {
+export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
   const { setToastAlert } = useToast();
 
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const { next_path } = router.query;
 
   const { user: userStore } = useMobxStore();
 
@@ -71,10 +61,7 @@ export const UserDetails: React.FC<Props> = observer(({ user }) => {
       .updateMe(payload)
       .then((response) => {
         userStore.setCurrentUser(response);
-
-        const nextPath = searchParams?.get("next_path") || "/";
-        router.push(nextPath);
-
+        router.push(next_path?.toString() || "/");
         setToastAlert({
           type: "success",
           title: "Success!",

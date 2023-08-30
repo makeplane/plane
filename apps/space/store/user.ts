@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
 // mobx
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // service

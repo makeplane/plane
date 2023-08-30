@@ -1,9 +1,7 @@
 import { useEffect, useState, FC } from "react";
-
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-
+import { useRouter } from "next/router";
 // next-themes
 import { useTheme } from "next-themes";
 // images
@@ -18,9 +16,9 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = ({ handleSignIn }) 
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
   const [gitCode, setGitCode] = useState<null | string>(null);
 
-  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  const code = searchParams?.get("code");
+  const { code } = router.query;
 
   const { theme } = useTheme();
 

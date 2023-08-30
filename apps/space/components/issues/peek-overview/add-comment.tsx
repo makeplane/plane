@@ -1,22 +1,15 @@
 import React, { useRef } from "react";
-
-import { useParams } from "next/navigation";
-
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
-
+// lib
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-
 // ui
 import { SecondaryButton } from "components/ui";
-
 // types
 import { Comment } from "store/types";
-
 // components
 import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
@@ -48,8 +41,8 @@ export const AddComment: React.FC<Props> = observer((props) => {
     reset,
   } = useForm<Comment>({ defaultValues });
 
-  const routerParams = useParams();
-  const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
+  const router = useRouter();
+  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const { issue: issueStore, user: userStore } = useMobxStore();
 

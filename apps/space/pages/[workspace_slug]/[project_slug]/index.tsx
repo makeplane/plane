@@ -1,8 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
-// next imports
-import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 // mobx
 import { observer } from "mobx-react-lite";
 // components
@@ -17,26 +14,23 @@ import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 // types
 import { TIssueBoardKeys } from "store/types";
+import ProjectLayout from "layouts/project-layout";
 
 const WorkspaceProjectPage = () => {
   const store: RootStore = useMobxStore();
 
   const router = useRouter();
-  const routerParams = useParams();
-  const routerSearchparams = useSearchParams();
 
   const activeIssueId = store.issue.activePeekOverviewIssueId;
 
-  const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
-  const board =
-    routerSearchparams &&
-    routerSearchparams.get("board") != null &&
-    (routerSearchparams.get("board") as TIssueBoardKeys | "");
-
-  const states = routerSearchparams && routerSearchparams.get("states") != null && routerSearchparams.get("states");
-  const labels = routerSearchparams && routerSearchparams.get("labels") != null && routerSearchparams.get("labels");
-  const priorities =
-    routerSearchparams && routerSearchparams.get("priorities") != null && routerSearchparams.get("priorities");
+  const { workspace_slug, project_slug, board, states, labels, priorities } = router.query as {
+    workspace_slug: string;
+    project_slug: string;
+    board: TIssueBoardKeys;
+    states: string[];
+    labels: string[];
+    priorities: string[];
+  };
 
   // updating default board view when we are in the issues page
   useEffect(() => {
@@ -114,46 +108,48 @@ const WorkspaceProjectPage = () => {
   }, [workspace_slug, project_slug, store?.project, store?.issue, states, labels, priorities]);
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
-      <IssuePeekOverview
-        isOpen={Boolean(activeIssueId)}
-        onClose={() => store.issue.setActivePeekOverviewIssueId(null)}
-        issue={store?.issue?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
-        workspaceSlug={workspace_slug}
-      />
+    <ProjectLayout>
+      <div className="relative w-full h-full overflow-hidden">
+        <IssuePeekOverview
+          isOpen={Boolean(activeIssueId)}
+          onClose={() => store.issue.setActivePeekOverviewIssueId(null)}
+          issue={store?.issue?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
+          workspaceSlug={workspace_slug}
+        />
 
-      {store?.issue?.loader && !store.issue.issues ? (
-        <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
-      ) : (
-        <>
-          {store?.issue?.error ? (
-            <div className="text-sm text-center py-10  bg-custom-background-200 text-custom-text-100">
-              Something went wrong.
-            </div>
-          ) : (
-            store?.issue?.currentIssueBoardView && (
-              <>
-                {store?.issue?.currentIssueBoardView === "list" && (
-                  <div className="relative w-full h-full overflow-y-auto">
-                    <div className="mx-auto px-4">
-                      <IssueListView />
+        {store?.issue?.loader && !store.issue.issues ? (
+          <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
+        ) : (
+          <>
+            {store?.issue?.error ? (
+              <div className="text-sm text-center py-10  bg-custom-background-200 text-custom-text-100">
+                Something went wrong.
+              </div>
+            ) : (
+              store?.issue?.currentIssueBoardView && (
+                <>
+                  {store?.issue?.currentIssueBoardView === "list" && (
+                    <div className="relative w-full h-full overflow-y-auto">
+                      <div className="mx-auto px-4">
+                        <IssueListView />
+                      </div>
                     </div>
-                  </div>
-                )}
-                {store?.issue?.currentIssueBoardView === "kanban" && (
-                  <div className="relative w-full h-full mx-auto px-9 py-5">
-                    <IssueKanbanView />
-                  </div>
-                )}
-                {store?.issue?.currentIssueBoardView === "calendar" && <IssueCalendarView />}
-                {store?.issue?.currentIssueBoardView === "spreadsheet" && <IssueSpreadsheetView />}
-                {store?.issue?.currentIssueBoardView === "gantt" && <IssueGanttView />}
-              </>
-            )
-          )}
-        </>
-      )}
-    </div>
+                  )}
+                  {store?.issue?.currentIssueBoardView === "kanban" && (
+                    <div className="relative w-full h-full mx-auto px-9 py-5">
+                      <IssueKanbanView />
+                    </div>
+                  )}
+                  {store?.issue?.currentIssueBoardView === "calendar" && <IssueCalendarView />}
+                  {store?.issue?.currentIssueBoardView === "spreadsheet" && <IssueSpreadsheetView />}
+                  {store?.issue?.currentIssueBoardView === "gantt" && <IssueGanttView />}
+                </>
+              )
+            )}
+          </>
+        )}
+      </div>
+    </ProjectLayout>
   );
 };
 
