@@ -1080,7 +1080,7 @@ def create_comment_reaction_activity(
     if requested_data and requested_data.get("reaction") is not None:
         comment_reaction_id, comment_id = CommentReaction.objects.filter(reaction=requested_data.get("reaction"), project=project, actor=actor).values_list('id', 'comment__id').first()
         comment = IssueComment.objects.get(pk=comment_id,project=project)
-        if comment is not None and comment_id is not None:
+        if comment is not None and comment_reaction_id is not None and comment_id is not None:
             issue_activities.append(
                 IssueActivity(
                     issue_id=comment.issue_id,
@@ -1106,21 +1106,22 @@ def delete_comment_reaction_activity(
     )
     if current_instance and current_instance.get("reaction") is not None:
         issue_id = IssueComment.objects.filter(pk=current_instance.get("comment_id"), project=project).values_list('issue_id', flat=True).first()
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor=actor,
-                verb="deleted",
-                old_value=current_instance.get("reaction"),
-                new_value=None,
-                field="reaction",
-                project=project,
-                workspace=project.workspace,
-                comment="removed the reaction",
-                old_identifier=current_instance.get("identifier"),
-                new_identifier=None,
+        if issue_id is not None:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    actor=actor,
+                    verb="deleted",
+                    old_value=current_instance.get("reaction"),
+                    new_value=None,
+                    field="reaction",
+                    project=project,
+                    workspace=project.workspace,
+                    comment="removed the reaction",
+                    old_identifier=current_instance.get("identifier"),
+                    new_identifier=None,
+                )
             )
-        )
 
 
 def create_issue_vote_activity(
