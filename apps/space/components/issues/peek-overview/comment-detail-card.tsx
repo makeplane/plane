@@ -16,7 +16,7 @@ import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon 
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { Comment } from "store/types";
+import { Comment } from "types";
 import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
 
 const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>((props, ref) => (

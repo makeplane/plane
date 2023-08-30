@@ -6,7 +6,7 @@ import ThemeStore from "./theme";
 import IssueStore, { IIssueStore } from "./issue";
 import ProjectStore, { IProjectStore } from "./project";
 // types
-import { IThemeStore } from "./types";
+import { IThemeStore } from "../types";
 
 enableStaticRendering(typeof window === "undefined");
 

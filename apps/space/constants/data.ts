@@ -7,7 +7,7 @@ import {
   TIssueGroupKey,
   IIssuePriorityFilters,
   IIssueGroup,
-} from "store/types/issue";
+} from "types/issue";
 // icons
 import {
   BacklogStateIcon,

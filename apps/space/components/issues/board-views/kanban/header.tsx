@@ -3,7 +3,7 @@
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // interfaces
-import { IIssueState } from "store/types/issue";
+import { IIssueState } from "types/issue";
 // constants
 import { issueGroupFilter } from "constants/data";
 // mobx hook
@@ -24,7 +24,7 @@ export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
       </div>
       <div className="font-semibold text-base capitalize ml-2 mr-3">{state?.name}</div>
       <div className="text-gray-700 w-full max-w-[26px] h-[20px] flex justify-center items-center rounded-full">
-        {store.issue.getCountOfIssuesByState(state.id)}
+        {/* {store.issue.getCountOfIssuesByState(state.id)} */}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 // types
-import { TIssuePriorityKey } from "store/types/issue";
+import { TIssuePriorityKey } from "types/issue";
 // constants
 import { issuePriorityFilter } from "constants/data";
 

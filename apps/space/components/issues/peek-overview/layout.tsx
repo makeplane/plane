@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { FullScreenPeekView, SidePeekView } from "components/issues/peek-overview";
 
 // types
-import type { IIssue } from "store/types";
+import type { IIssue } from "types";
 
 type Props = {
   issue: IIssue | null;
@@ -16,12 +16,7 @@ type Props = {
 
 export type TPeekOverviewModes = "side" | "modal" | "full";
 
-export const IssuePeekOverview: React.FC<Props> = ({
-  issue,
-  isOpen,
-  onClose,
-  workspaceSlug,
-}) => {
+export const IssuePeekOverview: React.FC<Props> = ({ issue, isOpen, onClose, workspaceSlug }) => {
   const [peekOverviewMode, setPeekOverviewMode] = useState<TPeekOverviewModes>("side");
 
   const handleClose = () => {

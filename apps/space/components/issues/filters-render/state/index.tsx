@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { RenderIssueState } from "./filter-state-block";
 // interfaces
-import { IIssueState } from "store/types/issue";
+import { IIssueState } from "types/issue";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";

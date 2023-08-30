@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { RenderIssueLabel } from "./filter-label-block";
 // interfaces
-import { IIssueLabel } from "store/types/issue";
+import { IIssueLabel } from "types/issue";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";

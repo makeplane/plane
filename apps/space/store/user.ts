@@ -3,7 +3,7 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 // service
 import UserService from "services/user.service";
 // types
-import { IUserStore } from "./types";
+import { IUserStore } from "../types";
 
 class UserStore implements IUserStore {
   currentUser: any | null = null;

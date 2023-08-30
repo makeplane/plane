@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
-import { IIssueLabel } from "store/types/issue";
+import { IIssueLabel } from "types/issue";
 
 export const RenderIssueLabel = observer(({ label }: { label: IIssueLabel }) => {
   const store = useMobxStore();

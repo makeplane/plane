@@ -10,7 +10,7 @@ import { Icon } from "components/ui";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "helpers/string.helper";
 
 // types
-import { IIssue } from "store/types";
+import { IIssue } from "types";
 
 // constants
 import { issueGroupFilter, issuePriorityFilter } from "constants/data";

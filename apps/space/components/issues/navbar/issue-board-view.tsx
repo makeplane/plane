@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 // constants
 import { issueViews } from "constants/data";
 // interfaces
-import { TIssueBoardKeys } from "store/types";
+import { TIssueBoardKeys } from "types";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
@@ -16,18 +16,18 @@ export const NavbarIssueBoardView = observer(() => {
 
   const handleCurrentBoardView = (boardView: string) => {
     projectStore.setActiveBoard(boardView);
-    router.replace(
+    router.push(
       `/${workspace_slug}/${project_slug}?board=${boardView}${
-        issueStore?.userSelectedLabels && issueStore?.userSelectedLabels.length > 0
-          ? `&labels=${issueStore?.userSelectedLabels.join(",")}`
+        issueStore?.filteredLabels && issueStore?.filteredLabels.length > 0
+          ? `&labels=${issueStore?.filteredLabels.join(",")}`
           : ""
       }${
-        issueStore?.userSelectedPriorities && issueStore?.userSelectedPriorities.length > 0
-          ? `&priorities=${issueStore?.userSelectedPriorities.join(",")}`
+        issueStore?.filteredPriorities && issueStore?.filteredPriorities.length > 0
+          ? `&priorities=${issueStore?.filteredPriorities.join(",")}`
           : ""
       }${
-        issueStore?.userSelectedStates && issueStore?.userSelectedStates.length > 0
-          ? `&states=${issueStore?.userSelectedStates.join(",")}`
+        issueStore?.filteredStates && issueStore?.filteredStates.length > 0
+          ? `&states=${issueStore?.filteredStates.join(",")}`
           : ""
       }`
     );
@@ -37,8 +37,6 @@ export const NavbarIssueBoardView = observer(() => {
     <>
       {projectStore?.viewOptions &&
         Object.keys(projectStore?.viewOptions).map((viewKey: string) => {
-          console.log("projectStore?.activeBoard", projectStore?.activeBoard);
-          console.log("viewKey", viewKey);
           if (projectStore?.viewOptions[viewKey]) {
             return (
               <div

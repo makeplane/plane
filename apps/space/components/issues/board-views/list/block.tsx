@@ -10,24 +10,24 @@ import { IssueBlockDueDate } from "components/issues/board-views/block-due-date"
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
-import { IIssue } from "store/types/issue";
+import { IIssue } from "types/issue";
 import { RootStore } from "store/root";
 
 export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
-  const store: RootStore = useMobxStore();
+  const { issue: issueStore, project: projectStore }: RootStore = useMobxStore();
 
   return (
     <div className="flex items-center px-9 py-3.5 relative gap-10 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0">
       <div className="relative flex items-center gap-6 w-full flex-grow overflow-hidden">
         {/* id */}
-        <div className="flex-shrink-0 text-sm w-[60px] text-custom-text-200">
-          {store?.project?.project?.identifier}-{issue?.sequence_id}
+        <div className="flex-shrink-0 text-sm w-auto text-custom-text-200">
+          {projectStore?.project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
         <div className="h-full line-clamp-1 w-full overflow-ellipsis cursor-pointer">
           <p
             onClick={() => {
-              store.issue.setActivePeekOverviewIssueId(issue.id);
+              issueStore.setPeekId(issue.id);
             }}
             className="text-[0.825rem] font-medium text-sm truncate text-custom-text-100"
           >

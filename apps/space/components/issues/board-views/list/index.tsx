@@ -6,25 +6,25 @@ import { observer } from "mobx-react-lite";
 import { IssueListHeader } from "components/issues/board-views/list/header";
 import { IssueListBlock } from "components/issues/board-views/list/block";
 // interfaces
-import { IIssueState, IIssue } from "store/types/issue";
+import { IIssueState, IIssue } from "types/issue";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
 export const IssueListView = observer(() => {
-  const store: RootStore = useMobxStore();
-
+  const { issue: issueStore }: RootStore = useMobxStore();
+  console.log("issueStore", issueStore.states);
   return (
     <>
-      {store?.issue?.states &&
-        store?.issue?.states.length > 0 &&
-        store?.issue?.states.map((_state: IIssueState) => (
+      {issueStore?.states &&
+        issueStore?.states.length > 0 &&
+        issueStore?.states.map((_state: IIssueState) => (
           <div key={_state.id} className="relative w-full">
             <IssueListHeader state={_state} />
-            {store.issue.getFilteredIssuesByState(_state.id) &&
-            store.issue.getFilteredIssuesByState(_state.id).length > 0 ? (
+            {issueStore.getFilteredIssuesByState(_state.id) &&
+            issueStore.getFilteredIssuesByState(_state.id).length > 0 ? (
               <div className="divide-y">
-                {store.issue.getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
+                {issueStore.getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
                   <IssueListBlock key={_issue.id} issue={_issue} />
                 ))}
               </div>
