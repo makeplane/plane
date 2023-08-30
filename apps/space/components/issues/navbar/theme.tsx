@@ -15,7 +15,7 @@ import { RootStore } from "store/root";
 export const NavbarTheme = observer(() => {
   const store: RootStore = useMobxStore();
 
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme = "light" } = useTheme();
 
   const handleTheme = () => {
     store?.theme?.setTheme(store?.theme?.theme === "light" ? "dark" : "light");
