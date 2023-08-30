@@ -14,7 +14,7 @@ import { IIssue } from "types/issue";
 import { RootStore } from "store/root";
 
 export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
-  const { issue: issueStore, project: projectStore }: RootStore = useMobxStore();
+  const { issue: issueStore, project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
 
   return (
     <div className="flex items-center px-9 py-3.5 relative gap-10 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0">
@@ -27,7 +27,7 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
         <div className="h-full line-clamp-1 w-full overflow-ellipsis cursor-pointer">
           <p
             onClick={() => {
-              issueStore.setPeekId(issue.id);
+              issueDetailStore.setPeekId(issue.id);
             }}
             className="text-[0.825rem] font-medium text-sm truncate text-custom-text-100"
           >

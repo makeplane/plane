@@ -18,13 +18,10 @@ export interface IIssueStore {
   filteredStates: string[];
   filteredLabels: string[];
   filteredPriorities: string[];
-  // peek info
-  peekId: string | null;
   // service
   issueService: any;
   // actions
   fetchPublicIssues: (workspace_slug: string, project_slug: string, params: any) => void;
-  setPeekId: (issueId: string | null) => void;
   getFilteredIssuesByState: (state: string) => IIssue[];
 }
 
@@ -41,8 +38,6 @@ class IssueStore implements IIssueStore {
 
   issues: IIssue[] | null = [];
   issue_detail: any = {};
-
-  peekId: string | null = null;
 
   rootStore: RootStore;
   issueService: any;
@@ -62,11 +57,8 @@ class IssueStore implements IIssueStore {
       // issues
       issues: observable.ref,
       issue_detail: observable.ref,
-      // peek
-      peekId: observable.ref,
       // actions
       fetchPublicIssues: action,
-      setPeekId: action,
       getFilteredIssuesByState: action,
     });
 
@@ -96,10 +88,6 @@ class IssueStore implements IIssueStore {
       this.loader = false;
       this.error = error;
     }
-  };
-
-  setPeekId = (issueId: string | null) => {
-    this.peekId = issueId;
   };
 
   getFilteredIssuesByState = (state_id: string): IIssue[] | [] =>

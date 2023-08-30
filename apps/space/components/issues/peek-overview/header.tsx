@@ -1,23 +1,26 @@
+import { useRouter } from "next/router";
+import { ArrowRightAlt, CloseFullscreen, East, OpenInFull } from "@mui/icons-material";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Icon } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
+// store
+import { IPeekMode } from "store/issue_details";
+import { RootStore } from "store/root";
+// lib
+import { useMobxStore } from "lib/mobx/store-provider";
 // types
-import { TPeekOverviewModes } from "./layout";
-import { ArrowRightAlt, CloseFullscreen, East, OpenInFull } from "@mui/icons-material";
+import { IIssue } from "types";
 
 type Props = {
   handleClose: () => void;
-  issue: any;
-  mode: TPeekOverviewModes;
-  setMode: (mode: TPeekOverviewModes) => void;
-  workspaceSlug: string;
+  issueDetails: IIssue;
 };
 
 const peekModes: {
-  key: TPeekOverviewModes;
+  key: IPeekMode;
   icon: string;
   label: string;
 }[] = [
@@ -34,13 +37,20 @@ const peekModes: {
   },
 ];
 
-export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, setMode, workspaceSlug }) => {
+export const PeekOverviewHeader: React.FC<Props> = (props) => {
+  const { issueDetails, handleClose } = props;
+
+  const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { setToastAlert } = useToast();
 
   const handleCopyLink = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${issue.project}/`).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${issueDetails.project}/`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
@@ -52,7 +62,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
   return (
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-4">
-        {mode === "side" && (
+        {issueDetailStore.peekMode === "side" && (
           <button
             type="button"
             onClick={() => {
@@ -66,8 +76,8 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
             />
           </button>
         )}
-        {mode === "modal" || mode === "full" ? (
-          <button type="button" onClick={() => setMode("side")}>
+        {issueDetailStore.peekMode === "modal" || issueDetailStore.peekMode === "full" ? (
+          <button type="button" onClick={() => issueDetailStore.setPeekMode("side")}>
             <CloseFullscreen
               sx={{
                 fontSize: "14px",
@@ -75,7 +85,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
             />
           </button>
         ) : (
-          <button type="button" onClick={() => setMode("modal")}>
+          <button type="button" onClick={() => issueDetailStore.setPeekMode("modal")}>
             <OpenInFull
               sx={{
                 fontSize: "14px",
@@ -83,11 +93,14 @@ export const PeekOverviewHeader: React.FC<Props> = ({ issue, handleClose, mode, 
             />
           </button>
         )}
-        <button type="button" className={`grid place-items-center ${mode === "full" ? "rotate-45" : ""}`}>
-          <Icon iconName={peekModes.find((m) => m.key === mode)?.icon ?? ""} />
+        <button
+          type="button"
+          className={`grid place-items-center ${issueDetailStore.peekMode === "full" ? "rotate-45" : ""}`}
+        >
+          <Icon iconName={peekModes.find((m) => m.key === issueDetailStore.peekMode)?.icon ?? ""} />
         </button>
       </div>
-      {(mode === "side" || mode === "modal") && (
+      {(issueDetailStore.peekMode === "side" || issueDetailStore.peekMode === "modal") && (
         <div className="flex items-center gap-2">
           <button type="button" onClick={handleCopyLink} className="-rotate-45">
             <Icon iconName="link" />

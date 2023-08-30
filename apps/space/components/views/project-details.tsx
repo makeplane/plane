@@ -16,11 +16,9 @@ export const ProjectDetailsView = observer(() => {
   const router = useRouter();
   const { workspace_slug, project_slug, states, labels, priorities } = router.query;
 
-  const { issue: issueStore, project: projectStore }: RootStore = useMobxStore();
+  const { issue: issueStore, project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
 
-  console.log("projectStore?.activeBoard", projectStore?.activeBoard);
-
-  const activeIssueId = issueStore.peekId;
+  const activeIssueId = issueDetailStore.peekId;
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
@@ -36,12 +34,7 @@ export const ProjectDetailsView = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden">
       {workspace_slug && (
-        <IssuePeekOverview
-          isOpen={Boolean(activeIssueId)}
-          onClose={() => issueStore.setPeekId(null)}
-          issue={issueStore?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
-          workspaceSlug={workspace_slug.toString()}
-        />
+        <IssuePeekOverview isOpen={Boolean(activeIssueId)} onClose={() => issueDetailStore.setPeekId(null)} />
       )}
 
       {issueStore?.loader && !issueStore.issues ? (

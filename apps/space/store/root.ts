@@ -5,6 +5,7 @@ import UserStore from "./user";
 import ThemeStore from "./theme";
 import IssueStore, { IIssueStore } from "./issue";
 import ProjectStore, { IProjectStore } from "./project";
+import IssueDetailStore, { IIssueDetailStore } from "./issue_details";
 // types
 import { IThemeStore } from "../types";
 
@@ -14,6 +15,7 @@ export class RootStore {
   user: UserStore;
   theme: IThemeStore;
   issue: IIssueStore;
+  issueDetails: IIssueDetailStore;
   project: IProjectStore;
 
   constructor() {
@@ -21,5 +23,6 @@ export class RootStore {
     this.theme = new ThemeStore(this);
     this.issue = new IssueStore(this);
     this.project = new ProjectStore(this);
+    this.issueDetails = new IssueDetailStore(this);
   }
 }

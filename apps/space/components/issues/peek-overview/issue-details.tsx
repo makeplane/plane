@@ -4,15 +4,15 @@ import { IssueReactions } from "components/issues/peek-overview";
 import { IIssue } from "types";
 
 type Props = {
-  issue: IIssue;
+  issueDetails: IIssue;
 };
 
-export const PeekOverviewIssueDetails: React.FC<Props> = ({ issue }) => (
+export const PeekOverviewIssueDetails: React.FC<Props> = ({ issueDetails }) => (
   <div className="space-y-2">
     <h6 className="font-medium text-custom-text-200">
-      {issue.project_detail.identifier}-{issue.sequence_id}
+      {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
     </h6>
-    <h4 className="break-words text-2xl font-semibold">{issue.name}</h4>
+    <h4 className="break-words text-2xl font-semibold">{issueDetails.name}</h4>
     <IssueReactions />
   </div>
 );
