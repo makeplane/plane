@@ -73,3 +73,6 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 
 .npmrc
+
+
+apiserver/plane/static-assets
