@@ -7,14 +7,12 @@ from .models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite, Tea
 @admin.register(User)
 class UserAdmin(UserAdmin):
     list_display = (
-        'password',
-        'last_login',
-        'id',
         'username',
         'mobile_number',
         'email',
         'first_name',
         'last_name',
+         'last_login',
         'avatar',
         'cover_image',
         'date_joined',
