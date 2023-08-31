@@ -14,7 +14,14 @@ import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 // ui
-import { CustomSelect, DangerButton, Input, SecondaryButton, Spinner } from "components/ui";
+import {
+  CustomSearchSelect,
+  CustomSelect,
+  DangerButton,
+  Input,
+  SecondaryButton,
+  Spinner,
+} from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
@@ -23,6 +30,7 @@ import type { NextPage } from "next";
 import type { IUser } from "types";
 // constants
 import { USER_ROLES } from "constants/workspace";
+import { TIME_ZONES } from "constants/timezones";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -31,6 +39,7 @@ const defaultValues: Partial<IUser> = {
   last_name: "",
   email: "",
   role: "Product / Project Manager",
+  user_timezone: "Asia/Kolkata",
 };
 
 const Profile: NextPage = () => {
@@ -72,6 +81,7 @@ const Profile: NextPage = () => {
       cover_image: formData.cover_image,
       role: formData.role,
       display_name: formData.display_name,
+      user_timezone: formData.user_timezone,
     };
 
     await userService
@@ -127,6 +137,12 @@ const Profile: NextPage = () => {
           .finally(() => setIsRemoving(false));
     });
   };
+
+  const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
+    value: timeZone.value,
+    query: timeZone.label + " " + timeZone.value,
+    content: timeZone.label,
+  }));
 
   return (
     <WorkspaceAuthorizationLayout
@@ -343,6 +359,35 @@ const Profile: NextPage = () => {
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
+                  )}
+                />
+                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-custom-text-100">Timezone</h4>
+                <p className="text-sm text-custom-text-200">Select a timezone</p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <Controller
+                  name="user_timezone"
+                  control={control}
+                  rules={{ required: "This field is required" }}
+                  render={({ field: { value, onChange } }) => (
+                    <CustomSearchSelect
+                      value={value}
+                      label={
+                        value
+                          ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
+                          : "Select a timezone"
+                      }
+                      options={timeZoneOptions}
+                      onChange={onChange}
+                      verticalPosition="top"
+                      optionsClassName="w-full"
+                      input
+                    />
                   )}
                 />
                 {errors.role && <span className="text-xs text-red-500">Please select a role</span>}

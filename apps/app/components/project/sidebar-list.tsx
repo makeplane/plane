@@ -31,6 +31,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 export const ProjectSidebarList: FC = () => {
   const store: any = useMobxStore();
 
+  const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [deleteProjectModal, setDeleteProjectModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
@@ -151,7 +152,7 @@ export const ProjectSidebarList: FC = () => {
       <CreateProjectModal
         isOpen={isProjectModalOpen}
         setIsOpen={setIsProjectModalOpen}
-        setToFavorite
+        setToFavorite={isFavoriteProjectCreate}
         user={user}
       />
       <DeleteProjectModal
@@ -189,7 +190,10 @@ export const ProjectSidebarList: FC = () => {
                             </Disclosure.Button>
                             <button
                               className="group-hover:opacity-100 opacity-0"
-                              onClick={() => setIsProjectModalOpen(true)}
+                              onClick={() => {
+                                setIsFavoriteProjectCreate(true);
+                                setIsProjectModalOpen(true);
+                              }}
                             >
                               <Icon iconName="add" />
                             </button>
@@ -252,7 +256,10 @@ export const ProjectSidebarList: FC = () => {
                             </Disclosure.Button>
                             <button
                               className="group-hover:opacity-100 opacity-0"
-                              onClick={() => setIsProjectModalOpen(true)}
+                              onClick={() => {
+                                setIsFavoriteProjectCreate(false);
+                                setIsProjectModalOpen(true);
+                              }}
                             >
                               <Icon iconName="add" />
                             </button>

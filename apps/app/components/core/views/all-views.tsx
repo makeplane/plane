@@ -114,7 +114,10 @@ export const AllViews: React.FC<Props> = ({
         )}
       </StrictModeDroppable>
       {groupedIssues ? (
-        !isEmpty || issueView === "kanban" || issueView === "calendar" ? (
+        !isEmpty ||
+        issueView === "kanban" ||
+        issueView === "calendar" ||
+        issueView === "gantt_chart" ? (
           <>
             {issueView === "list" ? (
               <AllLists

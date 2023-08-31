@@ -12,7 +12,6 @@ from .project import (
     ProjectUserViewsEndpoint,
     ProjectMemberUserEndpoint,
     ProjectFavoritesViewSet,
-    ProjectDeployBoardIssuesPublicEndpoint,
     ProjectDeployBoardViewSet,
     ProjectDeployBoardPublicSettingsEndpoint,
     ProjectMemberEndpoint,
@@ -86,6 +85,8 @@ from .issue import (
     CommentReactionPublicViewSet,
     IssueVotePublicViewSet,
     IssueRelationViewSet,
+    IssueRetrievePublicEndpoint,
+    ProjectIssuesPublicEndpoint,
 )
 
 from .auth_extended import (
@@ -163,6 +164,6 @@ from .analytic import (
     DefaultAnalyticsEndpoint,
 )
 
-from .notification import NotificationViewSet, UnreadNotificationEndpoint
+from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkAllReadNotificationViewSet
 
 from .exporter import ExportIssuesEndpoint

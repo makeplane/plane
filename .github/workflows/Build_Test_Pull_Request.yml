@@ -1,0 +1,55 @@
+name: Build Pull Request Contents
+
+on: 
+  pull_request:
+    types: ["opened", "synchronize"]
+
+jobs:
+  build-pull-request-contents:
+    name: Build Pull Request Contents
+    runs-on: ubuntu-20.04
+    permissions:
+      pull-requests: read
+
+    steps:
+      - name: Checkout Repository to Actions
+        uses: actions/checkout@v3.3.0
+
+      - name: Setup Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v38
+        with:
+          files_yaml: |
+            apiserver:
+              - apiserver/**
+            web:
+              - apps/app/**
+            deploy:
+              - apps/space/**
+
+      - name: Setup .npmrc for repository
+        run: |
+            echo -e "@tiptap-pro:registry=https://registry.tiptap.dev/\n//registry.tiptap.dev/:_authToken=${{ secrets.TIPTAP_TOKEN }}" > .npmrc
+
+      - name: Build Plane's Main App
+        if: steps.changed-files.outputs.web_any_changed == 'true'
+        run: |
+          mv ./.npmrc ./apps/app
+          cd apps/app
+          yarn
+          yarn build
+
+      - name: Build Plane's Deploy App
+        if: steps.changed-files.outputs.deploy_any_changed == 'true'
+        run: |
+          cd apps/space
+          yarn 
+          yarn build
+
+

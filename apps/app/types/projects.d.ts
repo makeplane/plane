@@ -39,6 +39,7 @@ export interface IProject {
   } | null;
   id: string;
   identifier: string;
+  is_deployed: boolean;
   is_favorite: boolean;
   is_member: boolean;
   member_role: 5 | 10 | 15 | 20 | null;
@@ -57,7 +58,6 @@ export interface IProject {
   updated_by: string;
   workspace: IWorkspace | string;
   workspace_detail: IWorkspaceLite;
-  is_deployed: boolean;
 }
 
 export interface IProjectLite {
